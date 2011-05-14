@@ -49,7 +49,7 @@ MKtlCtl {
 	}
 
 	init{ 
-		funcChain = KeyChain.new;
+		funcChain = FunctionList.new;
 	}
 
 	addFunction{ |key,func,addAction=\addToTail,target|
