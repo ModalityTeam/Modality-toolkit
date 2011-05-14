@@ -1,0 +1,11 @@
+(
+	\name: 			"Modality",
+	\path: 			"Modality",
+	\summary:		"Modality classes",
+	\author: 		"Marije Baalman",
+	\organization:	"modality",
+	\country: 		"The Globe",
+	\helpdoc:		"",
+	\since: 		"2011",
+	\version:		"0.1"
+)
