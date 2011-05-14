@@ -2,7 +2,7 @@
 ( // defining the quarks path:
 ~myquark = Quarks(
 	reposPath: "",
-	localPath: Document.current.dir +/+ "quarks"
+	localPath: Document.current.dir
 );
 );
 
