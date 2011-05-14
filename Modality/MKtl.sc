@@ -13,7 +13,9 @@ MKtl {
 	// these are key -> MKtlCtl pairs
 
 	var <outputs; // anything that can be sent out to the Ktl
-	
+
+	var <>recordFunc;
+
 	init{
 		envir = ();
 		inputs = ();
@@ -23,7 +25,10 @@ MKtl {
 	recordValue{ |key,value|
 		recordFunc.value( key, value );
 	}
-	
+
+	addFunction{ |ctl,key,func,addAction=\addToTail,target|
+		inputs[ ctl ].addFunction( key, func, addAction, target );
+	}
 
 }
 
@@ -44,9 +49,14 @@ MKtlCtl {
 	}
 
 	init{ 
-		funcChain = NamedFunctionList.new;
+		funcChain = KeyChain.new;
 	}
 
+	addFunction{ |key,func,addAction=\addToTail,target|
+		// by default adds the action to the end of the list
+		// if target is set to a function, addActions \addBefore, \addAfter, \addReplace, are valid
+		// otherwise there is \addToTail or \addToHead
+	}
 
 	updateState{ | newval |
 		// copies the current state to:
@@ -58,9 +68,7 @@ MKtlCtl {
 	update{ |newval|
 		this.updateState( newval );
 		ktl.recordValue( key, newval );
-		funcChain.do{ |it,i|
-			it.value( ktl, key, newval );
-		}
+		funcChain.valueAll( ktl, key, newval );
 	}
 
 }
