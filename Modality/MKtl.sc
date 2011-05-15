@@ -16,28 +16,28 @@ MKtl {
 
 	var <>recordFunc;
 
-	init{
+	init {
 		envir = ();
 		inputs = ();
 		outputs = ();
 	}
 	
-	recordValue{ |key,value|
+	recordValue { |key,value|
 		recordFunc.value( key, value );
 	}
 
-	addFunction{ |ctl,key,func,addAction=\addToTail,target|
+	addFunction { |ctl,key,func,addAction=\addToTail,target|
 		inputs[ ctl ].addFunction( key, func, addAction, target );
 	}
 	
 	//usefull if Dispatcher also uses this class
 	//also can be used to simulate a non present hardware
-	receive{ |key,val|
+	receive { |key, val|
 		// is it really inputs ?
-		inputs[ ctl ].update( val )
+		inputs[ key ].update( val )
 	}
 	
-	send{ |key,val|
+	send { |key, val|
 			
 	}
 
@@ -55,33 +55,33 @@ MKtlCtl {
 	var <value;
 	var <prevValue;
 
-	*new{ |ktl,key|
+	*new { |ktl,key|
 		^super.newCopyArgs( ktl, key );
 	}
 
-	init{ 
+	init { 
 		funcChain = FunctionList.new;
 	}
 
-	addFunction{ |key,func,addAction=\addToTail,target|
+	addFunction { |key,func,addAction=\addToTail,target|
 		// by default adds the action to the end of the list
 		// if target is set to a function, addActions \addBefore, \addAfter, \addReplace, are valid
 		// otherwise there is \addToTail or \addToHead
 	}
 	
-	send{ |val|
+	send { |val|
 		value = val;
 		//then send to hardware 	
 	}
 
-	updateState{ | newval |
+	updateState { | newval |
 		// copies the current state to:
 		prevValue = value;
 		// updates the state with the latest value
 		value = newval;
 	}
 
-	update{ |newval|
+	update { |newval|
 		this.updateState( newval );
 		ktl.recordValue( key, newval );
 		funcChain.valueAll( ktl, key, newval );

@@ -125,4 +125,10 @@ FuncChain : FunctionList { // a named FunctionList
 			array = array.add(func);
 		};
 	}
+	
+	at { |name| 
+		var index = names.indexOf(name); 
+		^if (index.notNil, { array[index] }, nil);
+	}
+	atIndex { |index| ^array[index] }
 }

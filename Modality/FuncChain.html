@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="1038.35">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #d00c0c}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #162bc4}
+span.s1 {color: #162bc4}
+span.s2 {color: #000000}
+span.s3 {color: #008323}
+span.s4 {color: #737373}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1">FuncChain: <span class="Apple-tab-span">	</span>a named <span class="s1">FunctionList</span><span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p1"><span class="s1">FuncChain</span> is an ordered list of functions that<span class="Apple-converted-space"> </span></p>
+<p class="p1">can be accessed, added and removed by name.<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p1">adding with a new name adds to the end of the list;<span class="Apple-converted-space"> </span></p>
+<p class="p1">adding with an existing name replaces the func at that name.</p>
+<p class="p1">one can add before or after an existing name,<span class="Apple-converted-space"> </span></p>
+<p class="p1">and one can add at the head of the list.</p>
+<p class="p2"><br></p>
+<p class="p3"><span class="s2"><span class="Apple-tab-span">	</span></span>// make one: <span class="Apple-tab-span">	</span><span class="Apple-converted-space"> </span></p>
+<p class="p1">(</p>
+<p class="p4"><span class="s2">a = </span>FuncChain<span class="s2">([</span></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="s3">\ada</span>, { <span class="s4">"ada"</span>.postln },<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-tab-span">	</span><span class="s3">\bob</span>, { <span class="s4">"bob"</span>.postln }</p>
+<p class="p1">]);</p>
+<p class="p1">)</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p3"><span class="s2"><span class="Apple-tab-span">	</span></span>// add a name and func to the end</p>
+<p class="p1">a.add(<span class="s3">\carl</span>, { <span class="s4">"carl"</span>.postln });</p>
+<p class="p2"><br></p>
+<p class="p3"><span class="s2"><span class="Apple-tab-span">	</span></span>// replace if name is there</p>
+<p class="p1">a.add(<span class="s3">\ada</span>, { <span class="s4">"ada222"</span>.postln });</p>
+<p class="p2"><br></p>
+<p class="p3"><span class="s2"><span class="Apple-tab-span">	</span></span>// insert relative to a name</p>
+<p class="p1">a.addAfter(<span class="s3">\carl</span>, <span class="s3">\otto</span>, { <span class="s4">"otto"</span>.postln });</p>
+<p class="p2"><br></p>
+<p class="p3"><span class="s2"><span class="Apple-tab-span">	</span></span>// adds to end if not there</p>
+<p class="p1">a.addAfter(<span class="s3">\bongo</span>, <span class="s3">\otto</span>, { <span class="s4">"otto222"</span>.postln });</p>
+<p class="p2"><br></p>
+<p class="p3"><span class="s2"><span class="Apple-tab-span">	</span></span>// adds to head if not there</p>
+<p class="p1">a.addBefore(<span class="s3">\bongo</span>, <span class="s3">\otto</span>, { <span class="s4">"otto222"</span>.postln });</p>
+<p class="p2"><br></p>
+<p class="p3"><span class="s2"><span class="Apple-tab-span">	</span></span>//<span class="Apple-converted-space"> </span></p>
+<p class="p1">a.removeAt(<span class="s3">\carl</span>);</p>
+<p class="p1">a.removeAtIndex(2);</p>
+<p class="p2"><br></p>
+<p class="p1">a.putAtIndex(1, <span class="s3">\dodo</span>, { <span class="s4">"dodo"</span>.postln });</p>
+<p class="p2"><br></p>
+<p class="p1">a.add(<span class="s3">\eve</span>, { <span class="s4">"eveve"</span>.postln });</p>
+<p class="p2"><br></p>
+</body>
+</html>
