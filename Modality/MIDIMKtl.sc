@@ -4,7 +4,8 @@ MIDIMKtl : MKtl {
 	
 	var <srcID, <source; 
 	
-			// optimised for fast lookup 
+			// optimisation for fast lookup, 
+			// may go away of everything lives in the elements
 	var <funcDict;
 	var <ccKeyToElNameDict;
 
@@ -27,7 +28,7 @@ MIDIMKtl : MKtl {
 		"\n///////".postln;
 	}
 
-		// access by name, or make if uid is OK	
+		// create with a uid, or access by name	
 	*new { |name, uid| 
 		var foundSource;
 		var foundKtl = all[name.asSymbol];
@@ -76,15 +77,37 @@ MIDIMKtl : MKtl {
 		// this.makeElements; 
 		this.prepareFuncDict;
 
-		this.addResps; 
-		
-		// what else in init? 
+		this.addResponders; 
 	}
+
+		// interface methods
+	addFunc { |elKey, name, func| 
+		var ccKey = ccKeyToElNameDict.findKeyForValue(elKey); 
+		funcDict[ccKey].addLast(name, func);
+	}
+
+	removeFunc { |elKey, name| 
+		var ccKey = ccKeyToElNameDict.findKeyForValue(elKey); 
+		funcDict[ccKey].removeAt(name);
+	}
+
+		// convenience methods
+	default { |elName| 
+		^devSpecs[elName].spec.default
+	}
+
+	postSpecs { devSpecs.printcsAll; }
 	
+	elNames { 
+		^(0, 2 .. devSpecs.size - 2).collect (devSpecs[_])
+	}
+
+
+		// plumbing	
 	prepareFuncDict { 
 		if (devSpecs.notNil) { 
 			// works only for scenes ATM;
-			devSpecs.keysValuesDo { |elName, descr| 
+			devSpecs.pairsDo { |elName, descr| 
 				var ccKey = this.makeCCKey(descr[\chan], descr[\ccNum]);
 				descr.put(\ccKey, ccKey); // just in case ... 
 				
@@ -107,57 +130,53 @@ MIDIMKtl : MKtl {
 			this.class.openTester(this);
 		};
 	}
-	
-	storeArgs { ^[name] }
-	
-	printOn { |stream| ^this.storeOn(stream) }
-	
-	openTester {	// breaks responders for now.
 
-		var observedCCs = List[];
-
-		// if not there, make a template text file for them, 
-		// and instructions where to save them so they can be found 
-		// automatically. 
-		this.addResps;
-		
-			// just sketching - keep track of several of them
-		
-		responders[\cc].function = { |src, chan, num, value| 
-			var oldCC = observedCCs.detect { |el| 
-				el.keep(2) == [chan, num] 
-			};
-			if (oldCC.notNil) { 
-				oldCC.put(2, min(value, oldCC[2])); 
-				oldCC.put(3, max(value, oldCC[3])); 
-			} { 
-				observedCCs.add([chan, num, value, value]);
-			};
-			observedCCs.postln;
-		};
-	}
-	
-	endTester { 
-		responders[\cc].function = { |src, chan, num, value| 
-		
-		};
-	}
-	
-	addResps { 
-			
-		responders = (cc: CCResponder({ |src, chan, num, value| 
+	addResponders { 	
+		responders = (
+			cc: CCResponder({ |src, chan, num, value| 
 				var ccKey = this.makeCCKey(chan, num);
 				var elName = ccKeyToElNameDict[ccKey]; 
-			
 				funcDict[ccKey].value(this, elName, value); 
-				
-				
 			}, srcID), 
-		noteon: NoteOnResponder({ |src, chan, note, vel|
+			
+			noteon: NoteOnResponder({ |src, chan, note, vel|
 				// [chan, note, vel].postln
 			}, srcID)
 		);
 	}
+
+		
+//	openTester {	// breaks responders for now.
+//
+//		var observedCCs = List[];
+//
+//		// if not there, make a template text file for them, 
+//		// and instructions where to save them so they can be found 
+//		// automatically. 
+//		this.addResponders;
+//		
+//			// just sketching - keep track of several of them
+//		
+//		responders[\cc].function = { |src, chan, num, value| 
+//			var oldCC = observedCCs.detect { |el| 
+//				el.keep(2) == [chan, num] 
+//			};
+//			if (oldCC.notNil) { 
+//				oldCC.put(2, min(value, oldCC[2])); 
+//				oldCC.put(3, max(value, oldCC[3])); 
+//			} { 
+//				observedCCs.add([chan, num, value, value]);
+//			};
+//			observedCCs.postln;
+//		};
+//	}
+//	
+//	endTester { 
+//		responders[\cc].function = { |src, chan, num, value| 
+//		
+//		};
+//	}	
+	
 
 		// utilities for lookup 
 	makeCCKey { |chan, cc| ^(chan.asString ++ "_" ++ cc).asSymbol }
@@ -172,46 +191,13 @@ MIDIMKtl : MKtl {
 
 	noteKeyToChanNote { |noteKey| ^noteKey.asString.split($_).asInteger }
 	
-	addFunc { |elKey, name, func| 
-		var ccKey = ccKeyToElNameDict.findKeyForValue(elKey); 
-		funcDict[ccKey].add(name, func);
-	}
-
-	removeFunc { |elKey, name| 
-		var ccKey = ccKeyToElNameDict.findKeyForValue(elKey); 
-		funcDict[ccKey].removeAt(name);
-	}
-
-/*	
-	MIDIMKtl.find;
-	MIDIMKtl(\nk1, -616253900);		// lower USB port on my MBP
+	storeArgs { ^[name] }
 	
-	// give the one of interest a name, and make it
-	MIDIMKtl(\nk1, 12345);			// no uid like that
-	
-	// give the one of interest a name, and make it
-	// based on reported name, look up its hardware specs
-	MIDIMKtl(\nk1, -616253900);		// lower USB port on my MBP
+	printOn { |stream| ^this.storeOn(stream) }
+}
 
+/*
 
-	MIDIMKtl(\nk1);		// look up again;
-
-	MIDIMKtl(\nk1).devSpecs;
-	MIDIMKtl(\nk1).funcDict;
-
-	MIDIMKtl(\nk1).addFunc(\sl1_1, \yubel, { |who, what, howmuch| 
-		"YAYAYAY: ".post; [who, what, howmuch].postln;
-	});
-		// 
-	MIDIMKtl(\nk1).removeFunc(\sl1_1, \post);
-	
-
-
-	MIDIMKtl(\nk1).openTester;
-
-
-	
 	
 */
 
-}

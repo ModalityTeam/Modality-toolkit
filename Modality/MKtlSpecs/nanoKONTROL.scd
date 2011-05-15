@@ -2,7 +2,7 @@
 //	// only cc messages, 
 //	// 4 hardware scenes, flattened out with underscores
 
-(
+[
 
 // the same in all scenes: 
 	\rew:  (\msgType: \cc, \type: \button, \chan: 0, \ccNum: 47, \spec: \midiBut, \mode: \push),
@@ -177,4 +177,4 @@
 	\bd8_4: (\msgType: \cc, \type: \button, \chan: 7, \ccNum: 17, \spec: \midiBut, \mode: \toggle),
 	\bd9_4: (\msgType: \cc, \type: \button, \chan: 8, \ccNum: 17, \spec: \midiBut, \mode: \toggle)
 
-)
+]
