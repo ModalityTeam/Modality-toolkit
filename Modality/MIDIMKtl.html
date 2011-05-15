@@ -7,15 +7,17 @@
 <meta name="Generator" content="Cocoa HTML Writer">
 <meta name="CocoaVersion" content="1038.35">
 <style type="text/css">
-p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 17.0px Monaco; color: #000000}
-p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000; min-height: 12.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #000000}
-p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #162bc4}
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 17.0px Monaco}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #c91505}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0024b9}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #d00c0c}
 p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #cf0c0c}
 p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-span.s1 {color: #162bc4}
-span.s2 {color: #000000}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #d0160d}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #162bc4}
+span.s1 {color: #000000}
+span.s2 {color: #162bc4}
 span.s3 {color: #008323}
 span.s4 {color: #d00c0c}
 span.s5 {color: #737373}
@@ -23,37 +25,41 @@ span.Apple-tab-span {white-space:pre}
 </style>
 </head>
 <body>
-<p class="p1"><span class="s1">MIDIMKtl</span> - an <span class="s1">MKtl</span> class for <span class="s1">MIDI</span>.</p>
+<p class="p1">MIDIMKtl - an MKtl class for MIDI.</p>
 <p class="p2"><br></p>
-<p class="p3"><span class="s1">One</span> can find potential <span class="s1">MIDI</span> sources like this:<span class="Apple-converted-space"> </span></p>
-<p class="p4"><span class="s2"><span class="Apple-tab-span">	</span></span>MIDIMKtl<span class="s2">.find;</span></p>
+<p class="p3">// One can find potential MIDI sources like this:<span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="s1"><span class="Apple-tab-span">	</span></span>MIDIMKtl<span class="s1">.find;</span></p>
 <p class="p2"><br></p>
-<p class="p5"><span class="s2"><span class="Apple-tab-span">	</span></span>// a posted line such as this</p>
-<p class="p5"><span class="s1">MIDIMKtl</span><span class="s2">(</span><span class="s3">'???'</span><span class="s2">, -616253900);<span class="Apple-converted-space">  </span></span>// this is a nanoKONTROL</p>
+<p class="p5"><span class="s1"><span class="Apple-tab-span">	</span></span>// a posted line such as this</p>
+<p class="p5"><span class="s2">MIDIMKtl</span><span class="s1">(</span><span class="s3">'???'</span><span class="s1">, -616253900);<span class="Apple-converted-space">  </span></span>// this is a nanoKONTROL</p>
 <p class="p2"><br></p>
-<p class="p5"><span class="s2"><span class="Apple-tab-span">	</span></span>// give the one of interest a name, and make with the USB port ID:</p>
-<p class="p5"><span class="s1">MIDIMKtl</span><span class="s2">(</span><span class="s3">\nk1</span><span class="s2">, -616253900);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// lower USB port on my MBP</p>
+<p class="p5"><span class="s1"><span class="Apple-tab-span">	</span></span>// give the one of interest a name, and make with the USB port ID:</p>
+<p class="p5"><span class="s2">MIDIMKtl</span><span class="s1">(</span><span class="s3">\nk1</span><span class="s1">, -616253900);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// lower USB port on my MBP</p>
 <p class="p2"><span class="Apple-tab-span">	</span></p>
-<p class="p6"><span class="s2"><span class="Apple-tab-span">	</span></span><span class="s4">// A Test, there is </span>no uid like that, so this fails</p>
-<p class="p3"><span class="s1">MIDIMKtl</span>(<span class="s3">\nk1</span>, 12345);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">//<span class="Apple-converted-space"> </span></span></p>
+<p class="p6"><span class="s1"><span class="Apple-tab-span">	</span></span><span class="s4">// A Test, there is </span>no uid like that, so this fails</p>
+<p class="p7"><span class="s2">MIDIMKtl</span>(<span class="s3">\nk1</span>, 12345);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">//<span class="Apple-converted-space"> </span></span></p>
 <p class="p2"><br></p>
-<p class="p5"><span class="s2"><span class="Apple-tab-span">	</span></span>// lookup existing ones by name:</p>
-<p class="p5"><span class="s1">MIDIMKtl</span><span class="s2">(</span><span class="s3">\nk1</span><span class="s2">);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// look up again;</p>
+<p class="p5"><span class="s1"><span class="Apple-tab-span">	</span></span>// lookup existing ones by name:</p>
+<p class="p5"><span class="s2">MIDIMKtl</span><span class="s1">(</span><span class="s3">\nk1</span><span class="s1">);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// look up again;</p>
+<p class="p2"><br></p>
+<p class="p8"><span class="s1"><span class="Apple-tab-span">	</span></span>// lookup existing ones by name from MKtl:</p>
+<p class="p8"><span class="s2">MKtl</span><span class="s1">(</span><span class="s3">\nk1</span><span class="s1">);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// look up again;</p>
+<p class="p2"><br></p>
 <p class="p2"><br></p>
 <p class="p5">// it loads descriptions of all its elements from files:<span class="Apple-converted-space"> </span></p>
-<p class="p3"><span class="Apple-tab-span">	</span><span class="s1">MIDIMKtl</span>(<span class="s3">\nk1</span>).devSpecs;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s2">MIDIMKtl</span>(<span class="s3">\nk1</span>).devSpecs;</p>
 <p class="p6">// which can be posted conveniently</p>
-<p class="p7"><span class="s2"><span class="Apple-tab-span">	</span></span><span class="s1">MIDIMKtl</span>(<span class="s3">\nk1</span>).postSpecs;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s2">MIDIMKtl</span>(<span class="s3">\nk1</span>).postSpecs;</p>
 <p class="p2"><br></p>
-<p class="p7"><span class="Apple-tab-span">	</span><span class="s1">MIDIMKtl</span>(<span class="s3">\nk1</span>).elNames.postcs; "";</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s2">MIDIMKtl</span>(<span class="s3">\nk1</span>).elNames.postcs; "";</p>
 <p class="p2"><br></p>
-<p class="p3">(</p>
-<p class="p4"><span class="s2"><span class="Apple-tab-span">	</span></span>MIDIMKtl<span class="s2">(</span><span class="s3">\nk1</span><span class="s2">).addFunc(</span><span class="s3">\sl1_1</span><span class="s2">, </span><span class="s3">\yubel</span><span class="s2">, { </span>|who, what, howmuch|<span class="s2"><span class="Apple-converted-space"> </span></span></p>
-<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">"YAYAYAY: "</span>.post; [who, what, howmuch].postln;</p>
-<p class="p3"><span class="Apple-tab-span">	</span>});</p>
-<p class="p3">)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">//<span class="Apple-converted-space"> </span></span></p>
-<p class="p3"><span class="Apple-tab-span">	</span><span class="s1">MIDIMKtl</span>(<span class="s3">\nk1</span>).removeFunc(<span class="s3">\sl1_1</span>, <span class="s3">\post</span>);</p>
+<p class="p7">(</p>
+<p class="p9"><span class="s1"><span class="Apple-tab-span">	</span></span>MIDIMKtl<span class="s1">(</span><span class="s3">\nk1</span><span class="s1">).addFunc(</span><span class="s3">\sl1_1</span><span class="s1">, </span><span class="s3">\yubel</span><span class="s1">, { </span>|who, what, howmuch|<span class="s1"><span class="Apple-converted-space"> </span></span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">"YAYAYAY: "</span>.post; [who, what, howmuch].postln;</p>
+<p class="p7"><span class="Apple-tab-span">	</span>});</p>
+<p class="p7">)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">//<span class="Apple-converted-space"> </span></span></p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s2">MIDIMKtl</span>(<span class="s3">\nk1</span>).removeFunc(<span class="s3">\sl1_1</span>, <span class="s3">\post</span>);</p>
 <p class="p2"><br></p>
-<p class="p3"><span class="Apple-tab-span">	</span><span class="s1">MIDIMKtl</span>(<span class="s3">\nk1</span>).openTester;</p>
+<p class="p7"><span class="Apple-tab-span">	</span><span class="s2">MIDIMKtl</span>(<span class="s3">\nk1</span>).openTester;</p>
 </body>
 </html>

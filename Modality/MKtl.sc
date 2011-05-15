@@ -1,5 +1,14 @@
 // honouring Jeff's MKeys by keeping the M for prototyping the new Ktl
-MKtl {
+
+
+// TODO:
+//	default devSpec files in quarks, custom ones in userAppSupportDir
+//		(Platform.userAppSupportDir +/+ "MKtlSpecs").standardizePath, 
+//		if (devSpecsFolders[0].pathMatch.isEmpty) { 
+//			unixCmd("mkdir \"" ++ devSpecsFolder ++ "\"");
+//		};
+
+MKtl { // abstract class
 	
 	classvar <devSpecsFolder;
 
@@ -9,39 +18,40 @@ MKtl {
 
 	//var <state; 	// MKtlElement keep their own state
 	var <name;	// a user-given unique name
-	var <envir;
+	// var <envir;	// maybe used for internal state
 	
-	var <devSpecs; // a dict with a description of all the elements on the device
+	// an array of keys and values with a description of all the elements on the device
+	var <devSpecs; 
 	
-	var <elements; // all control elements (MKtlElement) on the device you may want to listen or talk to
+	// all control elements (MKtlElement) on the device you may want to listen or talk to
+	var <elements;
 
 	var <>recordFunc; // what to do to record incoming control changes
 	
-	*initClass { 
+	*initClass {
 		all = ();	
 		devSpecsFolder = this.filenameSymbol.asString.dirname +/+ "MKtlSpecs";
-		
-			// later, if ... 
-//		(Platform.userAppSupportDir +/+ "MKtlSpecs").standardizePath, 
-//		if (devSpecsFolders[0].pathMatch.isEmpty) { 
-//			unixCmd("mkdir \"" ++ devSpecsFolder ++ "\"");
-//		};
+	}
+	
+	*find {
+		this.allSubclasses.do(_.find);	
 	}
 
 	init {
-		envir = ();
+		//envir = ();
 		elements = ();
+	}
+	
+	addFunc { |elementKey, funcName, function, addAction=\addToTail, target|
+		elements[elementKey].addFunc( funcName, function, addAction, target );
 	}
 	
 	recordValue { |key,value|
 		recordFunc.value( key, value );
 	}
 
-	addFunction { |ctl,key,func,addAction=\addToTail,target|
-		elements[ ctl ].addFunction( key, func, addAction, target );
-	}
 	
-	//usefull if Dispatcher also uses this class
+	//useful if Dispatcher also uses this class
 	//also can be used to simulate a non present hardware
 	receive { |key, val|
 		// is it really inputs ?
@@ -59,6 +69,7 @@ MKtlElement {
 
 	var <>ktl; // the Ktl it belongs to
 	var <>key; // its key in Ktl
+	var <>type; // its type.
 
 	var <funcChain; // how to keep the order?
 	
@@ -66,15 +77,24 @@ MKtlElement {
 	var <value;
 	var <prevValue;
 
-	*new { |ktl,key|
-		^super.newCopyArgs( ktl, key );
+	*initClass {
+		types = (
+			\slider: \x,
+			\button: \x,
+			\thumbStick: [\joyAxis, \joyAxis, \button],
+			\joyStick: [\joyAxis, \joyAxis, \button]
+		)
+	}
+
+	*new { |ktl, key, type|
+		^super.newCopyArgs( ktl, key, type );
 	}
 
 	init { 
 		funcChain = FuncChain.new;
 	}
 
-	addFunction { |key,func,addAction=\addToTail,target|
+	addFunc { |funcName, func, addAction=\addToTail, target|
 		// by default adds the action to the end of the list
 		// if target is set to a function, addActions \addBefore, \addAfter, \addReplace, are valid
 		// otherwise there is \addToTail or \addToHead

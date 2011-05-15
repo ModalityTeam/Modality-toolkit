@@ -1,5 +1,10 @@
 ///////// how to make anonymous ones? when would they be used anonymously? /////
 
+// TODO
+//    addFunc should conform to super.addFunc.
+//		but
+
+
 MIDIMKtl : MKtl { 
 	
 	var <srcID, <source; 
@@ -60,10 +65,10 @@ MIDIMKtl : MKtl {
 			^nil
 		};
 				
-		^super.new.init(name, uid, foundSource);
+		^super.new.init.initMIDI(name, uid, foundSource);
 	}
 	
-	init { |argName, argUid, argSource| 
+	initMIDI { |argName, argUid, argSource|
 		name = argName; 
 		srcID = argUid;
 		source = argSource;
@@ -81,9 +86,12 @@ MIDIMKtl : MKtl {
 	}
 
 		// interface methods
-	addFunc { |elKey, name, func| 
-		var ccKey = ccKeyToElNameDict.findKeyForValue(elKey); 
-		funcDict[ccKey].addLast(name, func);
+	addFunc { |elementKey, funcName, function| 
+		//	 |elementKey, funcName, function, addAction=\addToTail, target|
+		//super.addFunc(...);
+
+		var ccKey = ccKeyToElNameDict.findKeyForValue(elementKey);
+		funcDict[ccKey].addLast(funcName, function);
 	}
 
 	removeFunc { |elKey, name| 
@@ -92,7 +100,7 @@ MIDIMKtl : MKtl {
 	}
 
 		// convenience methods
-	default { |elName| 
+	defaultElementValue { |elName| 
 		^devSpecs[elName].spec.default
 	}
 
