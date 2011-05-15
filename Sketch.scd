@@ -16,21 +16,60 @@ Dispatch -
 k = Ktl.new;
 k.elements = [\slider1,\slider2,\slider3]
 
+a = (); // pseudoktl
+
 // Dispatch
 d = Dispatch.new;
-k.addFunction( \slider1, \dispatch1, d );
-k.addFunction( \slider2, \dispatch1, d );
-k.addFunction( \slider3, \dispatch1, d );
+
+d.mapToCtl( a, \slider1, \nano );
+d.mapToCtl( a, \slider2, \nano );
+d.mapToCtl( a, \slider3, \nano );
+
+now \slider1 when a value changes will call
+.value
 
 slider -> value( ktlname, slider, value )
 
-d.addFunction( \addSliderValue, { |value,ctl,dis,ktl| 
-	if ( [\slider1,\slider2,\slider3].contains(key) ){
-		envir.put( key, val );
-	};
-} );
+d.value( a )
+
+d.map( source, ctl, name );
+value->
+(source,ctl)-pairs to names;
+
+d.map( \nanoktl, \slider1, \myslidervalue );
+d.map( \guinano, \slider1, \myslidervalue );
+
+( \me -> this Dispatch )
+( \source1 -> Ktl )
+sources
+source1 -> collection of ctls
+   ctl -> name
+
+d.mapsource( \source1, d )
+
+d.addFunction( \setSlider1, {
+	d.setOutput( \slider1, 0.5 );
+});
+
 d.addFunction( \average, { |value,ctl,dis,ktl| 
 	envir.put( \average, [\slider1,\slider2,\slider3].collect{ |it| envir[it] }/3 );
+	[\average,\otherstuff]
+} );
+
+
+envir[\myslidervalue]
+
+look up name for source, ctl
+envir.name = value
+
+d.addFunction( \average, { |value,ctl,dis,ktl| 
+	envir.put( \average, [\slider1,\slider2,\slider3].collect{ |it| envir[it] }/3 );
+	[\average,\otherstuff]
+} );
+
+d.addFunction( \average, { |value,ctl,dis,ktl| 
+	envir.put( \average, [\slider1,\slider2,\slider3].collect{ |it| envir[it] }/3 );
+	dis.setOutput( \average, val )
 } );
 
 // initialize the scene
