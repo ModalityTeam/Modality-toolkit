@@ -29,6 +29,10 @@ MKtl {
 	addFunction{ |ctl,key,func,addAction=\addToTail,target|
 		inputs[ ctl ].addFunction( key, func, addAction, target );
 	}
+	
+	send{ |key,val|
+			
+	}
 
 }
 
@@ -56,6 +60,11 @@ MKtlCtl {
 		// by default adds the action to the end of the list
 		// if target is set to a function, addActions \addBefore, \addAfter, \addReplace, are valid
 		// otherwise there is \addToTail or \addToHead
+	}
+	
+	send{ |val|
+		value = val;
+		//then send to hardware 	
 	}
 
 	updateState{ | newval |
