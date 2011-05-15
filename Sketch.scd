@@ -46,7 +46,8 @@ d.outputs
 // initialize the scene
 d.setVar( \scene, 0 );
 d.addFunction( \setScene, { |dis| 
-	if ( dis.getInput( \nano, \button ) == 1 ){
+	var mybutton = dis.getInput( \nano, \button );
+	if ( (mybutton.value == 1) && mybutton.changed ){
 		// select one of five scenes;
 		dis.setVar( \scene, (dis.getVar( \scene ) + 1).wrap(0,5) );
 		"scene %\n".postf( dis.getVar( \scene ) );
@@ -54,6 +55,8 @@ d.addFunction( \setScene, { |dis|
 } );
 
 d.value( a, \button, 1 );
+
+d.value( a, \slider1, 0.2 );
 
 d.getInput( \nano, \slider2)
 d.setOutput( \average, 0.4)

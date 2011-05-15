@@ -44,7 +44,7 @@ Dispatch{
 		this.mapSource( ktlname, ktl );
 		ktl.addFunction( ctl, this.name, this );
 		// set a default value, should probably get this from the ktl[ctl]
-		this.setInput( ktl, ctl, ktl.default( ctl ) ? 0 );
+		sources[ktlname].put( ctl, DispatchInput( ktl.defaultElementValue( ctl ) ? 0 , false ) );
 		if ( mappedCtls[ktlname].isNil ){
 			mappedCtls[ktlname] = List.new;
 		};
@@ -74,14 +74,10 @@ Dispatch{
 		^ktlToSources.findKeysForValue( source );
 	}
 
-	setInputChanged{ |sourcekey,key|
-		
-	}
-
 	setInput{ |source,key,value|
 		var srcs = this.lookupSources( source );
 		srcs.do{ |it|
-			sources[it].put( key, value );
+			sources[it][key].value_( value ).changed_( true );
 		};
 	}
 
@@ -110,6 +106,15 @@ Dispatch{
 	value{ |source,key,value|
 		this.setInput( source, key, value );
 		this.processChain;
+		this.resetInputChanged;
+	}
+
+	resetInputChanged{
+		sources.do{ |it|
+			it.do{ |input|
+				input.changed = false;
+			}
+		}
 	}
 
 	// register for output
@@ -134,6 +139,26 @@ Dispatch{
 		funcChain.add( key, func, addAction, target );
 	}
 	
+}
+
+DispatchInput{
+	var <>value;
+	var <>changed;
+
+	*new{ |val,change|
+		^super.newCopyArgs( val, change );
+	}
+
+	printOn { arg stream;
+		if (stream.atLimit, { ^this });
+		stream << "DispatchInput[ " ;
+		value.printOn(stream);
+		stream << ",";
+		changed.printOn(stream);
+		stream << " ]" ;
+	}
+
+
 }
 
 DispatchOut {
