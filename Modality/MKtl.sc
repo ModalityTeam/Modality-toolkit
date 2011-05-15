@@ -59,8 +59,8 @@ MKtlCtl {
 		^super.newCopyArgs( ktl, key );
 	}
 
-	init { 
-		funcChain = FunctionList.new;
+	init{ 
+		funcChain = FuncChain.new;
 	}
 
 	addFunction { |key,func,addAction=\addToTail,target|
