@@ -1,13 +1,18 @@
 // honouring Jeff's MKeys by keeping the M for prototyping the new Ktl
 MKtl {
+	
+	classvar <devSpecsFolder;
 
 	classvar <all; // will hold all instances of MKtl
 
 	var <responders;
 
-	//	var <state; // MKtlCtls keep their own state
-
+	var <state; 	// MKtlCtls keep their own state
+	var <name;	// a user-given unique name
 	var <envir;
+	
+	var <devSpecs; // a dict with a description of all the elements on the device
+	
 	
 	var <inputs; // all controls on the Ktl which can be moved around
 	// these are key -> MKtlCtl pairs
@@ -15,6 +20,14 @@ MKtl {
 	var <outputs; // anything that can be sent out to the Ktl
 
 	var <>recordFunc;
+	
+	*initClass { 
+		all = ();	
+		devSpecsFolder = (Platform.userAppSupportDir +/+ "MKtlSpecs").standardizePath;
+		if (devSpecsFolder.pathMatch.isEmpty) { 
+			unixCmd("mkdir \"" ++ devSpecsFolder ++ "\"");
+		};
+	}
 
 	init {
 		envir = ();
