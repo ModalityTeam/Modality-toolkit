@@ -1,6 +1,12 @@
+///////// how to make anonymous ones? when would they be used anonymously? /////
+
 MIDIMKtl : MKtl { 
 	
 	var <srcID, <source; 
+	
+			// optimised for fast lookup 
+	var <funcDict;
+	var <ccKeyToElNameDict;
 
 		// open all ports and display them in readable fashion, 
 		// copy/paste-able directly 
@@ -37,7 +43,7 @@ MIDIMKtl : MKtl {
 					warn("MIDIMKtl: name % is in use for a different USB port ID!"
 					++ 	"	Please pick a different name.".format(name) 
 					++ 	"	Taken names:" + all.keys.asArray.sort ++ ".\n");
-					^foundKtl
+					^nil
 				}
 			}
 		};
@@ -62,9 +68,34 @@ MIDIMKtl : MKtl {
 		source = argSource;
 		all.put(name, this);
 		
-		this.findDevSpecs(source.device);
+		funcDict = ();
+		ccKeyToElNameDict = ();
+		
+		this.findDevSpecs(source.device); 
+		
+		// this.makeElements; 
+		this.prepareFuncDict;
 
+		this.addResps; 
+		
 		// what else in init? 
+	}
+	
+	prepareFuncDict { 
+		if (devSpecs.notNil) { 
+			// works only for scenes ATM;
+			devSpecs.keysValuesDo { |elName, descr| 
+				var ccKey = this.makeCCKey(descr[\chan], descr[\ccNum]);
+				descr.put(\ccKey, ccKey); // just in case ... 
+				
+				funcDict.put(
+					ccKey, FuncChain([\post, { |ktl, elName, value| 
+						[ktl, elName, value].postln;
+					}])
+				);
+				ccKeyToElNameDict.put(ccKey, elName);
+			}
+		}
 	}
 	
 	findDevSpecs { |devicename|
@@ -78,31 +109,82 @@ MIDIMKtl : MKtl {
 	}
 	
 	storeArgs { ^[name] }
+	
 	printOn { |stream| ^this.storeOn(stream) }
 	
-	openTester {
+	openTester {	// breaks responders for now.
+
+		var observedCCs = List[];
+
 		// if not there, make a template text file for them, 
 		// and instructions where to save them so they can be found 
 		// automatically. 
 		this.addResps;
+		
+			// just sketching - keep track of several of them
+		
+		responders[\cc].function = { |src, chan, num, value| 
+			var oldCC = observedCCs.detect { |el| 
+				el.keep(2) == [chan, num] 
+			};
+			if (oldCC.notNil) { 
+				oldCC.put(2, min(value, oldCC[2])); 
+				oldCC.put(3, max(value, oldCC[3])); 
+			} { 
+				observedCCs.add([chan, num, value, value]);
+			};
+			observedCCs.postln;
+		};
+	}
+	
+	endTester { 
+		responders[\cc].function = { |src, chan, num, value| 
+		
+		};
 	}
 	
 	addResps { 
-		var recentCCs = List[];
 			
-		responders = (cc: CCResponder({ |src, chan, num, value|
-				[chan, num, value].postln;
+		responders = (cc: CCResponder({ |src, chan, num, value| 
+				var ccKey = this.makeCCKey(chan, num);
+				var elName = ccKeyToElNameDict[ccKey]; 
+			
+				funcDict[ccKey].value(this, elName, value); 
 				
-				recentCCs.add([chan, num, value]).postln;
+				
 			}, srcID), 
 		noteon: NoteOnResponder({ |src, chan, note, vel|
-				[chan, note, vel].postln
+				// [chan, note, vel].postln
 			}, srcID)
 		);
 	}
 
+		// utilities for lookup 
+	makeCCKey { |chan, cc| ^(chan.asString ++ "_" ++ cc).asSymbol }
+	
+	ccKeyToChanCtl { |ccKey| ^ccKey.asString.split($_).asInteger }
+
+	makeNoteKey { |chan, note| 
+		var key = chan.asString; 
+		if (note.notNil) { key = key ++ "_" ++ note };
+		^key.asSymbol 
+	}
+
+	noteKeyToChanNote { |noteKey| ^noteKey.asString.split($_).asInteger }
+	
+	addFunc { |elKey, name, func| 
+		var ccKey = ccKeyToElNameDict.findKeyForValue(elKey); 
+		funcDict[ccKey].add(name, func);
+	}
+
+	removeFunc { |elKey, name| 
+		var ccKey = ccKeyToElNameDict.findKeyForValue(elKey); 
+		funcDict[ccKey].removeAt(name);
+	}
+
 /*	
 	MIDIMKtl.find;
+	MIDIMKtl(\nk1, -616253900);		// lower USB port on my MBP
 	
 	// give the one of interest a name, and make it
 	MIDIMKtl(\nk1, 12345);			// no uid like that
@@ -114,8 +196,22 @@ MIDIMKtl : MKtl {
 
 	MIDIMKtl(\nk1);		// look up again;
 
-	MIDIMKtl(\nk1).openTester
+	MIDIMKtl(\nk1).devSpecs;
+	MIDIMKtl(\nk1).funcDict;
 
-*/ 
+	MIDIMKtl(\nk1).addFunc(\sl1_1, \yubel, { |who, what, howmuch| 
+		"YAYAYAY: ".post; [who, what, howmuch].postln;
+	});
+		// 
+	MIDIMKtl(\nk1).removeFunc(\sl1_1, \post);
+	
+
+
+	MIDIMKtl(\nk1).openTester;
+
+
+	
+	
+*/
 
 }

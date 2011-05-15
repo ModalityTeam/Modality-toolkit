@@ -13,26 +13,24 @@ MKtl {
 	
 	var <devSpecs; // a dict with a description of all the elements on the device
 	
-	
-	var <inputs; // all controls on the Ktl which can be moved around
-	// these are key -> MKtlCtl pairs
+	var <elements; // all control elements on the device you may want to listen or talk to
 
-	var <outputs; // anything that can be sent out to the Ktl
-
-	var <>recordFunc;
+	var <>recordFunc; // what to do to record incoming control changes
 	
 	*initClass { 
 		all = ();	
-		devSpecsFolder = (Platform.userAppSupportDir +/+ "MKtlSpecs").standardizePath;
-		if (devSpecsFolder.pathMatch.isEmpty) { 
-			unixCmd("mkdir \"" ++ devSpecsFolder ++ "\"");
-		};
+		devSpecsFolder = this.filenameSymbol.asString.dirname +/+ "MKtlSpecs";
+		
+			// later, if ... 
+//		(Platform.userAppSupportDir +/+ "MKtlSpecs").standardizePath, 
+//		if (devSpecsFolders[0].pathMatch.isEmpty) { 
+//			unixCmd("mkdir \"" ++ devSpecsFolder ++ "\"");
+//		};
 	}
 
 	init {
 		envir = ();
-		inputs = ();
-		outputs = ();
+		elements = ();
 	}
 	
 	recordValue { |key,value|
@@ -40,14 +38,14 @@ MKtl {
 	}
 
 	addFunction { |ctl,key,func,addAction=\addToTail,target|
-		inputs[ ctl ].addFunction( key, func, addAction, target );
+		elements[ ctl ].addFunction( key, func, addAction, target );
 	}
 	
 	//usefull if Dispatcher also uses this class
 	//also can be used to simulate a non present hardware
 	receive { |key, val|
 		// is it really inputs ?
-		inputs[ key ].update( val )
+		elements[ key ].update( val )
 	}
 	
 	send { |key, val|
@@ -72,7 +70,7 @@ MKtlCtl {
 		^super.newCopyArgs( ktl, key );
 	}
 
-	init{ 
+	init { 
 		funcChain = FuncChain.new;
 	}
 
