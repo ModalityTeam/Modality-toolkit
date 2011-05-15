@@ -30,6 +30,13 @@ MKtl {
 		inputs[ ctl ].addFunction( key, func, addAction, target );
 	}
 	
+	//usefull if Dispatcher also uses this class
+	//also can be used to simulate a non present hardware
+	receive{ |key,val|
+		// is it really inputs ?
+		inputs[ ctl ].update( val )
+	}
+	
 	send{ |key,val|
 			
 	}
