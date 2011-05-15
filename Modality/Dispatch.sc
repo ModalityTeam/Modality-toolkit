@@ -8,13 +8,18 @@ Dispatch{
 
 	var <registered; // DispatchOuts to which stuff is registered
 
-	var <changedOuts; // keeps the changed outputs in order to update
 
 	var <ktlToSources;
 	//	var <sourcesToInputs;
-	var <sources; // internal/external state
+	var <mappedCtls;
 
-	var <envir;
+	// this will be internal only:
+	var <sources; // input state
+	var <outputs; // output state
+	var <envir; // internal state
+
+	var <changedOuts; // keeps the changed outputs in order to update
+	var <changedIns;
 
 	*new{ |name|
 		^super.new.init(name);
@@ -26,17 +31,39 @@ Dispatch{
 		funcChain = FuncChain.new;
 
 		sources = ();
+		outputs = ();
 		ktlToSources = ();
+		mappedCtls = ();
 
 		registered = ();
+
+		//	this.mapSource( \me, this );
 	}
 
 	mapToCtl{ |ktl,ctl,ktlname|
 		this.mapSource( ktlname, ktl );
 		ktl.addFunction( ctl, this.name, this );
+		// set a default value, should probably get this from the ktl[ctl]
+		this.setInput( ktl, ctl, ktl.default( ctl ) ? 0 );
+		if ( mappedCtls[ktlname].isNil ){
+			mappedCtls[ktlname] = List.new;
+		};
+		mappedCtls[ktlname].add( ctl );
+	}
+
+	changeSource{ |oldname, newsource|
+		mappedCtls[ oldname ].do{ |key|
+			// register the 
+			this.mapSource( newsource, key, this );
+		};
 	}
 
 	mapSource{ |name,source|
+		if ( ktlToSources.includesKey( name ) ){
+			if ( (ktlToSources[name] === source).not ){
+				this.changeSource( name, source );
+			};
+		};
 		ktlToSources.put( name, source );
 		if ( sources[name].isNil ){
 			sources.put( name, () );
@@ -47,6 +74,10 @@ Dispatch{
 		^ktlToSources.findKeysForValue( source );
 	}
 
+	setInputChanged{ |sourcekey,key|
+		
+	}
+
 	setInput{ |source,key,value|
 		var srcs = this.lookupSources( source );
 		srcs.do{ |it|
@@ -54,8 +85,17 @@ Dispatch{
 		};
 	}
 
+	getInput{ |sourcename,key|
+		^sources[sourcename][key];
+	}
+
+	getOutput{ |key|
+		^outputs[key];
+	}
+
 	setOutput{ |key,value|
-		this.setInput( this, key, value );
+		//	this.setInput( this, key, value );
+		outputs.put( key, value );
 		changedOuts.add(key);
 	}
 
@@ -84,7 +124,9 @@ Dispatch{
 		changedOuts = List.new;
 		funcChain.value( this );
 		changedOuts.do{ |key|
-			registered[key].value( sources[\me][key] );
+			if ( registered[key].notNil ){
+				registered[key].value( outputs[key] );
+			};
 		};
 	}
 

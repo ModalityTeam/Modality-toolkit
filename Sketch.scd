@@ -17,6 +17,11 @@ k = Ktl.new;
 k.elements = [\slider1,\slider2,\slider3]
 
 a = (); // pseudoktl
+a.put( \me, 1 )
+
+b = (); // pseudoktl
+b.put( \me, 2 )
+
 
 // Dispatch
 d = Dispatch.new;
@@ -24,11 +29,57 @@ d = Dispatch.new;
 d.mapToCtl( a, \slider1, \nano );
 d.mapToCtl( a, \slider2, \nano );
 d.mapToCtl( a, \slider3, \nano );
+d.mapToCtl( a, \button, \nano ); // should this set a default value?
+
+d.mappedCtls
+
+d.value( a, \slider1, 0.3 );
+d.value( a, \slider2, 0.5 );
+
+d.sources
+d.funcChain
+d.ktlToSources
+d.changedOuts
+d.envir
+d.outputs
+
+// initialize the scene
+d.setVar( \scene, 0 );
+d.addFunction( \setScene, { |dis| 
+	if ( dis.getInput( \nano, \button ) == 1 ){
+		// select one of five scenes;
+		dis.setVar( \scene, (dis.getVar( \scene ) + 1).wrap(0,5) );
+		"scene %\n".postf( dis.getVar( \scene ) );
+	};
+} );
+
+d.value( a, \button, 1 );
+
+d.getInput( \nano, \slider2)
+d.setOutput( \average, 0.4)
+
+d.ktlToSources
+d.sources
+
+d.changedOuts
+
+d.addFunction( \average, { |dis|
+	var val = [\slider1,\slider2].collect{ |it| dis.getInput( \nano, it ) }.sum;
+	dis.setOutput( \average, val/2 );
+} );
+
+d.addFunction( \averageBut, { |dis|
+	var val = dis.getInput( \me, \average );
+	dis.setVar( \avinter, val/2 );
+} );
+
 
 now \slider1 when a value changes will call
 .value
 
 slider -> value( ktlname, slider, value )
+
+d.ktlToSources
 
 d.value( a )
 
@@ -72,14 +123,6 @@ d.addFunction( \average, { |value,ctl,dis,ktl|
 	dis.setOutput( \average, val )
 } );
 
-// initialize the scene
-d.set( \scene, 0 );
-d.addFunction( \setScene, { |ktl,key,value,envir| 
-	if ( key == \button1 ){
-		// select one of five scenes;
-		envir.put( \scene, (envir[\scene] + 1).wrap(0,5) );
-	};
-} );
 
 ~d2 = Dispatch.new;
 d.addFunction( \dispatcher2, ~d2 );
