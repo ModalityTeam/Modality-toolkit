@@ -84,7 +84,7 @@ MKtlCtl {
 	update { |newval|
 		this.updateState( newval );
 		ktl.recordValue( key, newval );
-		funcChain.valueAll( ktl, key, newval );
+		funcChain.valueAll( key, newval );
 	}
 
 }
