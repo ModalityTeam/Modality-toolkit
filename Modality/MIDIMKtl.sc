@@ -63,8 +63,8 @@ MIDIMKtl : MKtl {
 		^super.new.init(name, uid, foundSource);
 	}
 	
-	init { |argname, argUid, argSource| 
-		name = argname; 
+	init { |argName, argUid, argSource| 
+		name = argName; 
 		srcID = argUid;
 		source = argSource;
 		all.put(name, this);

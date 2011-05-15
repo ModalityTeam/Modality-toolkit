@@ -7,13 +7,13 @@ MKtl {
 
 	var <responders;
 
-	var <state; 	// MKtlCtls keep their own state
+	//var <state; 	// MKtlElement keep their own state
 	var <name;	// a user-given unique name
 	var <envir;
 	
 	var <devSpecs; // a dict with a description of all the elements on the device
 	
-	var <elements; // all control elements on the device you may want to listen or talk to
+	var <elements; // all control elements (MKtlElement) on the device you may want to listen or talk to
 
 	var <>recordFunc; // what to do to record incoming control changes
 	
@@ -54,7 +54,7 @@ MKtl {
 
 }
 
-MKtlCtl {
+MKtlElement {
 	classvar <types;
 
 	var <>ktl; // the Ktl it belongs to
