@@ -44,13 +44,19 @@ FuncChain : FunctionList { // a named FunctionList
 
 	*new { arg pairs;
 		var argnames, argfuncs; 
+		if ( pairs.isNil ){ pairs = []; };
 		#argnames, argfuncs = pairs.clump(2).flop;
+		if ( argfuncs.isNil ){ argfuncs = []; };
 		^super.newCopyArgs(argfuncs).init(argnames);
 	} 
 	
 	init { |argnames| names = argnames }
 	
-	add { |name, func| 
+	add { |name, func, addAction, target|
+		this.perform( addAction, name, func, target );
+	}
+	
+	addLast{ |name, func| // no where
 		var index = names.indexOf(name); 
 			// replace at name if there
 		if (index.notNil) { 
@@ -76,7 +82,7 @@ FuncChain : FunctionList { // a named FunctionList
 		names.removeAt(index);
 	}
 	
-	addAfter { |where, name, func| 
+	addAfter { |name, func, where| 
 		var newIndex = names.indexOf(where); 
 		this.removeAt(name);
 		
@@ -85,15 +91,15 @@ FuncChain : FunctionList { // a named FunctionList
 			if (newIndex < (array.size - 2)) { 
 				this.putAtIndex(newIndex); 
 			} { 
-				this.add(name, func);
+				this.addLast(name, func);
 			}
 		} { 
 			"addAfter: name % not found, adding to end.".format(where).inform;
-			this.add(name, func);
+			this.addLast(name, func);
 		};
 	}
 
-	addBefore { |where, name, func| 
+	addBefore { |name, func, where| 
 		var newIndex = names.indexOf(where); 
 		this.removeAt(name);
 		
@@ -110,13 +116,13 @@ FuncChain : FunctionList { // a named FunctionList
 		};
 	}
 	
-	addFirst { |name, func| 
+	addFirst { |name, func| // no where 
 		this.removeAt(name);
 		array = array.addFirst(func);
 		names = names.addFirst(name); 
 	}
 	
-	replaceAt { |where, name, func| 
+	replaceAt { |name, func, where| 
 		var index = names.indexOf(where); 
 		if (index.notNil) { 
 			this.putAtIndex(index)
