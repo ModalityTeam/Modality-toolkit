@@ -11,7 +11,7 @@ Dispatch{
 
 	var <ktlToSources;
 	//	var <sourcesToInputs;
-	var <mappedCtls;
+	var <mappedElems;
 
 	// this will be internal only:
 	var <sources; // input state
@@ -33,26 +33,26 @@ Dispatch{
 		sources = ();
 		outputs = ();
 		ktlToSources = ();
-		mappedCtls = ();
+		mappedElems = ();
 
 		registered = ();
 
 		//	this.mapSource( \me, this );
 	}
 
-	mapToCtl{ |ktl, elem, ktlname|
+	mapToElem |ktl, elem, ktlname|
 		this.mapSource( ktlname, elem );
 		ktl.addFunction( elem, this.name, this );
 		// set a default value, should probably get this from the ktl[ctl]
 		sources[ktlname].put( elem, DispatchInput( ktl.defaultElementValue( elem ) ? 0 , false ) );
-		if ( mappedCtls[ktlname].isNil ){
-			mappedCtls[ktlname] = List.new;
+		if ( mappedElems[ktlname].isNil ){
+			mappedElems[ktlname] = List.new;
 		};
-		mappedCtls[ktlname].add( elem );
+		mappedElems[ktlname].add( elem );
 	}
 
 	changeSource{ |oldname, newsource|
-		mappedCtls[ oldname ].do{ |key|
+		mappedElems[ oldname ].do{ |key|
 			// register the 
 			this.mapSource( newsource, key, this );
 		};
