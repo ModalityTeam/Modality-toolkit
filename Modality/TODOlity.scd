@@ -5,8 +5,10 @@ ToDolity
   * test that all variants of adding and removing work
 
 * MKtl:
-	* populate with MKtlElements
 	* ? move subclass methods up ... 
+		(LFSaw: mostly done)
+
+	* populate with MKtlElements
 	* interface protocol: 
 		get/setting values, 
 		add/remove functions
@@ -20,15 +22,11 @@ ToDolity
 		test, then use getAllCookies
 
 * MKtlElement:
-	* composites? somewhat important (TB)
+	* composites? somewhat important (LFSaw)
 
 * MIDIMKtl:
-<<<<<<< HEAD
-=======
-	* populate with MKtlElements
->>>>>>> added a ToDolity list
+	* respond to noteOn, noteOff (LFSaw: done)
 	* test crossplatform
-	* respond to noteOn, noteOff
 	* addFunc should conform to super.addFunc
 
 * write more [stub] subclasses, finish by demand:
