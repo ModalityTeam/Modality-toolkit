@@ -131,7 +131,14 @@ MIDIMKtl : MKtl {
 			}, srcID), 
 			
 			noteon: NoteOnResponder({ |src, chan, note, vel|
-				// [chan, note, vel].postln
+				[chan, note, vel].postln
+//				var noteKey = this.makeNoteKey(chan, note);
+//				var elName = ccKeyToElNameDict[ccKey];
+//				funcDict[ccKey].value(this, elName, value); 
+			}, srcID), 
+			
+			noteon: NoteOffResponder({ |src, chan, note, vel|
+				[chan, note, vel].postln
 			}, srcID)
 		);
 	}
@@ -158,7 +165,8 @@ MIDIMKtl : MKtl {
 //			} { 
 //				observedCCs.add([chan, num, value, value]);
 //			};
-//			observedCCs.postln;
+//			[chan, num].postln;
+//			//observedCCs.postln;
 //		};
 //	}
 //	
