@@ -9,24 +9,21 @@
 //		};
 
 MKtl { // abstract class
-	
 	classvar <deviceDescriptionFolder;
 
 	classvar <all; // will hold all instances of MKtl
 
 	var <responders;
-
-	//var <state; 	// MKtlElement keep their own state
 	var <name;	// a user-given unique name
-	// var <envir;	// maybe used for internal state
 	
-	// an array of keys and values with a description of all the elements on the device
+	// an array of keys and values with a description of all the elements on the device.
+	// is read in from an external file.
 	var <deviceDescription; 
-	
+
 	// all control elements (MKtlElement) on the device you may want to listen or talk to
 	var <elements;
 
-	var <>recordFunc; // what to do to record incoming control changes
+	//var <>recordFunc; // what to do to record incoming control changes
 	
 	*initClass {
 		all = ();	
@@ -76,9 +73,9 @@ MKtl { // abstract class
 		elements[elementKey].addFunc( funcName, function, addAction, target );
 	}
 	
-	recordValue { |key,value|
-		recordFunc.value( key, value );
-	}
+//	recordValue { |key,value|
+//		recordFunc.value( key, value );
+//	}
 
 	
 	//useful if Dispatcher also uses this class

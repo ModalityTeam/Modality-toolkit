@@ -8,12 +8,13 @@
 MIDIMKtl : MKtl { 
 	classvar <initialized = false;
 	
+	// MIDI-specific address identifiers 
 	var <srcID, <source; 
 	
 			// optimisation for fast lookup, 
-			// may go away of everything lives in the elements
+			// may go away if everything lives in "elements" of superclass
 	var <funcDict;
-	var <ccKeyToElNameDict;
+	var <hashToElNameDict;
 
 		// open all ports 
 	*initMIDI{|force= false|
@@ -63,28 +64,29 @@ MIDIMKtl : MKtl {
 			}
 		};
 		
+			// make a new source
+		this.initMIDI;
 		foundSource = MIDIClient.sources.detect { |src|
 			src.uid == uid;
 		}; 
 
-			// make a new one		
 		if (foundSource.isNil) { 
 			warn("MIDIMKtl:" 
 			"	No MIDIIn source with USB port ID % exists! please check again.".format(uid));
 			^nil
 		};
 				
-		^super.basicNew.init.initMIDI(name, uid, foundSource);
+		^super.basicNew.init.initMIDIMKtl(name, uid, foundSource);
 	}
 	
-	initMIDI { |argName, argUid, argSource|
+	initMIDIMKtl { |argName, argUid, argSource|
 		name = argName; 
 		srcID = argUid;
 		source = argSource;
 		all.put(name, this);
 		
 		funcDict = ();
-		ccKeyToElNameDict = ();
+		hashToElNameDict = ();
 		
 		this.findDeviceDescription(source.device); 
 		
@@ -99,12 +101,12 @@ MIDIMKtl : MKtl {
 		//	 |elementKey, funcName, function, addAction=\addToTail, target|
 		//super.addFunc(...);
 
-		var ccKey = ccKeyToElNameDict.findKeyForValue(elementKey);
+		var ccKey = hashToElNameDict.findKeyForValue(elementKey);
 		funcDict[ccKey].addLast(funcName, function);
 	}
 
 	removeFunc { |elKey, name| 
-		var ccKey = ccKeyToElNameDict.findKeyForValue(elKey); 
+		var ccKey = hashToElNameDict.findKeyForValue(elKey); 
 		funcDict[ccKey].removeAt(name);
 	}
 
@@ -123,52 +125,73 @@ MIDIMKtl : MKtl {
 		// plumbing	
 	prepareFuncDict { 
 		if (deviceDescription.notNil) { 
-			// works only for scenes ATM;
-			deviceDescription.pairsDo { |elName, descr| 
-				var ccKey = this.makeCCKey(descr[\chan], descr[\ccNum]);
-				descr.put(\ccKey, ccKey); // just in case ... 
+			deviceDescription.pairsDo { |elName, descr|
+				var hash;
+				
+				hash = descr[\midiType].switch(
+				\note, {this.makeNoteKey(descr[\chan], descr[\midiNote]);},
+				
+				\cc, {this.makeCCKey(descr[\chan], descr[\ccNum]);},
+				//default:
+				{
+					"MIDIMKtl:prepareFuncDict (%): identifier in midiType for item % not known. Please correct.".format(this, elName).error; 
+					this.dump; 
+					^this;
+				});
+
+				//descr.put(\hash, hash); // just in case ... 
 				
 				funcDict.put(
-					ccKey, FuncChain([\post, { |ktl, elName, value| 
-						[ktl, elName, value].postln;
-					}])
+					hash, FuncChain();
 				);
-				ccKeyToElNameDict.put(ccKey, elName);
+				hashToElNameDict.put(hash, elName);
 			}
 		}
 	}
 	
-	findDeviceDescription { |devicename|
-		var path = deviceDescriptionFolder +/+ devicename ++ ".scd";
-		deviceDescription = try { 
-			path.load 
-		} { 
-			"MIDIMKtl - no deviceSpecs found for %: please make them!\n".postf(devicename);
-			this.class.openTester(this);
-		};
-	}
+//	findDeviceDescription { |devicename|
+//		var path = deviceDescriptionFolder +/+ devicename ++ ".scd";
+//		deviceDescription = try { 
+//			path.load 
+//		} { 
+//			"MIDIMKtl - no deviceSpecs found for %: please make them!\n".postf(devicename);
+//			this.class.openTester(this);
+//		};
+//	}
 
 	addResponders { 	
 		responders = (
 			cc: CCResponder({ |src, chan, num, value| 
-				var ccKey = this.makeCCKey(chan, num);
-				var elName = ccKeyToElNameDict[ccKey]; 
-				funcDict[ccKey].value(this, elName, value); 
+				var hash = this.makeCCKey(chan, num);
+				var elName = hashToElNameDict[hash]; 
+				funcDict[hash].value(this, elName, value); 
 			}, srcID), 
 			
 			noteon: NoteOnResponder({ |src, chan, note, vel|
-				[chan, note, vel].postln
-//				var noteKey = this.makeNoteKey(chan, note);
-//				var elName = ccKeyToElNameDict[ccKey];
-//				funcDict[ccKey].value(this, elName, value); 
+				var hash = this.makeNoteKey(chan, note);
+				var elName = hashToElNameDict[hash];
+				//	["noteOn", chan, note, vel, hash].postln;
+				funcDict[hash].value(this, elName, vel); 
 			}, srcID), 
 			
-			noteon: NoteOffResponder({ |src, chan, note, vel|
-				[chan, note, vel].postln
+			noteoff: NoteOffResponder({ |src, chan, note, vel|
+				var hash = this.makeNoteKey(chan, note);
+				var elName = hashToElNameDict[hash];
+				//	["noteOff", chan, note, vel, hash].postln;
+				funcDict[hash].value(this, elName, vel); 
 			}, srcID)
 		);
 	}
 
+	verbose_ {|value=true|
+		value.if({
+			funcDict.do{|item| item.addFirst(\verbose, { |ktl, elName, value| 
+					[ktl, elName, value].postln;
+			})}
+		}, {
+			funcDict.do{|item| item.removeAt(\verbose)}
+		})
+	}
 		
 //	openTester {	// breaks responders for now.
 //
@@ -205,7 +228,6 @@ MIDIMKtl : MKtl {
 
 		// utilities for lookup 
 	makeCCKey { |chan, cc| ^(chan.asString ++ "_" ++ cc).asSymbol }
-	
 	ccKeyToChanCtl { |ccKey| ^ccKey.asString.split($_).asInteger }
 
 	makeNoteKey { |chan, note| 
@@ -213,7 +235,6 @@ MIDIMKtl : MKtl {
 		if (note.notNil) { key = key ++ "_" ++ note };
 		^key.asSymbol 
 	}
-
 	noteKeyToChanNote { |noteKey| ^noteKey.asString.split($_).asInteger }
 	
 	storeArgs { ^[name] }
