@@ -26,12 +26,12 @@ b.put( \me, 2 )
 // Dispatch
 d = Dispatch.new;
 
-d.mapToCtl( a, \slider1, \nano );
-d.mapToCtl( a, \slider2, \nano );
-d.mapToCtl( a, \slider3, \nano );
-d.mapToCtl( a, \button, \nano ); // should this set a default value?
+d.mapToElem( a, \slider1, \nano );
+d.mapToElem( a, \slider2, \nano );
+d.mapToElem( a, \slider3, \nano );
+d.mapToElem( a, \button, \nano ); // should this set a default value?
 
-d.mappedCtls
+d.mappedElems
 
 d.value( a, \slider1, 0.3 );
 d.value( a, \slider2, 0.5 );

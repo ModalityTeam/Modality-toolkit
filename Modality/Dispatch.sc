@@ -40,7 +40,7 @@ Dispatch{
 		//	this.mapSource( \me, this );
 	}
 
-	mapToElem{ |ktl, elem, ktlname|
+	mapToElem |ktl, elem, ktlname|
 		this.mapSource( ktlname, elem );
 		ktl.addFunction( elem, this.name, this );
 		// set a default value, should probably get this from the ktl[ctl]
@@ -119,6 +119,8 @@ Dispatch{
 	}
 
 	// register for output
+// is the same as addFunc right now in Ktl
+
 	register{ |key,funcKey,func| // could have order indication
 		if ( registered[key].isNil ){
 			registered[key] = DispatchOut.new( this, key );
@@ -131,7 +133,7 @@ Dispatch{
 		funcChain.value( this );
 		changedOuts.do{ |key|
 			if ( registered[key].notNil ){
-				registered[key].value( outputs[key] );
+				registered[key].value( outputs[key] ); // this may need to pass more info
 			};
 		};
 	}
