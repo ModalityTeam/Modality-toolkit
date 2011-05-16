@@ -3,7 +3,10 @@ HIDMKtl.find;
 
 HIDMKtl('ferrari', 102760448);  // Run'N' Drive
 
-HIDMKtl('ferrari')
+HIDMKtl( 'ferrari', "usb-0000:00:1d.0-1.2/input0"); // Run 'N' Drive on Linux
+
+HIDMKtl('ferrari').srcDevice.slots
+
 HIDMKtl('ferrari').postRawSpecs
 
 HIDMKtl('ferrari').postSpecs
@@ -69,9 +72,7 @@ HIDMKtl : MKtl {
 			}
 		};
 		
-		foundSource = GeneralHID.deviceList.detect { |pair|
-			pair[1].physical == uid;
-		}; 
+		foundSource = GeneralHID.findBy( locID: uid );
 
 			// make a new one		
 		if (foundSource.isNil) { 
@@ -83,7 +84,7 @@ HIDMKtl : MKtl {
 		^super.basicNew.initHID(name, uid, foundSource);
 	}
 	
-	postRawSpecs { this.class.postRawSpecsOf(srcDevice.device.device) }
+	postRawSpecs { this.class.postRawSpecsOf(srcDevice) }
 	
 	*postRawSpecsOf { |dev| 
 		"HIDMKtl - the reported properties of device: %\n".postf(dev.info.name);
