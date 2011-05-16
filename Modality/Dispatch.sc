@@ -40,15 +40,15 @@ Dispatch{
 		//	this.mapSource( \me, this );
 	}
 
-	mapToCtl{ |ktl,ctl,ktlname|
-		this.mapSource( ktlname, ktl );
-		ktl.addFunction( ctl, this.name, this );
+	mapToCtl{ |ktl, elem, ktlname|
+		this.mapSource( ktlname, elem );
+		ktl.addFunction( elem, this.name, this );
 		// set a default value, should probably get this from the ktl[ctl]
-		sources[ktlname].put( ctl, DispatchInput( ktl.defaultElementValue( ctl ) ? 0 , false ) );
+		sources[ktlname].put( elem, DispatchInput( ktl.defaultElementValue( elem ) ? 0 , false ) );
 		if ( mappedCtls[ktlname].isNil ){
 			mappedCtls[ktlname] = List.new;
 		};
-		mappedCtls[ktlname].add( ctl );
+		mappedCtls[ktlname].add( elem );
 	}
 
 	changeSource{ |oldname, newsource|
