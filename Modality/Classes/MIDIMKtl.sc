@@ -147,6 +147,8 @@ MIDIMKtl : MKtl {
 			// moved to superclass init
 	//	this.loadDeviceDescription(source.device); 
 		
+		this.findDeviceDescription(source.device); 
+		
 		this.makeElements; 
 		this.prepareFuncDict;
 
