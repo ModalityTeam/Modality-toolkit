@@ -1,4 +1,9 @@
 + MXHIDSlot{
+
+	getSpecs{
+
+	}
+
 	getCookie{
 		^cookie;
 	}
