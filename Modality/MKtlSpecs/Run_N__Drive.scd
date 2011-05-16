@@ -22,21 +22,14 @@ Spec.add(\throt,  [0, 255, \lin, 1, 0]);
 	\rfTop6, (type: \button, cookie: 7, \spec: \hidBut, \mode: \push), 
 	\lfBot7, (type: \button, cookie: 8, \spec: \hidBut, \mode: \push), 
 	\rfBot8, (type: \button, cookie: 9, \spec: \hidBut, \mode: \push), 
-	
-		// left shoulder fire button, right shoulder fire button, 
-		// left bottom fire button,  right bottom fire button, 
- 	\lfTop5, (type: \button, cookie: 6, \spec: \hidBut, \mode: \push), 
-	\rfTop6, (type: \button, cookie: 7, \spec: \hidBut, \mode: \push), 
-	\lfBot7, (type: \button, cookie: 8, \spec: \hidBut, \mode: \push), 
-	\rfBot8, (type: \button, cookie: 9, \spec: \hidBut, \mode: \push), 
-	
+		
 		// middle buttons
  	\midL9, (type: \button, cookie: 10, \spec: \hidBut, \mode: \push), 
 	\midR10, (type: \button, cookie: 11, \spec: \hidBut, \mode: \push), 
 	
 		// joystick hat switches
-	\joyLHat, (type: \hat, cookie: 12, \spec: \hidHat, \mode: \center), 
-	\joyRHat, (type: \hat, cookie: 13, \spec: \hidHat, \mode: \center), 
+	\joyLHat, (type: \hidHat, cookie: 12, \spec: \hidHat, \mode: \center), 
+	\joyRHat, (type: \hidHat, cookie: 13, \spec: \hidHat, \mode: \center), 
 
 		// joystick axes switches
 	\joyLX, (type: \joyAxis, cookie: 15, \spec: \lin255n, \mode: \center), 
