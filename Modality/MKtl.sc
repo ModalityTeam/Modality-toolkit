@@ -2,7 +2,7 @@
 
 
 // TODO:
-//	default devSpec files in quarks, custom ones in userAppSupportDir
+//	default deviceDescription files in quarks, custom ones in userAppSupportDir
 //		(Platform.userAppSupportDir +/+ "MKtlSpecs").standardizePath, 
 //		if (deviceDescriptionFolders[0].pathMatch.isEmpty) { 
 //			unixCmd("mkdir \"" ++ deviceDescriptionFolder ++ "\"");
@@ -64,9 +64,9 @@ MKtl { // abstract class
 		};
 	}
 
-	postSpecs { deviceDescription.printcsAll; }
+	postDeviceDescription { deviceDescription.printcsAll; }
 	
-	devSpecFor { |elname| ^deviceDescription[deviceDescription.indexOf(elname) + 1] }
+	deviceDescriptionFor { |elname| ^deviceDescription[deviceDescription.indexOf(elname) + 1] }
 	
 	elNames { 
 		^(0, 2 .. deviceDescription.size - 2).collect (deviceDescription[_])
@@ -102,7 +102,7 @@ MKtlElement {
 	var <name; // its name in Ktl.elements
 	var <type; // its type. 
 	
-	var <devSpec, <spec; 
+	var <deviceDescription, <spec; 
 	var <funcChain; //
 	
 	// keep value and previous value here?
@@ -124,8 +124,8 @@ MKtlElement {
 
 	init { 
 		funcChain = FuncChain.new;
-		devSpec = ktl.devSpecFor(name);
-		spec = devSpec[\spec].asSpec;
+		deviceDescription = ktl.deviceDescriptionFor(name);
+		spec = deviceDescription[\spec].asSpec;
 		value = prevValue = spec.default ? 0;
 	}
 
