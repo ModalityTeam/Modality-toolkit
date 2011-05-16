@@ -1,15 +1,19 @@
 Dispatch{
 
+	classvar <>tempNamePrefix = "Dispatch_";
+	classvar tempDefCount = 0;
+	classvar <>maxTempDefNames = 512;
+
 	//	classvar <all;
 
 	//	var <key;
 	var <name;
 	var <funcChain;
 
-	var <registered; // DispatchOuts to which stuff is registered
+	var <dispatchOuts; // DispatchOuts to which stuff is registered
 
 
-	var <ktlToSources;
+	var <sourceNameToKtl;
 	//	var <sourcesToInputs;
 	var <mappedElems;
 
@@ -20,9 +24,15 @@ Dispatch{
 
 	var <changedOuts; // keeps the changed outputs in order to update
 	var <changedIn;
-
+	
+	*generateTempName {
+		var name = tempNamePrefix ++ tempDefCount;
+		tempDefCount = tempDefCount + 1 % maxTempDefNames;
+		^name.asSymbol
+	}
+	
 	*new{ |name|
-		^super.new.init(name);
+		^super.new.init(name ? Dispatch.generateTempName );
 	}
 
 	init{ |nm|
@@ -32,19 +42,18 @@ Dispatch{
 
 		sources = ();
 		outputs = ();
-		ktlToSources = ();
+		sourceNameToKtl = ();
 		mappedElems = ();
 
-		registered = ();
+		dispatchOuts = ();
 
 		//	this.mapSource( \me, this );
 	}
 
 	mapToElem{ |ktl, elem, ktlname|
-		this.mapSource( ktlname, elem );
-		ktl.addFunction( elem, this.name, this );
-		// set a default value, should probably get this from the ktl[ctl]
-		sources[ktlname].put( elem, DispatchInput( ktl.defaultValueFor( elem ) ? 0 , false ) );
+		this.mapSource( ktlname, ktl );
+		ktl.addToOutput( elem, this.name, this );
+		sources[ktlname].put( elem, ktl.defaultValueFor( elem ) ? 0);
 		if ( mappedElems[ktlname].isNil ){
 			mappedElems[ktlname] = List.new;
 		};
@@ -52,33 +61,46 @@ Dispatch{
 	}
 
 	changeSource{ |oldname, newsource|
-		mappedElems[ oldname ].do{ |key|
-			// register the 
-			this.mapSource( newsource, key, this );
+		var oldKtl = sourceNameToKtl[oldname];
+		mappedElems[ oldname ].do{ |elem|
+			// unregister from old Ktl
+			oldKtl.removeFunc(elem, this.name);
+			// register with new Ktl
+			this.mapToElem( newsource, elem, oldname );
 		};
 	}
 
-	mapSource{ |name,source|
-		if ( ktlToSources.includesKey( name ) ){
-			if ( (ktlToSources[name] === source).not ){
+	mapSource{ |name,source| //name is an abstract name for the source, source is either a Ktl or a Dispatch
+		if ( sourceNameToKtl.includesKey( name ) ){
+			if ( (sourceNameToKtl[name] === source).not ){
 				this.changeSource( name, source );
 			};
-		};
-		ktlToSources.put( name, source );
-		if ( sources[name].isNil ){
-			sources.put( name, () );
-		};
+		} {
+			sourceNameToKtl.put( name, source );
+			if ( sources[name].isNil ){
+				sources.put( name, () );
+			};
+		}
 	}
 
 	lookupSources{ |source|
-		^ktlToSources.findKeysForValue( source );
+		^sourceNameToKtl.findKeysForValue( source );
+	}
+	
+	
+	valueArray{ arg args;
+		var source,key,value;
+		#source,key,value = args;
+		this.setInput( source, key, value );
+		this.processChain;
+		changedIn = nil;		
 	}
 
 	setInput{ |source,key,value|
 		var srcs = this.lookupSources( source );
 		srcs.do{ |it|
-			sources[it][key].value_( value ).changed_( true );
-			changedIn = (\source: source, \key: key)
+			sources[it].put(key, value);
+			changedIn = (\source: source, \key: key, \val: value)
 		};
 	}
 
@@ -91,69 +113,32 @@ Dispatch{
 	}
 
 	setOutput{ |key,value|
-		//	this.setInput( this, key, value );
+		dispatchOuts[\key].value(value);
 		outputs.put( key, value );
 		changedOuts.add(key);
 	}
 
-	value{ |source,key,value|
-		this.setInput( source, key, value );
-		this.processChain;
-		this.resetInputChanged;
-	}
-
-	resetInputChanged{
-		sources.do{ |it|
-			it.do{ |input|
-				input.changed = false;
-			}
-		}
-	}
-
-	// register for output
-// is the same as addFunc right now in Ktl
-
-	register{ |key,funcKey,func| // could have order indication
-		if ( registered[key].isNil ){
-			registered[key] = DispatchOut.new( this, key );
+	addToOutput{ |key,funcName,func,addAction, other| // could have order indication
+		if ( dispatchOuts[key].isNil ){
+			dispatchOuts[key] = DispatchOut.new( this, key );
 		};
-		registered[key].addFunction( funcKey, func );
+		dispatchOuts[key].addFunction( funcName, func );
 	}
 
 	processChain{
 		changedOuts = List.new;
 		funcChain.value( this, envir);
 		changedOuts.do{ |key|
-			if ( registered[key].notNil ){
-				registered[key].value( outputs[key] ); // this may need to pass more info
+			if ( dispatchOuts[key].notNil ){
+				dispatchOuts[key].value( outputs[key] ); // this may need to pass more info
 			};
 		};
 	}
 
-	addFunction{ |key,func,addAction=\addLast,target|
+	addToProc{ |key,func,addAction=\addLast,target|
 		funcChain.add( key, func, addAction, target );
 	}
 	
-}
-
-DispatchInput{
-	var <>value;
-	var <>changed;
-
-	*new{ |val,change|
-		^super.newCopyArgs( val, change );
-	}
-
-	printOn { arg stream;
-		if (stream.atLimit, { ^this });
-		stream << "DispatchInput[ " ;
-		value.printOn(stream);
-		stream << ",";
-		changed.printOn(stream);
-		stream << " ]" ;
-	}
-
-
 }
 
 DispatchOut {
@@ -164,7 +149,7 @@ DispatchOut {
 	var <funcChain;
 
 	*new { |dis,key|
-		^super.newCopyArgs( dis, key );
+		^super.newCopyArgs( dis, key ).init;
 	}
 
 	init{ 
