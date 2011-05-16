@@ -15,6 +15,7 @@ ToDolity
 	* gesture recording / playback, MKtlLoop based on CtLoop?
 
 * HIDMKtl:
+	* populate with MKtlElements
 	* make crossplatform!! 
 		test, then use getAllCookies
 
@@ -22,6 +23,10 @@ ToDolity
 	* composites? somewhat important (TB)
 
 * MIDIMKtl:
+<<<<<<< HEAD
+=======
+	* populate with MKtlElements
+>>>>>>> added a ToDolity list
 	* test crossplatform
 	* respond to noteOn, noteOff
 	* addFunc should conform to super.addFunc
