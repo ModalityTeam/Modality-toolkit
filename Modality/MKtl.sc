@@ -74,25 +74,50 @@ MKtl { // abstract class
 	postDeviceDescription { deviceDescription.printcsAll; }
 	
 	deviceDescriptionFor { |elname| ^deviceDescription[deviceDescription.indexOf(elname) + 1] }
+
+
+	makeElements {
+		this.elementNames.do{|key|
+			elements[key] = MKtlElement(this, key);
+		}
+	}
 	
 			// convenience methods
 	defaultElementValue { |elName| 
 		^this.deviceDescriptionFor(elName).spec.default
 	}
 	
-
-	
-	elNames { 
+	elementNames { 
 		^(0, 2 .. deviceDescription.size - 2).collect (deviceDescription[_])
 	}
 	
-	addFunc { |elementKey, funcName, function, addAction=\addToTail, target|
-		elements[elementKey].addFunc( funcName, function, addAction, target );
+	
+	// element funcChain interface
+	addFunc { |elementKey, funcName, function, addAction, otherName|
+		elements[elementKey].addFunc(funcName, function, addAction, otherName);
+	}
+
+	addFuncAfter { |elementKey, funcName, function, otherName|
+		elements[elementKey].addFuncAfter(funcName, function, otherName);
 	}
 	
-//	recordValue { |key,value|
+	addFuncBefore { |elementKey, funcName, function, otherName|
+		elements[elementKey].addFuncBefore(funcName, function, otherName);
+	}
+	
+	removeFunc { |elementKey, funcName| 
+		elements[elementKey].removeFunc(funcName);
+	}
+
+	// interface compatibility for make MKtl usable like a Dispatch (sometimes called duck-typing (tm))
+	addToOutput { |elementKey, funcName, function, addAction, otherName|
+		this.addFunc(elementKey, funcName, function, addAction, otherName)
+	}
+
+	
+	recordValue { |key,value|
 //		recordFunc.value( key, value );
-//	}
+	}
 
 	
 	//useful if Dispatcher also uses this class
@@ -120,7 +145,7 @@ MKtlElement {
 	var <funcChain; //
 	
 	// keep value and previous value here?
-	var <>value;
+	var <value;
 	var <>prevValue;
 
 	*initClass {
@@ -132,8 +157,8 @@ MKtlElement {
 		)
 	}
 
-	*new { |ktl, name, type|
-		^super.newCopyArgs( ktl, name, type ).init;
+	*new { |ktl, name|
+		^super.newCopyArgs( ktl, name).init;
 	}
 
 	init { 
@@ -141,40 +166,52 @@ MKtlElement {
 		deviceDescription = ktl.deviceDescriptionFor(name);
 		spec = deviceDescription[\spec].asSpec;
 		value = prevValue = spec.default ? 0;
+		type = deviceDescription[\type];
 	}
 
-	addFunc { |funcName, func, addAction=\addToTail, target|
+	// funcChain interface
+	addFunc { |funcName, function, addAction=\addToTail, otherName|
 		// by default adds the action to the end of the list
-		// if target is set to a function, addActions \addBefore, \addAfter, \addReplace, are valid
+		// if otherName is set to a function, addActions \addBefore, \addAfter, \addReplace, are valid
 		// otherwise there is \addToTail or \addToHead
 		
-		^funcChain.addFunc(funcName, func, addAction, target);
+		funcChain.add(funcName, function, addAction, otherName);
+	}
+
+	addFuncAfter { |funcName, function, otherName|
+		funcChain.addAfter(funcName, function, otherName);
 	}
 	
-	replaceFunc { |funcName, func, where| 
-		^funcChain.replaceAt(funcName, func, where);
+	addFuncBefore { |funcName, function, otherName|
+		funcChain.addBefore(funcName, function, otherName);
 	}
 	
-	removeFunc {|funcName| ^funcChain.removeFunc(funcName) }
+	replaceFunc { |funcName, function, otherName| 
+		funcChain.replaceAt(funcName, function, otherName);
+	}
 	
+	removeFunc {|funcName| 
+		funcChain.removeAt(funcName) 
+	}
 	
-	
+
+
 	send { |val|
 		value = val;
 		//then send to hardware 	
 	}
 
-	updateState { | newval |
+	value_ { | newval |
 		// copies the current state to:
 		prevValue = value;
 		// updates the state with the latest value
 		value = newval;
 	}
 
-	update { |newval|
-		this.updateState( newval );
+	valueAction_ { |newval|
+		this.value( newval );
 		ktl.recordValue( name, newval );
-		funcChain.valueAll( name, newval );
+		funcChain.value( name, newval );
 	}
 
 }

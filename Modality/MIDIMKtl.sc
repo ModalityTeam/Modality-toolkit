@@ -90,26 +90,20 @@ MIDIMKtl : MKtl {
 		
 		this.findDeviceDescription(source.device); 
 		
-		// this.makeElements; 
+		this.makeElements; 
 		this.prepareFuncDict;
 
 		this.addResponders; 
 	}
 
 		// interface methods
-	addFunc { |elementKey, funcName, function| 
-		//	 |elementKey, funcName, function, addAction=\addToTail, target|
-		//super.addFunc(...);
-
-		var ccKey = hashToElNameDict.findKeyForValue(elementKey);
-		funcDict[ccKey].addLast(funcName, function);
-	}
-
-	removeFunc { |elKey, name| 
-		var ccKey = hashToElNameDict.findKeyForValue(elKey); 
-		funcDict[ccKey].removeAt(name);
-	}
-
+//	addFunc { |elementKey, funcName, function| 
+//		//	 |elementKey, funcName, function, addAction=\addToTail, target|
+//		//super.addFunc(...);
+//
+//		var hash = hashToElNameDict.findKeyForValue(elementKey);
+//		funcDict[hash].addLast(funcName, function);
+//	}
 
 		// plumbing	
 	prepareFuncDict { 
@@ -118,20 +112,20 @@ MIDIMKtl : MKtl {
 				var hash;
 				
 				hash = descr[\midiType].switch(
-				\note, {this.makeNoteKey(descr[\chan], descr[\midiNote]);},
+					\note, {this.makeNoteKey(descr[\chan], descr[\midiNote]);},
 				
-				\cc, {this.makeCCKey(descr[\chan], descr[\ccNum]);},
-				//default:
-				{
-					"MIDIMKtl:prepareFuncDict (%): identifier in midiType for item % not known. Please correct.".format(this, elName).error; 
-					this.dump; 
-					^this;
-				});
+					\cc, {this.makeCCKey(descr[\chan], descr[\ccNum]);},
+					{//default:
+						"MIDIMKtl:prepareFuncDict (%): identifier in midiType for item % not known. Please correct.".format(this, elName).error; 
+						this.dump; 
+						^this;
+					}
+				);
 
 				//descr.put(\hash, hash); // just in case ... 
 				
 				funcDict.put(
-					hash, FuncChain();
+					hash, elements[elName].funcChain;
 				);
 				hashToElNameDict.put(hash, elName);
 			}
