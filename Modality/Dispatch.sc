@@ -40,7 +40,7 @@ Dispatch{
 		//	this.mapSource( \me, this );
 	}
 
-	mapToElem |ktl, elem, ktlname|
+	mapToElem{ |ktl, elem, ktlname|
 		this.mapSource( ktlname, elem );
 		ktl.addFunction( elem, this.name, this );
 		// set a default value, should probably get this from the ktl[ctl]
