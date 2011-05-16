@@ -104,13 +104,6 @@ MIDIMKtl : MKtl {
 		^devSpecs[elName].spec.default
 	}
 
-	postSpecs { devSpecs.printcsAll; }
-	
-	elNames { 
-		^(0, 2 .. devSpecs.size - 2).collect (devSpecs[_])
-	}
-
-
 		// plumbing	
 	prepareFuncDict { 
 		if (devSpecs.notNil) { 
@@ -129,16 +122,6 @@ MIDIMKtl : MKtl {
 		}
 	}
 	
-	findDevSpecs { |devicename|
-		var path = devSpecsFolder +/+ devicename ++ ".scd";
-		devSpecs = try { 
-			path.load 
-		} { 
-			"MIDIMKtl - no deviceSpecs found for %: please make them!\n".postf(devicename);
-			this.class.openTester(this);
-		};
-	}
-
 	addResponders { 	
 		responders = (
 			cc: CCResponder({ |src, chan, num, value| 
@@ -186,7 +169,7 @@ MIDIMKtl : MKtl {
 //	}	
 	
 
-		// utilities for lookup 
+		// utilities for lookups
 	makeCCKey { |chan, cc| ^(chan.asString ++ "_" ++ cc).asSymbol }
 	
 	ccKeyToChanCtl { |ccKey| ^ccKey.asString.split($_).asInteger }

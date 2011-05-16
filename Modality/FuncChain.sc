@@ -1,39 +1,3 @@
-/*
-
-FuncChain: 	a named FunctionList 
-
-	// make one: 	 
-(
-a = FuncChain([
-	\ada, { "ada" }, 
-	\bob, { "bob" }
-]);
-)
-	
-	// add a name and func to the end
-a.add(\carl, { "carl" });
-
-	// replace if name is there
-a.add(\ada, { "ada222" });
-
-	// insert relative to a name
-a.addAfter(\carl, \otto, { "otto" });
-	
-	// adds to end if not there
-a.addAfter(\bongo, \otto, { "otto222" });
-
-	// adds to head if not there
-a.addBefore(\bongo, \otto, { "otto222" });
-
-	// 
-a.removeAt(\carl);
-a.removeAtIndex(2);
-
-a.putAtIndex(1, \dodo, { "dodo" });
-
-a.add(\eve, { "eveve" });
-
-*/
 
 FuncChain : FunctionList { // a named FunctionList
 	var <>names; 
@@ -52,11 +16,15 @@ FuncChain : FunctionList { // a named FunctionList
 	
 	init { |argnames| names = argnames }
 	
-	add { |name, func, addAction, target|
+	add { |name, func, addAction = \addToTail, target|
 		this.perform( addAction, name, func, target );
 	}
+		// adc: aliases, I like my names better, sorry. 
+	addToHead {  |name, func| ^this.addFirst(name, func) }
+	addToTail {  |name, func| ^this.addLast(name, func) }
+	addReplace {  |name, func| ^this.replaceAt(name, func) }
 	
-	addLast{ |name, func| // no where
+	addLast { |name, func| // no where
 		var index = names.indexOf(name); 
 			// replace at name if there
 		if (index.notNil) { 
@@ -74,12 +42,12 @@ FuncChain : FunctionList { // a named FunctionList
 	
 	removeAt { |name| 
 		var index = names.indexOf(name); 
-		if (index.notNil) { this.removeAtIndex(index) };
+		^if (index.notNil) { this.removeAtIndex(index) } { nil };
 	}
 	
 	removeAtIndex { |index| 
-		array.removeAt(index);
 		names.removeAt(index);
+		^array.removeAt(index);
 	}
 	
 	addAfter { |name, func, where| 
@@ -88,7 +56,7 @@ FuncChain : FunctionList { // a named FunctionList
 		
 		if (newIndex.notNil) { 
 			newIndex = newIndex + 1;
-			if (newIndex < (array.size - 2)) { 
+			if (newIndex < (array.size - 1)) { 
 				this.putAtIndex(newIndex); 
 			} { 
 				this.addLast(name, func);
@@ -115,7 +83,7 @@ FuncChain : FunctionList { // a named FunctionList
 			this.addFirst(name, func);
 		};
 	}
-	
+		
 	addFirst { |name, func| // no where 
 		this.removeAt(name);
 		array = array.addFirst(func);

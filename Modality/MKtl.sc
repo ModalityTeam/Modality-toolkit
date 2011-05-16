@@ -33,6 +33,16 @@ MKtl { // abstract class
 		devSpecsFolder = this.filenameSymbol.asString.dirname +/+ "MKtlSpecs";
 	}
 	
+		// abstract class - new returns existing instances 
+		// of subclasses that exist in .all
+	*new { |name|
+		^all[name]	
+	}
+	
+	*basicNew { 
+		^super.new.init;
+	}
+	
 	*find {
 		this.allSubclasses.do(_.find);	
 	}
@@ -40,6 +50,26 @@ MKtl { // abstract class
 	init {
 		//envir = ();
 		elements = ();
+	}
+
+	findDevSpecs { |deviceName| 
+		
+		var cleanDeviceName = deviceName.collect { |char| if (char.isAlphaNum, char, $_) }.postcs;
+		var path = devSpecsFolder +/+ cleanDeviceName ++ ".scd";
+		devSpecs = try { 
+			path.load 
+		} { 
+			"//" + this.class ++ ": - no deviceSpecs found for %: please make them!\n".postf(cleanDeviceName);
+		//	this.class.openTester(this);
+		};
+	}
+
+	postSpecs { devSpecs.printcsAll; }
+	
+	devSpecFor { |elname| ^devSpecs[devSpecs.indexOf(elname) + 1] }
+	
+	elNames { 
+		^(0, 2 .. devSpecs.size - 2).collect (devSpecs[_])
 	}
 	
 	addFunc { |elementKey, funcName, function, addAction=\addToTail, target|
@@ -62,20 +92,22 @@ MKtl { // abstract class
 			
 	}
 
+
 }
 
 MKtlElement {
 	classvar <types;
 
-	var <>ktl; // the Ktl it belongs to
-	var <>key; // its key in Ktl
-	var <>type; // its type.
-
-	var <funcChain; // how to keep the order?
+	var <ktl; // the Ktl it belongs to
+	var <name; // its name in Ktl.elements
+	var <type; // its type. 
+	
+	var <devSpec, <spec; 
+	var <funcChain; //
 	
 	// keep value and previous value here?
-	var <value;
-	var <prevValue;
+	var <>value;
+	var <>prevValue;
 
 	*initClass {
 		types = (
@@ -86,19 +118,32 @@ MKtlElement {
 		)
 	}
 
-	*new { |ktl, key, type|
-		^super.newCopyArgs( ktl, key, type );
+	*new { |ktl, name, type|
+		^super.newCopyArgs( ktl, name, type ).init;
 	}
 
 	init { 
 		funcChain = FuncChain.new;
+		devSpec = ktl.devSpecFor(name);
+		spec = devSpec[\spec].asSpec;
+		value = prevValue = spec.default ? 0;
 	}
 
 	addFunc { |funcName, func, addAction=\addToTail, target|
 		// by default adds the action to the end of the list
 		// if target is set to a function, addActions \addBefore, \addAfter, \addReplace, are valid
 		// otherwise there is \addToTail or \addToHead
+		
+		^funcChain.addFunc(funcName, func, addAction, target);
 	}
+	
+	replaceFunc { |funcName, func, where| 
+		^funcChain.replaceAt(funcName, func, where);
+	}
+	
+	removeFunc {|funcName| ^funcChain.removeFunc(funcName) }
+	
+	
 	
 	send { |val|
 		value = val;
@@ -114,8 +159,8 @@ MKtlElement {
 
 	update { |newval|
 		this.updateState( newval );
-		ktl.recordValue( key, newval );
-		funcChain.valueAll( key, newval );
+		ktl.recordValue( name, newval );
+		funcChain.valueAll( name, newval );
 	}
 
 }
