@@ -8,8 +8,8 @@
 <meta name="CocoaVersion" content="1038.35">
 <style type="text/css">
 p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #162bc4}
-p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #000000; min-height: 16.0px}
-p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #000000}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; min-height: 16.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Monaco; color: #d00c0c}
 span.s1 {color: #000000}
 span.s2 {color: #162bc4}
@@ -39,28 +39,88 @@ span.Apple-tab-span {white-space:pre}
 <p class="p4"><span class="s1"><span class="Apple-tab-span">	</span></span>// make an empty one:<span class="Apple-converted-space"> </span></p>
 <p class="p3">a = <span class="s2">FuncChain</span>.new;</p>
 <p class="p2"><br></p>
-<p class="p4"><span class="s1"><span class="Apple-tab-span">	</span></span>// add a name and func to the end</p>
-<p class="p3">a.add(<span class="s3">\carl</span>, { <span class="s4">"carl"</span> });</p>
+<p class="p3"><span class="Apple-tab-span">	</span>// common behavior for all add methods:</p>
+<p class="p3"><span class="Apple-tab-span">	</span>// if name exists, func at that name is removed;</p>
+<p class="p3"><span class="Apple-tab-span">	</span>// new func is put where indicated.</p>
 <p class="p2"><br></p>
-<p class="p4"><span class="s1"><span class="Apple-tab-span">	</span></span>// replace if name is there</p>
-<p class="p3">a.add(<span class="s3">\ada</span>, { <span class="s4">"ada222"</span> });</p>
+<p class="p3"><span class="Apple-tab-span">	</span>put(name, func)</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>// if name is present, put func there;</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>// if not, add a at the end.</p>
+<p class="p3">a.put(\x, {1});<span class="Apple-converted-space"> </span></p>
+<p class="p3">a.put(\y, {2});</p>
+<p class="p3">a.put(\x, {234});</p>
+<p class="p3">a.put(\z, {567});</p>
 <p class="p2"><br></p>
-<p class="p4"><span class="s1"><span class="Apple-tab-span">	</span></span>// insert relative to a name - NOT OK YET</p>
-<p class="p3">a.addAfter(<span class="s3">\otto</span>, { <span class="s4">"otto"</span> }, <span class="s3">\carl</span>);</p>
-<p class="p3">a.removeAt(<span class="s3">\otto</span>).postcs;<span class="Apple-tab-span">	</span></p>
+<p class="p3">a.at(\z).postcs</p>
 <p class="p2"><br></p>
-<p class="p4"><span class="s1"><span class="Apple-tab-span">	</span></span>// adds to end if not there</p>
-<p class="p3">a.addAfter(<span class="s3">\otto</span>, { <span class="s4">"otto222"</span> }, <span class="s3">\bongo</span>);</p>
+<p class="p3"><span class="Apple-tab-span">	</span>add(name, func, addAction, otherName)</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>// allows redirction by flags;<span class="Apple-converted-space"> </span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>// if no flags, like put.</p>
 <p class="p2"><br></p>
-<p class="p4"><span class="s1"><span class="Apple-tab-span">	</span></span>// adds to head if not there - is that smart?<span class="Apple-converted-space"> </span></p>
-<p class="p3">a.addBefore(<span class="s3">\otto</span>, { <span class="s4">"otto222"</span> }, <span class="s3">\bongo</span>);</p>
+<p class="p3">a.add(\x, {10});<span class="Apple-converted-space"> </span></p>
+<p class="p3">a.add(\y, {20});</p>
+<p class="p3">a.add(\z, {30});</p>
+<p class="p3">a.add(\w, {40});</p>
 <p class="p2"><br></p>
-<p class="p4"><span class="s1"><span class="Apple-tab-span">	</span></span>//<span class="Apple-converted-space"> </span></p>
-<p class="p3">a.removeAt(<span class="s3">\carl</span>);</p>
-<p class="p4"><span class="s1">a.removeAtIndex(2);<span class="Apple-tab-span">	</span></span>// fails if out of range</p>
+<p class="p3"><span class="Apple-tab-span">	</span>addLast(name, func)</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>// if name is used, remove func;</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>// add to end of list</p>
+<p class="p3">a.addLast(\x, {3});</p>
+<p class="p3">a.addLast(\y, {3});</p>
 <p class="p2"><br></p>
-<p class="p3">a.putAtIndex(1, <span class="s3">\dodo</span>, { <span class="s4">"dodo"</span> });</p>
+<p class="p3"><span class="Apple-tab-span">	</span>addFirst(name, func)<span class="Apple-converted-space"> </span></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>// if name is used, remove func;</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>// add to head of list</p>
+<p class="p3">a.addFirst(\z, {5});</p>
+<p class="p3">a.addFirst(\x, {5});</p>
+<p class="p3">a.addFirst(\y, {5});</p>
 <p class="p2"><br></p>
-<p class="p3">a.add(<span class="s3">\eve</span>, { <span class="s4">"eveve"</span> });</p>
+<p class="p3">a.names.indexOf(\x)</p>
+<p class="p2"><br></p>
+<p class="p3"><span class="Apple-tab-span">	</span>addBefore(name, func, otherName)</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>// add relative to another name</p>
+<p class="p3">a.addBefore(\abc, { 1234 }, \x);</p>
+<p class="p3">a.addBefore(\abc, { 1234 }, \y);</p>
+<p class="p3">a.addBefore(\abc, { 1234 }, \z);</p>
+<p class="p3">a.addBefore(\abc, { 1234 }, \tralala);</p>
+<p class="p2"><br></p>
+<p class="p3"><span class="Apple-tab-span">	</span>addAfter(name, func, otherName)</p>
+<p class="p3">a.addAfter(\abc, { 1234 }, \x);</p>
+<p class="p3">a.addAfter(\abc, { 1234 }, \y);<span class="Apple-tab-span">	</span>// still wrgon!</p>
+<p class="p3">a.addAfter(\abc, { 1234 }, \z);</p>
+<p class="p3">a.addAfter(\abc, { 1234 }, \x);</p>
+<p class="p3">a.addAfter(\xyz, { 1234 }, \tralala);</p>
+<p class="p3">a.addAfter(\rst, { 1234 }, \tralala);</p>
+<p class="p2"><br></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>// does nothing when name is not present</p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>// returns the func at name</p>
+<p class="p3"><span class="Apple-tab-span">	</span>removeAt(name)</p>
+<p class="p3">a.removeAt(\a)</p>
+<p class="p3">a.removeAt(\x); a</p>
+<p class="p3">a.removeAt(\y); a</p>
+<p class="p3">a.removeAt(\xyz); a</p>
+<p class="p3">a.removeAt(\rst); a</p>
+<p class="p2"><br></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>//<span class="Apple-converted-space"> </span></p>
+<p class="p3"><span class="Apple-tab-span">	</span>replaceAt(name, func, othername)</p>
+<p class="p2"><br></p>
+<p class="p3">a.replaceAt(\rst, { 987 }, \a); a</p>
+<p class="p3">a.replaceAt(\rst, { 123 }, \x); a</p>
+<p class="p2"><br></p>
+<p class="p3"><span class="Apple-tab-span">	</span>// internal<span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="s1">removeAtIndex(index) </span>// fails if out of range</p>
+<p class="p3">replaceAtIndex(index, name, func)</p>
+<p class="p3">putAtIndex(index, name, func)</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p3"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span>// todo:<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p3"><span class="Apple-tab-span">	</span>move( name, addAction, otherName )</p>
+<p class="p2"><br></p>
+<p class="p3"><span class="Apple-tab-span">	</span>moveLast(name)</p>
+<p class="p3"><span class="Apple-tab-span">	</span>moveFirst(name)</p>
+<p class="p3"><span class="Apple-tab-span">	</span>moveAfter(name)</p>
+<p class="p3"><span class="Apple-tab-span">	</span>moveBefore(name)</p>
+<p class="p2"><br></p>
 </body>
 </html>
