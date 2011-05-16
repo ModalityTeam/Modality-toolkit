@@ -4,13 +4,13 @@
 // TODO:
 //	default devSpec files in quarks, custom ones in userAppSupportDir
 //		(Platform.userAppSupportDir +/+ "MKtlSpecs").standardizePath, 
-//		if (devSpecsFolders[0].pathMatch.isEmpty) { 
-//			unixCmd("mkdir \"" ++ devSpecsFolder ++ "\"");
+//		if (deviceDescriptionFolders[0].pathMatch.isEmpty) { 
+//			unixCmd("mkdir \"" ++ deviceDescriptionFolder ++ "\"");
 //		};
 
 MKtl { // abstract class
 	
-	classvar <devSpecsFolder;
+	classvar <deviceDescriptionFolder;
 
 	classvar <all; // will hold all instances of MKtl
 
@@ -21,7 +21,7 @@ MKtl { // abstract class
 	// var <envir;	// maybe used for internal state
 	
 	// an array of keys and values with a description of all the elements on the device
-	var <devSpecs; 
+	var <deviceDescription; 
 	
 	// all control elements (MKtlElement) on the device you may want to listen or talk to
 	var <elements;
@@ -30,7 +30,7 @@ MKtl { // abstract class
 	
 	*initClass {
 		all = ();	
-		devSpecsFolder = this.filenameSymbol.asString.dirname +/+ "MKtlSpecs";
+		deviceDescriptionFolder = this.filenameSymbol.asString.dirname +/+ "MKtlSpecs";
 	}
 	
 		// abstract class - new returns existing instances 
@@ -52,11 +52,11 @@ MKtl { // abstract class
 		elements = ();
 	}
 
-	findDevSpecs { |deviceName| 
+	findDeviceDescription { |deviceName| 
 		
 		var cleanDeviceName = deviceName.collect { |char| if (char.isAlphaNum, char, $_) }.postcs;
-		var path = devSpecsFolder +/+ cleanDeviceName ++ ".scd";
-		devSpecs = try { 
+		var path = deviceDescriptionFolder +/+ cleanDeviceName ++ ".scd";
+		deviceDescription = try { 
 			path.load 
 		} { 
 			"//" + this.class ++ ": - no deviceSpecs found for %: please make them!\n".postf(cleanDeviceName);
@@ -64,12 +64,12 @@ MKtl { // abstract class
 		};
 	}
 
-	postSpecs { devSpecs.printcsAll; }
+	postSpecs { deviceDescription.printcsAll; }
 	
-	devSpecFor { |elname| ^devSpecs[devSpecs.indexOf(elname) + 1] }
+	devSpecFor { |elname| ^deviceDescription[deviceDescription.indexOf(elname) + 1] }
 	
 	elNames { 
-		^(0, 2 .. devSpecs.size - 2).collect (devSpecs[_])
+		^(0, 2 .. deviceDescription.size - 2).collect (deviceDescription[_])
 	}
 	
 	addFunc { |elementKey, funcName, function, addAction=\addToTail, target|

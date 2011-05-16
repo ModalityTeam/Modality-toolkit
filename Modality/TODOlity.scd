@@ -5,6 +5,7 @@ ToDolity
   * test that all variants of adding and removing work
 
 * MKtl:
+	* populate with MKtlElements
 	* ? move subclass methods up ... 
 	* interface protocol: 
 		get/setting values, 
@@ -14,7 +15,6 @@ ToDolity
 	* gesture recording / playback, MKtlLoop based on CtLoop?
 
 * HIDMKtl:
-	* populate with MKtlElements
 	* make crossplatform!! 
 		test, then use getAllCookies
 
@@ -22,7 +22,6 @@ ToDolity
 	* composites? somewhat important (TB)
 
 * MIDIMKtl:
-	* populate with MKtlElements
 	* test crossplatform
 	* respond to noteOn, noteOff
 	* addFunc should conform to super.addFunc

@@ -6,6 +6,7 @@
 
 
 MIDIMKtl : MKtl { 
+	classvar <initialized = false;
 	
 	var <srcID, <source; 
 	
@@ -14,10 +15,18 @@ MIDIMKtl : MKtl {
 	var <funcDict;
 	var <ccKeyToElNameDict;
 
-		// open all ports and display them in readable fashion, 
+		// open all ports 
+	*initMIDI{|force= false|
+		(initialized.not || {force}).if({
+			MIDIIn.connectAll;
+			initialized = true;
+		})
+	}
+	
+		// display all ports in readable fashion, 
 		// copy/paste-able directly 
 	*find { |name, uid| 
-		MIDIIn.connectAll;
+		this.initMIDI(true);
 		"\n///////// MIDIMKtl.find - - - MIDI sources found: /////// ".postln;
 		"	index	uid (USB port ID)	device	name".postln;
 		MIDIClient.sources.do({ |src,i|
@@ -77,7 +86,7 @@ MIDIMKtl : MKtl {
 		funcDict = ();
 		ccKeyToElNameDict = ();
 		
-		this.findDevSpecs(source.device); 
+		this.findDeviceDescription(source.device); 
 		
 		// this.makeElements; 
 		this.prepareFuncDict;
@@ -101,21 +110,21 @@ MIDIMKtl : MKtl {
 
 		// convenience methods
 	defaultElementValue { |elName| 
-		^devSpecs[elName].spec.default
+		^deviceDescription[elName].spec.default
 	}
 
-	postSpecs { devSpecs.printcsAll; }
+	postDescription { deviceDescription.printcsAll; }
 	
 	elNames { 
-		^(0, 2 .. devSpecs.size - 2).collect (devSpecs[_])
+		^(0, 2 .. deviceDescription.size - 2).collect (deviceDescription[_])
 	}
 
 
 		// plumbing	
 	prepareFuncDict { 
-		if (devSpecs.notNil) { 
+		if (deviceDescription.notNil) { 
 			// works only for scenes ATM;
-			devSpecs.pairsDo { |elName, descr| 
+			deviceDescription.pairsDo { |elName, descr| 
 				var ccKey = this.makeCCKey(descr[\chan], descr[\ccNum]);
 				descr.put(\ccKey, ccKey); // just in case ... 
 				
@@ -129,9 +138,9 @@ MIDIMKtl : MKtl {
 		}
 	}
 	
-	findDevSpecs { |devicename|
-		var path = devSpecsFolder +/+ devicename ++ ".scd";
-		devSpecs = try { 
+	findDeviceDescription { |devicename|
+		var path = deviceDescriptionFolder +/+ devicename ++ ".scd";
+		deviceDescription = try { 
 			path.load 
 		} { 
 			"MIDIMKtl - no deviceSpecs found for %: please make them!\n".postf(devicename);
