@@ -127,7 +127,7 @@ HIDMKtl : MKtl {
 //	}
 //
 //		// convenience methods
-//	defaultElementValue { |elName| 
+//	defaultValueFor { |elName| 
 //		^devSpecs[elName].spec.default
 //	}
 

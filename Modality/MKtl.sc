@@ -55,7 +55,7 @@ MKtl { // abstract class
 
 	findDeviceDescription { |deviceName| 
 		
-		var cleanDeviceName = deviceName.asString.collect { |char| if (char.isAlphaNum, char, $_) }.postcs;
+		var cleanDeviceName = deviceName.collect { |char| if (char.isAlphaNum, char, $_) }.postcs;
 		var path = deviceDescriptionFolder +/+ cleanDeviceName ++ ".scd";
 		deviceDescription = try { 
 			path.load;
@@ -71,10 +71,9 @@ MKtl { // abstract class
 		
 	}
 
-	postDeviceDescription { deviceDescription.printcsAll; }
-	
 	deviceDescriptionFor { |elname| ^deviceDescription[deviceDescription.indexOf(elname) + 1] }
 
+	postDeviceDescription { deviceDescription.printcsAll; }
 
 	makeElements {
 		this.elementNames.do{|key|
@@ -82,9 +81,9 @@ MKtl { // abstract class
 		}
 	}
 	
-			// convenience methods
-	defaultElementValue { |elName| 
-		^this.deviceDescriptionFor(elName).spec.default
+		// convenience methods
+	defaultValueFor { |elName|
+		^this.elements[elName].defaultValue
 	}
 	
 	elementNames { 
@@ -141,12 +140,19 @@ MKtlElement {
 	var <name; // its name in Ktl.elements
 	var <type; // its type. 
 	
-	var <deviceDescription, <spec; 
-	var <funcChain; //
+	var <deviceDescription;	 // its particular device description  
+	var <spec; // its spec
+
+
+	// Note to devs: 
+	//	Do never ever replace this funcChain with a new instance. 
+	// 	It is referenced externally for optimization (e.g. in MIDIKtl)
+	var <funcChain; 
 	
-	// keep value and previous value here?
+	
+	// keep value and previous value here
 	var <value;
-	var <>prevValue;
+	var <prevValue;
 
 	*initClass {
 		types = (
@@ -164,9 +170,13 @@ MKtlElement {
 	init { 
 		funcChain = FuncChain.new;
 		deviceDescription = ktl.deviceDescriptionFor(name);
-		spec = deviceDescription[\spec].asSpec;
+		spec = deviceDescription[\spec];
 		value = prevValue = spec.default ? 0;
 		type = deviceDescription[\type];
+	}
+
+	defaultValue {
+		^spec.default;	
 	}
 
 	// funcChain interface
@@ -194,8 +204,6 @@ MKtlElement {
 		funcChain.removeAt(funcName) 
 	}
 	
-
-
 	send { |val|
 		value = val;
 		//then send to hardware 	

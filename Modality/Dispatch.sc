@@ -44,7 +44,7 @@ Dispatch{
 		this.mapSource( ktlname, elem );
 		ktl.addFunction( elem, this.name, this );
 		// set a default value, should probably get this from the ktl[ctl]
-		sources[ktlname].put( elem, DispatchInput( ktl.defaultElementValue( elem ) ? 0 , false ) );
+		sources[ktlname].put( elem, DispatchInput( ktl.defaultValueFor( elem ) ? 0 , false ) );
 		if ( mappedElems[ktlname].isNil ){
 			mappedElems[ktlname] = List.new;
 		};
