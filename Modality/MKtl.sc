@@ -55,7 +55,7 @@ MKtl { // abstract class
 
 	findDeviceDescription { |deviceName| 
 		
-		var cleanDeviceName = deviceName.collect { |char| if (char.isAlphaNum, char, $_) }.postcs;
+		var cleanDeviceName = deviceName.asString.collect { |char| if (char.isAlphaNum, char, $_) }.postcs;
 		var path = deviceDescriptionFolder +/+ cleanDeviceName ++ ".scd";
 		deviceDescription = try { 
 			path.load;
