@@ -19,7 +19,7 @@ Dispatch{
 	var <envir; // internal state
 
 	var <changedOuts; // keeps the changed outputs in order to update
-	var <changedIns;
+	var <changedIn;
 
 	*new{ |name|
 		^super.new.init(name);
@@ -78,6 +78,7 @@ Dispatch{
 		var srcs = this.lookupSources( source );
 		srcs.do{ |it|
 			sources[it][key].value_( value ).changed_( true );
+			changedIn = (\source: source, \key: key)
 		};
 	}
 
