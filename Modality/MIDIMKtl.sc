@@ -110,17 +110,6 @@ MIDIMKtl : MKtl {
 		funcDict[ccKey].removeAt(name);
 	}
 
-		// convenience methods
-	defaultElementValue { |elName| 
-		^deviceDescription[elName].spec.default
-	}
-
-	postDescription { deviceDescription.printcsAll; }
-	
-	elNames { 
-		^(0, 2 .. deviceDescription.size - 2).collect (deviceDescription[_])
-	}
-
 
 		// plumbing	
 	prepareFuncDict { 

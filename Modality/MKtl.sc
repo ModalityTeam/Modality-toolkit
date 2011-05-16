@@ -27,6 +27,10 @@ MKtl { // abstract class
 	
 	*initClass {
 		all = ();	
+		Spec.add(\midiCC, [0, 127, \lin, 1, 0]); 
+		Spec.add(\midiVel, [0, 127, \lin, 1, 0]); 
+		Spec.add(\midiBut, [0, 127, \lin, 127, 0]); 
+
 		deviceDescriptionFolder = this.filenameSymbol.asString.dirname +/+ "MKtlSpecs";
 	}
 	
@@ -54,16 +58,29 @@ MKtl { // abstract class
 		var cleanDeviceName = deviceName.collect { |char| if (char.isAlphaNum, char, $_) }.postcs;
 		var path = deviceDescriptionFolder +/+ cleanDeviceName ++ ".scd";
 		deviceDescription = try { 
-			path.load 
+			path.load;
 		} { 
-			"//" + this.class ++ ": - no deviceSpecs found for %: please make them!\n".postf(cleanDeviceName);
+			"//" + this.class ++ ": - no device description found for %: please make them!\n".postf(cleanDeviceName);
 		//	this.class.openTester(this);
 		};
+		
+		// create specs
+		deviceDescription.pairsDo{|key, elem|
+			elem[\spec] = elem[\spec].asSpec
+		};
+		
 	}
 
 	postDeviceDescription { deviceDescription.printcsAll; }
 	
 	deviceDescriptionFor { |elname| ^deviceDescription[deviceDescription.indexOf(elname) + 1] }
+	
+			// convenience methods
+	defaultElementValue { |elName| 
+		^this.deviceDescriptionFor(elName).spec.default
+	}
+	
+
 	
 	elNames { 
 		^(0, 2 .. deviceDescription.size - 2).collect (deviceDescription[_])

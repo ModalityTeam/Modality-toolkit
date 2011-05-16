@@ -12,8 +12,9 @@ p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; min-height: 12.0px}
 p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #c91505}
 p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0024b9}
 p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco}
-p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #02701a}
-p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0025b9}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0025b8; min-height: 12.0px}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #02701a}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 9.0px Monaco; color: #0025b9}
 span.s1 {color: #0024b9}
 span.s2 {color: #000000}
 span.s3 {color: #006f1a}
@@ -22,7 +23,8 @@ span.s5 {color: #5b6060}
 span.s6 {color: #0024b8}
 span.s7 {color: #00701a}
 span.s8 {color: #0025b8}
-span.s9 {color: #036f1a}
+span.s9 {color: #02701a}
+span.s10 {color: #036f1a}
 span.Apple-tab-span {white-space:pre}
 </style>
 </head>
@@ -66,14 +68,22 @@ span.Apple-tab-span {white-space:pre}
 <p class="p2"><br></p>
 <p class="p2"><br></p>
 <p class="p5"><span class="s1">MIDIMKtl</span>(<span class="s3">'launchpad1'</span>, 1258389554);<span class="Apple-converted-space">  </span><span class="s4">// Launchpad</span></p>
-<p class="p5"><span class="s6">MIDIMKtl</span>(<span class="s7">'launchpad1')</span>.postDescription</p>
-<p class="p6"><span class="s8">MIDIMKtl</span><span class="s2">(</span>'launchpad1').verbose = true</p>
+<p class="p5"><span class="s6">MIDIMKtl</span>(<span class="s7">'launchpad1')</span>.postDeviceDescription</p>
+<p class="p6"><br></p>
+<p class="p7"><span class="s8">MIDIMKtl</span><span class="s2">(</span>'launchpad1').deviceDescription.pairsDo{|key, elem|</p>
+<p class="p7"><span class="Apple-tab-span">	</span>elem[\spec] = elem[\spec].asSpec</p>
+<p class="p7">}</p>
+<p class="p6"><br></p>
+<p class="p7"><span class="s8">MIDIMKtl</span><span class="s2">(</span>'launchpad1').deviceDescriptionFor(\bu13).spec.default</p>
+<p class="p5"><span class="s8">MIDIMKtl</span>(<span class="s9">'launchpad1').</span>defaultElementValue<span class="s2">(</span><span class="s3">\bu13</span><span class="s2">)</span></p>
+<p class="p2"><br></p>
+<p class="p7"><span class="s8">MIDIMKtl</span><span class="s2">(</span>'launchpad1').verbose = true</p>
 <p class="p2"><br></p>
 <p class="p5">(</p>
-<p class="p7"><span class="s2"><span class="Apple-tab-span">	</span></span>MIDIMKtl<span class="s2">(</span><span class="s9">\launchpad1</span><span class="s2">).addFunc(</span><span class="s9">\bu0</span><span class="s2">, </span><span class="s9">\yubel</span><span class="s2">, { </span>|who, what, howmuch|<span class="s2"><span class="Apple-converted-space"> </span></span></p>
+<p class="p8"><span class="s2"><span class="Apple-tab-span">	</span></span>MIDIMKtl<span class="s2">(</span><span class="s10">\launchpad1</span><span class="s2">).addFunc(</span><span class="s10">\bu0</span><span class="s2">, </span><span class="s10">\yubel</span><span class="s2">, { </span>|who, what, howmuch|<span class="s2"><span class="Apple-converted-space"> </span></span></p>
 <p class="p5"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">"YAYAYAY: "</span>.post; [who, what, howmuch].postln;</p>
 <p class="p5"><span class="Apple-tab-span">	</span>});</p>
 <p class="p5">)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s4">//<span class="Apple-converted-space"> </span></span></p>
-<p class="p6"><span class="s8">MIDIMKtl</span><span class="s2">(</span>'launchpad1').verbose = false</p>
+<p class="p7"><span class="s8">MIDIMKtl</span><span class="s2">(</span>'launchpad1').verbose = false</p>
 </body>
 </html>
