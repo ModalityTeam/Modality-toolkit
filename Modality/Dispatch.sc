@@ -40,7 +40,7 @@ Dispatch{
 		//	this.mapSource( \me, this );
 	}
 
-	mapToElem |ktl, elem, ktlname|
+	mapToElem{ |ktl, elem, ktlname|
 		this.mapSource( ktlname, elem );
 		ktl.addFunction( elem, this.name, this );
 		// set a default value, should probably get this from the ktl[ctl]
@@ -96,14 +96,6 @@ Dispatch{
 		changedOuts.add(key);
 	}
 
-	setVar{ |key,value|
-		envir.put( key, value );
-	}
-
-	getVar{ |key|
-		^envir.at( key );
-	}
-
 	value{ |source,key,value|
 		this.setInput( source, key, value );
 		this.processChain;
@@ -130,7 +122,7 @@ Dispatch{
 
 	processChain{
 		changedOuts = List.new;
-		funcChain.value( this );
+		funcChain.value( this, envir);
 		changedOuts.do{ |key|
 			if ( registered[key].notNil ){
 				registered[key].value( outputs[key] ); // this may need to pass more info
