@@ -68,6 +68,10 @@ MKtl { // abstract class
 		specs.put(key, spec.asSpec);	
 	}
 
+	*makeShortName {|deviceID|
+		^(deviceID.asString.toLower.select{|c| c.isAlpha && {"aeiou".includes(c).not}}.keep(4))
+	}
+
 	init {
 		//envir = ();
 		elements = ();

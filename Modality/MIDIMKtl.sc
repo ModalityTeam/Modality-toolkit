@@ -7,6 +7,7 @@
 
 MIDIMKtl : MKtl { 
 	classvar <initialized = false;
+	classvar <deviceDict;
 	
 	// MIDI-specific address identifiers 
 	var <srcID, <source; 
@@ -18,29 +19,57 @@ MIDIMKtl : MKtl {
 
 		// open all ports 
 	*initMIDI{|force= false|
-		(initialized.not || {force}).if({
-			MIDIIn.connectAll;
-			initialized = true;
-		})
+		var prevName = nil, j = 0, order, deviceNames;
+
+		(initialized && {force.not}).if{^this};
+		
+		
+		MIDIIn.connectAll;
+		deviceDict = ();
+
+		// prepare deviceDict
+		deviceNames = MIDIClient.sources.collect{|src|
+			this.makeShortName(src.device);
+		};
+		
+		order = deviceNames.order;
+		deviceNames[order].do{|name, i|
+			(prevName == name).if({
+				j = j+1;
+			},{
+				j = 0;
+			});
+			prevName = name;
+			
+			deviceDict.put((name ++ j).asSymbol, MIDIClient.sources[order[i]])
+		};
+				
+		initialized = true;
 	}
 	
 		// display all ports in readable fashion, 
 		// copy/paste-able directly 
 	*find { |name, uid| 
 		this.initMIDI(true);
-		"\n///////// MIDIMKtl.find - - - MIDI sources found: /////// ".postln;
-		"	index	uid (USB port ID)	device	name".postln;
-		MIDIClient.sources.do({ |src,i|
-			("\t" ++ i).post;
-			("\t\t[" ++ src.uid ++ "]").post;
-			("\t\t[" ++ src.device.asSymbol.asCompileString ++ "]").post;
-			("\t[" ++ src.name.asSymbol.asCompileString ++ "]").postln;
+		"/*\nMIDI sources found by MIDIMKtl.find:".postln;
+		"key	uid (USB port ID)	device	name".postln;
+		deviceDict.keysValuesDo({ |key, src|
+			"%\t[%]\t\t[%]\t[%]\n".postf(
+				key, 
+				src.uid,
+				src.device.asSymbol.asCompileString,
+				src.name.asSymbol.asCompileString
+			);
 		});	
-		"\n//	Possible	MIDIMKtls - just give them good names: ".postln;
-		MIDIClient.sources.do { |src| 
-			"		MIDIMKtl('???', %);  // %\n".postf(src.uid, src.device);
+		"*/\n\n// Available MIDIMKtls (you may want to change the names) */".postln;
+		deviceDict.keysValuesDo { |key, src| 
+			"MIDIMKtl('%', %);  // %\n".postf(
+				key, 
+				src.uid, 
+				src.device
+			);
 		};
-		"\n///////".postln;
+		"\n".postln;
 	}
 
 		// create with a uid, or access by name	
@@ -66,23 +95,41 @@ MIDIMKtl : MKtl {
 		
 			// make a new source
 		this.initMIDI;
-		foundSource = MIDIClient.sources.detect { |src|
-			src.uid == uid;
-		}; 
+		foundSource = uid.notNil.if({ 
+			MIDIClient.sources.detect { |src|
+				src.uid == uid;
+			}; 
+		}, {
+			deviceDict[name.asSymbol];
+		});
 
 		if (foundSource.isNil) { 
 			warn("MIDIMKtl:" 
 			"	No MIDIIn source with USB port ID % exists! please check again.".format(uid));
 			^nil
 		};
+		
+		this.reassignKeyOfDeviceDict(name, foundSource);
 				
-		^super.basicNew.init.initMIDIMKtl(name, uid, foundSource);
+		^super.basicNew.init.initMIDIMKtl(name, foundSource);
 	}
 	
-	initMIDIMKtl { |argName, argUid, argSource|
+	*reassignKeyOfDeviceDict{|name, source|
+		var oldName, otherSource;
+		
+		// find name clashes in deviceDict, and swap keys if there are. Otherwise "rename" key.
+		oldName = deviceDict.findKeyForValue(source);
+		otherSource = deviceDict[name];
+		
+		deviceDict[oldName] = otherSource;
+		deviceDict[name] = source;
+		
+	}
+	
+	initMIDIMKtl { |argName, argSource|
 		name = argName; 
-		srcID = argUid;
 		source = argSource;
+		srcID = source.uid;
 		all.put(name, this);
 		
 		funcDict = ();
@@ -210,15 +257,20 @@ MIDIMKtl : MKtl {
 	
 
 		// utilities for lookup 
-	makeCCKey { |chan, cc| ^(chan.asString ++ "_" ++ cc).asSymbol }
-	ccKeyToChanCtl { |ccKey| ^ccKey.asString.split($_).asInteger }
+	makeCCKey { |chan, cc| ^("c_%_%".format(cc, chan)).asSymbol }
+	
+	// currently broken
+	//ccKeyToChanCtl { |ccKey| ^ccKey.asString.split($_).asInteger }
 
 	makeNoteKey { |chan, note| 
-		var key = chan.asString; 
-		if (note.notNil) { key = key ++ "_" ++ note };
-		^key.asSymbol 
+		^("n_%_%".format(chan, note)).asSymbol
+		
+		// var key = chan.asString; 
+		// note !? { key = key ++ "_n_" ++ note };
+		// ^key.asSymbol 
 	}
-	noteKeyToChanNote { |noteKey| ^noteKey.asString.split($_).asInteger }
+	// currently broken
+	//noteKeyToChanNote { |noteKey| ^noteKey.asString.split($_).asInteger }
 	
 	storeArgs { ^[name] }
 	
