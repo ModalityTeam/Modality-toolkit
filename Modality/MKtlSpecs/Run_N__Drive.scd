@@ -1,11 +1,5 @@
 // Thrustmaster run'n'drive, designed by Ferrari, limited edition
 
-Spec.add(\hidBut, [0, 1, \lin, 1, 0]);
-Spec.add(\hidHat, [0, 1, \lin, 1, 0]);
-Spec.add(\lin255, [0, 255, \lin, 1, 128]);
-Spec.add(\lin255n, [255, 0, \lin, 1, 128]);
-Spec.add(\throt,  [0, 255, \lin, 1, 0]);
-
 [
 	// no idea what this is
 // [ Collection, GamePad, 1, 0, 0, 513, 1, 5 ]

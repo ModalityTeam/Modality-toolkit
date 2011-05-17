@@ -10,8 +10,8 @@
 
 MKtl { // abstract class
 	classvar <deviceDescriptionFolder;
-
 	classvar <all; // will hold all instances of MKtl
+	classvar <specs; // all specs
 
 	var <responders;
 	var <name;	// a user-given unique name
@@ -26,10 +26,23 @@ MKtl { // abstract class
 	//var <>recordFunc; // what to do to record incoming control changes
 	
 	*initClass {
-		all = ();	
-		Spec.add(\midiCC, [0, 127, \lin, 1, 0]); 
-		Spec.add(\midiVel, [0, 127, \lin, 1, 0]); 
-		Spec.add(\midiBut, [0, 127, \lin, 127, 0]); 
+		all = ();
+		
+		specs = ().parent_(Spec.specs);
+
+		// general
+		this.addSpec(\cent255, [0, 255, \lin, 1, 128]);
+		this.addSpec(\cent255inv, [255, 0, \lin, 1, 128]);
+		this.addSpec(\lin255,  [0, 255, \lin, 1, 0]);
+
+		// MIDI
+		this.addSpec(\midiCC, [0, 127, \lin, 1, 0]); 
+		this.addSpec(\midiVel, [0, 127, \lin, 1, 0]); 
+		this.addSpec(\midiBut, [0, 127, \lin, 127, 0]); 
+
+		// HID
+		this.addSpec(\hidBut, [0, 1, \lin, 1, 0]);
+		this.addSpec(\hidHat, [0, 1, \lin, 1, 0]);
 
 		deviceDescriptionFolder = this.filenameSymbol.asString.dirname +/+ "MKtlSpecs";
 	}
@@ -46,6 +59,10 @@ MKtl { // abstract class
 	
 	*find {
 		this.allSubclasses.do(_.find);	
+	}
+
+	*addSpec {|key, spec|
+		specs.put(key, spec.asSpec);	
 	}
 
 	init {
