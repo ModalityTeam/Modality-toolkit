@@ -143,10 +143,18 @@ MKtl { // abstract class
 	}
 
 	// interface compatibility for make MKtl usable like a Dispatch (sometimes called duck-typing (tm))
+	// allow to register easilly to multiple elements:
+	//i.e.  'sl*'
+	//i.e.  'sl1_?'
+	//i.e.  '*'
 	addToOutput { |elementKey, funcName, function, addAction, otherName|
-		this.addFunc(elementKey, funcName, function, addAction, otherName)
+		elements.do{ |elem|
+			var key = elem.name
+			if( key.matchOSCAddressPattern(elementKey) ) {
+				this.addFunc(key, funcName, function, addAction, otherName)
+			}
+		}
 	}
-
 	
 	recordValue { |key,value|
 //		recordFunc.value( key, value );
