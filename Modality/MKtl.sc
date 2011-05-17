@@ -71,26 +71,30 @@ MKtl { // abstract class
 	init {
 		//envir = ();
 		elements = ();
-		this.loadDeviceDescription; 
+		//this.loadDeviceDescription; 
 		
 		
 	}
 
 	loadDeviceDescription { |deviceName| 
 		
-		var cleanDeviceName = deviceName.collect { |char| if (char.isAlphaNum, char, $_) }.postcs;
-		var path = deviceDescriptionFolder +/+ cleanDeviceName ++ ".scd";
+		var cleanDeviceName;
+		var path; 
+
+		cleanDeviceName = deviceName.collect { |char| if (char.isAlphaNum, char, $_) };
+		path = deviceDescriptionFolder +/+ cleanDeviceName ++ ".scd";
+
 		deviceDescription = try { 
 			path.load;
 		} { 
 			"//" + this.class ++ ": - no device description found for %: please make them!\n".postf(cleanDeviceName);
 		//	this.class.openTester(this);
 		};
-		
+
 		// create specs
 		deviceDescription.pairsDo {|key, elem| 
 			elem[\specName] = elem[\spec];
-			elem[\spec] = elem[\spec].asSpec
+			elem[\spec] = this.class.specs[elem[\specName]];
 		};
 	}
 	
