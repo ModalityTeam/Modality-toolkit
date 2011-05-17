@@ -49,11 +49,12 @@ ToDolity
 	* UC33
 
 * Dispatch: 
+	* common interface between MKtlElement and DispatchOut
 	* use/test cases for dummies
 	* hierarchy of outputs
 	* factory of common functionality (average, page ctrl, trigger, acc, LOA, stuff that is in actionFunc, times things, regions(e.g. launchpad,), eventually WOLRD DOMINATION UHAHAAHAHAHAHAHAHAH)
 	* several things are the same source, how to deal with it?
-	* naming of addFunc/register/etc.
+	* naming of addFunc/register/etc. (Miguel: done)
 
 * GUI
 	* auto-generate based on controller description 
