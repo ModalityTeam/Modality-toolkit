@@ -3,10 +3,10 @@ Dispatch{
 	classvar <>tempNamePrefix = "Dispatch_";
 	classvar tempDefCount = 0;
 	classvar <>maxTempDefNames = 512;
-
+	
 	//	classvar <all;
 
-	//	var <key;
+	var <verbose = false;
 	var <name;
 	var <funcChain;
 
@@ -51,10 +51,10 @@ Dispatch{
 	}
 	
 	changeSource{ |sourceKey, newSource|
-		var oldKtl = sourceKeyToSource[sourceKey];
+		var oldSource = sourceKeyToSource[sourceKey];
 		mappedElems[ sourceKey ].do{ |elem|
 			// unregister from old Ktl
-			oldKtl.removeFunc(elem, this.name);
+			oldSource.removeFromOutput(elem, this.name);
 			// register with new Ktl
 			this.mapToElem( newSource, elem, sourceKey );
 		};
@@ -84,6 +84,7 @@ Dispatch{
 	
 	//map all elements
 	mapAll{ |source, sourceKey |
+		sourceKey = sourceKey ? source.name;
 		this.mapSourceToKey(source, sourceKey);
 		source.elementNames.do{ |elemKey|
 			this.prRegisterInputWithSource(source, elemKey, sourceKey)
@@ -91,12 +92,13 @@ Dispatch{
 	}
 	
 	mapToElem{ |source, elemKey, sourceKey|
+		sourceKey = sourceKey ? source.name;
 		this.mapSourceToKey(source, sourceKey);
 		this.prRegisterInputWithSource(source, elemKey, sourceKey)		
 	}
 
-	lookupSources{ |sourceKey|
-		^sourceKeyToSource.findKeysForValue( sourceKey );
+	lookupSources{ |source|
+		^sourceKeyToSource.findKeysForValue( source );
 	}	
 	
 	valueArray{ arg args;
@@ -107,10 +109,10 @@ Dispatch{
 		changedIn = nil;		
 	}
 
-	setInput{ |sourceKey, elemKey, value|
-		var srcs = this.lookupSources( sourceKey );
-		srcs.do{ |it|
-			sources[it].put(elemKey, value);
+	setInput{ | source, elemKey, value|
+		var srcKeys = this.lookupSources( source );
+		srcKeys.do{ |sourceKey|
+			sources[sourceKey].put(elemKey, value);
 			changedIn = (\source: sourceKey, \key: elemKey, \val: value)
 		};
 	}
@@ -118,7 +120,12 @@ Dispatch{
 	getInput{ | sourceKey, elemKey|
 		^sources[sourceKey][elemKey]
 	}
-
+	
+	createOutput{ |elemkey|
+		postln("creating output for"++ elemkey);
+		dispatchOuts[elemkey] = DispatchOut.new( this, elemkey );
+	}
+	
 	getOutput{ |elemKey|
 		^outputs[elemKey];
 	}
@@ -128,12 +135,27 @@ Dispatch{
 		outputs.put( elemKey, value );
 		changedOuts.add(elemKey);
 	}
-
-	addToOutput{ |key, funcName, func, addAction, other| // could have order indication
-		if ( dispatchOuts[key].isNil ){
-			dispatchOuts[key] = DispatchOut.new( this, key );
-		};
-		dispatchOuts[key].addFunction( funcName, func );
+	
+	//pattern matching
+	//i.e.  'sl*'
+	//i.e.  'sl1_?'
+	//i.e.  '*'
+	addToOutput { |elementKey, funcName, function, addAction, otherName| // could have order indication
+		dispatchOuts.do{ |elem|
+			var key = elem.name;
+			if( key.matchOSCAddressPattern(elementKey) ) {
+				dispatchOuts[key].addFunction( funcName, function );		
+			}
+		}
+	}
+	
+	removeFromOutput { |elementKey, funcName| 		
+		dispatchOuts.do{ |elem|
+			var key = elem.name;
+			if( key.matchOSCAddressPattern(elementKey) ) {
+				dispatchOuts[key].removeFunc(funcName);
+			}
+		}
 	}
 
 	processChain{
@@ -150,17 +172,43 @@ Dispatch{
 		funcChain.add( key, func, addAction, target );
 	}
 	
+	remove{
+		sources.keys.do{ |sourceKey|
+			var source = sourceKeyToSource[sourceKey];
+			mappedElems[ sourceKey ].do{ |elem|
+				// unregister from old Ktl
+				source. removeFromOutput(elem, this.name);
+			}
+		}
+	}
+	
+	elementNames{
+		^dispatchOuts.collect(_.name)
+	}
+	
+	defaultValueFor{ ^0 }
+	/*
+	verbose_ {|value=true|
+		value.if({
+			dispatchOuts.do{ |item| item.addFirst(\verbose, { |ktl, elName, value| 
+					[ktl, elName, value].postln;
+			})}
+		}, {
+			funcDict.do{|item| item.removeAt(\verbose)}
+		})
+	}
+	*/ 
 }
 
 DispatchOut {
 
 	var <>dispatch; // the dispatcher it belongs to
-	var <>key; // its key in dispatch
+	var <>name; // its key in dispatch
 
 	var <funcChain;
 
-	*new { |dis,key|
-		^super.newCopyArgs( dis, key ).init;
+	*new { |dis,name|
+		^super.newCopyArgs( dis, name ).init;
 	}
 
 	init{ 
@@ -172,7 +220,7 @@ DispatchOut {
 	}
 
 	value{ |newval|
-		funcChain.value( dispatch, key, newval );
+		funcChain.value( dispatch, name, newval );
 	}
 
 

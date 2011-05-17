@@ -47,14 +47,20 @@ ToDolity
 	* Saitec Cyborg Evol
 	* Cyborg Keyborg
 	* UC33
+	* BCR (just copy)
+	* BCF
 
 * Dispatch: 
 	* common interface between MKtlElement and DispatchOut
-	* use/test cases for dummies
-	* hierarchy of outputs
-	* factory of common functionality (average, page ctrl, trigger, acc, LOA, stuff that is in actionFunc, times things, regions(e.g. launchpad,), eventually WOLRD DOMINATION UHAHAAHAHAHAHAHAHAH)
+	* factory of common functionality (average, page ctrl, trigger, acc, LOA, stuff that is in actionFunc,
+	 times things, regions(e.g. launchpad,), transform trigger buttons (that go 127 when pressed and 0 when depressed) into just a trigger, eventually WOLRD DOMINATION UHAHAAHAHAHAHAHAHAH)
 	* several things are the same source, how to deal with it?
-	* naming of addFunc/register/etc. (Miguel: done)
+	* easy way to compose several Dispatchs
+	* add verbose posting
+	------------------------------------------------------------------------------------
+	* use/test cases for dummies (Miguuel: done - help file)
+	* hierarchy of outputs (Miguel - just use symbols like in osc /page1/string1, done)
+	* naming of addFunc/register/etc. (Miguel: done - addToProc and addToOutput)
 
 * GUI
 	* auto-generate based on controller description 
