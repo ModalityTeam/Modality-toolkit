@@ -13,7 +13,7 @@ Dispatch{
 	var <dispatchOuts; // DispatchOuts to which stuff is registered
 
 
-	var <sourceNameToKtl;
+	var <sourceKeyToSource;
 	//	var <sourcesToInputs;
 	var <mappedElems;
 
@@ -42,51 +42,62 @@ Dispatch{
 
 		sources = ();
 		outputs = ();
-		sourceNameToKtl = ();
+		sourceKeyToSource = ();
 		mappedElems = ();
 
 		dispatchOuts = ();
 
 		//	this.mapSource( \me, this );
 	}
-
-	mapToElem{ |ktl, elem, ktlname|
-		this.mapSource( ktlname, ktl );
-		ktl.addToOutput( elem, this.name, this );
-		sources[ktlname].put( elem, ktl.defaultValueFor( elem ) ? 0);
-		if ( mappedElems[ktlname].isNil ){
-			mappedElems[ktlname] = List.new;
-		};
-		mappedElems[ktlname].add( elem );
-	}
-
-	changeSource{ |oldname, newsource|
-		var oldKtl = sourceNameToKtl[oldname];
-		mappedElems[ oldname ].do{ |elem|
+	
+	changeSource{ |sourceKey, newSource|
+		var oldKtl = sourceKeyToSource[sourceKey];
+		mappedElems[ sourceKey ].do{ |elem|
 			// unregister from old Ktl
 			oldKtl.removeFunc(elem, this.name);
 			// register with new Ktl
-			this.mapToElem( newsource, elem, oldname );
+			this.mapToElem( newSource, elem, sourceKey );
 		};
 	}
 
-	mapSource{ |name,source| //name is an abstract name for the source, source is either a Ktl or a Dispatch
-		if ( sourceNameToKtl.includesKey( name ) ){
-			if ( (sourceNameToKtl[name] === source).not ){
-				this.changeSource( name, source );
+	mapSourceToKey{ |source, sourceKey | //name is an abstract name for the source, source is either a Ktl or a Dispatch
+		if ( sourceKeyToSource.includesKey( sourceKey ) ){
+			if ( (sourceKeyToSource[sourceKey] === source).not ){
+				this.changeSource( sourceKey, source );
 			};
 		} {
-			sourceNameToKtl.put( name, source );
+			sourceKeyToSource.put( sourceKey, source );
 			if ( sources[name].isNil ){
-				sources.put( name, () );
+				sources.put( sourceKey, () );
 			};
 		}
 	}
-
-	lookupSources{ |source|
-		^sourceNameToKtl.findKeysForValue( source );
+	
+	prRegisterInputWithSource{ |source, elemKey, sourceKey|
+		source.addToOutput( elemKey, this.name, this );
+		sources[sourceKey].put( elemKey, source.defaultValueFor( elemKey ) ? 0);
+		if ( mappedElems[sourceKey].isNil ){
+			mappedElems[sourceKey] = List.new;
+		};
+		mappedElems[sourceKey].add( elemKey );		
 	}
 	
+	//map all elements
+	mapAll{ |source, sourceKey |
+		this.mapSourceToKey(source, sourceKey);
+		source.elementNames.do{ |elemKey|
+			this.prRegisterInputWithSource(source, elemKey, sourceKey)
+		}
+	}
+	
+	mapToElem{ |source, elemKey, sourceKey|
+		this.mapSourceToKey(source, sourceKey);
+		this.prRegisterInputWithSource(source, elemKey, sourceKey)		
+	}
+
+	lookupSources{ |sourceKey|
+		^sourceKeyToSource.findKeysForValue( sourceKey );
+	}	
 	
 	valueArray{ arg args;
 		var source,key,value;
@@ -96,29 +107,29 @@ Dispatch{
 		changedIn = nil;		
 	}
 
-	setInput{ |source,key,value|
-		var srcs = this.lookupSources( source );
+	setInput{ |sourceKey, elemKey, value|
+		var srcs = this.lookupSources( sourceKey );
 		srcs.do{ |it|
-			sources[it].put(key, value);
-			changedIn = (\source: source, \key: key, \val: value)
+			sources[it].put(elemKey, value);
+			changedIn = (\source: sourceKey, \key: elemKey, \val: value)
 		};
 	}
 
-	getInput{ |sourcename,key|
-		^sources[sourcename][key];
+	getInput{ | sourceKey, elemKey|
+		^sources[sourceKey][elemKey]
 	}
 
-	getOutput{ |key|
-		^outputs[key];
+	getOutput{ |elemKey|
+		^outputs[elemKey];
 	}
 
-	setOutput{ |key,value|
-		dispatchOuts[\key].value(value);
-		outputs.put( key, value );
-		changedOuts.add(key);
+	setOutput{ |elemKey, value|
+		dispatchOuts[elemKey].value(value);
+		outputs.put( elemKey, value );
+		changedOuts.add(elemKey);
 	}
 
-	addToOutput{ |key,funcName,func,addAction, other| // could have order indication
+	addToOutput{ |key, funcName, func, addAction, other| // could have order indication
 		if ( dispatchOuts[key].isNil ){
 			dispatchOuts[key] = DispatchOut.new( this, key );
 		};
