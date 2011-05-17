@@ -149,7 +149,7 @@ MKtl { // abstract class
 	//i.e.  '*'
 	addToOutput { |elementKey, funcName, function, addAction, otherName|
 		elements.do{ |elem|
-			var key = elem.name
+			var key = elem.name;
 			if( key.matchOSCAddressPattern(elementKey) ) {
 				this.addFunc(key, funcName, function, addAction, otherName)
 			}
