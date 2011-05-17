@@ -138,8 +138,13 @@ MKtl { // abstract class
 		elements[elementKey].addFuncBefore(funcName, function, otherName);
 	}
 	
-	removeFunc { |elementKey, funcName| 
-		elements[elementKey].removeFunc(funcName);
+	removeFunc { |elementKey, funcName| 		
+		elements.do{ |elem|
+			var key = elem.name;
+			if( key.matchOSCAddressPattern(elementKey) ) {
+				elements[key].removeFunc(funcName);
+			}
+		}
 	}
 
 	// interface compatibility for make MKtl usable like a Dispatch (sometimes called duck-typing (tm))
@@ -154,6 +159,10 @@ MKtl { // abstract class
 				this.addFunc(key, funcName, function, addAction, otherName)
 			}
 		}
+	}
+	
+	removeFromOutput{ |elementKey, funcName| 
+		this.removeFunc(elementKey, funcName)
 	}
 	
 	recordValue { |key,value|
