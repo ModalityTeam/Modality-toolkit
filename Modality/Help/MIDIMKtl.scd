@@ -1,4 +1,4 @@
-MIDIMKtl - an MKtl class for MIDI.
+// MIDIMKtl - an MKtl class for MIDI.
 
 // One can find potential MIDI sources like this: 
 	MIDIMKtl.find;
@@ -13,17 +13,27 @@ a = MIDIMKtl('lnch0');
 
 // ... or give it another identifier by calling it with its uid 
 // (to be found in MIDIMKtl.find)
-// (you can also swap default names with this, for now only ones, though)
+// (you can also swap default names with this --for now only once, though-- )
 a = MIDIMKtl('launch', 593081660);
 	
 // there is no uid like that, so this fails
-b = MIDIMKtl(\launch, 12345);			// 
+b = MIDIMKtl(\launch, 12345);
 
-// calling the method again wth the same key will return the assigned one
+// calling the method again with the same key will return the assigned one
 b = MIDIMKtl(\launch);
 
 b === a
 // -> true
+
+// just any device you have connected:
+MIDIMKtl.find;
+a = MIDIMKtl(MIDIMKtl.deviceDict.keys.asArray.first)
+
+
+// the source
+MIDIMKtl('lnch0').source;
+MIDIMKtl('lnch0').srcID;
+
 
 
 // it loads descriptions of all its elements from files: 
