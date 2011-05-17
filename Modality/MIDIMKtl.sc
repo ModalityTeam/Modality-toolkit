@@ -88,7 +88,7 @@ MIDIMKtl : MKtl {
 		funcDict = ();
 		hashToElNameDict = ();
 		
-		this.findDeviceDescription(source.device); 
+		this.loadDeviceDescription(source.device); 
 		
 		this.makeElements; 
 		this.prepareFuncDict;

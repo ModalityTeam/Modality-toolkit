@@ -49,11 +49,14 @@ MKtl { // abstract class
 	
 		// abstract class - new returns existing instances 
 		// of subclasses that exist in .all
-	*new { |name|
-		^all[name]	
+	*new { |name, deviceDesc|
+		if (deviceDesc.isNil) { ^all[name] };
+		
+		^super.basicNew(deviceDesc);
+		
 	}
 	
-	*basicNew { 
+	*basicNew { |desc| 
 		^super.new.init;
 	}
 	
@@ -68,9 +71,12 @@ MKtl { // abstract class
 	init {
 		//envir = ();
 		elements = ();
+		this.loadDeviceDescription; 
+		
+		
 	}
 
-	findDeviceDescription { |deviceName| 
+	loadDeviceDescription { |deviceName| 
 		
 		var cleanDeviceName = deviceName.collect { |char| if (char.isAlphaNum, char, $_) }.postcs;
 		var path = deviceDescriptionFolder +/+ cleanDeviceName ++ ".scd";
@@ -82,10 +88,17 @@ MKtl { // abstract class
 		};
 		
 		// create specs
-		deviceDescription.pairsDo{|key, elem|
+		deviceDescription.pairsDo {|key, elem| 
+			elem[\specName] = elem[\spec];
 			elem[\spec] = elem[\spec].asSpec
 		};
-		
+	}
+	
+	*postDescriptions {
+		(MKtl.deviceDescriptionFolder +/+ "*").pathMatch
+			.collect { |path| path.basename.splitext.first }
+			.reject(_.beginsWith("_"))
+			.do { |path| ("['" ++ path ++"']").postln }
 	}
 
 	deviceDescriptionFor { |elname| ^deviceDescription[deviceDescription.indexOf(elname) + 1] }

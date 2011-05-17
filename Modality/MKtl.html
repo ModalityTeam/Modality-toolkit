@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<title></title>
+<meta name="Generator" content="Cocoa HTML Writer">
+<meta name="CocoaVersion" content="1038.35">
+<style type="text/css">
+p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 21.0px Monaco}
+p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Monaco; min-height: 17.0px}
+p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Monaco; color: #c91505}
+p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Monaco}
+p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Monaco; color: #c9150c}
+p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Monaco; color: #0024b9}
+p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Monaco; color: #02701a}
+p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Monaco; color: #0025b8; min-height: 17.0px}
+p.p9 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Monaco; color: #c20202}
+p.p10 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Monaco; color: #0025b9}
+p.p11 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Monaco; color: #0025b9; min-height: 17.0px}
+p.p12 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.0px Monaco; color: #036f1a}
+span.s1 {color: #0024b9}
+span.s2 {color: #c9150c}
+span.s3 {color: #1428b9}
+span.s4 {color: #000000}
+span.s5 {color: #c91505}
+span.s6 {color: #006f1a}
+span.s7 {color: #5b6060}
+span.s8 {color: #0025b9}
+span.s9 {color: #036f1a}
+span.s10 {color: #0024b8}
+span.s11 {color: #00701a}
+span.s12 {color: #0025b8}
+span.s13 {color: #02701a}
+span.Apple-tab-span {white-space:pre}
+</style>
+</head>
+<body>
+<p class="p1"><span class="s1">MKtl</span> - a model for a (hardware or gui-based) controller</p>
+<p class="p2"><br></p>
+<p class="p3"><span class="Apple-tab-span">	</span>// One can find all currently available devices <span class="s2">on MIDI, HID;</span></p>
+<p class="p3"><span class="Apple-tab-span">	</span>//<span class="Apple-converted-space">  </span>... others later: hardware<span class="Apple-converted-space">  </span>(Serial, OSC, <span class="s2">Wii, Keyboard</span>)</p>
+<p class="p3"><span class="Apple-tab-span">	</span>//<span class="Apple-converted-space">  </span>... virtual control devices (GUI, SETO, DataNode)</p>
+<p class="p4"><span class="s1">MKtl</span>.find;</p>
+<p class="p2"><br></p>
+<p class="p4"><span class="Apple-tab-span">	</span>// known devices have descriptions:</p>
+<p class="p4"><span class="s3">MKtl.</span>postDescriptions</p>
+<p class="p2"><br></p>
+<p class="p4">// There are two ways of making MKtls:</p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p3"><span class="s4">1.<span class="Apple-tab-span">	</span></span>// based on an existing uid, make a MIDIMKtl or HIDMKtl:</p>
+<p class="p5"><span class="s5"><span class="Apple-tab-span">	</span></span>// this gets the description for the device on that USB port ID;</p>
+<p class="p5"><span class="Apple-tab-span">	</span>// replace ??? with your preferred name for that device.</p>
+<p class="p4"><span class="s3">MIDIMKtl</span>(<span class="s6">''</span>, -616253900);<span class="Apple-converted-space"> </span></p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p5"><span class="s4">1.<span class="Apple-tab-span">	</span></span>// based on a description name, make an MKtl with those specs;<span class="Apple-converted-space"> </span></p>
+<p class="p5"><span class="Apple-tab-span">	</span>// should work without the device physically<span class="Apple-converted-space"> </span></p>
+<p class="p5"><span class="Apple-tab-span">	</span>// this gets the description for the device on that USB port ID;</p>
+<p class="p5"><span class="Apple-tab-span">	</span>// replace ??? with your preferred name for that device.</p>
+<p class="p4"><span class="s1">MKtl</span>(<span class="s6">\nk1</span>, 'nanoKONTROL');<span class="Apple-tab-span">	</span></p>
+<p class="p2"><span class="Apple-tab-span">	</span></p>
+<p class="p3"><span class="s4"><span class="Apple-tab-span">	</span></span>// A Test, there is no uid like that, so this fails</p>
+<p class="p4"><span class="s1">MIDIMKtl</span>(<span class="s6">\nk1</span>, 12345);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">//<span class="Apple-converted-space"> </span></span></p>
+<p class="p2"><br></p>
+<p class="p3"><span class="s4"><span class="Apple-tab-span">	</span></span>// lookup existing ones by name:</p>
+<p class="p3"><span class="s1">MIDIMKtl</span><span class="s4">(</span><span class="s6">\nk1</span><span class="s4">);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// look up again;</p>
+<p class="p2"><br></p>
+<p class="p3"><span class="s4"><span class="Apple-tab-span">	</span></span>// lookup existing ones by name from MKtl:</p>
+<p class="p3"><span class="s1">MKtl</span><span class="s4">(</span><span class="s6">\nk1</span><span class="s4">);<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span></span>// look up again;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p3">// it loads descriptions of all its elements from files:<span class="Apple-converted-space"> </span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s1">MIDIMKtl</span>(<span class="s6">\nk1</span>).deviceDescription;</p>
+<p class="p3">// which can be posted conveniently</p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s1">MIDIMKtl</span>(<span class="s6">\nk1</span>).postDescription;</p>
+<p class="p2"><br></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s1">MIDIMKtl</span>(<span class="s6">\nk1</span>).elNames.postcs; <span class="s7">""</span>;</p>
+<p class="p2"><br></p>
+<p class="p4">(</p>
+<p class="p6"><span class="s4"><span class="Apple-tab-span">	</span></span>MIDIMKtl<span class="s4">(</span><span class="s6">\nk1</span><span class="s4">).addFunc(</span><span class="s6">\sl1_1</span><span class="s4">, </span><span class="s6">\yubel</span><span class="s4">, { </span>|who, what, howmuch|<span class="s4"><span class="Apple-converted-space"> </span></span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">"YAYAYAY: "</span>.post; [who, what, howmuch].postln;</p>
+<p class="p4"><span class="Apple-tab-span">	</span>});</p>
+<p class="p4">)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">//<span class="Apple-converted-space"> </span></span></p>
+<p class="p2"><br></p>
+<p class="p4">// turn verbos mode on; this adds a "verbose" function to all functionChains for all elements.</p>
+<p class="p7"><span class="s4"><span class="Apple-tab-span">	</span></span><span class="s8">MIDIMKtl</span><span class="s4">(</span><span class="s9">\nk1</span><span class="s4">)</span>.verbose = true</p>
+<p class="p2"><br></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="s1">MIDIMKtl</span>(<span class="s6">\nk1</span>).openTester;</p>
+<p class="p2"><br></p>
+<p class="p2"><br></p>
+<p class="p6">MIDIMKtl('launchpad1', 593081660);<span class="Apple-converted-space">  </span>// Launchpad</p>
+<p class="p4"><span class="s10">MIDIMKtl</span>(<span class="s11">'launchpad1')</span>.postDeviceDescription</p>
+<p class="p8"><br></p>
+<p class="p4"><span class="s12">MIDIMKtl</span>(<span class="s13">'launchpad1').</span>defaultValueFor(<span class="s6">\bu13</span>)</p>
+<p class="p2"><br></p>
+<p class="p9">// maybe "debug" (as)?</p>
+<p class="p7"><span class="s12">MIDIMKtl</span><span class="s4">(</span>'launchpad1').verbose = true</p>
+<p class="p7"><span class="s12">MIDIMKtl</span><span class="s4">(</span>'launchpad1').verbose = false</p>
+<p class="p2"><br></p>
+<p class="p7"><span class="s8">MIDIMKtl</span><span class="s4">(</span><span class="s9">\launchpad1</span><span class="s4">)</span>.verbose = true</p>
+<p class="p2"><br></p>
+<p class="p4">(</p>
+<p class="p10"><span class="s4"><span class="Apple-tab-span">	</span></span>MIDIMKtl<span class="s4">(</span><span class="s9">\launchpad1</span><span class="s4">).addFunc(</span><span class="s9">\bu0</span><span class="s4">, </span><span class="s9">\yubel</span><span class="s4">, { </span>|who, what, howmuch|<span class="s4"><span class="Apple-converted-space"> </span></span></p>
+<p class="p4"><span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s7">"YAYAYAY: "</span>.post; [who, what, howmuch].postln;</p>
+<p class="p4"><span class="Apple-tab-span">	</span>});</p>
+<p class="p4">)<span class="Apple-tab-span">	</span><span class="Apple-tab-span">	</span><span class="s5">//<span class="Apple-converted-space"> </span></span></p>
+<p class="p7"><span class="s8">MIDIMKtl</span><span class="s4">(</span><span class="s9">\launchpad1</span><span class="s4">)</span>.verbose = false</p>
+<p class="p11"><br></p>
+<p class="p8"><br></p>
+<p class="p12"><span class="s8">MIDIMKtl</span><span class="s4">(</span>\launchpad1<span class="s4">).removeFunc(</span>\bu0<span class="s4">, </span>\yubel<span class="s4">)</span></p>
+</body>
+</html>
