@@ -5,10 +5,6 @@ ToDolity
   * test that all variants of adding and removing work
 
 * MKtl:
-	* ? move subclass methods up ... 
-		(LFSaw: mostly done)
-
-	* populate with MKtlElements
 	* interface protocol: 
 		get/setting values, 
 		add/remove functions
@@ -19,7 +15,6 @@ ToDolity
 	* gesture recording / playback, MKtlLoop based on CtLoop?
 
 * HIDMKtl:
-	* populate with MKtlElements
 	* make crossplatform!! 
 		test, then use getAllCookies
 
@@ -27,9 +22,7 @@ ToDolity
 	* composites? somewhat important (LFSaw)
 
 * MIDIMKtl:
-	* respond to noteOn, noteOff (LFSaw: done)
-	* test crossplatform
-	* addFunc should conform to super.addFunc
+	* get destination to work
 
 * write more [stub] subclasses, finish by demand:
 	* KeysMKtl
