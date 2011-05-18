@@ -225,35 +225,20 @@ MKtl { // abstract class
 
 }
 
-MKtlElement {
-	classvar <types;
-
+MKtlBasicElement {
+	
 	var <source; // the Ktl it belongs to
 	var <name; // its name in Ktl.elements
 	var <type; // its type. 
-	
-	var <deviceDescription;	 // its particular device description  
-	var <spec; // its spec
-
 
 	// Note to devs: 
 	//	Do never ever replace this funcChain with a new instance. 
 	// 	It is referenced externally for optimization (e.g. in MIDIKtl)
-	var <funcChain; 
-	
+	var <funcChain; 	
 	
 	// keep value and previous value here
 	var <value;
 	var <prevValue;
-
-	*initClass {
-		types = (
-			\slider: \x,
-			\button: \x,
-			\thumbStick: [\joyAxis, \joyAxis, \button],
-			\joyStick: [\joyAxis, \joyAxis, \button]
-		)
-	}
 
 	*new { |source, name|
 		^super.newCopyArgs( source, name).init;
@@ -261,25 +246,6 @@ MKtlElement {
 
 	init { 
 		funcChain = FuncChain.new;
-		deviceDescription = source.deviceDescriptionFor(name);
-		spec = deviceDescription[\spec];
-		if (spec.isNil) { 
-			warn("spec for '%' is missing!".format(spec));
-		} { 
-			value = prevValue = spec.default ? 0;
-		};
-		type = deviceDescription[\type];
-
-		spec = deviceDescription[\spec];
-		if (spec.isNil) { 
-			warn("spec for '%' is missing!".format(spec));
-		} { 
-			value = prevValue = spec.default ? 0;
-		};
-	}
-
-	defaultValue {
-		^spec.default;	
 	}
 
 	// funcChain interface //
@@ -327,5 +293,52 @@ MKtlElement {
 		//funcChain.value( name, newval );
 		funcChain.value( this );
 	}
+	
+	doAction {
+		funcChain.value( this );
+	}
 
+}
+
+MKtlElement : MKtlBasicElement{
+	classvar <types;
+		
+	var <deviceDescription;	 // its particular device description  
+	var <spec; // its spec
+
+	*initClass {
+		types = (
+			\slider: \x,
+			\button: \x,
+			\thumbStick: [\joyAxis, \joyAxis, \button],
+			\joyStick: [\joyAxis, \joyAxis, \button]
+		)
+	}
+
+	*new { |source, name|
+		^super.newCopyArgs( source, name).init;
+	}
+
+	init { 
+		super.init;
+		deviceDescription = source.deviceDescriptionFor(name);
+		spec = deviceDescription[\spec];
+		if (spec.isNil) { 
+			warn("spec for '%' is missing!".format(spec));
+		} { 
+			value = prevValue = spec.default ? 0;
+		};
+		type = deviceDescription[\type];
+
+		spec = deviceDescription[\spec];
+		if (spec.isNil) { 
+			warn("spec for '%' is missing!".format(spec));
+		} { 
+			value = prevValue = spec.default ? 0;
+		};
+	}
+
+	defaultValue {
+		^spec.default;	
+	}
 }

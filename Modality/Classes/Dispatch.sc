@@ -11,7 +11,7 @@ Dispatch{
 	var <name;
 	var <funcChain;
 
-	var <dispatchOuts; // DispatchOuts to which stuff is registered
+	var <elements; // elements to which stuff is registered
 
 
 	var <sourceKeyToSource;
@@ -20,7 +20,6 @@ Dispatch{
 
 	// this will be internal only:
 	var <sources; // input state
-	var <outputs; // output state
 	var <envir; // internal state
 
 	var <changedOuts; // keeps the changed outputs in order to update
@@ -79,11 +78,10 @@ Dispatch{
 		funcChain = FuncChain.new;
 
 		sources = ();
-		outputs = ();
 		sourceKeyToSource = ();
 		mappedElems = ();
 
-		dispatchOuts = ();
+		elements = ();
 
 		//	this.mapSource( \me, this );
 	}
@@ -140,9 +138,8 @@ Dispatch{
 	}	
 	
 	valueArray{ arg args;
-		var source,key,value;
-		#source,key,value = args;
-		this.setInput( source, key, value );
+		var element = args[0];
+		this.setInput( element.source, element.name, element.value );
 		this.processChain;
 		changedIn = nil;		
 	}
@@ -161,16 +158,15 @@ Dispatch{
 	
 	createOutput{ |elemkey|
 		postln("creating output for"++ elemkey);
-		dispatchOuts[elemkey] = DispatchOut.new( this, elemkey );
+		elements[elemkey] = DispatchOut.new( this, elemkey );
 	}
 	
 	getOutput{ |elemKey|
-		^outputs[elemKey];
+		^elements[elemKey].value;
 	}
 
 	setOutput{ |elemKey, value|
-		dispatchOuts[elemKey].value(value);
-		outputs.put( elemKey, value );
+		elements[elemKey].value_(value);
 		changedOuts.add(elemKey);
 	}
 	
@@ -179,19 +175,19 @@ Dispatch{
 	//i.e.  'sl1_?'
 	//i.e.  '*'
 	addToOutput { |elementKey, funcName, function, addAction, otherName| // could have order indication
-		dispatchOuts.do{ |elem|
+		elements.do{ |elem|
 			var key = elem.name;
 			if( key.matchOSCAddressPattern(elementKey) ) {
-				dispatchOuts[key].addFunction( funcName, function );		
+				elements[key].addFunction( funcName, function );		
 			}
 		}
 	}
 	
 	removeFromOutput { |elementKey, funcName| 		
-		dispatchOuts.do{ |elem|
+		elements.do{ |elem|
 			var key = elem.name;
 			if( key.matchOSCAddressPattern(elementKey) ) {
-				dispatchOuts[key].removeFunc(funcName);
+				elements[key].removeFunc(funcName);
 			}
 		}
 	}
@@ -200,8 +196,8 @@ Dispatch{
 		changedOuts = List.new;
 		funcChain.value( this, envir);
 		changedOuts.do{ |key|
-			if ( dispatchOuts[key].notNil ){
-				dispatchOuts[key].value( outputs[key] ); // this may need to pass more info
+			if ( elements[key].notNil ){
+				elements[key].doAction; // this may need to pass more info
 			};
 		};
 	}
@@ -221,45 +217,21 @@ Dispatch{
 	}
 	
 	elementNames{
-		^dispatchOuts.collect(_.name)
+		^elements.collect(_.name)
 	}
 	
 	defaultValueFor{ ^0 }
 	
 	verbose_ {|value=true|
 		value.if({
-			dispatchOuts.do{ |item| item.funcChain.addFirst(\verbose, { |source, elName, value| 
-					[source, elName, value].postln;
+			elements.do{ |item| item.funcChain.addFirst(\verbose, { |elem| 
+					[elem.source, elem.name, elem.value].postln;
 			})}
 		}, {
-			dispatchOuts.do{|item| item.funcChain.removeAt(\verbose)}
+			elements.do{|item| item.funcChain.removeAt(\verbose)}
 		})
 	}
 	 
 }
 
-DispatchOut {
-
-	var <>dispatch; // the dispatcher it belongs to
-	var <>name; // its key in dispatch
-
-	var <funcChain;
-
-	*new { |dis,name|
-		^super.newCopyArgs( dis, name ).init;
-	}
-
-	init{ 
-		funcChain = FuncChain.new;
-	}
-
-	addFunction { |key,func,addAction=\addLast,target|
-		funcChain.add( key, func, addAction, target );
-	}
-
-	value{ |newval|
-		funcChain.value( dispatch, name, newval );
-	}
-
-
-}
+DispatchOut : MKtlBasicElement {}
