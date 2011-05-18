@@ -26,14 +26,15 @@
 	\joyRHat, (type: \hidHat, cookie: 13, \spec: \hidHat, \mode: \center), 
 
 		// joystick axes switches
-	\joyLX, (type: \joyAxis, cookie: 15, \spec: \lin255n, \mode: \center), 
-	\joyLY, (type: \joyAxis, cookie: 16, \spec: \lin255, \mode: \center), 
-	\joyRX, (type: \joyAxis, cookie: 17, \spec: \lin255n, \mode: \center), 
-	\joyRY, (type: \joyAxis, cookie: 20, \spec: \lin255, \mode: \center), 
+	\joyLX, (type: \joyAxis, cookie: 15, \spec: \cent255inv, \mode: \center), 
+	\joyLY, (type: \joyAxis, cookie: 16, \spec: \cent255, \mode: \center), 
+	\joyRX, (type: \joyAxis, cookie: 17, \spec: \cent255inv, \mode: \center), 
+	\joyRY, (type: \joyAxis, cookie: 20, \spec: \cent255, \mode: \center), 
 
-	\throtL, (type: \springFader, cookie: 17, \spec: \throt, \mode: \minimum), 
-	\throtR, (type: \springFader, cookie: 20, \spec: \throt, \mode: \minimum), 
+	\throtL, (type: \springFader, cookie: 17, \spec: \lin255, \mode: \minimum), 
+	\throtR, (type: \springFader, cookie: 20, \spec: \lin255, \mode: \minimum), 
 	
 		// west is 1, south is 3, east is 5, north is 7
-	\compass, (type: \compass, cookie: 14) 	
+	\compass, (type: \compass, cookie: 14, \spec: \compass8, \mode: \push),	
+	\wheel, (type: \springFader, cookie: 21, \spec: \cent255, \mode: \center)
 ];
