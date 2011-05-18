@@ -38,12 +38,13 @@ MKtl { // abstract class
 		this.addSpec(\cent255, [0, 255, \lin, 1, 128]);
 		this.addSpec(\cent255inv, [255, 0, \lin, 1, 128]);
 		this.addSpec(\lin255,  [0, 255, \lin, 1, 0]);
+		this.addSpec(\cent1,  [0, 1, \lin, 0, 0.5]);
+		this.addSpec(\lin1inv,  [1, 0, \lin, 0, 1]);
 
 		// MIDI
 		this.addSpec(\midiCC, [0, 127, \lin, 1, 0]); 
 		this.addSpec(\midiVel, [0, 127, \lin, 1, 0]); 
 		this.addSpec(\midiBut, [0, 127, \lin, 127, 0]); 
-		this.addSpec(\compass8, [0, 8, \lin, 1, 1]); // may be wrong, check again!
 
 		// HID
 		this.addSpec(\hidBut, [0, 1, \lin, 1, 0]);
@@ -200,6 +201,10 @@ MKtl { // abstract class
 		//	this.class.openTester(this);
 		};
 
+		deviceDescription.pairsDo{ |key,elem|
+			this.flattenDescription( elem )
+		};
+
 		// create specs
 		deviceDescription.pairsDo {|key, elem| 
 			var foundSpec =  specs[elem[\spec]];
@@ -221,7 +226,21 @@ MKtl { // abstract class
 			.do { |path| ("['" ++ path ++"']").postln }
 	}
 
-	deviceDescriptionFor { |elname| ^deviceDescription[deviceDescription.indexOf(elname) + 1] }
+	flattenDescription{ |devDesc|
+		// some descriptions may have os specific entries, we flatten those into the dictionary
+		var platformDesc = devDesc[ thisProcess.platform.name ];
+		if ( platformDesc.notNil ){
+			platformDesc.keysValuesDo{ |key,val|
+				devDesc.put( key, val );
+			}
+		};
+		^devDesc;
+	}
+
+
+	deviceDescriptionFor { |elname| 
+		^deviceDescription[deviceDescription.indexOf(elname) + 1] 
+	}
 
 	postDeviceDescription {
 		deviceDescription.pairsDo {|a, b| "% : %\n".postf(a, b); }

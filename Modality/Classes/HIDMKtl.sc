@@ -168,14 +168,61 @@ HIDMKtl : MKtl {
 		
 		elemDict = ();
 		lookupDict = ();
+
+		this.setGeneralHIDActions;
 		
 		//		this.getDeviceDescription(  )
 		//		this.findDevSpecs(srcDevice.info.name.postln); 
 		
 //		// this.makeElements; 
-//		this.prepareFuncDict;
+		//		this.prepareFuncDict;
 //
 //		this.addResponders; 
+	}
+
+	setGeneralHIDActions{
+		this.elements.do{ |el|
+			var slot = el.deviceDescription[\slot]; // linux
+			var cookie = el.deviceDescription[\cookie]; // osx
+			// on linux:
+			if ( slot.notNil ){
+				srcDevice.slots[ slot[0] ][ slot[1] ].action = { |v| el.valueAction_( v.value ) };
+			};
+			// on osx:
+			if ( cookie.notNil ){
+				elemDict[ cookie ].put( el );
+				srcDevice.action = { |ck,val| this.elemDict[ ck ].valueAction_( val ) };
+			}
+		}
+	}
+
+	/*
+	prepareFuncDict { 
+		if (devSpecs.notNil) { 
+			// works only for scenes ATM;
+			devSpecs.pairsDo { |elName, descr| 
+				var ccKey = this.makeCCKey(descr[\chan], descr[\ccNum]);
+				descr.put(\ccKey, ccKey); // just in case ... 
+				
+				funcDict.put(
+					ccKey, FuncChain([\post, { |ktl, elName, value| 
+						[ktl, elName, value].postln;
+					}])
+				);
+				ccKeyToElNameDict.put(ccKey, elName);
+			}
+		}
+	}
+	*/
+
+	verbose_ {|value=true|
+		value.if({
+			elements.do{|item| item.addFunc(\verbose, { |element| 
+					[element.source, element.name, element.value].postln;
+			})}
+		}, {
+			elements.do{|item| item.removeFunc(\verbose)}
+		})
 	}
 
 //		// interface methods
