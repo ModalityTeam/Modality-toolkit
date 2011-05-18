@@ -168,7 +168,7 @@ Dispatch{
 		elements[elemkey] = DispatchOut.new( this, elemkey );
 	}
 	
-	createOuputsFromInputs{
+	createOutputsFromInputs{
 		mappedElems.pairsDo{ |sourceKey,elemKeys|
 			elemKeys.do{ |elemKey|
 				this.createOutput(elemKey)

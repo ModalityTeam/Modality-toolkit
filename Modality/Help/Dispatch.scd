@@ -12,7 +12,7 @@ MIDIMKtl.find
 		elementKeys.do{ |elemKey| d.mapToElem(source,elemKey,sourceKey)}
 	};
 	
-	d.createOuputsFromInputs;
+	d.createOutputsFromInputs;
 	
 	d.addToProc( \velocityCalc, { |dis,e|
 		var in = dis.changedIn;
@@ -82,7 +82,7 @@ d
 		d.map(disp, elemKeys)		
 	};
 	
-	d.createOuputsFromInputs;
+	d.createOutputsFromInputs;
 	
 	d.addToProc( \velocityCalc, { |dis,e|
 		var in = dis.changedIn;
@@ -94,7 +94,7 @@ d
 ~triggerDispatch = { |source,elemKeys, sourceKey|
 	d = Dispatch.new;
 	d.map(source, elemKeys);	
-	d.createOuputsFromInputs;
+	d.createOutputsFromInputs;
 	
 	d.addToProc( \velocityCalc, { |dis,e|
 		var in = dis.changedIn;
@@ -108,22 +108,167 @@ d
 ~multipleClickDispatch = { |source,elemKeys, sourceKey, numClicks = 2|
 	d = Dispatch.new;
 	d.map(source, elemKeys);	
-	d.createOuputsFromInputs;
+	d.createOutputsFromInputs;
 	source.elementNames.do{ |elemKey| d.envir.put(elemKey,0) };
 	d.addToProc( \velocityCalc, { |dis,e|
 		var in = dis.changedIn;
 		var key = in[\key];
+		
 		if( (in[\val] == 1) ) {
+			e[key] = e[key] + 1;
 			
 			if( e[key] == numClicks) { 
 				dis.setOutput(key, 1);
 				e[key] = 0;
-			} {			
-				e[key] = e[key] + 1;
-			}
+			} 
 		}
 	});
   	d
+};
+
+~thresh = { |source,elemKeys, sourceKey, thresh = 0.5|
+	d = Dispatch.new;
+	d.map(source, elemKeys);	
+	d.createOutputsFromInputs;
+	d.sources.pairsDo{ |sourceKey,keysDict|
+		d.envir.put(sourceKey,keysDict.collect{0})
+	};
+	
+	d.addToProc( \threshCalc, { |dis,e|
+		var in = dis.changedIn;
+		var key = in[\key];
+		var source = in[\source];
+		var value = in[\val];
+		
+		if( (value >= thresh) && (e[source][key] < thresh) ) {			dis.setOutput(key, \up );
+		};
+		if( (value <= thresh) && (e[source][key] > thresh) ) {			dis.setOutput(key, \down );
+		};
+		e[source][key] = value;
+	
+	} );
+   d
+};
+
+~threshUp = { |source,elemKeys, sourceKey, thresh = 0.5|
+	d = Dispatch.new;
+	d.map(source, elemKeys);	
+	d.createOutputsFromInputs;
+	d.sources.pairsDo{ |sourceKey,keysDict|
+		d.envir.put(sourceKey,keysDict.collect{0})
+	};
+	
+	d.addToProc( \threshCalc, { |dis,e|
+		var in = dis.changedIn;
+		var key = in[\key];
+		var source = in[\source];
+		var value = in[\val];
+		
+		if( (value >= thresh) && (e[source][key] < thresh) ) {			dis.setOutput(key, \up );
+		};
+		e[source][key] = value;
+	
+	} );
+   d
+};
+
+~threshDown = { |source,elemKeys, sourceKey, thresh = 0.5|
+	d = Dispatch.new;
+	d.map(source, elemKeys);	
+	d.createOutputsFromInputs;
+	d.sources.pairsDo{ |sourceKey,keysDict|
+		d.envir.put(sourceKey,keysDict.collect{0})
+	};
+	
+	d.addToProc( \threshCalc, { |dis,e|
+		var in = dis.changedIn;
+		var key = in[\key];
+		var source = in[\source];
+		var value = in[\val];
+		
+		if( (value <= thresh) && (e[source][key] > thresh) ) {			dis.setOutput(key, \down );
+		};
+		e[source][key] = value;
+	
+	} );
+   d
+};
+
+~threshZones = { |source,elemKeys, sourceKey, threshs|
+	d = Dispatch.new;
+	d.map(source, elemKeys);	
+	d.createOutputsFromInputs;
+	d.sources.pairsDo{ |sourceKey,keysDict|
+		d.envir.put(sourceKey,keysDict.collect{0})
+		keysDict.pairsDo{ |key|
+			threshs.do{ |a,i|
+				d.createOutputs(key++"i")
+			}
+		};
+	};
+	threshs = threshs.sort;
+	d.addToProc( \calc, { |dis,e|
+		var in = dis.changedIn;
+		var key = in[\key];
+		var source = in[\source];
+		var value = in[\val];
+		
+		threshs.do{ |th,i|
+			if( value > th ) {
+					
+			}
+				
+		}
+		if( (value >= thresh) && (e[source][key] < thresh) ) {			dis.setOutput(key, \up );
+		};
+		e[source][key] = value;
+	
+	} );
+   d
+};
+
+~up = { |source,elemKeys, sourceKey|
+	d = Dispatch.new;
+	d.map(source, elemKeys);	
+	d.createOutputsFromInputs;
+	d.sources.pairsDo{ |sourceKey,keysDict|
+		d.envir.put(sourceKey,keysDict.collect{0})
+	};
+	
+	d.addToProc( \calc, { |dis,e|
+		var in = dis.changedIn;
+		var key = in[\key];
+		var source = in[\source];
+		var value = in[\val];
+		
+		if( value > e[source][key] ) {			dis.setOutput(key, value );
+		};
+		e[source][key] = value;
+	
+	} );
+   d
+};
+
+~down = { |source,elemKeys, sourceKey, thresh = 0.5|
+	d = Dispatch.new;
+	d.map(source, elemKeys);	
+	d.createOutputsFromInputs;
+	d.sources.pairsDo{ |sourceKey,keysDict|
+		d.envir.put(sourceKey,keysDict.collect{0})
+	};
+	
+	d.addToProc( \calc, { |dis,e|
+		var in = dis.changedIn;
+		var key = in[\key];
+		var source = in[\source];
+		var value = in[\val];
+		
+		if( value < e[source][key] ) {				dis.setOutput(key, value );
+		};
+		e[source][key] = value;
+	
+	} );
+   d
 };
 )
 
@@ -223,7 +368,40 @@ d = Dispatch.new;
 )
 ~tr.remove
 
+// thresh
+(
+~tr =  ~thresh.( MIDIMKtl('nnkn0'), thresh: 0.5 );
+~tr.verbose = true;
+)
+~tr.remove
 
+// thresh up
+(
+~tr =  ~threshUp.( MIDIMKtl('nnkn0'), thresh:0.5 );
+~tr.verbose = true;
+)
+~tr.remove
+
+// thresh down
+(
+~tr =  ~threshDown.( MIDIMKtl('nnkn0'), thresh:0.5 );
+~tr.verbose = true;
+)
+
+// up
+(
+~tr =  ~up.( MIDIMKtl('nnkn0') );
+~tr.verbose = true;
+)
+~tr.remove
+
+// down
+(
+~tr =  ~down.( MIDIMKtl('nnkn0'), thresh:0.5 );
+~tr.verbose = true;
+)
+
+~tr.remove
 
 k.verbose = true
 k = MIDIMKtl('nnkn0')
