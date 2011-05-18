@@ -134,9 +134,10 @@ MIDIMKtl : MKtl {
 			destinationDeviceDict[name.asSymbol];
 		});
 		
-		this.reassignKeyOfDict(name, foundSource, sourceDeviceDict);
+		
+		sourceDeviceDict.changeKeyForValue(name, foundSource);
 		foundDestination.notNil.if{
-			this.reassignKeyOfDict(name, foundDestination, destinationDeviceDict);
+			destinationDeviceDict.changeKeyForValue(name, foundDestination);
 		};
 		
 		^super.basicNew(name, foundSource.device)
@@ -178,25 +179,6 @@ MIDIMKtl : MKtl {
 			
 			destinationDeviceDict.put((name ++ j).asSymbol, MIDIClient.destinations[order[i]])
 		};
-	}
-
-	*reassignKeyOfDict{|name, source, dict|
-		var oldName, otherSource;
-		
-		// find name clashes in dict and swap keys if there are. Otherwise "rename" key.
-		oldName = dict.findKeyForValue(source);
-		otherSource = dict[name];
-		
-		dict[oldName] = otherSource;
-		dict[name] = source;
-
-
-		oldName = dict.findKeyForValue(source);
-		otherSource = dict[name];
-		
-		dict[oldName] = otherSource;
-		dict[name] = source;
-		
 	}
 	
 	initMIDIMKtl { |argName, argSource, argDestination|
