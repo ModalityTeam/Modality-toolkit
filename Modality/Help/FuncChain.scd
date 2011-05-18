@@ -93,9 +93,13 @@ putAtIndex(index, name, func)
 
 
 		// todo: 
+* write examples that check .value method
+* maybe implement valueAt(name, ... args)? 
+
+
+implement moving:	
 
 	move( name, addAction, otherName )
-
 	moveLast(name)
 	moveFirst(name)
 	moveAfter(name)
