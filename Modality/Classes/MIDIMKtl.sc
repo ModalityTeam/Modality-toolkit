@@ -98,11 +98,11 @@ MIDIMKtl : MKtl {
 		//		var devDesc = this.getDeviceDescription( deviceDesc )
 		var devKey = this.findSource( devDesc[ thisProcess.platform.name ] );
 		this.sourceDeviceDict.swapKeys( name, devKey );
-		^this.new( name );
+		^this.new( name, devDescName: deviceDescName );
 	}
 
 		// create with a uid, or access by name	
-	*new { |name, uid, destID| 
+	*new { |name, uid, destID, devDescName| 
 		var foundSource, foundDestination;
 		var foundKtl = all[name.asSymbol];
 		
@@ -154,8 +154,10 @@ MIDIMKtl : MKtl {
 			destinationDeviceDict.changeKeyForValue(name, foundDestination);
 		};
 
-		^super.basicNew(name, foundSource.device)
-			.initMIDIMKtl(name, foundSource, foundDestination);
+		//	foundSource.device.postln;
+		//		^super.basicNew(name, foundSource.device)
+		^super.basicNew(name, devDescName ? foundSource.device.asSymbol )
+			.initMIDIMKtl(name, foundSource, foundDestination, devDescName ? foundSource.device.asSymbol );
 	}
 	
 	*prepareDeviceDicts{
@@ -193,9 +195,15 @@ MIDIMKtl : MKtl {
 			
 			destinationDeviceDict.put((name ++ j).asSymbol, MIDIClient.destinations[order[i]])
 		};
+
+		// put the available midi devices in MKtl's available devices
+		allAvailable.put( \midi, List.new );
+		sourceDeviceDict.keysDo({ |key|
+			allAvailable[\midi].add( key );
+		});
 	}
 	
-	initMIDIMKtl { |argName, argSource, argDestination|
+	initMIDIMKtl { |argName, argSource, argDestination, devDescName|
 		name = argName; 
 		
 		source = argSource;
@@ -212,7 +220,7 @@ MIDIMKtl : MKtl {
 		elementHashDict = ();
 		hashToElNameDict = ();
 			// moved to superclass init
-		this.loadDeviceDescription(source.device); 
+		this.loadDeviceDescription(devDescName); 
 		
 		//this.findDeviceDescription(source.device); 
 		
