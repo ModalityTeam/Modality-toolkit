@@ -6,7 +6,7 @@
 MKtl.find;
 
 	// post known devices that have descriptions:
-MKtl.postDescriptions;
+MKtl.postAllDescriptions;
 
 
 
@@ -25,6 +25,8 @@ MIDIMKtl('?', -616253900);
 	// this gets the description for the device on that USB port ID;
 MKtl.make(\nk1, 'nanoKONTROL');
 MKtl(\nk1).dump;
+MKtl(\nk1).deviceDescription;
+
 MKtl(\nk1).elements.choose.deviceDescription
 
 
@@ -41,6 +43,7 @@ MKtl(\ferr1).elements.do {|el| el.deviceDescription.postln };
 HIDMKtl.find;
 	// this is broken ATM ... 
 HIDMKtl(\fer1, 102760448)
+HIDMKtl('fer1', "usb-0000:00:1a.0-1.1/input0" );  // Thrustmaster Run'N' Drive
 
 
 
