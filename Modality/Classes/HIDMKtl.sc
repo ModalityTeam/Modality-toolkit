@@ -16,7 +16,10 @@ HIDMKtl('ferrari').postSpecs
 //    addFunc should conform to super.addFunc.
 
 
-HIDMKtl : MKtl { 
+HIDMKtl : MKtl {
+	classvar <initialized = false; 
+	classvar <sourceDeviceDict;
+
 	
 	var <srcID, <srcDevice; 
 	
@@ -25,11 +28,45 @@ HIDMKtl : MKtl {
 	var <elemDict;
 	var <lookupDict;
 
+	*initHID{ |force=false|
+		(initialized && {force.not}).if{^this};
+		GeneralHID.buildDeviceList;
+		sourceDeviceDict = ();
+
+		this.prepareDeviceDicts;
+		
+		initialized = true;
+	}
+
+	*prepareDeviceDicts{
+		var prevName = nil, j = 0, order, deviceNames;
+
+		deviceNames = GeneralHID.deviceList.collect{|dev,id|
+			if ( dev[1].name != "could not open device" ){
+				[this.makeShortName(dev[1].name.asString),id];
+			}
+		}.reject{ |it| it.isNil };
+		order = deviceNames.order{ arg a, b; a[0] < b[0] };
+		deviceNames[order].do{|name, i|
+			(prevName == name[0]).if({
+				j = j+1;
+			},{
+				j = 0;
+			});
+			prevName = name[0];
+			sourceDeviceDict.put((name[0] ++ j).asSymbol, GeneralHID.deviceList[ name[1] ])
+		};
+
+		// put the available midi devices in MKtl's available devices
+		allAvailable.put( \hid, List.new );
+		sourceDeviceDict.keysDo({ |key|
+			allAvailable[\hid].add( key );
+		});
+	}
 		// open all ports and display them in readable fashion, 
 		// copy/paste-able directly 
 	*find { |name, uid| 
-		
-		GeneralHID.buildDeviceList; 
+		this.initHID( true );
 
 		"\n///////// HIDMKtl.find - - - HID sources found: /////// ".postln;
 		"	index	locID (USB port ID)	device name         vendor  product".postln;
@@ -43,20 +80,29 @@ HIDMKtl : MKtl {
 		};
 			
 		"\n//	Possible	HIDMKtls - just give them unique names: ".postln;
-		GeneralHID.deviceList.do { |pair| 
+		sourceDeviceDict.keysValuesDo{ |key,pair| 
 			var rawdev, info; 
 			#rawdev, info = pair;
-			"		HIDMKtl('?', %);  // %\n".postf(info.physical, info.name);
+			"		HIDMKtl('%', %);  // %\n".postf(key, info.physical, info.name);
 		};
 		"\n///////".postln;
 	}
 
 	*findSource{ |rawDeviceName|
+		/*
 		var devices = GeneralHID.deviceList.detect{ |pair|
 			var dev, info; #dev, info = pair;
 			(info.name == rawDeviceName)
 		};
 		^devices;
+		*/
+		var devKey;
+		this.sourceDeviceDict.keysValuesDo{ |key,pair|
+			if ( pair[1].name == rawDeviceName ){
+				devKey = key;
+			};
+		};
+		^devKey;
 	}
 
 	// how to deal with additional arguments (uids...)?
