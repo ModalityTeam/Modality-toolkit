@@ -165,6 +165,11 @@ MKtl { // abstract class
 		^(0, 2 .. deviceDescription.size - 2).collect (deviceDescription[_])
 	}
 	
+	elementsOfType { |type|
+		^elements.select{ |elem|
+   			elem.deviceDescription[\type] == type
+		}	
+	}
 	
 	// element funcChain interface
 	addFunc { |elementKey, funcName, function, addAction, otherName|
@@ -341,4 +346,8 @@ MKtlElement : MKtlBasicElement{
 	defaultValue {
 		^spec.default;	
 	}
+	
+	value { ^spec.unmap(value) }
+	
+	rawValue { ^value }
 }
