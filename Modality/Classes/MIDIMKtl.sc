@@ -120,7 +120,8 @@ MIDIMKtl : MKtl {
 		
 		this.reassignKeyOfDeviceDict(name, foundSource);
 				
-		^super.basicNew.init.initMIDIMKtl(name, foundSource);
+		^super.basicNew(name, foundSource.device)
+			.initMIDIMKtl(name, foundSource);
 	}
 	
 	*reassignKeyOfDeviceDict{|name, source|
@@ -143,8 +144,8 @@ MIDIMKtl : MKtl {
 		
 		funcDict = ();
 		hashToElNameDict = ();
-		
-		this.loadDeviceDescription(source.device); 
+			// moved to superclass init
+	//	this.loadDeviceDescription(source.device); 
 		
 		this.makeElements; 
 		this.prepareFuncDict;
@@ -265,13 +266,19 @@ MIDIMKtl : MKtl {
 //	}	
 	
 
-		// utilities for lookup 
+		// utilities for fast lookup :
+		// as class methods so we can do it without an instance
 	*makeCCKey { |chan, cc| ^("c_%_%".format(chan, cc)).asSymbol }
 	*ccKeyToChanCtl { |ccKey| ^ccKey.asString.drop(2).split($_).asInteger }
-
 	*makeNoteKey { |chan, note| ^("n_%_%".format(chan, note)).asSymbol }
 	*noteKeyToChanNote { |noteKey| ^noteKey.asString.drop(2).split($_).asInteger }
 	
+		// as instance methods so we done need to ask this.class
+	makeCCKey { |chan, cc| ^("c_%_%".format(chan, cc)).asSymbol }
+	ccKeyToChanCtl { |ccKey| ^ccKey.asString.drop(2).split($_).asInteger }
+	makeNoteKey { |chan, note| ^("n_%_%".format(chan, note)).asSymbol }
+	noteKeyToChanNote { |noteKey| ^noteKey.asString.drop(2).split($_).asInteger }
+
 	storeArgs { ^[name] }
 	printOn { |stream| ^this.storeOn(stream) }
 }
