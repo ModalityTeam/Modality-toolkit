@@ -64,3 +64,12 @@ a.removeFunc(\sl1_1, \yubel)
 	});
 )
 a.removeFunc(\up, \yubel)
+
+
+
+// tests for lookup key conversions: 
+
+MIDIMKtl.makeCCKey(1, 20).postcs; // 'c_1_20'
+MIDIMKtl.ccKeyToChanCtl('c_1_20').postcs; // [1, 20]
+MIDIMKtl.makeNoteKey(1, 64).postcs; // 'c_1_20'
+MIDIMKtl.noteKeyToChanNote('n_1_64').postcs; // [1, 20]
