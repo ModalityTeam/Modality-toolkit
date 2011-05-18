@@ -46,7 +46,8 @@ a.elementNames.postcs; "";
 
 // turn on verbose mode:
 // this adds a "verbose" function to the functionChain of all elements.
-a.verbose = true;	// not working ATM
+a.verbose = true;
+b.verbose = true;
 
 // turn it off again
 a.verbose = false

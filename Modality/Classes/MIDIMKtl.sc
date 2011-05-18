@@ -16,7 +16,7 @@ MIDIMKtl : MKtl {
 	
 			// optimisation for fast lookup, 
 			// may go away if everything lives in "elements" of superclass
-	var <funcDict;
+	var <elementHashDict;
 	var <hashToElNameDict;
 
 		// open all ports 
@@ -208,7 +208,7 @@ MIDIMKtl : MKtl {
 		
 		all.put(name, this);
 		
-		funcDict = ();
+		elementHashDict = ();
 		hashToElNameDict = ();
 			// moved to superclass init
 		this.loadDeviceDescription(source.device); 
@@ -216,22 +216,13 @@ MIDIMKtl : MKtl {
 		//this.findDeviceDescription(source.device); 
 		
 		this.makeElements; 
-		this.prepareFuncDict;
+		this.prepareElementHashDict;
 
 		this.addResponders; 
 	}
 
-		// interface methods
-//	addFunc { |elementKey, funcName, function| 
-//		//	 |elementKey, funcName, function, addAction=\addToTail, target|
-//		//super.addFunc(...);
-//
-//		var hash = hashToElNameDict.findKeyForValue(elementKey);
-//		funcDict[hash].addLast(funcName, function);
-//	}
-
 		// plumbing	
-	prepareFuncDict { 
+	prepareElementHashDict { 
 		if (deviceDescription.notNil) { 
 			deviceDescription.pairsDo { |elName, descr|
 				var hash;
@@ -241,7 +232,7 @@ MIDIMKtl : MKtl {
 				
 					\cc, {this.makeCCKey(descr[\chan], descr[\ccNum]);},
 					{//default:
-						"MIDIMKtl:prepareFuncDict (%): identifier in midiType for item % not known. Please correct.".format(this, elName).error; 
+						"MIDIMKtl:prepareElementHashDict (%): identifier in midiType for item % not known. Please correct.".format(this, elName).error; 
 						this.dump; 
 						^this;
 					}
@@ -249,8 +240,8 @@ MIDIMKtl : MKtl {
 
 				//descr.put(\hash, hash); // just in case ... 
 				
-				funcDict.put(
-					hash, elements[elName].funcChain;
+				elementHashDict.put(
+					hash, elements[elName];
 				);
 				hashToElNameDict.put(hash, elName);
 			}
@@ -272,32 +263,32 @@ MIDIMKtl : MKtl {
 			cc: CCResponder({ |src, chan, num, value| 
 				var hash = this.makeCCKey(chan, num);
 				var elName = hashToElNameDict[hash]; 
-				funcDict[hash].value(this, elName, value); 
+				elementHashDict[hash].valueAction_(value); 
 			}, srcID), 
 			
 			noteon: NoteOnResponder({ |src, chan, note, vel|
 				var hash = this.makeNoteKey(chan, note);
 				var elName = hashToElNameDict[hash];
 				//	["noteOn", chan, note, vel, hash].postln;
-				funcDict[hash].value(this, elName, vel); 
+				elementHashDict[hash].valueAction_(vel); 
 			}, srcID), 
 			
 			noteoff: NoteOffResponder({ |src, chan, note, vel|
 				var hash = this.makeNoteKey(chan, note);
 				var elName = hashToElNameDict[hash];
 				//	["noteOff", chan, note, vel, hash].postln;
-				funcDict[hash].value(this, elName, vel); 
+				elementHashDict[hash].valueAction_(vel); 
 			}, srcID)
 		);
 	}
 
 	verbose_ {|value=true|
 		value.if({
-			funcDict.do{|item| item.addFirst(\verbose, { |ktl, elName, value| 
-					[ktl, elName, value].postln;
+			elementHashDict.do{|item| item.addFunc(\verbose, { |element| 
+					[element.source, element.name, element.value].postln;
 			})}
 		}, {
-			funcDict.do{|item| item.removeAt(\verbose)}
+			elementHashDict.do{|item| item.removeFunc(\verbose)}
 		})
 	}
 		

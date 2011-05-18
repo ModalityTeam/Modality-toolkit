@@ -228,7 +228,7 @@ MKtl { // abstract class
 MKtlElement {
 	classvar <types;
 
-	var <ktl; // the Ktl it belongs to
+	var <source; // the Ktl it belongs to
 	var <name; // its name in Ktl.elements
 	var <type; // its type. 
 	
@@ -255,13 +255,13 @@ MKtlElement {
 		)
 	}
 
-	*new { |ktl, name|
-		^super.newCopyArgs( ktl, name).init;
+	*new { |source, name|
+		^super.newCopyArgs( source, name).init;
 	}
 
 	init { 
 		funcChain = FuncChain.new;
-		deviceDescription = ktl.deviceDescriptionFor(name);
+		deviceDescription = source.deviceDescriptionFor(name);
 		spec = deviceDescription[\spec];
 		if (spec.isNil) { 
 			warn("spec for '%' is missing!".format(spec));
@@ -323,8 +323,9 @@ MKtlElement {
 
 	valueAction_ { |newval|
 		this.value_( newval );
-		ktl.recordValue( name, newval );
-		funcChain.value( name, newval );
+		source.recordValue( name, newval );
+		//funcChain.value( name, newval );
+		funcChain.value( this );
 	}
 
 }
