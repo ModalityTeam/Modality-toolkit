@@ -103,6 +103,9 @@ MKtl { // abstract class
 	storeArgs { ^[name] }
 	printOn { |stream| this.storeOn(stream) }
 
+	findDeviceDescription{
+		
+	}
 
 	loadDeviceDescription { |deviceName| 
 		
