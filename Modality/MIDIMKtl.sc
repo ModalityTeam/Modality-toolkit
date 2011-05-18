@@ -18,7 +18,7 @@ MIDIMKtl : MKtl {
 	var <hashToElNameDict;
 
 		// open all ports 
-	*initMIDI{|force= false|
+	*initMIDI { |force= false|
 		var prevName = nil, j = 0, order, deviceNames;
 
 		(initialized && {force.not}).if{^this};
@@ -49,8 +49,15 @@ MIDIMKtl : MKtl {
 	
 		// display all ports in readable fashion, 
 		// copy/paste-able directly 
+		// this could also live in 
 	*find { |name, uid| 
 		this.initMIDI(true);
+
+		if (MIDIClient.sources.isEmpty) { 
+			"// MIDIMKtl did not find any sources - you may want to connect some first.".inform;
+			^this 
+		};
+
 		"/*\nMIDI sources found by MIDIMKtl.find:".postln;
 		"key	uid (USB port ID)	device	name".postln;
 		deviceDict.keysValuesDo({ |key, src|
@@ -61,6 +68,8 @@ MIDIMKtl : MKtl {
 				src.name.asSymbol.asCompileString
 			);
 		});	
+
+
 		"*/\n\n// Available MIDIMKtls (you may want to change the names) */".postln;
 		deviceDict.keysValuesDo { |key, src| 
 			"MIDIMKtl('%', %);  // %\n".postf(
@@ -257,28 +266,12 @@ MIDIMKtl : MKtl {
 	
 
 		// utilities for lookup 
-	makeCCKey { |chan, cc| ^("c_%_%".format(cc, chan)).asSymbol }
-	
-	// currently broken
-	//ccKeyToChanCtl { |ccKey| ^ccKey.asString.split($_).asInteger }
+	*makeCCKey { |chan, cc| ^("c_%_%".format(chan, cc)).asSymbol }
+	*ccKeyToChanCtl { |ccKey| ^ccKey.asString.drop(2).split($_).asInteger }
 
-	makeNoteKey { |chan, note| 
-		^("n_%_%".format(chan, note)).asSymbol
-		
-		// var key = chan.asString; 
-		// note !? { key = key ++ "_n_" ++ note };
-		// ^key.asSymbol 
-	}
-	// currently broken
-	//noteKeyToChanNote { |noteKey| ^noteKey.asString.split($_).asInteger }
+	*makeNoteKey { |chan, note| ^("n_%_%".format(chan, note)).asSymbol }
+	*noteKeyToChanNote { |noteKey| ^noteKey.asString.drop(2).split($_).asInteger }
 	
 	storeArgs { ^[name] }
-	
 	printOn { |stream| ^this.storeOn(stream) }
 }
-
-/*
-
-	
-*/
-
