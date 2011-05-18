@@ -47,7 +47,7 @@ MKtl { // abstract class
 		this.addSpec(\hidHat, [0, 1, \lin, 1, 0]);
 		this.addSpec(\compass8, [0, 8, \lin, 1, 1]); // probably wrong, check again!
 
-		deviceDescriptionFolder = this.filenameSymbol.asString.dirname +/+ "MKtlSpecs";
+		deviceDescriptionFolder = this.filenameSymbol.asString.dirname.dirname +/+ "MKtlSpecs";
 	}
 
 	*find {
@@ -94,7 +94,7 @@ MKtl { // abstract class
 		//envir = ();
 		elements = ();
 		if (deviceDescName.isNil) { 
-			warn("no device name given!");
+			warn("no deviceDescription name given!");
 		} {
 			this.loadDeviceDescription(deviceDescName.asString);
 			this.makeElements;
