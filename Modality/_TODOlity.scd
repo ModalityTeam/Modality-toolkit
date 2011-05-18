@@ -53,13 +53,15 @@ ToDolity
 	* BCF
 
 * Dispatch: 
-	* common interface between MKtlElement and DispatchOut
-	* factory of common functionality (average, page ctrl, trigger, acc, LOA, stuff that is in actionFunc,
-	 times things, regions(e.g. launchpad,), transform trigger buttons (that go 127 when pressed and 0 when depressed) into just a trigger, eventually WOLRD DOMINATION UHAHAAHAHAHAHAHAHAH)
+	* pattern matching very slow on Dispatches with many outputs...
+	* read File with definitions - factory of common functionality (average, page ctrl, trigger, acc, LOA, stuff that is in actionFunc,
+	 times things, regions(e.g. launchpad,), transform trigger buttons (that go 127 when pressed and 0 when depressed)
+	  into just a trigger, eventually WOLRD DOMINATION UHAHAAHAHAHAHAHAHAH)
 	* several things are the same source, how to deal with it?
 	* easy way to compose several Dispatchs
-	* add verbose posting
 	------------------------------------------------------------------------------------
+	* common interface between MKtlElement and DispatchOut (done)
+	* add verbose posting (done)
 	* use/test cases for dummies (Miguuel: done - help file)
 	* hierarchy of outputs (Miguel - just use symbols like in osc /page1/string1, done)
 	* naming of addFunc/register/etc. (Miguel: done - addToProc and addToOutput)
