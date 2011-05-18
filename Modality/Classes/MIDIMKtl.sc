@@ -7,10 +7,12 @@
 
 MIDIMKtl : MKtl { 
 	classvar <initialized = false;
-	classvar <deviceDict;
+	classvar <sourceDeviceDict;
+	classvar <destinationDeviceDict;
 	
 	// MIDI-specific address identifiers 
 	var <srcID, <source; 
+	var <dstID, <destination; 
 	
 			// optimisation for fast lookup, 
 			// may go away if everything lives in "elements" of superclass
@@ -18,32 +20,20 @@ MIDIMKtl : MKtl {
 	var <hashToElNameDict;
 
 		// open all ports 
-	*initMIDI { |force= false|
-		var prevName = nil, j = 0, order, deviceNames;
+	*initMIDI{|force= false|
 
 		(initialized && {force.not}).if{^this};
 		
 		
 		MIDIIn.connectAll;
-		deviceDict = ();
+		sourceDeviceDict = ();
+		destinationDeviceDict = ();
 
-		// prepare deviceDict
-		deviceNames = MIDIClient.sources.collect{|src|
-			this.makeShortName(src.device);
-		};
+		this.prepareDeviceDicts;
+
 		
-		order = deviceNames.order;
-		deviceNames[order].do{|name, i|
-			(prevName == name).if({
-				j = j+1;
-			},{
-				j = 0;
-			});
-			prevName = name;
-			
-			deviceDict.put((name ++ j).asSymbol, MIDIClient.sources[order[i]])
-		};
-				
+		
+		
 		initialized = true;
 	}
 	
@@ -60,7 +50,17 @@ MIDIMKtl : MKtl {
 
 		"/*\nMIDI sources found by MIDIMKtl.find:".postln;
 		"key	uid (USB port ID)	device	name".postln;
-		deviceDict.keysValuesDo({ |key, src|
+		sourceDeviceDict.keysValuesDo({ |key, src|
+			"%\t[%]\t\t[%]\t[%]\n".postf(
+				key, 
+				src.uid,
+				src.device.asSymbol.asCompileString,
+				src.name.asSymbol.asCompileString
+			);
+		});	
+		"\nMIDI destinations found by MIDIMKtl.find:".postln;
+		"key	uid (USB port ID)	device	name".postln;
+		destinationDeviceDict.keysValuesDo({ |key, src|
 			"%\t[%]\t\t[%]\t[%]\n".postf(
 				key, 
 				src.uid,
@@ -71,10 +71,11 @@ MIDIMKtl : MKtl {
 
 
 		"*/\n\n// Available MIDIMKtls (you may want to change the names) */".postln;
-		deviceDict.keysValuesDo { |key, src| 
-			"MIDIMKtl('%', %);  // %\n".postf(
+		sourceDeviceDict.keysValuesDo { |key, src| 
+			"MIDIMKtl('%', %, %);  // %\n".postf(
 				key, 
 				src.uid, 
+				destinationDeviceDict[key].notNil.if({destinationDeviceDict[key].uid},{nil}),
 				src.device
 			);
 		};
@@ -82,8 +83,8 @@ MIDIMKtl : MKtl {
 	}
 
 		// create with a uid, or access by name	
-	*new { |name, uid| 
-		var foundSource;
+	*new { |name, uid, destID| 
+		var foundSource, foundDestination;
 		var foundKtl = all[name.asSymbol];
 		
 			// access by name
@@ -102,14 +103,15 @@ MIDIMKtl : MKtl {
 			}
 		};
 		
-			// make a new source
+
 		this.initMIDI;
+			// make a new source
 		foundSource = uid.notNil.if({ 
 			MIDIClient.sources.detect { |src|
 				src.uid == uid;
 			}; 
 		}, {
-			deviceDict[name.asSymbol];
+			sourceDeviceDict[name.asSymbol];
 		});
 
 		if (foundSource.isNil) { 
@@ -118,28 +120,92 @@ MIDIMKtl : MKtl {
 			^nil
 		};
 		
-		this.reassignKeyOfDeviceDict(name, foundSource);
-				
+			// make a new destination
+		foundDestination = destID.notNil.if({ 
+			MIDIClient.destinations.detect { |src|
+				src.uid == destID;
+			}; 
+		}, {
+			destinationDeviceDict[name.asSymbol];
+		});
+		
+		this.reassignKeyOfDict(name, foundSource, sourceDeviceDict);
+		foundDestination.notNil.if{
+			this.reassignKeyOfDict(name, foundDestination, destinationDeviceDict);
+		};
+		
 		^super.basicNew(name, foundSource.device)
-			.initMIDIMKtl(name, foundSource);
+			.initMIDIMKtl(name, foundSource, foundDestination);
 	}
 	
-	*reassignKeyOfDeviceDict{|name, source|
+	*prepareDeviceDicts{
+		var prevName = nil, j = 0, order, deviceNames;
+
+		deviceNames = MIDIClient.sources.collect{|src|
+			this.makeShortName(src.device);
+		};
+		order = deviceNames.order;
+		deviceNames[order].do{|name, i|
+			(prevName == name).if({
+				j = j+1;
+			},{
+				j = 0;
+			});
+			prevName = name;
+			
+			sourceDeviceDict.put((name ++ j).asSymbol, MIDIClient.sources[order[i]])
+		};
+		
+		// prepare destinationDeviceDict
+		j = 0; prevName = nil;
+		deviceNames = MIDIClient.destinations.collect{|src|
+			this.makeShortName(src.device);
+		};
+		order = deviceNames.order;
+
+		deviceNames[order].do{|name, i|
+			(prevName == name).if({
+				j = j+1;
+			},{
+				j = 0;
+			});
+			prevName = name;
+			
+			destinationDeviceDict.put((name ++ j).asSymbol, MIDIClient.destinations[order[i]])
+		};
+	}
+
+	*reassignKeyOfDict{|name, source, dict|
 		var oldName, otherSource;
 		
-		// find name clashes in deviceDict, and swap keys if there are. Otherwise "rename" key.
-		oldName = deviceDict.findKeyForValue(source);
-		otherSource = deviceDict[name];
+		// find name clashes in dict and swap keys if there are. Otherwise "rename" key.
+		oldName = dict.findKeyForValue(source);
+		otherSource = dict[name];
 		
-		deviceDict[oldName] = otherSource;
-		deviceDict[name] = source;
+		dict[oldName] = otherSource;
+		dict[name] = source;
+
+
+		oldName = dict.findKeyForValue(source);
+		otherSource = dict[name];
+		
+		dict[oldName] = otherSource;
+		dict[name] = source;
 		
 	}
 	
-	initMIDIMKtl { |argName, argSource|
+	initMIDIMKtl { |argName, argSource, argDestination|
 		name = argName; 
+		
 		source = argSource;
 		srcID = source.uid;
+		
+		// destination is optional
+		destination = argDestination;
+		destination.notNil.if{
+			dstID = destination.uid;
+		};
+		
 		all.put(name, this);
 		
 		funcDict = ();
