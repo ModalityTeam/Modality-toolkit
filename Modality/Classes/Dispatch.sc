@@ -127,6 +127,14 @@ Dispatch{
 		}
 	}
 	
+	map{ |source, elemKeys, sourceKey|
+		if(elemKeys.isNil) {
+			this.mapAll(source)
+		} {
+			elemKeys.do{ |elemKey| this.mapToElem(source, elemKey, sourceKey)}
+		}			
+	}
+	
 	mapToElem{ |source, elemKey, sourceKey|
 		sourceKey = sourceKey ? source.name;
 		this.mapSourceToKey(source, sourceKey);
@@ -157,8 +165,15 @@ Dispatch{
 	}
 	
 	createOutput{ |elemkey|
-		postln("creating output for"++ elemkey);
 		elements[elemkey] = DispatchOut.new( this, elemkey );
+	}
+	
+	createOuputsFromInputs{
+		mappedElems.pairsDo{ |sourceKey,elemKeys|
+			elemKeys.do{ |elemKey|
+				this.createOutput(elemKey)
+			}
+		}			
 	}
 	
 	getOutput{ |elemKey|
@@ -178,7 +193,7 @@ Dispatch{
 		elements.do{ |elem|
 			var key = elem.name;
 			if( key.matchOSCAddressPattern(elementKey) ) {
-				elements[key].addFunction( funcName, function );		
+				elements[key].addFunc( funcName, function );		
 			}
 		}
 	}
@@ -221,6 +236,8 @@ Dispatch{
 	}
 	
 	defaultValueFor{ ^0 }
+	
+	
 	
 	verbose_ {|value=true|
 		value.if({

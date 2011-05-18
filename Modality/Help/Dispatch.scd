@@ -91,11 +91,20 @@ x = { |freq= 400, mod = 1| Saw.ar( Lag.kr(freq) ) * SinOsc.ar(Lag.kr(mod) ).rang
 
 x = { |freq= 400, mod = 1| Saw.ar( LeakDC.kr( Lag.kr(freq)) + 100 ) * SinOsc.ar( LeakDC.kr( Lag.kr(mod), 0.990) + 1 ).range(0.0,1.0)* 0.5 }.play
 
+
+//paged ktl
 (
-~makeVelocityDispatch = { |source|
+~makeVelocityDispatch = { |source, elementKeys, sourceKey|
 	d = Dispatch.new;
-	d.mapAll(source);
-	source.elementNames.do{ |name| d.createOutput(name) };
+	
+	if( elementKeys.isNil ) {
+		d.mapAll(source,sourceKey)
+	} {
+		elementKeys.do{ |elemKey| d.mapToElem(source,elemKey,sourceKey)}
+	};
+	
+	d.createOuputsFromInputs;
+	
 	d.addToProc( \velocityCalc, { |dis,e|
 		var in = dis.changedIn;
 		var key = in[\key];
@@ -107,6 +116,7 @@ x = { |freq= 400, mod = 1| Saw.ar( LeakDC.kr( Lag.kr(freq)) + 100 ) * SinOsc.ar(
 		if( e[source].isNil ) {
 			e.put(source,Dictionary.new);
 		};
+		
 		if(	e[source][key].isNil ) {
 			e[source][key] = value;
 			e[source][keyTime] = Process.elapsedTime;
@@ -119,11 +129,8 @@ x = { |freq= 400, mod = 1| Saw.ar( LeakDC.kr( Lag.kr(freq)) + 100 ) * SinOsc.ar(
 	
 	} );
    d
-}
-)
+};
 
-//paged ktl
-(
 ~makePagedVersion = { |source, previousSceneKey, nextSceneKey, n = 10|
 var d = Dispatch.new;
 d.mapAll(source);
@@ -154,6 +161,25 @@ d.addToProc( \changeScene, {  |dis,e|
 	};	
 });
 d
+};
+
+~mergeDispatch = { |dispatchs|
+
+	d = Dispatch.new;
+	
+	dispatchs.do{ |arr|
+		var disp,elemKeys;
+		#disp, elemKeys = arr;
+		d.map(disp, elemKeys)		
+	};
+	
+	d.createOuputsFromInputs;
+	
+	d.addToProc( \velocityCalc, { |dis,e|
+		var in = dis.changedIn;
+		dis.setOutput(in[\key], in[\val] );
+	});
+  	d
 }
 )
 //k = MIDIMKtl(\nano1, -1871034450);
@@ -168,16 +194,50 @@ n.collect{ |i| source.elementNames.collect{ |name| d.addToOutput(("/page"++(i+1)
 ~paged.verbose = true
 ~paged.remove
 
-~dis1 = ~makePagedVersion.(MIDIMKtl('nnkn0'),\rew,\fwd,32);
+~dis1 = ~makePagedVersion.(MIDIMKtl('nnkn0'),\rew,\fwd,4);
 ~dis2 = ~makeVelocityDispatch.(~dis1);
 ~dis2.verbose = true
 ~paged.remove
 
-MIDIMKtl('lnch0').elementNames
+~dis2.insp
 
-d.remove
-d.envir[\scene] = 1
+//make slider output velocity but keep the rest of controls absolute and merge into just one controller
+(
+k = MIDIMKtl('nnkn0');
+
+~sliders =  ~makeVelocityDispatch.(k, k.elementsOfType(\slider).collect(_.name) );
+
+~restOfElems = k.elements.select{ |elem|
+	elem.deviceDescription[\type] != \slider
+}.collect(_.name);
+
+~result = ~mergeDispatch.([[~sliders,nil],[k,~restOfElems]]);
+~result.verbose = true;
+)
+
+//same ktl, different controls to different sources
+(
+k = MIDIMKtl('nnkn0');
+d = Dispatch.new
+~sliders =  ~makeVelocityDispatch.(k, k.elementsOfType(\slider).collect(_.name) );
+
+~restOfElems = k.elements.select{ |elem|
+	elem.deviceDescription[\type] != \slider
+}.collect(_.name);
+
+~result = ~mergeDispatch.([[~sliders,nil],[k,~restOfElems]]);
+~result.verbose = true;
+
+
+
+~result.verbose = true;
+~sliders.verbose = true;
+k.verbose = true
+//to do: recursive remove
+~result.remove
+~sliders.remove
+
+k.insp
 
 k.verbose = true
-
-
+k = MIDIMKtl('nnkn0')
