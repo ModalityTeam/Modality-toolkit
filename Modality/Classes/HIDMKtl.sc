@@ -98,7 +98,8 @@ HIDMKtl : MKtl {
 		*/
 		var devKey;
 		this.sourceDeviceDict.keysValuesDo{ |key,pair|
-			if ( pair[1].name == rawDeviceName ){
+			//	pair[1].postln;
+			if ( pair[1].name.asString == rawDeviceName ){
 				devKey = key;
 			};
 		};
@@ -109,12 +110,12 @@ HIDMKtl : MKtl {
 	*newFromDesc{ |name,deviceDescName,devDesc|
 		//		var devDesc = this.getDeviceDescription( deviceDesc )
 		var dev = this.findSource( devDesc[ thisProcess.platform.name ] );
-
+		dev.postln;
 		^this.new( name, dev );
 	}
 
 		// create with a uid, or access by name	
-	*new { |name, uid| 
+	*new { |name, uid, devDescName| 
 		var foundSource;
 		var foundKtl = all[name.asSymbol];
 		
@@ -133,9 +134,12 @@ HIDMKtl : MKtl {
 				}
 			}
 		};
-		
-		foundSource = GeneralHID.findBy( locID: uid );
 
+		if (uid.isNil) { 
+			foundSource = this.sourceDeviceDict[ name ];
+		}{
+			foundSource = GeneralHID.findBy( locID: uid );
+		};
 			// make a new one		
 		if (foundSource.isNil) { 
 			warn("HIDMKtl:" 
@@ -143,7 +147,7 @@ HIDMKtl : MKtl {
 			^nil
 		};
 				
-		^super.basicNew.initHID(name, uid, foundSource);
+		^super.basicNew(name,devDescName ? foundSource[1].name.asString ).initHIDMKtl(uid, foundSource);
 	}
 	
 	postRawSpecs { this.class.postRawSpecsOf(srcDevice) }
@@ -157,8 +161,7 @@ HIDMKtl : MKtl {
 		}
 	}
 	
-	initHID { |argName, argUid, argSource|
-		name = argName; 
+	initHIDMKtl { |argUid, argSource|
 		srcID = argUid;
 		srcDevice = GeneralHID.open(argSource);
 		all.put(name, this);
@@ -166,7 +169,8 @@ HIDMKtl : MKtl {
 		elemDict = ();
 		lookupDict = ();
 		
-		this.findDevSpecs(srcDevice.info.name.postln); 
+		//		this.getDeviceDescription(  )
+		//		this.findDevSpecs(srcDevice.info.name.postln); 
 		
 //		// this.makeElements; 
 //		this.prepareFuncDict;
