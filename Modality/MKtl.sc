@@ -45,6 +45,7 @@ MKtl { // abstract class
 		// HID
 		this.addSpec(\hidBut, [0, 1, \lin, 1, 0]);
 		this.addSpec(\hidHat, [0, 1, \lin, 1, 0]);
+		this.addSpec(\compass8, [0, 8, \lin, 1, 1]); // probably wrong, check again!
 
 		deviceDescriptionFolder = this.filenameSymbol.asString.dirname +/+ "MKtlSpecs";
 	}
@@ -123,7 +124,6 @@ MKtl { // abstract class
 
 		// create specs
 		deviceDescription.pairsDo {|key, elem| 
-
 			var foundSpec =  specs[elem[\spec]];
 			if (foundSpec.isNil) { 
 				warn("Mktl - in description %, spec for '%' is missing! please add it with:"
@@ -131,13 +131,12 @@ MKtl { // abstract class
 					.format(deviceName, elem[\spec], elem[\spec])
 				);
 			};
-
 			elem[\specName] = elem[\spec];
 			elem[\spec] = this.class.specs[elem[\specName]];
 		};
 	}
 	
-	*postDescriptions {
+	*postAllDescriptions {
 		(MKtl.deviceDescriptionFolder +/+ "*").pathMatch
 			.collect { |path| path.basename.splitext.first }
 			.reject(_.beginsWith("_"))
@@ -262,6 +261,12 @@ MKtlElement {
 	init { 
 		funcChain = FuncChain.new;
 		deviceDescription = ktl.deviceDescriptionFor(name);
+		spec = deviceDescription[\spec];
+		if (spec.isNil) { 
+			warn("spec for '%' is missing!".format(spec));
+		} { 
+			value = prevValue = spec.default ? 0;
+		};
 		type = deviceDescription[\type];
 
 		spec = deviceDescription[\spec];
@@ -282,7 +287,8 @@ MKtlElement {
 	// (indirection with perform is much slower than method calls.)
 	addFunc { |funcName, function, addAction, otherName|
 		// by default adds the action to the end of the list
-		// if otherName is set, addActions \addLast, \addFirst, \addBefore, \addAfter, \replaceAt, are valid
+		// if otherName is set, the valid addActions are: 
+		// \addLast, \addFirst, \addBefore, \addAfter, \replaceAt, are valid
 		funcChain.add(funcName, function, addAction, otherName);
 	}
 
@@ -315,7 +321,7 @@ MKtlElement {
 	}
 
 	valueAction_ { |newval|
-		this.value( newval );
+		this.value_( newval );
 		ktl.recordValue( name, newval );
 		funcChain.value( name, newval );
 	}
