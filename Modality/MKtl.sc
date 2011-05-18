@@ -70,7 +70,7 @@ MKtl { // abstract class
 	*new { |name, deviceDesc|
 		if (deviceDesc.isNil) { ^all[name] };
 		
-		^super.basicNew(deviceDesc);
+		^this.basicNew(deviceDesc);
 	}
 	
 	*basicNew { |name, deviceDescName| 
