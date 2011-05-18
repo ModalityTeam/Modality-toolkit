@@ -61,17 +61,15 @@ MKtl { // abstract class
 	*makeShortName {|deviceID|
 		^(deviceID.asString.toLower.select{|c| c.isAlpha && { c.isVowel.not }}.keep(4))
 	}
-
-
 	
 		// new returns existing instances
 		// of subclasses that exist in .all, 
-		// a new empty instance. 
-		// or returns this is to allow virtual MKtls eventually.
+		// or returns a new empty instance. 
+		// this is to allow virtual MKtls eventually.
 	*new { |name, deviceDesc|
 		if (deviceDesc.isNil) { ^all[name] };
 		
-		^this.basicNew(deviceDesc);
+		^this.basicNew(name, deviceDesc);
 	}
 	
 	*basicNew { |name, deviceDescName| 
@@ -80,7 +78,7 @@ MKtl { // abstract class
 
 	*make { |name, deviceDescName|
 		if (all[name].notNil) {
-			warn("MKtl name '%' is in use exists already! please use another name."
+			warn("MKtl name '%' is in use already. Please use another name."
 				.format(name));
 			^nil
 		};

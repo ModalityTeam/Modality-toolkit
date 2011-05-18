@@ -18,7 +18,7 @@ d.addToProc( \average, { |dis|
 d.addToOutput(\average,\blah,{ |a,b,c| postln("average is "++c) })
 )
 d.remove;
-
+d.verbose = true;
 //Delta
 (
 a = MIDIMKtl(\nano1, -1871034450);
@@ -118,6 +118,7 @@ x = { |freq= 400, mod = 1| Saw.ar( LeakDC.kr( Lag.kr(freq)) + 100 ) * SinOsc.ar(
 		}
 	
 	} );
+   d
 }
 )
 
@@ -165,14 +166,13 @@ n.collect{ |i| source.elementNames.collect{ |name| d.addToOutput(("/page"++(i+1)
 ~paged.remove
 
 ~paged = ~makePagedVersion.(MIDIMKtl('nnkn0'),\rew,\fwd)
-10.collect{ |i| MIDIMKtl('nnkn0').elementNames.collect{ |name| ~paged.addToOutput(("/page"++(i+1)++"/"++name).asSymbol, \aFunction, { |a,b,c| [a,b,c].postln }) } };
-
+~paged.verbose = true
 ~paged.remove
+
 ~dis1 = ~makePagedVersion.(MIDIMKtl('nnkn0'),\rew,\fwd);
 ~dis2 = ~makeVelocityDispatch.(~dis1);
-10.collect{ |i| MIDIMKtl('nnkn0').elementNames.collect{ |name| ~paged.addToOutput(("/page"++(i+1)++"/"++name).asSymbol, \aFunction, { |a,b,c| [a,b,c].postln }) } };
-~dis2.addToOutput('/page1/sl1_1',\blah,Ê{ |a,b,c| c.postln })
-
+~dis2.verbose = true
+~paged.remove
 
 MIDIMKtl('lnch0').elementNames
 

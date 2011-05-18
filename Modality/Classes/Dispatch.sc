@@ -225,17 +225,17 @@ Dispatch{
 	}
 	
 	defaultValueFor{ ^0 }
-	/*
+	
 	verbose_ {|value=true|
 		value.if({
-			dispatchOuts.do{ |item| item.addFirst(\verbose, { |ktl, elName, value| 
-					[ktl, elName, value].postln;
+			dispatchOuts.do{ |item| item.funcChain.addFirst(\verbose, { |source, elName, value| 
+					[source, elName, value].postln;
 			})}
 		}, {
-			funcDict.do{|item| item.removeAt(\verbose)}
+			dispatchOuts.do{|item| item.funcChain.removeAt(\verbose)}
 		})
 	}
-	*/ 
+	 
 }
 
 DispatchOut {
