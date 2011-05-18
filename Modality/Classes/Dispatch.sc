@@ -225,10 +225,23 @@ Dispatch{
 		sources.keys.do{ |sourceKey|
 			var source = sourceKeyToSource[sourceKey];
 			mappedElems[ sourceKey ].do{ |elem|
-				// unregister from old Ktl
 				source. removeFromOutput(elem, this.name);
 			}
 		}
+	}
+	
+	recursiveRemove{
+		sources.keys.do{ |sourceKey|
+			var source = sourceKeyToSource[sourceKey];
+			if( source.class == Dispatch){
+				source.remove
+			} {
+				mappedElems[ sourceKey ].do{ |elem|
+					source.removeFromOutput(elem, this.name);
+				}
+			}
+		}
+			
 	}
 	
 	elementNames{
