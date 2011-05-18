@@ -44,7 +44,7 @@ MIDIMKtl : MKtl {
 	
 		// display all ports in readable fashion, 
 		// copy/paste-able directly 
-		// this could also live in 
+		// this could also live in /--where?--/
 	*find { |name, uid| 
 		this.initMIDI(true);
 
@@ -85,6 +85,11 @@ MIDIMKtl : MKtl {
 			);
 		};
 		"\n".postln;
+	}
+
+	*newFromDesc{ |name,deviceDescName,devDesc|
+		//		var devDesc = this.getDeviceDescription( deviceDesc )
+		
 	}
 
 		// create with a uid, or access by name	
@@ -139,7 +144,7 @@ MIDIMKtl : MKtl {
 		foundDestination.notNil.if{
 			destinationDeviceDict.changeKeyForValue(name, foundDestination);
 		};
-		
+
 		^super.basicNew(name, foundSource.device)
 			.initMIDIMKtl(name, foundSource, foundDestination);
 	}

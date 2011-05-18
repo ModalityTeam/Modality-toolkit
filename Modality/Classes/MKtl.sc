@@ -10,6 +10,7 @@
 
 MKtl { // abstract class
 	classvar <deviceDescriptionFolder;
+	classvar <allDevDescs;
 	classvar <all; // will hold all instances of MKtl
 	classvar <specs; // all specs
 
@@ -66,10 +67,20 @@ MKtl { // abstract class
 		// of subclasses that exist in .all, 
 		// or returns a new empty instance. 
 		// this is to allow virtual MKtls eventually.
-	*new { |name, deviceDesc|
-		if (deviceDesc.isNil) { ^all[name] };
-		
-		^this.basicNew(name, deviceDesc);
+	*new { |name, deviceDescName|
+		var devDesc;
+		if (deviceDescName.isNil) { ^all[name] };
+
+		// create an instance of the right subclass based on the protocol given in the device description
+		devDesc = this.getDeviceDescription( deviceDescName );
+		devDesc[ \protocol ].switch(
+			\midi, ^MIDIMKtl.newFromDesc( name, deviceDescName, devDesc ),
+			\hid, ^HIDMKtl.newFromDesc( name, deviceDescName, devDesc )
+			//\osc, ^OSCMKtl.new( name, deviceDesc ),
+			//\serial, ^SerialMKtl.new(name, deviceDesc )
+		);
+
+		^this.basicNew(name, deviceDescName);
 	}
 	
 	*basicNew { |name, deviceDescName| 
@@ -94,7 +105,7 @@ MKtl { // abstract class
 		if (deviceDescName.isNil) { 
 			warn("no deviceDescription name given!");
 		} {
-			this.loadDeviceDescription(deviceDescName.asString);
+			this.loadDeviceDescription(deviceDescName);
 			this.makeElements;
 		};
 		all.put(name, this);
@@ -103,23 +114,63 @@ MKtl { // abstract class
 	storeArgs { ^[name] }
 	printOn { |stream| this.storeOn(stream) }
 
-	findDeviceDescription{
-		
+	*loadDeviceIndex{ |reload=false|
+		var path;
+		if ( allDevDescs.isNil or: reload ){
+			path = deviceDescriptionFolder +/+ "index.desc.scd";
+			allDevDescs = try { 
+				path.load;
+			} { 
+				"//" + this.class ++ ": - no device description index found!\n"
+				.post;
+			};
+		};		
 	}
 
-	loadDeviceDescription { |deviceName| 
-		
-		var cleanDeviceName;
-		var path; 
+	// this tries to find a description from an os specifically given device name
+	findDescriptions{ |rawDeviceName|
+		var found = List.new;
+		this.loadDeviceIndex;
+		allDevDescs.keyValuesDo{ |key,desc|
+			if ( desc[ thisProcess.platform.name ] == rawDeviceName ){
+				found.add( key );
+			};
+		};
+		^found;
+	}
 
-		cleanDeviceName = deviceName.collect { |char| if (char.isAlphaNum, char, $_) };
-		path = deviceDescriptionFolder +/+ cleanDeviceName ++ ".scd";
+	*getDeviceDescription{ |devName|
+		this.loadDeviceIndex;
+		^allDevDescs.at( devName );
+	}
+
+	// not sure if we need this method anymore, but maybe useful for automatic saving of a user defined description?
+	*getCleanDeviceName{ |dirtyName|
+		var cleanDeviceName = dirtyName.collect { |char| if (char.isAlphaNum, char, $_) };
+		^cleanDeviceName;
+	}
+
+	// this takes the actual filename
+	loadDeviceDescription { |deviceName| 
+		var deviceInfo;
+		var deviceFileName;
+		var path;
+
+		// look the filename up in the index
+		deviceInfo = this.class.getDeviceDescription( deviceName );
+		deviceInfo.postln;
+		// deviceInfo also has information about protocol and os specific naming
+
+		deviceFileName = deviceInfo[ \file ];
+
+		path = deviceDescriptionFolder +/+ deviceFileName;
+		path.postln;
 
 		deviceDescription = try { 
 			path.load;
 		} { 
 			"//" + this.class ++ ": - no device description found for %: please make them!\n"
-				.postf(cleanDeviceName);
+				.postf(deviceName);
 		//	this.class.openTester(this);
 		};
 
