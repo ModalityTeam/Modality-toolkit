@@ -1,4 +1,5 @@
 Dispatch{
+	classvar <dispatchTemplateFolder;
 
 	classvar <>tempNamePrefix = "Dispatch_";
 	classvar tempDefCount = 0;
@@ -24,6 +25,10 @@ Dispatch{
 
 	var <changedOuts; // keeps the changed outputs in order to update
 	var <changedIn;
+
+	*initClass{
+		dispatchTemplateFolder = this.filenameSymbol.asString.dirname.dirname +/+ "DispatchTemplates";
+	}
 	
 	*generateTempName {
 		var name = tempNamePrefix ++ tempDefCount;
@@ -33,6 +38,39 @@ Dispatch{
 	
 	*new{ |name|
 		^super.new.init(name ? Dispatch.generateTempName );
+	}
+
+	loadDispatchTemplate { |dispatchName| 
+		
+		var cleanTemplateName;
+		var path;
+		var dispatchTemplate;
+
+		cleanTemplateName = dispatchName.collect { |char| if (char.isAlphaNum, char, $_) };
+		path = dispatchTemplateFolder +/+ cleanTemplateName ++ ".scd";
+
+		dispatchTemplate = try { 
+			path.load;
+		} { 
+			"//" + this.class ++ ": - no dispatch template found for %: please make them!\n"
+				.postf(cleanTemplateName);
+		//	this.class.openTester(this);
+		};
+
+		/*
+		// create specs
+		dispatchTemplate.pairsDo {|key, elem| 
+			var foundSpec =  specs[elem[\spec]];
+			if (foundSpec.isNil) { 
+				warn("Mktl - in description %, spec for '%' is missing! please add it with:"
+					"\nMktl.addSpec( '%', [min, max, warp, step, default]);\n"
+					.format(deviceName, elem[\spec], elem[\spec])
+				);
+			};
+			elem[\specName] = elem[\spec];
+			elem[\spec] = this.class.specs[elem[\specName]];
+		};
+		*/
 	}
 
 	init{ |nm|
