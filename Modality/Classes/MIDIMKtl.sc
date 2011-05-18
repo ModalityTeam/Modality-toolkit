@@ -13,6 +13,11 @@ MIDIMKtl : MKtl {
 	// MIDI-specific address identifiers 
 	var <srcID, <source; 
 	var <dstID, <destination; 
+
+	// an action that is called every time a midi message comes in
+	// .value(type, src, chan, num/note, value/vel)
+	var <>midiRawAction; 
+	
 	
 			// optimisation for fast lookup, 
 			// may go away if everything lives in "elements" of superclass
@@ -262,7 +267,10 @@ MIDIMKtl : MKtl {
 		responders = (
 			cc: CCResponder({ |src, chan, num, value| 
 				var hash = this.makeCCKey(chan, num);
-				var elName = hashToElNameDict[hash]; 
+				var elName = hashToElNameDict[hash];
+				
+				midiRawAction.value(\control, src, chan, num, value);
+				 
 				elementHashDict[hash].valueAction_(value); 
 			}, srcID), 
 			
@@ -270,6 +278,8 @@ MIDIMKtl : MKtl {
 				var hash = this.makeNoteKey(chan, note);
 				var elName = hashToElNameDict[hash];
 				//	["noteOn", chan, note, vel, hash].postln;
+
+				midiRawAction.value(\noteOn, src, chan, note, vel);
 				elementHashDict[hash].valueAction_(vel); 
 			}, srcID), 
 			
@@ -277,6 +287,8 @@ MIDIMKtl : MKtl {
 				var hash = this.makeNoteKey(chan, note);
 				var elName = hashToElNameDict[hash];
 				//	["noteOff", chan, note, vel, hash].postln;
+
+				midiRawAction.value(\noteOff, src, chan, note, vel);
 				elementHashDict[hash].valueAction_(vel); 
 			}, srcID)
 		);
