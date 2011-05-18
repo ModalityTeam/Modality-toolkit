@@ -15,7 +15,7 @@ d.addToProc( \average, { |dis|
 	dis.setOutput( \average, val/2 );
 } );
 
-d.addToOutput(\average,\blah,{Ê|a,b,c| postln("average is "++c) })
+d.addToOutput(\average,\blah,{ |a,b,c| postln("average is "++c) })
 )
 d.remove;
 
@@ -46,7 +46,7 @@ d.addToProc( \velocityCalc, { |dis,e|
 
 } );
 
-d.addToOutput(\sl1_1,\blah,{Ê|a,b,c| postln("delta is "++c) })
+d.addToOutput(\sl1_1,\blah,{ |a,b,c| postln("delta is "++c) })
 )
 
 //Velocity
@@ -84,12 +84,12 @@ d.addToProc( \velocityCalc, { |dis,e|
 w = Window.new.front;
 ~sl = Slider(w, Rect(20, 60, 150, 20));
 d.addToOutput(\sl1_1,\blah,{Ê|a,b,c| { ~sl.value_(c/4000) }.defer; x.set(\freq,c*2)  });
-d.addToOutput(\sl2_1,\blah,{Ê|a,b,c| { ~sl.value_(c/4000) }.defer; x.set(\mod, c/40)  })
+d.addToOutput(\sl2_1,\blah,{ |a,b,c| { ~sl.value_(c/4000) }.defer; x.set(\mod, c/40)  })
 
 )
-x = {Ê|freq= 400, mod = 1| Saw.ar( Lag.kr(freq) ) * SinOsc.ar(Lag.kr(mod) ).range(0.0,1.0)* 0.5 }.play
+x = { |freq= 400, mod = 1| Saw.ar( Lag.kr(freq) ) * SinOsc.ar(Lag.kr(mod) ).range(0.0,1.0)* 0.5 }.play
 
-x = {Ê|freq= 400, mod = 1| Saw.ar( LeakDC.kr( Lag.kr(freq)) + 100 ) * SinOsc.ar( LeakDC.kr( Lag.kr(mod), 0.990) + 1 ).range(0.0,1.0)* 0.5 }.play
+x = { |freq= 400, mod = 1| Saw.ar( LeakDC.kr( Lag.kr(freq)) + 100 ) * SinOsc.ar( LeakDC.kr( Lag.kr(mod), 0.990) + 1 ).range(0.0,1.0)* 0.5 }.play
 
 (
 ~makeVelocityDispatch = { |source|
@@ -131,7 +131,7 @@ d.mapAll(source);
 n = 10;
 d.envir[\scene] = 0;
 d.envir[\numOfScenes] = n;
-d.envir[\values]Ê= n.collect{ Dictionary.new.putPairs(source.elementNames.collect{ |name| [name, source.defaultValueFor(name) ? 0] }) };
+d.envir[\values] = n.collect{ Dictionary.new.putPairs(source.elementNames.collect{ |name| [name, source.defaultValueFor(name) ? 0] }) };
 n.collect{ |i| source.elementNames.collect{ |name| d.createOutput(("/page"++(i+1)++"/"++name).asSymbol) } };
 d.addToProc( \processEvents, {  |dis,e|
 	var in = d.changedIn; // (source: \source, key: \sl1)
