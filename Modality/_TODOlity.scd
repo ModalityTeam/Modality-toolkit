@@ -14,6 +14,8 @@ ToDolity
 		add/remove functions
 		sendMsg
 	* default devSpec files in quarks, custom ones in userAppSupportDir
+        on linux hid device names show up differently (including vendor name)
+        how is device protocol, device name (os dependent) handled?
 	* gesture recording / playback, MKtlLoop based on CtLoop?
 
 * HIDMKtl:
