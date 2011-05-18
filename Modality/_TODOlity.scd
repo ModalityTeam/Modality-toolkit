@@ -52,14 +52,23 @@ ToDolity
 	* BCR (just copy)
 	* BCF
 
-* Dispatch: 
+* Dispatch:
 	* pattern matching very slow on Dispatches with many outputs...
-	* read File with definitions - factory of common functionality (average, page ctrl, trigger, acc, LOA, stuff that is in actionFunc,
-	 times things, regions(e.g. launchpad,), transform trigger buttons (that go 127 when pressed and 0 when depressed)
-	  into just a trigger, eventually WOLRD DOMINATION UHAHAAHAHAHAHAHAHAH)
-	* several things are the same source, how to deal with it?
-	* easy way to compose several Dispatchs
+	* read File with definitions - factory of common functionality
+		average, 
+		acc, 
+		LOA, 
+		stuff that is in actionFunc,
+	 	times things, 
+	 	regions(e.g. launchpad,)
+	* BynaryOpDispatch (copy from BinaryOpUGen ? )	- well let's just think about it
 	------------------------------------------------------------------------------------
+	* read File with definitions - factory of common functionality
+		page ctrl,
+		trigger, 
+	* recursive remove of dispatchs ? good idea ?
+	* easy way to compose several Dispatchs (starting to look like UGens, cool)
+	* several things are the same source, how to deal with it? (appears to work)
 	* common interface between MKtlElement and DispatchOut (done)
 	* add verbose posting (done)
 	* use/test cases for dummies (Miguuel: done - help file)
