@@ -13,7 +13,6 @@ MKtl { // abstract class
 	classvar <all; // will hold all instances of MKtl
 	classvar <specs; // all specs
 
-	var <responders;
 	var <name;	// a user-given unique name
 	
 	// an array of keys and values with a description of all the elements on the device.
@@ -22,6 +21,8 @@ MKtl { // abstract class
 
 	// all control elements (MKtlElement) on the device you may want to listen or talk to
 	var <elements;
+
+	var <responders;
 
 	//var <>recordFunc; // what to do to record incoming control changes
 	
@@ -39,6 +40,7 @@ MKtl { // abstract class
 		this.addSpec(\midiCC, [0, 127, \lin, 1, 0]); 
 		this.addSpec(\midiVel, [0, 127, \lin, 1, 0]); 
 		this.addSpec(\midiBut, [0, 127, \lin, 127, 0]); 
+		this.addSpec(\compass8, [0, 8, \lin, 1, 1]); // may be wrong, check again!
 
 		// HID
 		this.addSpec(\hidBut, [0, 1, \lin, 1, 0]);
@@ -46,20 +48,7 @@ MKtl { // abstract class
 
 		deviceDescriptionFolder = this.filenameSymbol.asString.dirname +/+ "MKtlSpecs";
 	}
-	
-		// abstract class - new returns existing instances 
-		// of subclasses that exist in .all
-	*new { |name, deviceDesc|
-		if (deviceDesc.isNil) { ^all[name] };
-		
-		^super.basicNew(deviceDesc);
-		
-	}
-	
-	*basicNew { |desc| 
-		^super.new.init;
-	}
-	
+
 	*find {
 		this.allSubclasses.do(_.find);	
 	}
@@ -69,16 +58,52 @@ MKtl { // abstract class
 	}
 
 	*makeShortName {|deviceID|
-		^(deviceID.asString.toLower.select{|c| c.isAlpha && {"aeiou".includes(c).not}}.keep(4))
+		^(deviceID.asString.toLower.select{|c| c.isAlpha && { c.isVowel.not }}.keep(4))
 	}
 
-	init {
+
+	
+		// new returns existing instances
+		// of subclasses that exist in .all, 
+		// a new empty instance. 
+		// or returns this is to allow virtual MKtls eventually.
+	*new { |name, deviceDesc|
+		if (deviceDesc.isNil) { ^all[name] };
+		
+		^super.basicNew(deviceDesc);
+	}
+	
+	*basicNew { |name, deviceDescName| 
+		^super.new.init(name, deviceDescName);
+	}
+
+	*make { |name, deviceDescName|
+		if (all[name].notNil) {
+			warn("MKtl name '%' is in use exists already! please use another name."
+				.format(name));
+			^nil
+		};
+		
+		^this.basicNew(name, deviceDescName);
+	}
+	
+	init { |argName, deviceDescName|
+		name = argName; 
+		
 		//envir = ();
 		elements = ();
-		//this.loadDeviceDescription; 
-		
-		
+		if (deviceDescName.isNil) { 
+			warn("no device name given!");
+		} {
+			this.loadDeviceDescription(deviceDescName.asString);
+			this.makeElements;
+		};
+		all.put(name, this);
 	}
+	
+	storeArgs { ^[name] }
+	printOn { |stream| this.storeOn(stream) }
+
 
 	loadDeviceDescription { |deviceName| 
 		
@@ -91,12 +116,22 @@ MKtl { // abstract class
 		deviceDescription = try { 
 			path.load;
 		} { 
-			"//" + this.class ++ ": - no device description found for %: please make them!\n".postf(cleanDeviceName);
+			"//" + this.class ++ ": - no device description found for %: please make them!\n"
+				.postf(cleanDeviceName);
 		//	this.class.openTester(this);
 		};
 
 		// create specs
 		deviceDescription.pairsDo {|key, elem| 
+
+			var foundSpec =  specs[elem[\spec]];
+			if (foundSpec.isNil) { 
+				warn("Mktl - in description %, spec for '%' is missing! please add it with:"
+					"\nMktl.addSpec( '%', [min, max, warp, step, default]);\n"
+					.format(deviceName, elem[\spec], elem[\spec])
+				);
+			};
+
 			elem[\specName] = elem[\spec];
 			elem[\spec] = this.class.specs[elem[\specName]];
 		};
@@ -111,7 +146,9 @@ MKtl { // abstract class
 
 	deviceDescriptionFor { |elname| ^deviceDescription[deviceDescription.indexOf(elname) + 1] }
 
-	postDeviceDescription { deviceDescription.printcsAll; }
+	postDeviceDescription {
+		deviceDescription.pairsDo {|a, b| "% : %\n".postf(a, b); }
+	}
 
 	makeElements {
 		this.elementNames.do{|key|
@@ -225,21 +262,27 @@ MKtlElement {
 	init { 
 		funcChain = FuncChain.new;
 		deviceDescription = ktl.deviceDescriptionFor(name);
-		spec = deviceDescription[\spec];
-		value = prevValue = spec.default ? 0;
 		type = deviceDescription[\type];
+
+		spec = deviceDescription[\spec];
+		if (spec.isNil) { 
+			warn("spec for '%' is missing!".format(spec));
+		} { 
+			value = prevValue = spec.default ? 0;
+		};
 	}
 
 	defaultValue {
 		^spec.default;	
 	}
 
-	// funcChain interface
-	addFunc { |funcName, function, addAction=\addToTail, otherName|
+	// funcChain interface //
+	
+	// by default, just do add = addLast, no flag needed. 
+	// (indirection with perform is much slower than method calls.)
+	addFunc { |funcName, function, addAction, otherName|
 		// by default adds the action to the end of the list
-		// if otherName is set to a function, addActions \addBefore, \addAfter, \addReplace, are valid
-		// otherwise there is \addToTail or \addToHead
-		
+		// if otherName is set, addActions \addLast, \addFirst, \addBefore, \addAfter, \replaceAt, are valid
 		funcChain.add(funcName, function, addAction, otherName);
 	}
 
