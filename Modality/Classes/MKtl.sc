@@ -210,6 +210,11 @@ MKtl { // abstract class
 	removeFromOutput{ |elementKey, funcName| 
 		this.removeFunc(elementKey, funcName)
 	}
+
+	// remove all functionalities from all elements
+	reset {
+		elements.do(_.reset)
+	}
 	
 	recordValue { |key,value|
 //		recordFunc.value( key, value );
@@ -251,6 +256,11 @@ MKtlBasicElement {
 
 	init { 
 		funcChain = FuncChain.new;
+	}
+
+		// remove all functionalities from the funcChains
+	reset {
+		this.init;
 	}
 
 	// funcChain interface //
