@@ -28,16 +28,12 @@ MIDIMKtl : MKtl {
 	*initMIDI{|force= false|
 
 		(initialized && {force.not}).if{^this};
-		
-		
+	
 		MIDIIn.connectAll;
 		sourceDeviceDict = ();
 		destinationDeviceDict = ();
 
 		this.prepareDeviceDicts;
-
-		
-		
 		
 		initialized = true;
 	}
@@ -45,7 +41,7 @@ MIDIMKtl : MKtl {
 		// display all ports in readable fashion, 
 		// copy/paste-able directly 
 		// this could also live in /--where?--/
-	*find { |name, uid| 
+	*find { 
 		this.initMIDI(true);
 
 		if (MIDIClient.sources.isEmpty) { 
@@ -87,9 +83,22 @@ MIDIMKtl : MKtl {
 		"\n".postln;
 	}
 
+	*findSource{ |rawDeviceName|
+		var devKey;
+		this.sourceDeviceDict.keysValuesDo{ |key,endpoint|
+			if ( endpoint.name == rawDeviceName ){
+				devKey = key;
+			};
+		};
+		^devKey;
+	}
+
+	// how to deal with additional arguments (uids...)?
 	*newFromDesc{ |name,deviceDescName,devDesc|
 		//		var devDesc = this.getDeviceDescription( deviceDesc )
-		
+		var devKey = this.findSource( devDesc[ thisProcess.platform.name ] );
+		this.sourceDeviceDict.swapKeys( name, devKey );
+		^this.new( name );
 	}
 
 		// create with a uid, or access by name	

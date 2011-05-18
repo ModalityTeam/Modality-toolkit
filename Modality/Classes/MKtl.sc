@@ -74,8 +74,8 @@ MKtl { // abstract class
 		// create an instance of the right subclass based on the protocol given in the device description
 		devDesc = this.getDeviceDescription( deviceDescName );
 		devDesc[ \protocol ].switch(
-			\midi, ^MIDIMKtl.newFromDesc( name, deviceDescName, devDesc ),
-			\hid, ^HIDMKtl.newFromDesc( name, deviceDescName, devDesc )
+			\midi, { ^MIDIMKtl.newFromDesc( name, deviceDescName, devDesc ) },
+			\hid, { ^HIDMKtl.newFromDesc( name, deviceDescName, devDesc ) }
 			//\osc, ^OSCMKtl.new( name, deviceDesc ),
 			//\serial, ^SerialMKtl.new(name, deviceDesc )
 		);

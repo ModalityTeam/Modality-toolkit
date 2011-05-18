@@ -51,6 +51,22 @@ HIDMKtl : MKtl {
 		"\n///////".postln;
 	}
 
+	*findSource{ |rawDeviceName|
+		var devices = GeneralHID.deviceList.detect{ |pair|
+			var dev, info; #dev, info = pair;
+			(info.name == rawDeviceName)
+		};
+		^devices;
+	}
+
+	// how to deal with additional arguments (uids...)?
+	*newFromDesc{ |name,deviceDescName,devDesc|
+		//		var devDesc = this.getDeviceDescription( deviceDesc )
+		var dev = this.findSource( devDesc[ thisProcess.platform.name ] );
+
+		^this.new( name, dev );
+	}
+
 		// create with a uid, or access by name	
 	*new { |name, uid| 
 		var foundSource;
