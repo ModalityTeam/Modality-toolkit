@@ -124,12 +124,11 @@ x = { |freq= 400, mod = 1| Saw.ar( LeakDC.kr( Lag.kr(freq)) + 100 ) * SinOsc.ar(
 
 //paged ktl
 (
-~makePagedVersion = { |source, previousSceneKey, nextSceneKey|
+~makePagedVersion = { |source, previousSceneKey, nextSceneKey, n = 10|
 var d = Dispatch.new;
 d.mapAll(source);
 
 // initialize the scene
-n = 10;
 d.envir[\scene] = 0;
 d.envir[\numOfScenes] = n;
 d.envir[\values] = n.collect{ Dictionary.new.putPairs(source.elementNames.collect{ |name| [name, source.defaultValueFor(name) ? 0] }) };
@@ -160,7 +159,7 @@ d
 //k = MIDIMKtl(\nano1, -1871034450);
 
 //could be Dispatch.paged(MIDIMKtl('lnch0'),\left,\right)
-~paged = ~makePagedVersion.(MIDIMKtl('lnch0'),\left,\right)
+~paged = ~makePagedVersion.(MIDIMKtl('lnch0'),\left,\right,32)
 n.collect{ |i| source.elementNames.collect{ |name| d.addToOutput(("/page"++(i+1)++"/"++name).asSymbol, \aFunction, { |a,b,c| [a,b,c].postln }) } };
 
 ~paged.remove
@@ -169,7 +168,7 @@ n.collect{ |i| source.elementNames.collect{ |name| d.addToOutput(("/page"++(i+1)
 ~paged.verbose = true
 ~paged.remove
 
-~dis1 = ~makePagedVersion.(MIDIMKtl('nnkn0'),\rew,\fwd);
+~dis1 = ~makePagedVersion.(MIDIMKtl('nnkn0'),\rew,\fwd,32);
 ~dis2 = ~makeVelocityDispatch.(~dis1);
 ~dis2.verbose = true
 ~paged.remove
