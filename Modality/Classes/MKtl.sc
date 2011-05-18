@@ -160,9 +160,14 @@ MKtl { // abstract class
 		var devDesc;
 		this.loadDeviceIndex;
 		devDesc = allDevDescs.at( devName );
-		if ( devDesc.isKindOf( Symbol ) ){
-			devDesc = this.getDeviceDescription( devDesc );
-		};
+		if ( devDesc.isNil ){
+			// see if we can find it from the device name:
+			allDevDescs.keysValuesDo{ |key,desc|
+				if ( desc[ thisProcess.platform.name ] == devName ){
+					devDesc = desc;
+				};
+			};
+		}
 		^devDesc;
 	}
 
@@ -180,13 +185,12 @@ MKtl { // abstract class
 
 		// look the filename up in the index
 		deviceInfo = this.class.getDeviceDescription( deviceName );
-		deviceInfo.postln;
+
 		// deviceInfo also has information about protocol and os specific naming
 
 		deviceFileName = deviceInfo[ \file ];
 
 		path = deviceDescriptionFolder +/+ deviceFileName;
-		path.postln;
 
 		deviceDescription = try { 
 			path.load;

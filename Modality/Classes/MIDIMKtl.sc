@@ -156,8 +156,8 @@ MIDIMKtl : MKtl {
 
 		//	foundSource.device.postln;
 		//		^super.basicNew(name, foundSource.device)
-		^super.basicNew(name, devDescName ? foundSource.device.asSymbol )
-			.initMIDIMKtl(name, foundSource, foundDestination, devDescName ? foundSource.device.asSymbol );
+		^super.basicNew(name, devDescName ? foundSource.device )
+			.initMIDIMKtl(name, foundSource, foundDestination );
 	}
 	
 	*prepareDeviceDicts{
@@ -203,7 +203,7 @@ MIDIMKtl : MKtl {
 		});
 	}
 	
-	initMIDIMKtl { |argName, argSource, argDestination, devDescName|
+	initMIDIMKtl { |argName, argSource, argDestination|
 		name = argName; 
 		
 		source = argSource;
@@ -220,11 +220,11 @@ MIDIMKtl : MKtl {
 		elementHashDict = ();
 		hashToElNameDict = ();
 			// moved to superclass init
-		this.loadDeviceDescription(devDescName); 
+		//	this.loadDeviceDescription(devDescName); 
 		
 		//this.findDeviceDescription(source.device); 
 		
-		this.makeElements; 
+		//	this.makeElements; 
 		this.prepareElementHashDict;
 
 		this.addResponders; 
