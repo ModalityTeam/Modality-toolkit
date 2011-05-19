@@ -41,6 +41,14 @@ StickView {
 	polar 	{ ^point.asPolar }
 	rho 		{ ^point.rho }
 	angle 	{ ^point.angle }
+		
+		// interface ... hmm, point is [-1, 1]!
+	value 	{ ^[point.x, point.y, hatval] }
+	value_ 	{ |val| 
+		point.x = val[0]; 
+		point.y = val[0]; 
+		hatval = val[2]; 
+	}
 	
 	init { |parent, bounds|
 		
