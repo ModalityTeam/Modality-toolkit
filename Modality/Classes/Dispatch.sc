@@ -259,7 +259,7 @@ Dispatch{
 	}
 	
 	elementNames{
-		^elements.collect(_.name)
+		^elements.keys.asArray
 	}
 	
 	defaultValueFor{ ^0 }
