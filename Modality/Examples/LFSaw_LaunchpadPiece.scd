@@ -130,15 +130,15 @@ Ndef(\murder, {|mute = 1|
 	}.lag(0, 1);
 	
 	(ctrls.size.collect{|i|
-		freq = 64 + (i * 0.125);
-		LPF.ar(
-			Pulse.ar([1, 0.5] * freq, 0.5, AmpComp.ir(freq)).sum 
+		freq = 64 + (i * 2);
+		(LPF.ar(
+			SinOsc.ar([1, 0.5] * freq, 0.5, AmpComp.ir(freq)).sum 
 			+ WhiteNoise.ar(0.25), i.linexp(0, 63, 50, 20000)
 		) 
-		* LFPulse.ar(0.2 * (i+1), i/64, 0.2, mul: 0.5, add: 0.2)
-		* LFPulse.ar(0.130874 * (i+1), i/64, 0.2, mul: 0.5, add: 0.2)
-		* i.linlin(0, 7, 1, 0.125)
-		* LFNoise2.ar(0.5).range(0.25, 1) * mute
+		//* LFPulse.ar(0.2 * (i+1), i/64, 0.2, mul: 0.5, add: 0.2)
+		//* LFPulse.ar(0.130874 * (i+1), i/64, 0.2, mul: 0.5, add: 0.2)
+		).tanh * i.linlin(0, 7, 1, 0.125)
+		* SinOsc.ar(i.linlin(0, 64, 5, 1.25).round(1.25), rrand(0, 0.1)).range(0.25, 1) * mute
 	} * ctrls).clump(2).sum.tanh ;
 })	 
 )
@@ -155,15 +155,15 @@ Ndef(\crackle, {|tail = 3, clicky = 0.04, crackle = 30|
 	var ctrls = q.arNames.collect{|elem|
 		q.lnch[elem].kr
 	};
-	//clicky = clicky.lag(10);
+	clicky = clicky.lag(10);
 	(ctrls.collect{|ctrl, i|
 		src = ({Dust.ar(crackle.lag(2))}!2);
-		//src = Decay.ar(src, 0.001) * BrownNoise.ar; 
+		src = Decay.ar(src, 0.001) * BrownNoise.ar; 
 		src = src.collect{|src|
-		Formlet.ar(
+		Ringz.ar(
 			src * 0.4, 
 			EnvGen.ar(Env([1000]++({exprand(500, 1700.0)}!10), ({1.0.rand}!9) ++[0]), levelScale: (i+1) * 0.2 + 2, gate: ctrl), 
-			clicky * 0.1, clicky
+			clicky
 		)
 		};
 		src * SinOsc.ar(i+1).range(0.1, 1) * ctrl.lag(0, tail)
