@@ -4,9 +4,6 @@ a = 12;
 z = 8768768;
 q = (a: 123, b: 234);
 
-t = g.texts.first.textField;
-t.action = { thisProcess.interpreter.perform(\a_, 123) }
-
 // todo: 
 
 *	compare with prevState, only update if needed
@@ -19,7 +16,7 @@ GlobalsGui : JITGui {
 	var <texts; 
 	classvar <names = #[
 		\a, \b, \c, \d, \e, \f, \g, 
-		\h, \n, \j, \k, \l, \m, \n,
+		\h, \i, \j, \k, \l, \m, \n,
 		\o, \p, \q, \r, \s, \t, \u, 
 		\v, \w, \x, \y, \z, \cmdLine ]; 
 	
@@ -40,8 +37,7 @@ GlobalsGui : JITGui {
 	makeViews { 
 		
 		texts = names.collect { |name, i| 
-			var labelWidth = 15, canEval = true; 
-			var text;
+			var text, labelWidth = 15, canEval = true; 
 			if (name == 'cmdLine', { 
 				labelWidth = 60;
 				canEval = false; 
@@ -50,7 +46,15 @@ GlobalsGui : JITGui {
 			text = EZText(zone, 188@ skin.buttonHeight, name, labelWidth: labelWidth);
 			text.view.resize_(2);
 			text.labelView.align_(\center); 
-			text.enabled_(canEval);
+			text.enabled_(canEval); 
+			if (canEval) { 
+				text.action = { |tx| 
+					thisProcess.interpreter.perform(
+						name.asSetter, 
+						tx.textField.string.interpret
+					);
+				} 
+			};
 			text; 
 		};
 		this.name_(this.getName);
@@ -75,7 +79,6 @@ GlobalsGui : JITGui {
 				texts[i].value_(obj);
 			};
 		};
-		// texts.last.textField = texts.last.textField
 		prevState = newState;
 	}
 }
