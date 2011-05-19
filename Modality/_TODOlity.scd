@@ -23,6 +23,7 @@
 		* BCR (just copy)
 		* BCF
 	* write some generic device descriptions (mouse, keyboard, general gamepad)
+    * device: could be multiple devices for devices with the same spec
 
 * HIDMKtl:
 	* test "crossplatform" on osx
