@@ -1,6 +1,43 @@
 /* 
 * convert sketch to class: 
 
+MKtl(\ferr1, 'Run_N__Drive');
+MKtl(\nk1, 'nanoKONTROL');
+
+
+	// the zones for each element 
+	// - suggestions for width and height could be based on  types
+zoneDict = (
+	'bt1r': Rect(250 + 40, 200 - 12, 40, 24),
+	'bt2r': Rect(275 + 40, 225 - 12, 40, 24),
+	'bt3r': Rect(300 + 40, 200 - 12, 40, 24),
+	'bt4r': Rect(275 + 40, 175 - 12,  40, 24),
+	
+	'compass': Rect.aboutPoint(100@200, 45, 45),
+	
+	'joyLHat': 	Rect(140, 320 + 20, 50, 40),
+	'joyLX': 		Rect(60, 280 + 20, 120, 40),
+	'joyLY': 		Rect(100, 240 + 20, 40, 120),
+	
+	'joyRHat': Rect(300, 320 + 20, 50, 40),
+	'joyRX': Rect(220, 280 + 20, 120, 40),
+	'joyRY': Rect(260, 240 + 20, 40, 120),
+	
+	'lfBot7': Rect(110, 25,  40, 20),
+	'lfTop5': Rect(40, 100,  80, 20),
+	
+	'midL9': Rect(150, 190, 48, 20),
+	'midR10': Rect(202, 190, 48, 20),
+	
+	'rfBot8': Rect(250, 25,  40, 20),
+	'rfTop6': Rect(280, 100,  80, 20),
+	
+	'throtL': Rect(30, 55, 120, 40),
+	'throtR': Rect(250, 55, 120, 40),
+	
+	'wheel': Rect(5, 125, 40, 150 )
+);	
+
 	
 	
 
@@ -80,7 +117,7 @@ MKtlGui : JITGui {
 		);
 	}
 
-	*new { 
-	
+	*new { |mtkl, parent, zoneDict| 
+		
 	}
 }
