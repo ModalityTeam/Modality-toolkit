@@ -28,10 +28,10 @@ Spec.add(\cent1,  [0, 1, \lin, 0, 0.5].asSpec);
 	\joyRHat, (type: \hidHat, osx: (cookie: 13), linux: (slot: [1,315]), spec: \hidHat, mode: \center), 
 
 		// joystick axes switches
-	\joyLX, (type: \joyAxis, osx: (cookie: 15, spec: \cent255inv), linux: (slot: [3,2], spec: \cent1 ),  mode: \center), 
-	\joyLY, (type: \joyAxis, osx: (cookie: 16, spec: \cent255 ), linux: (slot: [3,5], spec: \cent1 ),  mode: \center), 
-	\joyRX, (type: \joyAxis, osx: ( cookie: 17, spec: \cent255inv), linux: (slot: [3,0], spec: \cent1), mode: \center), 
-	\joyRY, (type: \joyAxis, osx: ( cookie: 20, spec: \cent255 ), linux: ( slot: [3,1], spec: \cent1 ), mode: \center), 
+	\joyLX, (type: \joyAxis, osx: (cookie: 15, spec: \cent255inv), linux: (slot: [3,0], spec: \cent1 ),  mode: \center), 
+	\joyLY, (type: \joyAxis, osx: (cookie: 16, spec: \cent255 ), linux: (slot: [3,1], spec: \cent1 ),  mode: \center), 
+	\joyRX, (type: \joyAxis, osx: ( cookie: 17, spec: \cent255inv), linux: (slot: [3,2], spec: \cent1), mode: \center), 
+	\joyRY, (type: \joyAxis, osx: ( cookie: 20, spec: \cent255 ), linux: ( slot: [3,5], spec: \cent1 ), mode: \center), 
 
 	// what is meant with mode "minimum", on Linux it seems more logical to just inverse the spec
 	\throtL, (type: \springFader, osx: (cookie: 17, spec: \lin255 ), linux: (slot: [3,3], spec: \lin1inv ), mode: \minimum), 

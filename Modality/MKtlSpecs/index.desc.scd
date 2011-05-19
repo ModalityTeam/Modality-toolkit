@@ -1,9 +1,10 @@
 IdentityDictionary[
 \nanoKONTROL -> 
 	(osx: ( device: "nanoKONTROL"), linux: ( device: "nanoKONTROL-nanoKONTROL MIDI 1"), protocol: \midi, file: "nanoKONTROL.desc.scd" ),
+	\GamePad -> ( type: \template, protocol: \hid, file: "GamePad.desc.scd" ), // gamepad template
 \Run_N_Drive -> 
 	(osx: ( device: "Run'N' Drive"), linux: (device: "Thrustmaster Run\'N\' Drive"), protocol: \hid, file: "Run_N_Drive.desc.scd" ),
-\GamePad -> ( osx: ( device: ), linux: ( device: "Mega World USB Game Controllers"), protocol: \hid, file: "GamePad" ),
+\ImpactGamePad -> ( osx: ( ), linux: ( device: "Mega World USB Game Controllers"), protocol: \hid, file: "ImpactGamePad.desc.scd" ),
 \Launchpad -> 
 	(osx: ( device: "Launchpad"), linux: (device: "Launchpad"), protocol: \midi, file: "Launchpad.desc.scd" ),
 \manta -> 
