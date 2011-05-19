@@ -2,7 +2,7 @@ The Wishlist
 
 DONE: 
 + Ndef: meaningful synthdef names 
-+ PKtl - use MKtl values in patterns
++ PKtl - use MKtl values in patterns, incl. polyphony.
 
 + transparent controllers: MKtl
 	+ jX: calibration, activity, timers, resolution test, setups, GUI
