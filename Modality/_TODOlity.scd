@@ -1,8 +1,7 @@
 ToDolity
 
 * FuncChain:
-  * simplify methods, unify method names
-  * test that all variants of adding and removing work
+  * add move methods
 
 * MKtl:
 	* interface protocol: 
