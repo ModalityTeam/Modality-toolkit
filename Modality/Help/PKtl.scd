@@ -19,3 +19,10 @@ Pdef(\mk, Pbind(\amp, z.squared, \dur, 0.25).trace).play;
 n.at(\sl1_1).value_(64);
 n.at(\sl1_1).value_(127.rand);
 
+	// test polyphony support: 
+z.elName = [\sl1_1, \sl1_2];
+
+n.at(\sl1_1).value_(127.rand.postln);
+n.at(\sl1_2).value_(127.rand.postln);
+
+n.setValueAt([\sl1_1, \sl1_2], [10.rand, rrand(60, 70)].postln);

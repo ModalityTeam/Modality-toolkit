@@ -262,12 +262,29 @@ MKtl { // abstract class
 	}
 	
 	elementsOfType { |type|
-		^elements.select{ |elem|
+		^elements.select { |elem|
    			elem.deviceDescription[\type] == type
 		}	
 	}
 	
-	at { |elName| ^elements[elName] }
+		// element access - support polyphonic name lists.
+	at { |elName| ^elements.atKeys(elName) }
+	
+	valueAt { |elName| 
+		if (elName.isKindOf(Collection).not) { 
+			^elements.at(elName).value;
+		};
+		^elName.collect { |name| this.valueAt(name) }
+	} 
+	
+	setValueAt { |elName, val| 
+		if (elName.isKindOf(Collection).not) { 
+			^this.at(elName).value_(val);
+		};
+		[elName, val].flop.do { |pair| 
+			elements[pair[0].postcs].value_(pair[1].postcs)
+		};
+	}
 	
 	// element funcChain interface
 	addFunc { |elementKey, funcName, function, addAction, otherName|
