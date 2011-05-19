@@ -267,6 +267,8 @@ MKtl { // abstract class
 		}	
 	}
 	
+	at { |elName| ^elements[elName] }
+	
 	// element funcChain interface
 	addFunc { |elementKey, funcName, function, addAction, otherName|
 		elements[elementKey].addFunc(funcName, function, addAction, otherName);
