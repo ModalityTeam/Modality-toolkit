@@ -145,18 +145,6 @@ MKtl { // abstract class
 		};		
 	}
 
-	// this tries to find a description from an os specifically given device name
-	findDescriptions{ |rawDeviceName|
-		var found = List.new;
-		this.loadDeviceIndex;
-		allDevDescs.keyValuesDo{ |key,desc|
-			if ( desc[ thisProcess.platform.name ] == rawDeviceName ){
-				found.add( key );
-			};
-		};
-		^found;
-	}
-
 	*getDeviceDescription{ |devName|
 		var devDesc;
 		this.loadDeviceIndex;
@@ -164,12 +152,14 @@ MKtl { // abstract class
 		if ( devDesc.isNil ){
 			// see if we can find it from the device name:
 			allDevDescs.keysValuesDo{ |key,desc|
-				desc = this.flattenDescription( desc );
-				if ( desc[ \device ] == devName ){
-					devDesc = desc;
+				if ( desc[\type] != \template ){
+					desc = this.flattenDescription( desc );
+					if ( desc[ \device ] == devName ){
+						devDesc = desc;
+					};
 				};
 			};
-		}
+		};
 		^devDesc;
 	}
 
