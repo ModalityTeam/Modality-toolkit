@@ -1,21 +1,105 @@
 /*
+
+AllGui.new(12)
 	for all globals a-z, 
 	proxyspace p, 
 	all proxyspaces, 
 	all Pdefs, 
 	all Pdefns, 
 	all Tdefs, 
-	BufEnvir? 
+//	BufEnvir? 
 	
-	* show how many in use, 
+	* show how many of each in use, 
 	* button to open each gui 
 		(with good initial positions and sizes)
-		(numbox for how many?)
-		(variants for small?)
-	
+		(numbox for how many slots?)
+		(variants for small size etc?)
+		
 	what else?
+
+AllGui(12); 
 	
+	a = 12;
+	~k = 345;
+	Tdef(\a);	
+	Pdef(\a);
+	Pdefn(\trala);
+	Ndef(\a);
+	
+	p = ProxySpace(s, \p);
+	p[\a] = 12;
+	p[\kkk] = 12;
+
 */
+
 AllGui : JITGui { 
+	var <labels, <texts; 
+	var <globalNames = #[ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 
+					    'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' ];
+					    
+	*new { |numItems = 12, parent, bounds|
+		^super.new(nil, numItems, parent, bounds);
+	}
+
+		// these methods should be overridden in subclasses: 
+	setDefaults { |options|
+		defPos = if (parent.isNil) { 10@10 } { skin.margin };
+		minSize = 185 @ 150;
+	}
 	
+	winName { ^"AllGui" }
+	
+	makeViews {
+		texts = ();
+		labels = [ 
+			\global, 		{ |num| GlobalsGui.new },
+			\currEnvir, 	{ |num| EnvirGui(currentEnvironment, num) },
+			\Tdef,		{ |num| TdefAllGui.new(num) }, 
+			\Pdef, 		{ |num|  PdefAllGui.new(num) }, 
+			\Pdefn,		{ |num| PdefnAllGui.new(num) }, 
+			\Ndef, 		{ |num| NdefMixer.new(Ndef.all.choose, num) }, 
+			\proxyspace, 	{ |num| 
+				var pxs = if (currentEnvironment.isKindOf(ProxySpace), 
+					currentEnvironment, 
+					ProxySpace.all.choose);
+					ProxyMixer.new(pxs, num) 
+				}
+		]; 
+		
+		labels.pairsDo { |label, action|
+			var numbox;
+			var text = EZText(zone, 100@20, label.asString, labelWidth: 70)
+				.value_(label.asString)
+				.enabled_(false);
+			
+			text.textField.align_(\center);
+			
+			texts.put(label, text);
+			Button(zone, Rect(0,0, 50, 20))
+				.states_([["open"]])
+				.action_({ action.value(numbox.value.asInteger) });
+			numbox = EZNumber(zone, Rect(0,0,30, 20), nil, [0, 32, \lin, 1], initVal: numItems);
+		};
+	} 
+	
+	getState { 
+		var interp = thisProcess.interpreter;
+		var numGlobs = globalNames.count { |glob| interp.perform(glob).notNil };
+
+		^(global: numGlobs, 
+		currEnvir: currentEnvironment.size, 
+		Tdef: Tdef.all.size,
+		Pdef: Pdef.all.size,
+		Pdefn: Pdefn.all.size,
+		Ndef: Ndef.all.collect { |ps| ps.envir.size }.sum, 
+		proxyspace: ProxySpace.all.collect { |ps| ps.envir.size }.sum;
+		);
+	}
+	
+	checkUpdate { 
+		var newState = this.getState;
+		newState.keysValuesDo { |key, val| 
+			texts[key].value_(val);
+		};
+	}
 }
