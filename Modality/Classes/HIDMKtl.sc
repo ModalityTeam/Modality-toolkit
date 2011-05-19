@@ -191,7 +191,7 @@ HIDMKtl : MKtl {
 			// on osx:
 			if ( cookie.notNil ){
 				elemDict[ cookie ].put( el );
-				srcDevice.action = { |ck,val| this.elemDict[ ck ].valueAction_( val ) };
+				srcDevice.hidDeviceAction = { |ck,val| this.elemDict[ ck ].valueAction_( val ) };
 			}
 		}
 	}
