@@ -281,40 +281,13 @@ MIDIMKtl('nnkn0').verbose = false
 )
 ~tr.remove
 
-8.do{ |i|
+
+9.do{ |i|
 	3.do{ |j|
-		~tr.addToOutput(("sl"++i++"_1_"++j).asSymbol, \sound,{ { SinOsc.ar(rrand(300,3000)) * EnvGen.ar(Env.perc, doneAction:2) }.play });
+		var r = rrand(300,3000);
+		~tr.addToOutput(("sl"++i++"_1_"++j).asSymbol, \sound,{ { FreeVerb.ar(0.1*SinOsc.ar(r) * EnvGen.ar(Env.perc, doneAction:2),0.5,0.9) }.play });
 	}
 }
-
-~tr.addToOutput(\sl1_1_2, \blah,{ { SinOsc.ar * EnvGen.ar(Env.perc, doneAction:2) }.play });
-~tr.addToOutput(\sl1_1_1, \blah,{ { SinOsc.ar(1200) * EnvGen.ar(Env.perc, doneAction:2) }.play });
-~tr.addToOutput(\sl1_1_0, \blah,{ { SinOsc.ar(700) * EnvGen.ar(Env.perc, doneAction:2) }.play });
-x = { SinOsc.ar * EnvGen.ar(Env.perc) }.play;
-y = { Saw.ar * EnvGen.ar(Env.perc) }.play;
-z = { WhiteNoise.ar * EnvGen.ar(Env.perc) }.play;
-
-(
-    // strummable guitar
-    // use mouse to strum strings
-{
-	var pitch, mousex, out;
-	// e a d g b e
-	pitch = [ 52, 57, 62, 67, 71, 76 ];
-	mousex = MouseX.kr;
-	out = Mix.arFill(pitch.size, { arg i;
-		var trigger, pluck, period, string;
-		// place trigger points from 0.25 to 0.75
-		trigger = HPZ1.kr(mousex > (0.25 + (i * 0.1))).abs;
-		pluck = PinkNoise.ar(Decay.kr(trigger, 0.05));
-		period = pitch.at(i).midicps.reciprocal;
-		string = CombL.ar(pluck, period, period, 4);
-		Pan2.ar(string, i * 0.2 - 0.5);
-	});
-	LPF.ar(out, 12000);
-	LeakDC.ar(out);
-}.play;
-)
 
 // up
 (

@@ -216,6 +216,10 @@ Dispatch{
 			}
 		}
 	}
+	
+	removeAllFromOutput {
+		elements.do( _.reset )
+	}
 
 	processChain{
 		changedOuts = List.new;

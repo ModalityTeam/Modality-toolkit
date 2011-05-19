@@ -366,7 +366,7 @@ MKtlBasicElement {
 
 		// remove all functionalities from the funcChains
 	reset {
-		this.init;
+		funcChain = FuncChain.new;
 	}
 
 	// funcChain interface //

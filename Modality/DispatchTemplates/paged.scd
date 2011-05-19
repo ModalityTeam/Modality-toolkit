@@ -15,19 +15,22 @@ func:{ |disp, source, previousSceneKey, nextSceneKey, n = 10, elementKeys, sourc
 			[name, source.defaultValueFor(name) ? 0] 
 		}) 
 	};
+	
 	n.collect{ |i| source.elementNames.collect{ |name| disp.createOutput(("/page"++(i+1)++"/"++name).asSymbol) } };
+	
 	disp.addToProc( \processEvents, {  |dis,e|
-		var in = d.changedIn;
+		var in = dis.changedIn;
 		var key = in[\key];
 		var val = in[\val];
 		var scene = e[\scene];
 	
 		e[\values][scene][key] = val;
-		d.setOutput(("/page"++(scene+1)++"/"++key).asSymbol,val)
+		dis.setOutput(("/page"++(scene+1)++"/"++key).asSymbol,val)
 	
 	});
-	d.addToProc( \changeScene, {  |dis,e|
-		var in = d.changedIn;
+	
+	disp.addToProc( \changeScene, {  |dis,e|
+		var in = dis.changedIn;
 	
 		if( (in[\key] == previousSceneKey) && ( in[\val] == 127 )) {
 			e[\scene] = (e[\scene] - 1).min(n);
@@ -39,6 +42,7 @@ func:{ |disp, source, previousSceneKey, nextSceneKey, n = 10, elementKeys, sourc
 			postln("Scene is "++e[\scene])
 		};	
 	});
+	
 	disp
 },
 desc: "makes a virtual scene system for the source",
