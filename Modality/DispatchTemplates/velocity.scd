@@ -1,15 +1,15 @@
-{ |source, elementKeys, sourceKey|
-	d = Dispatch.new;
+(
+func:{ |disp, source, elementKeys, sourceKey|
 	
 	if( elementKeys.isNil ) {
-		d.mapAll(source,sourceKey)
+		disp.mapAll(source,sourceKey)
 	} {
-		elementKeys.do{ |elemKey| d.mapToElem(source,elemKey,sourceKey)}
+		elementKeys.do{ |elemKey| disp.mapToElem(source,elemKey,sourceKey)}
 	};
 	
-	d.createOuputsFromInputs;
+	disp.createOutputsFromInputs;
 	
-	d.addToProc( \velocityCalc, { |dis,e|
+	disp.addToProc( \velocityCalc, { |dis,e|
 		var in = dis.changedIn;
 		var key = in[\key];
 		var source = in[\source];
@@ -32,5 +32,9 @@
 		}
 	
 	} );
-   d
-}
+   disp
+},
+desc: "returns the velocity of each controlElement",
+name: "velocity",
+type: "creator" //can be creator, modyfier 
+)

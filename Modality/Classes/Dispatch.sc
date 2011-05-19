@@ -35,43 +35,52 @@ Dispatch{
 		^name.asSymbol
 	}
 	
-	*new{ |name|
-		^super.new.init(name ? Dispatch.generateTempName );
+	*new{ arg name...args;
+		^super.new.init(name ? Dispatch.generateTempName )
+			.fromTemplate(name,*args)
+	}
+	
+	fromTemplate{ arg name...args;
+		var dict = Dispatch.getDispatchTemplate(name); 
+		if( dict.notNil ) { 
+			^dict[\func].value(this,*args)
+		}		
 	}
 
-	loadDispatchTemplate { |dispatchName| 
+	*getDispatchTemplate { |dispatchName| 
 		
 		var cleanTemplateName;
 		var path;
 		var dispatchTemplate;
 
-		cleanTemplateName = dispatchName.collect { |char| if (char.isAlphaNum, char, $_) };
+		cleanTemplateName = dispatchName.asString.collect { |char| if (char.isAlphaNum, char, $_) };
 		path = dispatchTemplateFolder +/+ cleanTemplateName ++ ".scd";
-
-		dispatchTemplate = try { 
-			path.load;
+		
+		path.postln;
+		
+		if( File.exists(path) ) { 
+			^path.load
 		} { 
 			"//" + this.class ++ ": - no dispatch template found for %: please make them!\n"
 				.postf(cleanTemplateName);
-		//	this.class.openTester(this);
+			^nil
 		};
-
-		/*
-		// create specs
-		dispatchTemplate.pairsDo {|key, elem| 
-			var foundSpec =  specs[elem[\spec]];
-			if (foundSpec.isNil) { 
-				warn("Mktl - in description %, spec for '%' is missing! please add it with:"
-					"\nMktl.addSpec( '%', [min, max, warp, step, default]);\n"
-					.format(deviceName, elem[\spec], elem[\spec])
-				);
-			};
-			elem[\specName] = elem[\spec];
-			elem[\spec] = this.class.specs[elem[\specName]];
-		};
-		*/
 	}
-
+	
+	*loadDispatchTemplate{ arg dispatchName ...args; 
+		var dict = this.getDispatchTemplate(dispatchName);
+		if( dict.notNil) {
+			dict[\func].value(args)
+		}
+	}
+	
+	*getDispatchTemplateDesc{ |dispatchName|
+		var dict = this.getDispatchTemplate(dispatchName);
+		if( dict.notNil) {
+			^dict[\desc]
+		}
+	}
+	
 	init{ |nm|
 		name = nm; // name is used to register with different controls in their functiondict
 		envir = ();

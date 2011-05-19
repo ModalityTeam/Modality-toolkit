@@ -3,42 +3,6 @@ MIDIMKtl.find
 //temporary dispatchs
 //evaluate this
 (
-~makeVelocityDispatch = { |source, elementKeys, sourceKey|
-	d = Dispatch.new;
-	
-	if( elementKeys.isNil ) {
-		d.mapAll(source,sourceKey)
-	} {
-		elementKeys.do{ |elemKey| d.mapToElem(source,elemKey,sourceKey)}
-	};
-	
-	d.createOutputsFromInputs;
-	
-	d.addToProc( \velocityCalc, { |dis,e|
-		var in = dis.changedIn;
-		var key = in[\key];
-		var source = in[\source];
-		var value = in[\val];
-		var keyTime = (key++"time").asSymbol;
-		var currentTime;
-		
-		if( e[source].isNil ) {
-			e.put(source,Dictionary.new);
-		};
-		
-		if(	e[source][key].isNil ) {
-			e[source][key] = value;
-			e[source][keyTime] = Process.elapsedTime;
-		} {
-			currentTime = Process.elapsedTime;
-			dis.setOutput(key, abs( (value - e[source][key]) / ( currentTime - e[source][keyTime] ) ) ) ;
-			e[source][key] = value;
-			e[source][keyTime] = currentTime;
-		}
-	
-	} );
-   d
-};
 
 ~makePagedVersion = { |source, previousSceneKey, nextSceneKey, n = 10|
 var d = Dispatch.new;
@@ -72,127 +36,6 @@ d.addToProc( \changeScene, {  |dis,e|
 d
 };
 
-~mergeDispatch = { |dispatchs|
-
-	d = Dispatch.new;
-	
-	dispatchs.do{ |arr|
-		var disp,elemKeys;
-		#disp, elemKeys = arr;
-		d.map(disp, elemKeys)		
-	};
-	
-	d.createOutputsFromInputs;
-	
-	d.addToProc( \velocityCalc, { |dis,e|
-		var in = dis.changedIn;
-		dis.setOutput(in[\key], in[\val] );
-	});
-  	d
-};
-
-~triggerDispatch = { |source,elemKeys, sourceKey|
-	d = Dispatch.new;
-	d.map(source, elemKeys);	
-	d.createOutputsFromInputs;
-	
-	d.addToProc( \velocityCalc, { |dis,e|
-		var in = dis.changedIn;
-		if( in[\val] == 1 ) {
-			dis.setOutput(in[\key], 1)
-		}
-	});
-  	d
-};
-
-~multipleClickDispatch = { |source,elemKeys, sourceKey, numClicks = 2|
-	d = Dispatch.new;
-	d.map(source, elemKeys);	
-	d.createOutputsFromInputs;
-	source.elementNames.do{ |elemKey| d.envir.put(elemKey,0) };
-	d.addToProc( \velocityCalc, { |dis,e|
-		var in = dis.changedIn;
-		var key = in[\key];
-		
-		if( (in[\val] == 1) ) {
-			e[key] = e[key] + 1;
-			
-			if( e[key] == numClicks) { 
-				dis.setOutput(key, 1);
-				e[key] = 0;
-			} 
-		}
-	});
-  	d
-};
-
-~thresh = { |source,elemKeys, sourceKey, thresh = 0.5|
-	d = Dispatch.new;
-	d.map(source, elemKeys);	
-	d.createOutputsFromInputs;
-	d.sources.pairsDo{ |sourceKey,keysDict|
-		d.envir.put(sourceKey,keysDict.collect{0})
-	};
-	
-	d.addToProc( \threshCalc, { |dis,e|
-		var in = dis.changedIn;
-		var key = in[\key];
-		var source = in[\source];
-		var value = in[\val];
-		
-		if( (value >= thresh) && (e[source][key] < thresh) ) {			dis.setOutput(key, \up );
-		};
-		if( (value <= thresh) && (e[source][key] > thresh) ) {			dis.setOutput(key, \down );
-		};
-		e[source][key] = value;
-	
-	} );
-   d
-};
-
-~threshUp = { |source,elemKeys, sourceKey, thresh = 0.5|
-	d = Dispatch.new;
-	d.map(source, elemKeys);	
-	d.createOutputsFromInputs;
-	d.sources.pairsDo{ |sourceKey,keysDict|
-		d.envir.put(sourceKey,keysDict.collect{0})
-	};
-	
-	d.addToProc( \threshCalc, { |dis,e|
-		var in = dis.changedIn;
-		var key = in[\key];
-		var source = in[\source];
-		var value = in[\val];
-		
-		if( (value >= thresh) && (e[source][key] < thresh) ) {			dis.setOutput(key, \up );
-		};
-		e[source][key] = value;
-	
-	} );
-   d
-};
-
-~threshDown = { |source,elemKeys, sourceKey, thresh = 0.5|
-	d = Dispatch.new;
-	d.map(source, elemKeys);	
-	d.createOutputsFromInputs;
-	d.sources.pairsDo{ |sourceKey,keysDict|
-		d.envir.put(sourceKey,keysDict.collect{0})
-	};
-	
-	d.addToProc( \threshCalc, { |dis,e|
-		var in = dis.changedIn;
-		var key = in[\key];
-		var source = in[\source];
-		var value = in[\val];
-		
-		if( (value <= thresh) && (e[source][key] > thresh) ) {			dis.setOutput(key, \down );
-		};
-		e[source][key] = value;
-	
-	} );
-   d
-};
 
 ~threshZones = { |source,elemKeys, sourceKey, threshs|
 	d = Dispatch.new;
@@ -302,6 +145,18 @@ d.addToOutput(\average,\blah,{ |a,b,c| postln("average is "++c) })
 d.remove;
 d.verbose = true;
 
+
+//same ktl, different controls to different sources
+(
+k = MIDIMKtl('nnkn0');
+d = Dispatch.new;
+~sliders =  d.map(k, k.elementsOfType(\slider).collect(_.name) , \nksliders);
+~buttons =  d.map(k, k.elementsOfType(\button).collect(_.name) , \nkbuttons);
+)
+d.remove
+
+//------- TEMPLATES-----------------------
+
 //paged launchpad
 (
 ~paged = ~makePagedVersion.(MIDIMKtl('lnch0'),\left,\right,32);
@@ -309,16 +164,25 @@ d.verbose = true;
 )
 ~paged.remove
 
+~paged = ~makePagedVersion.(MIDIMKtl('nnkn0'),\rew,\fwd);
+~paged.verbose = true
+
 //paged nanoKontrol
 (
-~paged = ~makePagedVersion.(MIDIMKtl('nnkn0'),\rew,\fwd)
+~paged = Dispatch(\paged,MIDIMKtl('nnkn0'),\rew,\fwd);
 ~paged.verbose = true
 )
 ~paged.remove
+~paged.insp
+
 
 //velocity
 (
-~dis = ~makeVelocityDispatch.(MIDIMKtl('nnkn0'));
+~dis = Dispatch(\velocity, MIDIMKtl('nnkn0') );
+~dis.verbose = true;
+)
+
+(
 w = Window.new.front;
 ~sl = Slider(w, Rect(20, 60, 150, 20));
 d.addToOutput(\sl1_1,\blah,{Ê|a,b,c| { ~sl.value_(c/4000) }.defer; x.set(\freq,c*2)  });
@@ -329,86 +193,103 @@ x = { |freq= 400, mod = 1| Saw.ar( Lag.kr(freq) ) * SinOsc.ar(Lag.kr(mod) ).rang
 
 x = { |freq= 400, mod = 1| Saw.ar( LeakDC.kr( Lag.kr(freq)) + 100 ) * SinOsc.ar( LeakDC.kr( Lag.kr(mod), 0.990) + 1 ).range(0.0,1.0)* 0.5 }.play
 
-d.remove
 // paged and then velocity
 (
-~dis1 = ~makePagedVersion.(MIDIMKtl('nnkn0'),\rew,\fwd,4);
-~dis2 = ~makeVelocityDispatch.(~dis1);
+~dis1 = Dispatch(\paged, MIDIMKtl('nnkn0'),\rew,\fwd,4);
+~dis2 = Dispatch(\velocity, ~dis1);
 ~dis2.verbose = true
 )
 ~dis2.recursiveRemove
 
+
+
+//merge
 //make slider output velocity but keep the rest of controls absolute and merge into just one controller
 (
 k = MIDIMKtl('nnkn0');
 
-~sliders =  ~makeVelocityDispatch.(k, k.elementsOfType(\slider).collect(_.name) );
+~sliders =  Dispatch(\velocity,k, k.elementsOfType(\slider).collect(_.name) );
 
 ~restOfElems = k.elements.select{ |elem|
 	elem.deviceDescription[\type] != \slider
 }.collect(_.name);
 
-~result = ~mergeDispatch.([[~sliders,nil],[k,~restOfElems]]);
+~result = Dispatch(\merge,[[~sliders,nil],[k,~restOfElems]]);
 ~result.verbose = true;
 ~sliders.verbose = true;
 )
 ~result.remove // only removes the merge dispatch
 ~result.recursiveRemove // removes all dispatchs going down the chain
 
-//same ktl, different controls to different sources
-(
-k = MIDIMKtl('nnkn0');
-d = Dispatch.new;
-~sliders =  d.map(k, k.elementsOfType(\slider).collect(_.name) , \nksliders);
-~buttons =  d.map(k, k.elementsOfType(\button).collect(_.name) , \nkbuttons);
-)
-d.remove
+
+
 // trigger
 (
-~tr =  ~triggerDispatch.( MIDIMKtl('nnkn0'));
+~tr =  Dispatch(\trigger, MIDIMKtl('nnkn0') );
 ~tr.verbose = true;
 )
 ~tr.remove
+MIDIMKtl('nnkn0').verbose = false
+
+
 
 // multiple trig
 (
-~tr =  ~multipleClickDispatch.( MIDIMKtl('nnkn0'));
-~tr.verbose = true;
+~disp  =  Dispatch(\multipleClick,MIDIMKtl('nnkn0'));
+~disp .verbose = true;
 )
-~tr.remove
+~disp .insp
+~disp .remove
+
+
 
 // thresh
 (
-~tr =  ~thresh.( MIDIMKtl('nnkn0'), thresh: 0.5 );
-~tr.verbose = true;
+~disp =  Dispatch(\threshold, MIDIMKtl('nnkn0'), thresh: 0.5 );
+~disp.verbose = true;
 )
-~tr.remove
+~disp.remove
+
+
 
 // thresh up
 (
-~tr =  ~threshUp.( MIDIMKtl('nnkn0'), thresh:0.5 );
-~tr.verbose = true;
+~disp =  Dispatch(\thresholdUp, MIDIMKtl('nnkn0'), thresh: 0.5 );
+~disp.verbose = true;
 )
-~tr.remove
+~disp.remove
+
+
 
 // thresh down
 (
-~tr =  ~threshDown.( MIDIMKtl('nnkn0'), thresh:0.5 );
-~tr.verbose = true;
+~disp =  Dispatch(\thresholdDown, MIDIMKtl('nnkn0'), thresh: 0.5 );
+~disp.verbose = true;
 )
+~disp.remove
 
-~tr.remove
+
 
 // thresh zones
 (
 ~tr =  ~threshZones.( MIDIMKtl('nnkn0'), threshs: [0.2,0.5,0.8] );
 ~tr.verbose = true;
 )
+(
+~tr =  Dispatch(\threshZones, MIDIMKtl('nnkn0'), nil, nil, [0.2,0.5,0.8] );
+~tr.verbose = true;
+)
 ~tr.remove
 
-~tr.addToOutput(\sl1_1_2, \blah,{ { SinOsc.ar * EnvGen.ar(Env.perc) }.play });
-~tr.addToOutput(\sl1_1_1, \blah,{ {  Saw.ar * EnvGen.ar(Env.perc) }.play });
-~tr.addToOutput(\sl1_1_0, \blah,{ { WhiteNoise.ar * EnvGen.ar(Env.perc) }.play });
+8.do{ |i|
+	3.do{ |j|
+		~tr.addToOutput(("sl"++i++"_1_"++j).asSymbol, \sound,{ { SinOsc.ar(rrand(300,3000)) * EnvGen.ar(Env.perc, doneAction:2) }.play });
+	}
+}
+
+~tr.addToOutput(\sl1_1_2, \blah,{ { SinOsc.ar * EnvGen.ar(Env.perc, doneAction:2) }.play });
+~tr.addToOutput(\sl1_1_1, \blah,{ { SinOsc.ar(1200) * EnvGen.ar(Env.perc, doneAction:2) }.play });
+~tr.addToOutput(\sl1_1_0, \blah,{ { SinOsc.ar(700) * EnvGen.ar(Env.perc, doneAction:2) }.play });
 x = { SinOsc.ar * EnvGen.ar(Env.perc) }.play;
 y = { Saw.ar * EnvGen.ar(Env.perc) }.play;
 z = { WhiteNoise.ar * EnvGen.ar(Env.perc) }.play;

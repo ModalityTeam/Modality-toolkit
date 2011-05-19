@@ -1,22 +1,22 @@
-{ |source, previousSceneKey, nextSceneKey, n = 10, elementKeys, sourceKey|
-	var d = Dispatch.new;
+(
+func:{ |disp, source, previousSceneKey, nextSceneKey, n = 10, elementKeys, sourceKey|
 	
 	if( elementKeys.isNil ) {
-		d.mapAll(source,sourceKey)
+		disp.mapAll(source,sourceKey)
 	} {
-		elementKeys.do{ |elemKey| d.mapToElem(source,elemKey,sourceKey)}
+		elementKeys.do{ |elemKey| disp.mapToElem(source,elemKey,sourceKey)}
 	};
 	
 	// initialize the scene
-	d.envir[\scene] = 0;
-	d.envir[\numOfScenes] = n;
-	d.envir[\values] = n.collect{ 
+	disp.envir[\scene] = 0;
+	disp.envir[\numOfScenes] = n;
+	disp.envir[\values] = n.collect{ 
 		Dictionary.new.putPairs(source.elementNames.collect{ |name| 
 			[name, source.defaultValueFor(name) ? 0] 
 		}) 
 	};
-	n.collect{ |i| source.elementNames.collect{ |name| d.createOutput(("/page"++(i+1)++"/"++name).asSymbol) } };
-	d.addToProc( \processEvents, {  |dis,e|
+	n.collect{ |i| source.elementNames.collect{ |name| disp.createOutput(("/page"++(i+1)++"/"++name).asSymbol) } };
+	disp.addToProc( \processEvents, {  |dis,e|
 		var in = d.changedIn;
 		var key = in[\key];
 		var val = in[\val];
@@ -39,5 +39,9 @@
 			postln("Scene is "++e[\scene])
 		};	
 	});
-	d
-}
+	disp
+},
+desc: "makes a virtual scene system for the source",
+name: "paged",
+type: "creator"
+)
