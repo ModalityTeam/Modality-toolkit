@@ -16,7 +16,10 @@ HIDMKtl('ferrari').postSpecs
 //    addFunc should conform to super.addFunc.
 
 
-HIDMKtl : MKtl { 
+HIDMKtl : MKtl {
+	classvar <initialized = false; 
+	classvar <sourceDeviceDict;
+
 	
 	var <srcID, <srcDevice; 
 	
@@ -25,11 +28,45 @@ HIDMKtl : MKtl {
 	var <elemDict;
 	var <lookupDict;
 
+	*initHID{ |force=false|
+		(initialized && {force.not}).if{^this};
+		GeneralHID.buildDeviceList;
+		sourceDeviceDict = ();
+
+		this.prepareDeviceDicts;
+		
+		initialized = true;
+	}
+
+	*prepareDeviceDicts{
+		var prevName = nil, j = 0, order, deviceNames;
+
+		deviceNames = GeneralHID.deviceList.collect{|dev,id|
+			if ( dev[1].name != "could not open device" ){
+				[this.makeShortName(dev[1].name.asString),id];
+			}
+		}.reject{ |it| it.isNil };
+		order = deviceNames.order{ arg a, b; a[0] < b[0] };
+		deviceNames[order].do{|name, i|
+			(prevName == name[0]).if({
+				j = j+1;
+			},{
+				j = 0;
+			});
+			prevName = name[0];
+			sourceDeviceDict.put((name[0] ++ j).asSymbol, GeneralHID.deviceList[ name[1] ])
+		};
+
+		// put the available midi devices in MKtl's available devices
+		allAvailable.put( \hid, List.new );
+		sourceDeviceDict.keysDo({ |key|
+			allAvailable[\hid].add( key );
+		});
+	}
 		// open all ports and display them in readable fashion, 
 		// copy/paste-able directly 
 	*find { |name, uid| 
-		
-		GeneralHID.buildDeviceList; 
+		this.initHID( true );
 
 		"\n///////// HIDMKtl.find - - - HID sources found: /////// ".postln;
 		"	index	locID (USB port ID)	device name         vendor  product".postln;
@@ -43,16 +80,42 @@ HIDMKtl : MKtl {
 		};
 			
 		"\n//	Possible	HIDMKtls - just give them unique names: ".postln;
-		GeneralHID.deviceList.do { |pair| 
+		sourceDeviceDict.keysValuesDo{ |key,pair| 
 			var rawdev, info; 
 			#rawdev, info = pair;
-			"		HIDMKtl('?', %);  // %\n".postf(info.physical, info.name);
+			"		HIDMKtl('%', %);  // %\n".postf(key, info.physical, info.name);
 		};
 		"\n///////".postln;
 	}
 
+	*findSource{ |rawDeviceName|
+		/*
+		var devices = GeneralHID.deviceList.detect{ |pair|
+			var dev, info; #dev, info = pair;
+			(info.name == rawDeviceName)
+		};
+		^devices;
+		*/
+		var devKey;
+		this.sourceDeviceDict.keysValuesDo{ |key,pair|
+			//	pair[1].postln;
+			if ( pair[1].name.asString == rawDeviceName ){
+				devKey = key;
+			};
+		};
+		^devKey;
+	}
+
+	// how to deal with additional arguments (uids...)?
+	*newFromDesc{ |name,deviceDescName,devDesc|
+		//		var devDesc = this.getDeviceDescription( deviceDesc )
+		var dev = this.findSource( devDesc[ thisProcess.platform.name ] );
+		dev.postln;
+		^this.new( name, dev );
+	}
+
 		// create with a uid, or access by name	
-	*new { |name, uid| 
+	*new { |name, uid, devDescName| 
 		var foundSource;
 		var foundKtl = all[name.asSymbol];
 		
@@ -71,9 +134,12 @@ HIDMKtl : MKtl {
 				}
 			}
 		};
-		
-		foundSource = GeneralHID.findBy( locID: uid );
 
+		if (uid.isNil) { 
+			foundSource = this.sourceDeviceDict[ name ];
+		}{
+			foundSource = GeneralHID.findBy( locID: uid );
+		};
 			// make a new one		
 		if (foundSource.isNil) { 
 			warn("HIDMKtl:" 
@@ -81,7 +147,7 @@ HIDMKtl : MKtl {
 			^nil
 		};
 				
-		^super.basicNew.initHID(name, uid, foundSource);
+		^super.basicNew(name,devDescName ? foundSource[1].name.asString ).initHIDMKtl(uid, foundSource);
 	}
 	
 	postRawSpecs { this.class.postRawSpecsOf(srcDevice) }
@@ -95,21 +161,68 @@ HIDMKtl : MKtl {
 		}
 	}
 	
-	initHID { |argName, argUid, argSource|
-		name = argName; 
+	initHIDMKtl { |argUid, argSource|
 		srcID = argUid;
 		srcDevice = GeneralHID.open(argSource);
 		all.put(name, this);
 		
 		elemDict = ();
 		lookupDict = ();
+
+		this.setGeneralHIDActions;
 		
-		this.findDevSpecs(srcDevice.info.name.postln); 
+		//		this.getDeviceDescription(  )
+		//		this.findDevSpecs(srcDevice.info.name.postln); 
 		
 //		// this.makeElements; 
-//		this.prepareFuncDict;
+		//		this.prepareFuncDict;
 //
 //		this.addResponders; 
+	}
+
+	setGeneralHIDActions{
+		this.elements.do{ |el|
+			var slot = el.deviceDescription[\slot]; // linux
+			var cookie = el.deviceDescription[\cookie]; // osx
+			// on linux:
+			if ( slot.notNil ){
+				srcDevice.slots[ slot[0] ][ slot[1] ].action = { |v| el.valueAction_( v.value ) };
+			};
+			// on osx:
+			if ( cookie.notNil ){
+				elemDict[ cookie ].put( el );
+				srcDevice.action = { |ck,val| this.elemDict[ ck ].valueAction_( val ) };
+			}
+		}
+	}
+
+	/*
+	prepareFuncDict { 
+		if (devSpecs.notNil) { 
+			// works only for scenes ATM;
+			devSpecs.pairsDo { |elName, descr| 
+				var ccKey = this.makeCCKey(descr[\chan], descr[\ccNum]);
+				descr.put(\ccKey, ccKey); // just in case ... 
+				
+				funcDict.put(
+					ccKey, FuncChain([\post, { |ktl, elName, value| 
+						[ktl, elName, value].postln;
+					}])
+				);
+				ccKeyToElNameDict.put(ccKey, elName);
+			}
+		}
+	}
+	*/
+
+	verbose_ {|value=true|
+		value.if({
+			elements.do{|item| item.addFunc(\verbose, { |element| 
+					[element.source, element.name, element.value].postln;
+			})}
+		}, {
+			elements.do{|item| item.removeFunc(\verbose)}
+		})
 	}
 
 //		// interface methods

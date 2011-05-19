@@ -12,7 +12,7 @@ MIDIMKtl.find
 		elementKeys.do{ |elemKey| d.mapToElem(source,elemKey,sourceKey)}
 	};
 	
-	d.createOuputsFromInputs;
+	d.createOutputsFromInputs;
 	
 	d.addToProc( \velocityCalc, { |dis,e|
 		var in = dis.changedIn;
@@ -82,7 +82,7 @@ d
 		d.map(disp, elemKeys)		
 	};
 	
-	d.createOuputsFromInputs;
+	d.createOutputsFromInputs;
 	
 	d.addToProc( \velocityCalc, { |dis,e|
 		var in = dis.changedIn;
@@ -94,7 +94,7 @@ d
 ~triggerDispatch = { |source,elemKeys, sourceKey|
 	d = Dispatch.new;
 	d.map(source, elemKeys);	
-	d.createOuputsFromInputs;
+	d.createOutputsFromInputs;
 	
 	d.addToProc( \velocityCalc, { |dis,e|
 		var in = dis.changedIn;
@@ -108,22 +108,175 @@ d
 ~multipleClickDispatch = { |source,elemKeys, sourceKey, numClicks = 2|
 	d = Dispatch.new;
 	d.map(source, elemKeys);	
-	d.createOuputsFromInputs;
+	d.createOutputsFromInputs;
 	source.elementNames.do{ |elemKey| d.envir.put(elemKey,0) };
 	d.addToProc( \velocityCalc, { |dis,e|
 		var in = dis.changedIn;
 		var key = in[\key];
+		
 		if( (in[\val] == 1) ) {
+			e[key] = e[key] + 1;
 			
 			if( e[key] == numClicks) { 
 				dis.setOutput(key, 1);
 				e[key] = 0;
-			} {			
-				e[key] = e[key] + 1;
-			}
+			} 
 		}
 	});
   	d
+};
+
+~thresh = { |source,elemKeys, sourceKey, thresh = 0.5|
+	d = Dispatch.new;
+	d.map(source, elemKeys);	
+	d.createOutputsFromInputs;
+	d.sources.pairsDo{ |sourceKey,keysDict|
+		d.envir.put(sourceKey,keysDict.collect{0})
+	};
+	
+	d.addToProc( \threshCalc, { |dis,e|
+		var in = dis.changedIn;
+		var key = in[\key];
+		var source = in[\source];
+		var value = in[\val];
+		
+		if( (value >= thresh) && (e[source][key] < thresh) ) {			dis.setOutput(key, \up );
+		};
+		if( (value <= thresh) && (e[source][key] > thresh) ) {			dis.setOutput(key, \down );
+		};
+		e[source][key] = value;
+	
+	} );
+   d
+};
+
+~threshUp = { |source,elemKeys, sourceKey, thresh = 0.5|
+	d = Dispatch.new;
+	d.map(source, elemKeys);	
+	d.createOutputsFromInputs;
+	d.sources.pairsDo{ |sourceKey,keysDict|
+		d.envir.put(sourceKey,keysDict.collect{0})
+	};
+	
+	d.addToProc( \threshCalc, { |dis,e|
+		var in = dis.changedIn;
+		var key = in[\key];
+		var source = in[\source];
+		var value = in[\val];
+		
+		if( (value >= thresh) && (e[source][key] < thresh) ) {			dis.setOutput(key, \up );
+		};
+		e[source][key] = value;
+	
+	} );
+   d
+};
+
+~threshDown = { |source,elemKeys, sourceKey, thresh = 0.5|
+	d = Dispatch.new;
+	d.map(source, elemKeys);	
+	d.createOutputsFromInputs;
+	d.sources.pairsDo{ |sourceKey,keysDict|
+		d.envir.put(sourceKey,keysDict.collect{0})
+	};
+	
+	d.addToProc( \threshCalc, { |dis,e|
+		var in = dis.changedIn;
+		var key = in[\key];
+		var source = in[\source];
+		var value = in[\val];
+		
+		if( (value <= thresh) && (e[source][key] > thresh) ) {			dis.setOutput(key, \down );
+		};
+		e[source][key] = value;
+	
+	} );
+   d
+};
+
+~threshZones = { |source,elemKeys, sourceKey, threshs|
+	d = Dispatch.new;
+	d.map(source, elemKeys);	
+	d.createOutputsFromInputs;
+	d.sources.pairsDo{ |sourceKey,keysDict|
+		d.envir.put(sourceKey,keysDict.collect{0});
+		keysDict.pairsDo{ |key|
+			threshs.do{ |a,i|
+				d.createOutput((key++"_"++i).asSymbol)
+			}
+		};
+	};
+	threshs = threshs.sort;
+	d.addToProc( \calc, { |dis,e|
+		var in = dis.changedIn;
+		var key = in[\key];
+		var source = in[\source];
+		var value = in[\val];
+		var prevTresh;
+		var currentTresh;
+		var currentTreshIndex;
+		
+		threshs.do{ |th,i|
+			if( value > th ) {
+				currentTresh = th;	
+				currentTreshIndex = i;						};
+			if( e[source][key] > th ) {
+				prevTresh = th;								};				
+		};
+		
+		if( prevTresh != currentTresh ) {
+			if( currentTreshIndex.notNil ) {
+				dis.setOutput((key++"_"++currentTreshIndex).asSymbol,  1);
+			}
+		};
+		e[source][key] = value;
+	
+	} );
+   d
+};
+
+~up = { |source,elemKeys, sourceKey|
+	d = Dispatch.new;
+	d.map(source, elemKeys);	
+	d.createOutputsFromInputs;
+	d.sources.pairsDo{ |sourceKey,keysDict|
+		d.envir.put(sourceKey,keysDict.collect{0})
+	};
+	
+	d.addToProc( \calc, { |dis,e|
+		var in = dis.changedIn;
+		var key = in[\key];
+		var source = in[\source];
+		var value = in[\val];
+		
+		if( value > e[source][key] ) {			dis.setOutput(key, value );
+		};
+		e[source][key] = value;
+	
+	} );
+   d
+};
+
+~down = { |source,elemKeys, sourceKey, thresh = 0.5|
+	d = Dispatch.new;
+	d.map(source, elemKeys);	
+	d.createOutputsFromInputs;
+	d.sources.pairsDo{ |sourceKey,keysDict|
+		d.envir.put(sourceKey,keysDict.collect{0})
+	};
+	
+	d.addToProc( \calc, { |dis,e|
+		var in = dis.changedIn;
+		var key = in[\key];
+		var source = in[\source];
+		var value = in[\val];
+		
+		if( value < e[source][key] ) {				dis.setOutput(key, value );
+		};
+		e[source][key] = value;
+	
+	} );
+   d
 };
 )
 
@@ -171,6 +324,7 @@ w = Window.new.front;
 d.addToOutput(\sl1_1,\blah,{Ê|a,b,c| { ~sl.value_(c/4000) }.defer; x.set(\freq,c*2)  });
 d.addToOutput(\sl2_1,\blah,{ |a,b,c| { ~sl.value_(c/4000) }.defer; x.set(\mod, c/40)  })
 )
+
 x = { |freq= 400, mod = 1| Saw.ar( Lag.kr(freq) ) * SinOsc.ar(Lag.kr(mod) ).range(0.0,1.0)* 0.5 }.play
 
 x = { |freq= 400, mod = 1| Saw.ar( LeakDC.kr( Lag.kr(freq)) + 100 ) * SinOsc.ar( LeakDC.kr( Lag.kr(mod), 0.990) + 1 ).range(0.0,1.0)* 0.5 }.play
@@ -208,7 +362,7 @@ d = Dispatch.new;
 ~sliders =  d.map(k, k.elementsOfType(\slider).collect(_.name) , \nksliders);
 ~buttons =  d.map(k, k.elementsOfType(\button).collect(_.name) , \nkbuttons);
 )
-
+d.remove
 // trigger
 (
 ~tr =  ~triggerDispatch.( MIDIMKtl('nnkn0'));
@@ -223,7 +377,79 @@ d = Dispatch.new;
 )
 ~tr.remove
 
+// thresh
+(
+~tr =  ~thresh.( MIDIMKtl('nnkn0'), thresh: 0.5 );
+~tr.verbose = true;
+)
+~tr.remove
 
+// thresh up
+(
+~tr =  ~threshUp.( MIDIMKtl('nnkn0'), thresh:0.5 );
+~tr.verbose = true;
+)
+~tr.remove
+
+// thresh down
+(
+~tr =  ~threshDown.( MIDIMKtl('nnkn0'), thresh:0.5 );
+~tr.verbose = true;
+)
+
+~tr.remove
+
+// thresh zones
+(
+~tr =  ~threshZones.( MIDIMKtl('nnkn0'), threshs: [0.2,0.5,0.8] );
+~tr.verbose = true;
+)
+~tr.remove
+
+~tr.addToOutput(\sl1_1_2, \blah,{ { SinOsc.ar * EnvGen.ar(Env.perc) }.play });
+~tr.addToOutput(\sl1_1_1, \blah,{ {  Saw.ar * EnvGen.ar(Env.perc) }.play });
+~tr.addToOutput(\sl1_1_0, \blah,{ { WhiteNoise.ar * EnvGen.ar(Env.perc) }.play });
+x = { SinOsc.ar * EnvGen.ar(Env.perc) }.play;
+y = { Saw.ar * EnvGen.ar(Env.perc) }.play;
+z = { WhiteNoise.ar * EnvGen.ar(Env.perc) }.play;
+
+(
+    // strummable guitar
+    // use mouse to strum strings
+{
+	var pitch, mousex, out;
+	// e a d g b e
+	pitch = [ 52, 57, 62, 67, 71, 76 ];
+	mousex = MouseX.kr;
+	out = Mix.arFill(pitch.size, { arg i;
+		var trigger, pluck, period, string;
+		// place trigger points from 0.25 to 0.75
+		trigger = HPZ1.kr(mousex > (0.25 + (i * 0.1))).abs;
+		pluck = PinkNoise.ar(Decay.kr(trigger, 0.05));
+		period = pitch.at(i).midicps.reciprocal;
+		string = CombL.ar(pluck, period, period, 4);
+		Pan2.ar(string, i * 0.2 - 0.5);
+	});
+	LPF.ar(out, 12000);
+	LeakDC.ar(out);
+}.play;
+)
+
+// up
+(
+~tr =  ~up.( MIDIMKtl('nnkn0') );
+~tr.verbose = true;
+)
+~tr.remove
+
+
+// down
+(
+~tr =  ~down.( MIDIMKtl('nnkn0'), thresh:0.5 );
+~tr.verbose = true;
+)
+
+~tr.remove
 
 k.verbose = true
 k = MIDIMKtl('nnkn0')

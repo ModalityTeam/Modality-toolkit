@@ -28,24 +28,20 @@ MIDIMKtl : MKtl {
 	*initMIDI{|force= false|
 
 		(initialized && {force.not}).if{^this};
-		
-		
+	
 		MIDIIn.connectAll;
 		sourceDeviceDict = ();
 		destinationDeviceDict = ();
 
 		this.prepareDeviceDicts;
-
-		
-		
 		
 		initialized = true;
 	}
 	
 		// display all ports in readable fashion, 
 		// copy/paste-able directly 
-		// this could also live in 
-	*find { |name, uid| 
+		// this could also live in /--where?--/
+	*find { 
 		this.initMIDI(true);
 
 		if (MIDIClient.sources.isEmpty) { 
@@ -87,8 +83,26 @@ MIDIMKtl : MKtl {
 		"\n".postln;
 	}
 
+	*findSource{ |rawDeviceName|
+		var devKey;
+		this.sourceDeviceDict.keysValuesDo{ |key,endpoint|
+			if ( endpoint.name == rawDeviceName ){
+				devKey = key;
+			};
+		};
+		^devKey;
+	}
+
+	// how to deal with additional arguments (uids...)?
+	*newFromDesc{ |name,deviceDescName,devDesc|
+		//		var devDesc = this.getDeviceDescription( deviceDesc )
+		var devKey = this.findSource( devDesc[ thisProcess.platform.name ] );
+		this.sourceDeviceDict.swapKeys( name, devKey );
+		^this.new( name, devDescName: deviceDescName );
+	}
+
 		// create with a uid, or access by name	
-	*new { |name, uid, destID| 
+	*new { |name, uid, destID, devDescName| 
 		var foundSource, foundDestination;
 		var foundKtl = all[name.asSymbol];
 		
@@ -139,9 +153,11 @@ MIDIMKtl : MKtl {
 		foundDestination.notNil.if{
 			destinationDeviceDict.changeKeyForValue(name, foundDestination);
 		};
-		
-		^super.basicNew(name, foundSource.device)
-			.initMIDIMKtl(name, foundSource, foundDestination);
+
+		//	foundSource.device.postln;
+		//		^super.basicNew(name, foundSource.device)
+		^super.basicNew(name, devDescName ? foundSource.device )
+			.initMIDIMKtl(name, foundSource, foundDestination );
 	}
 	
 	*prepareDeviceDicts{
@@ -179,6 +195,12 @@ MIDIMKtl : MKtl {
 			
 			destinationDeviceDict.put((name ++ j).asSymbol, MIDIClient.destinations[order[i]])
 		};
+
+		// put the available midi devices in MKtl's available devices
+		allAvailable.put( \midi, List.new );
+		sourceDeviceDict.keysDo({ |key|
+			allAvailable[\midi].add( key );
+		});
 	}
 	
 	initMIDIMKtl { |argName, argSource, argDestination|
@@ -198,11 +220,11 @@ MIDIMKtl : MKtl {
 		elementHashDict = ();
 		hashToElNameDict = ();
 			// moved to superclass init
-		this.loadDeviceDescription(source.device); 
+		//	this.loadDeviceDescription(devDescName); 
 		
 		//this.findDeviceDescription(source.device); 
 		
-		this.makeElements; 
+		//	this.makeElements; 
 		this.prepareElementHashDict;
 
 		this.addResponders; 

@@ -168,7 +168,7 @@ Dispatch{
 		elements[elemkey] = DispatchOut.new( this, elemkey );
 	}
 	
-	createOuputsFromInputs{
+	createOutputsFromInputs{
 		mappedElems.pairsDo{ |sourceKey,elemKeys|
 			elemKeys.do{ |elemKey|
 				this.createOutput(elemKey)
@@ -181,6 +181,7 @@ Dispatch{
 	}
 
 	setOutput{ |elemKey, value|
+		elemKey.postln;
 		elements[elemKey].value_(value);
 		changedOuts.add(elemKey);
 	}
