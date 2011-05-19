@@ -46,12 +46,12 @@
 
 * Dispatch:
 	* pattern matching very slow on Dispatches with many outputs...
+	* no defaults when creatings dispatch because of passing arguments in an array… what to do ????
 	* read File with definitions - factory of common functionality
-		average, 
 		acc, 
-		LOA, 
+		Level Of Activity (with decay), 
 		stuff that is in actionFunc,
-	 	times things, 
+	 	timed things, 
 	 	regions(e.g. launchpad,)
 
 * MKtlBasicElement
