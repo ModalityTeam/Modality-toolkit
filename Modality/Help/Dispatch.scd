@@ -1,129 +1,13 @@
+/*
+888~-_   ,e,                              d8           888      
+888   \   "   d88~\ 888-~88e    /~~~8e  _d88__  e88~~\ 888-~88e 
+888    | 888 C888   888  888b       88b  888   d888    888  888 
+888    | 888  Y88b  888  8888  e88~-888  888   8888    888  888 
+888   /  888   888D 888  888P C888  888  888   Y888    888  888 
+888_-~   888 \_88P  888-_88"   "88_-888  "88_/  "88__/ 888  888 
+                    888                                       
+*/
 
-MIDIMKtl.find
-//temporary dispatchs
-//evaluate this
-(
-
-~makePagedVersion = { |source, previousSceneKey, nextSceneKey, n = 10|
-var d = Dispatch.new;
-d.mapAll(source);
-
-// initialize the scene
-d.envir[\scene] = 0;
-d.envir[\numOfScenes] = n;
-d.envir[\values] = n.collect{ Dictionary.new.putPairs(source.elementNames.collect{ |name| [name, source.defaultValueFor(name) ? 0] }) };
-n.collect{ |i| source.elementNames.collect{ |name| d.createOutput(("/page"++(i+1)++"/"++name).asSymbol) } };
-d.addToProc( \processEvents, {  |dis,e|
-	var in = d.changedIn; // (source: \source, key: \sl1)
-
-	e[\values][e[\scene]][in[\key]] = in[\val];
-	d.setOutput(("/page"++(e[\scene]+1)++"/"++in[\key]).asSymbol,in[\val])
-
-});
-d.addToProc( \changeScene, {  |dis,e|
-	var in = d.changedIn; // (source: \source, key: \sl1)
-
-	if( (in[\key] == previousSceneKey) && ( in[\val] == 127 )) {
-		e[\scene] = (e[\scene] - 1).min(n);
-		postln("Scene is "++e[\scene])	
-
-	};
-	if( (in[\key] == nextSceneKey) && ( in[\val] == 127 )) {
-		e[\scene] = (e[\scene] + 1).max(0);
-		postln("Scene is "++e[\scene])
-	};	
-});
-d
-};
-
-
-~threshZones = { |source,elemKeys, sourceKey, threshs|
-	d = Dispatch.new;
-	d.map(source, elemKeys);	
-	d.createOutputsFromInputs;
-	d.sources.pairsDo{ |sourceKey,keysDict|
-		d.envir.put(sourceKey,keysDict.collect{0});
-		keysDict.pairsDo{ |key|
-			threshs.do{ |a,i|
-				d.createOutput((key++"_"++i).asSymbol)
-			}
-		};
-	};
-	threshs = threshs.sort;
-	d.addToProc( \calc, { |dis,e|
-		var in = dis.changedIn;
-		var key = in[\key];
-		var source = in[\source];
-		var value = in[\val];
-		var prevTresh;
-		var currentTresh;
-		var currentTreshIndex;
-		
-		threshs.do{ |th,i|
-			if( value > th ) {
-				currentTresh = th;	
-				currentTreshIndex = i;						};
-			if( e[source][key] > th ) {
-				prevTresh = th;								};				
-		};
-		
-		if( prevTresh != currentTresh ) {
-			if( currentTreshIndex.notNil ) {
-				dis.setOutput((key++"_"++currentTreshIndex).asSymbol,  1);
-			}
-		};
-		e[source][key] = value;
-	
-	} );
-   d
-};
-
-~up = { |source,elemKeys, sourceKey|
-	d = Dispatch.new;
-	d.map(source, elemKeys);	
-	d.createOutputsFromInputs;
-	d.sources.pairsDo{ |sourceKey,keysDict|
-		d.envir.put(sourceKey,keysDict.collect{0})
-	};
-	
-	d.addToProc( \calc, { |dis,e|
-		var in = dis.changedIn;
-		var key = in[\key];
-		var source = in[\source];
-		var value = in[\val];
-		
-		if( value > e[source][key] ) {			dis.setOutput(key, value );
-		};
-		e[source][key] = value;
-	
-	} );
-   d
-};
-
-~down = { |source,elemKeys, sourceKey, thresh = 0.5|
-	d = Dispatch.new;
-	d.map(source, elemKeys);	
-	d.createOutputsFromInputs;
-	d.sources.pairsDo{ |sourceKey,keysDict|
-		d.envir.put(sourceKey,keysDict.collect{0})
-	};
-	
-	d.addToProc( \calc, { |dis,e|
-		var in = dis.changedIn;
-		var key = in[\key];
-		var source = in[\source];
-		var value = in[\val];
-		
-		if( value < e[source][key] ) {				dis.setOutput(key, value );
-		};
-		e[source][key] = value;
-	
-	} );
-   d
-};
-)
-
-//k = MIDIMKtl(\nano1, -1871034450);
 
 //average
 (
@@ -133,13 +17,17 @@ d = Dispatch.new;
 
 d.mapToElem( a, \sl1_1, \myController1 );
 d.mapToElem( a, \sl2_1, \myController1 );
+
 d.createOutput(\average);
+
 d.addToProc( \average, { |dis|
-	var val = [\sl1_1,\sl2_1].collect{ |it| dis.getInput( \myController1, it ) }.sum;
+	var val = [\sl1_1,\sl2_1].collect{ |it| 
+		dis.getInput( \myController1, it ) 
+	}.sum;
 	dis.setOutput( \average, val/2 );
 } );
 
-d.addToOutput(\average,\blah,{ |a,b,c| postln("average is "++c) })
+d.addToOutput(\average,\blah,{ |element| postln("average is "++element.value) })
 )
 
 d.remove;
@@ -159,25 +47,23 @@ d.remove
 
 //paged launchpad
 (
-~paged = ~makePagedVersion.(MIDIMKtl('lnch0'),\left,\right,32);
+~paged = Dispatch(\paged,MIDIMKtl('lnch0'),\left,\right,32);
 ~paged.verbose = true
 )
 ~paged.remove
-
-~paged = ~makePagedVersion.(MIDIMKtl('nnkn0'),\rew,\fwd);
-~paged.verbose = true
 
 //paged nanoKontrol
 (
+MIDIMKtl('nnkn0').reset;
 ~paged = Dispatch(\paged,MIDIMKtl('nnkn0'),\rew,\fwd);
 ~paged.verbose = true
 )
-~paged.remove
-~paged.insp
+
 
 
 //velocity
 (
+MIDIMKtl('nnkn0') .reset;
 ~dis = Dispatch(\velocity, MIDIMKtl('nnkn0') );
 ~dis.verbose = true;
 )
@@ -185,16 +71,19 @@ d.remove
 (
 w = Window.new.front;
 ~sl = Slider(w, Rect(20, 60, 150, 20));
-d.addToOutput(\sl1_1,\blah,{Ê|a,b,c| { ~sl.value_(c/4000) }.defer; x.set(\freq,c*2)  });
-d.addToOutput(\sl2_1,\blah,{ |a,b,c| { ~sl.value_(c/4000) }.defer; x.set(\mod, c/40)  })
+~dis.addToOutput(\sl1_1,\blah,{Ê|elem| { ~sl.value_(elem.value/10) }.defer; x.set(\freq,elem.value*300)  });
+~dis.addToOutput(\sl2_1,\blah,{ |elem|  x.set(\mod, elem.value)  })
 )
 
 x = { |freq= 400, mod = 1| Saw.ar( Lag.kr(freq) ) * SinOsc.ar(Lag.kr(mod) ).range(0.0,1.0)* 0.5 }.play
 
 x = { |freq= 400, mod = 1| Saw.ar( LeakDC.kr( Lag.kr(freq)) + 100 ) * SinOsc.ar( LeakDC.kr( Lag.kr(mod), 0.990) + 1 ).range(0.0,1.0)* 0.5 }.play
 
+
+
 // paged and then velocity
 (
+MIDIMKtl('nnkn0').reset;
 ~dis1 = Dispatch(\paged, MIDIMKtl('nnkn0'),\rew,\fwd,4);
 ~dis2 = Dispatch(\velocity, ~dis1);
 ~dis2.verbose = true
@@ -207,7 +96,7 @@ x = { |freq= 400, mod = 1| Saw.ar( LeakDC.kr( Lag.kr(freq)) + 100 ) * SinOsc.ar(
 //make slider output velocity but keep the rest of controls absolute and merge into just one controller
 (
 k = MIDIMKtl('nnkn0');
-
+k.reset;
 ~sliders =  Dispatch(\velocity,k, k.elementsOfType(\slider).collect(_.name) );
 
 ~restOfElems = k.elements.select{ |elem|
@@ -225,16 +114,18 @@ k = MIDIMKtl('nnkn0');
 
 // trigger
 (
-~tr =  Dispatch(\trigger, MIDIMKtl('nnkn0') );
-~tr.verbose = true;
+MIDIMKtl('nnkn0').reset;
+~disp =  Dispatch(\trigger, MIDIMKtl('nnkn0') );
+~disp.verbose = true;
 )
-~tr.remove
+~disp.remove
 MIDIMKtl('nnkn0').verbose = false
 
 
 
 // multiple trig
 (
+MIDIMKtl('nnkn0').reset;
 ~disp  =  Dispatch(\multipleClick,MIDIMKtl('nnkn0'));
 ~disp .verbose = true;
 )
@@ -245,15 +136,17 @@ MIDIMKtl('nnkn0').verbose = false
 
 // thresh
 (
+MIDIMKtl('nnkn0').reset;
 ~disp =  Dispatch(\threshold, MIDIMKtl('nnkn0'), thresh: 0.5 );
 ~disp.verbose = true;
 )
 ~disp.remove
 
-
+MIDIMKtl('nnkn0').verbose = true;
 
 // thresh up
 (
+MIDIMKtl('nnkn0').reset;
 ~disp =  Dispatch(\thresholdUp, MIDIMKtl('nnkn0'), thresh: 0.5 );
 ~disp.verbose = true;
 )
@@ -263,6 +156,7 @@ MIDIMKtl('nnkn0').verbose = false
 
 // thresh down
 (
+MIDIMKtl('nnkn0').reset;
 ~disp =  Dispatch(\thresholdDown, MIDIMKtl('nnkn0'), thresh: 0.5 );
 ~disp.verbose = true;
 )
@@ -272,38 +166,37 @@ MIDIMKtl('nnkn0').verbose = false
 
 // thresh zones
 (
-~tr =  ~threshZones.( MIDIMKtl('nnkn0'), threshs: [0.2,0.5,0.8] );
-~tr.verbose = true;
+MIDIMKtl('nnkn0').reset;
+~disp =  Dispatch(\threshZones, MIDIMKtl('nnkn0'), nil, nil, [0.2,0.5,0.8] );
+~disp.verbose = true;
 )
-(
-~tr =  Dispatch(\threshZones, MIDIMKtl('nnkn0'), nil, nil, [0.2,0.5,0.8] );
-~tr.verbose = true;
-)
-~tr.remove
+~disp.remove
 
 
 9.do{ |i|
 	3.do{ |j|
 		var r = rrand(300,3000);
-		~tr.addToOutput(("sl"++i++"_1_"++j).asSymbol, \sound,{ { FreeVerb.ar(0.1*SinOsc.ar(r) * EnvGen.ar(Env.perc, doneAction:2),0.5,0.9) }.play });
+		~disp.addToOutput(("sl"++i++"_1_"++j).asSymbol, \sound,{ { FreeVerb.ar(0.1*SinOsc.ar(r) * EnvGen.ar(Env.perc, doneAction:2),0.5,0.9) }.play });
 	}
 }
 
+
 // up
 (
-~tr =  ~up.( MIDIMKtl('nnkn0') );
-~tr.verbose = true;
+MIDIMKtl('nnkn0').reset;
+~disp =  Dispatch(\up, MIDIMKtl('nnkn0') );
+~disp.verbose = true;
 )
-~tr.remove
-
+~disp.remove
 
 // down
 (
-~tr =  ~down.( MIDIMKtl('nnkn0'), thresh:0.5 );
-~tr.verbose = true;
+k = MIDIMKtl('nnkn0').reset;
+~disp =  Dispatch(\down, k);
+~disp.verbose = true;
 )
 
-~tr.remove
+~disp.remove
 
 k.verbose = true
 k = MIDIMKtl('nnkn0')
