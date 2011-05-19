@@ -3,7 +3,7 @@ func:{ |disp,source,elemKeys, sourceKey, numClicks = 2|
 	disp.map(source, elemKeys);	
 	disp.createOutputsFromInputs;
 	source.elementNames.do{ |elemKey| disp.envir.put(elemKey,0) };
-	disp.addToProc( \velocityCalc, { |dis,e|
+	disp.addToProc( \multiClick, { |dis,e|
 		var in = dis.changedIn;
 		var key = in[\key];
 		

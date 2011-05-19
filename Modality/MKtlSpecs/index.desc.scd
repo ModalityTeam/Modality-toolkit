@@ -5,6 +5,7 @@ IdentityDictionary[
 \Run_N_Drive -> 
 	(osx: ( device: "Run'N' Drive"), linux: (device: "Thrustmaster Run\'N\' Drive"), protocol: \hid, file: "Run_N_Drive.desc.scd" ),
 \ImpactGamePad -> ( osx: ( ), linux: ( device: "Mega World USB Game Controllers"), protocol: \hid, file: "ImpactGamePad.desc.scd" ),
+\PuzzleSphere -> ( osx: (), linux: (device: "In2Games Real Play"), protocol: \hid, file: "PuzzleSphere.desc.scd"),
 \Launchpad -> 
 	(osx: ( device: "Launchpad"), linux: (device: "Launchpad"), protocol: \midi, file: "Launchpad.desc.scd" ),
 \manta -> 

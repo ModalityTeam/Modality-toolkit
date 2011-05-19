@@ -89,13 +89,13 @@ MKtlBasicElement {
 	updateValueOnServer {
 		//this.initBus;
 		// set bus values
-		bus !? {bus.setn(value.asArray)};
+		bus !? {bus.setn(this.value.asArray)};
 	}
 	initBus {|server|
 		server = server ?? {Server.default};
 		server.serverRunning.not.if{^this};
 		bus.isNil.if({
-			bus = Bus.control(server, value.asArray.size ? 1);
+			bus = Bus.control(server, (value ? 1).asArray.size);
 		});	
 	}
 	kr {|server| 

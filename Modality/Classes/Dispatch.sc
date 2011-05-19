@@ -262,7 +262,10 @@ Dispatch{
 	}
 	
 	defaultValueFor{ ^0 }
-	
+
+		// element access - support polyphonic name lists.
+	at { |elName| ^elements.atKeys(elName) }
+
 	
 	
 	verbose_ {|value=true|

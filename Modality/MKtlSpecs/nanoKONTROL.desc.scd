@@ -157,7 +157,8 @@
 	\kn8_4: (\midiType: \cc, \type: \knob, \chan: 7, \ccNum:  10, \spec: \midiCC),
 	\kn9_4: (\midiType: \cc, \type: \knob, \chan: 8, \ccNum:  10, \spec: \midiCC),
 
-	\bu1_4: (\midiType: \cc, \type: \button, \chan: 0, \ccNum: 16, \spec: \midiBut, \mode: \toggle),
+	// doubled assignment with a knob in scene 1
+	//\bu1_4: (\midiType: \cc, \type: \button, \chan: 0, \ccNum: 16, \spec: \midiBut, \mode: \toggle),
 	\bu2_4: (\midiType: \cc, \type: \button, \chan: 1, \ccNum: 16, \spec: \midiBut, \mode: \toggle),
 	\bu3_4: (\midiType: \cc, \type: \button, \chan: 2, \ccNum: 16, \spec: \midiBut, \mode: \toggle),
 	\bu4_4: (\midiType: \cc, \type: \button, \chan: 3, \ccNum: 16, \spec: \midiBut, \mode: \toggle),
@@ -167,7 +168,8 @@
 	\bu8_4: (\midiType: \cc, \type: \button, \chan: 7, \ccNum: 16, \spec: \midiBut, \mode: \toggle),
 	\bu9_4: (\midiType: \cc, \type: \button, \chan: 8, \ccNum: 16, \spec: \midiBut, \mode: \toggle),
 
-	\bd1_4: (\midiType: \cc, \type: \button, \chan: 0, \ccNum: 17, \spec: \midiBut, \mode: \toggle),
+	// doubled assignment with a knob in scene 1
+	//\bd1_4: (\midiType: \cc, \type: \button, \chan: 0, \ccNum: 17, \spec: \midiBut, \mode: \toggle),
 	\bd2_4: (\midiType: \cc, \type: \button, \chan: 1, \ccNum: 17, \spec: \midiBut, \mode: \toggle),
 	\bd3_4: (\midiType: \cc, \type: \button, \chan: 2, \ccNum: 17, \spec: \midiBut, \mode: \toggle),
 	\bd4_4: (\midiType: \cc, \type: \button, \chan: 3, \ccNum: 17, \spec: \midiBut, \mode: \toggle),

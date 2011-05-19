@@ -1,5 +1,5 @@
 (
-func:{ |disp, source,elemKeys, sourceKey, thresh = 0.5|
+func:{ |disp, source,elemKeys, sourceKey|
 	disp.map(source, elemKeys);	
 	disp.createOutputsFromInputs;
 	disp.sources.pairsDo{ |sourceKey,keysDict|
@@ -12,16 +12,16 @@ func:{ |disp, source,elemKeys, sourceKey, thresh = 0.5|
 		var source = in[\source];
 		var value = in[\val];
 		
-		if( (value >= thresh) && (e[source][key] < thresh) ) {			dis.setOutput(key, \up );
+		if( value != e[source][key]) {
+			dis.setOutput(key, true );
 		};
-		if( (value <= thresh) && (e[source][key] > thresh) ) {			dis.setOutput(key, \down );
-		};
+		
 		e[source][key] = value;
 	
 	} );
    disp
 },
-desc: "trigger on passing threshold",
-name: "threshold",
+desc: "check if value is different then previous one",
+name: "change",
 type: "creator"
 )

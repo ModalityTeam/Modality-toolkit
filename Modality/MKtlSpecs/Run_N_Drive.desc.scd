@@ -1,6 +1,7 @@
 // Thrustmaster run'n'drive, designed by Ferrari, limited edition
 
 Spec.add(\cent1,  [0, 1, \lin, 0, 0.5].asSpec);
+Spec.add(\cent1inv,  [1, 0, \lin, 0, 0.5].asSpec);
 
 [
 	// no idea what this is
@@ -39,7 +40,7 @@ Spec.add(\cent1,  [0, 1, \lin, 0, 0.5].asSpec);
 	
 		// west is 1, south is 3, east is 5, north is 7
 	\compass, (type: \compass, osx: (cookie: 14, spec: \compass8), mode: \push),	
-	\compassX, (type: \compassX, linux: (slot: [3,16], spec: \cent1), mode: \push),	
-	\compassY, (type: \compassY, linux: (slot: [3,17], spec: \cent1), mode: \push),	
-	\wheel, (type: \springFader, osx: (cookie: 21, spec: \cent255), linux: (slot: [3,6], spec: \cent1), mode: \center)
+	\compassX, (type: \compassX, linux: (slot: [3,16], spec: \cent1inv), mode: \push),	
+	\compassY, (type: \compassY, linux: (slot: [3,17], spec: \cent1inv), mode: \push),	
+	\wheel, (type: \springFader, osx: (cookie: 21, spec: \cent255), linux: (slot: [3,6], spec: \cent1inv), mode: \center)
 ];

@@ -1,11 +1,8 @@
+//needs to be fixed
 (
 func:{ |disp, source, previousSceneKey, nextSceneKey, n = 10, elementKeys, sourceKey|
 	
-	if( elementKeys.isNil ) {
-		disp.mapAll(source,sourceKey)
-	} {
-		elementKeys.do{ |elemKey| disp.mapToElem(source,elemKey,sourceKey)}
-	};
+	disp.map(source, elementKeys);	
 	
 	// initialize the scene
 	disp.envir[\scene] = 0;
@@ -31,14 +28,14 @@ func:{ |disp, source, previousSceneKey, nextSceneKey, n = 10, elementKeys, sourc
 	
 	disp.addToProc( \changeScene, {  |dis,e|
 		var in = dis.changedIn;
-	
-		if( (in[\key] == previousSceneKey) && ( in[\val] == 127 )) {
-			e[\scene] = (e[\scene] - 1).min(n);
+
+		if( (in[\key] == previousSceneKey) && ( in[\val] == 1.0 ) ) {
+			e[\scene] = (e[\scene] - 1).max(0);
 			postln("Scene is "++e[\scene])	
 	
 		};
-		if( (in[\key] == nextSceneKey) && ( in[\val] == 127 )) {
-			e[\scene] = (e[\scene] + 1).max(0);
+		if( (in[\key] == nextSceneKey) && ( in[\val] == 1.0 )) {
+			e[\scene] = (e[\scene] + 1).min(n);
 			postln("Scene is "++e[\scene])
 		};	
 	});
