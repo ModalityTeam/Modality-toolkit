@@ -190,7 +190,6 @@ Dispatch{
 	}
 
 	setOutput{ |elemKey, value|
-		elemKey.postln;
 		elements[elemKey].value_(value);
 		changedOuts.add(elemKey);
 	}
