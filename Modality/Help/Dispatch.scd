@@ -196,6 +196,34 @@ k = MIDIMKtl('nnkn0').reset;
 ~disp.verbose = true;
 )
 
+// inRange
+(
+k = MIDIMKtl('nnkn0').reset;
+~disp =  Dispatch(\inRange, k, nil, nil, [0.5,1.0]);
+~disp.verbose = true;
+)
+
+// match
+(
+k = MIDIMKtl('nnkn0').reset;
+~disp =  Dispatch(\match, k, nil, nil, [0.0,1.0]);
+~disp.verbose = true;
+)
+
+// change
+(
+k = MIDIMKtl('nnkn0').reset;
+~disp =  Dispatch(\change, k, nil, nil, [0.0,1.0]);
+~disp.verbose = true;
+)
+~disp.remove
+
+// changeDirection
+(
+k = MIDIMKtl('nnkn0').reset;
+~disp =  Dispatch(\changeDirection, k, nil, nil, [0.0,1.0]);
+~disp.verbose = true;
+)
 ~disp.remove
 
 k.verbose = true
