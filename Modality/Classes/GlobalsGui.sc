@@ -3,6 +3,16 @@ g = GlobalsGui.new;
 a = 12;
 z = 8768768;
 q = (a: 123, b: 234);
+
+t = g.texts.first.textField;
+t.action = { thisProcess.interpreter.perform(\a_, 123) }
+
+// todo: 
+
+*	compare with prevState, only update if needed
+* 	maybe a smaller version that scrolls? 
+
+
 */
 
 GlobalsGui : JITGui { 
@@ -24,17 +34,26 @@ GlobalsGui : JITGui {
 		} {
 			defPos = skin.margin;
 		};
-		minSize = 250 @ (names.size * skin.buttonHeight + 10);
+		minSize = 200 @ (names.size * skin.buttonHeight + 10);
 	}
 	
 	makeViews { 
 		
-		texts = names.collect { |name| 
-			var text = EZText(zone, 240@ skin.buttonHeight, name);
+		texts = names.collect { |name, i| 
+			var labelWidth = 15, canEval = true; 
+			var text;
+			if (name == 'cmdLine', { 
+				labelWidth = 60;
+				canEval = false; 
+			});
+			
+			text = EZText(zone, 188@ skin.buttonHeight, name, labelWidth: labelWidth);
 			text.view.resize_(2);
-			text;
+			text.labelView.align_(\center); 
+			text.enabled_(canEval);
+			text; 
 		};
-		this.name_("Global Vars");
+		this.name_(this.getName);
 	}
 	
 	getState { 
@@ -45,16 +64,18 @@ GlobalsGui : JITGui {
 		^state;
 	}
 	
-	getName { ^"GlobalVars" }
-	
+	getName { ^"Global_Vars" }
+	winName { ^this.getName }
+				
 	checkUpdate { 
-		var newState = this.getState;
+		var newState = this.getState; 
 		names.do { |globvar, i|
 			var obj = newState[globvar];
 			if (obj != prevState[globvar]) { 
 				texts[i].value_(obj);
 			};
 		};
+		// texts.last.textField = texts.last.textField
 		prevState = newState;
 	}
 }
