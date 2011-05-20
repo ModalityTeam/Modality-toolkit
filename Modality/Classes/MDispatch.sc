@@ -243,9 +243,9 @@ MDispatch{
 	elementNames{
 		^elements.keys.asArray
 	}
-	
-	recordRawValue{ }
-	
+	recordRawValue { |key,value|
+//		recordFunc.value( key, value );
+	}
 	defaultValueFor{ ^0 }
 
 		// element access - support polyphonic name lists.
