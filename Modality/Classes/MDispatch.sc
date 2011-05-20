@@ -1,7 +1,7 @@
-Dispatch{
+MDispatch{
 	classvar <dispatchTemplateFolder;
 
-	classvar <>tempNamePrefix = "Dispatch_";
+	classvar <>tempNamePrefix = "MDispatch_";
 	classvar tempDefCount = 0;
 	classvar <>maxTempDefNames = 512;
 	
@@ -36,18 +36,18 @@ Dispatch{
 	}
 	
 	*new{ arg name...args;
-		^super.new.init(name ? Dispatch.generateTempName )
+		^super.new.init(name ? MDispatch.generateTempName )
 			.fromTemplate(name,*args)
 	}
 	
 	fromTemplate{ arg name...args;
-		var dict = Dispatch.getDispatchTemplate(name); 
+		var dict = MDispatch.getMDispatchTemplate(name); 
 		if( dict.notNil ) { 
 			^dict[\func].value(this,*args)
 		}		
 	}
 
-	*getDispatchTemplate { |dispatchName| 
+	*getMDispatchTemplate { |dispatchName| 
 		
 		var cleanTemplateName;
 		var path;
@@ -67,15 +67,15 @@ Dispatch{
 		};
 	}
 	
-	*loadDispatchTemplate{ arg dispatchName ...args; 
-		var dict = this.getDispatchTemplate(dispatchName);
+	*loadMDispatchTemplate{ arg dispatchName ...args; 
+		var dict = this.getMDispatchTemplate(dispatchName);
 		if( dict.notNil) {
 			dict[\func].value(args)
 		}
 	}
 	
-	*getDispatchTemplateDesc{ |dispatchName|
-		var dict = this.getDispatchTemplate(dispatchName);
+	*getMDispatchTemplateDesc{ |dispatchName|
+		var dict = this.getMDispatchTemplate(dispatchName);
 		if( dict.notNil) {
 			^dict[\desc]
 		}
@@ -105,7 +105,7 @@ Dispatch{
 		};
 	}
 
-	mapSourceToKey{ |source, sourceKey | //name is an abstract name for the source, source is either a Ktl or a Dispatch
+	mapSourceToKey{ |source, sourceKey | //name is an abstract name for the source, source is either a Ktl or a MDispatch
 		if ( sourceKeyToSource.includesKey( sourceKey ) ){
 			if ( (sourceKeyToSource[sourceKey] === source).not ){
 				this.changeSource( sourceKey, source );
@@ -174,7 +174,7 @@ Dispatch{
 	}
 	
 	createOutput{ |elemkey|
-		elements[elemkey] = DispatchOut.new( this, elemkey );
+		elements[elemkey] = MDispatchOut.new( this, elemkey );
 	}
 	
 	createOutputsFromInputs{
@@ -246,7 +246,7 @@ Dispatch{
 	recursiveRemove{
 		sources.keys.do{ |sourceKey|
 			var source = sourceKeyToSource[sourceKey];
-			if( source.class == Dispatch){
+			if( source.class == MDispatch){
 				source.remove
 			} {
 				mappedElems[ sourceKey ].do{ |elem|
@@ -280,4 +280,4 @@ Dispatch{
 	 
 }
 
-DispatchOut : MKtlBasicElement {}
+MDispatchOut : MKtlBasicElement {}

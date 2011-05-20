@@ -12,8 +12,8 @@
 //average
 (
 a = MIDIMKtl('nnkn0');
-// Dispatch
-d = Dispatch.new;
+// MDispatch
+d = MDispatch.new;
 
 d.mapToElem( a, \sl1_1, \myController1 );
 d.mapToElem( a, \sl2_1, \myController1 );
@@ -37,7 +37,7 @@ d.verbose = true;
 //same ktl, different controls to different sources
 (
 k = MIDIMKtl('nnkn0');
-d = Dispatch.new;
+d = MDispatch.new;
 ~sliders =  d.map(k, k.elementsOfType(\slider).collect(_.name) , \nksliders);
 ~buttons =  d.map(k, k.elementsOfType(\button).collect(_.name) , \nkbuttons);
 )
@@ -47,7 +47,7 @@ d.remove
 
 //paged launchpad
 (
-~paged = Dispatch(\paged,MIDIMKtl('lnch0'),\left,\right,32);
+~paged = MDispatch(\paged,MIDIMKtl('lnch0'),\left,\right,32);
 ~paged.verbose = true
 )
 ~paged.remove
@@ -55,7 +55,7 @@ d.remove
 //paged nanoKontrol
 (
 MIDIMKtl('nnkn0').reset;
-~paged = Dispatch(\paged,MIDIMKtl('nnkn0'),\rew,\fwd);
+~paged = MDispatch(\paged,MIDIMKtl('nnkn0'),\rew,\fwd);
 ~paged.verbose = true
 )
 
@@ -64,7 +64,7 @@ MIDIMKtl('nnkn0').reset;
 //velocity
 (
 MIDIMKtl('nnkn0') .reset;
-~dis = Dispatch(\velocity, MIDIMKtl('nnkn0') );
+~dis = MDispatch(\velocity, MIDIMKtl('nnkn0') );
 ~dis.verbose = true;
 )
 
@@ -84,8 +84,8 @@ x = { |freq= 400, mod = 1| Saw.ar( LeakDC.kr( Lag.kr(freq)) + 100 ) * SinOsc.ar(
 // paged and then velocity
 (
 MIDIMKtl('nnkn0').reset;
-~dis1 = Dispatch(\paged, MIDIMKtl('nnkn0'),\rew,\fwd,4);
-~dis2 = Dispatch(\velocity, ~dis1);
+~dis1 = MDispatch(\paged, MIDIMKtl('nnkn0'),\rew,\fwd,4);
+~dis2 = MDispatch(\velocity, ~dis1);
 ~dis2.verbose = true
 )
 ~dis2.recursiveRemove
@@ -97,13 +97,13 @@ MIDIMKtl('nnkn0').reset;
 (
 k = MIDIMKtl('nnkn0');
 k.reset;
-~sliders =  Dispatch(\velocity,k, k.elementsOfType(\slider).collect(_.name) );
+~sliders =  MDispatch(\velocity,k, k.elementsOfType(\slider).collect(_.name) );
 
 ~restOfElems = k.elements.select{ |elem|
 	elem.deviceDescription[\type] != \slider
 }.collect(_.name);
 
-~result = Dispatch(\merge,[[~sliders,nil],[k,~restOfElems]]);
+~result = MDispatch(\merge,[[~sliders,nil],[k,~restOfElems]]);
 ~result.verbose = true;
 ~sliders.verbose = true;
 )
@@ -115,7 +115,7 @@ k.reset;
 // trigger
 (
 MIDIMKtl('nnkn0').reset;
-~disp =  Dispatch(\trigger, MIDIMKtl('nnkn0') );
+~disp =  MDispatch(\trigger, MIDIMKtl('nnkn0') );
 ~disp.verbose = true;
 )
 ~disp.remove
@@ -126,7 +126,7 @@ MIDIMKtl('nnkn0').verbose = false
 // multiple trig
 (
 MIDIMKtl('nnkn0').reset;
-~disp  =  Dispatch(\multipleClick,MIDIMKtl('nnkn0'));
+~disp  =  MDispatch(\multipleClick,MIDIMKtl('nnkn0'));
 ~disp .verbose = true;
 )
 ~disp .insp
@@ -137,7 +137,7 @@ MIDIMKtl('nnkn0').reset;
 // thresh
 (
 MIDIMKtl('nnkn0').reset;
-~disp =  Dispatch(\threshold, MIDIMKtl('nnkn0'), thresh: 0.5 );
+~disp =  MDispatch(\threshold, MIDIMKtl('nnkn0'), thresh: 0.5 );
 ~disp.verbose = true;
 )
 ~disp.remove
@@ -147,7 +147,7 @@ MIDIMKtl('nnkn0').verbose = true;
 // thresh up
 (
 MIDIMKtl('nnkn0').reset;
-~disp =  Dispatch(\thresholdUp, MIDIMKtl('nnkn0'), thresh: 0.5 );
+~disp =  MDispatch(\thresholdUp, MIDIMKtl('nnkn0'), thresh: 0.5 );
 ~disp.verbose = true;
 )
 ~disp.remove
@@ -157,7 +157,7 @@ MIDIMKtl('nnkn0').reset;
 // thresh down
 (
 MIDIMKtl('nnkn0').reset;
-~disp =  Dispatch(\thresholdDown, MIDIMKtl('nnkn0'), thresh: 0.5 );
+~disp =  MDispatch(\thresholdDown, MIDIMKtl('nnkn0'), thresh: 0.5 );
 ~disp.verbose = true;
 )
 ~disp.remove
@@ -167,7 +167,7 @@ MIDIMKtl('nnkn0').reset;
 // thresh zones
 (
 MIDIMKtl('nnkn0').reset;
-~disp =  Dispatch(\threshZones, MIDIMKtl('nnkn0'), nil, nil, [0.2,0.5,0.8] );
+~disp =  MDispatch(\threshZones, MIDIMKtl('nnkn0'), nil, nil, [0.2,0.5,0.8] );
 ~disp.verbose = true;
 )
 ~disp.remove
@@ -184,7 +184,7 @@ MIDIMKtl('nnkn0').reset;
 // up
 (
 MIDIMKtl('nnkn0').reset;
-~disp =  Dispatch(\up, MIDIMKtl('nnkn0') );
+~disp =  MDispatch(\up, MIDIMKtl('nnkn0') );
 ~disp.verbose = true;
 )
 ~disp.remove
@@ -192,28 +192,28 @@ MIDIMKtl('nnkn0').reset;
 // down
 (
 k = MIDIMKtl('nnkn0').reset;
-~disp =  Dispatch(\down, k);
+~disp =  MDispatch(\down, k);
 ~disp.verbose = true;
 )
 
 // inRange
 (
 k = MIDIMKtl('nnkn0').reset;
-~disp =  Dispatch(\inRange, k, nil, nil, [0.5,1.0]);
+~disp =  MDispatch(\inRange, k, nil, nil, [0.5,1.0]);
 ~disp.verbose = true;
 )
 
 // match
 (
 k = MIDIMKtl('nnkn0').reset;
-~disp =  Dispatch(\match, k, nil, nil, [0.0,1.0]);
+~disp =  MDispatch(\match, k, nil, nil, [0.0,1.0]);
 ~disp.verbose = true;
 )
 
 // change
 (
 k = MIDIMKtl('nnkn0').reset;
-~disp =  Dispatch(\change, k, nil, nil, [0.0,1.0]);
+~disp =  MDispatch(\change, k, nil, nil, [0.0,1.0]);
 ~disp.verbose = true;
 )
 ~disp.remove
@@ -221,7 +221,7 @@ k = MIDIMKtl('nnkn0').reset;
 // changeDirection
 (
 k = MIDIMKtl('nnkn0').reset;
-~disp =  Dispatch(\changeDirection, k, nil, nil, [0.0,1.0]);
+~disp =  MDispatch(\changeDirection, k, nil, nil, [0.0,1.0]);
 ~disp.verbose = true;
 )
 ~disp.remove
@@ -229,18 +229,28 @@ k = MIDIMKtl('nnkn0').reset;
 // wait
 (
 k = MIDIMKtl('nnkn0').reset;
-~disp =  Dispatch(\wait, k, nil, nil, 0.1);
+~disp =  MDispatch(\wait, k, nil, nil, 0.1);
 ~disp.verbose = true;
 )
 
 // within - only if values come in within n seconds of each other.
 (
 k = MIDIMKtl('nnkn0').reset;
-~trigger = Dispatch(\trigger,k);
-~disp =  Dispatch(\within, ~trigger, nil, nil, 0.5);
+~trigger = MDispatch(\trigger,k);
+~disp =  MDispatch(\within, ~trigger, nil, nil, 0.5);
 ~disp.verbose = true;
 )
 
+
+// delay - only if values come in within n seconds of each other.
+(
+k = MIDIMKtl('nnkn0').reset;
+~disp =  MDispatch(\delay, k, nil, nil, 1);
+~disp.verbose = true;
+)
+
+~disp.remove
+~disp.insp
 
 k.verbose = true
 k = MIDIMKtl('nnkn0')

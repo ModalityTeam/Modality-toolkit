@@ -1,11 +1,41 @@
-CLASS:: Dispatch
-summary:: (put short description here)
-categories:: Undocumented classes
-related:: Classes/SomeRelatedClass, Reference/SomeRelatedStuff, etc.
+CLASS:: MDispatch
+summary:: A unit of actions that provide the calculations or logic to create new outputs
+categories:: Modality, Control
+related:: Classes/MKtl, Classes/FuncChain, Reference/SomeRelatedStuff
 
 DESCRIPTION::
-(put long description here)
-
+A MDispatch allows to create complex controls from simpler ones. A MDispatch has a set of inputs which can come from multiple sources, and has a set of outputs. Each MDispatch contains a link::Classes/FuncChain:: which is triggered on an incoming event, and causes every function in the FuncChain to be executed. 
+MDispatchs can be handwritten or created using a template.
+handwritten:
+code::
+//change 'nnkn0' to the name of your controller;
+Mktl.find;
+k = MKtl('nnkn0');
+k.reset;
+//map outputs of MKtl instance to the inputs of the Dispatch
+disp.map(k);	
+//create outputs for the Dispatch with the same name as the inputs.
+disp.createOutputsFromInputs;
+//only trigger actions if value is 1	
+disp.addToProc( \trigger, { |dis,e|
+	var in = dis.changedIn;
+	if( in[\val] == 1 ) {
+		dis.setOutput(in[\key], 1)
+	}
+}); 
+code::
+Using a template:
+code::
+//velocity
+(
+//change 'nnkn0' to the name of your controller;
+Mktl.find;
+k = MKtl('nnkn0');
+k.reset;
+~dis = MDispatch(\velocity, k );
+~dis.verbose = true;
+)
+::
 
 CLASSMETHODS::
 
