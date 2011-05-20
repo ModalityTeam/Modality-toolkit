@@ -260,6 +260,13 @@ MKtl { // abstract class
 		};
 		^elName.collect { |name| this.rawValueAt(name) }
 	} 
+
+	valueAt { |elName| 
+		if (elName.isKindOf(Collection).not) { 
+			^elements.at(elName).value;
+		};
+		^elName.collect { |name| this.valueAt(name) }
+	} 
 	
 	setRawValueAt { |elName, val| 
 		if (elName.isKindOf(Collection).not) { 
@@ -267,6 +274,15 @@ MKtl { // abstract class
 		};
 		[elName, val].flop.do { |pair| 
 			elements[pair[0].postcs].rawValue_(pair[1].postcs)
+		};
+	}
+
+	setValueAt { |elName, val| 
+		if (elName.isKindOf(Collection).not) { 
+			^this.at(elName).value_(val);
+		};
+		[elName, val].flop.do { |pair| 
+			elements[pair[0].postcs].value_(pair[1].postcs)
 		};
 	}
 	
