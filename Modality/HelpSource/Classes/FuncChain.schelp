@@ -55,7 +55,7 @@ The name of the function.
 
 METHOD:: add
 Generalized interface to add a function to the FuncChain.
-If the addAction is not given, it behaves like link::#-put.
+If the addAction is not given, it behaves like link::#-put::.
 Otherwise it calls the method defined by addAction.
 
 argument:: name
