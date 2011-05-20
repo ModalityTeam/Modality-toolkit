@@ -37,11 +37,11 @@ MKtlBasicElement {
 		funcChain.add(funcName, function, addAction, otherName);
 	}
 
-	addFuncFirst { |funcName, function, otherName|
+	addFuncFirst { |funcName, function|
 		funcChain.addFirst(funcName, function);
 	}
 
-	addFuncLast { |funcName, function, otherName|
+	addFuncLast { |funcName, function|
 		funcChain.addLast(funcName, function);
 	}
 
@@ -61,11 +61,11 @@ MKtlBasicElement {
 		funcChain.removeAt(funcName) 
 	}
 	
-	send { |val|
+/*	send { |val|
 		value = val;
 		//then send to hardware 	
 	}
-
+*/
 	value_ { | newval |
 		// copies the current state to:
 		prevValue = value;
@@ -77,8 +77,7 @@ MKtlBasicElement {
 	valueAction_ { |newval|
 		this.value_( newval );
 		source.recordValue( name, newval );
-		//funcChain.value( name, newval );
-		funcChain.value( this );
+		this.doAction;
 	}
 	
 	doAction {
@@ -91,6 +90,7 @@ MKtlBasicElement {
 		// set bus values
 		bus !? {bus.setn(this.value.asArray)};
 	}
+	
 	initBus {|server|
 		server = server ?? {Server.default};
 		server.serverRunning.not.if{^this};
@@ -98,13 +98,20 @@ MKtlBasicElement {
 			bus = Bus.control(server, (value ? 1).asArray.size);
 		});	
 	}
+	
+	freeBus {
+		bus.notNil.if({
+			Bus.free;
+		});	
+	}
+	
 	kr {|server| 
 		// server is an optional argument that you only have to set once 
 		// and only if the server for your bus is not the defualt one. 
 		this.initBus(server);
 		^In.kr(bus.index, bus.numChannels)
-	
 	}
+	
 }
 
 MKtlElement : MKtlBasicElement{
