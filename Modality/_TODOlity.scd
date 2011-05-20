@@ -56,7 +56,7 @@
 		from actionFunc:	\speedAbove,\speedBelow,\wait,\within,\delay,\slew.
 	 	regions(e.g. launchpad,)
 
-* MKtlBasicElement
+* MBasicElement
 	* writeToBus
 	* kr
 	* freeBus

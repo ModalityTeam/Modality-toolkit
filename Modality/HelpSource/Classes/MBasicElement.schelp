@@ -1,4 +1,4 @@
-CLASS:: MKtlBasicElement
+CLASS:: MBasicElement
 summary:: Base class for MKtl controller elements.
 categories:: Modality, Control
 related:: Classes/MKtlElement, Classes/MKtl, Classes/MDispatchOut
