@@ -13,6 +13,8 @@
     * deal more gracefully with:
         - controllers for which no spec is found - (print out a template, suggest to start a configuring routine)
         - shortnames which can/should be found in the specs, but that are not connected (store shortnames in index? or just generate them)
+
+* PKtl - add option to sequence MKtls too
 		
 * MKtlDescription
 	* write a bunch of device descriptions
