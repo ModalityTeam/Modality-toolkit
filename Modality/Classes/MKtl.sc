@@ -24,8 +24,6 @@ MKtl { // abstract class
 	// all control elements (MKtlElement) on the device you may want to listen or talk to
 	var <elements;
 
-	var <responders;
-
 	//var <>recordFunc; // what to do to record incoming control changes
 	
 	*initClass {
@@ -72,6 +70,9 @@ MKtl { // abstract class
 		// this is to allow virtual MKtls eventually.
 	*new { |name, deviceDescName|
 		var devDesc;
+		if ( this.checkName( name, deviceDescName ).not ){
+			^nil;
+		};
 		if (deviceDescName.isNil) { 
 			if ( all[name].notNil ){
 				^all[name];
@@ -105,14 +106,13 @@ MKtl { // abstract class
 		^super.new.init(name, deviceDescName);
 	}
 
-	*make { |name, deviceDescName|
-		if (all[name].notNil) {
+	*checkName { |name, deviceDescName|
+		if (all[name].notNil and: deviceDescName.notNil ) {
 			warn("MKtl name '%' is in use already. Please use another name."
 				.format(name));
-			^nil
-		};
-		
-		^this.basicNew(name, deviceDescName);
+			^false
+		};		
+		^true
 	}
 	
 	init { |argName, deviceDescName|
@@ -163,13 +163,6 @@ MKtl { // abstract class
 		^devDesc;
 	}
 
-	// not sure if we need this method anymore, but maybe useful for automatic saving of a user defined description?
-	*getCleanDeviceName{ |dirtyName|
-		var cleanDeviceName = dirtyName.collect { |char| if (char.isAlphaNum, char, $_) };
-		^cleanDeviceName;
-	}
-
-	// this takes the actual filename
 	loadDeviceDescription { |deviceName| 
 		var deviceInfo;
 		var deviceFileName;

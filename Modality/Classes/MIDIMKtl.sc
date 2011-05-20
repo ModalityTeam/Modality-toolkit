@@ -24,6 +24,8 @@ MIDIMKtl : MKtl {
 	var <elementHashDict;
 	var <hashToElNameDict;
 
+	var <responders;
+
 		// open all ports 
 	*initMIDI{|force= false|
 
