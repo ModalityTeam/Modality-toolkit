@@ -13,7 +13,6 @@ MDispatch{
 
 	var <elements; // elements to which stuff is registered
 
-
 	var <sourceKeyToSource;
 	//	var <sourcesToInputs;
 	var <mappedElems;
@@ -35,50 +34,35 @@ MDispatch{
 		^name.asSymbol
 	}
 	
-	*new{ arg name...args;
-		^super.new.init(name ? MDispatch.generateTempName )
-			.fromTemplate(name,*args)
+	*new{ arg name;
+		^super.new.init( name ? MDispatch.generateTempName )
 	}
 	
-	fromTemplate{ arg name...args;
-		var dict = MDispatch.getMDispatchTemplate(name); 
-		if( dict.notNil ) { 
-			^dict[\func].value(this,*args)
-		}		
+	*make{ arg name...args;
+		var template = this.getMDispatchTemplate(name);
+		if( template.notNil ) {
+			^template[\func].value(super.new.init(name), *args)
+		}
+	}
+	
+	*cleanTemplateName{ |name|
+		^name.asString.collect { |char| if (char.isAlphaNum, char, $_) };
 	}
 
-	*getMDispatchTemplate { |dispatchName| 
-		
-		var cleanTemplateName;
+	*getTemplateFilePath{ |templateName| 
+		var cleanTemplateName = this.cleanTemplateName(templateName);
+		^dispatchTemplateFolder +/+ cleanTemplateName ++ ".scd";
+	}
+	
+	*getMDispatchTemplate{ arg name;
 		var path;
-		var dispatchTemplate;
-
-		cleanTemplateName = dispatchName.asString.collect { |char| if (char.isAlphaNum, char, $_) };
-		path = dispatchTemplateFolder +/+ cleanTemplateName ++ ".scd";
-		
-		path.postln;
-		
-		if( File.exists(path) ) { 
-			^path.load
-		} { 
+		^if( name.notNil and: {path = this.getTemplateFilePath(name); File.exists(path)} ) {
+			path.load
+		} {
 			"//" + this.class ++ ": - no dispatch template found for %: please make them!\n"
-				.postf(cleanTemplateName);
-			^nil
-		};
-	}
-	
-	*loadMDispatchTemplate{ arg dispatchName ...args; 
-		var dict = this.getMDispatchTemplate(dispatchName);
-		if( dict.notNil) {
-			dict[\func].value(args)
-		}
-	}
-	
-	*getMDispatchTemplateDesc{ |dispatchName|
-		var dict = this.getMDispatchTemplate(dispatchName);
-		if( dict.notNil) {
-			^dict[\desc]
-		}
+			.postf( this.cleanTemplateName(name) );
+			nil
+		}				
 	}
 	
 	init{ |nm|
@@ -105,7 +89,7 @@ MDispatch{
 		};
 	}
 
-	mapSourceToKey{ |source, sourceKey | //name is an abstract name for the source, source is either a Ktl or a MDispatch
+	prMapSourceToKey{ |source, sourceKey | //sourceKey is an abstract name for the source, source is either a Ktl or a MDispatch
 		if ( sourceKeyToSource.includesKey( sourceKey ) ){
 			if ( (sourceKeyToSource[sourceKey] === source).not ){
 				this.changeSource( sourceKey, source );
@@ -126,27 +110,25 @@ MDispatch{
 		};
 		mappedElems[sourceKey].add( elemKey );		
 	}
-	
-	//map all elements
-	mapAll{ |source, sourceKey |
-		sourceKey = sourceKey ? source.name;
-		this.mapSourceToKey(source, sourceKey);
-		source.elementNames.do{ |elemKey|
-			this.prRegisterInputWithSource(source, elemKey, sourceKey)
-		}
-	}
-	
+
 	map{ |source, elemKeys, sourceKey|
+		sourceKey = sourceKey ? source.name;
+		
 		if(elemKeys.isNil) {
-			this.mapAll(source)
+			//map all keys
+			this.prMapSourceToKey(source, sourceKey);
+			source.elementNames.do{ |elemKey|
+				this.prRegisterInputWithSource(source, elemKey, sourceKey)
+			}
 		} {
+			//map just selected keys
 			elemKeys.do{ |elemKey| this.mapToElem(source, elemKey, sourceKey)}
 		}			
 	}
 	
 	mapToElem{ |source, elemKey, sourceKey|
 		sourceKey = sourceKey ? source.name;
-		this.mapSourceToKey(source, sourceKey);
+		this.prMapSourceToKey(source, sourceKey);
 		this.prRegisterInputWithSource(source, elemKey, sourceKey)		
 	}
 
@@ -198,19 +180,20 @@ MDispatch{
 	//i.e.  'sl*'
 	//i.e.  'sl1_?'
 	//i.e.  '*'
-	addToOutput { |elementKey, funcName, function, addAction, otherName| // could have order indication
+	addToOutput { |elementKey, funcName, function, addAction, target | 
+		// could have order indication
 		elements.do{ |elem|
 			var key = elem.name;
 			if( key.matchOSCAddressPattern(elementKey) ) {
-				elements[key].addFunc( funcName, function );		
+				elements[key].addFunc( funcName, function , addAction, target);		
 			}
 		}
 	}
 	
-	removeFromOutput { |elementKey, funcName| 		
+	removeFromOutput { | elemKey, funcName| 		
 		elements.do{ |elem|
 			var key = elem.name;
-			if( key.matchOSCAddressPattern(elementKey) ) {
+			if( key.matchOSCAddressPattern(elemKey) ) {
 				elements[key].removeFunc(funcName);
 			}
 		}
@@ -230,8 +213,8 @@ MDispatch{
 		};
 	}
 
-	addToProc{ |key,func,addAction=\addLast,target|
-		funcChain.add( key, func, addAction, target );
+	addToProc{ |key, function, addAction=\addLast, target|
+		funcChain.add( key, function, addAction, target );
 	}
 	
 	remove{
@@ -266,9 +249,7 @@ MDispatch{
 	defaultValueFor{ ^0 }
 
 		// element access - support polyphonic name lists.
-	at { |elName| ^elements.atKeys(elName) }
-
-	
+	at { | elemKey | ^elements.atKeys(elemKey) }	
 	
 	verbose_ {|value=true|
 		value.if({
