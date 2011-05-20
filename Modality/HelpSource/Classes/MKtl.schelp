@@ -1,6 +1,6 @@
 CLASS:: MKtl
 summary:: The class to use external controllers
-categories:: Control, MIDI, HID
+categories:: Modality, Control, MIDI, HID
 related:: Classes/Dispatch, Classes/Pktl, Reference/UsingMKtlAndDispatch
 
 DESCRIPTION::

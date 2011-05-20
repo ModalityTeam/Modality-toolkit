@@ -1,6 +1,6 @@
 CLASS:: FuncChain
 summary:: a named function list
-categories:: Collection, Modality
+categories:: Modality, Collections, Function
 related:: Classes/MKtl, Classes/MDispatch, Reference/Modality, etc.
 
 DESCRIPTION::
