@@ -1,0 +1,268 @@
+\documentclass[pdf,slideColor,colorBG,accumulate,total]{prosper}
+% \usepackage[toc,sensestage]{HA-prosper}
+% \usepackage[toc,capsules]{HA-prosper}
+% \usepackage[toc,ciment]{HA-prosper}
+\usepackage[toc,highlight,hlsections,sensestage2_lac]{HA-prosper}
+
+\usepackage{url}
+\usepackage{hyperref}
+
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+
+\newlength{\MiniPageLeft}
+\newlength{\MiniPageMiddle}
+\newlength{\MiniPageRight}
+\newlength{\ThisFigureWidth}
+
+% \usepackage{fancyvrb,relsize}
+
+% \HAPsetup{rf={Sense/Stage - infrastructure for realtime interactive environments},lf={KiberPipa - SenseStage Workshop - Feb 26 - March 4, 2011},trans=Wipe}
+
+\HAPsetup{rf={Modality},lf={STEIM - Modality residency - May 11-20, 2011},trans=Wipe}
+
+\title{Modality\\modal control in SuperCollider}
+
+
+\author{%
+Jeff Carey, Alberto de Campo,\\
+Hannes H\"olzl, Robert van Heumen,\\
+Marije Baalman, Till Bovermann, Miguel Negr\~{a}o
+}
+%  }
+% \date{31.08.2007}
+
+% \slideCaption{\centering Sharing Data in Collaborative, Interactive Performances: the SenseWorld DataNetwork - \today \hspace*{1cm}}
+% \Logo{\includegraphics[width=2cm,bb=14 14 361 271]{../eps/logo_TU_rot-n.eps}}
+% \slideCaption{\raisebox{\baselineskip}[0pt][0pt]{Sharing Data in Collaborative, Interactive Performances: the SenseWorld DataNetwork - Slide \thepage~of \realpageref{last@page} \hspace*{2mm}}} 
+% \DefaultTransition{Wipe}
+
+      
+\begin{document}
+
+\maketitle
+
+\overlays{2}{
+\begin{slide}{What is Modality?}
+
+\vspace*{0.25cm}
+
+\begin{itemize}
+ \item a loose collaboration between a couple of SuperCollider developers and users
+ \item goal is to create a toolkit to make it easy to hook up controllers to sound in SuperCollider
+ \item do complicated mapping
+ \item change mappings on the fly, while playing the instrument (modal control)
+\end{itemize}
+
+\onlySlide{2}{
+\vspace*{0.5cm}
+
+First meeting between Jeff Carey, Bj\o{}rnar Habbestad, Alberto de Campo, Wouter Snoei and Marije Baalman in October 2010 in Bergen (BEK).
+
+\vspace*{0.5cm}
+
+Second meeting here at STEIM with Jeff Carey, Alberto de Campo, Marije Baalman, Till Bovermann, Miguel Negr\~{a}o, Hannes H\"olzl and Robert van Heumen.
+}
+
+\end{slide}
+}
+
+\begin{slide}{Residency}
+\vspace*{0.25cm}
+\begin{itemize}
+ \item Presentation and discussion at SC-user meeting
+ \item first three days presentations of each others work
+ \item and a lot of discussion
+ \item and brainstorming
+ \item Then coding, coding, coding
+ \item and brainstorming
+ \item and playing a concert on Monday (DNK)
+ \item some more coding and discussion
+ \item and creating some instruments for tonight.
+\end{itemize}
+
+\end{slide}
+
+\begin{slide}{Concept}
+ 
+ \vspace*{0.5cm}
+ \begin{itemize}
+  \item Support different devices that work with different protocols (MIDI, HID, OSC, Serial, etc)
+  \item Provide a common interface to use these devices
+  \item Provide a system to process the data from these devices
+  \item Make real and virtual interfaces interchangeable (GUI for device, processed data for device, etc)
+ \end{itemize}
+
+\end{slide}
+
+\begin{slide}{Realisation}
+ 
+ \vspace*{0.5cm}
+ \begin{itemize}
+  \item Support different devices that work with different protocols (MIDIMKtl, HIDMKtl)
+  \item Provide a common interface to use these devices (MKtl)
+  \item Provide a system to process the data from these devices (Dispatch)
+  \item Templates for various devices
+  \item Templates for various common ways of processing
+  \item Same interface for MKtl and Dispatch
+ \end{itemize}
+
+ 
+\end{slide}
+
+\begin{slide}{What took you so long?}
+
+\vspace*{1cm}
+
+\begin{itemize}
+ \item Different protocols have different ways of transporting the data
+ \item Different operating systems (well, Linux and OSX) provide data in different ways
+ \item Semantics of different controllers
+\end{itemize}
+
+\vspace*{1cm}
+
+\begin{center}
+\textit{ A general solution is not so trivial.}
+\end{center}
+
+ 
+\end{slide}
+
+% \overlays{2}{
+\begin{slide}{Device description index}
+
+\footnotesize
+% \onlySlide*{1}{
+\begin{verbatim}
+
+IdentityDictionary[
+\nanoKONTROL -> 
+	(osx: ( device: "nanoKONTROL"), 
+	linux: ( device: "nanoKONTROL-nanoKONTROL MIDI 1"), 
+	protocol: \midi, file: "nanoKONTROL.desc.scd" ),
+\GamePad -> ( type: \template, protocol: \hid, 
+	file: "GamePad.desc.scd" ), // gamepad template
+\Run_N_Drive -> 
+	(osx: ( device: "Run'N' Drive"),
+	linux: (device: "Thrustmaster Run\'N\' Drive"), 
+	protocol: \hid, file: "Run_N_Drive.desc.scd" ),
+\manta -> 
+	(inport: 1234, outport: 5678, protocol: \osc,
+	file: "Manta.desc.scd" )
+] 
+\end{verbatim}
+% }
+\end{slide}
+
+\begin{slide}{Device description}
+
+\footnotesize
+% \onlySlide*{2}{
+\begin{verbatim}
+// right hand side four labeled buttons
+\bt1r, (type: \button, osx: (cookie: 2), linux: (slot: [1,304]),
+	  spec: \hidBut, mode: \push), 
+\bt2r, (type: \button, osx: (cookie: 3), linux: (slot: [1,305]),
+	  spec: \hidBut, mode: \push), 
+	
+// joystick axes switches
+\joyLX, (type: \joyAxis, osx: (cookie: 15, spec: \cent255inv), 
+    linux: (slot: [3,0], spec: \cent1 ),  mode: \center), 
+\joyLY, (type: \joyAxis, osx: (cookie: 16, spec: \cent255 ), 
+    linux: (slot: [3,1], spec: \cent1 ),  mode: \center), 
+\end{verbatim}
+
+% }
+
+ 
+\end{slide}
+% }
+
+\overlays{2}{
+\begin{slide}{Dispatching}
+
+\begin{itemize}
+ \item Each control can cause a chain of actions
+ \item A unit of actions that provide the calculations or logic to create new outputs is called a \textbf{Dispatch}
+ \item They can be handwritten
+ \item Or created from a template
+
+\fromSlide{2}{
+\vspace*{0.5cm}
+\small
+\begin{itemize}
+ \item trigger
+ \item paged
+ \item threshold
+ \item thresholdUp,  thresholdDown
+ \item up, down
+ \item thresholdZone
+ \item merge
+ \item multiclick
+\end{itemize}
+}
+\end{itemize}
+ 
+\end{slide}
+}
+
+\begin{slide}{Dispatch template example}
+\footnotesize
+\begin{verbatim}
+(
+func:{ |disp, source,elemKeys, sourceKey|
+	disp.map(source, elemKeys);	
+	disp.createOutputsFromInputs;
+	
+	disp.addToProc( \trigger, { |dis,e|
+		var in = dis.changedIn;
+		if( in[\val] == 1 ) {
+			dis.setOutput(in[\key], 1)
+		}
+	});
+  	disp
+},
+desc: "trigger on a value of 1",
+name: "trigger",
+type: "creator"
+)
+\end{verbatim}
+\end{slide}
+
+\begin{slide}{A simple instrument}
+ 
+ \scriptsize
+ \begin{verbatim}
+MKtl.find;
+a = MKtl.new( 'ngms0' );
+
+Ndef( \sine, { Pan2.ar( Mix.new( SinOsc.ar( 
+  [\freq1.kr(400).lag(0.3,0.5), \freq2.kr(400).lag(0.3,0.5), 
+  \freq3.kr(400).lag(0.3,0.5)]  * [3/4,1,4/3] ) ) / 10,
+  \pos.kr(0) ) } );
+Ndef( \sine ).fadeTime = 0.1;
+
+d = Dispatch.new( \trigger, a, 
+      a.elements.select{ |it| it.type == \button }.collect( _.name ) );
+
+d.addToOutput( \btgreen, \playSynth, { Ndef(\sine).play( fadeTime: 1 ); } );
+d.addToOutput( \btred, \stopSynth, { Ndef(\sine).stop(1); } );
+
+a.addToOutput( \accX, \changeFreq, { |c| Ndef( \sine ).set( \freq1, 
+      [400,2000,\exponential].asSpec.map( c.value ) ) } );
+a.addToOutput( \accY, \changeFreq, { |c| Ndef( \sine ).set( \freq2, 
+      [400,2000,\exponential].asSpec.map( c.value ) ) } );
+a.addToOutput( \accZ, \changeFreq, { |c| Ndef( \sine ).set( \freq3, 
+      [400,2000,\exponential].asSpec.map( c.value ) ) } );
+ \end{verbatim}
+
+\end{slide}
+
+\begin{slide}{Dispatch example}
+ 
+\end{slide}
+
+
+
+\end{document}
