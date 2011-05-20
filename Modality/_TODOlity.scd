@@ -29,7 +29,7 @@
     * device: could be multiple devices for devices with the same spec
 
 * HIDMKtl:
-	* test "crossplatform" on osx
+	* test "crossplatform" on osx. Cannot test until HID is broken on osx.
 
 * MKtlElement:
 	* composites? somewhat important (LFSaw)
@@ -48,7 +48,7 @@
 	* KintectMKtl
 
 * Dispatch:
-	* allow the user to pass in another folder where to look for dispatch templates.
+	* default template files in quarks, custom ones in userAppSupportDir
 	* pattern matching very slow on Dispatches with many outputs...
 	* no defaults when creatings dispatch because of passing arguments in an array… what to do ????
 	* do templates:
@@ -56,11 +56,6 @@
 		Level Of Activity (with decay), 
 		from actionFunc:	\speedAbove,\speedBelow,\delay,\slew.
 	 	regions(e.g. launchpad,)
-
-* MBasicElement
-	* writeToBus
-	* kr
-	* freeBus
 
 * GUI
 	* auto-generate based on controller description 
