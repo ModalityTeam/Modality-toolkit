@@ -1,6 +1,6 @@
 
 FuncChain : FunctionList { // a named FunctionList
-	var <>names; 
+	var <names; 
 	
 	storeArgs { ^[names, array].flop.flat.bubble }
 	
@@ -90,7 +90,8 @@ FuncChain : FunctionList { // a named FunctionList
 	}
 
 	replaceAt { |name, func, othername| 
-		var index = names.indexOf(othername); 
+		var index = names.indexOf(othername);
+		this.removeAt(name); 
 		if (index.notNil) { 
 			this.putAtIndex(index, name, func)
 		} { 							// add if absent
