@@ -254,19 +254,19 @@ MKtl { // abstract class
 		// element access - support polyphonic name lists.
 	at { |elName| ^elements.atKeys(elName) }
 	
-	valueAt { |elName| 
+	rawValueAt { |elName| 
 		if (elName.isKindOf(Collection).not) { 
-			^elements.at(elName).value;
+			^elements.at(elName).rawValue;
 		};
-		^elName.collect { |name| this.valueAt(name) }
+		^elName.collect { |name| this.rawValueAt(name) }
 	} 
 	
-	setValueAt { |elName, val| 
+	setRawValueAt { |elName, val| 
 		if (elName.isKindOf(Collection).not) { 
-			^this.at(elName).value_(val);
+			^this.at(elName).rawValue_(val);
 		};
 		[elName, val].flop.do { |pair| 
-			elements[pair[0].postcs].value_(pair[1].postcs)
+			elements[pair[0].postcs].rawValue_(pair[1].postcs)
 		};
 	}
 	
@@ -315,7 +315,7 @@ MKtl { // abstract class
 		elements.do(_.reset)
 	}
 	
-	recordValue { |key,value|
+	recordRawValue { |key,value|
 //		recordFunc.value( key, value );
 	}
 

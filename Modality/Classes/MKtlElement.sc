@@ -73,14 +73,21 @@ MBasicElement {
 		value = newval;
 		this.updateValueOnServer;
 	}
-
 	valueAction_ { |newval|
 		this.value_( newval );
-		source.recordValue( name, newval );
+		this.doAction;
+	}
+	
+	rawValue_{|newval|
+		this.value_(newval);
+	}
+	rawValueAction_{|newval|
+		this.rawValue_( newval );
 		this.doAction;
 	}
 	
 	doAction {
+		source.recordRawValue( name, value );
 		funcChain.value( this );
 	}
 
@@ -158,5 +165,31 @@ MKtlElement : MBasicElement{
 	
 	value { ^spec.unmap(value) }
 	
+	// usually, you do not call this but rawValue_ instead.
+	value_ {|newval|
+		^super.value(spec.map(newval))
+	}
 	rawValue { ^value }
+	rawValue_ {|newVal|
+		super.value_(newVal)
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

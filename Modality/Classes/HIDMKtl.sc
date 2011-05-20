@@ -186,12 +186,12 @@ HIDMKtl : MKtl {
 			var cookie = el.deviceDescription[\cookie]; // osx
 			// on linux:
 			if ( slot.notNil ){
-				srcDevice.slots[ slot[0] ][ slot[1] ].action = { |v| el.valueAction_( v.value ) };
+				srcDevice.slots[ slot[0] ][ slot[1] ].action = { |v| el.rawValueAction_( v.value ) };
 			};
 			// on osx:
 			if ( cookie.notNil ){
-				elemDict[ cookie ].put( el );
-				srcDevice.hidDeviceAction = { |ck,val| this.elemDict[ ck ].valueAction_( val ) };
+				elemDict.put(  cookie, el );
+				srcDevice.hidDeviceAction = { |ck,val| this.elemDict[ ck ].rawValueAction_( val ) };
 			}
 		}
 	}
