@@ -1,0 +1,389 @@
+CLASS:: Dispatch
+summary:: (put short description here)
+categories:: Undocumented classes
+related:: Classes/SomeRelatedClass, Reference/SomeRelatedStuff, etc.
+
+DESCRIPTION::
+(put long description here)
+
+
+CLASSMETHODS::
+
+METHOD:: dispatchTemplateFolder
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: tempNamePrefix
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: maxTempDefNames
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: initClass
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: generateTempName
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: new
+(describe method here)
+
+argument:: name
+(describe argument here)
+
+argument::  ... args
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: getDispatchTemplate
+(describe method here)
+
+argument:: dispatchName
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: loadDispatchTemplate
+(describe method here)
+
+argument:: dispatchName
+(describe argument here)
+
+argument::  ... args
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: getDispatchTemplateDesc
+(describe method here)
+
+argument:: dispatchName
+(describe argument here)
+
+returns:: (returnvalue)
+
+
+INSTANCEMETHODS::
+
+METHOD:: verbose
+(describe method here)
+
+argument:: value
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: name
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: funcChain
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: elements
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: sourceKeyToSource
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: mappedElems
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: sources
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: envir
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: changedOuts
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: changedIn
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: fromTemplate
+(describe method here)
+
+argument:: name
+(describe argument here)
+
+argument::  ... args
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: init
+(describe method here)
+
+argument:: nm
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: changeSource
+(describe method here)
+
+argument:: sourceKey
+(describe argument here)
+
+argument:: newSource
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: mapSourceToKey
+(describe method here)
+
+argument:: source
+(describe argument here)
+
+argument:: sourceKey
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: prRegisterInputWithSource
+(describe method here)
+
+argument:: source
+(describe argument here)
+
+argument:: elemKey
+(describe argument here)
+
+argument:: sourceKey
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: mapAll
+(describe method here)
+
+argument:: source
+(describe argument here)
+
+argument:: sourceKey
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: map
+(describe method here)
+
+argument:: source
+(describe argument here)
+
+argument:: elemKeys
+(describe argument here)
+
+argument:: sourceKey
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: mapToElem
+(describe method here)
+
+argument:: source
+(describe argument here)
+
+argument:: elemKey
+(describe argument here)
+
+argument:: sourceKey
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: lookupSources
+(describe method here)
+
+argument:: source
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: valueArray
+(describe method here)
+
+argument:: args
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: setInput
+(describe method here)
+
+argument:: source
+(describe argument here)
+
+argument:: elemKey
+(describe argument here)
+
+argument:: value
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: getInput
+(describe method here)
+
+argument:: sourceKey
+(describe argument here)
+
+argument:: elemKey
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: createOutput
+(describe method here)
+
+argument:: elemkey
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: createOutputsFromInputs
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: getOutput
+(describe method here)
+
+argument:: elemKey
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: setOutput
+(describe method here)
+
+argument:: elemKey
+(describe argument here)
+
+argument:: value
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: addToOutput
+(describe method here)
+
+argument:: elementKey
+(describe argument here)
+
+argument:: funcName
+(describe argument here)
+
+argument:: function
+(describe argument here)
+
+argument:: addAction
+(describe argument here)
+
+argument:: otherName
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: removeFromOutput
+(describe method here)
+
+argument:: elementKey
+(describe argument here)
+
+argument:: funcName
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: removeAllFromOutput
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: processChain
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: addToProc
+(describe method here)
+
+argument:: key
+(describe argument here)
+
+argument:: func
+(describe argument here)
+
+argument:: addAction
+(describe argument here)
+
+argument:: target
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: remove
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: recursiveRemove
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: elementNames
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: defaultValueFor
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: at
+(describe method here)
+
+argument:: elName
+(describe argument here)
+
+returns:: (returnvalue)
+
+
+EXAMPLES::
+
+code::
+(some example code)
+::
