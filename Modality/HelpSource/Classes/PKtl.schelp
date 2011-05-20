@@ -1,0 +1,31 @@
+CLASS:: PKtl
+summary:: access MKtl values in patterns
+categories:: Modality, Streams-Patterns-Events>Patterns
+related:: Classes/MKtl, Reference/UsingMKtlAndDispatch, etc.
+
+DESCRIPTION::
+This class gives you access to MKtl elements from a pattern.
+
+
+CLASSMETHODS::
+
+METHOD:: new
+Create a PKtl pattern
+
+argument:: mktl
+The MKtl instance to take the values from.
+
+argument:: elName
+The element name(s) to access
+
+
+INSTANCEMETHODS::
+
+PRIVATE::mktl, elName, embedInStream, value
+
+EXAMPLES::
+
+code::
+n = MKtl('thrs0');
+
+::

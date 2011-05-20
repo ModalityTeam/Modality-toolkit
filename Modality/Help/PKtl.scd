@@ -1,30 +1,30 @@
 PKtl 		access MKtl values in patterns
 
+MKtl.find;
 	// make an MKtl
-
-MKtl.find
-MKtl(\nnkn0);
-n = MKtl(\nnkn0);
+MKtl.make(\nk1, 'nanoKONTROL');
+n = MKtl('thrs0');
 
 	// get a value from its elements
-n.elements.at(\sl1_1).value;
-n.elements.at(\sl2_1).value;
+n.elements.at(\bt1r).value;
 	// shortcut for access
-n.at(\sl1_1).value;
-n.at(\sl2_1).value;
+n.at(\bt1r).value;
 
 	// make a PKtl
-z = PKtl(MKtl(\nnkn0), \sl1_1);
+z = PKtl(MKtl(\thrs0), Pseq( [\bt1r, \bt2r], inf ) );
+z = PKtl(MKtl(\thrs0), [\bt1r, \bt2r] );
+z = PKtl(MKtl(\thrs0), \bt1r, 5 );
 
 	// use it in a playing pattern
-Pdef(\mk, Pbind(\amp, z.squared, \dur, 0.25, \freq, [250, 500, 1000])).play;
+Pdef(\mk, Pbind(\amp, z/4, \degree, Pseq([0,3], inf), \dur, 0.25, \pos, [-1,1] ).trace).play;
+Pdef(\mk, Pbind(\amp, z/4, \degree, [0,3], \dur, 0.25, \pos, [-1,1] ).trace).play;
 
 	// change mktl's relevant value
-n.at(\sl1_1).rawValue_(64);
-n.at(\sl1_1).rawValue_(127.rand);
+n.at(\sl1_1).value_(64);
+n.at(\sl1_1).value_(127.rand);
 
 	// test polyphony support: 
-z.elName = [\sl1_1, \sl2_1, \sl3_1];
+z.elName = [\sl1_1, \sl1_2];
 
 n.at(\sl1_1).value_(127.rand.postln);
 n.at(\sl1_2).value_(127.rand.postln);

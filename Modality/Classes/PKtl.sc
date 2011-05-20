@@ -37,20 +37,28 @@ n.elements[\sl1_1]
 
 PKtl : Pattern { 
 	var <>mktl, <>elName; 
-	*new { |mktl, elName| 
-		^super.newCopyArgs(mktl, elName);
+	var <>repeats;
+
+	*new { |mktl, elName, repeats=inf| 
+		^super.newCopyArgs(mktl, elName, repeats);
 	}
 
-	embedInStream { arg inval; 
-		inf.do { 
-			var item = mktl.valueAt(elName);
-			inval = item.embedInStream(inval);
+	embedInStream { arg inval;
+		var keyStr = elName.asStream;
+		var keyVal;
+		repeats.value.do { 
+			var item;
+			keyVal = keyStr.next(inval);
+			keyVal = keyVal.asArray;
+			item = mktl.valueAt(keyVal);
+			inval = item.flatten.unbubble.embedInStream(inval);
 		};
 		^inval;
 	}
 
-	storeArgs { ^[ mktl, elName ] }
+	storeArgs { ^[ mktl, elName, repeats ] }
 	
+	// what is this method used for?
 	value { ^mktl.at(elName).value }
 }
 	
