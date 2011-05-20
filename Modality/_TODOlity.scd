@@ -50,11 +50,10 @@
 * Dispatch:
 	* pattern matching very slow on Dispatches with many outputs...
 	* no defaults when creatings dispatch because of passing arguments in an array… what to do ????
-	* read File with definitions - factory of common functionality
+	* do templates:
 		acc, 
 		Level Of Activity (with decay), 
-		stuff that is in actionFunc,
-	 	timed things, 
+		from actionFunc:	\speedAbove,\speedBelow,\wait,\within,\delay,\slew.
 	 	regions(e.g. launchpad,)
 
 * MKtlBasicElement
@@ -65,7 +64,7 @@
 * GUI
 	* auto-generate based on controller description 
 		(postpone 'til QT gui is settled?)
-	* MKtlAllGui
+	* MKtlAllGui -> turn on an off posting, or get a graphic representation ?
 	
 * modality mapping, learning, etc.
 	copyMap(\sl1, \sl2)

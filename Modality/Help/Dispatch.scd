@@ -226,5 +226,21 @@ k = MIDIMKtl('nnkn0').reset;
 )
 ~disp.remove
 
+// wait
+(
+k = MIDIMKtl('nnkn0').reset;
+~disp =  Dispatch(\wait, k, nil, nil, 0.1);
+~disp.verbose = true;
+)
+
+// within - only if values come in within n seconds of each other.
+(
+k = MIDIMKtl('nnkn0').reset;
+~trigger = Dispatch(\trigger,k);
+~disp =  Dispatch(\within, ~trigger, nil, nil, 0.5);
+~disp.verbose = true;
+)
+
+
 k.verbose = true
 k = MIDIMKtl('nnkn0')
