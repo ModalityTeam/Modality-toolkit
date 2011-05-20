@@ -2,7 +2,7 @@
 func:{ |disp, source, elementKeys, sourceKey|
 	
 	if( elementKeys.isNil ) {
-		disp.mapAll(source,sourceKey)
+		disp.map(source,nil,sourceKey)
 	} {
 		elementKeys.do{ |elemKey| disp.mapToElem(source,elemKey,sourceKey)}
 	};
