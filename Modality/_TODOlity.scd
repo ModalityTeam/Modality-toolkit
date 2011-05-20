@@ -48,12 +48,13 @@
 	* KintectMKtl
 
 * Dispatch:
+	* allow the user to pass in another folder where to look for dispatch templates.
 	* pattern matching very slow on Dispatches with many outputs...
 	* no defaults when creatings dispatch because of passing arguments in an array… what to do ????
 	* do templates:
 		acc, 
 		Level Of Activity (with decay), 
-		from actionFunc:	\speedAbove,\speedBelow,\wait,\within,\delay,\slew.
+		from actionFunc:	\speedAbove,\speedBelow,\delay,\slew.
 	 	regions(e.g. launchpad,)
 
 * MBasicElement
