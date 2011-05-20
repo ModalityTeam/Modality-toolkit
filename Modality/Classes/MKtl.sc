@@ -106,6 +106,15 @@ MKtl { // abstract class
 		^super.new.init(name, deviceDescName);
 	}
 
+	*make{ |name, deviceDescName|
+		if (all[name].notNil ) {
+			warn("MKtl name '%' is in use already. Please use another name."
+				.format(name));
+			^nil
+		};		
+		^this.basicNew( name, deviceDescName )
+	}
+
 	*checkName { |name, deviceDescName|
 		if (all[name].notNil and: deviceDescName.notNil ) {
 			warn("MKtl name '%' is in use already. Please use another name."
