@@ -1,0 +1,401 @@
+CLASS:: MKtl
+summary:: The class to use external controllers
+categories:: Control, MIDI, HID
+related:: Classes/Dispatch, Classes/Pktl, Reference/UsingMKtlAndDispatch
+
+DESCRIPTION::
+MKtl gives an easy to use interface for devices you can connect to your computer through MIDI, HID, OSC, Serial and other protocols. Even more, you can also use it for GUI based controllers.
+MKtl searches for controllers connected to your machine, and gives you a list of available devices. Or, if you already know which controller you want to use, it will look through this list and give you the controller you want to use. If it cannot find it, it will replace it with a graphical representation of the controller to simulate it.
+
+CLASSMETHODS::
+
+PRIVATE:: deviceDescriptionFolder
+This class variable holds the path where the device descriptions are located. It is automatically inferred from the location where the class is residing on your system.
+
+returns::
+
+PRIVATE:: allDevDescs
+An IdentityDictionary holding all known device specs. These are read from a file in deviceDescriptionFolder +/+ "index.desc.scd".
+
+returns::
+
+METHOD:: all
+all open MKtl controllers.
+
+returns::
+
+PRIVATE:: specs
+All the ControlSpecs used by controller elements.
+
+returns::
+
+METHOD:: allAvailable
+List of available controllers (by name) per protocol.
+
+returns:: 
+
+PRIVATE:: initClass
+Initializes the class variables.
+
+returns::
+
+METHOD:: find
+Find all currently connected controllers.
+This method calls the find method on all of MKtl's subclasses.
+
+returns::
+
+METHOD:: addSpec
+add a ControlSpec to MKtl's library of specs.
+
+argument:: key
+Name of the spec
+
+argument:: spec
+The ControlSpec
+
+returns::
+
+PRIVATE:: makeShortName
+Convenience method to make a short name from a long name given by the controller.
+
+argument:: deviceID
+The long name given by the controller.
+
+returns:: the short name
+
+METHOD:: new
+(describe method here)
+
+argument:: name
+The name of the controller as you want to refer to it.
+If you supply the short name that was given by MKtl's find method, it will try to open this device.
+If you supply the name of an MKtl that already exists, the new method will return that instance (a la Ndef proxy style).
+
+argument:: deviceDescName
+The device description that you want to use. This is the name used in the device description index, or the long name of the device as reported.
+
+returns:: a new instance of MKtl.
+
+PRIVATE:: basicNew
+This is the basic method to create a new MKtl, which is called by the subclasses to do the basic initialisation of the MKtl.
+
+argument:: name
+The name of the controller as you want to refer to it.
+If you supply the short name that was given by MKtl's find method, it will try to open this device.
+If you supply the name of an MKtl that already exists, the new method will return that instance (a la Ndef proxy style).
+
+argument:: deviceDescName
+The device description that you want to use. This is the name used in the device description index, or the long name of the device as reported.
+
+returns:: the instance of MKtl that is created.
+
+METHOD:: make
+(describe method here)
+
+argument:: name
+(describe argument here)
+
+argument:: deviceDescName
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: loadDeviceIndex
+(describe method here)
+
+argument:: reload
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: getDeviceDescription
+(describe method here)
+
+argument:: devName
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: getCleanDeviceName
+(describe method here)
+
+argument:: dirtyName
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: postAllDescriptions
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: flattenDescription
+(describe method here)
+
+argument:: devDesc
+(describe argument here)
+
+returns:: (returnvalue)
+
+
+INSTANCEMETHODS::
+
+METHOD:: name
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: deviceDescription
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: elements
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: responders
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: init
+(describe method here)
+
+argument:: argName
+(describe argument here)
+
+argument:: deviceDescName
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: storeArgs
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: printOn
+(describe method here)
+
+argument:: stream
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: loadDeviceDescription
+(describe method here)
+
+argument:: deviceName
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: deviceDescriptionFor
+(describe method here)
+
+argument:: elname
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: postDeviceDescription
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: makeElements
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: defaultValueFor
+(describe method here)
+
+argument:: elName
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: elementNames
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: elementsOfType
+(describe method here)
+
+argument:: type
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: at
+(describe method here)
+
+argument:: elName
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: valueAt
+(describe method here)
+
+argument:: elName
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: setValueAt
+(describe method here)
+
+argument:: elName
+(describe argument here)
+
+argument:: val
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: addFunc
+(describe method here)
+
+argument:: elementKey
+(describe argument here)
+
+argument:: funcName
+(describe argument here)
+
+argument:: function
+(describe argument here)
+
+argument:: addAction
+(describe argument here)
+
+argument:: otherName
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: addFuncAfter
+(describe method here)
+
+argument:: elementKey
+(describe argument here)
+
+argument:: funcName
+(describe argument here)
+
+argument:: function
+(describe argument here)
+
+argument:: otherName
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: addFuncBefore
+(describe method here)
+
+argument:: elementKey
+(describe argument here)
+
+argument:: funcName
+(describe argument here)
+
+argument:: function
+(describe argument here)
+
+argument:: otherName
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: removeFunc
+(describe method here)
+
+argument:: elementKey
+(describe argument here)
+
+argument:: funcName
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: addToOutput
+(describe method here)
+
+argument:: elementKey
+(describe argument here)
+
+argument:: funcName
+(describe argument here)
+
+argument:: function
+(describe argument here)
+
+argument:: addAction
+(describe argument here)
+
+argument:: otherName
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: removeFromOutput
+(describe method here)
+
+argument:: elementKey
+(describe argument here)
+
+argument:: funcName
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: reset
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: recordValue
+(describe method here)
+
+argument:: key
+(describe argument here)
+
+argument:: value
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: receive
+(describe method here)
+
+argument:: key
+(describe argument here)
+
+argument:: val
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: send
+(describe method here)
+
+argument:: key
+(describe argument here)
+
+argument:: val
+(describe argument here)
+
+returns:: (returnvalue)
+
+
+EXAMPLES::
+
+code::
+(some example code)
+::
