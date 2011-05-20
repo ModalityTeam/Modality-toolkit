@@ -1,0 +1,6 @@
+class:: String
+
+METHOD:: cleanAlphaNum
+cleans up a String by replacing non-alpha-numeric characters with underscores.
+
+returns:: the clean name

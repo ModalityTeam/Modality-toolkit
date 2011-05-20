@@ -9,33 +9,8 @@ MKtl searches for controllers connected to your machine, and gives you a list of
 
 CLASSMETHODS::
 
-PRIVATE:: deviceDescriptionFolder
-This class variable holds the path where the device descriptions are located. It is automatically inferred from the location where the class is residing on your system.
-
-returns::
-
-PRIVATE:: allDevDescs
-An IdentityDictionary holding all known device specs. These are read from a file in deviceDescriptionFolder +/+ "index.desc.scd".
-
-returns::
-
 METHOD:: all
 all open MKtl controllers.
-
-returns::
-
-PRIVATE:: specs
-All the ControlSpecs used by controller elements.
-
-returns::
-
-METHOD:: allAvailable
-List of available controllers (by name) per protocol.
-
-returns:: 
-
-PRIVATE:: initClass
-Initializes the class variables.
 
 returns::
 
@@ -56,13 +31,6 @@ The ControlSpec
 
 returns::
 
-PRIVATE:: makeShortName
-Convenience method to make a short name from a long name given by the controller.
-
-argument:: deviceID
-The long name given by the controller.
-
-returns:: the short name
 
 METHOD:: new
 (describe method here)
@@ -77,187 +45,111 @@ The device description that you want to use. This is the name used in the device
 
 returns:: a new instance of MKtl.
 
-PRIVATE:: basicNew
-This is the basic method to create a new MKtl, which is called by the subclasses to do the basic initialisation of the MKtl.
-
-argument:: name
-The name of the controller as you want to refer to it.
-If you supply the short name that was given by MKtl's find method, it will try to open this device.
-If you supply the name of an MKtl that already exists, the new method will return that instance (a la Ndef proxy style).
-
-argument:: deviceDescName
-The device description that you want to use. This is the name used in the device description index, or the long name of the device as reported.
-
-returns:: the instance of MKtl that is created.
-
-METHOD:: make
-(describe method here)
-
-argument:: name
-(describe argument here)
-
-argument:: deviceDescName
-(describe argument here)
-
-returns:: (returnvalue)
 
 METHOD:: loadDeviceIndex
-(describe method here)
+This method loads the device index file. If the device index was already loaded, it will only reload the device index if reload is true. Normally this method is only used internally, but if you updated the device index file manually you may want to call this method manually.
 
 argument:: reload
-(describe argument here)
+force a reload of the device index
 
-returns:: (returnvalue)
-
-METHOD:: getDeviceDescription
-(describe method here)
-
-argument:: devName
-(describe argument here)
-
-returns:: (returnvalue)
-
-METHOD:: getCleanDeviceName
-(describe method here)
-
-argument:: dirtyName
-(describe argument here)
-
-returns:: (returnvalue)
 
 METHOD:: postAllDescriptions
-(describe method here)
+Posts all descriptions found in the deviceDescriptionFolder.
 
-returns:: (returnvalue)
-
-METHOD:: flattenDescription
-(describe method here)
-
-argument:: devDesc
-(describe argument here)
-
-returns:: (returnvalue)
 
 
 INSTANCEMETHODS::
 
 METHOD:: name
-(describe method here)
-
-returns:: (returnvalue)
+retrieve the name of the MKtl.
 
 METHOD:: deviceDescription
-(describe method here)
-
-returns:: (returnvalue)
+The device description of the MKtl.
 
 METHOD:: elements
-(describe method here)
+all control elements (MKtlElement) on the device you may want to listen or talk to
 
-returns:: (returnvalue)
-
-METHOD:: responders
-(describe method here)
-
-returns:: (returnvalue)
-
-METHOD:: init
-(describe method here)
+PRIVATE:: init
+Initializes the MKtl with its name, elements and puts it in all.
 
 argument:: argName
-(describe argument here)
+name of the MKtl
 
 argument:: deviceDescName
-(describe argument here)
+deviceDescName of the MKtl
 
-returns:: (returnvalue)
 
-METHOD:: storeArgs
-(describe method here)
-
-returns:: (returnvalue)
-
-METHOD:: printOn
-(describe method here)
-
-argument:: stream
-(describe argument here)
-
-returns:: (returnvalue)
 
 METHOD:: loadDeviceDescription
-(describe method here)
+Load a device description from either a given device description name, or a device name.
+Also creates the specs for them.
 
 argument:: deviceName
-(describe argument here)
+a given device description name, or a device name.
 
-returns:: (returnvalue)
 
-METHOD:: deviceDescriptionFor
-(describe method here)
+PRIVATE:: deviceDescriptionFor
+Find a description for a specific element.
 
 argument:: elname
-(describe argument here)
+Name of the element.
 
-returns:: (returnvalue)
+returns:: the description of the element.
 
 METHOD:: postDeviceDescription
-(describe method here)
+pretty print the device description.
 
-returns:: (returnvalue)
 
-METHOD:: makeElements
-(describe method here)
+PRIVATE:: makeElements
+Populate the elements with MKtlElements.
 
-returns:: (returnvalue)
 
 METHOD:: defaultValueFor
-(describe method here)
+Get the default value for a specific element
 
 argument:: elName
-(describe argument here)
+Name of the element
 
-returns:: (returnvalue)
+returns:: the default value
 
 METHOD:: elementNames
-(describe method here)
+get all the names for the elements.
 
-returns:: (returnvalue)
+returns:: list with element names
+
 
 METHOD:: elementsOfType
-(describe method here)
+get all elements of a specific type
 
 argument:: type
-(describe argument here)
+type (e.g. button, slider)
 
-returns:: (returnvalue)
+returns:: list with MKtlElements
 
 METHOD:: at
-(describe method here)
+get elements with the given names
 
 argument:: elName
-(describe argument here)
+single element name or a collection of element names
 
-returns:: (returnvalue)
+returns:: the MKtlElements asked for.
 
 METHOD:: valueAt
-(describe method here)
+Get the values of the given elements.
 
 argument:: elName
-(describe argument here)
+single element name or a collection of element names
 
-returns:: (returnvalue)
+returns:: the values asked for
 
 METHOD:: setValueAt
-(describe method here)
+Set the values of the given elements.
 
 argument:: elName
-(describe argument here)
+single element name or a collection of element names
 
 argument:: val
-(describe argument here)
-
-returns:: (returnvalue)
+value(s) for the elements
 
 METHOD:: addFunc
 (describe method here)
@@ -399,3 +291,83 @@ EXAMPLES::
 code::
 (some example code)
 ::
+
+SUBSECTION:: Private methods
+The following methods are used internally.
+
+CLASSMETHODS::
+
+PRIVATE:: initClass
+
+METHOD:: deviceDescriptionFolder
+This class variable holds the path where the device descriptions are located. It is automatically inferred from the location where the class is residing on your system.
+
+returns::
+
+METHOD:: allDevDescs
+An IdentityDictionary holding all known device specs. These are read from a file in deviceDescriptionFolder +/+ "index.desc.scd".
+
+returns::
+
+METHOD:: specs
+All the ControlSpecs used by controller elements.
+
+returns::
+
+METHOD:: allAvailable
+List of available controllers (by name) per protocol.
+
+returns:: 
+
+METHOD:: makeShortName
+Convenience method to make a short name from a long name given by the controller.
+
+argument:: deviceID
+The long name given by the controller.
+
+returns:: the short name
+
+METHOD:: basicNew
+This is the basic method to create a new MKtl, which is called by the subclasses to do the basic initialisation of the MKtl.
+
+argument:: name
+The name of the controller as you want to refer to it.
+If you supply the short name that was given by MKtl's find method, it will try to open this device.
+If you supply the name of an MKtl that already exists, the new method will return that instance (a la Ndef proxy style).
+
+argument:: deviceDescName
+The device description that you want to use. This is the name used in the device description index, or the long name of the device as reported.
+
+returns:: the instance of MKtl that is created.
+
+METHOD:: checkName
+Checks whether you are trying to make a new instance of MKtl with a specific deviceDescName with a name that is already in use.
+
+argument:: name
+The name of the controller as you want to refer to it.
+
+argument:: deviceDescName
+The device description that you want to use.
+
+returns:: true if the name is already taken, false if the name is not taken, or if you did not specify a deviceDescName
+
+METHOD:: getDeviceDescription
+Try to find a fitting device description.
+
+argument:: Name of the device description, or name of the controller name given.
+
+returns:: a device description.
+
+METHOD:: flattenDescription
+flattens a device description based on which platform the code is currently running.
+
+argument:: devDesc
+The description to flatten
+
+returns:: the flattened description.
+
+
+INSTANCE METHODS::
+
+PRIVATE:: storeArgs, printOn
+

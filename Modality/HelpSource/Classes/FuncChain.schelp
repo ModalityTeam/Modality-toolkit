@@ -1,0 +1,206 @@
+CLASS:: FuncChain
+summary:: (put short description here)
+categories:: Undocumented classes
+related:: Classes/SomeRelatedClass, Reference/SomeRelatedStuff, etc.
+
+DESCRIPTION::
+(put long description here)
+
+
+CLASSMETHODS::
+
+METHOD:: new
+(describe method here)
+
+argument:: pairs
+(describe argument here)
+
+returns:: (returnvalue)
+
+
+INSTANCEMETHODS::
+
+METHOD:: names
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: storeArgs
+(describe method here)
+
+returns:: (returnvalue)
+
+METHOD:: printOn
+(describe method here)
+
+argument:: stream
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: init
+(describe method here)
+
+argument:: argnames
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: put
+(describe method here)
+
+argument:: name
+(describe argument here)
+
+argument:: func
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: at
+(describe method here)
+
+argument:: name
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: add
+(describe method here)
+
+argument:: name
+(describe argument here)
+
+argument:: func
+(describe argument here)
+
+argument:: addAction
+(describe argument here)
+
+argument:: otherName
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: removeAt
+(describe method here)
+
+argument:: name
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: addLast
+(describe method here)
+
+argument:: name
+(describe argument here)
+
+argument:: func
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: addFirst
+(describe method here)
+
+argument:: name
+(describe argument here)
+
+argument:: func
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: addBefore
+(describe method here)
+
+argument:: name
+(describe argument here)
+
+argument:: func
+(describe argument here)
+
+argument:: othername
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: addAfter
+(describe method here)
+
+argument:: name
+(describe argument here)
+
+argument:: func
+(describe argument here)
+
+argument:: othername
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: replaceAt
+(describe method here)
+
+argument:: name
+(describe argument here)
+
+argument:: func
+(describe argument here)
+
+argument:: othername
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: putAtIndex
+(describe method here)
+
+argument:: index
+(describe argument here)
+
+argument:: name
+(describe argument here)
+
+argument:: func
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: insertAtIndex
+(describe method here)
+
+argument:: index
+(describe argument here)
+
+argument:: name
+(describe argument here)
+
+argument:: func
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: removeAtIndex
+(describe method here)
+
+argument:: index
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: atIndex
+(describe method here)
+
+argument:: index
+(describe argument here)
+
+returns:: (returnvalue)
+
+
+EXAMPLES::
+
+code::
+(some example code)
+::
