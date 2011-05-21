@@ -1,36 +1,3 @@
-/*
-
-AllGui.new(12)
-	for all globals a-z, 
-	proxyspace p, 
-	all proxyspaces, 
-	all Pdefs, 
-	all Pdefns, 
-	all Tdefs, 
-//	BufEnvir? 
-	
-	* show how many of each in use, 
-	* button to open each gui 
-		(with good initial positions and sizes)
-		(numbox for how many slots?)
-		(variants for small size etc?)
-		
-	what else?
-
-AllGui(12); 
-	
-	a = 12;
-	~k = 345;
-	Tdef(\a);	
-	Pdef(\a);
-	Pdefn(\trala);
-	Ndef(\a);
-	
-	p = ProxySpace(s, \p);
-	p[\a] = 12;
-	p[\kkk] = 12;
-
-*/
 
 AllGui : JITGui { 
 	var <labels, <texts; 
