@@ -1,16 +1,23 @@
-GlobalsGui		show all global variables
+GlobalsGui		a gui that shows all global variables in the interpreter.
 
 	// make one
 g = GlobalsGui.new;
 
-	// put some global vars
+	// set some global variables - they should show up
 a = 12;
 z = 8768768;
 q = (a: 123, b: 234);
 
-// * try changing window size. //
+// * try changing the window size - the textviews adjust. //
 
-// * try writing and eval in textfield a, then do:
+// * try writing into a textfield and evaluating 
+// - this should set the global variables. To check, do:
 
-a.postcs;
+this.dump
 
+
+
+
+// todo: 
+*	compare newState with prevState, only do gui update if needed
+* 	do we need a smaller version that only shows used vars, and scrolls? 

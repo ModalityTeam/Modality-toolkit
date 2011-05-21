@@ -1,19 +1,5 @@
-/*
-g = GlobalsGui.new;
-a = 12;
-z = 8768768;
-q = (a: 123, b: 234);
-
-// todo: 
-
-*	compare with prevState, only update if needed
-* 	maybe a smaller version that scrolls? 
-
-
-*/
-
 GlobalsGui : JITGui { 
-	var <texts; 
+	var <textViews, <cmdLineView; 
 	classvar <names = #[
 		\a, \b, \c, \d, \e, \f, \g, 
 		\h, \i, \j, \k, \l, \m, \n,
@@ -31,32 +17,30 @@ GlobalsGui : JITGui {
 		} {
 			defPos = skin.margin;
 		};
-		minSize = 200 @ (names.size * skin.buttonHeight + 10);
+		minSize = 200 @ (names.size * skin.buttonHeight + 4);
 	}
 	
 	makeViews { 
+		var textwidth = zone.bounds.width - 20;
+		var textheight = skin.buttonHeight;
 		
-		texts = names.collect { |name, i| 
-			var text, labelWidth = 15, canEval = true; 
-			if (name == 'cmdLine', { 
-				labelWidth = 60;
-				canEval = false; 
-			});
+		cmdLineView = EZText(zone, textwidth @ textheight, 'cmdLine', labelWidth: 60)
+			.enabled_(false);
 			
-			text = EZText(zone, 188@ skin.buttonHeight, name, labelWidth: labelWidth);
+		cmdLineView.labelView.align_(\center);
+		
+		textViews = names.drop(-1).collect { |name, i| 
+			var text, labelWidth = 15, canEval = true; 
+			
+			text = EZText(zone, 188@ skin.buttonHeight, name, 
+				{ |tx| object.perform(name.asSetter, tx.textField.string.interpret); }, 
+			labelWidth: labelWidth);
 			text.view.resize_(2);
 			text.labelView.align_(\center); 
-			text.enabled_(canEval); 
-			if (canEval) { 
-				text.action = { |tx| 
-					thisProcess.interpreter.perform(
-						name.asSetter, 
-						tx.textField.string.interpret
-					);
-				} 
-			};
 			text; 
 		};
+		textViews = textViews ++ cmdLineView;
+		
 		this.name_(this.getName);
 	}
 	
@@ -76,7 +60,7 @@ GlobalsGui : JITGui {
 		names.do { |globvar, i|
 			var obj = newState[globvar];
 			if (obj != prevState[globvar]) { 
-				texts[i].value_(obj);
+				textViews[i].value_(obj);
 			};
 		};
 		prevState = newState;
