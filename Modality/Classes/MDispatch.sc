@@ -1,7 +1,7 @@
-Dispatch{
+MDispatch{
 	classvar <dispatchTemplateFolder;
 
-	classvar <>tempNamePrefix = "Dispatch_";
+	classvar <>tempNamePrefix = "MDispatch_";
 	classvar tempDefCount = 0;
 	classvar <>maxTempDefNames = 512;
 	
@@ -12,7 +12,6 @@ Dispatch{
 	var <funcChain;
 
 	var <elements; // elements to which stuff is registered
-
 
 	var <sourceKeyToSource;
 	//	var <sourcesToInputs;
@@ -35,50 +34,35 @@ Dispatch{
 		^name.asSymbol
 	}
 	
-	*new{ arg name...args;
-		^super.new.init(name ? Dispatch.generateTempName )
-			.fromTemplate(name,*args)
+	*new{ arg name;
+		^super.new.init( name ? MDispatch.generateTempName )
 	}
 	
-	fromTemplate{ arg name...args;
-		var dict = Dispatch.getDispatchTemplate(name); 
-		if( dict.notNil ) { 
-			^dict[\func].value(this,*args)
-		}		
+	*make{ arg name...args;
+		var template = this.getMDispatchTemplate(name);
+		if( template.notNil ) {
+			^template[\func].value(super.new.init(name), *args)
+		}
+	}
+	
+	*cleanTemplateName{ |name|
+		^name.asString.collect { |char| if (char.isAlphaNum, char, $_) };
 	}
 
-	*getDispatchTemplate { |dispatchName| 
-		
-		var cleanTemplateName;
+	*getTemplateFilePath{ |templateName| 
+		var cleanTemplateName = this.cleanTemplateName(templateName);
+		^dispatchTemplateFolder +/+ cleanTemplateName ++ ".scd";
+	}
+	
+	*getMDispatchTemplate{ arg name;
 		var path;
-		var dispatchTemplate;
-
-		cleanTemplateName = dispatchName.asString.collect { |char| if (char.isAlphaNum, char, $_) };
-		path = dispatchTemplateFolder +/+ cleanTemplateName ++ ".scd";
-		
-		path.postln;
-		
-		if( File.exists(path) ) { 
-			^path.load
-		} { 
+		^if( name.notNil and: {path = this.getTemplateFilePath(name); File.exists(path)} ) {
+			path.load
+		} {
 			"//" + this.class ++ ": - no dispatch template found for %: please make them!\n"
-				.postf(cleanTemplateName);
-			^nil
-		};
-	}
-	
-	*loadDispatchTemplate{ arg dispatchName ...args; 
-		var dict = this.getDispatchTemplate(dispatchName);
-		if( dict.notNil) {
-			dict[\func].value(args)
-		}
-	}
-	
-	*getDispatchTemplateDesc{ |dispatchName|
-		var dict = this.getDispatchTemplate(dispatchName);
-		if( dict.notNil) {
-			^dict[\desc]
-		}
+			.postf( this.cleanTemplateName(name) );
+			nil
+		}				
 	}
 	
 	init{ |nm|
@@ -105,7 +89,7 @@ Dispatch{
 		};
 	}
 
-	mapSourceToKey{ |source, sourceKey | //name is an abstract name for the source, source is either a Ktl or a Dispatch
+	prMapSourceToKey{ |source, sourceKey | //sourceKey is an abstract name for the source, source is either a Ktl or a MDispatch
 		if ( sourceKeyToSource.includesKey( sourceKey ) ){
 			if ( (sourceKeyToSource[sourceKey] === source).not ){
 				this.changeSource( sourceKey, source );
@@ -126,27 +110,25 @@ Dispatch{
 		};
 		mappedElems[sourceKey].add( elemKey );		
 	}
-	
-	//map all elements
-	mapAll{ |source, sourceKey |
-		sourceKey = sourceKey ? source.name;
-		this.mapSourceToKey(source, sourceKey);
-		source.elementNames.do{ |elemKey|
-			this.prRegisterInputWithSource(source, elemKey, sourceKey)
-		}
-	}
-	
+
 	map{ |source, elemKeys, sourceKey|
+		sourceKey = sourceKey ? source.name;
+		
 		if(elemKeys.isNil) {
-			this.mapAll(source)
+			//map all keys
+			this.prMapSourceToKey(source, sourceKey);
+			source.elementNames.do{ |elemKey|
+				this.prRegisterInputWithSource(source, elemKey, sourceKey)
+			}
 		} {
+			//map just selected keys
 			elemKeys.do{ |elemKey| this.mapToElem(source, elemKey, sourceKey)}
 		}			
 	}
 	
 	mapToElem{ |source, elemKey, sourceKey|
 		sourceKey = sourceKey ? source.name;
-		this.mapSourceToKey(source, sourceKey);
+		this.prMapSourceToKey(source, sourceKey);
 		this.prRegisterInputWithSource(source, elemKey, sourceKey)		
 	}
 
@@ -174,7 +156,7 @@ Dispatch{
 	}
 	
 	createOutput{ |elemkey|
-		elements[elemkey] = DispatchOut.new( this, elemkey );
+		elements[elemkey] = MDispatchOut.new( this, elemkey );
 	}
 	
 	createOutputsFromInputs{
@@ -198,19 +180,20 @@ Dispatch{
 	//i.e.  'sl*'
 	//i.e.  'sl1_?'
 	//i.e.  '*'
-	addToOutput { |elementKey, funcName, function, addAction, otherName| // could have order indication
+	addToOutput { |elementKey, funcName, function, addAction, target | 
+		// could have order indication
 		elements.do{ |elem|
 			var key = elem.name;
 			if( key.matchOSCAddressPattern(elementKey) ) {
-				elements[key].addFunc( funcName, function );		
+				elements[key].addFunc( funcName, function , addAction, target);		
 			}
 		}
 	}
 	
-	removeFromOutput { |elementKey, funcName| 		
+	removeFromOutput { | elemKey, funcName| 		
 		elements.do{ |elem|
 			var key = elem.name;
-			if( key.matchOSCAddressPattern(elementKey) ) {
+			if( key.matchOSCAddressPattern(elemKey) ) {
 				elements[key].removeFunc(funcName);
 			}
 		}
@@ -230,8 +213,8 @@ Dispatch{
 		};
 	}
 
-	addToProc{ |key,func,addAction=\addLast,target|
-		funcChain.add( key, func, addAction, target );
+	addToProc{ |key, function, addAction=\addLast, target|
+		funcChain.add( key, function, addAction, target );
 	}
 	
 	remove{
@@ -246,7 +229,7 @@ Dispatch{
 	recursiveRemove{
 		sources.keys.do{ |sourceKey|
 			var source = sourceKeyToSource[sourceKey];
-			if( source.class == Dispatch){
+			if( source.class == MDispatch){
 				source.remove
 			} {
 				mappedElems[ sourceKey ].do{ |elem|
@@ -260,13 +243,13 @@ Dispatch{
 	elementNames{
 		^elements.keys.asArray
 	}
-	
+	recordRawValue { |key,value|
+//		recordFunc.value( key, value );
+	}
 	defaultValueFor{ ^0 }
 
 		// element access - support polyphonic name lists.
-	at { |elName| ^elements.atKeys(elName) }
-
-	
+	at { | elemKey | ^elements.atKeys(elemKey) }	
 	
 	verbose_ {|value=true|
 		value.if({
@@ -280,4 +263,4 @@ Dispatch{
 	 
 }
 
-DispatchOut : MKtlBasicElement {}
+MDispatchOut : MBasicElement {}

@@ -1,0 +1,274 @@
+CLASS:: FuncChain
+summary:: a named function list
+categories:: Modality, Collections, Function
+related:: Classes/MKtl, Classes/MDispatch, Reference/Modality, etc.
+
+DESCRIPTION::
+FuncChain is an ordered list of functions that can be accessed, added and removed by name. 
+
+list::
+## Adding with a new name adds to the end of the list.
+## Adding with an existing name replaces the func at that name.
+## One can add before or after an existing name.
+## One can add at the head of the list.
+::
+
+When the method valueArray is called, all functions in the list will be called in the order specified.
+
+CLASSMETHODS::
+
+METHOD:: new
+Create a new FuncChain.
+
+argument:: pairs
+list with key - function pairs to populate the FuncChain with.
+
+returns:: a new FuncChain.
+
+
+INSTANCEMETHODS::
+
+PRIVATE:: storeArgs, printOn, init
+
+METHOD:: names
+Names of the different functions.
+
+
+METHOD:: put
+Put a function in the chain.
+If the name is already present, replace the function with the new one.
+If the name is not yet present, place the function at the end of the chain.
+
+argument:: name
+The name for the function.
+
+argument:: func
+The function.
+
+
+METHOD:: at
+Get the function that's in the chain with the given name
+
+argument:: name
+The name of the function.
+
+
+METHOD:: add
+Generalized interface to add a function to the FuncChain.
+If the addAction is not given, it behaves like link::#-put::.
+Otherwise it calls the method defined by addAction.
+
+argument:: name
+The name for the function.
+
+argument:: func
+The function to add
+
+argument:: addAction
+Way of adding the function (addAfter, addBefore, addFirst, addLast, replaceAt)
+
+argument:: otherName
+The name of the function relative to which the function needs to be placed (only for addActions: addAfter, addBefore, replaceAt).
+
+METHOD:: removeAt
+
+argument:: name
+(describe argument here)
+
+returns:: (returnvalue)
+
+METHOD:: addLast
+Add the function to the end of the list. If a function was already there with that name, replace the function, and put it at the end of the list.
+
+argument:: name
+The name of the function.
+
+argument:: func
+The function to add
+
+METHOD:: addFirst
+
+Add the function to the begining of the list. If a function was already there with that name, replace the function, and put it at the beginning of the list.
+
+argument:: name
+The name of the function.
+
+argument:: func
+The function to add
+
+
+METHOD:: addBefore
+Add the function to the list before the function with the other name.
+If a function was already there with that name, replace the function, and put it before the other function.
+If the otherName is not present, the function is placed at the beginning of the list (and you are given a warning).
+
+argument:: name
+The name of the function.
+
+argument:: func
+The function to add
+
+argument:: othername
+The name of the function before which the function needs to be placed.
+
+
+METHOD:: addAfter
+Add the function to the list after the function with the otherName.
+If a function was already there with that name, replace the function, and put it after the other function.
+If the other function is not present, the function is placed at the end of the list (and you are given a warning).
+
+argument:: name
+The name of the function.
+
+argument:: func
+The function to add
+
+argument:: othername
+The name of the function after which the function needs to be placed.
+
+
+METHOD:: replaceAt
+Replace the function with the other name with the function passed in, with the name.
+
+If a function was already there with that name, remove that function, and replace the function at the given place.
+
+If the other function is not present, the function is placed at the end of the list (and you are given a warning).
+
+
+argument:: name
+The name of the function.
+
+argument:: func
+The function to add
+
+argument:: othername
+The name of the function after which the function needs to be placed.
+(describe method here)
+
+
+subsection:: private methods
+
+METHOD:: putAtIndex
+Put the function at the given index.
+
+argument:: index
+integer index into the list
+
+argument:: name
+name for the function
+
+argument:: func
+the function
+
+
+METHOD:: insertAtIndex
+insert a method at a given index
+
+argument:: index
+integer number for the index
+
+argument:: name
+Name of the function
+
+argument:: func
+The function
+
+
+METHOD:: removeAtIndex
+remove the function at the index
+
+argument:: index
+integer number for the index
+
+
+METHOD:: atIndex
+get what's at a given index
+
+argument:: index
+integer number for the index
+
+returns:: the function at the index
+
+
+EXAMPLES::
+
+code::
+// make a FuncChain one: 	 
+(
+a = FuncChain([
+	\ada, { "ada" }, 
+	\bob, { "bob" }
+]);
+)
+	// make an empty one: 
+a = FuncChain.new;
+
+	// common behavior for all add methods:
+	// if name exists, func at that name is removed;
+	// new func is put where indicated.
+
+	put(name, func)
+		// if name is present, put func there;
+		// if not, add a at the end.
+a.put(\x, {1}); 
+a.put(\y, {2});
+a.put(\x, {234});
+a.put(\z, {567});
+
+a.at(\z).postcs
+
+	add(name, func, addAction, otherName)
+		// allows redirction by flags; 
+		// if no flags, like put.
+
+a.add(\x, {10}); 
+a.add(\y, {20});
+a.add(\z, {30});
+a.add(\w, {40});
+
+	addLast(name, func)
+		// if name is used, remove func;
+		// add to end of list
+a.addLast(\x, {3});
+a.addLast(\y, {3});
+
+	addFirst(name, func) 
+		// if name is used, remove func;
+		// add to head of list
+a.addFirst(\z, {5});
+a.addFirst(\x, {5});
+a.addFirst(\y, {5});
+
+a.names.indexOf(\x)
+
+	addBefore(name, func, otherName)
+		// add relative to another name
+a.addBefore(\abc, { 1234 }, \x);
+a.addBefore(\abc, { 1234 }, \y);
+a.addBefore(\abc, { 1234 }, \z);
+a.addBefore(\abc, { 1234 }, \tralala);
+
+	addAfter(name, func, otherName)
+a.addAfter(\abc, { 1234 }, \x);
+a.addAfter(\abc, { 1234 }, \y);	// still wrgon!
+a.addAfter(\abc, { 1234 }, \z);
+a.addAfter(\abc, { 1234 }, \x);
+a.addAfter(\xyz, { 1234 }, \tralala);
+a.addAfter(\rst, { 1234 }, \tralala);
+
+		// does nothing when name is not present
+		// returns the func at name
+	removeAt(name)
+a.removeAt(\a)
+a.removeAt(\x); a
+a.removeAt(\y); a
+a.removeAt(\xyz); a
+a.removeAt(\rst); a
+
+		// 
+	replaceAt(name, func, othername)
+
+a.replaceAt(\rst, { 987 }, \a); a
+a.replaceAt(\rst, { 123 }, \x); a
+
+::

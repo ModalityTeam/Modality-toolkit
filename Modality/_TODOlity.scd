@@ -10,6 +10,11 @@
 	* gesture recording / playback, a class MKtlLoop based on CtLoop?
 	* wrap Description stuff into a separate class? E.g. MKtlDescription?
 	* add optional locacionID args to *new
+    * deal more gracefully with:
+        - controllers for which no spec is found - (print out a template, suggest to start a configuring routine)
+        - shortnames which can/should be found in the specs, but that are not connected (store shortnames in index? or just generate them)
+
+* PKtl - add option to sequence MKtls too
 		
 * MKtlDescription
 	* write a bunch of device descriptions
@@ -26,7 +31,7 @@
     * device: could be multiple devices for devices with the same spec
 
 * HIDMKtl:
-	* test "crossplatform" on osx
+	* test "crossplatform" on osx. Cannot test until HID is broken on osx.
 
 * MKtlElement:
 	* composites? somewhat important (LFSaw)
@@ -45,24 +50,19 @@
 	* KintectMKtl
 
 * Dispatch:
+	* default template files in quarks, custom ones in userAppSupportDir
 	* pattern matching very slow on Dispatches with many outputs...
 	* no defaults when creatings dispatch because of passing arguments in an array… what to do ????
-	* read File with definitions - factory of common functionality
+	* do templates:
 		acc, 
 		Level Of Activity (with decay), 
-		stuff that is in actionFunc,
-	 	timed things, 
+		from actionFunc:	\speedAbove,\speedBelow,\delay,\slew.
 	 	regions(e.g. launchpad,)
-
-* MKtlBasicElement
-	* writeToBus
-	* kr
-	* freeBus
 
 * GUI
 	* auto-generate based on controller description 
 		(postpone 'til QT gui is settled?)
-	* MKtlAllGui
+	* MKtlAllGui -> turn on an off posting, or get a graphic representation ?
 	
 * modality mapping, learning, etc.
 	copyMap(\sl1, \sl2)

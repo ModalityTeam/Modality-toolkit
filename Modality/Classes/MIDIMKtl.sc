@@ -24,6 +24,8 @@ MIDIMKtl : MKtl {
 	var <elementHashDict;
 	var <hashToElNameDict;
 
+	var <responders;
+
 		// open all ports 
 	*initMIDI{|force= false|
 
@@ -275,7 +277,7 @@ MIDIMKtl : MKtl {
 				
 				midiRawAction.value(\control, src, chan, num, value);
 				 
-				elementHashDict[hash].valueAction_(value); 
+				elementHashDict[hash].rawValueAction_(value); 
 			}, srcID), 
 			
 			noteon: NoteOnResponder({ |src, chan, note, vel|
@@ -284,7 +286,7 @@ MIDIMKtl : MKtl {
 				//	["noteOn", chan, note, vel, hash].postln;
 
 				midiRawAction.value(\noteOn, src, chan, note, vel);
-				elementHashDict[hash].valueAction_(vel); 
+				elementHashDict[hash].rawValueAction_(vel); 
 			}, srcID), 
 			
 			noteoff: NoteOffResponder({ |src, chan, note, vel|
@@ -293,7 +295,7 @@ MIDIMKtl : MKtl {
 				//	["noteOff", chan, note, vel, hash].postln;
 
 				midiRawAction.value(\noteOff, src, chan, note, vel);
-				elementHashDict[hash].valueAction_(vel); 
+				elementHashDict[hash].rawValueAction_(vel); 
 			}, srcID)
 		);
 	}
@@ -308,39 +310,6 @@ MIDIMKtl : MKtl {
 		})
 	}
 		
-//	openTester {	// breaks responders for now.
-//
-//		var observedCCs = List[];
-//
-//		// if not there, make a template text file for them, 
-//		// and instructions where to save them so they can be found 
-//		// automatically. 
-//		this.addResponders;
-//		
-//			// just sketching - keep track of several of them
-//		
-//		responders[\cc].function = { |src, chan, num, value| 
-//			var oldCC = observedCCs.detect { |el| 
-//				el.keep(2) == [chan, num] 
-//			};
-//			if (oldCC.notNil) { 
-//				oldCC.put(2, min(value, oldCC[2])); 
-//				oldCC.put(3, max(value, oldCC[3])); 
-//			} { 
-//				observedCCs.add([chan, num, value, value]);
-//			};
-//			[chan, num].postln;
-//			//observedCCs.postln;
-//		};
-//	}
-//	
-//	endTester { 
-//		responders[\cc].function = { |src, chan, num, value| 
-//		
-//		};
-//	}	
-	
-
 		// utilities for fast lookup :
 		// as class methods so we can do it without an instance
 	*makeCCKey { |chan, cc| ^("c_%_%".format(chan, cc)).asSymbol }

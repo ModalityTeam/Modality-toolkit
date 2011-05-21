@@ -1,5 +1,4 @@
-(
-func:{ |disp, source,elemKeys, sourceKey|
+(func:{ |disp, source,elemKeys, sourceKey|
 	disp.map(source, elemKeys);	
 	disp.createOutputsFromInputs;
 	disp.sources.pairsDo{ |sourceKey,keysDict|

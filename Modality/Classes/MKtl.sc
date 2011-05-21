@@ -24,8 +24,6 @@ MKtl { // abstract class
 	// all control elements (MKtlElement) on the device you may want to listen or talk to
 	var <elements;
 
-	var <responders;
-
 	//var <>recordFunc; // what to do to record incoming control changes
 	
 	*initClass {
@@ -72,6 +70,9 @@ MKtl { // abstract class
 		// this is to allow virtual MKtls eventually.
 	*new { |name, deviceDescName|
 		var devDesc;
+		if ( this.checkName( name, deviceDescName ).not ){
+			^nil;
+		};
 		if (deviceDescName.isNil) { 
 			if ( all[name].notNil ){
 				^all[name];
@@ -105,14 +106,22 @@ MKtl { // abstract class
 		^super.new.init(name, deviceDescName);
 	}
 
-	*make { |name, deviceDescName|
-		if (all[name].notNil) {
+	*make{ |name, deviceDescName|
+		if (all[name].notNil ) {
 			warn("MKtl name '%' is in use already. Please use another name."
 				.format(name));
 			^nil
-		};
-		
-		^this.basicNew(name, deviceDescName);
+		};		
+		^this.basicNew( name, deviceDescName )
+	}
+
+	*checkName { |name, deviceDescName|
+		if (all[name].notNil and: deviceDescName.notNil ) {
+			warn("MKtl name '%' is in use already. Please use another name."
+				.format(name));
+			^false
+		};		
+		^true
 	}
 	
 	init { |argName, deviceDescName|
@@ -163,13 +172,6 @@ MKtl { // abstract class
 		^devDesc;
 	}
 
-	// not sure if we need this method anymore, but maybe useful for automatic saving of a user defined description?
-	*getCleanDeviceName{ |dirtyName|
-		var cleanDeviceName = dirtyName.collect { |char| if (char.isAlphaNum, char, $_) };
-		^cleanDeviceName;
-	}
-
-	// this takes the actual filename
 	loadDeviceDescription { |deviceName| 
 		var deviceInfo;
 		var deviceFileName;
@@ -261,6 +263,13 @@ MKtl { // abstract class
 		// element access - support polyphonic name lists.
 	at { |elName| ^elements.atKeys(elName) }
 	
+	rawValueAt { |elName| 
+		if (elName.isKindOf(Collection).not) { 
+			^elements.at(elName).rawValue;
+		};
+		^elName.collect { |name| this.rawValueAt(name) }
+	} 
+
 	valueAt { |elName| 
 		if (elName.isKindOf(Collection).not) { 
 			^elements.at(elName).value;
@@ -268,6 +277,15 @@ MKtl { // abstract class
 		^elName.collect { |name| this.valueAt(name) }
 	} 
 	
+	setRawValueAt { |elName, val| 
+		if (elName.isKindOf(Collection).not) { 
+			^this.at(elName).rawValue_(val);
+		};
+		[elName, val].flop.do { |pair| 
+			elements[pair[0].postcs].rawValue_(pair[1].postcs)
+		};
+	}
+
 	setValueAt { |elName, val| 
 		if (elName.isKindOf(Collection).not) { 
 			^this.at(elName).value_(val);
@@ -322,7 +340,7 @@ MKtl { // abstract class
 		elements.do(_.reset)
 	}
 	
-	recordValue { |key,value|
+	recordRawValue { |key,value|
 //		recordFunc.value( key, value );
 	}
 

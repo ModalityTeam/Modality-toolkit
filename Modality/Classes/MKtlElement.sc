@@ -1,4 +1,4 @@
-MKtlBasicElement {
+MBasicElement {
 	
 	var <source; // the Ktl it belongs to
 	var <name; // its name in Ktl.elements
@@ -37,11 +37,11 @@ MKtlBasicElement {
 		funcChain.add(funcName, function, addAction, otherName);
 	}
 
-	addFuncFirst { |funcName, function, otherName|
+	addFuncFirst { |funcName, function|
 		funcChain.addFirst(funcName, function);
 	}
 
-	addFuncLast { |funcName, function, otherName|
+	addFuncLast { |funcName, function|
 		funcChain.addLast(funcName, function);
 	}
 
@@ -61,11 +61,11 @@ MKtlBasicElement {
 		funcChain.removeAt(funcName) 
 	}
 	
-	send { |val|
+/*	send { |val|
 		value = val;
 		//then send to hardware 	
 	}
-
+*/
 	value_ { | newval |
 		// copies the current state to:
 		prevValue = value;
@@ -73,15 +73,21 @@ MKtlBasicElement {
 		value = newval;
 		this.updateValueOnServer;
 	}
-
 	valueAction_ { |newval|
 		this.value_( newval );
-		source.recordValue( name, newval );
-		//funcChain.value( name, newval );
-		funcChain.value( this );
+		this.doAction;
+	}
+	
+	rawValue_{|newval|
+		this.value_(newval);
+	}
+	rawValueAction_{|newval|
+		this.rawValue_( newval );
+		this.doAction;
 	}
 	
 	doAction {
+		source.recordRawValue( name, value );
 		funcChain.value( this );
 	}
 
@@ -91,6 +97,7 @@ MKtlBasicElement {
 		// set bus values
 		bus !? {bus.setn(this.value.asArray)};
 	}
+	
 	initBus {|server|
 		server = server ?? {Server.default};
 		server.serverRunning.not.if{^this};
@@ -98,16 +105,23 @@ MKtlBasicElement {
 			bus = Bus.control(server, (value ? 1).asArray.size);
 		});	
 	}
+	
+	freeBus {
+		bus.notNil.if({
+			Bus.free;
+		});	
+	}
+	
 	kr {|server| 
 		// server is an optional argument that you only have to set once 
 		// and only if the server for your bus is not the defualt one. 
 		this.initBus(server);
 		^In.kr(bus.index, bus.numChannels)
-	
 	}
+	
 }
 
-MKtlElement : MKtlBasicElement{
+MKtlElement : MBasicElement{
 	classvar <types;
 		
 	var <deviceDescription;	 // its particular device description  
@@ -151,5 +165,31 @@ MKtlElement : MKtlBasicElement{
 	
 	value { ^spec.unmap(value) }
 	
+	// usually, you do not call this but rawValue_ instead.
+	value_ {|newval|
+		^super.value(spec.map(newval))
+	}
 	rawValue { ^value }
+	rawValue_ {|newVal|
+		super.value_(newVal)
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
