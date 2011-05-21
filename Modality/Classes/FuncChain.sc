@@ -73,9 +73,8 @@ FuncChain : FunctionList { // a named FunctionList
 	addAfter { |name, func, othername| 
 		var newIndex; 
 		this.removeAt(name); 
-		this.postln;
 		
-		newIndex = names.indexOf(othername).postln; 
+		newIndex = names.indexOf(othername); 
 		if (newIndex.isNil) { 
 			warn("FuncChain:addAfter - othername % not present!\n adding % to tail.".format(othername, name));
 			^this.addLast(name, func);
