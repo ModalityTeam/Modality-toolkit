@@ -9,11 +9,10 @@ func:{ |disp, source, elementKeys, sourceKey|
 	
 	disp.createOutputsFromInputs;
 	
-	disp.addToProc( \velocityCalc, { |dis,e|
-		var in = dis.changedIn;
-		var key = in[\key];
-		var source = in[\source];
-		var value = in[\val];
+	disp.addToProc( \calc, { |dis|
+		var key = ~changedIn[\key];
+		var source = ~changedIn[\source];
+		var value = ~changedIn[\val];
 		var keyTime = (key++"time").asSymbol;
 		var currentTime;
 		

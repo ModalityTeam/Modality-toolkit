@@ -9,9 +9,8 @@ func:{ |disp,dispatchs|
 	
 	disp.createOutputsFromInputs;
 	
-	disp.addToProc( \velocityCalc, { |dis,e|
-		var in = dis.changedIn;
-		dis.setOutput(in[\key], in[\val] );
+	disp.addToProc( \calc, { |dis|
+		dis.setOutput(~changedIn[\key], ~changedIn[\val] );
 	});
   	disp
 },

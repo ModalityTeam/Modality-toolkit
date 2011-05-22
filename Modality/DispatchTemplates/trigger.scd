@@ -3,10 +3,9 @@ func:{ |disp, source,elemKeys, sourceKey|
 	disp.map(source, elemKeys);	
 	disp.createOutputsFromInputs;
 	
-	disp.addToProc( \trigger, { |dis,e|
-		var in = dis.changedIn;
-		if( in[\val] == 1 ) {
-			dis.setOutput(in[\key], 1)
+	disp.addToProc( \calc, { |dis|
+		if( ~changedIn[\val] == 1 ) {
+			dis.setOutput( ~changedIn[\key], 1)
 		}
 	});
   	disp

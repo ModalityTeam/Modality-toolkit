@@ -1,20 +1,27 @@
-(func:{ |disp,source,elemKeys, sourceKey, threshs|
+(func:{ |disp, source, threshs, elemKeys, sourceKey|
+	
 	disp.map(source, elemKeys);	
 	disp.createOutputsFromInputs;
+	
+	disp.envir.put(\prevValues,
+		disp.sources.collect{ |keysDict|
+			keysDict.collect{0}
+		}
+	);
+	
 	disp.sources.pairsDo{ |sourceKey,keysDict|
-		disp.envir.put(sourceKey,keysDict.collect{0});
 		keysDict.pairsDo{ |key|
 			threshs.do{ |a,i|
 				disp.createOutput((key++"_"++i).asSymbol)
 			}
 		};
 	};
+	
 	threshs = threshs.sort;
-	disp.addToProc( \calc, { |dis,e|
-		var in = dis.changedIn;
-		var key = in[\key];
-		var source = in[\source];
-		var value = in[\val];
+	disp.addToProc( \calc, { |dis|
+		var key = ~changedIn[\key];
+		var source = ~changedIn[\source];
+		var value = ~changedIn[\val];
 		var prevTresh;
 		var currentTresh;
 		var currentTreshIndex;
@@ -23,7 +30,7 @@
 			if( value > th ) {
 				currentTresh = th;	
 				currentTreshIndex = i;						};
-			if( e[source][key] > th ) {
+			if( ~prevValues[source][key] > th ) {
 				prevTresh = th;								};				
 		};
 		
@@ -32,7 +39,7 @@
 				dis.setOutput((key++"_"++currentTreshIndex).asSymbol,  1);
 			}
 		};
-		e[source][key] = value;
+		~prevValues[source][key] = value;
 	
 	} );
    disp

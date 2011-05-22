@@ -2,20 +2,22 @@
 func:{ |disp, source, elemKeys, sourceKey|
 	disp.map(source, elemKeys);	
 	disp.createOutputsFromInputs;
-	disp.sources.pairsDo{ |sourceKey,keysDict|
-		disp.envir.put(sourceKey,keysDict.collect{0})
-	};
 	
-	disp.addToProc( \calc, { |dis,e|
-		var in = dis.changedIn;
-		var key = in[\key];
-		var source = in[\source];
-		var value = in[\val];
+	disp.envir.put(\prevValues,
+		disp.sources.collect{ |keysDict|
+			keysDict.collect{0}
+		}
+	);
+	
+	disp.addToProc( \calc, { |dis|
+		var key = ~changedIn[\key];
+		var source = ~changedIn[\source];
+		var value = ~changedIn[\val];
 		
-		if( value > e[source][key] ) {
+		if( value > ~prevValues[source][key] ) {
 			dis.setOutput(key, value );
 		};
-		e[source][key] = value;
+		~prevValues[source][key] = value;
 	
 	} );
    disp

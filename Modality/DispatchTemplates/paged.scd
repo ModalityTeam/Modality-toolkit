@@ -15,7 +15,7 @@ func:{ |disp, source, previousSceneKey, nextSceneKey, n = 10, elementKeys, sourc
 	
 	n.collect{ |i| source.elementNames.collect{ |name| disp.createOutput(("/page"++(i+1)++"/"++name).asSymbol) } };
 	
-	disp.addToProc( \processEvents, {  |dis,e|
+	disp.addToProc( \processEvents, {  |dis|
 		var in = dis.changedIn;
 		var key = in[\key];
 		var val = in[\val];
@@ -26,7 +26,7 @@ func:{ |disp, source, previousSceneKey, nextSceneKey, n = 10, elementKeys, sourc
 	
 	});
 	
-	disp.addToProc( \changeScene, {  |dis,e|
+	disp.addToProc( \changeScene, {  |dis|
 		var in = dis.changedIn;
 
 		if( (in[\key] == previousSceneKey) && ( in[\val] == 1.0 ) ) {

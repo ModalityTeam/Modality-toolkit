@@ -1,18 +1,26 @@
 (
-func:{ |disp,source,elemKeys, sourceKey, numClicks = 2|
+func:{ |disp, source, numClicks = 2, elemKeys, sourceKey|
+
 	disp.map(source, elemKeys);	
 	disp.createOutputsFromInputs;
-	source.elementNames.do{ |elemKey| disp.envir.put(elemKey,0) };
+	
+	disp.envir.put(\clicks,
+		disp.sources.collect{ |keysDict|
+			keysDict.collect{0}
+		}
+	);	
+
+	
 	disp.addToProc( \multiClick, { |dis,e|
-		var in = dis.changedIn;
-		var key = in[\key];
+		var key = ~changedIn[\key];
+		var source = ~changedIn[\source];
 		
-		if( (in[\val] == 1) ) {
-			e[key] = e[key] + 1;
+		if( (~changedIn[\val] == 1) ) {
+			~clicks[source][key] = ~clicks[source][key] + 1;
 			
-			if( e[key] == numClicks) { 
+			if( ~clicks[source][key] == (numClicks-1) ) { 
 				dis.setOutput(key, 1);
-				e[key] = 0;
+				~clicks[source][key] = 0;
 			} 
 		}
 	});

@@ -1,13 +1,14 @@
 (
-func:{ |disp, source,elemKeys, sourceKey, matchValues|
+func:{ |disp, source, matchValues, elemKeys, sourceKey|
+
 	disp.map(source, elemKeys);	
 	disp.createOutputsFromInputs;
 	
 	disp.addToProc( \threshCalc, { |dis,e|
-		var in = dis.changedIn;
-		var key = in[\key];
-		var source = in[\source];
-		var value = in[\val];
+		var key = ~changedIn[\key];
+		var source = ~changedIn[\source];
+		var value = ~changedIn[\val];
+		
 		var index = matchValues.indexOf( value );
 		
 		if( index.notNil ) {

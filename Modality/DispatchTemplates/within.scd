@@ -1,41 +1,32 @@
 (
-func:{ |disp, source,elemKeys, sourceKey, waitTime = 1|
+func:{ |disp, source, waitTime = 1, elemKeys, sourceKey|
 	
 	disp.map(source, elemKeys);		
 	disp.createOutputsFromInputs;
 	
-	disp.sources.pairsDo{ |sourceKey,keysDict|
-		disp.envir.put(sourceKey,keysDict.collect{0})
-	};
-	
-	elemKeys = elemKeys ? source.elementNames;
-	
-	disp.sources.pairsDo{ |sourceKey,keysDict|
-		disp.envir.put(sourceKey,keysDict.collect{0})
-	};
-	
-	disp.envir[\tasks] = Dictionary.new.putPairs(elemKeys.collect{ |name| 
-		[name, nil] 
-	}.flat);	
+	disp.envir.put(\tasks,
+		disp.sources.collect{ |keysDict|
+			keysDict.collect{0}
+		}
+	);	
 
-	disp.addToProc( \threshCalc, { |dis,e|
-		var in = dis.changedIn;
-		var key = in[\key];
-		var source = in[\source];
-		var value = in[\val];
+	disp.addToProc( \calc, { |dis|
+		var key = ~changedIn[\key];
+		var source = ~changedIn[\source];
+		var value = ~changedIn[\val];
 		
-		if( e[\tasks][key].isPlaying.not ) {
-			e[\tasks][key] = Task({ waitTime.wait; }).start;			
+		if( ~tasks[source][key].isPlaying.not ) {
+			~tasks[source][key] = Task({ waitTime.wait; }).start;			
 		} {
-			e[\tasks][key].stop;
-			e[\tasks][key] = nil;
+			~tasks[source][key].stop;
+			~tasks[source][key] = nil;
 			dis.setOutput(key, value );			
 		}
 	
 	});
    disp
 },
-desc: "only let value pass it it comes in within  s",
+desc: "only let value pass if it comes in within  s",
 name: "wait",
 type: "creator"
 )
