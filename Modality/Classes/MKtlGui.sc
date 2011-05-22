@@ -1,9 +1,14 @@
 /* 
 * convert sketch to class: 
 
-MKtl(\ferr1, 'Run_N__Drive');
-MKtl(\nk1, 'nanoKONTROL');
+MKtl.find;
+MKtl.postAllDescriptions;
 
+MKtl.all.clear
+MKtl.make(\ferr1, 'Run_N_Drive');
+MKtl.make(\nk1, 'nanoKONTROL');
+
+MKtlAllGui(12);
 
 	// the zones for each element 
 	// - suggestions for width and height could be based on  types
@@ -38,17 +43,61 @@ zoneDict = (
 	'wheel': Rect(5, 125, 40, 150 )
 );	
 
-	
-	
+
 
 */
+
+MKtlAllGui : JITGui {
+	var <dragViews; 
+	*new { |numItems = 12, parent, bounds| 
+		^super.new(MKtl, numItems, parent, bounds);
+	}
+
+		// these methods should be overridden in subclasses: 
+	setDefaults { |options|
+		defPos = if (parent.isNil, 10@260, skin.margin);
+		minSize = 180 @ (numItems * skin.buttonHeight + skin.headHeight);
+	}
+	
+	winName { ^"AllGui" }
+	
+	makeViews {
+		
+		dragViews = numItems.collect { |num|
+			var numbox;
+			var drag = DragSource(zone, 100@20)
+				.object_(nil).visible_(false)
+				.align_(\center);	
+			
+			Button(zone, Rect(0,0, 50, 20))
+				.states_([["open"]])
+				.action_({ MKtlGui.new(drag.object) });
+			numbox = EZNumber(zone, Rect(0,0, 20, 20), nil, [0, 32, \lin, 1], 
+				initVal: numItems, numberWidth: 20);
+			drag;
+		};
+	} 
+	
+	getState { 
+		^object.all.keys.asArray.sort;
+	}
+			// optimize later
+	checkUpdate { 
+		var newState = this.getState;
+		dragViews.do { |drag, i| 
+			var key = newState[i];
+			drag.object_(object.all[key])
+				.visible_(key.notNil)
+			}
+	}
+}
 
 MKtlGui : JITGui { 
 	classvar buildFuncs;
 	classvar defaultSizes;
 	classvar skin;
 	
-	*zoneTemplate { |mktl| 
+	*postZoneTemplate { |mktl| 
 		"(\n // where should each gui element be? \n"
 		"var zoneDict = (".postln; 
 		mktl.elements.keys.asArray.sort.do { |k|
@@ -93,7 +142,7 @@ MKtlGui : JITGui {
 			hidHat: { |w, zone, el| buildFuncs[\button].value(w, el) }, 
 			
 				// Compass needs to be a class, ... because value_ on a 
-				// pseuod-object dict does not work.
+				// pseudo-object dict does not work. Replace with StickView class.
 			compass: { |w, zone, el| 
 				var center = zone.center;
 				var myZone = StaticText(w, zone)

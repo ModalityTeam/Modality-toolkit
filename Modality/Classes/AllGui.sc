@@ -11,7 +11,7 @@ AllGui : JITGui {
 		// these methods should be overridden in subclasses: 
 	setDefaults { |options|
 		defPos = if (parent.isNil) { 10@10 } { skin.margin };
-		minSize = 185 @ 150;
+		minSize = 175 @ 170;
 	}
 	
 	winName { ^"AllGui" }
@@ -20,7 +20,8 @@ AllGui : JITGui {
 		texts = ();
 		labels = [ 
 			\global, 		{ |num| GlobalsGui.new },
-			\currEnvir, 	{ |num| EnvirGui(currentEnvironment, num) },
+			\currEnvir, 	{ |num| EnvirGui(currentEnvironment, num) }, 
+			
 			\Tdef,		{ |num| TdefAllGui.new(num) }, 
 			\Pdef, 		{ |num|  PdefAllGui.new(num) }, 
 			\Pdefn,		{ |num| PdefnAllGui.new(num) }, 
@@ -33,21 +34,26 @@ AllGui : JITGui {
 				}
 		]; 
 		
+		if (\MKtl.asClass.notNil) { 
+			labels = labels ++ [ \MKtl, { |num| MKtlAllGui.new(num) } ];
+		};
+		
 		labels.pairsDo { |label, action|
 			var numbox;
 			var text = EZText(zone, 100@20, label.asString, labelWidth: 70)
-				.value_(label.asString)
+				.value_(0)
 				.enabled_(false);
 			
 			text.textField.align_(\center);
+			text.labelView.align_(\center);
 			
 			texts.put(label, text);
 			Button(zone, Rect(0,0, 50, 20))
 				.states_([["open"]])
 				.action_({ action.value(numbox.value.asInteger) });
-			numbox = EZNumber(zone, Rect(0,0,30, 20), nil, [0, 32, \lin, 1], initVal: numItems);
+			numbox = EZNumber(zone, Rect(0,0, 20, 20), nil, [0, 32, \lin, 1], initVal: numItems);
 		};
-	} 
+	}
 	
 	getState { 
 		var interp = thisProcess.interpreter;
@@ -55,6 +61,7 @@ AllGui : JITGui {
 
 		^(global: numGlobs, 
 		currEnvir: currentEnvironment.size, 
+		MKtl: MKtl.all.size,
 		Tdef: Tdef.all.size,
 		Pdef: Pdef.all.size,
 		Pdefn: Pdefn.all.size,
@@ -66,7 +73,7 @@ AllGui : JITGui {
 	checkUpdate { 
 		var newState = this.getState;
 		newState.keysValuesDo { |key, val| 
-			texts[key].value_(val);
+			try { texts[key].value_(val) };
 		};
 	}
 }
