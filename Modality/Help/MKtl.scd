@@ -33,7 +33,7 @@ MKtl(\nk1).elements.choose.deviceDescription
 // 2b // the same procedure for HIDKtl: 
 
 MKtl.all.clear;
-MKtl.make(\ferr1, 'Run_N__Drive');
+MKtl.make(\ferr1, 'Run_N_Drive');
 MKtl(\ferr1).dump;
 MKtl(\ferr1).elements[\joyLX].deviceDescription
 MKtl(\ferr1).elements.do {|el| el.deviceDescription.postln };
@@ -41,10 +41,9 @@ MKtl(\ferr1).elements.do {|el| el.deviceDescription.postln };
 
 // look only for HIDMKtl devices present:
 HIDMKtl.find;
-	// this is broken ATM ... 
-HIDMKtl(\fer1, 102760448)
-HIDMKtl('fer1', "usb-0000:00:1a.0-1.1/input0" );  // Thrustmaster Run'N' Drive
 
+HIDMKtl(\fer1, 102760448);	// osx
+HIDMKtl('fer1', "usb-0000:00:1a.0-1.1/input0" );  // Thrustmaster Run'N' Drive on linux
 
 
 

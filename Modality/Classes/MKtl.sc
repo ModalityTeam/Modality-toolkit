@@ -48,6 +48,9 @@ MKtl { // abstract class
 		this.addSpec(\hidBut, [0, 1, \lin, 1, 0]);
 		this.addSpec(\hidHat, [0, 1, \lin, 1, 0]);
 		this.addSpec(\compass8, [0, 8, \lin, 1, 1]); // probably wrong, check again!
+		
+		this.addSpec(\cent1,  [0, 1, \lin, 0, 0.5].asSpec);
+		this.addSpec(\cent1inv,  [1, 0, \lin, 0, 0.5].asSpec);
 
 		deviceDescriptionFolder = this.filenameSymbol.asString.dirname.dirname +/+ "MKtlSpecs";
 	}
@@ -106,7 +109,7 @@ MKtl { // abstract class
 		^super.new.init(name, deviceDescName);
 	}
 
-	*make{ |name, deviceDescName|
+	*make { |name, deviceDescName|
 		if (all[name].notNil ) {
 			warn("MKtl name '%' is in use already. Please use another name."
 				.format(name));
@@ -141,7 +144,7 @@ MKtl { // abstract class
 	storeArgs { ^[name] }
 	printOn { |stream| this.storeOn(stream) }
 
-	*loadDeviceIndex{ |reload=false|
+	*loadDeviceIndex { |reload=false|
 		var path;
 		if ( allDevDescs.isNil or: reload ){
 			path = deviceDescriptionFolder +/+ "index.desc.scd";
@@ -154,7 +157,7 @@ MKtl { // abstract class
 		};		
 	}
 
-	*getDeviceDescription{ |devName|
+	*getDeviceDescription { |devName|
 		var devDesc;
 		this.loadDeviceIndex;
 		devDesc = allDevDescs.at( devName );
@@ -202,9 +205,9 @@ MKtl { // abstract class
 		deviceDescription.pairsDo {|key, elem| 
 			var foundSpec =  specs[elem[\spec]];
 			if (foundSpec.isNil) { 
-				warn("Mktl - in description %, spec for '%' is missing! please add it with:"
+				warn("// Mktl - in description %, el %, spec for '%' is missing! please add it with:"
 					"\nMktl.addSpec( '%', [min, max, warp, step, default]);\n"
-					.format(deviceName, elem[\spec], elem[\spec])
+					.format(deviceName, key, elem[\spec], elem[\spec])
 				);
 			};
 			elem[\specName] = elem[\spec];
@@ -219,7 +222,7 @@ MKtl { // abstract class
 			.do { |path| ("['" ++ path ++"']").postln }
 	}
 
-	*flattenDescription{ |devDesc|
+	*flattenDescription { |devDesc|
 		// some descriptions may have os specific entries, we flatten those into the dictionary
 		var platformDesc = devDesc[ thisProcess.platform.name ];
 		if ( platformDesc.notNil ){
@@ -331,7 +334,7 @@ MKtl { // abstract class
 		}
 	}
 	
-	removeFromOutput{ |elementKey, funcName| 
+	removeFromOutput { |elementKey, funcName| 
 		this.removeFunc(elementKey, funcName)
 	}
 
