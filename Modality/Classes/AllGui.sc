@@ -20,7 +20,8 @@ AllGui : JITGui {
 		texts = ();
 		labels = [ 
 			\global, 		{ |num| GlobalsGui.new },
-			\currEnvir, 	{ |num| EnvirGui(currentEnvironment, num) }, 
+			\currEnvir, 	{ |num| EnvirGui(currentEnvironment, num)
+								.parent.name_("currentEnvironment") }, 
 			
 			\Tdef,		{ |num| TdefAllGui.new(num) }, 
 			\Pdef, 		{ |num|  PdefAllGui.new(num) }, 

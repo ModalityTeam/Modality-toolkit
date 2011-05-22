@@ -59,7 +59,7 @@ MKtlAllGui : JITGui {
 		minSize = 180 @ (numItems * skin.buttonHeight + skin.headHeight);
 	}
 	
-	winName { ^"AllGui" }
+	winName { ^"MKtl.all" }
 	
 	makeViews {
 		
