@@ -27,7 +27,7 @@ MIDIMKtl : MKtl {
 	var <responders;
 
 		// open all ports 
-	*initMIDI{|force= false|
+	*initMIDI {|force= false|
 
 		(initialized && {force.not}).if{^this};
 	
@@ -85,7 +85,7 @@ MIDIMKtl : MKtl {
 		"\n".postln;
 	}
 
-	*findSource{ |rawDeviceName|
+	*findSource { |rawDeviceName|
 		var devKey;
 		this.sourceDeviceDict.keysValuesDo{ |key,endpoint|
 			if ( endpoint.name == rawDeviceName ){
@@ -162,14 +162,19 @@ MIDIMKtl : MKtl {
 			.initMIDIMKtl(name, foundSource, foundDestination );
 	}
 	
-	*prepareDeviceDicts{
+	*prepareDeviceDicts {
 		var prevName = nil, j = 0, order, deviceNames;
 
-		deviceNames = MIDIClient.sources.collect{|src|
+		deviceNames = MIDIClient.sources.collect {|src|
 			this.makeShortName(src.device);
+		}; 
+		
+		if (deviceNames.isEmpty) { 
+			^this
 		};
+		
 		order = deviceNames.order;
-		deviceNames[order].do{|name, i|
+		deviceNames[order].do {|name, i|
 			(prevName == name).if({
 				j = j+1;
 			},{
