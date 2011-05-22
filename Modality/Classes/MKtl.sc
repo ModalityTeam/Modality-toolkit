@@ -8,30 +8,26 @@
 //			unixCmd("mkdir \"" ++ deviceDescriptionFolder ++ "\"");
 //		};
 
-MKtl { // abstract class
+MKtl : MAbstractKtl { // abstract class
 	classvar <deviceDescriptionFolder;
 	classvar <allDevDescs;
 	classvar <all; // will hold all instances of MKtl
 	classvar <specs; // all specs
 	classvar <allAvailable;
-
-	var <name;	// a user-given unique name
 	
 	// an array of keys and values with a description of all the elements on the device.
 	// is read in from an external file.
 	var <deviceDescription; 
 
-	// all control elements (MKtlElement) on the device you may want to listen or talk to
-	var <elements;
-
 	//var <>recordFunc; // what to do to record incoming control changes
 	
 	*initClass {
+		Class.initClassTree(Spec);
 		all = ();
-		allAvailable = ();
+		allAvailable = ();		
 		
 		specs = ().parent_(Spec.specs);
-
+		
 		// general
 		this.addSpec(\cent255, [0, 255, \lin, 1, 128]);
 		this.addSpec(\cent255inv, [255, 0, \lin, 1, 128]);
@@ -262,92 +258,7 @@ MKtl { // abstract class
    			elem.deviceDescription[\type] == type
 		}	
 	}
-	
-		// element access - support polyphonic name lists.
-	at { |elName| ^elements.atKeys(elName) }
-	
-	rawValueAt { |elName| 
-		if (elName.isKindOf(Collection).not) { 
-			^elements.at(elName).rawValue;
-		};
-		^elName.collect { |name| this.rawValueAt(name) }
-	} 
-
-	valueAt { |elName| 
-		if (elName.isKindOf(Collection).not) { 
-			^elements.at(elName).value;
-		};
-		^elName.collect { |name| this.valueAt(name) }
-	} 
-	
-	setRawValueAt { |elName, val| 
-		if (elName.isKindOf(Collection).not) { 
-			^this.at(elName).rawValue_(val);
-		};
-		[elName, val].flop.do { |pair| 
-			elements[pair[0].postcs].rawValue_(pair[1].postcs)
-		};
-	}
-
-	setValueAt { |elName, val| 
-		if (elName.isKindOf(Collection).not) { 
-			^this.at(elName).value_(val);
-		};
-		[elName, val].flop.do { |pair| 
-			elements[pair[0].postcs].value_(pair[1].postcs)
-		};
-	}
-	
-	// element funcChain interface
-	addFunc { |elementKey, funcName, function, addAction, otherName|
-		elements[elementKey].addFunc(funcName, function, addAction, otherName);
-	}
-
-	addFuncAfter { |elementKey, funcName, function, otherName|
-		elements[elementKey].addFuncAfter(funcName, function, otherName);
-	}
-	
-	addFuncBefore { |elementKey, funcName, function, otherName|
-		elements[elementKey].addFuncBefore(funcName, function, otherName);
-	}
-	
-	removeFunc { |elementKey, funcName| 		
-		elements.do{ |elem|
-			var key = elem.name;
-			if( key.matchOSCAddressPattern(elementKey) ) {
-				elements[key].removeFunc(funcName);
-			}
-		}
-	}
-
-	// interface compatibility for make MKtl usable like a Dispatch (sometimes called duck-typing (tm))
-	// allow to register easilly to multiple elements:
-	//i.e.  'sl*'
-	//i.e.  'sl1_?'
-	//i.e.  '*'
-	addToOutput { |elementKey, funcName, function, addAction, otherName|
-		elements.do{ |elem|
-			var key = elem.name;
-			if( key.matchOSCAddressPattern(elementKey) ) {
-				this.addFunc(key, funcName, function, addAction, otherName)
-			}
-		}
-	}
-	
-	removeFromOutput { |elementKey, funcName| 
-		this.removeFunc(elementKey, funcName)
-	}
-
-	// remove all functionalities from all elements
-	reset {
-		elements.do(_.reset)
-	}
-	
-	recordRawValue { |key,value|
-//		recordFunc.value( key, value );
-	}
-
-	
+		
 	//useful if Dispatcher also uses this class
 	//also can be used to simulate a non present hardware
 	receive { |key, val|

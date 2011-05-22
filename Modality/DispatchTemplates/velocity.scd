@@ -1,34 +1,46 @@
 (
-func:{ |disp, source, elementKeys, sourceKey|
+func:{ |disp, source, waitTime = 0.5, elemKeys, sourceKey|
 	
-	if( elementKeys.isNil ) {
-		disp.map(source,nil,sourceKey)
-	} {
-		elementKeys.do{ |elemKey| disp.mapToElem(source,elemKey,sourceKey)}
-	};
-	
+	disp.map(source, elemKeys);	
 	disp.createOutputsFromInputs;
+	
+	disp.envir.put(\prevValues,
+		disp.sources.collect{ |keysDict|
+			keysDict.collect{0}
+		}
+	);
+	
+	disp.envir.put(\prevTimes,
+		disp.sources.collect{ |keysDict|
+			keysDict.collect{Process.elapsedTime}
+		}
+	);
+	
+	disp.envir.put(\tasks,
+		disp.sources.collect{ |keysDict|
+			keysDict.collect{nil}
+		}
+	);	
 	
 	disp.addToProc( \calc, { |dis|
 		var key = ~changedIn[\key];
 		var source = ~changedIn[\source];
 		var value = ~changedIn[\val];
-		var keyTime = (key++"time").asSymbol;
-		var currentTime;
+		var currentTime = Process.elapsedTime;
 		
-		if( e[source].isNil ) {
-			e.put(source,Dictionary.new);
+		if( ~tasks[source][key].isPlaying ) {
+			~tasks[source][key].stop;
 		};
 		
-		if(	e[source][key].isNil ) {
-			e[source][key] = value;
-			e[source][keyTime] = Process.elapsedTime;
-		} {
-			currentTime = Process.elapsedTime;
-			dis.setOutput(key, abs( (value - e[source][key]) / ( currentTime - e[source][keyTime] ) ) ) ;
-			e[source][key] = value;
-			e[source][keyTime] = currentTime;
-		}
+		dis.setOutput(key, 
+			abs( (value - ~prevValues[source][key]) / ( currentTime - ~prevTimes[source][key] ) ) ) ;
+			
+		~prevValues[source][key] = value;
+		~prevTimes[source][key] = currentTime;	
+		~tasks[source][key] = Task({ 
+			waitTime.wait;
+			disp.elements[key].value_(0).doAction
+		}).start;	
 	
 	} );
    disp

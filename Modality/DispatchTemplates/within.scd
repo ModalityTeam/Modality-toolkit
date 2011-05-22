@@ -6,7 +6,7 @@ func:{ |disp, source, waitTime = 1, elemKeys, sourceKey|
 	
 	disp.envir.put(\tasks,
 		disp.sources.collect{ |keysDict|
-			keysDict.collect{0}
+			keysDict.collect{ nil }
 		}
 	);	
 

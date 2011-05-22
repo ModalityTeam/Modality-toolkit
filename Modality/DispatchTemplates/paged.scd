@@ -8,9 +8,9 @@ func:{ |disp, source, previousSceneKey, nextSceneKey, n = 10, elementKeys, sourc
 	disp.envir[\scene] = 0;
 	disp.envir[\numOfScenes] = n;
 	disp.envir[\values] = n.collect{ 
-		Dictionary.new.putPairs(source.elementNames.collect{ |name| 
+		Dictionary.newFrom(source.elementNames.collect{ |name| 
 			[name, source.defaultValueFor(name) ? 0] 
-		}) 
+		}.flat) 
 	};
 	
 	n.collect{ |i| source.elementNames.collect{ |name| disp.createOutput(("/page"++(i+1)++"/"++name).asSymbol) } };

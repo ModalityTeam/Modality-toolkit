@@ -1,4 +1,4 @@
-MDispatch{
+MDispatch : MAbstractKtl {
 	classvar <dispatchTemplateFolder;
 
 	classvar <>tempNamePrefix = "MDispatch_";
@@ -7,11 +7,7 @@ MDispatch{
 	
 	//	classvar <all;
 
-	var <verbose = false;
-	var <name;
 	var <funcChain;
-
-	var <elements; // elements to which stuff is registered
 
 	var <sourceKeyToSource;
 	//	var <sourcesToInputs;
@@ -82,13 +78,14 @@ MDispatch{
 		var oldSource = sourceKeyToSource[sourceKey];
 		mappedElems[ sourceKey ].do{ |elem|
 			// unregister from old Ktl
-			oldSource.removeFromOutput(elem, this.name);
+			oldSource.removeFuncElem(elem, this.name);
 			// register with new Ktl
 			this.mapToElem( newSource, elem, sourceKey );
 		};
 	}
-
-	prMapSourceToKey{ |source, sourceKey | //sourceKey is an abstract name for the source, source is either a Ktl or a MDispatch
+	
+	//sourceKey is an abstract name for the source, source is either a Ktl or a MDispatch
+	prMapSourceToKey{ |source, sourceKey | 		
 		if ( sourceKeyToSource.includesKey( sourceKey ) ){
 			if ( (sourceKeyToSource[sourceKey] === source).not ){
 				this.changeSource( sourceKey, source );
@@ -102,7 +99,7 @@ MDispatch{
 	}
 	
 	prRegisterInputWithSource{ |source, elemKey, sourceKey|
-		source.addToOutput( elemKey, this.name, this );
+		source.addFuncElem( elemKey, this.name, this );
 		sources[sourceKey].put( elemKey, source.defaultValueFor( elemKey ) ? 0);
 		if ( mappedElems[sourceKey].isNil ){
 			mappedElems[sourceKey] = List.new;
@@ -111,7 +108,7 @@ MDispatch{
 	}
 
 	map{ |source, elemKeys, sourceKey|
-		sourceKey = sourceKey ? source.name;
+		sourceKey = (sourceKey ? source.name).asSymbol;
 		
 		if(elemKeys.isNil) {
 			//map all keys
@@ -126,9 +123,9 @@ MDispatch{
 	}
 	
 	mapToElem{ |source, elemKey, sourceKey|
-		sourceKey = sourceKey ? source.name;
+		sourceKey = (sourceKey ? source.name).asSymbol;
 		this.prMapSourceToKey(source, sourceKey);
-		this.prRegisterInputWithSource(source, elemKey, sourceKey)		
+		this.prRegisterInputWithSource(source, elemKey.asSymbol, sourceKey)		
 	}
 
 	lookupSources{ |source|
@@ -138,7 +135,7 @@ MDispatch{
 	valueArray{ arg args;
 		var element = args[0];
 		this.setInput( element.source, element.name, element.value );
-		this.processChain;
+		this.prProcessChain;
 	}
 
 	setInput{ | source, elemKey, value|
@@ -150,17 +147,18 @@ MDispatch{
 	}
 
 	getInput{ | sourceKey, elemKey|
-		^sources[sourceKey][elemKey]
+		^sources[sourceKey][elemKey.asSymbol]
 	}
 	
 	createOutput{ |elemkey|
+		elemkey = elemkey.asSymbol;
 		elements[elemkey] = MDispatchOut.new( this, elemkey );
 	}
 	
 	createOutputsFromInputs{
 		mappedElems.pairsDo{ |sourceKey,elemKeys|
 			elemKeys.do{ |elemKey|
-				this.createOutput(elemKey)
+				this.createOutput(elemKey.asSymbol)
 			}
 		}			
 	}
@@ -174,34 +172,11 @@ MDispatch{
 		changedOuts.add(elemKey);
 	}
 	
-	//pattern matching
-	//i.e.  'sl*'
-	//i.e.  'sl1_?'
-	//i.e.  '*'
-	addToOutput { |elementKey, funcName, function, addAction, target | 
-		// could have order indication
-		elements.do{ |elem|
-			var key = elem.name;
-			if( key.matchOSCAddressPattern(elementKey) ) {
-				elements[key].addFunc( funcName, function , addAction, target);		
-			}
-		}
-	}
+	//addToOutput -> addFuncElem	
+	//removeFromOutput -> removeFuncElem	
+	//removeAllFromOutput -> removeAllFromElems
 	
-	removeFromOutput { | elemKey, funcName| 		
-		elements.do{ |elem|
-			var key = elem.name;
-			if( key.matchOSCAddressPattern(elemKey) ) {
-				elements[key].removeFunc(funcName);
-			}
-		}
-	}
-	
-	removeAllFromOutput {
-		elements.do( _.reset )
-	}
-
-	processChain{
+	prProcessChain{
 		changedOuts = List.new;
 		envir.use({ funcChain.value( this ) });
 		changedOuts.do{ |key|
@@ -211,15 +186,16 @@ MDispatch{
 		};
 	}
 
-	addToProc{ |key, function, addAction=\addLast, target|
-		funcChain.add( key, function, addAction, target );
+	addToProc{ |funcName, function, addAction=\addLast, target|
+		funcName = funcName.asSymbol;
+		funcChain.add( funcName, function, addAction, target );
 	}
 	
 	remove{
 		sources.keys.do{ |sourceKey|
 			var source = sourceKeyToSource[sourceKey];
 			mappedElems[ sourceKey ].do{ |elem|
-				source. removeFromOutput(elem, this.name);
+				source.removeFuncElem(elem, this.name);
 			}
 		}
 	}
@@ -231,34 +207,14 @@ MDispatch{
 				source.remove
 			} {
 				mappedElems[ sourceKey ].do{ |elem|
-					source.removeFromOutput(elem, this.name);
+					source.removeFuncElem(elem, this.name);
 				}
 			}
 		}
 			
 	}
 	
-	elementNames{
-		^elements.keys.asArray
-	}
-	recordRawValue { |key,value|
-//		recordFunc.value( key, value );
-	}
 	defaultValueFor{ ^0 }
-
-		// element access - support polyphonic name lists.
-	at { | elemKey | ^elements.atKeys(elemKey) }	
-	
-	verbose_ {|value=true|
-		value.if({
-			elements.do{ |item| item.funcChain.addFirst(\verbose, { |elem| 
-					[elem.source, elem.name, elem.value].postln;
-			})}
-		}, {
-			elements.do{|item| item.funcChain.removeAt(\verbose)}
-		})
-	}
-	 
 }
 
 MDispatchOut : MBasicElement {}
