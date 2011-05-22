@@ -22,7 +22,6 @@ MDispatch{
 	var <envir; // internal state
 
 	var <changedOuts; // keeps the changed outputs in order to update
-	var <changedIn;
 
 	*initClass{
 		dispatchTemplateFolder = this.filenameSymbol.asString.dirname.dirname +/+ "DispatchTemplates";
@@ -67,7 +66,7 @@ MDispatch{
 	
 	init{ |nm|
 		name = nm; // name is used to register with different controls in their functiondict
-		envir = ();
+		envir = Environment.new;
 		funcChain = FuncChain.new;
 
 		sources = ();
@@ -140,14 +139,13 @@ MDispatch{
 		var element = args[0];
 		this.setInput( element.source, element.name, element.value );
 		this.processChain;
-		changedIn = nil;		
 	}
 
 	setInput{ | source, elemKey, value|
 		var srcKeys = this.lookupSources( source );
 		srcKeys.do{ |sourceKey|
 			sources[sourceKey].put(elemKey, value);
-			changedIn = (\source: sourceKey, \key: elemKey, \val: value)
+			envir[\changedIn] = (\source: sourceKey, \key: elemKey, \val: value)
 		};
 	}
 
@@ -205,7 +203,7 @@ MDispatch{
 
 	processChain{
 		changedOuts = List.new;
-		funcChain.value( this, envir);
+		envir.use({ funcChain.value( this ) });
 		changedOuts.do{ |key|
 			if ( elements[key].notNil ){
 				elements[key].doAction; // this may need to pass more info
