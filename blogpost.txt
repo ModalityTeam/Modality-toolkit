@@ -1,0 +1,56 @@
+Between May 11 and 20, the "Modality Team" has been enjoying the hospitality of STEIM.
+
+Modality is a loose collaboration between SuperCollider developers and (advanced) users to come together and develop a toolkit to make it easy to create your own instruments using controllers of any kind and SuperCollider. This collaboration was initiated by Jeff Carey and Bjornar Habbestad.
+
+Our residency at STEIM was the second developer meeting we had; a follow-up to the first workshop we had in Bergen at BEK in October 2010.
+
+﻿﻿﻿The participants in the STEIM-Modality residency were (in no particular order):
+Jeff Carey, Marije Baalman, Miguel Negrao, Alberto de Campo, Till Bovermann, Hannes Hölzl, and Robert van Heumen
+
+TIMELINE
+
+Our residency started off with presenting the project to the local SuperCollider user group meeting, where Jeff Carey talked for about one-and-a-half hour about his current instrument setup to explain the kind of problems that we try to address in the Modality project. Despite Jeff's jetlag (just having arrived the same day from an overnight flight from the US) this was an engaging presentation and discussion.
+
+In the three days that followed we held internal presentations; each about their own work thus far with SuperCollider; these presentations then continued into discussions and brainstorming, so we had no problems to go over time with regard to our optimistic planned time schedule. Some of the presentations were joined by other visitors as well.
+
+The first day, Jeff and Marije introduced the project to the people who were not present at the previous meeting, and to give a summary of what we achieved during the first developer meeting. This was followed by Till who showed some of his work on TUIO, controller semantics and computer vision in connection with juggling and sounds.
+
+In the evening we joined the Open Studio Night, by giving several presentations on the project - short improvisational performances followed by explanation by Jeff and the others, and answering questions from the visitors.
+
+The next day, Robert kicked off the day by showing us around in his performance setup, and giving us insights into the STEIM software packages LiSa and Junxion. A lot of the concepts of mapping and processing data are quite inspiring for our Modality toolkit.
+
+Miguel continued by showing some of his work on 2D parameter spaces and model-view-controller approaches.
+
+Marije presented some of the work she has done on the SenseWorld DataNetwork.
+
+On Saturday, Alberto presented his course on improvisation that he had his students in Berlin engage in, giving some insights in how to teach students on how to improvise and create instruments on the fly.
+
+In the afternoon Miguel gave the rest a short crash course on the git version control system; SuperCollider's main source development switched over to git from subversion a while ago, but not all of use were comfortable in using it yet. Miguel's presentation, and then our use of git for the Modality code we developed during the residency, really helped us all to feel at ease with the system.
+
+On Sunday we made a excursion to Marije's home at IJburg for relaxed Sunday afternoon brunching,  coding and eventually dinner. Here we made the first start on the new MKtl and MDispatch classes.
+
+On Monday we continued coding at STEIM, and did a concert in the evening within DNK's concert series at the Smart Project Space.
+
+Following this, Tuesday was a bit of a slow day; with some of us departing to go back home, or onto the next destination.
+
+Wednesday, Thursday and Friday then left Miguel, Till and Marije continuing to come together, code and document at STEIM, while Alberto pushed his contributions from Berlin.
+
+On Thursday we presented our workshop results to an attentive audience at the STEIM Hotpot #16.
+
+Presentation slides for Modality Hotpot #16
+
+ACHIEVEMENTS
+
+We developed a new set of extensions (a Quark in SuperCollider terms) which enable the user to interface with both MIDI and HID devices through the MKtl class.
+
+The user can query which controllers are currently connected to the system and pick one of the controllers from the list. The capabilities of the device are stored in a configuration file (which only needs to be made once and can then be used by any user --- if the person who made the configuration shares it). The user can then access the data coming from the controller through a human readable name, rather than a hardware specific code (e.g. a MIDI control number, or an HID device element cookie), and add actions which will be executed each time data comes in. We've tried to make the implementation as generic as possible, so that it can easily be extended to also support OSC, serial or other interfaces.
+
+Additionally, we have worked on a MDispatch class, which allows to create unit of calculations or logic, to create output data from its input. Examples of this are converting button presses (two events: on - off) to one trigger event (on), or calculating the speed of change of a controller or the average of a number of controllers. We've created a number of templates for commonly used functionality, which makes it easier to abstract the data processing, allowing you to think in blocks of data processing and chaining these together.
+
+As the MKtl and MDispatch classes share the same interface, you can easily exchange one class for the other, e.g. use processed data from an MDispatch, rather than the raw data coming from the MKtl directly.
+
+As we are polishing up some of the implementation and documentation in the aftermath of the residency, we soon hope to release an early version of the extensions for the general public to try out.
+
+THANKS
+
+STEIM's hospitality to give us the space and time to sit together in the same room for about 10 days has really helped us to share experiences, do intensive brainstorming and develop code, which will be beneficial for quite a few SuperCollider users out there.
