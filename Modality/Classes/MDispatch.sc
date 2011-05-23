@@ -217,4 +217,4 @@ MDispatch : MAbstractKtl {
 	defaultValueFor{ ^0 }
 }
 
-MDispatchOut : MBasicElement {}
+MDispatchOut : MAbstractElement {}

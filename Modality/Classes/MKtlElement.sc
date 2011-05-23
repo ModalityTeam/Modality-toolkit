@@ -1,4 +1,4 @@
-MBasicElement {
+MAbstractElement {
 	
 	var <source; // the Ktl it belongs to
 	var <name; // its name in Ktl.elements
@@ -121,7 +121,7 @@ MBasicElement {
 	
 }
 
-MKtlElement : MBasicElement{
+MKtlElement : MAbstractElement{
 	classvar <types;
 		
 	var <deviceDescription;	 // its particular device description  
