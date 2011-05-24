@@ -1,51 +1,3 @@
-/* 
-* convert sketch to class: 
-
-MKtl.find;
-MKtl.postAllDescriptions;
-
-MKtl.all.clear
-MKtl.make(\ferr1, 'Run_N_Drive');
-MKtl.make(\nk1, 'nanoKONTROL');
-
-MKtlAllGui(12);
-
-	// the zones for each element 
-	// - suggestions for width and height could be based on  types
-zoneDict = (
-	'bt1r': Rect(250 + 40, 200 - 12, 40, 24),
-	'bt2r': Rect(275 + 40, 225 - 12, 40, 24),
-	'bt3r': Rect(300 + 40, 200 - 12, 40, 24),
-	'bt4r': Rect(275 + 40, 175 - 12,  40, 24),
-	
-	'compass': Rect.aboutPoint(100@200, 45, 45),
-	
-	'joyLHat': 	Rect(140, 320 + 20, 50, 40),
-	'joyLX': 		Rect(60, 280 + 20, 120, 40),
-	'joyLY': 		Rect(100, 240 + 20, 40, 120),
-	
-	'joyRHat': Rect(300, 320 + 20, 50, 40),
-	'joyRX': Rect(220, 280 + 20, 120, 40),
-	'joyRY': Rect(260, 240 + 20, 40, 120),
-	
-	'lfBot7': Rect(110, 25,  40, 20),
-	'lfTop5': Rect(40, 100,  80, 20),
-	
-	'midL9': Rect(150, 190, 48, 20),
-	'midR10': Rect(202, 190, 48, 20),
-	
-	'rfBot8': Rect(250, 25,  40, 20),
-	'rfTop6': Rect(280, 100,  80, 20),
-	
-	'throtL': Rect(30, 55, 120, 40),
-	'throtR': Rect(250, 55, 120, 40),
-	
-	'wheel': Rect(5, 125, 40, 150 )
-);	
-
-
-
-*/
 
 MKtlAllGui : JITGui {
 	var <dragViews; 
@@ -93,44 +45,50 @@ MKtlAllGui : JITGui {
 }
 
 MKtlGui : JITGui { 
-	classvar buildFuncs;
-	classvar defaultSizes;
-	classvar skin;
+	classvar <buildFuncs;
+	classvar <defaultSizes;
+	classvar <skin;
+	
+	var <elemParent, <elemViews;
 	
 	*postZoneTemplate { |mktl| 
-		"(\n // where should each gui element be? \n"
-		"var zoneDict = (".postln; 
+	//	"(\n // where should each gui element be? \n"
+	//	"var zoneDict = (".postln; 
 		mktl.elements.keys.asArray.sort.do { |k|
-			"	'%': Rect(0, 0, 40, 40),\n".postf(k);
+			var type = mktl.elements[k].type.postcs;
+			var sizePt = (defaultSizes[type] ?? { 40@40 }).dump;
+		//	"	'%': Rect(0, 0, %, %),\n".postf(k, sizePt.x, sizePt.y);
 		};
 		");\n)".postln;""
+	}
+
+		// these methods should be overridden in subclasses: 
+	setDefaults { |options|
+		if (parent.isNil) { 
+			defPos = 10@260
+		} { 
+			defPos = skin.margin;
+		};
+		minSize = 400 @ 400;
 	}
 	
 	skin { ^skin ?? { this.init; skin } }
 	buildFuncs { ^skin ?? { this.init; buildFuncs } }
 	
-	*init {	
+	*init { 
 		
 		skin = (onColor: Color(0.5, 1, 0.5, 1.0), offColor: Color.grey(0.7), fontColor: Color.black);
 		defaultSizes = (
-			button: 40@20, 
-			compass: 90@90, 
+			button:    40@20, 
+			compass:   90@90, 
 			joyStick: 120@120,
-			joyLHat: 50@40, 	// temp
+			joyLHat:   50@40, 	// temp
 			joyAxisX: 120@40,	// temp
-			joyAxisY: 40@120,	// temp
-			wheel: 40@150
+			joyAxisY:  40@120,	// temp
+			wheel:     40@150
 		);
 		
 		buildFuncs = (
-			joyAxis: { |w, zone, el| EZSlider(w, zone, el.name, 
-				el.spec, { |sl|
-					el.valueAction_(sl.value);
-					[el.name, sl.value, el.prevValue, el.value].postln;
-				}, el.value, layout: \line2, numberWidth: 40); 
-			},
-			springFader: { |w, zone, el| buildFuncs[\joyAxis].value(w, el) }, 
-			
 			button: { |w, zone, el| Button(w, zone)
 					.states_([[el.name, skin.fontColor, skin.offColor], 
 						[el.name, skin.fontColor, skin.onColor]])
@@ -139,10 +97,35 @@ MKtlGui : JITGui {
 						[el.name, but.value, el.prevValue, el.value].postln 
 					}); 
 				},
-			hidHat: { |w, zone, el| buildFuncs[\button].value(w, el) }, 
+
+			wheel: { |w, zone, el| 
+				EZSlider(w, zone, el.name, 
+					el.spec, { |sl|
+						el.valueAction_(sl.value);
+						[el.name, sl.value, el.prevValue, el.value].postln;
+					}, el.value, layout: \line2, numberWidth: 40); 
+				},
+
+			springFader: { |w, zone, el| buildFuncs[\wheel].value(w, zone, el) }, 
+
+			joyStick: { |w, zone, el|
+				StickView(w, zone);
+				el.dump;
+			},
+
+//			joyAxis: { |w, zone, el| 
+//				EZSlider(w, zone, el.name, 
+//					el.spec, { |sl|
+//						el.valueAction_(sl.value);
+//						[el.name, sl.value, el.prevValue, el.value].postln;
+//					}, el.value, layout: \line2, numberWidth: 40); 
+//				},
+			
+//			hidHat: { |w, zone, el| buildFuncs[\button].value(w, zone, el) }, 
 			
 				// Compass needs to be a class, ... because value_ on a 
-				// pseudo-object dict does not work. Replace with StickView class.
+				// pseudo-object dict does not work. 
+				// Replace with the Compass class.
 			compass: { |w, zone, el| 
 				var center = zone.center;
 				var myZone = StaticText(w, zone)
@@ -165,8 +148,89 @@ MKtlGui : JITGui {
 			}
 		);
 	}
+	
+	getName { ^try { object.name } { "anon" } }
+	
+	*new { |mtkl, parent, bounds, makeSkip = true, options = #[]| 
+		^super.new(mtkl, 0, parent, bounds, makeSkip, options);
+	}
+			// only allow once - replugging makes no sense
+	accepts { |obj| ^object.isNil and: { obj.isKindOf(MKtl) } }
 
-	*new { |mtkl, parent, zoneDict| 
+	object_ { |obj| 
+		if (this.accepts(obj)) {
+			object = obj;
+		} { 
+			"% : object % not accepted!".format(this.class, obj).warn;
+		}
+	}
+
+	makeViews { 
+
+		var lineheight = skin.headHeight;
+		
+		nameView = DragBoth(zone, Rect(0,0, 60, lineheight))
+			.font_(font)
+			.align_(\center)
+			.receiveDragHandler_({ arg obj; 
+				this.object = View.currentDrag 
+			});
+			
+		csView = EZText(zone, 
+			Rect(0,0, bounds.width - 65, lineheight), 
+			nil, { |ez| object = ez.value; })
+			.font_(font);
+		csView.enabled_(false); // disable until testable
+		csView.view.resize_(2);
+		csView.textField.align_(\center).resize_(2);
+		
+		elemViews = ();
 		
 	}
+	
+		// called if object changed: 
+	makeElemViews { |rectDict| 
+		
+		elemParent = elemParent ?? { 
+			CompositeView(zone, zone.bounds.top_(zone.bounds.top - 30))
+		};
+
+		// remove old ones:
+		elemViews.keysValuesDo { |k, v|
+			elemViews.removeAt(k).remove;
+		};
+		
+		if (rectDict.isNil) { 
+			// make them left to right in lines and hope for the best
+
+	//		// then make new ones 
+	//		object.elements.do { |elem| 
+	//			// make view for each element 
+	//			var type = elem.type;
+	//			var elemBounds = rectDict[elem.name] ? Rect(0,0, 100, 100);
+	//			[parent, elemBounds, elem].postln;
+	//		//	buildFuncs[elem.type].value();
+	//		};
+		} {	 
+			rectDict.keysValuesDo { |k, rect| 
+				var elem = object.elements[k];
+				buildFuncs[elem.type].value(elemParent, rect, elem);
+			};
+		}	
+	}
+	
+	checkUpdate { 
+		var newState = this.getState; 
+
+		if (newState[\object] != prevState[\object]) { 
+			this.name_(this.getName);
+			if (csView.textField.hasFocus.not) { csView.value_(object) };
+		};
+	}
+	getState { 
+		^(object: object); 
+	
+	}
+	
+	
 }
