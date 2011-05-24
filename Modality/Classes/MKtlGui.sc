@@ -56,7 +56,7 @@ MKtlGui : JITGui {
 	//	"var zoneDict = (".postln; 
 		mktl.elements.keys.asArray.sort.do { |k|
 			var type = mktl.elements[k].type.postcs;
-			var sizePt = (defaultSizes[type] ?? { 40@40 }).dump;
+			var sizePt = (defaultSizes[type] ?? { 40@40 });
 		//	"	'%': Rect(0, 0, %, %),\n".postf(k, sizePt.x, sizePt.y);
 		};
 		");\n)".postln;""
@@ -110,9 +110,10 @@ MKtlGui : JITGui {
 
 			joyStick: { |w, zone, el|
 				StickView(w, zone);
-				el.dump;
+				// el;
 			},
 
+				// individual axes, not needed anymore
 //			joyAxis: { |w, zone, el| 
 //				EZSlider(w, zone, el.name, 
 //					el.spec, { |sl|
@@ -123,29 +124,13 @@ MKtlGui : JITGui {
 			
 //			hidHat: { |w, zone, el| buildFuncs[\button].value(w, zone, el) }, 
 			
-				// Compass needs to be a class, ... because value_ on a 
-				// pseudo-object dict does not work. 
-				// Replace with the Compass class.
-			compass: { |w, zone, el| 
-				var center = zone.center;
-				var myZone = StaticText(w, zone)
-					.string_(el.name)
-					.background_(Color.grey(0.8, 0.5))
-					.align_(\center); 
-					
-				var buttons = 8.collect { |i| 
-					var angle = (i + 4 / 8 * -2pi );
-					var butcent = center + Polar(35, angle).asPoint;
-					Button(w, Rect.aboutPoint(butcent, 10, 10))
-						.states_([[(i + 1).asString, skin.fontColor, skin.offColor ], 
-							[(i + 1).asString, skin.fontColor, skin.onColor ]])
-						.action_({ |but| 
-							buttons.do { |but2, j| if (i != j) { but2.value = 0 } };
-							el.valueAction_(if (but.value > 0, i + 1, 0));
-							[el.name, but.value, el.prevValue, el.value].postln;
-						}); 
-				};
-			}
+			compass: { |w, zone, el|			
+					CompassView(w, zone)
+						.action_({ |comp| 
+							// el.valueAction;
+							// [el.name, but.value, el.prevValue, el.value].postln;
+						});
+				}
 		);
 	}
 	
