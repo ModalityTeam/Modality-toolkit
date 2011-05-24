@@ -17,6 +17,7 @@ AllGui : JITGui {
 	winName { ^"AllGui" }
 	
 	makeViews {
+		zone.resize_(2);
 		texts = ();
 		labels = [ 
 			\global, 		{ |num| GlobalsGui.new },
@@ -41,18 +42,28 @@ AllGui : JITGui {
 		
 		labels.pairsDo { |label, action|
 			var numbox;
-			var text = EZText(zone, 100@20, label.asString, labelWidth: 70)
+			var text = EZText(zone, 100@20, label.asString, labelWidth: 75)
 				.value_(0)
 				.enabled_(false);
-			
-			text.textField.align_(\center);
+		
+		// resizing not working properly yet 
+		// in EZNumber seems to be the problem.
 			text.labelView.align_(\center);
+			text.textField.align_(\center);
+//			text.labelView.resize_(2);
+//			text.textField.resize_(3);
 			
 			texts.put(label, text);
 			Button(zone, Rect(0,0, 50, 20))
 				.states_([["open"]])
-				.action_({ action.value(numbox.value.asInteger) });
-			numbox = EZNumber(zone, Rect(0,0, 20, 20), nil, [0, 32, \lin, 1], initVal: numItems);
+				.action_({ action.value(numbox.value.asInteger) })
+			//	.resize_(3)
+				;
+			numbox = EZNumber(zone, 
+				Rect(0,0, 20, 20), nil, 
+				[0, 32, \lin, 1], 
+				initVal: numItems);
+			//	numbox.view.resize_(3);
 		};
 	}
 	
