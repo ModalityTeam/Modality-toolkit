@@ -52,17 +52,17 @@ MKtlGui : JITGui {
 	var <elemParent, <elemViews;
 	
 	*postZoneTemplate { |mktl| 
-	//	"(\n // where should each gui element be? \n"
-	//	"var zoneDict = (".postln; 
-		mktl.elements.keys.asArray.sort.do { |k|
-			var type = mktl.elements[k].type.postcs;
+		var nameArr = mktl.elementNames;
+		"(\n // where should each gui element be? \n"
+		"var zoneDict = (".postln; 
+		nameArr.do { |k, i|
+			var type = mktl.elements[k].type;
 			var sizePt = (defaultSizes[type] ?? { 40@40 });
-		//	"	'%': Rect(0, 0, %, %),\n".postf(k, sizePt.x, sizePt.y);
+			"	'%': Rect(0, 0, %, %)%\n".postf(k, sizePt.x, sizePt.y, if (i < nameArr.lastIndex, ",", ""));
 		};
 		");\n)".postln;""
 	}
 
-		// these methods should be overridden in subclasses: 
 	setDefaults { |options|
 		if (parent.isNil) { 
 			defPos = 10@260
@@ -80,6 +80,8 @@ MKtlGui : JITGui {
 		skin = (onColor: Color(0.5, 1, 0.5, 1.0), offColor: Color.grey(0.7), fontColor: Color.black);
 		defaultSizes = (
 			button:    40@20, 
+			slider: 	 120@40,
+			springFader: 	 120@40,
 			compass:   90@90, 
 			joyStick: 120@120,
 			joyLHat:   50@40, 	// temp
@@ -89,6 +91,15 @@ MKtlGui : JITGui {
 		);
 		
 		buildFuncs = (
+			knob: { |w, zone, el| 
+				EZKnob(w, zone, el.name, 
+					el.spec, { |sl|
+						el.valueAction_(sl.value);
+						[el.name, sl.value, el.prevValue, el.value].postln;
+					}, el.value); 
+				
+			
+			}, 
 			button: { |w, zone, el| Button(w, zone)
 					.states_([[el.name, skin.fontColor, skin.offColor], 
 						[el.name, skin.fontColor, skin.onColor]])
@@ -97,8 +108,7 @@ MKtlGui : JITGui {
 						[el.name, but.value, el.prevValue, el.value].postln 
 					}); 
 				},
-
-			wheel: { |w, zone, el| 
+			slider: { |w, zone, el| 
 				EZSlider(w, zone, el.name, 
 					el.spec, { |sl|
 						el.valueAction_(sl.value);
@@ -106,7 +116,8 @@ MKtlGui : JITGui {
 					}, el.value, layout: \line2, numberWidth: 40); 
 				},
 
-			springFader: { |w, zone, el| buildFuncs[\wheel].value(w, zone, el) }, 
+			wheel: { |w, zone, el| buildFuncs[\slider].value(w, zone, el) }, 
+			springFader: { |w, zone, el| buildFuncs[\slider].value(w, zone, el) }, 
 
 			joyStick: { |w, zone, el|
 				StickView(w, zone);
@@ -208,13 +219,19 @@ MKtlGui : JITGui {
 		var newState = this.getState; 
 
 		if (newState[\object] != prevState[\object]) { 
+				// redraw elements if object changed!
 			this.name_(this.getName);
 			if (csView.textField.hasFocus.not) { csView.value_(object) };
+		}; 
+		newState[\values].keysValuesDo { |k, v|
+			if (v != prevState[k]) { 
+				try { elemViews[k].value_(v) };
+			}
 		};
 	}
 	getState { 
-		^(object: object); 
-	
+			// get object, get all values from its elements;
+		^(object: object, values: object.elements.collect(_.value));
 	}
 	
 	
