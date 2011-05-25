@@ -1,0 +1,56 @@
+CLASS:: MKtlElement
+summary:: An element of an MKtl.
+categories:: Undocumented classes
+related:: Classes/SomeRelatedClass, Reference/SomeRelatedStuff, etc.
+
+DESCRIPTION::
+An element of an link::Classes/MKtl::.
+
+CLASSMETHODS::
+
+METHOD:: types
+Available types.
+
+private:: initClass
+
+METHOD:: new
+creates a new instance.
+
+argument:: source
+The link::Classes/MKtl:: it belongs to.
+
+argument:: name
+A name.
+
+INSTANCEMETHODS::
+
+METHOD:: deviceDescription
+returns:: a dictionary containing the element description
+
+METHOD:: spec
+
+returns:: the element's spec 
+
+private:: init
+
+METHOD:: defaultValue
+
+returns:: the element's default value
+
+METHOD:: value
+
+returns:: the element's current value (normed)
+
+METHOD:: rawValue
+
+argument:: newval
+sets the element's value (raw)
+
+returns:: the element's current value (raw)
+
+
+EXAMPLES::
+
+code::
+(some example code)
+::
