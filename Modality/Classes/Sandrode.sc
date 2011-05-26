@@ -29,9 +29,13 @@ Sandrode {
 	}
 
 	*drawAll {|view| 
+		fork ({ 
 			all.do { |ct| ct.textView.remove; };
+			0.02.wait;
 			view.refresh;
+			0.02.wait;
 			all.do (_.drawOn(view));
+		}, AppClock);
 	}
 
 	*addMtpTouch { |id, xys| 
