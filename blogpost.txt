@@ -23,7 +23,7 @@ The next day, Robert kicked off the day by showing us around in his performance 
 
 Miguel continued by presenting some of his work on 2D parameter spaces, which feature amazingly detailed and fine-grained insights into software patterns, especially the model-view-controller concept.
 
-This was followed by a presentation by Marije, featuring the SenseWorld DataNetwork, especially her newly build (and commercially avaiable) <a href="http://sensestage.eu">MiniBees</a>.
+This was followed by a presentation by Marije, featuring the SenseWorld DataNetwork, especially her newly designed (and commercially available) <a href="http://sensestage.eu">MiniBees</a>.
 
 <h4>Saturday</h4>
 
@@ -57,7 +57,7 @@ Presentation slides for Modality Hotpot #16
 
 We developed a new set of extensions (a <em>Quark</em>, in SuperCollider terms), which enables users to interface with both MIDI and HID devices through the very same MKtl class.
 
-The user can query which controllers are currently connected to the system and pick one of them from a list. The capabilities of the device are stored in a configuration file (which only needs to be made once and can then be used by any user; pretending the person who made it, shares it with others). The user can then access the data coming from the controller through a human readable name, rather than a hardware specific code (e.g. a MIDI control number, or an HID device element cookie), and add actions which will be executed each time data comes in from the actual hardware controller. We've tried to make the implementation as generic as possible, so that it can easily be extended to also support OSC, the serial port, or other interfaces.
+The user can query which controllers are currently connected to the system and pick one of them from a list. The capabilities of each device are stored in a configuration file (which only needs to be made once and can then be used by any user; assuming the person who made it shares it by putting it in the MKtl quark). The user can then access the data coming from the controller through a human readable name, rather than a hardware specific code (e.g. a MIDI control number, or an HID device element cookie), and add actions which will be executed each time data comes in from the actual hardware controller. We've tried to make the implementation as generic as possible, so that it can easily be extended to also support OSC, the serial port, or other interfaces.
 
 Additionally, we worked on the MDispatch class, which allows to create  <em>calculation units</em>; algorithms that render output from a given input. Examples of this are e.g. the conversion of button presses (two events: on - off) to one trigger event (on), the calculation of slider speed, or the average value of a number of controllers. We've created various templates for commonly used functionality, which hopefully makes it easier to abstract the data processing from your work, allowing you to think in blocks of data processing in order to chain them together.
 
