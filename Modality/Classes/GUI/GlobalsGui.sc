@@ -1,12 +1,14 @@
 GlobalsGui : JITGui { 
-	var <textViews, <cmdLineView; 
+	var <textViews, <cmdLineView;
+	var <scroller, <editKeys = #[], keysRotation = 0;
+	
 	classvar <names = #[
 		\a, \b, \c, \d, \e, \f, \g, 
 		\h, \i, \j, \k, \l, \m, \n,
 		\o, \p, \q, \r, \s, \t, \u, 
 		\v, \w, \x, \y, \z, \cmdLine ]; 
 	
-	*new { |numItems, parent, bounds| 
+	*new { |numItems = 12, parent, bounds| 
 			// numItems not supported yet, should do scrolling
 			// ... for small screens ...
 		^super.new(thisProcess.interpreter, numItems, parent, bounds);
@@ -19,29 +21,47 @@ GlobalsGui : JITGui {
 		} {
 			defPos = skin.margin;
 		};
-		minSize = 200 @ (names.size * skin.buttonHeight + 4);
+		minSize = 200 @ (numItems + 1 * skin.buttonHeight + 4);
 	}
 	
 	makeViews { 
 		var textwidth = zone.bounds.width - 20;
 		var textheight = skin.buttonHeight;
 		
-		cmdLineView = EZText(zone, textwidth @ textheight, 'cmdLine', labelWidth: 60)
+		cmdLineView = EZText(zone, textwidth + 16 @ textheight, 'cmdLine', labelWidth: 60)
 			.enabled_(false);
-			
-		cmdLineView.labelView.align_(\center);
 		
-		textViews = names.drop(-1).collect { |name, i| 
+		cmdLineView.labelView.align_(\center);
+		cmdLineView.view.resize_(2);
+		
+		textViews = numItems.collect { |i| 
 			var text, labelWidth = 15, canEval = true; 
 			
-			text = EZText(zone, 188@ skin.buttonHeight, name, 
-				{ |tx| object.perform(name.asSetter, tx.textField.string.interpret); }, 
-			labelWidth: labelWidth);
+			text = EZText(zone, 188@ skin.buttonHeight, "", 
+				{ |tx| 
+					object.perform(
+						text.labelView.string.asSymbol.asSetter, 
+						tx.textField.string.interpret); 
+				}, 
+				labelWidth: labelWidth
+			);
+			text.visible_(false);
 			text.view.resize_(2);
 			text.labelView.align_(\center); 
 			text; 
 		};
-		textViews = textViews ++ cmdLineView;
+		
+		textViews = textViews;
+
+		/// make a scroller
+		zone.decorator.reset.shift(zone.bounds.width - 16, textheight);
+		scroller = EZScroller(zone,
+			Rect(0, 0, 12, numItems * textheight),
+			numItems, numItems,
+			{ |sc| keysRotation = sc.value.asInteger.max(0); }
+		).visible_(false);
+
+		scroller.slider.resize_(3);
 		
 		this.name_(this.getName);
 	}
@@ -58,13 +78,40 @@ GlobalsGui : JITGui {
 	winName { ^this.getName }
 				
 	checkUpdate { 
-		var newState = this.getState; 
-		names.do { |globvar, i|
-			var obj = newState[globvar];
-			if (obj != prevState[globvar]) { 
-				textViews[i].value_(obj);
+		var newKeys;
+		var newState = this.getState;
+		var allNewKeys = newState.keys.remove(\cmdLine).asArray.sort; 
+		var overflow = (allNewKeys.size - numItems).max(0);
+		
+		keysRotation = keysRotation.clip(0, overflow);
+
+		newKeys = allNewKeys.drop(keysRotation).keep(numItems); 
+		
+		if (prevState[\cmdLine] != newState[\cmdLine]) { 
+			cmdLineView.value_(newState[\cmdLine]);
+		};
+		
+		scroller
+			.numItems_(allNewKeys.size)
+			.visible_(overflow > 0)
+			.value_(keysRotation);
+		
+		textViews.do { |textView, i|
+			var oldKey = editKeys[i];
+			var oldObj = textView.value;
+			var newKey = newKeys [i];
+			var newObj = newState[newKey];
+			
+			if (newKey != oldKey) { 
+				textView.visible_(newKey.notNil);
+				textView.labelView.string_(newKey.asString);
+			};
+			if (newObj != oldObj) { 
+				textView.value_(newObj ? "");
 			};
 		};
+		
 		prevState = newState;
+		editKeys = newKeys;
 	}
 }

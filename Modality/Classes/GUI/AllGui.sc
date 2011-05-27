@@ -58,7 +58,7 @@ AllGui : JITGui {
 			].do { |triple| this.add(*triple) };
 			
 			if (\MKtl.asClass.notNil) { 
-				this.add(\MKtl, { MKtl.all.size }, { |num| MKtlAllGui(num).moveTo(400, 5); });
+				this.add(\MKtl, { MKtl.all.size }, { |num| MKtlAllGui(num).moveTo(420, 5); });
 			};
 		};
 		
