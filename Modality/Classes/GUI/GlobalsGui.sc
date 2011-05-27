@@ -6,8 +6,10 @@ GlobalsGui : JITGui {
 		\o, \p, \q, \r, \s, \t, \u, 
 		\v, \w, \x, \y, \z, \cmdLine ]; 
 	
-	*new { |parent, bounds| 
-		^super.new(thisProcess.interpreter, 0, parent, bounds);
+	*new { |numItems, parent, bounds| 
+			// numItems not supported yet, should do scrolling
+			// ... for small screens ...
+		^super.new(thisProcess.interpreter, numItems, parent, bounds);
 	}
 	
 		// these methods should be overridden in subclasses:

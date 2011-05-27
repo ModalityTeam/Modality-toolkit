@@ -1,12 +1,13 @@
 ////////// AllGui	- an overview for global vars and some classvars //////////
 
-sclang has several options for permanent state:
+sclang has several places for keeping permanent objects:
+
 	global variables in the interpreter (a-z)
-	a currentEnvironment
-	some classvars that keep all instances:
+	the currentEnvironment
+	some classvars that keep all instances of that class:
 		Pdef.all, Tdef.all, Pdefn.all,
 		ProxySpace.all, Ndef.all,
-	and potentially others.
+	and potentially others, such as MKtl.
 
 AllGui shows an overview of these: 
 	the number global vars in use (a-z);
@@ -14,15 +15,15 @@ AllGui shows an overview of these:
 	the number of items in Tdef.all, Pdef.all, Pdefn.all, 
 	and the number items in Ndef.all, and proxies in proxyspaces.
 
-	// numItems arg is used here to set default numItems for thesizes for the 
-AllGui.new;
+
+a = AllGui.new;
 
 	// the "open" button opens the proper JITGui for each collection;
 	// the number next to it sets the number of items each gui will 
-	// display without scrolling.
+	// be able to display without scrolling.
 
-	// the numItems argument here sets the default numItems in the AllGui.
-AllGui(16); 
+	// the numItems argument in AllGui.new sets the default numItems in the AllGui.
+AllGui(8);
 
 	// test adding things that should show up: 
 a = 12;
@@ -43,15 +44,39 @@ p[\a] = 12;
 p[\kkk] = 12;
 
 
-// todo: 
-*	a non-overlapping layout for all of them, based on numItems
-* 	maybe a version that puts them all on one window? 
-* 	maybe a CocoaMenu entry on OSX
-* 	maybe an uncloseable flag
-* 	a simple way to add other classes to it
+You can add and remove and other items: 
 
+AllGui.remove(\Tdef);
+AllGui.remove(\Pdef);
+AllGui.remove(\Pdefn);
+
+AllGui.new;
+
+		// name, 	countFunc, 			openFunc
+AllGui.add(\Karlo, { rrand(1, 5).postln }, { Window("Karlo!").front });
+
+AllGui.new;
+
+
+
+	// protect against closing
+a.parent.userCanClose_(false);
+
+	// osx: add a menu item to "Library" Menu:
+CocoaMenuItem.add(["AllGui"], { AllGui.new });
+
+
+
+	// the guis are reasonably non-overlapping / tiled:
+a = AllGui(12);
+AllGui.openFuncs.do(_.value(8)); // small screens
+AllGui.openFuncs.do(_.value(12));
+
+
+
+
+// questions
 *	what other candidates that should be there?
-
 /* 
 (
 Class.allClasses.do { |cl|
@@ -60,6 +85,6 @@ Class.allClasses.do { |cl|
 			[cl.asSymbol, cvn].postcs
 		}
 	}
-}
+}; "";
 )
 */

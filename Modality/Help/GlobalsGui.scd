@@ -15,9 +15,8 @@ q = (a: 123, b: 234);
 
 this.dump
 
-
-
-
 // todo: 
 *	compare newState with prevState, only do gui update if needed
-* 	do we need a smaller version that only shows used vars, and scrolls? 
+* 	make smaller version (use numItems), that only shows used vars, and scrolls
+MKtlAllGui(8).moveTo(430, 5);
+

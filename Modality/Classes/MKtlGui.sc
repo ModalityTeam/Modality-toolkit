@@ -8,7 +8,7 @@ MKtlAllGui : JITGui {
 		// these methods should be overridden in subclasses: 
 	setDefaults { |options|
 		defPos = if (parent.isNil, 10@260, skin.margin);
-		minSize = 180 @ (numItems * skin.buttonHeight + skin.headHeight);
+		minSize = 170 @ (numItems * skin.buttonHeight + skin.headHeight);
 	}
 	
 	winName { ^"MKtl.all" }
@@ -16,17 +16,16 @@ MKtlAllGui : JITGui {
 	makeViews {
 		
 		dragViews = numItems.collect { |num|
-			var numbox;
-			var drag = DragSource(zone, 100@20)
-				.object_(nil).visible_(false)
-				.align_(\center);	
-			
-			Button(zone, Rect(0,0, 50, 20))
+			var numbox, drag;
+			Button(zone, Rect(0,0, 40, 20))
 				.states_([["open"]])
-				.action_({ MKtlGui.new(drag.object) });
+				.action_({ MKtlGui.new(drag.object, numbox.value.asInteger) });
 			numbox = EZNumber(zone, Rect(0,0, 20, 20), nil, [0, 32, \lin, 1], 
 				initVal: numItems, numberWidth: 20);
-			drag;
+
+			drag = DragSource(zone, 100@20)
+				.object_(nil).visible_(false)
+				.align_(\center);	
 		};
 	} 
 	

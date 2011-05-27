@@ -1,85 +1,120 @@
+/* To do: 
 
+	customize by adding [name, openFunc, countFunc]
+	
+*/ 
 AllGui : JITGui { 
-	var <labels, <texts; 
-	var <globalNames = #[ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 
+	classvar <globalNames = #[ 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 
 					    'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' ];
+
+	classvar <inited = false, <labels, <countFuncs, <openFuncs;
+
+	var <texts; 
 					    
 	*new { |numItems = 12, parent, bounds|
+		this.init;
 		^super.new(nil, numItems, parent, bounds);
 	}
+	
+	*countGlobals { 
+		var interp = thisProcess.interpreter;
+		^globalNames.count { |glob| interp.perform(glob).notNil };
+	}
+	
+	*findProxySpace { 
+		var space = if (currentEnvironment.isKindOf(ProxySpace), currentEnvironment); 
+		if (space.notNil) { ^space };
+		
+		if (thisProcess.interpreter.p.isKindOf(ProxySpace), { space = thisProcess.interpreter.p });
+		if (space.notNil) { ^space };
+		
+		^ProxySpace.all.maxItem(_.size);
+	}
+	
+	*init { |force = false| 
+		
+		if (inited.not or: { force }) {	 
+			inited = true; 
 
-		// these methods should be overridden in subclasses: 
+			labels = List[]; 
+			countFuncs = (); 
+			openFuncs = ();			
+			
+			[ 
+				[ \global, 	{ this.countGlobals }, { |num| GlobalsGui(num).moveTo(600, 5); } ],
+				[ \currEnvir, { currentEnvironment.size }, 
+							{ |num| EnvirGui(currentEnvironment, num)
+								.moveTo(540, 400)
+								.parent.name_("currentEnvironment") } ],
+				
+				[ \Tdef,		{ Tdef.all.size }, { |num| TdefAllGui.new(num) } ],
+				[ \Pdef, 		{ Pdef.all.size }, { |num|  PdefAllGui.new(num) } ],
+				[ \Pdefn,		{ Pdefn.all.size }, { |num| PdefnAllGui.new(num) } ],
+	
+				[ \Ndef, 		{ Ndef.all.sum(_.size) }, { |num| NdefMixer.new(Ndef.all.choose, num) } ],
+				[ \proxyspace, { try { this.findProxySpace.envir.size } { ProxySpace.all.sum { |ps| ps.envir.size } } },
+							{ |num| ProxyMixer.new(this.findProxySpace, num) } ]
+							
+			].do { |triple| this.add(*triple) };
+			
+			if (\MKtl.asClass.notNil) { 
+				this.add(\MKtl, { MKtl.all.size }, { |num| MKtlAllGui(num).moveTo(400, 5); });
+			};
+		};
+		
+	}
+	
+	*add { |name, countFunc, openFunc| 
+		this.init;
+		if (labels.includes(name).not) { labels.add(name) }; 
+		countFuncs.put(name, countFunc);
+		openFuncs.put(name, openFunc);
+	}
+	
+	*remove { |name| 
+		this.init;
+		labels.remove(name); 
+		countFuncs.removeAt(name);
+		openFuncs.removeAt(name);
+	}
+
 	setDefaults { |options|
-		defPos = if (parent.isNil) { 10@10 } { skin.margin };
-		minSize = 175 @ 170;
+		minSize = 170 @ 170;
+								// at the top - works in osx
+		defPos = if (parent.isNil) { 250@5 } { skin.margin };
 	}
 	
 	winName { ^"AllGui" }
 	
-	makeViews {
+	makeViews { 
 		zone.resize_(2);
 		texts = ();
-		labels = [ 
-			\global, 		{ |num| GlobalsGui.new },
-			\currEnvir, 	{ |num| EnvirGui(currentEnvironment, num)
-								.parent.name_("currentEnvironment") }, 
+				
+		labels.do { |label|
+			var numItemsBox, countView;
 			
-			\Tdef,		{ |num| TdefAllGui.new(num) }, 
-			\Pdef, 		{ |num|  PdefAllGui.new(num) }, 
-			\Pdefn,		{ |num| PdefnAllGui.new(num) }, 
-			\Ndef, 		{ |num| NdefMixer.new(Ndef.all.choose, num) }, 
-			\proxyspace, 	{ |num| 
-				var pxs = if (currentEnvironment.isKindOf(ProxySpace), 
-					currentEnvironment, 
-					ProxySpace.all.choose);
-					ProxyMixer.new(pxs, num) 
-				}
-		]; 
-		
-		if (\MKtl.asClass.notNil) { 
-			labels = labels ++ [ \MKtl, { |num| MKtlAllGui.new(num) } ];
-		};
-		
-		labels.pairsDo { |label, action|
-			var numbox;
-			var text = EZText(zone, 100@20, label.asString, labelWidth: 75)
-				.value_(0)
-				.enabled_(false);
-		
-		// resizing not working properly yet 
-		// in EZNumber seems to be the problem.
-			text.labelView.align_(\center);
-			text.textField.align_(\center);
-//			text.labelView.resize_(2);
-//			text.textField.resize_(3);
-			
-			texts.put(label, text);
-			Button(zone, Rect(0,0, 50, 20))
+			Button(zone, Rect(0,0, 40, 20))
 				.states_([["open"]])
-				.action_({ action.value(numbox.value.asInteger) })
-			//	.resize_(3)
-				;
-			numbox = EZNumber(zone, 
-				Rect(0,0, 20, 20), nil, 
-				[0, 32, \lin, 1], 
-				initVal: numItems);
-			//	numbox.view.resize_(3);
+				.action_({ openFuncs[label].value(numItemsBox.value.asInteger) })
+			;
+			
+			numItemsBox = EZNumber(zone, Rect(0,0, 20, 20), nil, [0, 32, \lin, 1], initVal: numItems);
+
+			countView = EZText(zone, 110@20, label.asString, labelWidth: 75)
+				.value_(0).enabled_(false);
+		
+			countView.view.resize_(2);
+			countView.labelView.align_(\center);
+			countView.textField.align_(\center);
+			countView.labelView.resize_(2);
+			countView.textField.resize_(3);
+			
+			texts.put(label, countView);
 		};
 	}
 	
 	getState { 
-		var interp = thisProcess.interpreter;
-		var numGlobs = globalNames.count { |glob| interp.perform(glob).notNil };
-
-		^(global: numGlobs, 
-		currEnvir: currentEnvironment.size, 
-		MKtl: MKtl.all.size,
-		Tdef: Tdef.all.size,
-		Pdef: Pdef.all.size,
-		Pdefn: Pdefn.all.size,
-		Ndef: Ndef.all.collect { |ps| ps.envir.size }.sum, 
-		proxyspace: ProxySpace.all.collect { |ps| ps.envir.size }.sum;
-		);
+		^countFuncs.collect(_.value);
 	}
 	
 	checkUpdate { 
