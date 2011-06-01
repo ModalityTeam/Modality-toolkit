@@ -21,7 +21,7 @@ MKtl('nnkn0').reset;
 )
 ::
 
-velocity
+velocity - returns the velocity of each controlElement
 code::
 (
 MIDIMKtl.find;
@@ -57,12 +57,12 @@ MKtl('nnkn0').reset;
 ::
 
 
-merge
+merge - merges multiple sources into just one MDispatch
 Make sliders output velocity but keep the rest of controls absolute and merge into just one controller.
 code::
 (
-k = MKtl('nnkn0');
-k.reset;
+MIDIMKtl.find;
+MKtl('nnkn0').reset;
 ~sliders =  MDispatch.make(\velocity,k, k.elementsOfType(\slider).collect(_.name) );
 
 ~restOfElems = k.elements.select{ |elem|
@@ -78,7 +78,7 @@ k.reset;
 ::
 
 
-trigger
+trigger - trigger on a value of 1
 code::
 (
 MIDIMKtl.find;
@@ -91,7 +91,7 @@ MKtl('nnkn0').verbose = false
 ::
 
 
-multipleClick
+multipleClick - trigger on passing threshold
 code::
 (
 MIDIMKtl.find;
@@ -115,7 +115,7 @@ MKtl('nnkn0').reset;
 ::
 
 
-thresholdUp
+thresholdUp - trigger on passing threshold going Up
 code::
 (
 MIDIMKtl.find;
@@ -126,7 +126,7 @@ MKtl('nnkn0').reset;
 ~disp.remove
 ::
 
-thresholdDown
+thresholdDown - trigger on passing threshold going down
 code::
 // thresh down
 (
@@ -139,12 +139,12 @@ MKtl('nnkn0').reset;
 ::
 
 
-threshZones
+threshZones - setup multiple triggers
 code::
 (
 MIDIMKtl.find;
 MKtl('nnkn0').reset;
-~disp =  MDispatch.make(\threshZones, MKtl('nnkn0'), nil, nil, [0.2,0.5,0.8] );
+~disp =  MDispatch.make(\threshZones, MKtl('nnkn0'), [0.2,0.5,0.8] );
 ~disp.verbose = true;
 )
 ~disp.remove
@@ -158,7 +158,7 @@ MKtl('nnkn0').reset;
 }
 ::
 
-up
+up - only output when values increase
 code::
 (
 MIDIMKtl.find;
@@ -169,85 +169,89 @@ MKtl('nnkn0').reset;
 ~disp.remove
 ::
 
-down
+down - only output when values decrease
 code::
 (
-k = MIDIMKtl.find;
-MKtl('nnkn0').reset;
+MIDIMKtl.find;
+k = MKtl('nnkn0').reset;
 ~disp =  MDispatch.make(\down, k);
 ~disp.verbose = true;
 )
 ::
 
-inRange
+inRange - pass values when in range
 code::
 (
-k = MIDIMKtl.find;
-MKtl('nnkn0').reset;
-~disp =  MDispatch.make(\inRange, k, nil, nil, [0.5,1.0]);
+MIDIMKtl.find;
+k = MKtl('nnkn0').reset;
+~disp =  MDispatch.make(\inRange, k, [0.5,1.0]);
 ~disp.verbose = true;
 )
 ::
 
-match
+match - pass values when they match some value in list
 code::
 (
-k = MIDIMKtl.find;
-MKtl('nnkn0').reset;
-~disp =  MDispatch.make(\match, k, nil, nil, [0.0,1.0]);
+MIDIMKtl.find;
+k = MKtl('nnkn0').reset;
+~disp =  MDispatch.make(\match, k, [0.0,1.0]);
 ~disp.verbose = true;
 )
 ::
 
-change
+change - check if value is different then previous one
 code::
 (
-k = MIDIMKtl.find;
-MKtl('nnkn0').reset;
-~disp =  MDispatch.make(\change, k, nil, nil, [0.0,1.0]);
-~disp.verbose = true;
-)
-~disp.remove
-::
-
-changeDirection
-code::
-(
-k = MIDIMKtl.find;
-MKtl('nnkn0').reset;
-~disp =  MDispatch.make(\changeDirection, k, nil, nil, [0.0,1.0]);
+MIDIMKtl.find;
+k = MKtl('nnkn0').reset;
+~disp =  MDispatch.make(\change, k, [0.0,1.0]);
 ~disp.verbose = true;
 )
 ~disp.remove
 ::
 
-wait
+changeDirection - check if value is different then previous one
+
 code::
 (
-k = MIDIMKtl.find;
-MKtl('nnkn0').reset;
-~disp =  MDispatch.make(\wait, k, nil, nil, 0.1);
+MIDIMKtl.find;
+k = MKtl('nnkn0').reset;
+~disp =  MDispatch.make(\changeDirection, k, [0.0,1.0]);
 ~disp.verbose = true;
+)
+~disp.remove
+::
+
+wait - only let value pass again after waitTime. This can be used to reduce the rate of incoming messages.
+code::
+(
+MIDIMKtl.find;
+k = MKtl('nnkn0').reset;
+~disp =  MDispatch.make(\wait, k, 0.1);
+~disp.verbose = true;
+//move fader around, and notice that values only appear at maximum every second.
 )
 ::
 
-within - only if values come in within n seconds of each other.
+within - only if values come in within n seconds of each other. This can be used to detect double clicks.
 code::
 (
-k = MIDIMKtl.find;
-MKtl('nnkn0').reset;
-~trigger = MDispatch.make(\trigger,k);
-~disp =  MDispatch.make(\within, ~trigger, nil, nil, 0.5);
+MIDIMKtl.find;
+k = MKtl('nnkn0').reset;
+~trigger = MDispatch.make(\changeDirection,k);
+~disp =  MDispatch.make(\within, ~trigger, 0.5);
 ~disp.verbose = true;
+//wiggle fader slowly nothing happens.
+//wiggle fader fast and you get hits.
 )
 ::
 
-delay - only if values come in within n seconds of each other.
+delay - only let value pass again after waitTime, but get the latest value.
 code::
 (
-k = MIDIMKtl.find;
-MKtl('nnkn0').reset;
-~disp =  MDispatch.make(\delay, k, nil, nil, 1);
+MIDIMKtl.find;
+k = MKtl('nnkn0').reset;
+~disp =  MDispatch.make(\delay, k, 1);
 ~disp.verbose = true;
 )
 

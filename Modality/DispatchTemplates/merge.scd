@@ -14,7 +14,7 @@ func:{ |disp,dispatchs|
 	});
   	disp
 },
-desc: "merges multiple sources into just one Dispatch",
+desc: "merges multiple sources into just one MDispatch",
 name: "merge",
 type: "creator"
 )

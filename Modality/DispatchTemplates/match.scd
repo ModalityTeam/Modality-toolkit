@@ -18,7 +18,7 @@ func:{ |disp, source, matchValues, elemKeys, sourceKey|
 	} );
    disp
 },
-desc: "pass values when in range",
+desc: "pass values when they match some value in list",
 name: "match",
 type: "creator"
 )

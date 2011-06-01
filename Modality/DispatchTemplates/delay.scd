@@ -35,7 +35,7 @@ func:{ |disp, source, waitTime = 1, elemKeys, sourceKey|
 	});
    disp
 },
-desc: "delay the action, but get the latest value",
+desc: "only let value pass again after waitTime, but get the latest value",
 name: "delay",
 type: "creator"
 )

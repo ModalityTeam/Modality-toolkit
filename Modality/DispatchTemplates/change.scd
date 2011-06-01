@@ -14,7 +14,6 @@ func:{ |disp, source,elemKeys, sourceKey|
 		var key = ~changedIn[\key];
 		var source = ~changedIn[\source];
 		var value = ~changedIn[\val];
-			~changedIn.postln;
 
 		if( value != ~prevValues[source][key]) {
 			dis.setOutput(key, true );
