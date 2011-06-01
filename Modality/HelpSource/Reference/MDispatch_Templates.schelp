@@ -28,15 +28,16 @@ MKtl('nnkn0') .reset;
 ~dis.verbose = true;
 )
 ~dis.insp
-
 (
 w = Window.new.front;
 ~sl = Slider(w, Rect(20, 60, 150, 20));
 
-Ndef(\y,{ |freq= 400, mod = 1| Saw.ar( Lag.kr(freq,1)+200 ) * SinOsc.ar(Lag.kr(mod,1) ).range(0.0,1.0)* 0.5 }).play
+Ndef(\y,{ |freq= 400, mod = 1| Saw.ar( Lag.kr(freq,1)+200 ) * SinOsc.ar(Lag.kr(mod,1) ).range(0.0,1.0)* 0.5 }).play;
 
-~dis.addFuncElem(\sl1_1,\blah,{¬†|elem| { ~sl.value_(elem.value/10) }.defer; Ndef(\y).set(\freq,elem.value*300)  });
-~dis.addFuncElem(\sl2_1,\blah,{ |elem|  Ndef(\y).set(\mod, elem.value *5 )  }))
+//move first two faders. velocity maps to frequency and amplitude modulation frequency
+~dis.addFuncElem(\sl1_1,\blah,{¬¨‚Ä†|elem| { ~sl.value_(elem.value/10) }.defer; Ndef(\y).set(\freq,elem.value*300)  });
+~dis.addFuncElem(\sl2_1,\blah,{ |elem|  Ndef(\y).set(\mod, elem.value *5 )  });
+)
 
 ::
 

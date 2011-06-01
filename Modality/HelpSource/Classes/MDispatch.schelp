@@ -1,7 +1,7 @@
 CLASS:: MDispatch
 summary:: Create complex controls from simpler ones
 categories:: Modality, Control
-related:: Classes/MKtl, Classes/FuncChain, Reference/SomeRelatedStuff
+related:: Classes/MKtl, Classes/FuncChain, Reference/MDispatch_Templates
 
 DESCRIPTION::
 A MDispatch allows to create complex controls from simpler ones. A MDispatch has a set of inputs which can come from multiple sources, and has a set of outputs. Each MDispatch contains a link::Classes/FuncChain:: which is triggered on an incoming event, and causes every function in the FuncChain to be executed. 
