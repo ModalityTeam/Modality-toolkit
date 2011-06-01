@@ -24,22 +24,34 @@ MAbstractKtl {
 	}
 	
 	// element funcChain interface
-	addFuncElem { |elementKey, funcName, function, addAction, target, match = false|
-		this.prMatchDo(match, elementKey, _.addFunc( funcName, function , addAction, target) )
+	addFuncElem { |elementKey, funcName, function, addAction, otherFuncName, match = false|
+		this.prMatchDo(match, elementKey, _.addFunc( funcName, function , addAction, otherFuncName) )
 	}
 
-	addFuncElemAfter { |elementKey, funcName, function, target, match = false|
-		this.prMatchDo(match, elementKey, _.addFuncAfter(funcName, function, target) )
+	addFuncElemAfter { |elementKey, funcName, function, otherFuncName, match = false|
+		this.prMatchDo(match, elementKey, _.addFuncAfter(funcName, function, otherFuncName) )
 	}
 	
-	addFuncElemBefore { |elementKey, funcName, function, target, match = false|
-		this.prMatchDo(match, elementKey, _.addFuncBefore( funcName, function, target) )
+	addFuncElemBefore { |elementKey, funcName, function, otherFuncName, match = false|
+		this.prMatchDo(match, elementKey, _.addFuncBefore( funcName, function, otherFuncName) )
 	}
 	
 	removeFuncElem { |elementKey, funcName, match = false|
 		this.prMatchDo(match, elementKey, _.removeFunc(funcName) )
 	}
 	
+	replaceFuncElem { |elementKey, funcName, function, otherName, match = false|
+		this.prMatchDo(match, elementKey, _.replaceFunc(funcName, function, otherName) )				
+	}
+
+	addFuncElemFirst { |elementKey, funcName, function, match = false|
+		this.prMatchDo(match, elementKey, _.addFuncFirst(funcName, function) )		
+	}
+	
+	addFuncElemLast { |elementKey, funcName, function, match = false|
+		this.prMatchDo(match, elementKey, _. addFuncLast(funcName, function) )		
+	}
+		
 	removeAllFromElems {
 		elements.do( _.reset )
 	}
