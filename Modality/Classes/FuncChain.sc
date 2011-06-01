@@ -57,26 +57,26 @@ FuncChain : FunctionList { // a named FunctionList
 		names = names.addFirst(name); 
 	}
 
-	addBefore { |name, func, othername| 
+	addBefore { |name, func, otherName| 
 		var newIndex; 
 		this.removeAt(name); 
 		
-		newIndex = names.indexOf(othername); 
+		newIndex = names.indexOf(otherName); 
 		if (newIndex.isNil) { 
-			warn("FuncChain:addBefore - othername % not present!\n adding at head.".format(name));
+			warn("FuncChain:addBefore - otherName % not present!\n adding at head.".format(name));
 			this.addFirst(name, func)
 		} { 
 			this.insertAtIndex(newIndex, name, func); 
 		}
 	}
 
-	addAfter { |name, func, othername| 
+	addAfter { |name, func, otherName| 
 		var newIndex; 
 		this.removeAt(name); 
 		
-		newIndex = names.indexOf(othername); 
+		newIndex = names.indexOf(otherName); 
 		if (newIndex.isNil) { 
-			warn("FuncChain:addAfter - othername % not present!\n adding % to tail.".format(othername, name));
+			warn("FuncChain:addAfter - otherName % not present!\n adding % to tail.".format(otherName, name));
 			^this.addLast(name, func);
 		};
 		
@@ -88,13 +88,13 @@ FuncChain : FunctionList { // a named FunctionList
 		}
 	}
 
-	replaceAt { |name, func, othername| 
-		var index = names.indexOf(othername);
+	replaceAt { |name, func, otherName| 
+		var index = names.indexOf(otherName);
 		this.removeAt(name); 
 		if (index.notNil) { 
 			this.putAtIndex(index, name, func)
 		} { 							// add if absent
-			warn("FuncChain:replaceAt - othername % not present!\n adding to tail.".format(othername, name));
+			warn("FuncChain:replaceAt - otherName % not present!\n adding to tail.".format(otherName, name));
 			this.put(name, func)
 		};
 	}
@@ -117,12 +117,12 @@ FuncChain : FunctionList { // a named FunctionList
 //		}
 //	}
 //
-//	moveAfter { |name, othername| 
+//	moveAfter { |name, otherName| 
 //		var func = this.at(name); 
 //		if (func.isNil) { 
 //			warn("FuncChain:moveLast - name % not present.\n".format(name));
 //		} {  
-//			this.addAfter(name, func, othername)
+//			this.addAfter(name, func, otherName)
 //		}
 //	}
 //

@@ -24,16 +24,16 @@ MAbstractKtl {
 	}
 	
 	// element funcChain interface
-	addFuncElem { |elementKey, funcName, function, addAction, otherFuncName, match = false|
-		this.prMatchDo(match, elementKey, _.addFunc( funcName, function , addAction, otherFuncName) )
+	addFuncElem { |elementKey, funcName, function, addAction, otherName, match = false|
+		this.prMatchDo(match, elementKey, _.addFunc( funcName, function , addAction, otherName) )
 	}
 
-	addFuncElemAfter { |elementKey, funcName, function, otherFuncName, match = false|
-		this.prMatchDo(match, elementKey, _.addFuncAfter(funcName, function, otherFuncName) )
+	addFuncElemAfter { |elementKey, funcName, function, otherName, match = false|
+		this.prMatchDo(match, elementKey, _.addFuncAfter(funcName, function, otherName) )
 	}
 	
-	addFuncElemBefore { |elementKey, funcName, function, otherFuncName, match = false|
-		this.prMatchDo(match, elementKey, _.addFuncBefore( funcName, function, otherFuncName) )
+	addFuncElemBefore { |elementKey, funcName, function, otherName, match = false|
+		this.prMatchDo(match, elementKey, _.addFuncBefore( funcName, function, otherName) )
 	}
 	
 	removeFuncElem { |elementKey, funcName, match = false|
