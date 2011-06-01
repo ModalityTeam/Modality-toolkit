@@ -118,12 +118,8 @@ returns:: Dictionary[sourceName:Symbol,Dictionary[elementKey:Symbol,Any]]
 
 METHOD:: envir
 An link::Classses/Event:: which holds the internal variables of the Dispatch. It can be used to hold temporary values or calculations.
+ the code::'changedIn':: key holds an event of type code::(source:theSource, key:theKey, value:theValue)::. Each time a new value arrives in one the inputs, each function in the FuncChain will be called. The functions in funcChain can access the input that was changed by getting the variable changedIn.
 returns:: Event
-
-METHOD:: changedIn
-An event of type code::(source:theSource, key:theKey, value:theValue)::. Each time a new value arrives in one the inputs, each function in the FuncChain will be called. The functions in funcChain can access the input that was changed by getting the variable changedIn.
-
-returns:: (source:theSource, key:theKey, value:theValue)
 
 METHOD:: changeSource
 Changes which actual source is associated with an internal source name. For instance, to change code::\myNanoController:: to be associated with code::MKtl('nnkn1'):: instead of code::MKtl('nnkn0'):: one would do
@@ -227,36 +223,6 @@ argument:: elemKey
 Key corresponding to the output.
 
 argument:: value
-
-METHOD:: addToOutput
-Registers a function for updates on the output.
-
-argument:: elementKey
-Key corresponding to the output.
-
-argument:: funcName
-A name for the function. This allows to later remove the function by name.
-
-argument:: function
-A link::Classes/Function::.
-
-argument:: addAction
-see link::Classes/FuncChain::.
-
-argument:: target
-see link::Classes/FuncChain::.
-
-METHOD:: removeFromOutput
-Deregisters a function from an output.
-
-argument:: elemKey
-Key corresponding to the output.
-
-argument:: funcName
-The name used to register the function.
-
-METHOD:: removeAllFromOutput
-Remove all registered functions from all Outputs.
 
 METHOD:: addToProc
 Adds a function to the link::Classes/FuncChain:: for processing events.
