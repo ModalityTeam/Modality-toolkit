@@ -14,6 +14,7 @@ code::
 
 //paged nanoKontrol
 (
+MIDIMKtl.find;
 MKtl('nnkn0').reset;
 ~paged = MDispatch.make(\paged,MKtl('nnkn0'),\rew,\fwd);
 ~paged.verbose = true
@@ -23,7 +24,8 @@ MKtl('nnkn0').reset;
 velocity
 code::
 (
-MKtl('nnkn0') .reset;
+MIDIMKtl.find;
+MKtl('nnkn0').reset;
 ~dis = MDispatch.make(\velocity, MKtl('nnkn0') );
 ~dis.verbose = true;
 )
@@ -45,6 +47,7 @@ Ndef(\y,{ |freq= 400, mod = 1| Saw.ar( Lag.kr(freq,1)+200 ) * SinOsc.ar(Lag.kr(m
 paged velocity
 code::
 (
+MIDIMKtl.find;
 MKtl('nnkn0').reset;
 ~dis1 = MDispatch.make(\paged, MKtl('nnkn0'),\rew,\fwd,4);
 ~dis2 = MDispatch.make(\velocity, ~dis1);
@@ -78,6 +81,7 @@ k.reset;
 trigger
 code::
 (
+MIDIMKtl.find;
 MKtl('nnkn0').reset;
 ~disp =  MDispatch.make(\trigger, MKtl('nnkn0') );
 ~disp.verbose = true;
@@ -90,6 +94,7 @@ MKtl('nnkn0').verbose = false
 multipleClick
 code::
 (
+MIDIMKtl.find;
 MKtl('nnkn0').reset;
 ~disp  =  MDispatch.make(\multipleClick,MKtl('nnkn0'));
 ~disp .verbose = true;
@@ -101,6 +106,7 @@ MKtl('nnkn0').reset;
 thresh
 code::
 (
+MIDIMKtl.find;
 MKtl('nnkn0').reset;
 ~disp =  MDispatch.make(\threshold, MKtl('nnkn0'), thresh: 0.5 );
 ~disp.verbose = true;
@@ -112,6 +118,7 @@ MKtl('nnkn0').reset;
 thresholdUp
 code::
 (
+MIDIMKtl.find;
 MKtl('nnkn0').reset;
 ~disp =  MDispatch.make(\thresholdUp, MKtl('nnkn0'), thresh: 0.5 );
 ~disp.verbose = true;
@@ -123,6 +130,7 @@ thresholdDown
 code::
 // thresh down
 (
+MIDIMKtl.find;
 MKtl('nnkn0').reset;
 ~disp =  MDispatch.make(\thresholdDown, MKtl('nnkn0'), thresh: 0.5 );
 ~disp.verbose = true;
@@ -134,6 +142,7 @@ MKtl('nnkn0').reset;
 threshZones
 code::
 (
+MIDIMKtl.find;
 MKtl('nnkn0').reset;
 ~disp =  MDispatch.make(\threshZones, MKtl('nnkn0'), nil, nil, [0.2,0.5,0.8] );
 ~disp.verbose = true;
@@ -152,6 +161,7 @@ MKtl('nnkn0').reset;
 up
 code::
 (
+MIDIMKtl.find;
 MKtl('nnkn0').reset;
 ~disp =  MDispatch.make(\up, MKtl('nnkn0') );
 ~disp.verbose = true;
@@ -162,7 +172,8 @@ MKtl('nnkn0').reset;
 down
 code::
 (
-k = MKtl('nnkn0').reset;
+k = MIDIMKtl.find;
+MKtl('nnkn0').reset;
 ~disp =  MDispatch.make(\down, k);
 ~disp.verbose = true;
 )
@@ -171,7 +182,8 @@ k = MKtl('nnkn0').reset;
 inRange
 code::
 (
-k = MKtl('nnkn0').reset;
+k = MIDIMKtl.find;
+MKtl('nnkn0').reset;
 ~disp =  MDispatch.make(\inRange, k, nil, nil, [0.5,1.0]);
 ~disp.verbose = true;
 )
@@ -180,7 +192,8 @@ k = MKtl('nnkn0').reset;
 match
 code::
 (
-k = MKtl('nnkn0').reset;
+k = MIDIMKtl.find;
+MKtl('nnkn0').reset;
 ~disp =  MDispatch.make(\match, k, nil, nil, [0.0,1.0]);
 ~disp.verbose = true;
 )
@@ -189,7 +202,8 @@ k = MKtl('nnkn0').reset;
 change
 code::
 (
-k = MKtl('nnkn0').reset;
+k = MIDIMKtl.find;
+MKtl('nnkn0').reset;
 ~disp =  MDispatch.make(\change, k, nil, nil, [0.0,1.0]);
 ~disp.verbose = true;
 )
@@ -199,7 +213,8 @@ k = MKtl('nnkn0').reset;
 changeDirection
 code::
 (
-k = MKtl('nnkn0').reset;
+k = MIDIMKtl.find;
+MKtl('nnkn0').reset;
 ~disp =  MDispatch.make(\changeDirection, k, nil, nil, [0.0,1.0]);
 ~disp.verbose = true;
 )
@@ -209,7 +224,8 @@ k = MKtl('nnkn0').reset;
 wait
 code::
 (
-k = MKtl('nnkn0').reset;
+k = MIDIMKtl.find;
+MKtl('nnkn0').reset;
 ~disp =  MDispatch.make(\wait, k, nil, nil, 0.1);
 ~disp.verbose = true;
 )
@@ -218,7 +234,8 @@ k = MKtl('nnkn0').reset;
 within - only if values come in within n seconds of each other.
 code::
 (
-k = MKtl('nnkn0').reset;
+k = MIDIMKtl.find;
+MKtl('nnkn0').reset;
 ~trigger = MDispatch.make(\trigger,k);
 ~disp =  MDispatch.make(\within, ~trigger, nil, nil, 0.5);
 ~disp.verbose = true;
@@ -228,7 +245,8 @@ k = MKtl('nnkn0').reset;
 delay - only if values come in within n seconds of each other.
 code::
 (
-k = MKtl('nnkn0').reset;
+k = MIDIMKtl.find;
+MKtl('nnkn0').reset;
 ~disp =  MDispatch.make(\delay, k, nil, nil, 1);
 ~disp.verbose = true;
 )
