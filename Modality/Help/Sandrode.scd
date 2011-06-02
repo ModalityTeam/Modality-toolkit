@@ -23,6 +23,10 @@ thisProcess.recompile;
 
 	// OK, ready!
 
+
+
+// tested with external Magic Trackpad - only sees the internal one, hm.
+
 */
 
 (
