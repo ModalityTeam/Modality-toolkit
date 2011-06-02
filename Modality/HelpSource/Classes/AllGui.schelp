@@ -1,0 +1,93 @@
+CLASS:: AllGui
+summary:: Overview of many globally stored objects
+categories:: Undocumented classes
+related:: Interpreter, JITLib, ProxySpace, Ndef, Tdef, Pdef, Pdefn
+
+DESCRIPTION::
+AllGui shows many of the globally storage locations in SC3: 
+	global variables in the interpreter (a-z)
+	objects in the currentEnvironment
+	some classvars that keep all instances of that class:
+		Pdef.all, Tdef.all, Pdefn.all,
+		ProxySpace.all, Ndef.all,
+	and potentially others, such as MKtl.
+
+For each location, the number of items there is displayed, 
+and a gui can be opened to display it in more detail.
+
+code::
+a = AllGui.new;
+	// test adding things that should show up: 
+a = 12;
+z = 42;
+~bar = 345;
+~foo = 345;
+Tdef(\a);	
+Tdef(\b);	
+Pdef(\a);
+Pdef(\b);
+Pdefn(\trala);
+Pdefn(\hopsa);
+Ndef(\a);
+Ndef(\b);
+	// then try clicking the open button on one...
+::
+
+EXAMPLES::
+
+code::
+	// the guis are reasonably non-overlapping / tiled:
+a = AllGui(12);
+AllGui.openFuncs.do(_.value(8)); // small screens
+AllGui.openFuncs.do(_.value(12));
+::
+
+CLASSMETHODS::
+
+METHOD:: globalNames
+the interpreter global variables as a list of symbols.
+
+METHOD:: labels
+the names of the currently watched storage locations.
+
+METHOD:: countFuncs
+the functions for counting the objects in each location
+
+METHOD:: openFuncs
+the functions to run when the open button is pressed, 
+which typically opens the appropriate gui.
+
+METHOD:: new
+create a new AllGui
+
+argument:: numItems
+the number of items to show on each subgui
+
+argument:: parent
+an optional parent view
+
+argument:: bounds
+optional bounds 
+
+returns:: the new AllGui.
+
+METHOD:: add
+add an item to display 
+
+argument:: name
+the name under which to display it
+
+argument:: countFunc
+the function for counting the objects there
+
+argument:: openFunc
+the fucntion for opening a GUI for that location
+
+returns:: (returnvalue)
+
+METHOD:: remove
+remove an item from display 
+
+argument:: name
+the name of the item to remove
+
