@@ -20,5 +20,15 @@
 		
 		this[oldName] = otherVal;
 		this[newKey] = val;
-	}	
+	}
+}
+	// move up to dictionary? 
+	// dictionary key could also be e.g. a string
++ IdentityDictionary {
+	atKeys { |keys|
+		if (keys.isKindOf(Collection)) { 
+			^keys.collect (this.at(_))
+		};
+		^this.at(keys);
+	}
 }

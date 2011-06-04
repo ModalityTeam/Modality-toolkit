@@ -22,9 +22,3 @@
 + ProxySpace {
 	size { ^envir.size }
 }
-	// support option \small for small displays:
-	// less than 800@600, arZone only 390 wide, 
-	// rotate between nothing, krZone, editZone
-+ ProxyMixer { 
-
-}

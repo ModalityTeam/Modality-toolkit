@@ -1,20 +1,4 @@
-
-/* 
 // support an option \small for 800x600 screens. 
-
-	make arZone < 400,
-	move both krZone and editZone in the same location,
-	toggle between small, krZone, editGui.
-	
-m = NdefMixer(s, 8, options: [\small]);
-Ndef(\a, { |freq, amp| Pulse.ar(amp) }).play
-Ndef(\k, { |freq, amp| Pulse.kr(amp) });
-
-m = NdefMixer.small(s, 12);
-m.moveTo(0,0)
-m = NdefMixer(s);
-
-*/
 
 + NdefGui { 
 		// smaller fader
@@ -80,7 +64,7 @@ m = NdefMixer(s);
 		this.makeArZone(isSmall);
 		
 		this.makeKrZone; 
-		this.setEdButs;
+		this.setEdButs(isSmall);
 		
 		if (isSmall) { 
 			// put editGui in the same place as krZone
@@ -131,4 +115,23 @@ m = NdefMixer(s);
 		};
 	}
 
+	setEdButs { |isSmall = false| 
+		(arGuis ++ krGuis).do { |pxgui|
+			pxgui.edBut.states_([
+					["ed", Color.black, Color.grey(0.75)],
+					["ed", Color.black, Color.white]])
+
+				.action_({ arg btn, mod; 
+					if (mod.notNil and: { mod.isAlt }) { 
+						NdefGui(pxgui.object);
+					} { 
+						this.switchSize(2, isSmall);
+						editGui.object_(pxgui.object);
+						arGuis.do { |gui| gui.edBut.value_(0) };
+						krGuis.do { |gui| gui.edBut.value_(0) };
+						btn.value_(1);
+					};
+				});		
+		};
+	}
 }
