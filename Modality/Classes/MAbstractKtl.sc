@@ -113,4 +113,13 @@ MAbstractKtl {
 			elements.do{|item| item.funcChain.removeAt(\verbose)}
 		})
 	}
+	
+	//also can be used to simulate a non present hardware
+	receive { |key, val|
+		elements[ key ].update( val )
+	}
+	
+	send { |key, val|
+			
+	}
 }

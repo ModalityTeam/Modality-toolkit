@@ -258,17 +258,4 @@ MKtl : MAbstractKtl { // abstract class
    			elem.deviceDescription[\type] == type
 		}	
 	}
-		
-	//useful if Dispatcher also uses this class
-	//also can be used to simulate a non present hardware
-	receive { |key, val|
-		// is it really inputs ?
-		elements[ key ].update( val )
-	}
-	
-	send { |key, val|
-			
-	}
-
-
 }
