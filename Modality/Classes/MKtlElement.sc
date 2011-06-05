@@ -61,11 +61,11 @@ MAbstractElement {
 		funcChain.removeAt(funcName) 
 	}
 	
-/*	send { |val|
+	send { |val|
 		value = val;
-		//then send to hardware 	
+		source.send(name,val)
 	}
-*/
+
 	value_ { | newval |
 		// copies the current state to:
 		prevValue = value;
@@ -73,6 +73,7 @@ MAbstractElement {
 		value = newval;
 		this.updateValueOnServer;
 	}
+	
 	valueAction_ { |newval|
 		this.value_( newval );
 		this.doAction;
@@ -81,6 +82,7 @@ MAbstractElement {
 	rawValue_{|newval|
 		this.value_(newval);
 	}
+	
 	rawValueAction_{|newval|
 		this.rawValue_( newval );
 		this.doAction;
@@ -160,16 +162,18 @@ MKtlElement : MAbstractElement{
 	}
 
 	defaultValue {
-		^spec.default;	
+		^spec.default;
 	}
-	
+
 	value { ^spec.unmap(value) }
-	
+
 	// usually, you do not call this but rawValue_ instead.
 	value_ {|newval|
 		^super.value(spec.map(newval))
 	}
+
 	rawValue { ^value }
+
 	rawValue_ {|newVal|
 		super.value_(newVal)
 	}
