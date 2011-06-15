@@ -4,21 +4,26 @@ MKtl.find;
 a = MKtl.new( 'thrs0' );
 
 // check whether it works
-//a.verbose_( true );
-//a.verbose_( false );
+a.verbose_( true );
+a.verbose_( false );
 
 d = ();
 
-d.trigger = Dispatch.new( \trigger, a, a.elements.select{ |it| it.type == \button }.collect( _.name ) );
-//d.trigger.verbose_( false )
+d.trigger = MDispatch.make( \trigger, a, a.elements.select{ |it| it.type == \button }.collect( _.name ) );
+d.trigger.verbose_( false )
 
-d.trigger.addToOutput( \bt1r, \playSynth, { Ndef(\ting).set( \trig, 1, \freq, 600 ) } );
-d.trigger.addToOutput( \bt2r, \playSynth, { Ndef(\ting).set( \trig, 1, \freq, 800 ) } );
-d.trigger.addToOutput( \bt3r, \playSynth, { Ndef(\ting).set( \trig, 1, \freq, 1000 ) } );
-d.trigger.addToOutput( \bt4r, \playSynth, { Ndef(\ting).set( \trig, 1, \freq, 1200 ) } );
+d.trigger.envir
+d.trigger.addToProc( \test, { |d,e| d.postln; ~changedIn.postln })
 
+d.trigger.addFuncElem( \bt1r, \playSynth, { Ndef(\ting).set( \trig, 1, \freq, 600 ) } );
+d.trigger.addFuncElem( \bt2r, \playSynth, { Ndef(\ting).set( \trig, 1, \freq, 800 ) } );
+d.trigger.addFuncElem( \bt3r, \playSynth, { Ndef(\ting).set( \trig, 1, \freq, 1000 ) } );
+d.trigger.addFuncElem( \bt4r, \playSynth, { Ndef(\ting).set( \trig, 1, \freq, 1200 ) } );
 
-d.mycount = Dispatch.new(\mycount);
+s.meter;
+NdefMixer.new(s)
+
+d.mycount = MDispatch.new(\mycount);
 d.mycount.envir[ \mycount_rfTop6 ] = 0;
 d.mycount.envir[ \mycount_lfTop5 ] = 0;
 d.mycount.envir[ \maxcount ] = 3;
@@ -26,25 +31,27 @@ d.mycount.envir[ \maxcount ] = 3;
 d.mycount.mapToElem( d.trigger, \rfTop6 );
 d.mycount.mapToElem( d.trigger, \lfTop5 );
 
-[\rc1,\rc2,\rc3,\lc1,\lc2,\lc3].do{ |it| d.mycount.createOutput( it ) };
+[\rc1,\rc2,\rc3,\lc1,\lc2,\lc3].do{ |it| d.mycount.addFuncElem( it ) };
+
+d.mycount.addToProc( \counting, {
 
 d.mycount.addToProc( \counting, { |d,e| var mykey = (\mycount_ ++ d.changedIn.key).asSymbol; e[mykey] = (e[mykey] + 1).wrap(0,e[\maxcount] ); } );
 
-d.mycount.addToProc( \countR1, { |d,e| if ( d.changedIn.key == \rfTop6 ) { if ( e[\mycount_rfTop6] == 1 ){ d.setOutput( \rc1, 1 ) }{ d.setOutput( \rc1, 0 ) } } } );
-d.mycount.addToProc( \countR2, { |d,e| if ( d.changedIn.key == \rfTop6 ) { if ( e[\mycount_rfTop6] == 2 ){ d.setOutput( \rc2, 1 ) }{ d.setOutput( \rc2, 0 ) } } } );
-d.mycount.addToProc( \countR3, { |d,e| if ( d.changedIn.key == \rfTop6 ) { if ( e[\mycount_rfTop6] == 3 ){ d.setOutput( \rc3, 1 ) }{ d.setOutput( \rc3, 0 ) } } } );
-d.mycount.addToProc( \countL1, { |d,e| if ( d.changedIn.key == \lfTop5 ) { if ( e[\mycount_lfTop5] == 1 ){ d.setOutput( \lc1, 1 ) }{ d.setOutput( \lc1, 0 ) } } } );
-d.mycount.addToProc( \countL2, { |d,e| if ( d.changedIn.key == \lfTop5 ) { if ( e[\mycount_lfTop5] == 2 ){ d.setOutput( \lc2, 1 ) }{ d.setOutput( \lc2, 0 ) } } } );
-d.mycount.addToProc( \countL3, { |d,e| if ( d.changedIn.key == \lfTop5 ) { if ( e[\mycount_lfTop5] == 3 ){ d.setOutput( \lc3, 1 ) }{ d.setOutput( \lc3, 0 ) } } } );
+d.mycount.addToProc( \countR1, { |d,e| if ( ~changedIn.key == \rfTop6 ) { if ( e[\mycount_rfTop6] == 1 ){ d.setOutput( \rc1, 1 ) }{ d.setOutput( \rc1, 0 ) } } } );
+d.mycount.addToProc( \countR2, { |d,e| if ( ~changedIn.key == \rfTop6 ) { if ( e[\mycount_rfTop6] == 2 ){ d.setOutput( \rc2, 1 ) }{ d.setOutput( \rc2, 0 ) } } } );
+d.mycount.addToProc( \countR3, { |d,e| if ( ~changedIn.key == \rfTop6 ) { if ( e[\mycount_rfTop6] == 3 ){ d.setOutput( \rc3, 1 ) }{ d.setOutput( \rc3, 0 ) } } } );
+d.mycount.addToProc( \countL1, { |d,e| if ( ~changedIn.key == \lfTop5 ) { if ( e[\mycount_lfTop5] == 1 ){ d.setOutput( \lc1, 1 ) }{ d.setOutput( \lc1, 0 ) } } } );
+d.mycount.addToProc( \countL2, { |d,e| if ( ~changedIn.key == \lfTop5 ) { if ( e[\mycount_lfTop5] == 2 ){ d.setOutput( \lc2, 1 ) }{ d.setOutput( \lc2, 0 ) } } } );
+d.mycount.addToProc( \countL3, { |d,e| if ( ~changedIn.key == \lfTop5 ) { if ( e[\mycount_lfTop5] == 3 ){ d.setOutput( \lc3, 1 ) }{ d.setOutput( \lc3, 0 ) } } } );
 
-d.countTrigger = Dispatch.new( \trigger, d.mycount, d.mycount.elements.collect( _.name ) );
+d.countTrigger = MDispatch.make( \trigger, d.mycount, d.mycount.elements.collect( _.name ) );
 
 a.verbose = false;
 d.mycount.verbose = false;
 
-d.mycount.addToOutput( \rc1, \sine, { |c| if ( c.value == 1 ) { Ndef( \ting, { Pan2.ar( Mix.new( SinOsc.ar( \freq.kr(600) * LFNoise1.kr( 30, 0.05, 1) * ( 1 + [ 0,\detune.kr(0),\detune2.kr(0)] ) ) * EnvGen.kr( Env.perc, \trig.tr(1), timeScale: \dur.kr(1), doneAction: 0 ) ) / 12 , \pos.kr(0) ) } ); \sine.postln; }; }  );
-d.mycount.addToOutput( \rc2, \noise, { |c| if (c.value == 1){ Ndef( \ting, { Pan2.ar( Mix.new( BPF.ar( WhiteNoise.ar(1), \freq.kr(600) * ( 1 + [ 0,\detune.kr(0),\detune2.kr(0)] ), 0.1 ) * 2 * EnvGen.kr( Env.perc, \trig.tr(1), timeScale: \dur.kr(1), doneAction: 0 ) ) / 3 , \pos.kr(0) ) } ); \noise.postln; } } );
-d.mycount.addToOutput( \rc3, \resonz, { |c| if (c.value == 1){ 
+d.mycount.addFuncElem( \rc1, \sine, { |c| if ( c.value == 1 ) { Ndef( \ting, { Pan2.ar( Mix.new( SinOsc.ar( \freq.kr(600) * LFNoise1.kr( 30, 0.05, 1) * ( 1 + [ 0,\detune.kr(0),\detune2.kr(0)] ) ) * EnvGen.kr( Env.perc, \trig.tr(1), timeScale: \dur.kr(1), doneAction: 0 ) ) / 12 , \pos.kr(0) ) } ); \sine.postln; }; }  );
+d.mycount.addFuncElem( \rc2, \noise, { |c| if (c.value == 1){ Ndef( \ting, { Pan2.ar( Mix.new( BPF.ar( WhiteNoise.ar(1), \freq.kr(600) * ( 1 + [ 0,\detune.kr(0),\detune2.kr(0)] ), 0.1 ) * 2 * EnvGen.kr( Env.perc, \trig.tr(1), timeScale: \dur.kr(1), doneAction: 0 ) ) / 3 , \pos.kr(0) ) } ); \noise.postln; } } );
+d.mycount.addFuncElem( \rc3, \resonz, { |c| if (c.value == 1){ 
 	Ndef( \ting, { Pan2.ar( Mix.new( Resonz.ar( Dust.ar(\dust.kr(5) ), \freq.kr(600) * 10 * ( 1 + [ 0,\detune.kr(0),\detune2.kr(0)] ), 0.1 ) * \mul.kr(100) * EnvGen.kr( Env.perc, \trig.tr(1), timeScale: \dur.kr(1), doneAction: 0 ) ) / 3 , \pos.kr(0) ); } ); \resonz.postln;
 } } );
 
