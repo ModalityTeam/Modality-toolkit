@@ -1,7 +1,7 @@
 (
 func:{ |disp, source, waitTime = 1, elemKeys, sourceKey|
 	
-	disp.map(source, elemKeys);		
+	disp.map(source, elemKeys);
 	disp.createOutputsFromInputs;
 	
 	disp.envir.put(\prevValues,
@@ -14,7 +14,7 @@ func:{ |disp, source, waitTime = 1, elemKeys, sourceKey|
 		disp.sources.collect{ |keysDict|
 			keysDict.collect{ nil }
 		}
-	);			
+	);
 
 	disp.addToProc( \calc, { |dis|
 		var key = ~changedIn[\key];
@@ -27,7 +27,7 @@ func:{ |disp, source, waitTime = 1, elemKeys, sourceKey|
 			~tasks[source][key] = Task({ 
 				waitTime.wait;
 				dis.elements[key].value_(~prevValues[source][key]).doAction
-			}).start;			
+			}).start;
 		} {
 			
 		}

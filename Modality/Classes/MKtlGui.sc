@@ -206,7 +206,7 @@ MKtlGui : JITGui {
 	//			[parent, elemBounds, elem].postln;
 	//		//	buildFuncs[elem.type].value();
 	//		};
-		} {	 
+		} {
 			rectDict.keysValuesDo { |k, rect| 
 				var elem = object.elements[k];
 				buildFuncs[elem.type].value(elemParent, rect, elem);

@@ -33,7 +33,7 @@ PdefnAllGui : TaskProxyAllGui {
 
 	setDefaults { 
 		defPos = 540@660;
-		minSize = 260 @ (numItems + 1 * 20);		
+		minSize = 260 @ (numItems + 1 * 20);
 	}
 }
 

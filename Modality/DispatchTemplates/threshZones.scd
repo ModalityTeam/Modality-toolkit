@@ -31,7 +31,7 @@
 				currentTresh = th;	
 				currentTreshIndex = i;						};
 			if( ~prevValues[source][key] > th ) {
-				prevTresh = th;								};				
+				prevTresh = th;								};
 		};
 		
 		if( prevTresh != currentTresh ) {

@@ -9,12 +9,12 @@ CompassView {
 		
 	value_ 	{ |val| 
 		value = val; 
-		this.buttonReset(value);		
+		this.buttonReset(value);
 	}
 
 	valueAction_ 	{ |val| 
 		this.value_(val); 
-		action.value(this);		
+		action.value(this);
 	}
 	
 	buttonReset { |val| 

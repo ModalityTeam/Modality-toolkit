@@ -1,7 +1,7 @@
 (
 func:{ |disp, source, waitTime = 1, elemKeys, sourceKey|
 	
-	disp.map(source, elemKeys);		
+	disp.map(source, elemKeys);
 	disp.createOutputsFromInputs;
 	
 	disp.envir.put(\tasks,
@@ -16,11 +16,11 @@ func:{ |disp, source, waitTime = 1, elemKeys, sourceKey|
 		var value = ~changedIn[\val];
 		
 		if( ~tasks[source][key].isPlaying.not ) {
-			~tasks[source][key] = Task({ waitTime.wait; }).start;			
+			~tasks[source][key] = Task({ waitTime.wait; }).start;
 		} {
 			~tasks[source][key].stop;
 			~tasks[source][key] = nil;
-			dis.setOutput(key, value );			
+			dis.setOutput(key, value );
 		}
 	
 	});

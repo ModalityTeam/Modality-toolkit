@@ -68,7 +68,7 @@
 		
 		if (isSmall) { 
 			// put editGui in the same place as krZone
-			zone.decorator.left_(krZone.bounds.left).top_(krZone.bounds.top);		
+			zone.decorator.left_(krZone.bounds.left).top_(krZone.bounds.top);
 				// change openEditButton action:
 			openEditBut.action = { |but| this.switchSize(but.value, true) };
 		};
@@ -131,7 +131,7 @@
 						krGuis.do { |gui| gui.edBut.value_(0) };
 						btn.value_(1);
 					};
-				});		
+				});
 		};
 	}
 }

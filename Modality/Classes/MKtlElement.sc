@@ -4,7 +4,7 @@ MAbstractElement {
 	var <name; // its name in Ktl.elements
 	var <type; // its type. 
 
-	var <funcChain; 	
+	var <funcChain;
 	
 	// keep value and previous value here
 	var <value;

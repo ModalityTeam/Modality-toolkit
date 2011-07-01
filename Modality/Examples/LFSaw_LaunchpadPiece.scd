@@ -146,7 +146,7 @@ Ndef(\murder, {|mute = 1|
 		).tanh * i.linlin(0, 7, 1, 0.125)
 		* SinOsc.ar(i.linlin(0, 64, 5, 1.25).round(1.25), rrand(0, 0.1)).range(0.25, 1) * mute
 	} * ctrls).clump(2).sum.tanh ;
-})	 
+})
 )
 
 
@@ -174,5 +174,5 @@ Ndef(\crackle, {|tail = 3, clicky = 0.04, crackle = 30|
 		};
 		src * SinOsc.ar(i+1).range(0.1, 1) * ctrl.lag(0, tail)
 	}.postln ).sum.tanh ;
-})	 
+})
 )

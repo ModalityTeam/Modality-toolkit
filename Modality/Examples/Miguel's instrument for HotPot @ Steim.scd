@@ -20,7 +20,7 @@ Ndef(\out).ar;
 
 Ndef(\folter, { |revMix = 0, lfMix = 0|
 	var in = Ndef(\out).ar;
-   	FreeVerb.ar( SinOsc.ar(2+(lfMix*300)).range(0,1)*in, 0.7, Lag.kr(revMix) )    
+   	FreeVerb.ar( SinOsc.ar(2+(lfMix*300)).range(0,1)*in, 0.7, Lag.kr(revMix) )
 });
 ~spec = [0,7.0,\lin].asSpec;
 

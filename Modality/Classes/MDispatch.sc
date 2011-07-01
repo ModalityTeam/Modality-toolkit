@@ -57,7 +57,7 @@ MDispatch : MAbstractKtl {
 			"//" + this.class ++ ": - no dispatch template found for %: please make them!\n"
 			.postf( this.cleanTemplateName(name) );
 			nil
-		}				
+		}
 	}
 	
 	init{ |nm|
@@ -104,7 +104,7 @@ MDispatch : MAbstractKtl {
 		if ( mappedElems[sourceKey].isNil ){
 			mappedElems[sourceKey] = List.new;
 		};
-		mappedElems[sourceKey].add( elemKey );		
+		mappedElems[sourceKey].add( elemKey );
 	}
 
 	map{ |source, elemKeys, sourceKey|
@@ -119,13 +119,13 @@ MDispatch : MAbstractKtl {
 		} {
 			//map just selected keys
 			elemKeys.do{ |elemKey| this.mapToElem(source, elemKey, sourceKey)}
-		}			
+		}
 	}
 	
 	mapToElem{ |source, elemKey, sourceKey|
 		sourceKey = (sourceKey ? source.name).asSymbol;
 		this.prMapSourceToKey(source, sourceKey);
-		this.prRegisterInputWithSource(source, elemKey.asSymbol, sourceKey)		
+		this.prRegisterInputWithSource(source, elemKey.asSymbol, sourceKey)
 	}
 
 	lookupSources{ |source|
@@ -160,7 +160,7 @@ MDispatch : MAbstractKtl {
 			elemKeys.do{ |elemKey|
 				this.createOutput(elemKey.asSymbol)
 			}
-		}			
+		}
 	}
 	
 	getOutput{ |elemKey|

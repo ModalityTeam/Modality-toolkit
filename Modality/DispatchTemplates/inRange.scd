@@ -2,7 +2,7 @@
 func:{ |disp, source,elemKeys, sourceKey, range|
 	range = range ? [0.2,0.3];
 	
-	disp.map(source, elemKeys);		
+	disp.map(source, elemKeys);
 	disp.createOutputsFromInputs;	
 	
 	disp.addToProc( \threshCalc, { |dis|

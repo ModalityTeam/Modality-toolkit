@@ -24,7 +24,7 @@ FuncChain : FunctionList { // a named FunctionList
 		} {	// or add to end
 			names = names.add(name); 
 			array = array.add(func);
-		}; 	
+		};
 	}
 
 	at { |name| 

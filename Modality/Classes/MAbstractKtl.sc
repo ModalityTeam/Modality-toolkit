@@ -41,15 +41,15 @@ MAbstractKtl {
 	}
 	
 	replaceFuncElem { |elementKey, funcName, function, otherName, match = false|
-		this.prMatchDo(match, elementKey, _.replaceFunc(funcName, function, otherName) )				
+		this.prMatchDo(match, elementKey, _.replaceFunc(funcName, function, otherName) )
 	}
 
 	addFuncElemFirst { |elementKey, funcName, function, match = false|
-		this.prMatchDo(match, elementKey, _.addFuncFirst(funcName, function) )		
+		this.prMatchDo(match, elementKey, _.addFuncFirst(funcName, function) )
 	}
 	
 	addFuncElemLast { |elementKey, funcName, function, match = false|
-		this.prMatchDo(match, elementKey, _. addFuncLast(funcName, function) )		
+		this.prMatchDo(match, elementKey, _. addFuncLast(funcName, function) )
 	}
 		
 	removeAllFromElems {

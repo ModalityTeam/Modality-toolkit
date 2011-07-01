@@ -1,7 +1,7 @@
 (
 func:{ |disp, source, waitTime = 1, elemKeys, sourceKey|
 
-	disp.map(source, elemKeys);		
+	disp.map(source, elemKeys);
 	disp.createOutputsFromInputs;	
 	
 	disp.envir.put(\tasks,

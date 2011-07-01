@@ -24,7 +24,7 @@ MKtl : MAbstractKtl { // abstract class
 	*initClass {
 		Class.initClassTree(Spec);
 		all = ();
-		allAvailable = ();		
+		allAvailable = ();
 		
 		specs = ().parent_(Spec.specs);
 		
@@ -87,7 +87,7 @@ MKtl : MAbstractKtl { // abstract class
 						// add the other protocols
 					);
 				};
-			}		
+			}
 		};
 		// create an instance of the right subclass based on the protocol given in the device description
 		devDesc = this.getDeviceDescription( deviceDescName );
@@ -110,7 +110,7 @@ MKtl : MAbstractKtl { // abstract class
 			warn("MKtl name '%' is in use already. Please use another name."
 				.format(name));
 			^nil
-		};		
+		};
 		^this.basicNew( name, deviceDescName )
 	}
 
@@ -119,7 +119,7 @@ MKtl : MAbstractKtl { // abstract class
 			warn("MKtl name '%' is in use already. Please use another name."
 				.format(name));
 			^false
-		};		
+		};
 		^true
 	}
 	
@@ -150,7 +150,7 @@ MKtl : MAbstractKtl { // abstract class
 				"//" + this.class ++ ": - no device description index found!\n"
 				.post;
 			};
-		};		
+		};
 	}
 
 	*getDeviceDescription { |devName|

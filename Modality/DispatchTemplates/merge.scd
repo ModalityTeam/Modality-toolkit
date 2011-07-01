@@ -4,7 +4,7 @@ func:{ |disp,dispatchs|
 	dispatchs.do{ |arr|
 		var dispatch,elemKeys;
 		#dispatch, elemKeys = arr;
-		disp.map(dispatch, elemKeys)		
+		disp.map(dispatch, elemKeys)
 	};
 	
 	disp.createOutputsFromInputs;
