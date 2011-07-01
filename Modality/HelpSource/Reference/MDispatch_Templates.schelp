@@ -199,7 +199,7 @@ k = MKtl('nnkn0').reset;
 )
 ::
 
-change - check if value is different then previous one
+change - check if value is different than previous one
 code::
 (
 MIDIMKtl.find;
@@ -210,7 +210,7 @@ k = MKtl('nnkn0').reset;
 ~disp.remove
 ::
 
-changeDirection - check if value is different then previous one
+changeDirection - check if value is different than previous one
 
 code::
 (

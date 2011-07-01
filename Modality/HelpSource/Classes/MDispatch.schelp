@@ -4,13 +4,14 @@ categories:: Modality, Control
 related:: Classes/MKtl, Classes/FuncChain, Reference/MDispatch_Templates
 
 DESCRIPTION::
-A MDispatch allows to create complex controls from simpler ones. A MDispatch has a set of inputs which can come from multiple sources, and has a set of outputs. Each MDispatch contains a link::Classes/FuncChain:: which is triggered on an incoming event, and causes every function in the FuncChain to be executed. 
-MDispatchs can be handwritten or created using a template.
+An MDispatch allows to create complex controls from simpler ones. An MDispatch has both a set of inputs (possibly from multiple sources) and a set of outputs. Each MDispatch contains a link::Classes/FuncChain:: which is triggered on an incoming event, and causes every function in the FuncChain to be executed. 
+MDispatches can be handwritten or created using a template.
 
 handwritten:
+
 code::
 (
-//change 'nnkn0' to the name of your controller;
+//change 'nnkn0' to the MKtl shortname of your controller
 Mktl.find;
 k = MKtl('nnkn0');
 k.reset;
@@ -34,7 +35,7 @@ Using a template:
 
 code::
 (
-//change 'nnkn0' to the name of your controller;
+//change 'nnkn0' to the MKtl shortname of your controller
 Mktl.find;
 k = MKtl('nnkn0');
 k.reset;
