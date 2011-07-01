@@ -35,19 +35,21 @@ s.boot;
 
 
 
+
 (
 // Dispatch
-q.toggleDispatch = Dispatch.new;
+q.toggleDispatch = MDispatch.new;
 
 // create
 
 q.toggleDispatch.map(q.lnch, q.names);
 // create outputs for the inputs
 q.toggleDispatch.createOutputsFromInputs;
-q.toggleDispatch.envir.states = ();
-q.names.do{|name|  q.toggleDispatch.envir.states.put(name, 0)};
-q.toggleDispatch.addToProc( \toggle, {  |dis,env|
-	var in = dis.changedIn; // the thing that changed
+q.toggleDispatch.envir[\states] = ();
+q.names.do{|name|  q.toggleDispatch.envir[\states].put(name, 0)};
+q.toggleDispatch.addToProc( \toggle, {  |dis|
+	var env = dis.envir;
+	var in = env[\changedIn]; // the thing that changed
 	var key = in[\key];
 	var val = in[\val];
 
@@ -58,10 +60,11 @@ q.toggleDispatch.addToProc( \toggle, {  |dis,env|
 });
 )
 
+
 (
 // set lights
 q.names.do{|name| 
-	q.toggleDispatch.addToOutput(name, \setLight, {|element|
+	q.toggleDispatch.addFuncElem(name, \setLight, {|element|
 		var idx = q.names.indexOf(element.name);
 		
 		q.lnhout.setColor([idx div: 8, idx % 8], [[\green, \fGreen], [\red, \fRed]][idx%2][element.value])
@@ -72,45 +75,48 @@ q.ticker.stop;
 q.ticker = SkipJack({q.lnhout.tick}, 0.25)
 )
 
+q.lnch
+MKtl
 (
-q.lnch.addFunc(\up, \muteGrid, {|elem|
+q.lnch.addFuncElem(\up, \muteGrid, {|elem|
+	elem.value.postln;
 	elem.value.booleanValue.if({
 		Ndef(\murder).set(\mute, 0);
 	},{
 		Ndef(\murder).set(\mute, 1);
 	})
 });
-q.lnch.addFunc(\left, \longTail, {|elem|
+q.lnch.addFuncElem(\left, \longTail, {|elem|
 	elem.value.booleanValue.if({
 		Ndef(\crackle).set(\tail, 0);
 	},{
 	})
 });
-q.lnch.addFunc(\right, \shortTail, {|elem|
+q.lnch.addFuncElem(\right, \shortTail, {|elem|
 	elem.value.booleanValue.if({
 		Ndef(\crackle).set(\tail, 6);
 	},{
 	})
 });
-q.lnch.addFunc(\session, \clicky, {|elem|
+q.lnch.addFuncElem(\session, \clicky, {|elem|
 	elem.value.booleanValue.if({
 		Ndef(\crackle).set(\clicky, 0.0004);
 	},{
 	})
 });
-q.lnch.addFunc(\user1, \clicky, {|elem|
+q.lnch.addFuncElem(\user1, \clicky, {|elem|
 	elem.value.booleanValue.if({
 		Ndef(\crackle).set(\clicky, 0.004);
 	},{
 	})
 });
-q.lnch.addFunc(\user2, \clicky, {|elem|
+q.lnch.addFuncElem(\user2, \clicky, {|elem|
 	elem.value.booleanValue.if({
 		Ndef(\crackle).set(\crackle, 5);
 	},{
 	})
 });
-q.lnch.addFunc(\mixer, \clicky, {|elem|
+q.lnch.addFuncElem(\mixer, \clicky, {|elem|
 	elem.value.booleanValue.if({
 		Ndef(\crackle).set(\crackle, 30);
 	},{
