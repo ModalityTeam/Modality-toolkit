@@ -56,7 +56,7 @@ LaunchpadOut {
 		midiOut.noteOn(0, matrixIdx[which[0]][which[1]], colors[color])
 	}
 
-	setPlayColor{|which, color(\red), flash(false)|
+	setArrowColor{|which, color(\red), flash(false)|
 		midiOut.noteOn(0, playIdx[which], colors[color])
 	}
 
