@@ -6,6 +6,7 @@
 * MKtl:
 	* interface protocol: 
 		setting values on the device, sendMsg
+	* Input/Output specs.	
 	* default devSpec files in quarks, custom ones in userAppSupportDir
 	* gesture recording / playback, a class MKtlLoop based on CtLoop?
 	* wrap Description stuff into a separate class? E.g. MKtlDescription?
@@ -29,7 +30,7 @@
     * device: could be multiple devices for devices with the same spec
 
 * HIDMKtl:
-	* test "crossplatform" on osx. Cannot test until HID is broken on osx.
+	* test "crossplatform" on osx. Cannot test while HID is broken on osx.
 
 * MKtlElement:
 	* composites? somewhat important (LFSaw)
@@ -48,13 +49,15 @@
 	* KintectMKtl
 
 * Dispatch:
-	* default template files in quarks, custom ones in userAppSupportDir
-	* pattern matching very slow on Dispatches with many outputs...
-	* no defaults when creatings dispatch because of passing arguments in an array‚Ä¶ what to do ????
+	*How to do paged ctrl / two way communication.	
+	
+	This is not critical, can be done after 1.0:
+	* . It would also be nice to get a description of all parameters needed to create a specific MDispatch via Meta_MDispatch:make.
+	* no defaults when creatings dispatch because of passing arguments in an array… what to do ????
 	* do templates:
 		acc, 
 		Level Of Activity (with decay), 
-		from actionFunc:	\speedAbove,\speedBelow,\delay,\slew.
+		from actionFunc:	\speedAbove,\speedBelow,\slew.
 	 	regions(e.g. launchpad,)
 
 * GUI
