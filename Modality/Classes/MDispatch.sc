@@ -68,6 +68,14 @@ MDispatch : MAbstractKtl {
 		}
 	}
 	
+	*availableTemplates{
+		^MDispatch.dispatchTemplateFolders.collect{ |x| 
+			x.getPathsInDirectory.collect{ |y| 
+				y.removeExtension
+			} 
+		}.flatten
+	}
+	
 	init{ |nm|
 		name = nm; // name is used to register with different controls in their functiondict
 		envir = Environment.new;
