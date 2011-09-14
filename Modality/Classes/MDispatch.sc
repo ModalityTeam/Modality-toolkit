@@ -1,5 +1,5 @@
 MDispatch : MAbstractKtl {
-	classvar <dispatchTemplateFolder;
+	classvar <dispatchTemplateFolders;
 
 	classvar <>tempNamePrefix = "MDispatch_";
 	classvar tempDefCount = 0;
@@ -20,7 +20,9 @@ MDispatch : MAbstractKtl {
 	var <changedOuts; // keeps the changed outputs in order to update
 
 	*initClass{
-		dispatchTemplateFolder = this.filenameSymbol.asString.dirname.dirname +/+ "DispatchTemplates";
+		dispatchTemplateFolders =
+			[this.filenameSymbol.asString.dirname.dirname +/+ "DispatchTemplates",
+			Platform.userAppSupportDir++"/Extensions/DispatchTemplates/"];
 	}
 	
 	*generateTempName {
@@ -44,18 +46,24 @@ MDispatch : MAbstractKtl {
 		^name.asString.collect { |char| if (char.isAlphaNum, char, $_) };
 	}
 
-	*getTemplateFilePath{ |templateName| 
+	*getTemplateFilePaths{ |templateName|
 		var cleanTemplateName = this.cleanTemplateName(templateName);
-		^dispatchTemplateFolder +/+ cleanTemplateName ++ ".scd";
+		^dispatchTemplateFolders.collect({|x| x +/+ cleanTemplateName ++ ".scd"});
 	}
 	
 	*getMDispatchTemplate{ arg name;
 		var path;
-		^if( name.notNil and: {path = this.getTemplateFilePath(name); File.exists(path)} ) {
+		this.getTemplateFilePaths(name).do{ |testpath|
+			if( File.exists(testpath) ) {
+				path = testpath;
+			}
+		};
+		^if( name.notNil and: path.notNil ) {
 			path.load
 		} {
 			"//" + this.class ++ ": - no dispatch template found for %: please make them!\n"
 			.postf( this.cleanTemplateName(name) );
+			("Templates should be placed at "++Platform.userAppSupportDir++"/Extensions/DispatchTemplates/").postln;
 			nil
 		}
 	}
