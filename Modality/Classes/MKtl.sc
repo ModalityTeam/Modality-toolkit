@@ -9,15 +9,20 @@
 //		};
 
 MKtl : MAbstractKtl { // abstract class
-	classvar <deviceDescriptionFolder;
-	classvar <allDevDescs;
+	classvar <deviceDescriptionFolder; //path of MKtlSpecs folder
+	classvar <allDevDescs; // contains the identity dictionary in index.desc.scd
+	//i.e. (BCR2000 -> ( 'osx': ( 'device': BCR2000 ), 'device': BCR2000, 'protocol': midi, 'file': BCR2000.desc.scd ))
 	classvar <all; // will hold all instances of MKtl
-	classvar <specs; // all specs
-	classvar <allAvailable;
+	classvar <specs; // ( 'specName': ControlSpec, ...) -> all specs
+	classvar <allAvailable; // ( 'midi': List['name1',... ], 'hid': List['name1',... ], ... )
 	
 	// an array of keys and values with a description of all the elements on the device.
 	// is read in from an external file.
-	var <deviceDescription; 
+	var <deviceDescription;
+	                    //of type: [ 'elemName', ( 'mode': Symbol, 'chan': Int, 'type': Symbol, 'specName': Symbol,
+                        //'midiType': Symbol, 'spec':ControlSpec, 'ccNum': Int )
+	                    // i.e. [ prA1, ( 'mode': toggle, 'chan': 0, 'type': button, 'specName': midiBut,
+                        //'midiType': cc, 'spec': a ControlSpec(0, 127, 'linear', 127, 0, ""), 'ccNum': 105 )
 
 	//var <>recordFunc; // what to do to record incoming control changes
 	

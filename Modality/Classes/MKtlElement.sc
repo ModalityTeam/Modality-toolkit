@@ -125,9 +125,13 @@ MAbstractElement {
 
 MKtlElement : MAbstractElement{
 	classvar <types;
-		
-	var <deviceDescription;	 // its particular device description  
-	var <spec; // its spec
+
+	var <deviceDescription;	 //its particular device description
+	                         //of type: ( 'chan':Int, 'midiType':symbol, 'spec':ControlSpec,
+	                         //           'ccNum': Int, 'specName':symbol, 'type':Symbol )
+	                         // i.e.   ( 'chan':0, 'midiType':'cc', 'spec': ControlSpec,
+	                         //          'ccNum': 24, 'specName':'midiCC', 'type':'midiBut' )
+	var <spec; // ControlSpec -> its spec
 
 	*initClass {
 		types = (

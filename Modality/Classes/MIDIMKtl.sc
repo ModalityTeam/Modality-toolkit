@@ -7,12 +7,14 @@
 
 MIDIMKtl : MKtl {
 	classvar <initialized = false;
-	classvar <sourceDeviceDict;
-	classvar <destinationDeviceDict;
+	classvar <sourceDeviceDict;         //      ('deviceName': MIDIEndPoint, ... )
+	                                    //i.e.  ( 'bcr0': MIDIEndPoint("BCR2000", "Port 1"), ... )
+	classvar <destinationDeviceDict;    //      ('deviceName': MIDIEndPoint, ... )
+	                                    //i.e.  ( 'bcr0': MIDIEndPoint("BCR2000", "Port 2"), ... )
 
 	// MIDI-specific address identifiers
-	var <srcID, <source;
-	var <dstID, <destination, <midiOut;
+	var <srcID /*Int*/, <source /*MIDIEndPoint*/;
+	var <dstID /*Int*/, <destination /*MIDIEndPoint*/, <midiOut /*MIDIOut*/;
 
 	// an action that is called every time a midi message comes in
 	// .value(type, src, chan, num/note, value/vel)
@@ -21,13 +23,14 @@ MIDIMKtl : MKtl {
 
 			// optimisation for fast lookup,
 			// may go away if everything lives in "elements" of superclass
-	var <elementHashDict;
-	var <hashToElNameDict;
-	var <elNameToMidiDescDict;
+	var <elementHashDict;  //of type: ('c_ChannelNumber_CCNumber': MKtlElement, ...) i.e. ('c_0_21':a MKtlElement, ... )
+	var <hashToElNameDict; //of type: ('c_ChannelNumber_CCNumber':'elementName') i.e. ( 'c_0_108': prB2, ... )
+	var <elNameToMidiDescDict;//      ('elementName': [type, channel, midiNote or ccNum, ControlSpec], ... )
+	                          //i.e.  ( 'trD1': [ cc, 0, 57, a ControlSpec(0, 127, 'linear', 1, 0, "") ], ... )
 
 	var <responders;
 
-		// open all ports
+	    // open all ports
 	*initMIDI {|force= false|
 
 		(initialized && {force.not}).if{^this};

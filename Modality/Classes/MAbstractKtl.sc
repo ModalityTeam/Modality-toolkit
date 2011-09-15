@@ -6,7 +6,7 @@ MAbstractKtl {
 	var <verbose = false;
 	var <name;
 	
-	var <elements; // elements to which stuff is registered
+	var <elements; //of type: ('elementName':MKtlElement, ...) -> elements to which stuff is registered
 	
 	prMatchedElements { |elementKey|
 		^elements.asArray.select{ |elem| elem.name.matchOSCAddressPattern(elementKey) }
