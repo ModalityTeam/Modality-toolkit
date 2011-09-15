@@ -263,4 +263,10 @@ MKtl : MAbstractKtl { // abstract class
    			elem.deviceDescription[\type] == type
 		}	
 	}
+
+	elementsNotOfType { |type|
+		^elements.select { |elem|
+   			elem.deviceDescription[\type] != type
+		}
+	}
 }
