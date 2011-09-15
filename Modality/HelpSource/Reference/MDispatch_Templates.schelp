@@ -29,9 +29,13 @@ MKtl('nnkn0').reset;
 ~dis = MDispatch.make(\velocity, MKtl('nnkn0') );
 ~dis.verbose = true;
 )
-~dis.insp
 (
 w = Window.new.front;
+w.onClose_({
+    ~dis.removeFuncElem(\sl1_1,\blah);
+    ~dis.removeFuncElem(\sl2_1,\blah);
+});
+
 ~sl = Slider(w, Rect(20, 60, 150, 20));
 
 Ndef(\y,{ |freq= 400, mod = 1| Saw.ar( Lag.kr(freq,1)+200 ) * SinOsc.ar(Lag.kr(mod,1) ).range(0.0,1.0)* 0.5 }).play;
@@ -62,16 +66,10 @@ Make sliders output velocity but keep the rest of controls absolute and merge in
 code::
 (
 MIDIMKtl.find;
-MKtl('nnkn0').reset;
+k = MKtl('nnkn0').reset;
 ~sliders =  MDispatch.make(\velocity,k, k.elementsOfType(\slider).collect(_.name) );
-
-~restOfElems = k.elements.select{ |elem|
-	elem.deviceDescription[\type] != \slider
-}.collect(_.name);
-
-~result = MDispatch.make(\merge,[[~sliders,nil],[k,~restOfElems]]);
+~result = MDispatch.make(\merge,[ [~sliders, nil], [k, k.elementsNotOfType(\slider).collect(_.name) ] ]);
 ~result.verbose = true;
-~sliders.verbose = true;
 )
 ~result.remove // only removes the merge dispatch
 ~result.recursiveRemove // removes all dispatchs going down the chain
@@ -108,7 +106,7 @@ code::
 (
 MIDIMKtl.find;
 MKtl('nnkn0').reset;
-~disp =  MDispatch.make(\threshold, MKtl('nnkn0'), thresh: 0.5 );
+~disp =  MDispatch.make(\threshold, MKtl('nnkn0'), nil, nil, 0.5 );
 ~disp.verbose = true;
 )
 ~disp.remove
@@ -120,7 +118,7 @@ code::
 (
 MIDIMKtl.find;
 MKtl('nnkn0').reset;
-~disp =  MDispatch.make(\thresholdUp, MKtl('nnkn0'), thresh: 0.5 );
+~disp =  MDispatch.make(\thresholdUp, MKtl('nnkn0'), nil, nil, 0.2 );
 ~disp.verbose = true;
 )
 ~disp.remove
@@ -132,7 +130,7 @@ code::
 (
 MIDIMKtl.find;
 MKtl('nnkn0').reset;
-~disp =  MDispatch.make(\thresholdDown, MKtl('nnkn0'), thresh: 0.5 );
+~disp =  MDispatch.make(\thresholdDown, MKtl('nnkn0'), nil, nil, 0.5 );
 ~disp.verbose = true;
 )
 ~disp.remove
@@ -144,7 +142,7 @@ code::
 (
 MIDIMKtl.find;
 MKtl('nnkn0').reset;
-~disp =  MDispatch.make(\threshZones, MKtl('nnkn0'), [0.2,0.5,0.8] );
+~disp =  MDispatch.make(\threshZones, MKtl('nnkn0'), nil, nil, [0.2,0.5,0.8] );
 ~disp.verbose = true;
 )
 ~disp.remove
@@ -204,7 +202,7 @@ code::
 (
 MIDIMKtl.find;
 k = MKtl('nnkn0').reset;
-~disp =  MDispatch.make(\change, k, [0.0,1.0]);
+~disp =  MDispatch.make(\change, k);
 ~disp.verbose = true;
 )
 ~disp.remove
@@ -216,7 +214,7 @@ code::
 (
 MIDIMKtl.find;
 k = MKtl('nnkn0').reset;
-~disp =  MDispatch.make(\changeDirection, k, [0.0,1.0]);
+~disp =  MDispatch.make(\changeDirection, k);
 ~disp.verbose = true;
 )
 ~disp.remove
@@ -247,6 +245,7 @@ k = MKtl('nnkn0').reset;
 ::
 
 delay - only let value pass again after waitTime, but get the latest value.
+move a slider fast and it will only update every 1 second.
 code::
 (
 MIDIMKtl.find;
