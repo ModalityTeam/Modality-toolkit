@@ -69,8 +69,8 @@ MDispatch : MAbstractKtl {
 	}
 	
 	*availableTemplates{
-		^MDispatch.dispatchTemplateFolders.collect{ |x| 
-			x.getPathsInDirectory.collect{ |y| 
+		^MDispatch.dispatchTemplateFolders.collect{ |x|
+			x.getPathsInDirectory.collect{ |y|
 				y.removeExtension
 			} 
 		}.flatten
