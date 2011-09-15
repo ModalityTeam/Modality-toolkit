@@ -11,7 +11,7 @@ func:{ |disp, source, elemKeys, sourceKey|
 	);
 	
 	disp.addToProc( \calc, { |dis|
-		vasr key = ~changedIn[\key];
+		var key = ~changedIn[\key];
 		var source = ~changedIn[\source];
 		var value = ~changedIn[\val];
 		

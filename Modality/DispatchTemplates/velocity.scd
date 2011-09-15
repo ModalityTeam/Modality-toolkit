@@ -1,5 +1,5 @@
 (
-func:{ |disp, source, waitTime = 0.5, elemKeys, sourceKey|
+func:{ |disp, source, elemKeys, sourceKey, waitTime = 0.5|
 	
 	disp.map(source, elemKeys);	
 	disp.createOutputsFromInputs;

@@ -1,5 +1,5 @@
 (
-func:{ |disp, source, thresh = 0.5, elemKeys, sourceKey|
+func:{ |disp, source, elemKeys, sourceKey, thresh = 0.5|
 	
 	disp.map(source, elemKeys);	
 	disp.createOutputsFromInputs;

@@ -16,27 +16,28 @@ func:{ |disp, source, previousSceneKey, nextSceneKey, n = 10, elementKeys, sourc
 	n.collect{ |i| source.elementNames.collect{ |name| disp.createOutput(("/page"++(i+1)++"/"++name).asSymbol) } };
 	
 	disp.addToProc( \processEvents, {  |dis|
-		var in = dis.changedIn;
-		var key = in[\key];
-		var val = in[\val];
-		var scene = e[\scene];
-	
-		e[\values][scene][key] = val;
-		dis.setOutput(("/page"++(scene+1)++"/"++key).asSymbol,val)
+	    var key = ~changedIn[\key];
+        var source = ~changedIn[\source];
+        var value = ~changedIn[\val];
+
+        ~values[~scene][key] = value;
+        dis.setOutput(("/page"++(~scene+1)++"/"++key).asSymbol,value)
 	
 	});
 	
 	disp.addToProc( \changeScene, {  |dis|
-		var in = dis.changedIn;
+		var key = ~changedIn[\key];
+        var source = ~changedIn[\source];
+        var value = ~changedIn[\val];
 
-		if( (in[\key] == previousSceneKey) && ( in[\val] == 1.0 ) ) {
-			e[\scene] = (e[\scene] - 1).max(0);
-			postln("Scene is "++e[\scene])	
-	
+		if( (key == previousSceneKey) && ( value == 1.0 ) ) {
+            ~scene = (~scene - 1).max(0);
+            postln("Scene is "++(~scene+1))
+
 		};
-		if( (in[\key] == nextSceneKey) && ( in[\val] == 1.0 )) {
-			e[\scene] = (e[\scene] + 1).min(n);
-			postln("Scene is "++e[\scene])
+		if( (key == nextSceneKey) && ( value == 1.0 )) {
+            ~scene = (~scene + 1).min(n);
+            postln("Scene is "++(~scene+1))
 		};	
 	});
 	
