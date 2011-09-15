@@ -178,6 +178,11 @@ MDispatch : MAbstractKtl {
 			}
 		}
 	}
+
+	connect{ |source, elemKeys, sourceKey|
+	    this.map(source, elemKeys, sourceKey);
+	    this.createOutputsFromInputs;
+	}
 	
 	getOutput{ |elemKey|
 		^elements[elemKey].value;
