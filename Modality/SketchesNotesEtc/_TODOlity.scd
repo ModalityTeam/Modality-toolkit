@@ -46,14 +46,14 @@
 	* WiiMKtl
 	* SETOMKtl
 	* DataNodeMKtl
-	* KintectMKtl
+	* KinectMKtl
 
 * Dispatch:
 	*How to do paged ctrl / two way communication.	
 	
 	This is not critical, can be done after 1.0:
 	* . It would also be nice to get a description of all parameters needed to create a specific MDispatch via Meta_MDispatch:make.
-	* no defaults when creatings dispatch because of passing arguments in an arrayÉ what to do ????
+	* no defaults when creatings dispatch because of passing arguments in an array what to do ????
 	* do templates:
 		acc, 
 		Level Of Activity (with decay), 
@@ -62,7 +62,7 @@
 
 * GUI
 	* auto-generate based on controller description 
-		(postpone 'til QT gui is settled?)
+		(postpone until QT gui is settled?)
 	* MKtlAllGui -> turn on an off posting, or get a graphic representation ?
 	
 * modality mapping, learning, etc.
