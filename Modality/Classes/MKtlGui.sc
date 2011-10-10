@@ -51,13 +51,13 @@ MKtlGui : JITGui {
 	var <elemParent, <elemViews;
 	
 	*postZoneTemplate { |mktl| 
-		var nameArr = mktl.elementNames;
+		var nameArr = mktl.elements.asArray;
 		"(\n // where should each gui element be? \n"
 		"var zoneDict = (".postln; 
 		nameArr.do { |k, i|
-			var type = mktl.elements[k].type;
+			var type = k.type;
 			var sizePt = (defaultSizes[type] ?? { 40@40 });
-			"	'%': Rect(0, 0, %, %)%\n".postf(k, sizePt.x, sizePt.y, if (i < nameArr.lastIndex, ",", ""));
+			"	'%': Rect(0, 0, %, %)%\n".postf(k.name, sizePt.x, sizePt.y, if (i < nameArr.lastIndex, ",", ""));
 		};
 		");\n)".postln;""
 	}
@@ -73,12 +73,13 @@ MKtlGui : JITGui {
 	
 	skin { ^skin ?? { this.init; skin } }
 	buildFuncs { ^skin ?? { this.init; buildFuncs } }
-	
-	*init { 
-		
-		skin = (onColor: Color(0.5, 1, 0.5, 1.0), offColor: Color.grey(0.7), fontColor: Color.black);
+
+	*initDefaults{
+		// this was in init, but then it doesnt make sense that postZoneTemplate is a class function
 		defaultSizes = (
 			button:    40@20, 
+			knob:    40@40, 
+			encoder:    40@40, 
 			slider: 	 120@40,
 			springFader: 	 120@40,
 			compass:   90@90, 
@@ -88,9 +89,23 @@ MKtlGui : JITGui {
 			joyAxisY:  40@120,	// temp
 			wheel:     40@150
 		);
+	}	
+	
+	*init { 
+		
+		skin = (onColor: Color(0.5, 1, 0.5, 1.0), offColor: Color.grey(0.7), fontColor: Color.black);
 		
 		buildFuncs = (
 			knob: { |w, zone, el| 
+				EZKnob(w, zone, el.name, 
+					el.spec, { |sl|
+						el.valueAction_(sl.value);
+						[el.name, sl.value, el.prevValue, el.value].postln;
+					}, el.value); 
+				
+			
+			}, 
+			encoder: { |w, zone, el| 
 				EZKnob(w, zone, el.name, 
 					el.spec, { |sl|
 						el.valueAction_(sl.value);
