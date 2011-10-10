@@ -56,8 +56,25 @@ MKtl : MAbstractKtl { // abstract class
 		deviceDescriptionFolder = this.filenameSymbol.asString.dirname.dirname +/+ "MKtlSpecs";
 	}
 
-	*find {
-		this.allSubclasses.do(_.find);	
+	*find { |protocols|
+		if ( protocols.isNil ){
+			this.allSubclasses.do(_.find);
+		}{
+			if ( protocols.isKindOf( Array ) ){
+				protocols.do{ |pcol|
+					switch( pcol,
+						\hid,  { HIDMKtl.find},
+						\midi, { MIDIMKtl.find}
+					);
+				};
+			};
+			if ( protocols.isKindOf( Symbol ) ){
+				switch( protocols,
+					\hid,  { HIDMKtl.find},
+					\midi, { MIDIMKtl.find}
+				);
+			};
+		};
 	}
 
 	*addSpec {|key, spec|
