@@ -68,6 +68,7 @@ HIDMKtl : MKtl {
 	*find { |name, uid| 
 		this.initHID( true );
 
+		/*
 		"\n///////// HIDMKtl.find - - - HID sources found: /////// ".postln;
 		"	index	locID (USB port ID)	device name         vendor  product".postln;
 		GeneralHID.deviceList.do { |pair, i| 
@@ -78,12 +79,13 @@ HIDMKtl : MKtl {
 			("\t\t[" ++ info.name.asSymbol.asCompileString ++ "]").post;
 			("    " ++ info.vendor + info.product).postln;
 		};
+		*/
 			
 		"\n//	Possible	HIDMKtls - just give them unique names: ".postln;
 		sourceDeviceDict.keysValuesDo{ |key,pair| 
 			var rawdev, info; 
 			#rawdev, info = pair;
-			"		HIDMKtl('%', %);  // %\n".postf(key, info.physical, info.name);
+			"		HIDMKtl('%', %);  // %\n".postf(key, info.physical.asCompileString, info.name);
 		};
 		"\n///////".postln;
 	}

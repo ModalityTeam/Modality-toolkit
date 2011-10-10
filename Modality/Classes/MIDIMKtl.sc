@@ -55,7 +55,8 @@ MIDIMKtl : MKtl {
 			^this
 		};
 
-		"/*\nMIDI sources found by MIDIMKtl.find:".postln;
+		/*
+			"\nMIDI sources found by MIDIMKtl.find:".postln;
 		"key	uid (USB port ID)	device	name".postln;
 		sourceDeviceDict.keysValuesDo({ |key, src|
 			"%\t[%]\t\t[%]\t[%]\n".postf(
@@ -75,9 +76,11 @@ MIDIMKtl : MKtl {
 				src.name.asSymbol.asCompileString
 			);
 		});
+			*/
 
+			// TODO: what happens to MIDI devs that are only destinations?
 
-		"*/\n\n// Available MIDIMKtls (you may want to change the names) */".postln;
+		"/*/\n// Available MIDIMKtls (you may want to change the names) */".postln;
 		sourceDeviceDict.keysValuesDo { |key, src|
 			"MIDIMKtl('%', %, %);  // %\n".postf(
 				key,
