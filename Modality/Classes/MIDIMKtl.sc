@@ -78,7 +78,7 @@ MIDIMKtl : MKtl {
 		});
 			*/
 
-			// TODO: what happens to MIDI devs that are only destinations?
+		// TODO: what happens to MIDI devs that are only destinations?
 
 		"/*/\n// Available MIDIMKtls (you may want to change the names) */".postln;
 		sourceDeviceDict.keysValuesDo { |key, src|
@@ -163,7 +163,7 @@ MIDIMKtl : MKtl {
 			destinationDeviceDict.changeKeyForValue(name, foundDestination);
 		};
 
-		//	foundSource.device.postln;
+		[ devDescName, foundSource.device].postln;
 		//		^super.basicNew(name, foundSource.device)
 		^super.basicNew(name, devDescName ? foundSource.device )
 			.initMIDIMKtl(name, foundSource, foundDestination );
@@ -218,6 +218,7 @@ MIDIMKtl : MKtl {
 	}
 
 	initMIDIMKtl { |argName, argSource, argDestination|
+		[argName, argSource, argDestination].postln;
 		name = argName;
 
 		source = argSource;
@@ -227,7 +228,10 @@ MIDIMKtl : MKtl {
 		destination = argDestination;
 		destination.notNil.if{
 			dstID = destination.uid;
-			midiOut = MIDIOut( MIDIClient.destinations.indexOf(destination), dstID )
+			midiOut = MIDIOut( MIDIClient.destinations.indexOf(destination), dstID );
+			if ( thisProcess.platform.name == \linux ){
+				midiOut.connect( MIDIClient.destinations.indexOf(destination) )
+			};
 		};
 
 
@@ -248,36 +252,56 @@ MIDIMKtl : MKtl {
 		this.addResponders;
 	}
 
+	makeHashKey{ |descr,elName|
+		var hash;
+		// TODO: pitchbend, other miditypes, etc.
+		hash = descr[\midiType].switch(
+			\note, {this.makeNoteKey(descr[\chan], descr[\midiNote]);},
+			
+			\cc, {this.makeCCKey(descr[\chan], descr[\ccNum]);},
+			{//default:
+				"MIDIMKtl:prepareElementHashDict (%): identifier in midiType for item % not known. Please correct.".format(this, elName).error;
+				this.dump;
+				nil;
+			}
+		);
+		elementHashDict.put(
+			hash, elements[elName];
+		);
+		//	[elName, descr ].postcs;
+		//	elements[elName].dump;
+		if ( elements[elName].ioType == \in  or:  elements[elName].ioType == \inout ){
+			hashToElNameDict.put(hash, elName);
+		};
+
+		if ( elements[elName].ioType == \out  or:  elements[elName].ioType == \inout ){
+			elNameToMidiDescDict.put(elName,
+				[
+					descr[\midiType], descr[\chan],
+					descr[\midiType].switch(\note,{descr[\midiNote]},\cc,{descr[\ccNum]}),
+					elements[elName].spec
+				])
+		};
+	}
 		// plumbing
 	prepareElementHashDict {
 		if (deviceDescription.notNil) {
 			deviceDescription.pairsDo { |elName, descr|
 				var hash;
 
-				hash = descr[\midiType].switch(
-					\note, {this.makeNoteKey(descr[\chan], descr[\midiNote]);},
-
-					\cc, {this.makeCCKey(descr[\chan], descr[\ccNum]);},
-					{//default:
-						"MIDIMKtl:prepareElementHashDict (%): identifier in midiType for item % not known. Please correct.".format(this, elName).error;
-						this.dump;
-						^this;
-					}
-				);
-
-				//descr.put(\hash, hash); // just in case ...
-
-				elementHashDict.put(
-					hash, elements[elName];
-				);
-				hashToElNameDict.put(hash, elName);
-				elNameToMidiDescDict.put(elName,
-				[
-					descr[\midiType], descr[\chan],
-					descr[\midiType].switch(\note,{descr[\midiNote]},\cc,{descr[\ccNum]}),
-					elements[elName].spec
-				])
-
+				if ( descr[\out].notNil ){
+					// element has a specific description for the output of the element
+					descr = MKtl.flattenDescriptionForIO( descr, \out );
+					hash = this.makeHashKey( descr, elName );
+				};
+				if ( descr[\in].notNil ){
+					// element has a specific description for the input of the element
+					descr = MKtl.flattenDescriptionForIO( descr, \in );
+					hash = this.makeHashKey( descr, elName );
+				};
+				if ( descr[\in].isNil and: descr[\out].isNil ){
+					hash = this.makeHashKey( descr, elName );
+				};
 			}
 		}
 	}
@@ -323,12 +347,12 @@ MIDIMKtl : MKtl {
 		);
 	}
 
-	send{ |key,val,miditype|
+	send{ |key,val|
 	 	var type, ch, num, spec;
 	 	#type, ch, num, spec = elNameToMidiDescDict.at(key);
 	 	switch(type)
  			{\cc}{ midiOut.control(ch, num, spec.map(val) ) }
- 			{\note}{ /*check type for noteOn, noteOff, etc*/ }
+ 			{\note}{ /*TODO: check type for noteOn, noteOff, etc*/ }
 	}
 
 	verbose_ {|value=true|

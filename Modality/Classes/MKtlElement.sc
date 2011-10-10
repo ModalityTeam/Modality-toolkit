@@ -4,6 +4,8 @@ MAbstractElement {
 	var <name; // its name in Ktl.elements
 	var <type; // its type. 
 
+	var <ioType; // can be \in, \out, \inout
+
 	var <funcChain;
 	
 	// keep value and previous value here
@@ -126,7 +128,7 @@ MAbstractElement {
 MKtlElement : MAbstractElement{
 	classvar <types;
 
-	var <deviceDescription;	 //its particular device description
+	var <elementDescription;	 //its particular device description
 	                         //of type: ( 'chan':Int, 'midiType':symbol, 'spec':ControlSpec,
 	                         //           'ccNum': Int, 'specName':symbol, 'type':Symbol )
 	                         // i.e.   ( 'chan':0, 'midiType':'cc', 'spec': ControlSpec,
@@ -148,16 +150,20 @@ MKtlElement : MAbstractElement{
 
 	init { 
 		super.init;
-		deviceDescription = source.deviceDescriptionFor(name);
-		spec = deviceDescription[\spec];
+		elementDescription = source.elementDescriptionFor(name);
+		spec = elementDescription[\spec];
 		if (spec.isNil) { 
 			warn("spec for '%' is missing!".format(spec));
 		} { 
 			value = prevValue = spec.default ? 0;
 		};
-		type = deviceDescription[\type];
+		type = elementDescription[\type];
+		ioType = elementDescription[\ioType];
+		if ( ioType.isNil ){
+			ioType = \in; // default is in
+		};
 
-		spec = deviceDescription[\spec];
+		spec = elementDescription[\spec];
 		if (spec.isNil) { 
 			warn("spec for '%' is missing!".format(spec));
 		} { 
@@ -174,6 +180,14 @@ MKtlElement : MAbstractElement{
 	// usually, you do not call this but rawValue_ instead.
 	value_ {|newval|
 		^super.value(spec.map(newval))
+	}
+
+	// assuming that something setting the element's value will first set the value and then call doAction (like in Dispatch)
+	doAction {
+		super.doAction;
+		if ( ioType == \out or: ioType == \inout ){
+			source.send( name, value );
+		}
 	}
 
 	rawValue { ^value }

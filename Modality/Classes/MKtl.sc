@@ -251,8 +251,19 @@ MKtl : MAbstractKtl { // abstract class
 		^devDesc;
 	}
 
+	*flattenDescriptionForIO { |eleDesc,ioType|
+		// some descriptions may have ioType specific entries, we flatten those into the dictionary
+		var ioDesc = eleDesc[ thisProcess.platform.name ];
+		if ( ioDesc.notNil ){
+			ioDesc.keysValuesDo{ |key,val|
+				eleDesc.put( key, val );
+			}
+		};
+		^eleDesc;
+	}
 
-	deviceDescriptionFor { |elname| 
+
+	elementDescriptionFor { |elname| 
 		^deviceDescription[deviceDescription.indexOf(elname) + 1] 
 	}
 
