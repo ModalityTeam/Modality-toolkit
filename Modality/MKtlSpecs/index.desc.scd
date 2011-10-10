@@ -1,8 +1,8 @@
 IdentityDictionary[
 
 	\nanoKONTROL -> (osx: ( device: "nanoKONTROL"), linux: ( device: "nanoKONTROL-nanoKONTROL MIDI 1"), protocol: \midi, file: "nanoKONTROL.desc.scd" ),
-	\BCR2000 -> (osx: ( device: "BCR2000"), protocol: \midi, file: "BCR2000.desc.scd" ),
-	\BCF2000 -> (osx: ( device: "BCF2000"), protocol: \midi, file: "BCF2000.desc.scd" ),
+	\BCR2000 -> (osx: ( device: "BCR2000"), linux: ( device: "BCR2000-BCR2000 MIDI 1" ), protocol: \midi, file: "BCR2000.desc.scd" ),
+	\BCF2000 -> (osx: ( device: "BCF2000"), linux: ( device: "BCF2000-BCF2000 MIDI 1" ), protocol: \midi, file: "BCF2000.desc.scd" ),
 	\Launchpad -> (osx: ( device: "Launchpad"), linux: (device: "Launchpad"), protocol: \midi, file: "Launchpad.desc.scd" ),
 	
 	\GamePad -> ( type: \template, protocol: \hid, file: "GamePad.desc.scd" ), // gamepad template
@@ -12,7 +12,7 @@ IdentityDictionary[
 
 	\manta -> (inport: 1234, outport: 5678, protocol: \osc, file: "Manta.desc.scd" ),
 	
-	\Arduino -> (protocol: \serial),
-	\JeeLink -> (protocol: \serial),
-	\JeeNode -> (protocol: \serial)
+	//	\Arduino -> (protocol: \serial),
+	//	\JeeLink -> (protocol: \serial),
+	//	\JeeNode -> (protocol: \serial)
 ]
