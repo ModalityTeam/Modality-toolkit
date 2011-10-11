@@ -268,20 +268,6 @@ MIDIMKtl : MKtl {
 		elementHashDict.put(
 			hash, elements[elName];
 		);
-		//	[elName, descr ].postcs;
-		//	elements[elName].dump;
-		if ( elements[elName].ioType == \in  or:  elements[elName].ioType == \inout ){
-			hashToElNameDict.put(hash, elName);
-		};
-
-		if ( elements[elName].ioType == \out  or:  elements[elName].ioType == \inout ){
-			elNameToMidiDescDict.put(elName,
-				[
-					descr[\midiType], descr[\chan],
-					descr[\midiType].switch(\note,{descr[\midiNote]},\cc,{descr[\ccNum]}),
-					elements[elName].spec
-				])
-		};
 	}
 		// plumbing
 	prepareElementHashDict {
@@ -293,14 +279,33 @@ MIDIMKtl : MKtl {
 					// element has a specific description for the output of the element
 					descr = MKtl.flattenDescriptionForIO( descr, \out );
 					hash = this.makeHashKey( descr, elName );
+					elNameToMidiDescDict.put(elName,
+						[
+							descr[\midiType], descr[\chan],
+							descr[\midiType].switch(\note,{descr[\midiNote]},\cc,{descr[\ccNum]}),
+							elements[elName].spec
+						])
 				};
 				if ( descr[\in].notNil ){
 					// element has a specific description for the input of the element
 					descr = MKtl.flattenDescriptionForIO( descr, \in );
 					hash = this.makeHashKey( descr, elName );
+					hashToElNameDict.put(hash, elName);
 				};
 				if ( descr[\in].isNil and: descr[\out].isNil ){
 					hash = this.makeHashKey( descr, elName );
+					if ( elements[elName].ioType == \in  or:  elements[elName].ioType == \inout ){
+						hashToElNameDict.put(hash, elName);
+					};
+					if ( elements[elName].ioType == \out  or:  elements[elName].ioType == \inout ){
+						elNameToMidiDescDict.put(elName,
+							[
+								descr[\midiType], descr[\chan],
+								descr[\midiType].switch(\note,{descr[\midiNote]},\cc,{descr[\ccNum]}),
+								elements[elName].spec
+							])
+					};
+
 				};
 			}
 		}
