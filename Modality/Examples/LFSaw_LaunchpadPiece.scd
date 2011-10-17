@@ -1,8 +1,27 @@
+/*** 
+
+This is a piece by Till Bovermann which shows basic uses 
+of the MKtl and MIDIKtl classes. 
+
+It takes a Novation Launchpad, and configures it for everything 
+needed to play that simple piece. 
+(The Launchpad needs drivers from Novation installed.)
+
+Requires SC 3.5 beta or better!
+
+***/
+
+	// QT is still unpredictable, so use cocoa gui
+
+Window.allWindows.do(_.close); // not that that works
+
 GUI.cocoa
 
-q = ();
+(
+q = ();	// a dict for various objects
 
-// the launchpad
+
+// the interface to set the LEDs on the Launchpad:
 q.lnch = MIDIMKtl(\lnch0);
 
 
@@ -11,10 +30,11 @@ q.lnhout = LaunchpadOut(q.lnch);
 q.lnhout.reset; // reset it
 
 // button names
-q.names =  (0..63).collect{|idx| ("bu"++idx).asSymbol}; 
+q.btNames =  (0..63).collect{|idx| ("bu"++idx).asSymbol}; 
 // arrow button names
 q.arNames = (0..7).collect{|i| ("ar"++i).asSymbol};
 
+	// test pattern for setting the LED colors:
 ( 
 // initially set colors of the pad; 
 // green buttons will play on the left  side 
@@ -25,28 +45,38 @@ q.arNames = (0..7).collect{|i| ("ar"++i).asSymbol};
 	q.lnhout.setColor([j, i+1], \red)
 }}
 )
+)
+// check whether the device is actually working
 
-// test is the device is actually working
-MIDIMKtl(\lnch0).verbose = true;
-MIDIMKtl(\lnch0).verbose = false;
+MIDIMKtl(\lnch0).verbose = true;		// see post window
+
+MIDIMKtl(\lnch0).verbose = false;	// shut up again
 
 // boot the soundserver
 s.boot;
+s.latency = 0.05;
 
+s.makeWindow;
 
 
 
 (
-// Dispatch
+// make a Dispatch by hand that makes all the buttons toggle:
+
 q.toggleDispatch = MDispatch.new;
 
-// create
+	// introduce the dispatch to a source (the launchpad), 
+	/// and tell it which elemKeys to listen for: 
+q.toggleDispatch.map(q.lnch, q.btNames);
 
-q.toggleDispatch.map(q.lnch, q.names);
-// create outputs for the inputs
+	// create outputs for the inputs 
+	// - and these outputs will have the same names as the inputs.
 q.toggleDispatch.createOutputsFromInputs;
+
+	// set up a place in the dispatch's envir where the toggle states 
+	// can be stored and looked up; store the current state (0)
 q.toggleDispatch.envir[\states] = ();
-q.names.do{|name|  q.toggleDispatch.envir[\states].put(name, 0)};
+q.btNames.do{|name|  q.toggleDispatch.envir[\states].put(name, 0)};
 q.toggleDispatch.addToProc( \toggle, {  |dis|
 	var env = dis.envir;
 	var in = env[\changedIn]; // the thing that changed
@@ -62,21 +92,23 @@ q.toggleDispatch.addToProc( \toggle, {  |dis|
 
 
 (
-// set lights
-q.names.do{|name| 
+	// set lights according to toggle state
+q.btNames.do{|name| 
 	q.toggleDispatch.addFuncElem(name, \setLight, {|element|
-		var idx = q.names.indexOf(element.name);
+		var idx = q.btNames.indexOf(element.name);
 		
 		q.lnhout.setColor([idx div: 8, idx % 8], [[\green, \fGreen], [\red, \fRed]][idx%2][element.value])
 	})
 };
 
+	// ticker - LEDs can blink from remote clock, as here
 q.ticker.stop;
 q.ticker = SkipJack({q.lnhout.tick}, 0.25)
 )
 
-q.lnch
-MKtl
+
+	// use one custom button on top to control the Ndef
+	// that will generate the sound
 (
 q.lnch.addFuncElem(\up, \muteGrid, {|elem|
 	elem.value.postln;
@@ -86,52 +118,15 @@ q.lnch.addFuncElem(\up, \muteGrid, {|elem|
 		Ndef(\murder).set(\mute, 1);
 	})
 });
-q.lnch.addFuncElem(\left, \longTail, {|elem|
-	elem.value.booleanValue.if({
-		Ndef(\crackle).set(\tail, 0);
-	},{
-	})
-});
-q.lnch.addFuncElem(\right, \shortTail, {|elem|
-	elem.value.booleanValue.if({
-		Ndef(\crackle).set(\tail, 6);
-	},{
-	})
-});
-q.lnch.addFuncElem(\session, \clicky, {|elem|
-	elem.value.booleanValue.if({
-		Ndef(\crackle).set(\clicky, 0.0004);
-	},{
-	})
-});
-q.lnch.addFuncElem(\user1, \clicky, {|elem|
-	elem.value.booleanValue.if({
-		Ndef(\crackle).set(\clicky, 0.004);
-	},{
-	})
-});
-q.lnch.addFuncElem(\user2, \clicky, {|elem|
-	elem.value.booleanValue.if({
-		Ndef(\crackle).set(\crackle, 5);
-	},{
-	})
-});
-q.lnch.addFuncElem(\mixer, \clicky, {|elem|
-	elem.value.booleanValue.if({
-		Ndef(\crackle).set(\crackle, 30);
-	},{
-	})
-})
 )
 
-q.toggleDispatch[\bu0].kr
-s.latency = 0.05
+	// create Ndefs for the sounds
+NdefMixer(s);
 
-NdefMixer(s)
 (
 Ndef(\murder, {|mute = 1|
 	var freq;
-	var ctrls = q.names.collect{|elem|
+	var ctrls = q.btNames.collect{|elem|
 		q.toggleDispatch[elem].kr
 	}.lag(0, 1);
 	
@@ -147,32 +142,4 @@ Ndef(\murder, {|mute = 1|
 		* SinOsc.ar(i.linlin(0, 64, 5, 1.25).round(1.25), rrand(0, 0.1)).range(0.25, 1) * mute
 	} * ctrls).clump(2).sum.tanh ;
 })
-)
-
-
-/*
-q.lnch.verbose = true
-q.lnch.verbose = false
-*/
-Ndef(\crackle).clear
-(
-Ndef(\crackle, {|tail = 3, clicky = 0.04, crackle = 30|
-	var freq, src;
-	var ctrls = q.arNames.collect{|elem|
-		q.lnch[elem].kr
-	};
-	clicky = clicky.lag(10);
-	(ctrls.collect{|ctrl, i|
-		src = ({Dust.ar(crackle.lag(2))}!2);
-		src = Decay.ar(src, 0.001) * BrownNoise.ar; 
-		src = src.collect{|src|
-		Ringz.ar(
-			src * 0.4, 
-			EnvGen.ar(Env([1000]++({exprand(500, 1700.0)}!10), ({1.0.rand}!9) ++[0]), levelScale: (i+1) * 0.2 + 2, gate: ctrl), 
-			clicky
-		)
-		};
-		src * SinOsc.ar(i+1).range(0.1, 1) * ctrl.lag(0, tail)
-	}.postln ).sum.tanh ;
-})
-)
+);
