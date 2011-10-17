@@ -40,13 +40,6 @@ The ControlSpec
 
 SUBSECTION:: Private methods
 
-METHOD:: loadDeviceDescription
-Load a device description from either a given device description name, or a device name.
-Also creates the specs for them.
-
-argument:: deviceName
-a given device description name, or a device name.
-
 
 PRIVATE:: deviceDescriptionFor
 Find a description for a specific element.
@@ -141,6 +134,13 @@ PRIVATE:: storeArgs, printOn
 
 METHOD:: name
 retrieve the name of the MKtl.
+
+METHOD:: loadDeviceDescription
+Load a device description from either a given device description name, or a device name.
+Also creates the specs for them.
+
+argument:: deviceName
+a given device description name, or a device name.
 
 METHOD:: deviceDescription
 The device description of the MKtl.
