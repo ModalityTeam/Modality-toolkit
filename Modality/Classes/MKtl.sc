@@ -82,7 +82,7 @@ MKtl : MAbstractKtl { // abstract class
 	}
 
 	*makeShortName {|deviceID|
-		^(deviceID.asString.toLower.select{|c| c.isAlpha && { c.isVowel.not }}.keep(4))
+		^(deviceID.asString.toLower.select{|c| c.isAlpha && { c.isVowel.not }}.keep(4) ++ deviceID.asString.select({|c| c.isDecDigit}))
 	}
 	
 		// new returns existing instances
