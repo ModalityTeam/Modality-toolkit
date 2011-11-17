@@ -11,11 +11,7 @@ Requires SC 3.5 beta or better!
 
 ***/
 
-	// QT is still unpredictable, so use cocoa gui
 
-Window.allWindows.do(_.close); // not that that works
-
-GUI.cocoa
 
 (
 q = ();	// a dict for various objects
