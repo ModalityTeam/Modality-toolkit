@@ -54,8 +54,8 @@ StickView {
 		
 		var midGrey = Color.grey(0.5,0.5);
 		var black = Color.grey(0);
-		var blackB = Color.grey(0, 0.7);
-		var onColor = Color.grey(1.0);
+		var blackB = Color.grey(0, 0.6);
+		var onColor = Color.grey(1.0, 0.6);
 
 		var fieldSize = bounds.width;
 		var halfWidth = fieldSize * 0.5; 
@@ -106,7 +106,7 @@ StickView {
 			Pen.addRect(Rect.aboutPoint([0,rhoToLength/2].asPoint, fieldSize* 0.06, fieldSize * 0.1));
 			Pen.translate(0,rhoToLength); 
 			
-			Pen.fillColor = [black, onColor][hatval];
+			Pen.fillColor = [blackB, onColor][hatval];
 				// this is the head
 			Pen.addOval(
 				Rect.aboutPoint(Point(0,0),
