@@ -278,6 +278,11 @@ MKtl : MAbstractKtl { // abstract class
 			elements[key] = MKtlElement(this, key);
 		}
 	}
+
+	// needed for fixing elements that are not present for a specific OS
+	replaceElements{ |newelements|
+		elements = newelements;
+	}
 	
 		// convenience methods
 	defaultValueFor { |elName|

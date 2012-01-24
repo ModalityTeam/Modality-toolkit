@@ -159,6 +159,7 @@ HIDMKtl : MKtl {
 	
 	postRawSpecs { this.class.postRawSpecsOf(srcDevice) }
 	
+	// is this cross platform? Doesn't seem like!
 	*postRawSpecsOf { |dev| 
 		"HIDMKtl - the reported properties of device: %\n".postf(dev.info.name);
 		"	index, type, usage, cookie, min, max, ioType, usagePage, usageType.\n\t".postln;
@@ -188,20 +189,24 @@ HIDMKtl : MKtl {
 	}
 
 	setGeneralHIDActions{
+		var newElements = (); // make a new list of elements, so we only have the ones that are present for the OS
 		this.elements.do{ |el|
 			var slot = el.elementDescription[\slot]; // linux
 			var cookie = el.elementDescription[\cookie]; // osx
-			el.postcs;
+			
 			// on linux:
 			if ( slot.notNil ){
 				srcDevice.slots[ slot[0] ][ slot[1] ].action = { |v| el.rawValueAction_( v.value ) };
+				newElements.put( el.name, el );
 			};
 			// on osx:
 			if ( cookie.notNil ){
 				elemDict.put(  cookie, el );
 				srcDevice.hidDeviceAction = { |ck,val| this.elemDict[ ck ].rawValueAction_( val ) };
+				newElements.put( el.name, el );
 			}
-		}
+		};
+		this.replaceElements( newElements );
 	}
 
 	/*
