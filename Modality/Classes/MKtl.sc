@@ -290,7 +290,11 @@ MKtl : MAbstractKtl { // abstract class
 	}
 		// should filter: those for my platform only
 	elementNames { 
-		^(0, 2 .. deviceDescription.size - 2).collect (deviceDescription[_])
+		if ( elements.isEmpty ){
+			^(0, 2 .. deviceDescription.size - 2).collect (deviceDescription[_])
+		}{
+			^elements.keys.asArray;
+		}
 	}
 	
 	elementsOfType { |type|
