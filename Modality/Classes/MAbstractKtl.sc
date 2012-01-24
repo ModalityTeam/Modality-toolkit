@@ -9,7 +9,11 @@ MAbstractKtl {
 	var <elements; //of type: ('elementName':MKtlElement, ...) -> elements to which stuff is registered
 	
 	prMatchedElements { |elementKey|
-		^elements.asArray.select{ |elem| elem.name.matchOSCAddressPattern(elementKey) }
+		if ( Main.versionAtLeast( 3.5 ) ){
+			^elements.asArray.select{ |elem| elem.name.matchOSCAddressPattern(elementKey) }
+		}{
+			^elements.asArray.select{ |elem| elementKey.asString.matchRegexp( elem.name.asString ) };
+		}
 	}
 	
 	prMatchDo{ |match, elementKey, func|
