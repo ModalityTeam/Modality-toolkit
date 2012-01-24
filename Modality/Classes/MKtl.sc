@@ -58,7 +58,9 @@ MKtl : MAbstractKtl { // abstract class
 
 	*find { |protocols|
 		if ( protocols.isNil ){
-			this.allSubclasses.do(_.find);
+			this.allSubclasses.do(_.find( post: false ) );
+			"\n-----------------------------------------------------".postln;
+			this.allSubclasses.do(_.postPossible() );
 		}{
 			if ( protocols.isKindOf( Array ) ){
 				protocols.do{ |pcol|

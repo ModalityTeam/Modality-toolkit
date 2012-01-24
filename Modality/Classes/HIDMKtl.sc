@@ -65,7 +65,7 @@ HIDMKtl : MKtl {
 	}
 		// open all ports and display them in readable fashion, 
 		// copy/paste-able directly 
-	*find { |name, uid| 
+	*find { |name, uid, post=true| 
 		this.initHID( true );
 
 		/*
@@ -80,14 +80,19 @@ HIDMKtl : MKtl {
 			("    " ++ info.vendor + info.product).postln;
 		};
 		*/
-			
-		"\n//	Possible	HIDMKtls - just give them unique names: ".postln;
+		if ( post ){
+			this.postPossible;
+		};
+	}
+
+	*postPossible{
+		"\n// Available	HIDMKtls - just give them unique names: ".postln;
 		sourceDeviceDict.keysValuesDo{ |key,pair| 
 			var rawdev, info; 
 			#rawdev, info = pair;
-			"		HIDMKtl('%', %);  // %\n".postf(key, info.physical.asCompileString, info.name);
+			"   HIDMKtl('%', %);  // %\n".postf(key, info.physical.asCompileString, info.name);
 		};
-		"\n///////".postln;
+		"\n-----------------------------------------------------".postln;
 	}
 
 	*findSource{ |rawDeviceName|
@@ -184,8 +189,9 @@ HIDMKtl : MKtl {
 
 	setGeneralHIDActions{
 		this.elements.do{ |el|
-			var slot = el.deviceDescription[\slot]; // linux
-			var cookie = el.deviceDescription[\cookie]; // osx
+			var slot = el.elementDescription[\slot]; // linux
+			var cookie = el.elementDescription[\cookie]; // osx
+			el.postcs;
 			// on linux:
 			if ( slot.notNil ){
 				srcDevice.slots[ slot[0] ][ slot[1] ].action = { |v| el.rawValueAction_( v.value ) };

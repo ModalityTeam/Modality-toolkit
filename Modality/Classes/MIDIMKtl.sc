@@ -47,7 +47,7 @@ MIDIMKtl : MKtl {
 		// display all ports in readable fashion,
 		// copy/paste-able directly
 		// this could also live in /--where?--/
-	*find {
+	*find { |post=true|
 		this.initMIDI(true);
 
 		if (MIDIClient.sources.isEmpty) {
@@ -77,19 +77,23 @@ MIDIMKtl : MKtl {
 			);
 		});
 			*/
-
+		if ( post ){
+			this.postPossible;
+		};
 		// TODO: what happens to MIDI devs that are only destinations?
-
-		"/*/\n// Available MIDIMKtls (you may want to change the names) */".postln;
+	}
+	
+	*postPossible{
+		"\n// Available MIDIMKtls - you may want to change the names: ".postln;
 		sourceDeviceDict.keysValuesDo { |key, src|
-			"MIDIMKtl('%', %, %);  // %\n".postf(
+			"   MIDIMKtl('%', %, %);  // %\n".postf(
 				key,
 				src.uid,
 				destinationDeviceDict[key].notNil.if({destinationDeviceDict[key].uid},{nil}),
 				src.device
 			);
 		};
-		"\n".postln;
+		"\n-----------------------------------------------------".postln;
 	}
 
 	*findSource { |rawDeviceName|
