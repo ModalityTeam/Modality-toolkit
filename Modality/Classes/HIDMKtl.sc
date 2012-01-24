@@ -7,10 +7,6 @@ HIDMKtl( 'ferrari', "usb-0000:00:1d.0-1.2/input0"); // Run 'N' Drive on Linux
 
 HIDMKtl('ferrari').srcDevice.slots
 
-HIDMKtl('ferrari').postRawSpecs
-
-HIDMKtl('ferrari').postSpecs
-
 */
 // TODO
 //    addFunc should conform to super.addFunc.
@@ -28,12 +24,14 @@ HIDMKtl : MKtl {
 	var <elemDict;
 	var <lookupDict;
 
-	*initHID{ |force=false|
+	*initHID { |force=false|
 		(initialized && {force.not}).if{^this};
 		GeneralHID.buildDeviceList;
 		sourceDeviceDict = ();
 
 		this.prepareDeviceDicts;
+
+		GeneralHID.startEventLoop;
 		
 		initialized = true;
 	}
@@ -190,6 +188,7 @@ HIDMKtl : MKtl {
 
 	setGeneralHIDActions{
 		var newElements = (); // make a new list of elements, so we only have the ones that are present for the OS
+
 		this.elements.do{ |el|
 			var slot = el.elementDescription[\slot]; // linux
 			var cookie = el.elementDescription[\cookie]; // osx
@@ -202,7 +201,8 @@ HIDMKtl : MKtl {
 			// on osx:
 			if ( cookie.notNil ){
 				elemDict.put(  cookie, el );
-				srcDevice.slots.at( cookie ).action = { this.elemDict[ cookie ].rawValueAction_( val ) };
+			//	srcDevice.dump;
+				srcDevice.device.slots.at( cookie ).action = { |slot| this.elemDict[ cookie ].rawValueAction_( slot.rawValue ) };
 				//	srcDevice.hidDeviceAction = { |ck,val| this.elemDict[ ck ].rawValueAction_( val ) };
 				newElements.put( el.name, el );
 			}
