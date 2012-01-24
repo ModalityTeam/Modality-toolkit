@@ -329,7 +329,7 @@ MIDIMKtl : MKtl {
 
 				midiRawAction.value(\control, src, chan, num, value);
 
-				elementHashDict[hash].rawValueAction_(value);
+				elementHashDict[hash].rawValueAction_(value, false);
 			}, srcID),
 
 			noteon: NoteOnResponder({ |src, chan, note, vel|

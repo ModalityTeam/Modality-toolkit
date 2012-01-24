@@ -85,9 +85,9 @@ MAbstractElement {
 		this.value_(newval);
 	}
 	
-	rawValueAction_{|newval|
+	rawValueAction_{|newval, sendValue = true|
 		this.rawValue_( newval );
-		this.doAction;
+		this.doAction(sendValue);
 	}
 	
 	doAction {
@@ -183,10 +183,12 @@ MKtlElement : MAbstractElement{
 	}
 
 	// assuming that something setting the element's value will first set the value and then call doAction (like in Dispatch)
-	doAction {
+	doAction { |sendValue = true|
 		super.doAction;
 		if ( ioType == \out or: ioType == \inout ){
-			source.send( name, value );
+		    if(sendValue) {
+			    source.send( name, value );
+			}
 		}
 	}
 
