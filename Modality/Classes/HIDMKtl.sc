@@ -65,7 +65,7 @@ HIDMKtl : MKtl {
 	}
 		// open all ports and display them in readable fashion, 
 		// copy/paste-able directly 
-	*find { |name, uid| 
+	*find { |name, uid, post=true| 
 		this.initHID( true );
 
 		/*
@@ -80,14 +80,19 @@ HIDMKtl : MKtl {
 			("    " ++ info.vendor + info.product).postln;
 		};
 		*/
-			
-		"\n//	Possible	HIDMKtls - just give them unique names: ".postln;
+		if ( post ){
+			this.postPossible;
+		};
+	}
+
+	*postPossible{
+		"\n// Available	HIDMKtls - just give them unique names: ".postln;
 		sourceDeviceDict.keysValuesDo{ |key,pair| 
 			var rawdev, info; 
 			#rawdev, info = pair;
-			"		HIDMKtl('%', %);  // %\n".postf(key, info.physical.asCompileString, info.name);
+			"   HIDMKtl('%', %);  // %\n".postf(key, info.physical.asCompileString, info.name);
 		};
-		"\n///////".postln;
+		"\n-----------------------------------------------------".postln;
 	}
 
 	*findSource{ |rawDeviceName|
@@ -154,6 +159,7 @@ HIDMKtl : MKtl {
 	
 	postRawSpecs { this.class.postRawSpecsOf(srcDevice) }
 	
+	// is this cross platform? Doesn't seem like!
 	*postRawSpecsOf { |dev| 
 		"HIDMKtl - the reported properties of device: %\n".postf(dev.info.name);
 		"	index, type, usage, cookie, min, max, ioType, usagePage, usageType.\n\t".postln;
@@ -183,19 +189,24 @@ HIDMKtl : MKtl {
 	}
 
 	setGeneralHIDActions{
+		var newElements = (); // make a new list of elements, so we only have the ones that are present for the OS
 		this.elements.do{ |el|
-			var slot = el.deviceDescription[\slot]; // linux
-			var cookie = el.deviceDescription[\cookie]; // osx
+			var slot = el.elementDescription[\slot]; // linux
+			var cookie = el.elementDescription[\cookie]; // osx
+			
 			// on linux:
 			if ( slot.notNil ){
 				srcDevice.slots[ slot[0] ][ slot[1] ].action = { |v| el.rawValueAction_( v.value ) };
+				newElements.put( el.name, el );
 			};
 			// on osx:
 			if ( cookie.notNil ){
 				elemDict.put(  cookie, el );
 				srcDevice.hidDeviceAction = { |ck,val| this.elemDict[ ck ].rawValueAction_( val ) };
+				newElements.put( el.name, el );
 			}
-		}
+		};
+		this.replaceElements( newElements );
 	}
 
 	/*

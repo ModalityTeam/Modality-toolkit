@@ -58,7 +58,9 @@ MKtl : MAbstractKtl { // abstract class
 
 	*find { |protocols|
 		if ( protocols.isNil ){
-			this.allSubclasses.do(_.find);
+			this.allSubclasses.do(_.find( post: false ) );
+			"\n-----------------------------------------------------".postln;
+			this.allSubclasses.do(_.postPossible() );
 		}{
 			if ( protocols.isKindOf( Array ) ){
 				protocols.do{ |pcol|
@@ -276,6 +278,11 @@ MKtl : MAbstractKtl { // abstract class
 			elements[key] = MKtlElement(this, key);
 		}
 	}
+
+	// needed for fixing elements that are not present for a specific OS
+	replaceElements{ |newelements|
+		elements = newelements;
+	}
 	
 		// convenience methods
 	defaultValueFor { |elName|
@@ -283,7 +290,11 @@ MKtl : MAbstractKtl { // abstract class
 	}
 		// should filter: those for my platform only
 	elementNames { 
-		^(0, 2 .. deviceDescription.size - 2).collect (deviceDescription[_])
+		if ( elements.isEmpty ){
+			^(0, 2 .. deviceDescription.size - 2).collect (deviceDescription[_])
+		}{
+			^elements.keys.asArray;
+		}
 	}
 	
 	elementsOfType { |type|

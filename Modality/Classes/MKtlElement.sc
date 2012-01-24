@@ -172,7 +172,7 @@ MKtlElement : MAbstractElement{
 	}
 
 	defaultValue {
-		^spec.default;
+		^(spec.default ? 0);
 	}
 
 	value { ^spec.unmap(value) }
