@@ -202,7 +202,8 @@ HIDMKtl : MKtl {
 			// on osx:
 			if ( cookie.notNil ){
 				elemDict.put(  cookie, el );
-				srcDevice.hidDeviceAction = { |ck,val| this.elemDict[ ck ].rawValueAction_( val ) };
+				srcDevice.slots.at( cookie ).action = { this.elemDict[ cookie ].rawValueAction_( val ) };
+				//	srcDevice.hidDeviceAction = { |ck,val| this.elemDict[ ck ].rawValueAction_( val ) };
 				newElements.put( el.name, el );
 			}
 		};
