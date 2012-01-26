@@ -133,8 +133,11 @@ MDispatch : MAbstractKtl {
 				this.prRegisterInputWithSource(source, elemKey, sourceKey)
 			}
 		} {
-			//map just selected keys
-			elemKeys.do{ |elemKey| this.mapToElem(source, elemKey, sourceKey)}
+		    //map just selected keys
+		    this.prMapSourceToKey(source, sourceKey);
+		    elemKeys.do{ |elemKey|
+		        this.prRegisterInputWithSource(source, elemKey, sourceKey)
+		    }
 		}
 	}
 	
@@ -144,12 +147,37 @@ MDispatch : MAbstractKtl {
 		this.prRegisterInputWithSource(source, elemKey.asSymbol, sourceKey)
 	}
 
+	unmap { |source|
+	    var keys, mktl;
+	    if( source.class == Symbol ) {
+	        mktl = sourceKeyToSource[source];
+	        mappedElems[ \source ].do{ |elem|
+                mktl.removeFuncElem(elem, this.name);
+            };
+            sources.removeAt(source);
+            sourceKeyToSource.removeAt(source);
+	    } {
+	        keys = this.lookupSources(source).postln;
+	        keys.do{ |sourceKey|
+	            sourceKey.postln;
+                mappedElems[ sourceKey ].postln.do{ |elem|
+                    "elem".postln;
+                    ("source.removeFuncElem("++elem++", "++"this.name)").postln;
+                    source.removeFuncElem(elem, this.name);
+                };
+                [sources, sourceKeyToSource,mappedElems].do( _.removeAt(sourceKey) );
+            }
+
+	    }
+	}
+
 	lookupSources{ |source|
 		^sourceKeyToSource.findKeysForValue( source );
 	}	
 	
 	valueArray{ arg args;
 		var element = args[0];
+		//("Dispatch "++this.name++" received input "++args.asString).postln;
 		this.setInput( element.source, element.name, element.value );
 		this.prProcessChain;
 	}
@@ -198,6 +226,7 @@ MDispatch : MAbstractKtl {
 	//removeAllFromOutput -> removeAllFromElems
 	
 	prProcessChain{
+	    //("processing chain for "++this.name).postln;
 		changedOuts = List.new;
 		envir.use({ funcChain.value( this ) });
 		changedOuts.do{ |key|
@@ -218,7 +247,9 @@ MDispatch : MAbstractKtl {
 			mappedElems[ sourceKey ].do{ |elem|
 				source.removeFuncElem(elem, this.name);
 			}
-		}
+		};
+		sources = ();
+        sourceKeyToSource = ();
 	}
 	
 	recursiveRemove{
