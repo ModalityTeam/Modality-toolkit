@@ -111,7 +111,7 @@ MAbstractKtl {
 		verbose = value;
 		value.if({
 			elements.do{ |item| item.funcChain.addFirst(\verbose, { |elem| 
-					[elem.source, elem.name, elem.value].postln;
+					[elem.source.name, elem.name, elem.value].postln;
 			})}
 		}, {
 			elements.do{|item| item.funcChain.removeAt(\verbose)}
