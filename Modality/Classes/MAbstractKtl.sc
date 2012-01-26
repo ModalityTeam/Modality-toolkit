@@ -126,4 +126,161 @@ MAbstractKtl {
 	send { |key, val|
 			
 	}
+
+    // f: A -> B
+	collect { |f|
+	    var disp = MDispatch( (this.name.asString++"_collect").asSymbol );
+        disp.map(this);
+        disp.createOutputsFromInputs;
+
+        disp.addToProc( \calc, { |dis|
+            var key = ~changedIn[\key];
+            var source = ~changedIn[\source];
+            var value = ~changedIn[\val];
+
+            dis.setOutput(key, f.(value) );
+
+        });
+        ^disp
+	}
+
+	// keys: Array[Symbol]
+	filterKeys { |...keys|
+	    var disp = MDispatch( (this.name.asString++"_filterKeys").asSymbol );
+        disp.map(this, keys);
+        disp.createOutputsFromInputs;
+
+        disp.addToProc( \calc, { |dis|
+            var key = ~changedIn[\key];
+            var source = ~changedIn[\source];
+            var value = ~changedIn[\val];
+            dis.setOutput(key, value );
+
+        });
+        ^disp
+	}
+
+	// f: A -> Boolean
+    select { |f|
+        var disp = MDispatch( (this.name.asString++"_filter").asSymbol );
+        disp.map(this);
+        disp.createOutputsFromInputs;
+
+        disp.addToProc( \calc, { |dis|
+            var key = ~changedIn[\key];
+            var source = ~changedIn[\source];
+            var value = ~changedIn[\val];
+            if( f.(value ) ) {
+                dis.setOutput(key, value );
+            }
+
+        });
+        ^disp
+    }
+
+	// f: State X A -> State
+	fold { |initialState, f|
+	    var disp = MDispatch( (this.name.asString++"_fold").asSymbol );
+        disp.map(this);
+        disp.createOutputsFromInputs;
+
+        //state
+        disp.envir.put(\state,
+        		disp.sources.collect{ |keysDict|
+        			keysDict.collect{ initialState }
+        		}
+        	);
+        disp.addToProc( \calc, { |dis|
+            var key = ~changedIn[\key];
+            var source = ~changedIn[\source];
+            var value = ~changedIn[\val];
+
+            var next = f.(~state[source][key], value);
+            ~state[source][key] = next;
+            dis.setOutput(key, next );
+        });
+        ^disp
+	}
+
+	// f: A -> MDispatch
+	flatCollect { |f|
+	    var disp = MDispatch( (this.name.asString++"_flatMap").asSymbol );
+
+        disp.map(this);
+
+        //lastKtl
+        disp.envir.put(\lastKtl, nil );
+
+        disp.envir.put(\parent, this);
+
+        disp.addToProc( \flatMapMain, { |dis|
+            var key = ~changedIn[\key];
+            var source = ~changedIn[\source];
+            var value = ~changedIn[\val];
+            var nextDispatch;
+
+            /*
+            dis.envir.postln;
+            this.name.postln;
+            this.hash.postln;
+            dis.envir.postln;
+            key.postln;
+            source.postln;
+            value.postln;
+            */
+
+            ~lastKtl !? { |x|
+                ~lastKtl.elementNames.do{ |elemKey|
+                    ~lastKtl.removeFuncElem(elemKey, dis.hash.asSymbol)
+                }
+            };
+
+            ~lastKtl = f.(value);
+
+            ~lastKtl.elementNames.do{ |elemKey|
+                 dis.createOutput(elemKey.asSymbol);
+                 if(dis.verbose == true) {
+                    dis.elements[elemKey].funcChain.addFirst(\verbose, { |elem|
+                 	    [elem.source.name, elem.name, elem.value].postln;
+                 	})
+                 };
+            	 ~lastKtl.addFuncElem( elemKey, dis.hash.asSymbol, { |element|
+            	    dis.setOutput(element.name.postln, element.value.postln );
+            	    dis.elements[element.name].doAction
+            	 });
+            };
+
+
+
+
+
+
+        });
+        ^disp
+	}
+
+	// merge events
+	| { |mktl|
+
+	    var disp = MDispatch( (this.name.asString++"_merge").asSymbol );
+
+        disp.map(this);
+        disp.map(mktl);
+
+	    //disp.createOutputsFromInputs;
+
+        disp.addToProc( \calc, { |dis|
+            dis.setOutput(~changedIn[\key], ~changedIn[\val] );
+        });
+
+        ^disp
+	}
+
+
+	fromTemplate{ arg name ...args;
+	    ^MDispatch.make(name, *([this]++args))
+	}
+
+
+
 }
