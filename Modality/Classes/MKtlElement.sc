@@ -7,6 +7,7 @@ MAbstractElement {
 	var <ioType; // can be \in, \out, \inout
 
 	var <funcChain;
+	var <eventSource;
 	
 	// keep value and previous value here
 	var <value;
@@ -21,6 +22,7 @@ MAbstractElement {
 
 	init { 
 		this.reset;
+		eventSource = EventSource();
 	}
 
 		// remove all functionalities from the funcChains
@@ -93,6 +95,7 @@ MAbstractElement {
 	doAction {
 		source.recordRawValue( name, value );
 		funcChain.value( this );
+		eventSource.fire( this.value )
 	}
 
 	// UGen support
