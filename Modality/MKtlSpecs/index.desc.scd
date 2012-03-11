@@ -6,6 +6,7 @@ IdentityDictionary[
 	\BCF2000 -> (osx: ( device: "BCF2000"), linux: ( device: "BCF2000-BCF2000 MIDI 1" ), protocol: \midi, file: "BCF2000.desc.scd" ),
 	\Launchpad -> (osx: ( device: "Launchpad"), linux: (device: "Launchpad"), protocol: \midi, file: "Launchpad.desc.scd" ),
 	\istage -> (osx: ( device: "iCON iStage V1.00"), file: "ICONIStage.desc.scd"),
+    \lpd80 -> (osx: ( device: "LPD8"), file: "LPD8.desc.scd"),
 
 	
 	\GamePad -> ( type: \template, protocol: \hid, file: "GamePad.desc.scd" ), // gamepad template
