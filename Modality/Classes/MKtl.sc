@@ -25,6 +25,8 @@ MKtl : MAbstractKtl { // abstract class
                         //'midiType': cc, 'spec': a ControlSpec(0, 127, 'linear', 127, 0, ""), 'ccNum': 105 )
 
 	//var <>recordFunc; // what to do to record incoming control changes
+
+	var <signal; //signal that output anything that comes in;
 	
 	*initClass {
 		Class.initClassTree(Spec);
@@ -159,6 +161,7 @@ MKtl : MAbstractKtl { // abstract class
 			this.makeElements;
 		};
 		all.put(name, this);
+		signal = Var( (\nothing: nil) );
 	}
 	
 	storeArgs { ^[name] }
@@ -307,5 +310,17 @@ MKtl : MAbstractKtl { // abstract class
 		^elements.select { |elem|
    			elem.deviceDescription[\type] != type
 		}
+	}
+
+	esFor{ |elementKey|
+		^this.at(elementKey).collectOrApply( _.eventSource )
+	}
+
+	signalFor{ |elementKey|
+		^this.at(elementKey).collectOrApply( _.signal )
+	}
+
+	eventSource {
+		^signal.changes
 	}
 }

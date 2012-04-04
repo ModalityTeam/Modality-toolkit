@@ -7,7 +7,7 @@ MAbstractElement {
 	var <ioType; // can be \in, \out, \inout
 
 	var <funcChain;
-	var <eventSource;
+	var <signal;
 	
 	// keep value and previous value here
 	var <value;
@@ -21,13 +21,18 @@ MAbstractElement {
 	}
 
 	init { 
-		this.reset;
-		eventSource = EventSource();
+		signal = Var(0.0);
+		funcChain = FuncChain.new;		
 	}
 
 		// remove all functionalities from the funcChains
 	reset {
 		funcChain = FuncChain.new;
+		this.eventSource !? _.reset;
+	}
+
+	eventSource {
+		^signal.changes
 	}
 
 	// funcChain interface //
@@ -95,7 +100,8 @@ MAbstractElement {
 	doAction {
 		source.recordRawValue( name, value );
 		funcChain.value( this );
-		eventSource.fire( this.value )
+		signal.value_( this.value );
+		source.signal.value_( [source, name, this.value] );
 	}
 
 	// UGen support

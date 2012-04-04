@@ -14,10 +14,7 @@
 		// top knob push mode
 		[( "tr" ++ ["A","B","C","D"][j] ++ (i+1) ).asSymbol,(\midiType: \cc, \type: \encoder, \chan: 0, \ccNum: 33+(8*j)+i, \spec: \midiCC, \ioType: \in),
 		// knobs (top row)
-		( "kn" ++ ["A","B","C","D"][j] ++ (i+1) ).asSymbol,(\midiType: \cc, \type: \encoder, \chan: 0, 
-			\in: (\ccNum: 1+(8*j)+i),
-			\out: (\ccNum: 1+(8*j)+i), 
-			\spec: \midiCC, \ioType: \inout)]
+		( "kn" ++ ["A","B","C","D"][j] ++ (i+1) ).asSymbol,(\midiType: \cc, \type: \encoder, \chan: 0,\ccNum: 1+(8*j)+i, \spec: \midiCC, \ioType: \inout)]
 	}
 	++
 	[

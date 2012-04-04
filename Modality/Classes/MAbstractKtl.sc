@@ -105,7 +105,19 @@ MAbstractKtl {
 	}
 	
 	// element access - support polyphonic name lists.
-	at { | elementKey | ^elements.atKeys(elementKey) }
+	at { |elementKey|
+		//we can't distinguis [\kn1,\kn2] from [\kn,1]
+		//so [[\kn,1]] must be used instead
+		^elements.atKeys( elementKey.collectOrApply( this.prArgToElementKey(_) ) )
+	}
+
+	prArgToElementKey { |argm|
+		//argm is either a symbol, a string or an array
+		^switch( argm.class)
+			{ Symbol }{ argm }
+			{ String }{ argm.asSymbol }
+			{ (argm[..(argm.size-2)].inject("",{ |a,b| a++b.asString++"_"}).asSymbol ++ argm.last.asString).asSymbol }
+	}
 	
 	verbose_ {|value=true|
 		verbose = value;
