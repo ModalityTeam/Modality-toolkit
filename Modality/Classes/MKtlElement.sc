@@ -188,7 +188,7 @@ MKtlElement : MAbstractElement{
 
 	// usually, you do not call this but rawValue_ instead.
 	value_ {|newval|
-		^super.value(spec.map(newval))
+		^super.value_(spec.map(newval))
 	}
 
 	// assuming that something setting the element's value will first set the value and then call doAction (like in Dispatch)
