@@ -1,0 +1,279 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1138\cocoasubrtf230
+{\fonttbl\f0\fnil\fcharset0 Monaco;\f1\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green115\blue0;\red0\green0\blue191;
+\red0\green0\blue0;\red0\green0\blue191;\red0\green0\blue255;\red96\green96\blue96;}
+\deftab560
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\pardirnatural
+
+\f0\fs32 \cf2 /*\
+SuperCollider Symposium- Modality Workshop \
+April 2012\
+London\
+\'a9 Modality Team\
+Creative Commons Licence Attribution-NonCommercial-ShareAlike 3.0\
+http://creativecommons.org/licenses/by-nc-sa/3.0/\
+*/\
+\cf0 \
+\pard\pardeftab560
+\cf0 \
+\cf2 /*Function Reactive Programming*/\cf0 \
+\cf2 /*Introduction*/\cf0 \
+\
+FRP deals with with \cf3 'Event Processing'\cf0 .\
+Events come in while the program is running, most often, at unpredictable times.\
+Under the hood it uses Observers, but it automates the removal of the observer from the observers list.\
+Usually it's done with callbacks or observers. FRP is a different approach.\
+\
+From Wikipedia:\
+Functional reactive programming (FRP) is a programming paradigm for reactive programming using the building blocks of functional programming.\
+\
+The key traits of FRP are:\
+	- Input is viewed as a behavior, or time-varying stream of events.\
+	- Continuous, time-varying values.\
+	- Time-ordered sequences of discrete events.\
+	- Time-varying values can be of higher orders. ????\
+	\
+\cf3 'Continuous, time-varying values'\cf0 	\
+\
+You know the value at each moment in time.\
+Encoded with subclasses of FPSignal.\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\pardirnatural
+
+\f1\fs24 \cf0 {{\NeXTGraphic Pasted Graphic 1.pdf \width10240 \height6400
+}¬}\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\pardirnatural
+
+\f0\fs32 \cf0 \
+\
+//A Var is an FPSignal\
+x = \cf4 Var\cf0 (0.0);\
+\cf2 //current value\cf0 \
+x.now;\
+\cf2 //change value\cf0 \
+x.value_(3.3);\
+x.now;\
+\pard\pardeftab560
+\cf0 \
+\cf3 'Time-ordered sequences of discrete events'\
+\cf0 \
+Encoded with subclasses of EventStream.\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\pardirnatural
+
+\f1\fs24 \cf0 {{\NeXTGraphic Pasted Graphic 4.pdf \width10340 \height6660
+}¬}\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\pardirnatural
+
+\f0\fs32 \cf0 	\
+\
+x = EventSource();\
+x.do\{ |x| postln("I have received this: "++x) \};\
+x.fire(1);\
+x.fire(5);\
+\
+You can go from to the other with the functions \cf3 'changes'\cf0  and \cf3 'hold'\cf0 .\
+\
+x = Var(0.0);\
+~eventStream = x.changes;\
+\
+x = EventSource();\
+~signal = x.hold(0.0);\
+\
+If you do \
+\
+x = EventSource();\
+x.hold(0.0).changes that is equivalent to the original EventSource x.\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\cf2 /*Event Streams*/\cf0 \
+\
+- EventStreams emit events at given times. \
+\
+- EventStreams can be chained creating a network.\
+\
+- The start of the network is always an EventSource. \
+\
+- To react to these events you use the 'do' method.\
+\
+\cf5 (\
+x = \cf6 EventSource\cf5 ();\
+x.do\{ \cf7 |x|\cf5  postln(\cf8 "Hello world: "\cf5 ++x) \};\
+x.fire(3)\
+)\cf0 \
+\
+You can think of EventStreams as Collections of elements over time. Therefore the methods of collections will work as you expect.\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\pardirnatural
+
+\f1\fs24 \cf0 {{\NeXTGraphic 1__#$!@%!#__Pasted Graphic 4.pdf \width10340 \height6660
+}¬}\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\pardirnatural
+
+\f0\fs32 \cf0 	\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\pardirnatural
+\cf3 'select(f)'\cf0  only outputs a value if f.(value) is true.\
+\
+x.select(_<0.04)\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\pardirnatural
+
+\f1\fs24 \cf0 {{\NeXTGraphic Pasted Graphic 5.pdf \width10480 \height6740
+}¬}\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\pardirnatural
+
+\f0\fs32 \cf0 \
+\
+\
+\
+(\
+x = EventSource();\
+y = x.select(_>3);\
+y.do\{ |v| postln("I got a "++v) \};\
+x.fire(1);//will not let through.\
+x.fire(4);//will let through.\
+)\
+\
+\
+\
+\
+\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\pardirnatural
+\cf3 'collect(f)'\cf0  outputs a value by applying a value to the funciton f.(value).\
+\
+x.collect(_*100)\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\pardirnatural
+
+\f1\fs24 \cf0 {{\NeXTGraphic Pasted Graphic 6.pdf \width10340 \height6760
+}¬}\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\pardirnatural
+
+\f0\fs32 \cf0 \
+\
+(\
+x = EventSource();\
+y = x.collect(_*100);\
+y.do\{ |v| postln("I got a "++v) \};\
+x.fire(1);\
+x.fire(4);\
+)\
+\
+\
+\
+\
+\
+- EventSources "fire" events, which are propagated by the network of EventStreams ( collect, select, etc ), until they reach a do method, at which point they can finally cause side-effects. Since the network is completely functional, no visible side-effects are performed until reaching a do method.\
+\
+\
+\
+\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\pardirnatural
+\cf3 'fold(initialState,f)'\cf0  - this method can be used for keeping state. It's is the equivalent of 'inject' in sc collections. \
+\
+f must receive two variables, the first is the current state and second is the last value.\
+\
+(\
+x = EventSource();\
+y = x.fold(0.0,\{ |state,v| state + v \});\
+y.do\{ |v| postln("I got a "++v) \};\
+x.fire(1);\
+x.fire(4);\
+x.fire(7);\
+x.fire(12);\
+)\
+\
+(\
+x = EventSource();\
+x.fold([],\{ |state,v| state ++ [v] \}).dopost;\
+y.do\{ |v| postln("I got a "++v) \};\
+x.fire(1);\
+x.fire(4);\
+x.fire(7);\
+x.fire(12);\
+)\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\pardirnatural
+\cf2 //keep last two values\cf0 \
+(\
+x = EventSource();\
+x.fold([0.0,0.0],\{ |state,v| [state[1],v] \}).dopost;\
+y.do\{ |v| postln("I got a "++v) \};\
+x.fire(1);\
+x.fire(4);\
+x.fire(7);\
+x.fire(12);\
+)\
+\
+\
+\
+\
+\
+\
+\
+\
+flatCollect(f) - This is the most important method of EventSource !! It allows selecting which events to output depending on the some other EventSource.\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\pardirnatural
+
+\f1\fs24 \cf0 {{\NeXTGraphic Pasted Graphic 7.tiff \width7440 \height4380
+}¬}\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\pardirnatural
+
+\f0\fs32 \cf0 \
+(\
+\cf2 //selector\cf0 \
+x = \cf4 EventSource\cf0 ();\
+\cf2 //two sources\cf0 \
+y = \cf4 EventSource\cf0 ();\
+z = \cf4 EventSource\cf0 ();\
+\cf2 //the result\cf0 \
+w = x.flatCollect\{ \cf7 |v|\cf0 \
+\'a0if(v==0)\{y\}\{z\}\
+\};\
+w.do(\cf4 _\cf0 .postln);\
+)\
+(\
+//will get value from y\
+x.fire(0);\
+y.fire(1);\
+z.fire(4);\
+)\
+(\
+//will get value from z\
+x.fire(1);\
+y.fire(1);\
+z.fire(4);\
+)\
+\
+Why is it called flatCollect ?\
+\
+well, because it is analoguous to [1,2,3].collect(_*[1,2,3]).flatten, which in other languages is called flatMap or bind (It is an instance of the famous Monad). Notice that [1,2,3].collect(_*[1,2,3]) creates an array of arrays which is then flattened to just one array. \
+In the same way doing \
+\
+x = \cf4 EventSource\cf0 ();\
+y = \cf4 EventSource\cf0 ();\
+z = \cf4 EventSource\cf0 ();\
+x.collect\{ \cf7 |v|\cf0 \
+\'a0if(v==0)\{y\}\{z\}\
+\};\
+\
+creates an EventStream of EventStreams. flatCollect will flatten it down again to a EventStream. \
+}
