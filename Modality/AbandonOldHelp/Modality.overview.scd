@@ -6,7 +6,7 @@ A second starting point is that the same physical interfaces (sets of sliders, b
 
 
 The Modality project:
-... was initiated by Jeff Carey and Bjoernar Habbestad, and colloborators so far have included: Marije Baalman, Alberto de Campo, Wouter Snoei, Till Bovermann, Miguel Negrao, Robert van Heumen, and Hannes Hoelzl.
+... was initiated by Jeff Carey and Bjoernar Habbestad, and collaborators so far have included: Marije Baalman, Alberto de Campo, Wouter Snoei, Till Bovermann, Miguel Negrao, Robert van Heumen, and Hannes Hoelzl.
 
 Documentation to follow at http://modality.bek.no/
 
