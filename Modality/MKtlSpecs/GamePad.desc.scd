@@ -14,10 +14,10 @@ Spec.add(\cent1,  [0, 1, \lin, 0, 0.5].asSpec);
 	
 		// left shoulder fire button, right shoulder fire button, 
 		// left bottom fire button,  right bottom fire button, 
- 	\lfTop_1, (type: \button, osx: (cookie: '?'), linux: (slot: [1,'?']), spec: \hidBut, mode: \push),
-	\lfBot_2, (type: \button, osx: (cookie: '?'), linux: (slot: [1,'?']), spec: \hidBut, mode: \push),
-	\rfTop_3, (type: \button, osx: (cookie: '?'), linux: (slot: [1,'?']), spec: \hidBut, mode: \push),
-	\rfBot_4, (type: \button, osx: (cookie: '?'), linux: (slot: [1,'?']), spec: \hidBut, mode: \push),
+ 	\lfTop_5, (type: \button, osx: (cookie: '?'), linux: (slot: [1,'?']), spec: \hidBut, mode: \push),
+	\lfBot_6, (type: \button, osx: (cookie: '?'), linux: (slot: [1,'?']), spec: \hidBut, mode: \push),
+	\rfTop_7, (type: \button, osx: (cookie: '?'), linux: (slot: [1,'?']), spec: \hidBut, mode: \push),
+	\rfBot_8, (type: \button, osx: (cookie: '?'), linux: (slot: [1,'?']), spec: \hidBut, mode: \push),
 		
 		// middle buttons
  	\mid_L, (type: \button, osx: (cookie: '?'), linux: (slot: [1,'?']), spec: \hidBut, mode: \push),

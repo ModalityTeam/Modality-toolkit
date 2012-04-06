@@ -12,14 +12,16 @@
 	
 		// left shoulder fire button, right shoulder fire button, 
 		// left bottom fire button,  right bottom fire button, 
- 	\lfTop_1, (type: \button, osx: (cookie: 6), linux: (slot: [1,308]), spec: \hidBut, mode: \push),
-	\lfTop_2, (type: \button, osx: (cookie: 7), linux: (slot: [1,309]), spec: \hidBut, mode: \push),
-	\lfTop_3, (type: \button, osx: (cookie: 8), linux: (slot: [1,310]), spec: \hidBut, mode: \push),
-	\lfTop_4, (type: \button, osx: (cookie: 9), linux: (slot: [1,311]), spec: \hidBut, mode: \push),
+ 	\lfTop_5, (type: \button, osx: (cookie: 6), linux: (slot: [1,308]), spec: \hidBut, mode: \push),
+	\rfTop_6, (type: \button, osx: (cookie: 7), linux: (slot: [1,309]), spec: \hidBut, mode: \push),
+
+	\lfTop_7, (type: \button, osx: (cookie: 8), linux: (slot: [1,310]), spec: \hidBut, mode: \push),
+	\rfTop_8, (type: \button, osx: (cookie: 9), linux: (slot: [1,311]), spec: \hidBut, mode: \push),
 		
 		// middle buttons
  	\mid_L, (type: \button, osx: (cookie: 10), linux: (slot: [1,312]), spec: \hidBut, mode: \push),
 	\mid_R, (type: \button, osx: (cookie: 11), linux: (slot: [1,313]), spec: \hidBut, mode: \push),
+
 	
 		// joystick hat switches
 	\joyHat_L, (type: \hidHat, osx: (cookie: 12), linux: (slot: [1,314]), spec: \hidHat, mode: \center),
@@ -36,12 +38,12 @@
 	\throt_R, (type: \springFader, osx: (cookie: 20, spec: \lin255 ), linux: (slot: [3,4], spec: \lin1inv ), mode: \minimum),
 	
 		// west is 1, south is 3, east is 5, north is 7
-	\compass, (type: \compass, osx: (cookie: 14, spec: \compass8), mode: \push),	
+	\compass, (type: \compass, osx: (cookie: 14), spec: \compass8 , mode: \push),	
 		// added osx specs for compassX, Y to avoid warning; not sure it is a good idea. 
 		// maybe some way of labeling whether an element shows up on linux or osx only? 
 		// e.g. if no spec the platform is not there, swallow it.
-	\compass_X, (type: \compassX, osx: (cookie: 14, spec: \compass8), linux: (slot: [3,16], spec: \cent1inv), mode: \push),
-	\compass_Y, (type: \compassY, osx: (cookie: 14, spec: \compass8), linux: (slot: [3,17], spec: \cent1inv), mode: \push),
+	\compass_X, (type: \compassX, linux: (slot: [3,16] ), spec: \cent1inv, mode: \push),
+	\compass_Y, (type: \compassY, linux: (slot: [3,17] ), spec: \cent1inv, mode: \push),
 	
 	\wheel, (type: \springFader, osx: (cookie: 21, spec: \cent255), linux: (slot: [3,6], spec: \cent1inv), mode: \center)
 ];

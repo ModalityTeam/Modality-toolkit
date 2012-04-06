@@ -14,10 +14,10 @@ Spec.add(\cent1,  [0, 1, \lin, 0, 0.5].asSpec);
 	
 		// left shoulder fire button, right shoulder fire button, 
 		// left bottom fire button,  right bottom fire button, 
- 	\lfTop_1, (type: \button, osx: (cookie: 6), linux: (slot: [1,292]), spec: \hidBut, mode: \push),
-	\lfBot_2, (type: \button, osx: (cookie: 7), linux: (slot: [1,293]), spec: \hidBut, mode: \push),
-	\rfTop_3, (type: \button, osx: (cookie: 8), linux: (slot: [1,294]), spec: \hidBut, mode: \push),
-	\rfBot_4, (type: \button, osx: (cookie: 9), linux: (slot: [1,295]), spec: \hidBut, mode: \push),
+ 	\lfTop_5, (type: \button, osx: (cookie: 6), linux: (slot: [1,292]), spec: \hidBut, mode: \push),
+	\lfBot_6, (type: \button, osx: (cookie: 7), linux: (slot: [1,293]), spec: \hidBut, mode: \push),
+	\rfTop_7, (type: \button, osx: (cookie: 8), linux: (slot: [1,294]), spec: \hidBut, mode: \push),
+	\rfBot_8, (type: \button, osx: (cookie: 9), linux: (slot: [1,295]), spec: \hidBut, mode: \push),
 		
 		// middle buttons
  	\mid_L, (type: \button, osx: (cookie: 10), linux: (slot: [1,296]), spec: \hidBut, mode: \push),
@@ -34,7 +34,7 @@ Spec.add(\cent1,  [0, 1, \lin, 0, 0.5].asSpec);
 	\joy_R_Y, (type: \joyAxis, osx: ( cookie: 20, spec: \cent255 ), linux: ( slot: [3,2], spec: \cent1 ), mode: \center),
 	
 		// west is 1, south is 3, east is 5, north is 7
-	\compass, (type: \compass, osx: (cookie: 14, spec: \compass8), mode: \push),	
-	\compass_X, (type: \compassX, linux: (slot: [3,16], spec: \cent1), mode: \push),
-	\compass_Y, (type: \compassY, linux: (slot: [3,17], spec: \cent1), mode: \push),
+	\compass, (type: \compass, osx: (cookie: 14), spec: \compass8, mode: \push),	
+	\compass_X, (type: \compassX, linux: (slot: [3,16]), spec: \cent1, mode: \push),
+	\compass_Y, (type: \compassY, linux: (slot: [3,17]), spec: \cent1, mode: \push),
 ];
