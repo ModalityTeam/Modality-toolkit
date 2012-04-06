@@ -21,8 +21,7 @@ MAbstractElement {
 	}
 
 	init { 
-		signal = Var(0.0);
-		funcChain = FuncChain.new;		
+		funcChain = FuncChain.new;
 	}
 
 		// remove all functionalities from the funcChains
@@ -100,8 +99,6 @@ MAbstractElement {
 	doAction {
 		source.recordRawValue( name, value );
 		funcChain.value( this );
-		signal.value_( this.value );
-		source.signal.value_( [source, name, this.value] );
 	}
 
 	// UGen support
@@ -178,6 +175,9 @@ MKtlElement : MAbstractElement{
 		} { 
 			value = prevValue = spec.default ? 0;
 		};
+		signal = HideVar(0.0);
+        signal.externalChanges.do{ |x| source.send(name, spec.map(x) ) };
+
 	}
 
 	defaultValue {
@@ -198,7 +198,9 @@ MKtlElement : MAbstractElement{
 		    if(sendValue) {
 			    source.send( name, value );
 			}
-		}
+		};
+		signal.internalValue_( this.value );
+        source.signal.value_( [source, name, this.value] );
 	}
 
 	rawValue { ^value }
