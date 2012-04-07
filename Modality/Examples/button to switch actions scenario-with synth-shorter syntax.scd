@@ -7,11 +7,7 @@ k.reset;
 //change to this if you don't have a nanokontrol
 //k =  MKtl.make('nnkn0', 'nanoKONTROL'); 
 //some controls that control some synthesis process
-~knob1 = k.elements[\kn_1_1].eventSource;
-~knob2 = k.elements[\kn_2_1].eventSource;
-~knob3 = k.elements[\kn_3_1].eventSource;
-~knob4 = k.elements[\kn_4_1].eventSource;
-~knobs = [~knob1, ~knob2, ~knob3, ~knob4];
+~knobs = k.esFor((1..4).collect{ |i| [\kn,i,1] });
 
 //the button that enters selection mode
 ~but = k.esFor(\bu_1_1);
@@ -54,13 +50,8 @@ k.reset;
 });
 
 f = { |i| { |state|
-	switch(state[i])
-		{0}{~knob1}
-		{1}{~knob2}
-		{2}{~knob3}
-		{3}{~knob4}	
-	
-} };
+	~knobs[state[i]]	
+}};
 
 //between receiving 1 on ~but and ~receiving a zero, or receiving something from ~exchange do nothing.
 g = { |i| (~but | ~exchange).flatCollect({ |x|
@@ -73,25 +64,18 @@ g = { |i| (~but | ~exchange).flatCollect({ |x|
 
 ~selSignal = ~sel.hold([0,1,2,3]);
 
-~action1 = g.(0);
-~action2 = g.(1);
-~action3 = g.(2);
-~action4 = g.(3);
+~actions = 4.collect{ |i| g.(i) };
 
-~action1.do{ |x| ("action 1 got a "++x).postln };
-~action2.do{ |x| ("action 2 got a "++x).postln };
-~action3.do{ |x| ("action 3 got a "++x).postln };
-~action4.do{ |x| ("action 4 got a "++x).postln };
-~actions = [~action1, ~action2, ~action3, ~action4];
+~actions.do{ |es,i| es.do{ |x| ("action "++i++" got a "++x).postln } };
 ~synths = [
 	{ |freq=400| SinOsc.ar(freq)*0.2 }.play,
 	{ |freq=400| Saw.ar(freq)*0.2 }.play,
 	{ |freq=400| LFNoise0.ar(freq)*0.2 }.play,
 	{ |freq=400| Blip.ar(freq)*0.2 }.play
 ];
-~actions.do{ |a, i|
-	a.do{ |v|
-		~synths[i].set(\freq, v.linlin(0.0,1.0,200.0,2000.0))
+[~actions, ~synths].flopWith{ |es, synth|
+	es.do{ |v|
+		synth.set(\freq, v.linlin(0.0,1.0,200.0,2000.0))
 	}
 };
 )
