@@ -357,11 +357,13 @@ MIDIMKtl : MKtl {
 	}
 
 	send{ |key,val|
-	 	var type, ch, num, spec;
-	 	#type, ch, num, spec = elNameToMidiDescDict.at(key);
-	 	switch(type)
- 			{\cc}{ midiOut.control(ch, num, val ) }
- 			{\note}{ /*TODO: check type for noteOn, noteOff, etc*/ }
+	 	elNameToMidiDescDict !? _.at(key) !? { |x|
+			var type, ch, num, spec;
+			#type, ch, num, spec = x;
+	 		switch(type)
+	 			{\cc}{ midiOut.control(ch, num, val ) }
+	 			{\note}{ /*TODO: check type for noteOn, noteOff, etc*/ }
+	 	}
 	}
 
 	verbose_ {|value=true|
