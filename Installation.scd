@@ -12,3 +12,7 @@
 // install from code:
 ~myquark.install( "Modality" )
 
+// dependencies:
+
+Quarks.updateDirectory;
+Quarks.install("FP");
