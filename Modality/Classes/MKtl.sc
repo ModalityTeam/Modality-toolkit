@@ -158,7 +158,9 @@ MKtl : MAbstractKtl { // abstract class
 			warn("no deviceDescription name given!");
 		} {
 			this.loadDeviceDescription(deviceDescName);
-			this.makeElements;
+			if ( deviceDescription.notNil ){
+				this.makeElements;
+			};
 		};
 		all.put(name, this);
 		signal = Var( (\nothing: nil) );
@@ -206,36 +208,41 @@ MKtl : MAbstractKtl { // abstract class
 		// look the filename up in the index
 		deviceInfo = this.class.getDeviceDescription( deviceName );
 
-		// deviceInfo also has information about protocol and os specific naming
+		if ( deviceInfo.notNil ){
 
-		deviceFileName = deviceInfo[ \file ];
+			// deviceInfo also has information about protocol and os specific naming
 
-		path = deviceDescriptionFolder +/+ deviceFileName;
+			deviceFileName = deviceInfo[ \file ];
 
-		deviceDescription = try { 
-			path.load;
-		} { 
-			"//" + this.class ++ ": - no device description found for %: please make them!\n"
+			path = deviceDescriptionFolder +/+ deviceFileName;
+
+			deviceDescription = try { 
+				path.load;
+			} { 
+				"//" + this.class ++ ": - no device description found for %: please make them!\n"
 				.postf(deviceName);
-		//	this.class.openTester(this);
-		};
-
-		deviceDescription.pairsDo{ |key,elem|
-			this.class.flattenDescription( elem )
-		};
-
-		// create specs
-		deviceDescription.pairsDo {|key, elem| 
-			var foundSpec =  specs[elem[\spec]];
-			if (foundSpec.isNil) { 
-				warn("// Mktl - in description %, el %, spec for '%' is missing! please add it with:"
-					"\nMktl.addSpec( '%', [min, max, warp, step, default]);\n"
-					.format(deviceName, key, elem[\spec], elem[\spec])
-				);
+				//	this.class.openTester(this);
 			};
-			elem[\specName] = elem[\spec];
-			elem[\spec] = this.class.specs[elem[\specName]];
-		};
+
+			deviceDescription.pairsDo{ |key,elem|
+				this.class.flattenDescription( elem )
+			};
+
+			// create specs
+			deviceDescription.pairsDo {|key, elem| 
+				var foundSpec =  specs[elem[\spec]];
+				if (foundSpec.isNil) { 
+					warn("// Mktl - in description %, el %, spec for '%' is missing! please add it with:"
+						"\nMktl.addSpec( '%', [min, max, warp, step, default]);\n"
+						.format(deviceName, key, elem[\spec], elem[\spec])
+				);
+				};
+				elem[\specName] = elem[\spec];
+				elem[\spec] = this.class.specs[elem[\specName]];
+			};
+		}{ // no device file found:
+			warn( "// Mktl could not find a device file for this device" + deviceName );
+		}
 	}
 	
 	*postAllDescriptions {
