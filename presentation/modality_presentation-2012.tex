@@ -19,7 +19,7 @@
 
 % \HAPsetup{rf={Sense/Stage - infrastructure for realtime interactive environments},lf={KiberPipa - SenseStage Workshop - Feb 26 - March 4, 2011},trans=Wipe}
 
-\HAPsetup{rf={Modality},lf={STEIM - Modality residency - May 11-20, 2011},trans=Wipe}
+\HAPsetup{rf={Modality},lf={SuperCollider Symposium 2012 - London - April, 2012},trans=Wipe}
 
 \title{Modality\\modal control in SuperCollider}
 
@@ -55,19 +55,26 @@ Marije Baalman, Till Bovermann, Miguel Negr\~{a}o
 \end{itemize}
 
 \onlySlide{2}{
-\vspace*{0.5cm}
+\vspace*{0.3cm}
 
-First meeting between Jeff Carey, Bj\o{}rnar Habbestad, Alberto de Campo, Wouter Snoei and Marije Baalman in October 2010 in Bergen (BEK).
-
-\vspace*{0.5cm}
-
-Second meeting here at STEIM with Jeff Carey, Alberto de Campo, Marije Baalman, Till Bovermann, Miguel Negr\~{a}o, Hannes H\"olzl and Robert van Heumen.
+\textit{First meeting between Jeff Carey, Bj\o{}rnar Habbestad, Alberto de Campo, Wouter Snoei and Marije Baalman in October 2010 in Bergen (BEK).
 }
+
+\vspace*{0.3cm}
+
+\textit{Second meeting at STEIM in May 2011 with Jeff Carey, Alberto de Campo, Marije Baalman, Till Bovermann, Miguel Negr\~{a}o, Hannes H\"olzl and Robert van Heumen.
+}
+
+\vspace*{0.3cm}
+
+\textit{Semi-regular email contact and chance meetings since then...
+}}
 
 \end{slide}
 }
 
-\begin{slide}{Residency}
+\begin{slide}{Process and work approach}
+\textit{STEIM residency:}
 \vspace*{0.25cm}
 \begin{itemize}
  \item Presentation and discussion at SC-user meeting
@@ -76,10 +83,14 @@ Second meeting here at STEIM with Jeff Carey, Alberto de Campo, Marije Baalman, 
  \item and brainstorming
  \item Then coding, coding, coding
  \item and brainstorming
- \item and playing a concert on Monday (DNK)
+ \item and playing a concert
  \item some more coding and discussion
- \item and creating some instruments for tonight.
+ \item and creating some instruments for presentations.
 \end{itemize}
+
+\vspace*{0.5cm}
+
+\textit{Bergen residency followed a similar scheme (but also involving walks on mountains)}
 
 \end{slide}
 
@@ -101,16 +112,19 @@ Second meeting here at STEIM with Jeff Carey, Alberto de Campo, Marije Baalman, 
  \begin{itemize}
   \item Support different devices that work with different protocols (MIDIMKtl, HIDMKtl)
   \item Provide a common interface to use these devices (MKtl)
-  \item Provide a system to process the data from these devices (Dispatch)
+  \item Provide a system to process the data from these devices (Dispatch or FRP approach)
   \item Templates for various devices
   \item Templates for various common ways of processing
   \item Same interface for MKtl and Dispatch
  \end{itemize}
 
+ \vspace*{0.5cm}
+ 
+ \textit{We are actually slowly moving Dispatch out again in favour of FRP...}
  
 \end{slide}
 
-\begin{slide}{What took you so long?}
+\begin{slide}{What is the problem?}
 
 \vspace*{1cm}
 
@@ -128,6 +142,26 @@ Second meeting here at STEIM with Jeff Carey, Alberto de Campo, Marije Baalman, 
 
  
 \end{slide}
+
+\begin{slide}{Issues in accessing devices}
+
+\vspace*{1cm}
+
+\begin{itemize}
+ \item HID: different subsystems in OSX and Linux:
+ \begin{itemize}
+  \item causing elements to be numbered differently,
+  \item as well as scaling, 
+  \item as well as names reported with slight variations.
+  \end{itemize}
+ \item MIDI: device names are reported differently between OSX and Linux,
+ \item real MIDI devices (not USB-MIDI) will not report their names, but simply be MIDI-ports.
+ \item Similar issues are to be expected for OSC or SerialPort devices.
+\end{itemize}
+
+ 
+\end{slide}
+
 
 % \overlays{2}{
 \begin{slide}{Device description index}
@@ -161,32 +195,56 @@ IdentityDictionary[
 % \onlySlide*{2}{
 \begin{verbatim}
 // right hand side four labeled buttons
-\bt1r, (type: \button, osx: (cookie: 2), linux: (slot: [1,304]),
-	  spec: \hidBut, mode: \push), 
-\bt2r, (type: \button, osx: (cookie: 3), linux: (slot: [1,305]),
-	  spec: \hidBut, mode: \push), 
-	
+\bt_R_1, (type: \button, osx: (cookie: 2), linux: (slot: [1,304]), 
+    spec: \hidBut, mode: \push),
+\bt_R_2, (type: \button, osx: (cookie: 3), linux: (slot: [1,305]),
+  spec: \hidBut, mode: \push),
+
 // joystick axes switches
-\joyLX, (type: \joyAxis, osx: (cookie: 15, spec: \cent255inv), 
-    linux: (slot: [3,0], spec: \cent1 ),  mode: \center), 
-\joyLY, (type: \joyAxis, osx: (cookie: 16, spec: \cent255 ), 
-    linux: (slot: [3,1], spec: \cent1 ),  mode: \center), 
+\joy_L_X, (type: \joyAxis, osx: (cookie: 15, spec: \cent255inv),
+	linux: (slot: [3,0], spec: \cent1 ),  mode: \center),
+\joy_L_Y, (type: \joyAxis, osx: (cookie: 16, spec: \cent255 ), 
+	linux: (slot: [3,1], spec: \cent1 ),  mode: \center),
 \end{verbatim}
 
 % }
-
  
 \end{slide}
 % }
 
 \overlays{2}{
-\begin{slide}{Dispatching}
+\begin{slide}{Basic elements of device descriptions}
+ 
+\begin{itemize}
+ \item Array of elements: name, event/dictionary with specifications.
+ 
+ \onlySlide*{1}{
+ \item Whenever something is different between platforms, you put the platform specific stuff in a sub-dictionary containing the specifics. When the file is parsed, MKtl will check on which platform it is running, and handle things accordingly.
+ \item Naming of elements are somewhat hierarchical, so they are easy to sort out using pattern-matching
+ \item Since it's SC code you can also programmatically fill in the description...
+ }
+ \onlySlide*{2}{
+ \item Element specification contains:
+\begin{itemize}
+  \item the element in the controller (cookies, slots, midichannels and control numbers, notes, etc.)
+  \item a ControlSpec (by name). Some of these are defined in MKtl, but you can also define custom ones inside the device description file (it's just SC-code!).
+  \item types: we've tried to classify a number of typical controls (joyAxis, button, slider, encoder, etc).
+  \item modes: we've tried to classify a number of typical behaviours of controls (push vs. switch, center, ..)
+ \end{itemize}
+ }
+\end{itemize}
+ 
+\end{slide}
+}
+
+\overlays{2}{
+\begin{slide}{Chain of events}
 
 \begin{itemize}
  \item Each control can cause a chain of actions
- \item A unit of actions that provide the calculations or logic to create new outputs is called a \textbf{Dispatch}
+%  \item A unit of actions that provide the calculations or logic to create new outputs is called a \textbf{Dispatch}
  \item They can be handwritten
- \item Or created from a template
+ \item Or created from one or more templates
 
 \fromSlide{2}{
 \vspace*{0.5cm}
@@ -207,28 +265,28 @@ IdentityDictionary[
 \end{slide}
 }
 
-\begin{slide}{Dispatch template example}
-\footnotesize
-\begin{verbatim}
-(
-func:{ |disp, source,elemKeys, sourceKey|
-	disp.map(source, elemKeys);	
-	disp.createOutputsFromInputs;
-	
-	disp.addToProc( \trigger, { |dis,e|
-		var in = dis.changedIn;
-		if( in[\val] == 1 ) {
-			dis.setOutput(in[\key], 1)
-		}
-	});
-  	disp
-},
-desc: "trigger on a value of 1",
-name: "trigger",
-type: "creator"
-)
-\end{verbatim}
-\end{slide}
+% \begin{slide}{Dispatch template example}
+% \footnotesize
+% \begin{verbatim}
+% (
+% func:{ |disp, source,elemKeys, sourceKey|
+% 	disp.map(source, elemKeys);	
+% 	disp.createOutputsFromInputs;
+% 	
+% 	disp.addToProc( \trigger, { |dis,e|
+% 		var in = dis.changedIn;
+% 		if( in[\val] == 1 ) {
+% 			dis.setOutput(in[\key], 1)
+% 		}
+% 	});
+%   	disp
+% },
+% desc: "trigger on a value of 1",
+% name: "trigger",
+% type: "creator"
+% )
+% \end{verbatim}
+% \end{slide}
 
 \begin{slide}{A simple instrument}
  
@@ -259,10 +317,32 @@ a.addToOutput( \accZ, \changeFreq, { |c| Ndef( \sine ).set( \freq3,
 
 \end{slide}
 
-\begin{slide}{Dispatch example}
+% \begin{slide}{Dispatch example}
  
+% \end{slide}
+
+\begin{slide}{Workshop overview}
+ 
+ \begin{itemize}
+  \item Intro (to which you just listened)
+  \item Installing Modality and dependencies
+  \item Hooking up your devices
+  \item Creating templates for your devices
+  \item What is FRP?
+  \item Writing FRP's with your controllers
+ \end{itemize}
 \end{slide}
 
+\begin{slide}{Installing Modality}
+
+\begin{itemize}
+ \item Get the code from: \url{https://github.com/ModalityTeam/Modality-toolkit}
+ \item Open the file ``Installation.scd'' in SuperCollider, and follow the instructions there
+ \item Install the ``FP'' quark from the main quarks.
+ \item Recompile sclang!
+\end{itemize}
+ 
+\end{slide}
 
 
 \end{document}
