@@ -309,13 +309,13 @@ MKtl : MAbstractKtl { // abstract class
 	
 	elementsOfType { |type|
 		^elements.select { |elem|
-   			elem.deviceDescription[\type] == type
+   			elem.elementDescription[\type] == type
 		}	
 	}
 
 	elementsNotOfType { |type|
 		^elements.select { |elem|
-   			elem.deviceDescription[\type] != type
+   			elem.elementDescription[\type] != type
 		}
 	}
 
