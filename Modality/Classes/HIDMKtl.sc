@@ -55,7 +55,7 @@ HIDMKtl : MKtl {
 			sourceDeviceDict.put((name[0] ++ j).asSymbol, GeneralHID.deviceList[ name[1] ])
 		};
 
-		// put the available midi devices in MKtl's available devices
+		// put the available hid devices in MKtl's available devices
 		allAvailable.put( \hid, List.new );
 		sourceDeviceDict.keysDo({ |key|
 			allAvailable[\hid].add( key );
