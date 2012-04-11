@@ -98,7 +98,7 @@ w = Window(bounds:Rect(200,200,200,100)).layout_(
 		
 ).front;
 [~knobs, ~guiKnobs].flopWith{ |knob,gui|
-	knob.do{ |v| defer{ gui.value_(v) } }
+	knob.connect(gui)
 };
 ~sel.do{ |array|
 	array.postln;
