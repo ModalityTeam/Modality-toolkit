@@ -264,7 +264,7 @@ Spec.add(\midiBut, [0, 127, \lin, 127, 0]);
 */
 
 
-MIDIIn
+//MIDIIn
 
 
 
