@@ -35,7 +35,7 @@ x = Synth(\sliderFreq);
 
 // select the first slider in the first page
 a.addFuncElem(\sl1_1, \freq, {|elem|
-	x.set(\freq,Êelem.value.linexp(0, 1, 40, 1000));
+	x.set(\freq, elem.value.linexp(0, 1, 40, 1000));
 })
 
 
@@ -52,11 +52,11 @@ To view all possible element names to which actions can be hooked, call
 The other parameters of the Synth can be mapped e.g. by these lines:
   
 a.addFuncElem(\sl2_1, \freq, {|elem|
-	x.set(\preAmp,Êelem.value.linlin(0, 1, 0.5, 15));
+	x.set(\preAmp, elem.value.linlin(0, 1, 0.5, 15));
 })
 
 a.addFuncElem(\sl3_1, \freq, {|elem|
-	x.set(\amp,Êelem.value);
+	x.set(\amp, elem.value);
 })
 */
 
