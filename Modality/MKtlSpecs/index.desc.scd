@@ -8,7 +8,7 @@ IdentityDictionary[
 	\istage -> (osx: ( device: "iCON iStage V1.00"), file: "ICONIStage.desc.scd"),
     \lpd80 -> (osx: ( device: "LPD8"), file: "LPD8.desc.scd"),
 
-	\DanceMat -> (osx: (), linux: (device: "WiseGroup.,Ltd MP-8888 USB Joypad"), protocol: \hid, file: "DanceMat.desc.scd" ) ),
+	\DanceMat -> (osx: (), linux: (device: "WiseGroup.,Ltd MP-8888 USB Joypad"), protocol: \hid, file: "DanceMat.desc.scd" ),
 	
 	\GamePad -> ( type: \template, protocol: \hid, file: "GamePad.desc.scd" ), // gamepad template
 	\Run_N_Drive -> (osx: ( device: "Run'N' Drive"), linux: (device: "Thrustmaster Run\'N\' Drive"), protocol: \hid, file: "Run_N_Drive.desc.scd" ),
