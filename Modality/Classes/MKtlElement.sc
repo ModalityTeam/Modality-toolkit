@@ -191,6 +191,10 @@ MKtlElement : MAbstractElement{
 		^super.value_(spec.map(newval))
 	}
 
+	sendMapped { |newVal|
+		^this.send( spec.map(newVal) )
+	}
+
 	// assuming that something setting the element's value will first set the value and then call doAction (like in Dispatch)
 	doAction { |sendValue = true|
 		super.doAction;
