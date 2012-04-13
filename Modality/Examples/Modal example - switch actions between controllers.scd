@@ -1,5 +1,5 @@
 (
-var withGui = true;
+	var withGui = true;
 //one controller
 MIDIMKtl.find;
 //with nanokontrol
@@ -21,17 +21,17 @@ k =  MKtl.make('nnkn0', 'nanoKONTROL');
 //selection mode is entered when ~but is set to 1
 //it is exited when two different knobs are moved
 ~but.do{ |x| if(x == 1){ "entering remap mode".postln } };
-~exchange = ~but.flatCollectR{ |y|
+~exchange = ~but.flatCollect{ |y|
 	var selection;
 	//enter remap mode
 	if( y == 1) {
 		//two different knobs are moved
 		selection = ~knobs.collect{ |x,i| x.collect{i} }.reduce('|')
-		.fold([false],{ |state,x|
+		.inject([false],{ |state,x|
 			//("knob "++x++" selected for exchange").postln;
 			(switch(state.size) 
 				{1} { [false,x] }
-				{2} { if(x != state.last) { [true,state.last,x] } { state } }
+				{2} { if(x != state.last) { [true,state.last,x] } { state} }
 				{3} { [false,0,0] });
 		}).select{ |x| x[0] == true}.collect{ |array| [array[1],array[2]] };
 	} {	
@@ -46,7 +46,7 @@ k =  MKtl.make('nnkn0', 'nanoKONTROL');
 ~startState = [0,1,2,3]; //which knobs go to which action
 
 //~exchange = EventSource();
-~sel = ~exchange.fold(~startState, { |state, exchangePair|
+~sel = ~exchange.inject(~startState, { |state, exchangePair|
 		var indexA = state.indexOf(exchangePair[0]);
 		var indexB = state.indexOf(exchangePair[1]);	
 		//("Exchange pair: "++exchangePair).postln;	
@@ -92,7 +92,7 @@ w !? _.close;
 ~guiTV = ~labels.collect{ |st| TextView().string_(st) };
 w = Window(bounds:Rect(200,200,200,100)).layout_(
 	 VLayout(
-    	HLayout( *~guiKnobs ),
+		HLayout( *~guiKnobs ),
 		HLayout( *~guiTV ),
 	)
 		

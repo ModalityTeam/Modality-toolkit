@@ -1,10 +1,10 @@
 // Behringer BCR2000 specs: 
 
 [
-	\pr_1_1: (\midiType: \cc, \type: \button, \chan: 0, \ccNum: 105, \spec: \midiBut, \mode: \toggle),
-	\pr_1_2: (\midiType: \cc, \type: \button, \chan: 0, \ccNum: 106, \spec: \midiBut, \mode: \toggle),
-	\pr_2_1: (\midiType: \cc, \type: \button, \chan: 0, \ccNum: 107, \spec: \midiBut, \mode: \toggle),
-	\pr_2_2: (\midiType: \cc, \type: \button, \chan: 0, \ccNum: 108, \spec: \midiBut, \mode: \toggle)
+	\pr_1_1: (\midiType: \cc, \type: \button, \chan: 0, \ccNum: 105, \spec: \midiBut, \mode: \toggle, \ioType: \inout),
+	\pr_1_2: (\midiType: \cc, \type: \button, \chan: 0, \ccNum: 106, \spec: \midiBut, \mode: \toggle, \ioType: \inout),
+	\pr_2_1: (\midiType: \cc, \type: \button, \chan: 0, \ccNum: 107, \spec: \midiBut, \mode: \toggle, \ioType: \inout),
+	\pr_2_2: (\midiType: \cc, \type: \button, \chan: 0, \ccNum: 108, \spec: \midiBut, \mode: \toggle, \ioType: \inout)
 ]
 ++
 8.collect{ |i|
