@@ -5,7 +5,7 @@
 // based on its type, gui elements will be drawn in that location.
 
 	// make a virtual MKtl, based on Ferrari GamePad
-MKtl.make(\ferr1, 'Run_N__Drive');
+MKtl.make(\ferr1, 'Run_N_Drive');
 
 	// post a template for typing in lots of rects:
 (
@@ -20,7 +20,7 @@ MKtl(\ferr1).elements.keys.asArray.sort.do { |k|
 MKtl(\ferr1).postDeviceDescription;
 	
 	// one specific description
-MKtl(\ferr1).elements[\joyLHat].dump
+MKtl(\ferr1).elements[\joyHat_L].elementDescription;
 
 (	// collect all the types that occur in a Set
 z = Set[];
@@ -42,32 +42,32 @@ w = Window("Ferrari").background_(Color(1, 0.1, 0.1)).front;
 	// the zones for each element 
 	// - suggestions for width and height could be based on  types
 zoneDict = (
-	'bt1r': Rect(250 + 40, 200 - 12, 40, 24),
-	'bt2r': Rect(275 + 40, 225 - 12, 40, 24),
-	'bt3r': Rect(300 + 40, 200 - 12, 40, 24),
-	'bt4r': Rect(275 + 40, 175 - 12,  40, 24),
+	'bt_R_1': Rect(250 + 40, 200 - 12, 40, 24),
+	'bt_R_2': Rect(275 + 40, 225 - 12, 40, 24),
+	'bt_R_3': Rect(300 + 40, 200 - 12, 40, 24),
+	'bt_R_4': Rect(275 + 40, 175 - 12,  40, 24),
 	
 	'compass': Rect.aboutPoint(100@200, 45, 45),
 	
-	'joyLHat': 	Rect(140, 320 + 20, 50, 40),
-	'joyLX': 		Rect(60, 280 + 20, 120, 40),
-	'joyLY': 		Rect(100, 240 + 20, 40, 120),
+	'joyHat_L': 	Rect(140, 320 + 20, 50, 40),
+	'joy_L_X': 	Rect(60, 280 + 20, 120, 40),
+	'joy_L_Y': 	Rect(100, 240 + 20, 40, 120),
 	
-	'joyRHat': Rect(300, 320 + 20, 50, 40),
-	'joyRX': Rect(220, 280 + 20, 120, 40),
-	'joyRY': Rect(260, 240 + 20, 40, 120),
+	'joyHat_R': Rect(300, 320 + 20, 50, 40),
+	'joy_R_X': Rect(220, 280 + 20, 120, 40),
+	'joy_R_Y': Rect(260, 240 + 20, 40, 120),
 	
-	'lfBot7': Rect(110, 25,  40, 20),
-	'lfTop5': Rect(40, 100,  80, 20),
+	'lfBot_7': Rect(110, 25,  40, 20),
+	'lfTop_5': Rect(40, 100,  80, 20),
 	
-	'midL9': Rect(150, 190, 48, 20),
-	'midR10': Rect(202, 190, 48, 20),
+	'mid_L_9': Rect(150, 190, 48, 20),
+	'mid_R_10': Rect(202, 190, 48, 20),
 	
-	'rfBot8': Rect(250, 25,  40, 20),
-	'rfTop6': Rect(280, 100,  80, 20),
+	'rfBot_8': Rect(250, 25,  40, 20),
+	'rfTop_6': Rect(280, 100,  80, 20),
 	
-	'throtL': Rect(30, 55, 120, 40),
-	'throtR': Rect(250, 55, 120, 40),
+	'throt_L': Rect(30, 55, 120, 40),
+	'throt_R': Rect(250, 55, 120, 40),
 	
 	'wheel': Rect(5, 125, 40, 150 )
 );	
@@ -133,6 +133,6 @@ MKtl(\ferr1).elements.do { |el|
 };
 )
 (
-MKtl(\ferr1).elements[\joyLY].valueAction_(255.rand);
-MKtl(\ferr1).elements[\joyRY].valueAction_(255.rand);
+MKtl(\ferr1).elements[\joy_L_Y].valueAction_(255.rand);
+MKtl(\ferr1).elements[\joy_R_Y].valueAction_(255.rand);
 )
