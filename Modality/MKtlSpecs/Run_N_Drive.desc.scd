@@ -15,12 +15,12 @@
  	\lfTop_5, (type: \button, osx: (cookie: 6), linux: (slot: [1,308]), spec: \hidBut, mode: \push),
 	\rfTop_6, (type: \button, osx: (cookie: 7), linux: (slot: [1,309]), spec: \hidBut, mode: \push),
 
-	\lfTop_7, (type: \button, osx: (cookie: 8), linux: (slot: [1,310]), spec: \hidBut, mode: \push),
-	\rfTop_8, (type: \button, osx: (cookie: 9), linux: (slot: [1,311]), spec: \hidBut, mode: \push),
+	\lfBot_7, (type: \button, osx: (cookie: 8), linux: (slot: [1,310]), spec: \hidBut, mode: \push),
+	\rfBot_8, (type: \button, osx: (cookie: 9), linux: (slot: [1,311]), spec: \hidBut, mode: \push),
 		
 		// middle buttons
- 	\mid_L, (type: \button, osx: (cookie: 10), linux: (slot: [1,312]), spec: \hidBut, mode: \push),
-	\mid_R, (type: \button, osx: (cookie: 11), linux: (slot: [1,313]), spec: \hidBut, mode: \push),
+ 	\mid_L_9, (type: \button, osx: (cookie: 10), linux: (slot: [1,312]), spec: \hidBut, mode: \push),
+	\mid_R_10, (type: \button, osx: (cookie: 11), linux: (slot: [1,313]), spec: \hidBut, mode: \push),
 
 	
 		// joystick hat switches
