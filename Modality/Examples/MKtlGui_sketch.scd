@@ -129,10 +129,15 @@ elemGuis = ();
 MKtl(\ferr1).elements.do { |el| 
 	var gui = buildFuncs[el.type].value(w, el); 
 	elemGuis.put(el.name, gui);
-	el.addFunc(\gui, { |name, newval| try { [name, newval].postln; gui.value_(newval) } });
+	el.eventSource.doDef( \gui, { |newval| try { [el.name, newval].postln; gui.value_(newval) } });
+	//	el.addFuncElem(\gui, { |name, newval| try { [name, newval].postln; gui.value_(newval) } });
 };
 )
+
+
 (
-MKtl(\ferr1).elements[\joy_L_Y].valueAction_(255.rand);
-MKtl(\ferr1).elements[\joy_R_Y].valueAction_(255.rand);
+MKtl(\ferr1).elements[\joy_L_Y].valueAction_(1.0.rand);
+MKtl(\ferr1).elements[\joy_R_Y].valueAction_(1.0.rand);
+
+MKtl(\ferr1).elements[\lfBot_7].valueAction_(1);
 )
