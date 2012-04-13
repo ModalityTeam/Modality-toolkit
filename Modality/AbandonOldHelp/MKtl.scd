@@ -27,7 +27,7 @@ MKtl.make(\nk1, 'nanoKONTROL');
 MKtl(\nk1).dump;
 MKtl(\nk1).deviceDescription;
 
-MKtl(\nk1).elements.choose.deviceDescription
+MKtl(\nk1).elements.choose.elementDescription
 
 
 // 2b // the same procedure for HIDKtl: 
