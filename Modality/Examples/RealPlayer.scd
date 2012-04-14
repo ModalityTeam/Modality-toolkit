@@ -10,7 +10,7 @@ Ndef( \sine ).fadeTime = 0.1;
 
 d = ();
 
-d.trigger = Dispatch.new( \trigger, a, a.elements.select{ |it| it.type == \button }.collect( _.name ) );
+d.trigger = MDispatch.new( \trigger, a, a.elements.select{ |it| it.type == \button }.collect( _.name ) );
 
 d.trigger.verbose_( true )
 d.trigger.verbose_( false )
