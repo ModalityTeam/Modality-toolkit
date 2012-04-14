@@ -1,7 +1,7 @@
 IdentityDictionary[
 
 	\nanoKONTROL -> (osx: ( device: "nanoKONTROL"), linux: ( device: "nanoKONTROL-nanoKONTROL MIDI 1"), protocol: \midi, file: "nanoKONTROL.desc.scd" ),
-	\nanoKONTROL2 -> (osx: ( device: "nanoKONTROL2"), protocol: \midi, file: "nanoKONTROL2.desc.scd" ),
+	\nanoKONTROL2 -> (osx: ( device: "nanoKONTROL2"), linux: ( device: "nanoKONTROL2-nanoKONTROL2 MIDI 1" ), protocol: \midi, file: "nanoKONTROL2.desc.scd" ),
 	\BCR2000 -> (osx: ( device: "BCR2000"), linux: ( device: "BCR2000-BCR2000 MIDI 1" ), protocol: \midi, file: "BCR2000.desc.scd" ),
 	\BCF2000 -> (osx: ( device: "BCF2000"), linux: ( device: "BCF2000-BCF2000 MIDI 1" ), protocol: \midi, file: "BCF2000.desc.scd" ),
 	\Launchpad -> (osx: ( device: "Launchpad"), linux: (device: "Launchpad"), protocol: \midi, file: "Launchpad.desc.scd" ),
