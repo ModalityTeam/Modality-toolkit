@@ -116,17 +116,90 @@ Marije Baalman, Till Bovermann, Miguel Negr\~{a}o
  \begin{itemize}
   \item Support different devices that work with different protocols (MIDIMKtl, HIDMKtl)
   \item Provide a common interface to use these devices (MKtl)
-  \item Provide a system to process the data from these devices (Dispatch or FRP approach)
+  \item Provide a system to process the data from these devices (MDispatch or FRP approach)
   \item Templates for various devices
   \item Templates for various common ways of processing
-  \item Same interface for MKtl and Dispatch
+  \item Same interface for MKtl and MDispatch
  \end{itemize}
 
  \vspace*{0.5cm}
  
- \textit{We are actually slowly moving Dispatch out again in favour of FRP...}
+ \textit{We are considering moving MDispatch out again in favour of FRP...}
  
 \end{slide}
+
+
+\tsectionandpart{Workshop}
+
+\begin{slide}{Workshop overview}
+ 
+ \begin{itemize}
+  \item Intro (to which you just listened)
+  \item Installing Modality and dependencies
+  \item Hooking up your devices
+  \item Creating templates for your devices
+  \item Actions for controllers
+  \item What is FRP?
+  \item Writing FRP's with your controllers
+ \end{itemize}
+\end{slide}
+
+\begin{slide}{Installing Modality}
+
+\begin{itemize}
+ \item Get the code from: \url{https://github.com/ModalityTeam/Modality-toolkit}
+ \item Open the file ``Installation.scd'' in SuperCollider, and follow the instructions there
+ \item Install the ``FP'' quark from the main quarks.
+ \item Recompile sclang!
+\end{itemize}
+ 
+\end{slide}
+
+\tsectionandpart{The end}
+
+\overlays{3}{
+\begin{slide}{We're not there yet...}
+
+\begin{itemize}
+ \item GUI replacements and/or visualisation for controllers
+ \item Backends for OSC and Serial based devices (and others?)
+%  \item 
+\end{itemize}
+
+\vspace*{1cm}
+
+\fromSlide*{2}{
+\begin{center}
+Where to have our next workshop week?
+\end{center}
+}
+
+\fromSlide*{3}{
+\vspace*{1cm}
+\begin{center}
+Who else could join in?
+\end{center}
+}
+ 
+\end{slide}
+}
+
+\begin{slide}{Acknowledgements}
+ \vspace*{1cm}
+ \begin{center}
+
+ BEK - Bergen, Norway\\
+ \url{www.bek.no}\\
+ \vspace*{1cm}
+ 
+STEIM - Amsterdam, The Netherlands\\
+ \url{www.steim.org}\\
+ \vspace*{1cm}
+ 
+\textit{Jeff Carey - getting us all together} \end{center}
+\end{slide}
+
+\tsectionandpart{The rest of the presentation}
 
 \begin{slide}{What is the problem?}
 
@@ -176,18 +249,18 @@ Marije Baalman, Till Bovermann, Miguel Negr\~{a}o
 
 IdentityDictionary[
 \nanoKONTROL -> 
-	(osx: ( device: "nanoKONTROL"), 
-	linux: ( device: "nanoKONTROL-nanoKONTROL MIDI 1"), 
-	protocol: \midi, file: "nanoKONTROL.desc.scd" ),
+        (osx: ( device: "nanoKONTROL"), 
+        linux: ( device: "nanoKONTROL-nanoKONTROL MIDI 1"), 
+        protocol: \midi, file: "nanoKONTROL.desc.scd" ),
 \GamePad -> ( type: \template, protocol: \hid, 
-	file: "GamePad.desc.scd" ), // gamepad template
+        file: "GamePad.desc.scd" ), // gamepad template
 \Run_N_Drive -> 
-	(osx: ( device: "Run'N' Drive"),
-	linux: (device: "Thrustmaster Run\'N\' Drive"), 
-	protocol: \hid, file: "Run_N_Drive.desc.scd" ),
+        (osx: ( device: "Run'N' Drive"),
+        linux: (device: "Thrustmaster Run\'N\' Drive"), 
+        protocol: \hid, file: "Run_N_Drive.desc.scd" ),
 \manta -> 
-	(inport: 1234, outport: 5678, protocol: \osc,
-	file: "Manta.desc.scd" )
+        (inport: 1234, outport: 5678, protocol: \osc,
+        file: "Manta.desc.scd" )
 ] 
 \end{verbatim}
 % }
@@ -324,75 +397,6 @@ a.addToOutput( \accZ, \changeFreq, { |c| Ndef( \sine ).set( \freq3,
 % \begin{slide}{Dispatch example}
  
 % \end{slide}
-
-\tsectionandpart{Workshop}
-
-\begin{slide}{Workshop overview}
- 
- \begin{itemize}
-  \item Intro (to which you just listened)
-  \item Installing Modality and dependencies
-  \item Hooking up your devices
-  \item Creating templates for your devices
-  \item What is FRP?
-  \item Writing FRP's with your controllers
- \end{itemize}
-\end{slide}
-
-\begin{slide}{Installing Modality}
-
-\begin{itemize}
- \item Get the code from: \url{https://github.com/ModalityTeam/Modality-toolkit}
- \item Open the file ``Installation.scd'' in SuperCollider, and follow the instructions there
- \item Install the ``FP'' quark from the main quarks.
- \item Recompile sclang!
-\end{itemize}
- 
-\end{slide}
-
-\tsectionandpart{The end}
-
-\overlays{3}{
-\begin{slide}{We're not there yet...}
-
-\begin{itemize}
- \item GUI replacements and/or visualisation for controllers
- \item Backends for OSC and Serial based devices (and others?)
-%  \item 
-\end{itemize}
-
-\vspace*{1cm}
-
-\fromSlide*{2}{
-\begin{center}
-Where to have our next workshop week?
-\end{center}
-}
-
-\fromSlide*{3}{
-\vspace*{1cm}
-\begin{center}
-Who else could join in?
-\end{center}
-}
- 
-\end{slide}
-}
-
-\begin{slide}{Acknowledgements}
- \vspace*{1cm}
- \begin{center}
-
- BEK - Bergen, Norway\\
- \url{www.bek.no}\\
- \vspace*{1cm}
- 
-STEIM - Amsterdam, The Netherlands\\
- \url{www.steim.org}\\
- \vspace*{1cm}
- 
-\textit{Jeff Carey - getting us all together} \end{center}
-\end{slide}
 
 
 \end{document}
