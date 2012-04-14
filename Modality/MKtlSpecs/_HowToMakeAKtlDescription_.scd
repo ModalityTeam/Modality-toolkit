@@ -1,4 +1,4 @@
-Making a description file for a Ktl device:
+"Making a description file for a Ktl device:
 
 For every element:
 	give it a short name, 
@@ -13,10 +13,22 @@ For every element:
 		(e.g. [0, 127, \lin, 1, 0])
 	note other things (toggle/push mode)
 
+To discover names and channels and stuff for MIDI devices, connect your device and evaluate the following:"
+
+MIDIIn.connectAll
+MIDIFunc.cc({|val, num, chan, src| 
+	[\val,val,\num, num, \chan, chan, \src, src].postln
+}); // match all ccs
+
+
+MIDIFunc.noteOn({|val, num, chan, src| 
+	[\val,val,\num, num, \chan, chan, \src, src].postln
+}); // match any noteOn
+
 
 	// in the device's state itself: 
 current state, 
-	(sl1: 54, kn1: 127, bu7: 0); 
+	(sl_1: 54, kn_1: 127, bu_7: 0); 
 current scene (if known)
 
 
