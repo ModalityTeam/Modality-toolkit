@@ -29,9 +29,9 @@
 
 		// joystick axes switches
 	\joy_L_X, (type: \joyAxis, osx: (cookie: 15, spec: \cent255inv), linux: (slot: [3,0], spec: \cent1 ),  mode: \center),
-	\joy_L_Y, (type: \joyAxis, osx: (cookie: 16, spec: \cent255 ), linux: (slot: [3,1], spec: \cent1 ),  mode: \center),
+	\joy_L_Y, (type: \joyAxis, osx: (cookie: 16, spec: \cent255 ), linux: (slot: [3,1], spec: \cent1inv ),  mode: \center),
 	\joy_R_X, (type: \joyAxis, osx: ( cookie: 17, spec: \cent255inv), linux: (slot: [3,2], spec: \cent1), mode: \center),
-	\joy_R_Y, (type: \joyAxis, osx: ( cookie: 20, spec: \cent255 ), linux: ( slot: [3,5], spec: \cent1 ), mode: \center),
+	\joy_R_Y, (type: \joyAxis, osx: ( cookie: 20, spec: \cent255 ), linux: ( slot: [3,5], spec: \cent1inv ), mode: \center),
 
 	// what is meant with mode "minimum", on Linux it seems more logical to just inverse the spec
 	\throt_L, (type: \springFader, osx: (cookie: 17, spec: \lin255 ), linux: (slot: [3,3], spec: \lin1inv ), mode: \minimum),
@@ -42,8 +42,8 @@
 		// added osx specs for compassX, Y to avoid warning; not sure it is a good idea. 
 		// maybe some way of labeling whether an element shows up on linux or osx only? 
 		// e.g. if no spec the platform is not there, swallow it.
-	\compass_X, (type: \compassX, linux: (slot: [3,16] ), spec: \cent1inv, mode: \push),
-	\compass_Y, (type: \compassY, linux: (slot: [3,17] ), spec: \cent1inv, mode: \push),
+	\compass_X, (type: \joyAxis, linux: (slot: [3,16] ), spec: \cent1inv, mode: \push),
+	\compass_Y, (type: \joyAxis, linux: (slot: [3,17] ), spec: \cent1inv, mode: \push),
 	
 	\wheel, (type: \springFader, osx: (cookie: 21, spec: \cent255), linux: (slot: [3,6], spec: \cent1inv), mode: \center)
 ];
