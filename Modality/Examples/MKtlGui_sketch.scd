@@ -4,6 +4,9 @@
 // of the gui element that is reasonably similar to the physical device.
 // based on its type, gui elements will be drawn in that location.
 
+MKtl.find;
+MKtl( 'thrs0');
+
 	// make a virtual MKtl, based on Ferrari GamePad
 MKtl.make(\ferr1, 'Run_N_Drive');
 
@@ -48,6 +51,8 @@ zoneDict = (
 	'bt_R_4': Rect(275 + 40, 175 - 12,  40, 24),
 	
 	'compass': Rect.aboutPoint(100@200, 45, 45),
+	'compass_X': Rect.aboutPoint( 100@200, 45, 20),
+	'compass_Y': Rect.aboutPoint( 100@200,  20, 45),
 	
 	'joyHat_L': 	Rect(140, 320 + 20, 50, 40),
 	'joy_L_X': 	Rect(60, 280 + 20, 120, 40),
@@ -85,7 +90,9 @@ skin = (onColor: Color(0.5, 1, 0.5, 1.0), offColor: Color.grey(0.7), fontColor: 
 	
 buildFuncs = (
 	joyAxis: { |w, el| EZSlider(w, zoneDict[el.name], el.name, 
-		el.spec, { |sl|
+		[0,1].asSpec
+		// el.spec, // double 
+		{ |sl|
 			el.valueAction_(sl.value);
 			[el.name, sl.value, el.prevValue, el.value].postln;
 		}, el.value, layout: \line2, numberWidth: 40); 
@@ -126,10 +133,11 @@ buildFuncs = (
 
 elemGuis = ();
 
-MKtl(\ferr1).elements.do { |el| 
+//MKtl(\ferr1);
+MKtl(\thrs0).elements.do { |el| 
 	var gui = buildFuncs[el.type].value(w, el); 
 	elemGuis.put(el.name, gui);
-	el.eventSource.doDef( \gui, { |newval| try { [el.name, newval].postln; gui.value_(newval) } });
+	el.eventSource.doDef( \gui, { |newval| try { [el.name, newval].postln; { gui.value_(newval) }.defer } });
 	//	el.addFuncElem(\gui, { |name, newval| try { [name, newval].postln; gui.value_(newval) } });
 };
 )
