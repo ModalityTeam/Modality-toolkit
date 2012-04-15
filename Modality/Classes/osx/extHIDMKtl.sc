@@ -19,7 +19,9 @@
 				locIDtoKtl.at( locID ).cookieslots.at( cookie ).value_(val);
 			} {
 				// fall thru to next action here...
-				if (debug) {("fall thru"+[productID, vendorID, locID, cookie, val]).postln;}
+				if (exploring) {
+					("fall thru"+[productID, vendorID, locID, cookie, val]).postln;
+				}
 			}
 		});
 	}

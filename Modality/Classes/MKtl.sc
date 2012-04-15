@@ -27,6 +27,8 @@ MKtl : MAbstractKtl { // abstract class
 	//var <>recordFunc; // what to do to record incoming control changes
 
 	var <signal; //signal that output anything that comes in;
+
+	var <exploring = false;
 	
 	*initClass {
 		Class.initClassTree(Spec);

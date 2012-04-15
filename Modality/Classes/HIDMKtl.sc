@@ -168,6 +168,13 @@ HIDMKtl : MKtl {
 	
 	postRawSpecs { this.class.postRawSpecsOf(srcDevice) }
 	
+	explore{ |mode=true|
+		if ( thisProcess.platform.name == \linux ){
+			srcDevice.debug_( mode );
+		};
+		// this is enough for osx
+		exploring = mode;
+	}
 	
 	initHIDMKtl { |argUid, argSource|
 		srcID = argUid;
