@@ -9,6 +9,11 @@ MKtl.find( \hid );
 
 a = MKtl( 'sbcm0');
 
+// this will print incoming messages:
+a.explore( true )
+
+
+-89999-
 // turn on debugging on the source device
 a.srcDevice.debug_( true );
 

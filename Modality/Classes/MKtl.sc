@@ -27,6 +27,8 @@ MKtl : MAbstractKtl { // abstract class
 	//var <>recordFunc; // what to do to record incoming control changes
 
 	var <signal; //signal that output anything that comes in;
+
+	var <exploring = false;
 	
 	*initClass {
 		Class.initClassTree(Spec);
@@ -160,6 +162,7 @@ MKtl : MAbstractKtl { // abstract class
 			this.loadDeviceDescription(deviceDescName);
 			if ( deviceDescription.notNil ){
 				this.makeElements;
+				( "Opened device:" + name + "using device description"+deviceDescName ).postln;
 			};
 		};
 		all.put(name, this);
@@ -241,7 +244,7 @@ MKtl : MAbstractKtl { // abstract class
 				elem[\spec] = this.class.specs[elem[\specName]];
 			};
 		}{ // no device file found:
-			warn( "// Mktl could not find a device file for this device" + deviceName );
+			warn( "// Mktl could not find a device file for this device" + deviceName + "\n You can start exploring the capabilities of this device with:\n" ++ this.class ++ "(" ++ name ++ ").explore" );
 		}
 	}
 	

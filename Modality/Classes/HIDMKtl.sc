@@ -16,7 +16,12 @@ HIDMKtl : MKtl {
 	classvar <initialized = false; 
 	classvar <sourceDeviceDict;
 
-	
+
+	// needed for OSX; can be removed once 3.5 works with hid
+	classvar <locIDtoKtl;
+	var <cookieslots;
+	// -- end osx specific stuff
+				
 	var <srcID, <srcDevice; 
 	
 			// optimisation for fast lookup, 
@@ -29,7 +34,13 @@ HIDMKtl : MKtl {
 		GeneralHID.buildDeviceList;
 		sourceDeviceDict = ();
 
+		locIDtoKtl = ();
+
 		this.prepareDeviceDicts;
+
+		if ( thisProcess.platform.name == \osx ){
+			this.initHIDDeviceServiceAction;
+		};
 
 		GeneralHID.startEventLoop;
 		
@@ -157,20 +168,25 @@ HIDMKtl : MKtl {
 	
 	postRawSpecs { this.class.postRawSpecsOf(srcDevice) }
 	
-	// is this cross platform? Doesn't seem like!
-	*postRawSpecsOf { |dev| 
-		"HIDMKtl - the reported properties of device: %\n".postf(dev.info.name);
-		"	index, type, usage, cookie, min, max, ioType, usagePage, usageType.\n\t".postln;
-		
-		dev.elements.do { |ele, i|
-			("" + i + "\t").post; [ele.type, ele.usage, ele.cookie, ele.min, ele.max, ele.ioType, ele.usagePage, ele.usageType].postln;
-		}
+	explore{ |mode=true|
+		if ( thisProcess.platform.name == \linux ){
+			srcDevice.debug_( mode );
+		};
+		// this is enough for osx
+		exploring = mode;
 	}
 	
 	initHIDMKtl { |argUid, argSource|
 		srcID = argUid;
 		srcDevice = GeneralHID.open(argSource);
 		all.put(name, this);
+
+		if ( thisProcess.platform.name == \osx ){
+			// srcDevice: GeneralHID
+			// device: MXHID
+			// device: HIDDevice
+			locIDtoKtl.put( srcDevice.device.device.locID, this );
+		};
 		
 		elemDict = ();
 		lookupDict = ();
@@ -189,6 +205,11 @@ HIDMKtl : MKtl {
 	setGeneralHIDActions{
 		var newElements = (); // make a new list of elements, so we only have the ones that are present for the OS
 
+		/*
+		if ( thisProcess.platform.name == \osx ){					cookieslots = cookieslots ?? srcDevice.device.getSlotsForCookies;
+		};
+		*/
+		
 		this.elements.do{ |el|
 			var slot = el.elementDescription[\slot]; // linux
 			var cookie = el.elementDescription[\cookie]; // osx
@@ -202,6 +223,8 @@ HIDMKtl : MKtl {
 			if ( cookie.notNil ){
 				elemDict.put(  cookie, el );
 			//	srcDevice.dump;
+				
+				//cookieslots.at( cookie ).action = { |slot| this.elemDict[ cookie ].rawValueAction_( slot.rawValue ) };
 				srcDevice.device.slots.at( cookie ).action = { |slot| this.elemDict[ cookie ].rawValueAction_( slot.rawValue ) };
 				//	srcDevice.hidDeviceAction = { |ck,val| this.elemDict[ ck ].rawValueAction_( val ) };
 				newElements.put( el.name, el );

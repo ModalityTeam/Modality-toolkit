@@ -30,6 +30,8 @@ MIDIMKtl : MKtl {
 
 	var <responders;
 
+	var <exploreResponders;
+
 	    // open all ports
 	*initMIDI {|force= false|
 
@@ -90,7 +92,7 @@ MIDIMKtl : MKtl {
 				key,
 				src.uid,
 				destinationDeviceDict[key].notNil.if({destinationDeviceDict[key].uid},{nil}),
-				src.device
+				this.getMIDIdeviceName(src.device)
 			);
 		};
 		"\n-----------------------------------------------------".postln;
@@ -152,7 +154,7 @@ MIDIMKtl : MKtl {
 			^nil
 		};
 
-			// make a new destination
+		// make a new destination
 		foundDestination = destID.notNil.if({
 			MIDIClient.destinations.detect { |src|
 				src.uid == destID;
@@ -169,15 +171,26 @@ MIDIMKtl : MKtl {
 
 		[ devDescName, foundSource.device].postln;
 		//		^super.basicNew(name, foundSource.device)
-		^super.basicNew(name, devDescName ? foundSource.device )
+		^super.basicNew(name, devDescName ? this.getMIDIdeviceName( foundSource.device ) )
 			.initMIDIMKtl(name, foundSource, foundDestination );
+	}
+
+	// convenience method to get the right name on linux.
+	*getMIDIdeviceName{ |fullDeviceName|
+		if ( thisProcess.platform.name == \linux ){
+			^fullDeviceName.split( $- ).first;
+		}{
+			^fullDeviceName;
+		};
 	}
 
 	*prepareDeviceDicts {
 		var prevName = nil, j = 0, order, deviceNames;
+		var tempName;
 
 		deviceNames = MIDIClient.sources.collect {|src|
-			this.makeShortName(src.device);
+			tempName = this.getMIDIdeviceName( src.device );
+			this.makeShortName(tempName);
 		};
 
 		if (deviceNames.isEmpty) {
@@ -199,7 +212,8 @@ MIDIMKtl : MKtl {
 		// prepare destinationDeviceDict
 		j = 0; prevName = nil;
 		deviceNames = MIDIClient.destinations.collect{|src|
-			this.makeShortName(src.device);
+			tempName = this.getMIDIdeviceName( src.device );
+			this.makeShortName(tempName);
 		};
 		order = deviceNames.order;
 
@@ -219,6 +233,33 @@ MIDIMKtl : MKtl {
 		sourceDeviceDict.keysDo({ |key|
 			allAvailable[\midi].add( key );
 		});
+	}
+
+	explore{ |mode=true|
+		if ( mode ){
+			if ( exploreResponders.isNil ){
+				exploreResponders = (
+					cc: CCResponder({ |src, chan, num, value|
+						[ this.name, \control, src, chan, num, value ].postln;
+					}, srcID),
+					
+					noteon: NoteOnResponder({ |src, chan, note, vel|
+						[ this.name, \noteOn, src, chan, note, vel ].postln;
+					}, srcID),
+					
+					noteoff: NoteOffResponder({ |src, chan, note, vel|
+						[ this.name, \noteOff, src, chan, note, vel ].postln;
+					}, srcID)
+				);
+			}{
+				exploreResponders.do{ |it| it.add };
+			};
+		}{
+			if ( exploreResponders.notNil ){
+				exploreResponders.do{ |it| it.remove };
+			};
+		};
+		exploring = mode;
 	}
 
 	initMIDIMKtl { |argName, argSource, argDestination|
@@ -241,19 +282,21 @@ MIDIMKtl : MKtl {
 
 		all.put(name, this);
 
-		elementHashDict = ();
-		hashToElNameDict = ();
-		elNameToMidiDescDict = ();
 
-			// moved to superclass init
+		// moved to superclass init
 		//	this.loadDeviceDescription(devDescName);
 
 		//this.findDeviceDescription(source.device);
 
-		//	this.makeElements;
-		this.prepareElementHashDict;
+		elementHashDict = ();
+		hashToElNameDict = ();
+		elNameToMidiDescDict = ();
 
-		this.addResponders;
+		//	this.makeElements;
+		if ( deviceDescription.notNil ){
+			this.prepareElementHashDict;
+			this.addResponders;		
+		}
 	}
 
 	makeHashKey{ |descr,elName|
