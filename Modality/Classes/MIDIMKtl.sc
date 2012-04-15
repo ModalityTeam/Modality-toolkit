@@ -90,7 +90,7 @@ MIDIMKtl : MKtl {
 				key,
 				src.uid,
 				destinationDeviceDict[key].notNil.if({destinationDeviceDict[key].uid},{nil}),
-				src.device
+				this.getMIDIdeviceName(src.device)
 			);
 		};
 		"\n-----------------------------------------------------".postln;
@@ -152,7 +152,7 @@ MIDIMKtl : MKtl {
 			^nil
 		};
 
-			// make a new destination
+		// make a new destination
 		foundDestination = destID.notNil.if({
 			MIDIClient.destinations.detect { |src|
 				src.uid == destID;
@@ -169,15 +169,26 @@ MIDIMKtl : MKtl {
 
 		[ devDescName, foundSource.device].postln;
 		//		^super.basicNew(name, foundSource.device)
-		^super.basicNew(name, devDescName ? foundSource.device )
+		^super.basicNew(name, devDescName ? this.getMIDIdeviceName( foundSource.device ) )
 			.initMIDIMKtl(name, foundSource, foundDestination );
+	}
+
+	// convenience method to get the right name on linux.
+	*getMIDIdeviceName{ |fullDeviceName|
+		if ( thisProcess.platform.name == \linux ){
+			^fullDeviceName.split( $- ).first;
+		}{
+			^fullDeviceName;
+		};
 	}
 
 	*prepareDeviceDicts {
 		var prevName = nil, j = 0, order, deviceNames;
+		var tempName;
 
 		deviceNames = MIDIClient.sources.collect {|src|
-			this.makeShortName(src.device);
+			tempName = this.getMIDIdeviceName( src.device );
+			this.makeShortName(tempName);
 		};
 
 		if (deviceNames.isEmpty) {
@@ -199,7 +210,8 @@ MIDIMKtl : MKtl {
 		// prepare destinationDeviceDict
 		j = 0; prevName = nil;
 		deviceNames = MIDIClient.destinations.collect{|src|
-			this.makeShortName(src.device);
+			tempName = this.getMIDIdeviceName( src.device );
+			this.makeShortName(tempName);
 		};
 		order = deviceNames.order;
 
