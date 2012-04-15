@@ -16,7 +16,9 @@ HIDMKtl : MKtl {
 	classvar <initialized = false; 
 	classvar <sourceDeviceDict;
 
-	
+	// needed for OSX; can be removed once 3.5 works with hid
+	var <cookieslots;
+				
 	var <srcID, <srcDevice; 
 	
 			// optimisation for fast lookup, 
@@ -189,6 +191,11 @@ HIDMKtl : MKtl {
 	setGeneralHIDActions{
 		var newElements = (); // make a new list of elements, so we only have the ones that are present for the OS
 
+		/*
+		if ( thisProcess.platform.name == \osx ){					cookieslots = cookieslots ?? srcDevice.device.getSlotsForCookies;
+		};
+		*/
+		
 		this.elements.do{ |el|
 			var slot = el.elementDescription[\slot]; // linux
 			var cookie = el.elementDescription[\cookie]; // osx
@@ -202,6 +209,8 @@ HIDMKtl : MKtl {
 			if ( cookie.notNil ){
 				elemDict.put(  cookie, el );
 			//	srcDevice.dump;
+				
+				//cookieslots.at( cookie ).action = { |slot| this.elemDict[ cookie ].rawValueAction_( slot.rawValue ) };
 				srcDevice.device.slots.at( cookie ).action = { |slot| this.elemDict[ cookie ].rawValueAction_( slot.rawValue ) };
 				//	srcDevice.hidDeviceAction = { |ck,val| this.elemDict[ ck ].rawValueAction_( val ) };
 				newElements.put( el.name, el );
