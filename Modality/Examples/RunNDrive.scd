@@ -39,6 +39,8 @@ MKtl('thrs0').elements;
 MKtl('thrs0').postDeviceDescription;
 
 
+MKtl('thrs0').addFuncElem( \wheel, \postme, { |i| [i, i.name, i.value].postln; });
+MID
 // selecting all buttons:
 ~buttons = MKtl( 'thrs0' ).elementsOfType( \button ).collect( _.eventSource );
 ~allTriggers = ~buttons.collect{ |b| b.trigger() };
@@ -59,16 +61,17 @@ NdefMixer.new(s);
 
 //// writing joystick control to buffer:
 
-~buffer = Buffer.alloc(s, s.sampleRate * 3, 2 );
+//~buffer = Buffer.alloc(s, s.sampleRate * 3, 2 );
 ~buffer2 = Buffer.alloc(s, s.sampleRate * 0.1, 2 );
 
 //~buffer.free;
+
+Ndef( \writeWaveForm ).set( \buffer, ~buffer2.bufnum);
 
 Ndef( \writeWaveForm, { |speed1=0.5,speed2=0.5,buffer=0,input1=0,input2=0,onoff1=0,onoff2=0| 
 	BufWr.kr( In.kr( [input1,input2], 1 ) - 0.5, buffer, 
 		LFSaw.ar(BufDur.ir(buffer).reciprocal * [speed1,speed2]/20 ).range(0, BufFrames.ir(buffer) * [ onoff1,onoff2] )
 		, 0 ); } );
-Ndef( \writeWaveForm ).set( \buffer, ~buffer2.bufnum);
 
 
 // select joyAxes
@@ -88,8 +91,8 @@ Ndef( \writeWaveForm ).set( \buffer, ~buffer2.bufnum);
 // playing back the buffer
 Ndef( \playWaveForm, { |buffer=0, speed1=0.5, speed2=0.5,amp1=0, amp2=0| [amp1,amp2] * BufRd.ar( 2, buffer, LFSaw.ar(BufDur.ir(buffer).reciprocal * [speed1,speed2] * 2).range(0, BufFrames.ir(buffer)) ); });
 
-~joysRight.do{ |it,i| it.doDef( \setSpeed, { |v| Ndef('playWaveForm').set( 'speed'++(i+1), v ); [\setSpeed, i, v ].postln; } ) };
-~joysRight.do{ |it,i| it.doDef( \setSpeedWrite, { |v| Ndef('writeWaveForm').set( 'speed'++(i+1), v ); [\setSpeedWrite, i, v ].postln; } ) };
+~joysRight.do{ |it,i| it.doDef( \setSpeed, { |v| Ndef('playWaveForm').set( 'speed'++(i+1), v ); } ) };
+~joysRight.do{ |it,i| it.doDef( \setSpeedWrite, { |v| Ndef('writeWaveForm').set( 'speed'++(i+1), v ); } ) };
 //~joysRight.reset;
 
 ~joysX.do{ |it,i| it.doDef( \setSpeed, { |v| Ndef('playWaveForm').set( 'speed'++(i+1), v ); [\setSpeed, i, v ].postln; } ) };
@@ -103,6 +106,17 @@ Ndef( \playWaveForm ).set( \buffer, ~buffer2.bufnum; );
 ~throttles[0].doDef( \amp, { |val| Ndef( \playWaveForm).set( \amp2, val ); val.postln; })
 ~throttles[1].doDef( \amp, { |val| Ndef( \playWaveForm).set( \amp1, val ); val.postln; })
 
+
+~buttonsTop.do{ |it| it.reset; };
+~buttonsTop = [ MKtl( 'thrs0' ).esFor( \lfTop_5 ),  MKtl( 'thrs0' ).esFor( \rfTop_6 ) ];
+~triggersTop = ~buttonsTop.collect{ |b| b.trigger() };
+~togglesTop = ~triggersTop.collect{ |b| b.toggle(2) };
+
+~togglesTop[0].doDef( \onoff, { |val| Ndef( \writeWaveForm).set( \onoff2, val ); val.postln; });
+~togglesTop[1].doDef( \onoff, { |val| Ndef( \writeWaveForm).set( \onoff1, val ); val.postln; });
+
+
+~buffer2.plot;
 
 ~plotter = Plotter.new( "WaveWorm" );
 ~buffer2.loadToFloatArray( action: { |vals| {~plotter.value = vals.clump(2).flop; }.defer; } )
