@@ -10,6 +10,9 @@ IdentityDictionary[
 	\istage -> ( device: "iCON iStage V1.00", protocol: \midi, file: "ICONIStage.desc.scd"),
     \lpd8 -> ( device: "LPD8", protocol: \midi, file: "LPD8.desc.scd"),
 
+	'UC-33' -> ( device: "UC-33 USB MIDI Controller", protocol: \midi, file: "UC-33.desc.scd" ),
+	\triggerfinger -> ( device: "USB Trigger Finger", protocol: \midi, file: "triggerfinger.desc.scd"),
+
 	\DanceMat -> (osx: ( "MP-8888 USB Joypad"), linux: (device: "WiseGroup.,Ltd MP-8888 USB Joypad"), protocol: \hid, file: "DanceMat.desc.scd" ), // device identifier might be specific to PS/2 to USB adapter...
 	
 	\GamePad -> ( type: \template, protocol: \hid, file: "GamePad.desc.scd" ), // gamepad template
