@@ -160,6 +160,7 @@ MKtl : MAbstractKtl { // abstract class
 			this.loadDeviceDescription(deviceDescName);
 			if ( deviceDescription.notNil ){
 				this.makeElements;
+				( "Opened device:" + name + "using device description"+deviceDescName ).postln;
 			};
 		};
 		all.put(name, this);
