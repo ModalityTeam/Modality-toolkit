@@ -16,8 +16,11 @@ HIDMKtl : MKtl {
 	classvar <initialized = false; 
 	classvar <sourceDeviceDict;
 
+
 	// needed for OSX; can be removed once 3.5 works with hid
+	classvar <locIDtoKtl;
 	var <cookieslots;
+	// -- end osx specific stuff
 				
 	var <srcID, <srcDevice; 
 	
@@ -30,6 +33,8 @@ HIDMKtl : MKtl {
 		(initialized && {force.not}).if{^this};
 		GeneralHID.buildDeviceList;
 		sourceDeviceDict = ();
+
+		locIDtoKtl = ();
 
 		this.prepareDeviceDicts;
 
@@ -159,20 +164,18 @@ HIDMKtl : MKtl {
 	
 	postRawSpecs { this.class.postRawSpecsOf(srcDevice) }
 	
-	// is this cross platform? Doesn't seem like!
-	*postRawSpecsOf { |dev| 
-		"HIDMKtl - the reported properties of device: %\n".postf(dev.info.name);
-		"	index, type, usage, cookie, min, max, ioType, usagePage, usageType.\n\t".postln;
-		
-		dev.elements.do { |ele, i|
-			("" + i + "\t").post; [ele.type, ele.usage, ele.cookie, ele.min, ele.max, ele.ioType, ele.usagePage, ele.usageType].postln;
-		}
-	}
 	
 	initHIDMKtl { |argUid, argSource|
 		srcID = argUid;
 		srcDevice = GeneralHID.open(argSource);
 		all.put(name, this);
+
+		if ( thisProcess.platform.name == \osx ){
+			// srcDevice: GeneralHID
+			// device: MXHID
+			// device: HIDDevice
+			locIDtoKtl.put( srcDevice.device.device.locID, this );
+		};
 		
 		elemDict = ();
 		lookupDict = ();
