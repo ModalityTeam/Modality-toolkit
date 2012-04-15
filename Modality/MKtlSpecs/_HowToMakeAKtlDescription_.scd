@@ -17,13 +17,17 @@ To discover names and channels and stuff for MIDI devices, connect your device a
 
 MIDIIn.connectAll
 MIDIFunc.cc({|val, num, chan, src| 
-	[\val,val,\num, num, \chan, chan, \src, src].postln
+	["cc",\val,val,\num, num, \chan, chan, \src, src].postln
 }); // match all ccs
 
 
 MIDIFunc.noteOn({|val, num, chan, src| 
-	[\val,val,\num, num, \chan, chan, \src, src].postln
+	["noteOn",\val,val,\num, num, \chan, chan, \src, src].postln
 }); // match any noteOn
+
+MIDIFunc.noteOff({|val, num, chan, src| 
+	["noteOff",\val,val,\num, num, \chan, chan, \src, src].postln
+}); // match any noteOff
 
 
 	// in the device's state itself: 
