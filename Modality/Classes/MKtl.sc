@@ -28,7 +28,7 @@ MKtl : MAbstractKtl { // abstract class
 
 	var <signal; //signal that output anything that comes in;
 
-	var <exploring = false;
+	classvar <exploring = false;
 	
 	*initClass {
 		Class.initClassTree(Spec);

@@ -38,11 +38,12 @@ HIDMKtl : MKtl {
 
 		this.prepareDeviceDicts;
 
+		GeneralHID.startEventLoop;
+
 		if ( thisProcess.platform.name == \osx ){
 			this.initHIDDeviceServiceAction;
 		};
 
-		GeneralHID.startEventLoop;
 		
 		initialized = true;
 	}

@@ -13,10 +13,16 @@
 	*initHIDDeviceServiceAction{
 		"HIDMKtl is overriding the normal GeneralHID HIDDeviceService action, you cannot use HIDMKtl and GeneralHID at the same time".warn;
 		HIDDeviceService.action_({arg productID, vendorID, locID, cookie, val;
-		//	[productID, vendorID, locID, cookie, val].postln;
+			//[productID, vendorID, locID, cookie, val].postln;
+			//this.locIDtoKtl.postln;
 		//	if (debug) {("debug"+[productID, vendorID, locID, cookie, val]).postln;};
+			if ( exploring ){
+				try{
+					[ this.locIDtoKtl.at( locID ), locID, cookie, val].postln
+				}
+			};
 			try {
-				locIDtoKtl.at( locID ).cookieslots.at( cookie ).value_(val);
+				this.locIDtoKtl.at( locID ).cookieslots.at( cookie ).value_(val);
 			} {
 				// fall thru to next action here...
 				if (exploring) {
