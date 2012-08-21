@@ -1,7 +1,7 @@
 CLASS:: MKtl
 summary:: The class to use external controllers
 categories:: Modality, Control, MIDI, HID
-related:: Classes/MDispatch, Classes/PKtl, Reference/UsingMKtlAndDispatch
+related:: Classes/MDispatch, Classes/PKtl
 
 DESCRIPTION::
 MKtl gives an easy to use interface for devices you can connect to your computer through MIDI, HID, OSC, Serial and other protocols. Even more, you can also use it for GUI based controllers (yet to be implemented).
