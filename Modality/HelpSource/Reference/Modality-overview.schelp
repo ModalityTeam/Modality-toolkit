@@ -68,7 +68,7 @@ code::
 k.elements.asArray.select{ |x| x.type == \encoder }
 ::
 
-Each element contains an link::class/FPSignal:: :
+Each element contains an link::Classes/FPSignal:: :
 
 code::
 MIDIMKtl('bcr20000').at(\kn_1_1).signal
@@ -78,7 +78,7 @@ or
 MIDIMKtl('bcr20000').signalFor(\kn_1_1)
 ::
 
-You can get the corresponding link::class/EventSource:: : 
+You can get the corresponding link::Classes/EventSource:: :
 
 
 code::
