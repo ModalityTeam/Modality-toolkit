@@ -33,7 +33,6 @@ code::
 ::
 
 private:: init
-Initialization
 
 METHOD:: reset
 Reset the element to a neutral state without any functionality.
@@ -169,7 +168,6 @@ returns:: an link::Classes/In#-kr:: holding the current value of this element. R
 
 
 private:: updateValueOnServer
-update the value on the server.
 
 METHOD:: initBus
 initialize the bus on the server.
