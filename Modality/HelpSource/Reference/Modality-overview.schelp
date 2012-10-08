@@ -1,22 +1,22 @@
 title:: Modality Lib
 summary:: Interfacing with the outside world made easy.
-categories::Modality, MIDI, OSC, HID, Control
+categories::Modality, External Control
 
 Section:: Introduction
 
-Modality is a toolkit created by a loose collaboration between both developers and (advanced) users of SuperCollider (also called Modality, see below). 
+Modality is a toolkit created by a loose collaboration between both developers and (advanced) users of SuperCollider (also called Modality, see below).
 
-One of its basic ideas is to simplify the creation of your very personal instruments with SuperCollider, using controllers of many different kinds. To this end, a common code interface, MKtl, is used for connecting  controllers from different sources (and protocols) like HID and MIDI, Serial, OSC, GUI, etc. 
+One of its basic ideas is to simplify the creation of your very personal instruments with SuperCollider, using controllers of many different kinds. To this end, a common code interface, MKtl, is used for connecting  controllers from different sources (and protocols) like HID and MIDI, Serial, OSC, GUI, etc.
 
-A second starting point is that the same physical interfaces (sets of sliders, buttons, motion sensors etc etc) can be used for many different purposes, and a highly modal approach to mapping and on-the-fly remapping can help to make a setup much more flexible, powerful, and interesting to play. For example, when improvising with acoustic musicians, highly modal interfaces allow much faster changes of overall direction. 
+A second starting point is that the same physical interfaces (sets of sliders, buttons, motion sensors etc etc) can be used for many different purposes, and a highly modal approach to mapping and on-the-fly remapping can help to make a setup much more flexible, powerful, and interesting to play. For example, when improvising with acoustic musicians, highly modal interfaces allow much faster changes of overall direction.
 
 http://modality.bek.no/
 
 The Modality project was initiated by Jeff Carey and Bjoernar Habbestad, and collaborators so far have included: Marije Baalman, Alberto de Campo, Wouter Snoei, Till Bovermann, Miguel Negrao, Robert van Heumen, and Hannes Hoelzl.
 
 
-Acknowledgements: 
-Modality and its research meetings have kindly been supported by BEK in Bergen, Norway, and STEIM, Amsterdam. 
+Acknowledgements:
+Modality and its research meetings have kindly been supported by BEK in Bergen, Norway, and STEIM, Amsterdam.
 
 SECTION:: Overview
 
@@ -25,7 +25,7 @@ Each MKtl has 'elements' (i.e. a slider, a knob, etc).
 code::
 MIDIMKtl.find
 
-//create a non existing Controller according to template 'BCR2000' 
+//create a non existing Controller according to template 'BCR2000'
 
 k = MIDIMKtl.make('fakeBCR','BCR2000');
 k.elements //Dictionary of controls keys to MKtlElements
@@ -53,7 +53,7 @@ And you can use arrays instead of symbols
 code::
 k.at([[\kn,7,1],[\kn,7,2]]);
 ::
-or 
+or
 code::
 k.at((1..8).collect{ |i| [\kn,7,i] });
 ::
@@ -68,7 +68,7 @@ code::
 k.elements.asArray.select{ |x| x.type == \encoder }
 ::
 
-Each element contains an link::class/FPSignal:: :
+Each element contains an link::Classes/FPSignal:: :
 
 code::
 MIDIMKtl('bcr20000').at(\kn_1_1).signal
@@ -78,7 +78,7 @@ or
 MIDIMKtl('bcr20000').signalFor(\kn_1_1)
 ::
 
-You can get the corresponding link::class/EventSource:: : 
+You can get the corresponding link::Classes/EventSource:: :
 
 
 code::
@@ -104,7 +104,7 @@ k = MIDIMKtl('bcr20000');
 //first remove all actions from the controller.
 k.reset;
 k.signalFor( (1..8).collect{ |i| [\kn,7,i] })
-	.do{ |sig,i| 
+	.do{ |sig,i|
 		sig.do{ |v| postln("Got something from knob "++(i+1)++" : "++v) }
 	}
 )
