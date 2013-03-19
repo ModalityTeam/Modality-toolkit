@@ -36,7 +36,7 @@ MKtlSpecs/_HowToMakeAKtlDescription_.scd
 
 FRP examples:
 
-Examples/Modality FRP.scd
+modality/Examples/FRP/Modality FRP tutorial.scd
 
 
 
