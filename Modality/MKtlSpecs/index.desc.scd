@@ -18,6 +18,7 @@ IdentityDictionary[
 	\GamePad -> ( type: \template, protocol: \hid, file: "GamePad.desc.scd" ), // gamepad template
 	\Run_N_Drive -> (osx: ( device: "Run'N' Drive"), linux: (device: "Thrustmaster Run\'N\' Drive"), protocol: \hid, file: "Run_N_Drive.desc.scd" ),
 	\ImpactGamePad -> ( osx: ( device: "USB Game Controllers"), linux: ( device: "Mega World USB Game Controllers"), protocol: \hid, file: "ImpactGamePad.desc.scd" ),
+	\DragonRiseGamePad -> ( linux: ( device: "DragonRise Inc.   Generic   USB  Joystick  "), protocol: \hid, file: "DragonRiseGamePad.desc.scd" ),
 	\PuzzleSphere -> ( osx: ( device: "Real Play"), linux: (device: "In2Games Real Play"), protocol: \hid, file: "PuzzleSphere.desc.scd"),
 
 
