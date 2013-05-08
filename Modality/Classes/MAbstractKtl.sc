@@ -63,7 +63,20 @@ MAbstractKtl {
 	elementNames{
 		^elements.keys.asArray
 	}
-	
+
+	printElementNames{
+
+		(
+			"\nElements available for %:\n".format(this.name)
+			++ elements.keys.as(Array)
+			.collect{ |s| s.asString.padRight(14) }
+			.clump(4)
+			.collect{ |xs| xs.reduce('++') ++ "\n" }
+			.reduce('++')
+			++ "\n"
+		).postln
+	}
+
 	recordRawValue { |key,value|
 	//		recordFunc.value( key, value );
 	}
