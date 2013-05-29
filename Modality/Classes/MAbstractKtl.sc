@@ -68,7 +68,7 @@ MAbstractKtl {
 
 		(
 			"\nElements available for %:\n".format(this.name)
-			++ elements.keys.as(Array)
+			++ elements.keys.as(Array).sort
 			.collect{ |s| s.asString.padRight(14) }
 			.clump(4)
 			.collect{ |xs| xs.reduce('++') ++ "\n" }
