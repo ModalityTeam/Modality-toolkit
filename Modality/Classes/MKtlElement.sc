@@ -1,18 +1,17 @@
 MAbstractElement {
-	
+
 	var <source; // the Ktl it belongs to
 	var <name; // its name in Ktl.elements
-	var <type; // its type. 
+	var <type; // its type.
 
 	var <ioType; // can be \in, \out, \inout
 
 	var <funcChain;
-	var <signal;
-	
+
 	// keep value and previous value here
 	var <value;
 	var <prevValue;
-	
+
 	// server support, currently only one server per element supported.
 	var <bus;
 
@@ -20,7 +19,7 @@ MAbstractElement {
 		^super.newCopyArgs( source, name).init;
 	}
 
-	init { 
+	init {
 		funcChain = FuncChain.new;
 	}
 
@@ -30,17 +29,13 @@ MAbstractElement {
 		this.eventSource !? _.reset;
 	}
 
-	eventSource {
-		^signal.changes
-	}
-
 	// funcChain interface //
-	
-	// by default, just do add = addLast, no flag needed. 
+
+	// by default, just do add = addLast, no flag needed.
 	// (indirection with perform is much slower than method calls.)
 	addFunc { |funcName, function, addAction, otherName|
 		// by default adds the action to the end of the list
-		// if otherName is set, the valid addActions are: 
+		// if otherName is set, the valid addActions are:
 		// \addLast, \addFirst, \addBefore, \addAfter, \replaceAt, are valid
 		funcChain.add(funcName, function, addAction, otherName);
 	}
@@ -56,19 +51,19 @@ MAbstractElement {
 	addFuncAfter { |funcName, function, otherName|
 		funcChain.addAfter(funcName, function, otherName);
 	}
-	
+
 	addFuncBefore { |funcName, function, otherName|
 		funcChain.addBefore(funcName, function, otherName);
 	}
-	
-	replaceFunc { |funcName, function, otherName| 
+
+	replaceFunc { |funcName, function, otherName|
 		funcChain.replaceAt(funcName, function, otherName);
 	}
-	
-	removeFunc {|funcName| 
-		funcChain.removeAt(funcName) 
+
+	removeFunc {|funcName|
+		funcChain.removeAt(funcName)
 	}
-	
+
 	send { |val|
 		value = val;
 		source.send(name,val)
@@ -81,21 +76,21 @@ MAbstractElement {
 		value = newval;
 		this.updateValueOnServer;
 	}
-	
+
 	valueAction_ { |newval|
 		this.value_( newval );
 		this.doAction;
 	}
-	
+
 	rawValue_{|newval|
 		this.value_(newval);
 	}
-	
+
 	rawValueAction_{|newval, sendValue = true|
 		this.rawValue_( newval );
 		this.doAction(sendValue);
 	}
-	
+
 	doAction {
 		source.recordRawValue( name, value );
 		funcChain.value( this );
@@ -107,28 +102,28 @@ MAbstractElement {
 		// set bus values
 		bus !? {bus.setn(this.value.asArray)};
 	}
-	
+
 	initBus {|server|
 		server = server ?? {Server.default};
 		server.serverRunning.not.if{^this};
 		bus.isNil.if({
 			bus = Bus.control(server, (value ? 1).asArray.size);
-		});	
+		});
 	}
-	
+
 	freeBus {
 		bus.notNil.if({
 			Bus.free;
-		});	
+		});
 	}
-	
-	kr {|server| 
-		// server is an optional argument that you only have to set once 
-		// and only if the server for your bus is not the defualt one. 
+
+	kr {|server|
+		// server is an optional argument that you only have to set once
+		// and only if the server for your bus is not the defualt one.
 		this.initBus(server);
 		^In.kr(bus.index, bus.numChannels)
 	}
-	
+
 }
 
 MKtlElement : MAbstractElement{
@@ -154,13 +149,13 @@ MKtlElement : MAbstractElement{
 		^super.newCopyArgs( source, name).init;
 	}
 
-	init { 
+	init {
 		super.init;
 		elementDescription = source.elementDescriptionFor(name);
 		spec = elementDescription[\spec];
-		if (spec.isNil) { 
+		if (spec.isNil) {
 			warn("spec for '%' is missing!".format(spec));
-		} { 
+		} {
 			value = prevValue = spec.default ? 0;
 		};
 		type = elementDescription[\type];
@@ -170,13 +165,11 @@ MKtlElement : MAbstractElement{
 		};
 
 		spec = elementDescription[\spec];
-		if (spec.isNil) { 
+		if (spec.isNil) {
 			warn("spec for '%' is missing!".format(spec));
-		} { 
+		} {
 			value = prevValue = spec.default ? 0;
 		};
-		signal = HideVar(0.0);
-        signal.externalChanges.do{ |x| source.send(name, spec.map(x) ) };
 
 	}
 
@@ -203,8 +196,6 @@ MKtlElement : MAbstractElement{
 			    source.send( name, value );
 			}
 		};
-		signal.internalValue_( this.value );
-        source.signal.value_( [source, name, this.value] );
 	}
 
 	rawValue { ^value }

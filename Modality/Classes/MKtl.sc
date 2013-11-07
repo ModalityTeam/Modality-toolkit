@@ -3,8 +3,8 @@
 
 // TODO:
 //	default deviceDescription files in quarks, custom ones in userAppSupportDir
-//		(Platform.userAppSupportDir +/+ "MKtlSpecs").standardizePath, 
-//		if (deviceDescriptionFolders[0].pathMatch.isEmpty) { 
+//		(Platform.userAppSupportDir +/+ "MKtlSpecs").standardizePath,
+//		if (deviceDescriptionFolders[0].pathMatch.isEmpty) {
 //			unixCmd("mkdir \"" ++ deviceDescriptionFolder ++ "\"");
 //		};
 
@@ -15,7 +15,7 @@ MKtl : MAbstractKtl { // abstract class
 	classvar <all; // will hold all instances of MKtl
 	classvar <specs; // ( 'specName': ControlSpec, ...) -> all specs
 	classvar <allAvailable; // ( 'midi': List['name1',... ], 'hid': List['name1',... ], ... )
-	
+
 	// an array of keys and values with a description of all the elements on the device.
 	// is read in from an external file.
 	var <deviceDescription;
@@ -26,17 +26,15 @@ MKtl : MAbstractKtl { // abstract class
 
 	//var <>recordFunc; // what to do to record incoming control changes
 
-	var <signal; //signal that output anything that comes in;
-
 	classvar <exploring = false;
-	
+
 	*initClass {
 		Class.initClassTree(Spec);
 		all = ();
 		allAvailable = ();
-		
+
 		specs = ().parent_(Spec.specs);
-		
+
 		// general
 		this.addSpec(\cent255, [0, 255, \lin, 1, 128]);
 		this.addSpec(\cent255inv, [255, 0, \lin, 1, 128]);
@@ -45,15 +43,15 @@ MKtl : MAbstractKtl { // abstract class
 		this.addSpec(\lin1inv,  [1, 0, \lin, 0, 1]);
 
 		// MIDI
-		this.addSpec(\midiCC, [0, 127, \lin, 1, 0]); 
-		this.addSpec(\midiVel, [0, 127, \lin, 1, 0]); 
-		this.addSpec(\midiBut, [0, 127, \lin, 127, 0]); 
+		this.addSpec(\midiCC, [0, 127, \lin, 1, 0]);
+		this.addSpec(\midiVel, [0, 127, \lin, 1, 0]);
+		this.addSpec(\midiBut, [0, 127, \lin, 127, 0]);
 
 		// HID
 		this.addSpec(\hidBut, [0, 1, \lin, 1, 0]);
 		this.addSpec(\hidHat, [0, 1, \lin, 1, 0]);
 		this.addSpec(\compass8, [0, 8, \lin, 1, 1]); // probably wrong, check again!
-		
+
 		this.addSpec(\cent1,  [0, 1, \lin, 0, 0.5].asSpec);
 		this.addSpec(\cent1inv,  [1, 0, \lin, 0, 0.5].asSpec);
 
@@ -84,23 +82,23 @@ MKtl : MAbstractKtl { // abstract class
 	}
 
 	*addSpec {|key, spec|
-		specs.put(key, spec.asSpec);	
+		specs.put(key, spec.asSpec);
 	}
 
 	*makeShortName {|deviceID|
 		^(deviceID.asString.toLower.select{|c| c.isAlpha && { c.isVowel.not }}.keep(4) ++ deviceID.asString.select({|c| c.isDecDigit}))
 	}
-	
+
 		// new returns existing instances
-		// of subclasses that exist in .all, 
-		// or returns a new empty instance. 
+		// of subclasses that exist in .all,
+		// or returns a new empty instance.
 		// this is to allow virtual MKtls eventually.
 	*new { |name, deviceDescName|
 		var devDesc;
 		if ( this.checkName( name, deviceDescName ).not ){
 			^nil;
 		};
-		if (deviceDescName.isNil) { 
+		if (deviceDescName.isNil) {
 			if ( all[name].notNil ){
 				^all[name];
 			};
@@ -128,8 +126,8 @@ MKtl : MAbstractKtl { // abstract class
 
 		^this.basicNew(name, deviceDescName);
 	}
-	
-	*basicNew { |name, deviceDescName| 
+
+	*basicNew { |name, deviceDescName|
 		^super.new.init(name, deviceDescName);
 	}
 
@@ -150,13 +148,13 @@ MKtl : MAbstractKtl { // abstract class
 		};
 		^true
 	}
-	
+
 	init { |argName, deviceDescName|
-		name = argName; 
-		
+		name = argName;
+
 		//envir = ();
 		elements = ();
-		if (deviceDescName.isNil) { 
+		if (deviceDescName.isNil) {
 			warn("no deviceDescription name given!");
 		} {
 			this.loadDeviceDescription(deviceDescName);
@@ -166,9 +164,8 @@ MKtl : MAbstractKtl { // abstract class
 			};
 		};
 		all.put(name, this);
-		signal = Var( (\nothing: nil) );
 	}
-	
+
 	storeArgs { ^[name] }
 	printOn { |stream| this.storeOn(stream) }
 
@@ -176,9 +173,9 @@ MKtl : MAbstractKtl { // abstract class
 		var path;
 		if ( allDevDescs.isNil or: reload ){
 			path = deviceDescriptionFolder +/+ "index.desc.scd";
-			allDevDescs = try { 
+			allDevDescs = try {
 				path.load;
-			} { 
+			} {
 				"//" + this.class ++ ": - no device description index found!\n"
 				.post;
 			};
@@ -203,7 +200,7 @@ MKtl : MAbstractKtl { // abstract class
 		^devDesc;
 	}
 
-	loadDeviceDescription { |deviceName| 
+	loadDeviceDescription { |deviceName|
 		var deviceInfo;
 		var deviceFileName;
 		var path;
@@ -219,9 +216,9 @@ MKtl : MAbstractKtl { // abstract class
 
 			path = deviceDescriptionFolder +/+ deviceFileName;
 
-			deviceDescription = try { 
+			deviceDescription = try {
 				path.load;
-			} { 
+			} {
 				"//" + this.class ++ ": - no device description found for %: please make them!\n"
 				.postf(deviceName);
 				//	this.class.openTester(this);
@@ -232,9 +229,9 @@ MKtl : MAbstractKtl { // abstract class
 			};
 
 			// create specs
-			deviceDescription.pairsDo {|key, elem| 
+			deviceDescription.pairsDo {|key, elem|
 				var foundSpec =  specs[elem[\spec]];
-				if (foundSpec.isNil) { 
+				if (foundSpec.isNil) {
 					warn("// Mktl - in description %, el %, spec for '%' is missing! please add it with:"
 						"\nMktl.addSpec( '%', [min, max, warp, step, default]);\n"
 						.format(deviceName, key, elem[\spec], elem[\spec])
@@ -247,7 +244,7 @@ MKtl : MAbstractKtl { // abstract class
 			warn( "// Mktl could not find a device file for this device" + deviceName + "\n You can start exploring the capabilities of this device with:\n" ++ this.class ++ "(" ++ name ++ ").explore" );
 		}
 	}
-	
+
 	*postAllDescriptions {
 		(MKtl.deviceDescriptionFolder +/+ "*").pathMatch
 			.collect { |path| path.basename.splitext.first }
@@ -278,8 +275,8 @@ MKtl : MAbstractKtl { // abstract class
 	}
 
 
-	elementDescriptionFor { |elname| 
-		^deviceDescription[deviceDescription.indexOf(elname) + 1] 
+	elementDescriptionFor { |elname|
+		^deviceDescription[deviceDescription.indexOf(elname) + 1]
 	}
 
 	postDeviceDescription {
@@ -296,24 +293,24 @@ MKtl : MAbstractKtl { // abstract class
 	replaceElements{ |newelements|
 		elements = newelements;
 	}
-	
+
 		// convenience methods
 	defaultValueFor { |elName|
 		^this.elements[elName].defaultValue
 	}
 		// should filter: those for my platform only
-	elementNames { 
+	elementNames {
 		if ( elements.isEmpty ){
 			^(0, 2 .. deviceDescription.size - 2).collect (deviceDescription[_])
 		}{
 			^elements.keys.asArray;
 		}
 	}
-	
+
 	elementsOfType { |type|
 		^elements.select { |elem|
    			elem.elementDescription[\type] == type
-		}	
+		}
 	}
 
 	elementsNotOfType { |type|
@@ -322,15 +319,4 @@ MKtl : MAbstractKtl { // abstract class
 		}
 	}
 
-	esFor{ |elementKey|
-		^this.at(elementKey).collectOrApply( _.eventSource )
-	}
-
-	signalFor{ |elementKey|
-		^this.at(elementKey).collectOrApply( _.signal )
-	}
-
-	eventSource {
-		^signal.changes
-	}
 }
