@@ -1,8 +1,9 @@
 ///////// how to make anonymous ones? when would they be used anonymously? /////
 
 // TODO
-//    addFunc should conform to super.addFunc.
-//		but
+//   addFunc should conform to super.addFunc.
+//	convert all responders to midifuncs
+//	test noteOn  off responders, they are not working yet!
 
 
 MIDIMKtl : MKtl {
@@ -50,7 +51,9 @@ MIDIMKtl : MKtl {
 		// copy/paste-able directly
 		// this could also live in /--where?--/
 	*find { |post=true|
-		this.initMIDI(true);
+	
+			// was true, make it false for now while MIDI re-init is broken
+		this.initMIDI(false);
 
 		if (MIDIClient.sources.isEmpty) {
 			"// MIDIMKtl did not find any sources - you may want to connect some first.".inform;
@@ -373,10 +376,19 @@ MIDIMKtl : MKtl {
 			cc: CCResponder({ |src, chan, num, value|
 				var hash = this.makeCCKey(chan, num);
 				var elName = hashToElNameDict[hash];
-
+				var el = elementHashDict[hash];
+				
 				midiRawAction.value(\control, src, chan, num, value);
-
-				elementHashDict[hash].rawValueAction_(value, false);
+				if (el.isNil) { 
+					"MIDIMKtl( % ) : cc element found for chan %, ccnum % !\n"
+					" - add it to the description file, e.g.: "
+					"\\<name>: (\\midiType: \\cc, \\type: \\button, \\chan: %, \\ccNum: %, \\spec: \\midiBut, \\mode: \\push).\n\n"
+						.postf(name, chan, num, chan, num);
+				} { 
+					try { el.rawValueAction_(value, false); } { 
+						"MIDIMKtl( % ) : cc message for chan %, ccnum % failed.\n\n".postf(name, chan, num);
+					};
+				};
 			}, srcID),
 
 			noteon: NoteOnResponder({ |src, chan, note, vel|
@@ -385,7 +397,11 @@ MIDIMKtl : MKtl {
 				//	["noteOn", chan, note, vel, hash].postln;
 
 				midiRawAction.value(\noteOn, src, chan, note, vel);
-				elementHashDict[hash].rawValueAction_(vel);
+
+				// try the global noteOn function first
+				this[\noteOn].rawValueAction_(note, vel);
+				// then try an individual key func as well
+				try { elementHashDict[hash].rawValueAction_(vel) };
 			}, srcID),
 
 			noteoff: NoteOffResponder({ |src, chan, note, vel|
@@ -394,7 +410,10 @@ MIDIMKtl : MKtl {
 				//	["noteOff", chan, note, vel, hash].postln;
 
 				midiRawAction.value(\noteOff, src, chan, note, vel);
-				elementHashDict[hash].rawValueAction_(vel);
+				// try the global noteOn function first
+				this[\noteOff].rawValueAction_(note, vel);
+				// then try an individual key func as well
+				try { elementHashDict[hash].rawValueAction_(vel) };
 			}, srcID)
 		);
 	}

@@ -7,7 +7,7 @@ MDispatch : MAbstractKtl {
 	
 	//	classvar <all;
 
-	var <funcChain;
+	var <action;
 
 	var <sourceKeyToSource;
 	//	var <sourcesToInputs;
@@ -79,7 +79,6 @@ MDispatch : MAbstractKtl {
 	init{ |nm|
 		name = nm; // name is used to register with different controls in their functiondict
 		envir = Environment.new;
-		funcChain = FuncChain.new;
 
 		sources = ();
 		sourceKeyToSource = ();
@@ -228,17 +227,17 @@ MDispatch : MAbstractKtl {
 	prProcessChain{
 	    //("processing chain for "++this.name).postln;
 		changedOuts = List.new;
-		envir.use({ funcChain.value( this ) });
+		envir.use({ action.value( this ) });
 		changedOuts.do{ |key|
 			if ( elements[key].notNil ){
 				elements[key].doAction; // this may need to pass more info
 			};
 		};
 	}
-
+			// is funcName needed for action.add ?  
 	addToProc{ |funcName, function, addAction=\addLast, target|
 		funcName = funcName.asSymbol;
-		funcChain.add( funcName, function, addAction, target );
+		action.add( funcName, function, addAction, target );
 	}
 	
 	remove{

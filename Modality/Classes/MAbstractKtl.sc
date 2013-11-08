@@ -26,35 +26,6 @@ MAbstractKtl {
 			func.value(elements[elementKey])	
 		}	
 	}
-	
-	// element funcChain interface
-	addFuncElem { |elementKey, funcName, function, addAction, otherName, match = false|
-		this.prMatchDo(match, elementKey, _.addFunc( funcName, function , addAction, otherName) )
-	}
-
-	addFuncElemAfter { |elementKey, funcName, function, otherName, match = false|
-		this.prMatchDo(match, elementKey, _.addFuncAfter(funcName, function, otherName) )
-	}
-	
-	addFuncElemBefore { |elementKey, funcName, function, otherName, match = false|
-		this.prMatchDo(match, elementKey, _.addFuncBefore( funcName, function, otherName) )
-	}
-	
-	removeFuncElem { |elementKey, funcName, match = false|
-		this.prMatchDo(match, elementKey, _.removeFunc(funcName) )
-	}
-	
-	replaceFuncElem { |elementKey, funcName, function, otherName, match = false|
-		this.prMatchDo(match, elementKey, _.replaceFunc(funcName, function, otherName) )
-	}
-
-	addFuncElemFirst { |elementKey, funcName, function, match = false|
-		this.prMatchDo(match, elementKey, _.addFuncFirst(funcName, function) )
-	}
-	
-	addFuncElemLast { |elementKey, funcName, function, match = false|
-		this.prMatchDo(match, elementKey, _. addFuncLast(funcName, function) )
-	}
 		
 	removeAllFromElems {
 		elements.do( _.reset )
