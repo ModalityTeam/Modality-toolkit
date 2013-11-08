@@ -30,17 +30,20 @@ MIDIFunc.noteOff({|val, num, chan, src|
 }); // match any noteOff
 
 
+
+	// in the device's state itself:
+current state,
+	(sl_1: 54, kn_1: 127, bu_7: 0);
+
 MIDIFunc.bend({|val, num, chan, src|
 	["bend",\val,val,\num, num, \chan, chan, \src, src].postln
 }); // match any bend
 
+//A nice trick to get a bunch of midi/cc numbers:
 
+x=[];
 
-// in the device's state itself:
-current state,
-	(sl_1: 54, kn_1: 127, bu_7: 0);
-current scene (if known)
-
+MIDIIn.noteOn_({ |a,b,c,d| x = x.add(c.postln) })
 
 Spec.add(\midiCC, [0, 127, \lin, 1, 0]);
 Spec.add(\midiVel, [0, 127, \lin, 1, 0]);
@@ -237,6 +240,7 @@ Spec.add(\midiBut, [0, 127, \lin, 127, 0]);
 \type
 	\button
 	\slider
+    \pad
 
 \spec
 	\something	 * symbol of an existing Spec
