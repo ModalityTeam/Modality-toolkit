@@ -298,7 +298,17 @@ MKtl : MAbstractKtl { // abstract class
 	defaultValueFor { |elName|
 		^this.elements[elName].defaultValue
 	}
-		// should filter: those for my platform only
+
+	makeElementName { |args|
+		var n = args.size;
+		^(args[..n-2].collect({ |x| x.asString++"_"}).reduce('++')++args.last).asSymbol
+	}
+
+	elementAt { |...args|
+		^elements.at(this.makeElementName(args))
+	}
+
+	// should filter: those for my platform only
 	elementNames {
 		if ( elements.isEmpty ){
 			^(0, 2 .. deviceDescription.size - 2).collect (deviceDescription[_])
