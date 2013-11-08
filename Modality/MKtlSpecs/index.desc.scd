@@ -14,7 +14,7 @@ IdentityDictionary[
 	\triggerfinger -> ( device: "USB Trigger Finger", protocol: \midi, file: "triggerfinger.desc.scd"),
 
 	\DanceMat -> (osx: ( device: "MP-8888 USB Joypad"), linux: (device: "WiseGroup.,Ltd MP-8888 USB Joypad"), protocol: \hid, file: "DanceMat.desc.scd" ), // device identifier might be specific to PS/2 to USB adapter...
-	
+
 	\GamePad -> ( type: \template, protocol: \hid, file: "GamePad.desc.scd" ), // gamepad template
 	\Run_N_Drive -> (osx: ( device: "Run'N' Drive"), linux: (device: "Thrustmaster Run\'N\' Drive"), protocol: \hid, file: "Run_N_Drive.desc.scd" ),
 	\ImpactGamePad -> ( osx: ( device: "USB Game Controllers"), linux: ( device: "Mega World USB Game Controllers"), protocol: \hid, file: "ImpactGamePad.desc.scd" ),
@@ -22,10 +22,11 @@ IdentityDictionary[
 	\ZeroplusXbox -> ( linux: ( device: "Zeroplus Xbox Controller" ), protocol: \hid, file: "ZeroplusXbox.desc.scd" ),
 	\PuzzleSphere -> ( osx: ( device: "Real Play"), linux: (device: "In2Games Real Play"), protocol: \hid, file: "PuzzleSphere.desc.scd"),
 
+	'The Ribbon' -> ( device: "The Ribbon", protocol: \midi, file: "EOWave_Ribbon.desc.scd" ),
 
 	//	\manta -> (inport: 1234, outport: 5678, protocol: \osc, file: "Manta.desc.scd" ),
 
-	
+
 	//	\Arduino -> (protocol: \serial),
 	//	\JeeLink -> (protocol: \serial),
 	//	\JeeNode -> (protocol: \serial)
