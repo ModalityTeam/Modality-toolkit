@@ -25,7 +25,6 @@ MAbstractElement {
 
 		// remove all functionalities from the actions
 	reset {
-		this.eventSource !? _.reset;
 	}
 
 	send { |val|
@@ -152,11 +151,11 @@ MKtlElement : MAbstractElement{
 		^this.send( spec.map(newVal) )
 	}
 
-	addAction { |argAction| 
+	addAction { |argAction|
 		action = action.addFunc(argAction);
 	}
 
-	removeAction { |argAction| 
+	removeAction { |argAction|
 		action = action.removeFunc(argAction);
 	}
 
