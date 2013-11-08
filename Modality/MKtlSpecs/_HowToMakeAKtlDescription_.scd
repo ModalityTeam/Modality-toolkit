@@ -1,14 +1,14 @@
 "Making a description file for a Ktl device:
 
 For every element:
-	give it a short name, 
+	give it a short name,
 		(e.g. slider 1 could be \sl1)
-	note how to identify its messages: 
-		(e.g. for MIDI cc, 
-			note its chan 0 and cc number 12, 
+	note how to identify its messages:
+		(e.g. for MIDI cc,
+			note its chan 0 and cc number 12,
 			and possibly its combined ccKey '0_12')
-	move it thru all its range, 
-	note its expected default state, 
+	move it thru all its range,
+	note its expected default state,
 	write the observed range and default as a spec,
 		(e.g. [0, 127, \lin, 1, 0])
 	note other things (toggle/push mode)
@@ -16,34 +16,40 @@ For every element:
 To discover names and channels and stuff for MIDI devices, connect your device and evaluate the following:"
 
 MIDIIn.connectAll
-MIDIFunc.cc({|val, num, chan, src| 
+MIDIFunc.cc({|val, num, chan, src|
 	["cc",\val,val,\num, num, \chan, chan, \src, src].postln
 }); // match all ccs
 
 
-MIDIFunc.noteOn({|val, num, chan, src| 
+MIDIFunc.noteOn({|val, num, chan, src|
 	["noteOn",\val,val,\num, num, \chan, chan, \src, src].postln
 }); // match any noteOn
 
-MIDIFunc.noteOff({|val, num, chan, src| 
+MIDIFunc.noteOff({|val, num, chan, src|
 	["noteOff",\val,val,\num, num, \chan, chan, \src, src].postln
 }); // match any noteOff
 
 
-	// in the device's state itself: 
-current state, 
-	(sl_1: 54, kn_1: 127, bu_7: 0); 
+MIDIFunc.bend({|val, num, chan, src|
+	["bend",\val,val,\num, num, \chan, chan, \src, src].postln
+}); // match any bend
+
+
+
+// in the device's state itself:
+current state,
+	(sl_1: 54, kn_1: 127, bu_7: 0);
 current scene (if known)
 
 
-Spec.add(\midiCC, [0, 127, \lin, 1, 0]); 
-Spec.add(\midiVel, [0, 127, \lin, 1, 0]); 
-Spec.add(\midiBut, [0, 127, \lin, 127, 0]); 
+Spec.add(\midiCC, [0, 127, \lin, 1, 0]);
+Spec.add(\midiVel, [0, 127, \lin, 1, 0]);
+Spec.add(\midiBut, [0, 127, \lin, 127, 0]);
 
 	// filename is nanoKONTROL.scd, so device name is nanoKONTROL
 [
 
-// the same in all scenes: 
+// the same in all scenes:
 	\rew:  (\midiType: \cc, \type: \button, \chan: 0, \ccNum: 47, \spec: \midiBut, \mode: \push),
 	\play: (\midiType: \cc, \type: \button, \chan: 0, \ccNum: 45, \spec: \midiBut, \mode: \push),
 	\fwd:  (\midiType: \cc, \type: \button, \chan: 0, \ccNum: 48, \spec: \midiBut, \mode: \push),
@@ -51,16 +57,16 @@ Spec.add(\midiBut, [0, 127, \lin, 127, 0]);
 	\stop: (\midiType: \cc, \type: \button, \chan: 0, \ccNum: 46, \spec: \midiBut, \mode: \push),
 	\rec:  (\midiType: \cc, \type: \button, \chan: 0, \ccNum: 44, \spec: \midiBut, \mode: \push),
 
-// scene1: 
-	\sl1_1: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  2, \spec: \midiCC), 
-	\sl2_1: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  3, \spec: \midiCC), 
-	\sl3_1: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  4, \spec: \midiCC), 
-	\sl4_1: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  5, \spec: \midiCC), 
-	\sl5_1: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  6, \spec: \midiCC), 
-	\sl6_1: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  8, \spec: \midiCC), 
-	\sl7_1: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  9, \spec: \midiCC), 
-	\sl8_1: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum: 12, \spec: \midiCC), 
-	\sl9_1: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum: 13, \spec: \midiCC), 
+// scene1:
+	\sl1_1: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  2, \spec: \midiCC),
+	\sl2_1: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  3, \spec: \midiCC),
+	\sl3_1: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  4, \spec: \midiCC),
+	\sl4_1: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  5, \spec: \midiCC),
+	\sl5_1: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  6, \spec: \midiCC),
+	\sl6_1: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  8, \spec: \midiCC),
+	\sl7_1: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  9, \spec: \midiCC),
+	\sl8_1: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum: 12, \spec: \midiCC),
+	\sl9_1: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum: 13, \spec: \midiCC),
 
 	\kn1_1: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum: 14, \spec: \midiCC),
 	\kn2_1: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum: 15, \spec: \midiCC),
@@ -93,15 +99,15 @@ Spec.add(\midiBut, [0, 127, \lin, 127, 0]);
 	\bd9_1: (\midiType: \cc, \type: \button, \chan: 0, \ccNum: 41, \spec: \midiBut, \mode: \push),
 
 // scene2:
-	\sl1_2:  (\midiType: \cc, \type: \slider, \chan: 0, \ccNum: 42, \spec: \midiCC), 
-	\sl2_2:  (\midiType: \cc, \type: \slider, \chan: 0, \ccNum: 43, \spec: \midiCC), 
-	\sl3_2:  (\midiType: \cc, \type: \slider, \chan: 0, \ccNum: 50, \spec: \midiCC), 
-	\sl4_2:  (\midiType: \cc, \type: \slider, \chan: 0, \ccNum: 51, \spec: \midiCC), 
-	\sl5_2:  (\midiType: \cc, \type: \slider, \chan: 0, \ccNum: 52, \spec: \midiCC), 
-	\sl6_2:  (\midiType: \cc, \type: \slider, \chan: 0, \ccNum: 53, \spec: \midiCC), 
-	\sl7_2:  (\midiType: \cc, \type: \slider, \chan: 0, \ccNum: 54, \spec: \midiCC), 
-	\sl8_2:  (\midiType: \cc, \type: \slider, \chan: 0, \ccNum: 55, \spec: \midiCC), 
-	\sl9_2:  (\midiType: \cc, \type: \slider, \chan: 0, \ccNum: 56, \spec: \midiCC), 
+	\sl1_2:  (\midiType: \cc, \type: \slider, \chan: 0, \ccNum: 42, \spec: \midiCC),
+	\sl2_2:  (\midiType: \cc, \type: \slider, \chan: 0, \ccNum: 43, \spec: \midiCC),
+	\sl3_2:  (\midiType: \cc, \type: \slider, \chan: 0, \ccNum: 50, \spec: \midiCC),
+	\sl4_2:  (\midiType: \cc, \type: \slider, \chan: 0, \ccNum: 51, \spec: \midiCC),
+	\sl5_2:  (\midiType: \cc, \type: \slider, \chan: 0, \ccNum: 52, \spec: \midiCC),
+	\sl6_2:  (\midiType: \cc, \type: \slider, \chan: 0, \ccNum: 53, \spec: \midiCC),
+	\sl7_2:  (\midiType: \cc, \type: \slider, \chan: 0, \ccNum: 54, \spec: \midiCC),
+	\sl8_2:  (\midiType: \cc, \type: \slider, \chan: 0, \ccNum: 55, \spec: \midiCC),
+	\sl9_2:  (\midiType: \cc, \type: \slider, \chan: 0, \ccNum: 56, \spec: \midiCC),
 
 	\kn1_2:  (\midiType: \cc, \type: \slider, \chan: 0, \ccNum: 57, \spec: \midiCC),
 	\kn2_2:  (\midiType: \cc, \type: \slider, \chan: 0, \ccNum: 58, \spec: \midiCC),
@@ -132,17 +138,17 @@ Spec.add(\midiBut, [0, 127, \lin, 127, 0]);
 	\bd7_2:  (\midiType: \cc, \type: \button, \chan: 0, \ccNum: 82, \spec: \midiBut, \mode: \push),
 	\bd8_2:  (\midiType: \cc, \type: \button, \chan: 0, \ccNum: 83, \spec: \midiBut, \mode: \push),
 	\bd9_2:  (\midiType: \cc, \type: \button, \chan: 0, \ccNum: 84, \spec: \midiBut, \mode: \push),
-	
-// scene3: 
-	\sl1_3: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  85, \spec: \midiCC), 
-	\sl2_3: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  86, \spec: \midiCC), 
-	\sl3_3: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  87, \spec: \midiCC), 
-	\sl4_3: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  88, \spec: \midiCC), 
-	\sl5_3: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  89, \spec: \midiCC), 
-	\sl6_3: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  90, \spec: \midiCC), 
-	\sl7_3: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  91, \spec: \midiCC), 
-	\sl8_3: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  92, \spec: \midiCC), 
-	\sl9_3: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  93, \spec: \midiCC), 
+
+// scene3:
+	\sl1_3: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  85, \spec: \midiCC),
+	\sl2_3: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  86, \spec: \midiCC),
+	\sl3_3: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  87, \spec: \midiCC),
+	\sl4_3: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  88, \spec: \midiCC),
+	\sl5_3: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  89, \spec: \midiCC),
+	\sl6_3: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  90, \spec: \midiCC),
+	\sl7_3: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  91, \spec: \midiCC),
+	\sl8_3: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  92, \spec: \midiCC),
+	\sl9_3: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  93, \spec: \midiCC),
 
 	\kn1_3: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  94, \spec: \midiCC),
 	\kn2_3: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  95, \spec: \midiCC),
@@ -173,18 +179,18 @@ Spec.add(\midiBut, [0, 127, \lin, 127, 0]);
 	\bd7_3: (\midiType: \cc, \type: \button, \chan: 0, \ccNum: 122, \spec: \midiBut, \mode: \push),
 	\bd8_3: (\midiType: \cc, \type: \button, \chan: 0, \ccNum: 123, \spec: \midiBut, \mode: \push),
 	\bd9_3: (\midiType: \cc, \type: \button, \chan: 0, \ccNum: 124, \spec: \midiBut, \mode: \push),
- 	
-// scene4: 
 
-	\sl1_4: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:   7, \spec: \midiCC), 
-	\sl2_4: (\midiType: \cc, \type: \slider, \chan: 1, \ccNum:   7, \spec: \midiCC), 
-	\sl3_4: (\midiType: \cc, \type: \slider, \chan: 2, \ccNum:   7, \spec: \midiCC), 
-	\sl4_4: (\midiType: \cc, \type: \slider, \chan: 3, \ccNum:   7, \spec: \midiCC), 
-	\sl5_4: (\midiType: \cc, \type: \slider, \chan: 4, \ccNum:   7, \spec: \midiCC), 
-	\sl6_4: (\midiType: \cc, \type: \slider, \chan: 5, \ccNum:   7, \spec: \midiCC), 
-	\sl7_4: (\midiType: \cc, \type: \slider, \chan: 6, \ccNum:   7, \spec: \midiCC), 
-	\sl8_4: (\midiType: \cc, \type: \slider, \chan: 7, \ccNum:   7, \spec: \midiCC), 
-	\sl9_4: (\midiType: \cc, \type: \slider, \chan: 8, \ccNum:   7, \spec: \midiCC), 
+// scene4:
+
+	\sl1_4: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:   7, \spec: \midiCC),
+	\sl2_4: (\midiType: \cc, \type: \slider, \chan: 1, \ccNum:   7, \spec: \midiCC),
+	\sl3_4: (\midiType: \cc, \type: \slider, \chan: 2, \ccNum:   7, \spec: \midiCC),
+	\sl4_4: (\midiType: \cc, \type: \slider, \chan: 3, \ccNum:   7, \spec: \midiCC),
+	\sl5_4: (\midiType: \cc, \type: \slider, \chan: 4, \ccNum:   7, \spec: \midiCC),
+	\sl6_4: (\midiType: \cc, \type: \slider, \chan: 5, \ccNum:   7, \spec: \midiCC),
+	\sl7_4: (\midiType: \cc, \type: \slider, \chan: 6, \ccNum:   7, \spec: \midiCC),
+	\sl8_4: (\midiType: \cc, \type: \slider, \chan: 7, \ccNum:   7, \spec: \midiCC),
+	\sl9_4: (\midiType: \cc, \type: \slider, \chan: 8, \ccNum:   7, \spec: \midiCC),
 
 	\kn1_4: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  10, \spec: \midiCC),
 	\kn2_4: (\midiType: \cc, \type: \slider, \chan: 1, \ccNum:  10, \spec: \midiCC),
@@ -217,7 +223,7 @@ Spec.add(\midiBut, [0, 127, \lin, 127, 0]);
 	\bd9_4: (\midiType: \cc, \type: \button, \chan: 8, \ccNum: 17, \spec: \midiBut, \mode: \toggle)
 
 ]
-// description of geometric layout for auto-gui? 
+// description of geometric layout for auto-gui?
 
 
 
@@ -235,22 +241,22 @@ Spec.add(\midiBut, [0, 127, \lin, 127, 0]);
 \spec
 	\something	 * symbol of an existing Spec
 	\anything		 * symbol of another existing Spec
-	
+
 	\hidBut
 	\midiBut
-	
+
 \mode
 	\push
 	\toggle
-	
+
 * protocol dependant
-		
+
 	* HID
 		\cookie
-		
+
 	* MIDI
 		\chan
-		
+
 		\midiType
 			\cc
 				\ccNum
@@ -275,7 +281,7 @@ Spec.add(\midiBut, [0, 127, \lin, 127, 0]);
 			\smpte
 				\smpteNum
 
-	
+
 
 */
 
