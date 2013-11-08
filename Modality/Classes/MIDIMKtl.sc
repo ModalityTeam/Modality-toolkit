@@ -51,7 +51,7 @@ MIDIMKtl : MKtl {
 		// copy/paste-able directly
 		// this could also live in /--where?--/
 	*find { |post=true|
-	
+
 			// was true, make it false for now while MIDI re-init is broken
 		this.initMIDI(false);
 
@@ -87,7 +87,7 @@ MIDIMKtl : MKtl {
 		};
 		// TODO: what happens to MIDI devs that are only destinations?
 	}
-	
+
 	*postPossible{
 		"\n// Available MIDIMKtls - you may want to change the names: ".postln;
 		sourceDeviceDict.keysValuesDo { |key, src|
@@ -245,11 +245,11 @@ MIDIMKtl : MKtl {
 					cc: CCResponder({ |src, chan, num, value|
 						[ this.name, \control, src, chan, num, value ].postln;
 					}, srcID),
-					
+
 					noteon: NoteOnResponder({ |src, chan, note, vel|
 						[ this.name, \noteOn, src, chan, note, vel ].postln;
 					}, srcID),
-					
+
 					noteoff: NoteOffResponder({ |src, chan, note, vel|
 						[ this.name, \noteOff, src, chan, note, vel ].postln;
 					}, srcID)
@@ -298,7 +298,7 @@ MIDIMKtl : MKtl {
 		//	this.makeElements;
 		if ( deviceDescription.notNil ){
 			this.prepareElementHashDict;
-			this.addResponders;		
+			this.addResponders;
 		}
 	}
 
@@ -307,7 +307,7 @@ MIDIMKtl : MKtl {
 		// TODO: pitchbend, other miditypes, etc.
 		hash = descr[\midiType].switch(
 			\note, {this.makeNoteKey(descr[\chan], descr[\midiNote]);},
-			
+
 			\cc, {this.makeCCKey(descr[\chan], descr[\ccNum]);},
 			{//default:
 				"MIDIMKtl:prepareElementHashDict (%): identifier in midiType for item % not known. Please correct.".format(this, elName).error;
@@ -377,15 +377,15 @@ MIDIMKtl : MKtl {
 				var hash = this.makeCCKey(chan, num);
 				var elName = hashToElNameDict[hash];
 				var el = elementHashDict[hash];
-				
+
 				midiRawAction.value(\control, src, chan, num, value);
-				if (el.isNil) { 
+				if (el.isNil) {
 					"MIDIMKtl( % ) : cc element found for chan %, ccnum % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiType: \\cc, \\type: \\button, \\chan: %, \\ccNum: %, \\spec: \\midiBut, \\mode: \\push).\n\n"
 						.postf(name, chan, num, chan, num);
-				} { 
-					try { el.rawValueAction_(value, false); } { 
+				} {
+					try { el.rawValueAction_(value, false); } {
 						"MIDIMKtl( % ) : cc message for chan %, ccnum % failed.\n\n".postf(name, chan, num);
 					};
 				};
@@ -394,26 +394,52 @@ MIDIMKtl : MKtl {
 			noteon: NoteOnResponder({ |src, chan, note, vel|
 				var hash = this.makeNoteKey(chan, note);
 				var elName = hashToElNameDict[hash];
+				var el = elementHashDict[hash];
+				var global = this[\noteOn];
 				//	["noteOn", chan, note, vel, hash].postln;
 
 				midiRawAction.value(\noteOn, src, chan, note, vel);
 
 				// try the global noteOn function first
-				this[\noteOn].rawValueAction_(note, vel);
+				if( global.notNil) {
+					global.rawValueAction_(note, vel);
+				};
+
 				// then try an individual key func as well
-				try { elementHashDict[hash].rawValueAction_(vel) };
+				if (el.isNil) {
+					"MIDIMKtl( % ) : noteon element found for chan %, ccnum % !\n"
+					" - add it to the description file, e.g.: "
+					"\\<name>: (\\midiType: \\note, \\type: \\button, \\chan: %, \\midiNote: %, \\spec: \\midiVel).\n\n"
+						.postf(name, chan, note, chan, vel);
+				} {
+					el.rawValueAction_(vel)
+				}
 			}, srcID),
 
 			noteoff: NoteOffResponder({ |src, chan, note, vel|
 				var hash = this.makeNoteKey(chan, note);
 				var elName = hashToElNameDict[hash];
+				var el = elementHashDict[hash];
+				var global = this[\noteOff];
+
 				//	["noteOff", chan, note, vel, hash].postln;
 
 				midiRawAction.value(\noteOff, src, chan, note, vel);
+
 				// try the global noteOn function first
-				this[\noteOff].rawValueAction_(note, vel);
+				if( global.notNil) {
+					global.rawValueAction_(note, vel);
+				};
+
 				// then try an individual key func as well
-				try { elementHashDict[hash].rawValueAction_(vel) };
+				if (el.isNil) {
+					"MIDIMKtl( % ) : noteon element found for chan %, ccnum % !\n"
+					" - add it to the description file, e.g.: "
+					"\\<name>: (\\midiType: \\note, \\type: \\button, \\chan: %, \\midiNote: %, \\spec: \\midiVel).\n\n"
+						.postf(name, chan, note, chan, vel);
+				}{
+					el.rawValueAction_(vel)
+				};
 			}, srcID)
 		);
 	}
