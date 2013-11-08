@@ -68,63 +68,26 @@ code::
 k.elements.asArray.select{ |x| x.type == \encoder }
 ::
 
-Each element contains an link::Classes/FPSignal:: :
+To send data back to a device one uses link::Classes/MAbstractElement#value_:: :
 
-code::
-MIDIMKtl('bcr20000').at(\kn_1_1).signal
+MIDIMKtl('bcf20000').elementAt(\kn,1,i+1).value_(0.5)
 
-or
+Classic knobs rotating demo for Behringed BCF2000:
 
-MIDIMKtl('bcr20000').signalFor(\kn_1_1)
-::
-
-You can get the corresponding link::Classes/EventSource:: :
-
-
-code::
-MIDIMKtl('bcr20000').at(\kn_1_1).eventSource
-::
-which is the same as
-code::
-MIDIMKtl('bcr20000').at(\kn_1_1).signal.changes
-::
-or
-code::
-MIDIMKtl('bcr20000').esFor(\kn_1_1)
-::
-Get multiple Signals:
-code::
-MIDIMKtl('bcr20000').signalFor( (1..8).collect{ |i| [\kn,7,i] });
-::
-
-Connect an action the each slider
 code::
 (
-k = MIDIMKtl('bcr20000');
-//first remove all actions from the controller.
-k.reset;
-k.signalFor( (1..8).collect{ |i| [\kn,7,i] })
-	.do{ |sig,i|
-		sig.do{ |v| postln("Got something from knob "++(i+1)++" : "++v) }
+x = 0;
+fork{
+	loop{
+		0.1.wait;
+		x = x + 0.1;
+		8.do{ |i|
+			MIDIMKtl('bcf20000').elementAt(\kn,1,i+1).value_(
+				(x + (i/7)).mod(1.0)
+			)
+		}
 	}
-)
-::
-
-A simple example of controling the frequency of synth with a knob:
-
-code::
-//Connecting a synth to knob
-
-(
-k = MIDIMKtl('bcr20000'); //change to your own controller
-k.reset; //reset controller to a clean state
-~knob = k.esFor(\kn_7_1); //change to your own controller
-
-//start synth
-~synth = { |freq=400| LFNoise0.ar(freq)*0.2 }.play;
-
-//associate each result EventSource with a synth
-~knob.do{ |v| ~synth.set(\freq, v.linlin(0.0,1.0,100.0,4000.0) ) };
+}
 )
 ::
 

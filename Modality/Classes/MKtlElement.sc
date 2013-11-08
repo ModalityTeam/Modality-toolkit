@@ -30,25 +30,19 @@ MAbstractElement {
 		^super.newCopyArgs( source, name).init;
 	}
 
-	init {
+	init { }
 
+	prMaybeSend {
+		if( [\out, \inout].includes( this.elementDescription.ioType ) ) {
+			source.send(name, value)
+		}
 	}
 
-		// remove all functionalities from the actions
-	reset {
-	}
-
-	send { |val|
-		value = val;
-		source.send(name,val)
-	}
-
+	//value_ is (possibly) mapped and sends out the value
+	//rawValue_ is not mapped and does not send out value
 	value_ { | newval |
-		// copies the current state to:
-		prevValue = value;
-		// updates the state with the latest value
-		value = newval;
-		this.updateValueOnServer;
+		this.rawValue_( newval );
+		this.prMaybeSend
 	}
 
 	valueAction_ { |newval|
@@ -57,7 +51,11 @@ MAbstractElement {
 	}
 
 	rawValue_{|newval|
-		this.value_(newval);
+		// copies the current state to:
+		prevValue = value;
+		// updates the state with the latest value
+		value = newval;
+		this.updateValueOnServer;
 	}
 
 	rawValueAction_{|newval, sendValue = true|
@@ -153,13 +151,8 @@ MKtlElement : MAbstractElement{
 
 	value { ^spec.unmap(value) }
 
-	// usually, you do not call this but rawValue_ instead.
 	value_ {|newval|
 		^super.value_(spec.map(newval))
-	}
-
-	sendMapped { |newVal|
-		^this.send( spec.map(newVal) )
 	}
 
 	addAction { |argAction|
@@ -183,7 +176,7 @@ MKtlElement : MAbstractElement{
 	rawValue { ^value }
 
 	rawValue_ {|newVal|
-		super.value_(newVal)
+		super.rawValue_(newVal)
 	}
 }
 
