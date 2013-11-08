@@ -1,5 +1,0 @@
-+ MXHIDSlot{
-	getCookie{
-		^cookie;
-	}
-}
