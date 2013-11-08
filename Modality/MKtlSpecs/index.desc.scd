@@ -8,6 +8,7 @@ IdentityDictionary[
 
 	\Launchpad -> ( device: "Launchpad", protocol: \midi, file: "Launchpad.desc.scd" ),
 	\istage -> ( device: "iCON iStage V1.00", protocol: \midi, file: "ICONIStage.desc.scd"),
+	\icontrols -> ( device: "iCON iControls V2.00", file: "ICONIControls.desc.scd" ),
     \lpd8 -> ( device: "LPD8", protocol: \midi, file: "LPD8.desc.scd"),
 
 	'UC-33' -> ( device: "UC-33 USB MIDI Controller", protocol: \midi, file: "UC-33.desc.scd" ),
