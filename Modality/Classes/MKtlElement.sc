@@ -6,7 +6,7 @@ MAbstractElement {
 
 	var <ioType; // can be \in, \out, \inout
 
-	var <funcChain;
+	var <>action;
 	var <signal;
 	
 	// keep value and previous value here
@@ -21,52 +21,16 @@ MAbstractElement {
 	}
 
 	init { 
-		funcChain = FuncChain.new;
+	
 	}
 
-		// remove all functionalities from the funcChains
+		// remove all functionalities from the actions
 	reset {
-		funcChain = FuncChain.new;
 		this.eventSource !? _.reset;
 	}
 
 	eventSource {
 		^signal.changes
-	}
-
-	// funcChain interface //
-	
-	// by default, just do add = addLast, no flag needed. 
-	// (indirection with perform is much slower than method calls.)
-	addFunc { |funcName, function, addAction, otherName|
-		// by default adds the action to the end of the list
-		// if otherName is set, the valid addActions are: 
-		// \addLast, \addFirst, \addBefore, \addAfter, \replaceAt, are valid
-		funcChain.add(funcName, function, addAction, otherName);
-	}
-
-	addFuncFirst { |funcName, function|
-		funcChain.addFirst(funcName, function);
-	}
-
-	addFuncLast { |funcName, function|
-		funcChain.addLast(funcName, function);
-	}
-
-	addFuncAfter { |funcName, function, otherName|
-		funcChain.addAfter(funcName, function, otherName);
-	}
-	
-	addFuncBefore { |funcName, function, otherName|
-		funcChain.addBefore(funcName, function, otherName);
-	}
-	
-	replaceFunc { |funcName, function, otherName| 
-		funcChain.replaceAt(funcName, function, otherName);
-	}
-	
-	removeFunc {|funcName| 
-		funcChain.removeAt(funcName) 
 	}
 	
 	send { |val|
@@ -98,7 +62,7 @@ MAbstractElement {
 	
 	doAction {
 		source.recordRawValue( name, value );
-		funcChain.value( this );
+		action.value( this );
 	}
 
 	// UGen support
@@ -193,6 +157,14 @@ MKtlElement : MAbstractElement{
 
 	sendMapped { |newVal|
 		^this.send( spec.map(newVal) )
+	}
+
+	addAction { |argAction| 
+		action = action.addFunc(argAction);
+	}
+
+	removeAction { |argAction| 
+		action = action.removeFunc(argAction);
 	}
 
 	// assuming that something setting the element's value will first set the value and then call doAction (like in Dispatch)
