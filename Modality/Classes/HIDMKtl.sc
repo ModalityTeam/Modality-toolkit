@@ -204,8 +204,8 @@ HIDMKtl : MKtl {
 		this.replaceElements( newElements );
 	}
 
-    /*
 	verbose_ {|value=true|
+    /*
 		value.if({
 			elements.do{|item|
                 item.addFunc(\verbose, { |element|
@@ -215,8 +215,8 @@ HIDMKtl : MKtl {
 		}, {
 			elements.do{|item| item.removeFunc(\verbose)}
 		})
-	}
     */
+	}
 
 	storeArgs { ^[name] }
 
