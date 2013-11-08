@@ -22,6 +22,8 @@ IdentityDictionary[
 	\ZeroplusXbox -> ( linux: ( device: "Zeroplus Xbox Controller" ), protocol: \hid, file: "ZeroplusXbox.desc.scd" ),
 	\PuzzleSphere -> ( osx: ( device: "Real Play"), linux: (device: "In2Games Real Play"), protocol: \hid, file: "PuzzleSphere.desc.scd"),
 
+	
+    \Teenage_OP1 -> ( device: "OP-1 Midi Device", protocol: \midi, file: "Teenage_OP1.desc.scd"),
 
 	//	\manta -> (inport: 1234, outport: 5678, protocol: \osc, file: "Manta.desc.scd" ),
 
