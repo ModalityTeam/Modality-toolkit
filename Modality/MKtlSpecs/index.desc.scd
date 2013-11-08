@@ -24,6 +24,8 @@ IdentityDictionary[
 
 	'The Ribbon' -> ( device: "The Ribbon", protocol: \midi, file: "EOWave_Ribbon.desc.scd" ),
 
+    \Teenage_OP1 -> ( device: "OP-1 Midi Device", protocol: \midi, file: "Teenage_OP1.desc.scd"),
+
 	//	\manta -> (inport: 1234, outport: 5678, protocol: \osc, file: "Manta.desc.scd" ),
 
 

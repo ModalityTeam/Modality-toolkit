@@ -6,7 +6,10 @@
 //	test noteOn  off responders, they are not working yet!
 
 
-MIDIMKtl : MKtl {
+MIDIMKtl : MKtl { 
+	
+	classvar <allMsgTypes = #[ \noteOn, \noteOff, \control, \touch, \polytouch, \bend, \program ];
+
 	classvar <initialized = false;
 	classvar <sourceDeviceDict;         //      ('deviceName': MIDIEndPoint, ... )
 	                                    //i.e.  ( 'bcr0': MIDIEndPoint("BCR2000", "Port 1"), ... )
@@ -31,7 +34,7 @@ MIDIMKtl : MKtl {
 
 	var <responders;
 
-	var <exploreResponders;
+	var <exploreFuncs;
 
 	    // open all ports
 	*initMIDI {|force= false|
@@ -238,31 +241,24 @@ MIDIMKtl : MKtl {
 		});
 	}
 
-	explore{ |mode=true|
-		if ( mode ){
-			if ( exploreResponders.isNil ){
-				exploreResponders = (
-					cc: CCResponder({ |src, chan, num, value|
-						[ this.name, \control, src, chan, num, value ].postln;
-					}, srcID),
-
-					noteon: NoteOnResponder({ |src, chan, note, vel|
-						[ this.name, \noteOn, src, chan, note, vel ].postln;
-					}, srcID),
-
-					noteoff: NoteOffResponder({ |src, chan, note, vel|
-						[ this.name, \noteOff, src, chan, note, vel ].postln;
-					}, srcID)
-				);
-			}{
-				exploreResponders.do{ |it| it.add };
+	explore { |flag=true|
+		if ( flag ){
+			if ( exploreFuncs.isNil ){ 
+				exploreFuncs = (); 
+				allMsgTypes.do { |msgType| 
+					exploreFuncs.put(msgType, 
+						MIDIFunc({ |...args| 
+							[this.class, name, msgType, args].postcs
+						}, msgType: msgType)
+					);
+				};
 			};
-		}{
-			if ( exploreResponders.notNil ){
-				exploreResponders.do{ |it| it.remove };
-			};
+			exploreFuncs.do(_.add);
+		} { 
+			exploreFuncs.do(_.remove);
 		};
-		exploring = mode;
+		
+		exploring = flag;
 	}
 
 	initMIDIMKtl { |argName, argSource, argDestination|
@@ -370,7 +366,17 @@ MIDIMKtl : MKtl {
 //			this.class.openTester(this);
 //		};
 //	}
-
+		// modularize - only make the ones that are needed? 
+		// make them only once, methods to activate/deactivate them 
+		// 
+	
+	makeResponders { |msgTypes| 
+		if (responders.isNil) { responders = () };
+		
+		msgTypes = msgTypes ? allMsgTypes;  
+		
+	}
+	
 	addResponders {
 		responders = (
 			cc: CCResponder({ |src, chan, num, value|
@@ -391,7 +397,7 @@ MIDIMKtl : MKtl {
 				};
 			}, srcID),
 
-			noteon: NoteOnResponder({ |src, chan, note, vel|
+			noteOn: NoteOnResponder({ |src, chan, note, vel|
 				var hash = this.makeNoteKey(chan, note);
 				var elName = hashToElNameDict[hash];
 				var el = elementHashDict[hash];
@@ -416,7 +422,7 @@ MIDIMKtl : MKtl {
 				}
 			}, srcID),
 
-			noteoff: NoteOffResponder({ |src, chan, note, vel|
+			noteOff: NoteOffResponder({ |src, chan, note, vel|
 				var hash = this.makeNoteKey(chan, note);
 				var elName = hashToElNameDict[hash];
 				var el = elementHashDict[hash];
@@ -444,7 +450,7 @@ MIDIMKtl : MKtl {
 		);
 	}
 
-	send{ |key,val|
+	send { |key,val|
 	 	elNameToMidiDescDict !? _.at(key) !? { |x|
 			var type, ch, num, spec;
 			#type, ch, num, spec = x;
@@ -454,14 +460,16 @@ MIDIMKtl : MKtl {
 	 	}
 	}
 
+		// not working like this anymore (relied onFuncChain)
+		// replace with a special verbose action
 	verbose_ {|value=true|
-		value.if({
-			elementHashDict.do{|item| item.addFunc(\verbose, { |element|
-					[element.source, element.name, element.value].postln;
-			})}
-		}, {
-			elementHashDict.do{|item| item.removeFunc(\verbose)}
-		})
+//		value.if({
+//			elementHashDict.do{|item| item.addFunc(\verbose, { |element|
+//					[element.source, element.name, element.value].postln;
+//			})}
+//		}, {
+//			elementHashDict.do{|item| item.removeFunc(\verbose)}
+//		})
 	}
 
 		// utilities for fast lookup :
