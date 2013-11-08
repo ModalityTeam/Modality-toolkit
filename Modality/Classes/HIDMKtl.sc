@@ -13,58 +13,42 @@ HIDMKtl('ferrari').srcDevice.slots
 
 
 HIDMKtl : MKtl {
-	classvar <initialized = false; 
+	classvar <initialized = false;
 	classvar <sourceDeviceDict;
 
+	var <srcID, <srcDevice;
 
-	// needed for OSX; can be removed once 3.5 works with hid
-	classvar <locIDtoKtl;
-	var <cookieslots;
-	// -- end osx specific stuff
-				
-	var <srcID, <srcDevice; 
-	
-			// optimisation for fast lookup, 
-			// may go away of everything lives in the elements
-	var <elemDict;
-	var <lookupDict;
+    // classvar locIDtoKtl;
+	// optimisation for fast lookup,
+	// may go away of everything lives in the elements
+    // var <elemDict;
+    // var <lookupDict;
+    var <deviceElements;
 
 	*initHID { |force=false|
 		(initialized && {force.not}).if{^this};
-		GeneralHID.buildDeviceList;
-		sourceDeviceDict = ();
+        HID.findAvailable;
 
-		locIDtoKtl = ();
-
+        sourceDeviceDict = IdentityDictionary.new;
 		this.prepareDeviceDicts;
 
-		GeneralHID.startEventLoop;
-
-		if ( thisProcess.platform.name == \osx ){
-			this.initHIDDeviceServiceAction;
-		};
-
-		
 		initialized = true;
 	}
 
 	*prepareDeviceDicts{
 		var prevName = nil, j = 0, order, deviceNames;
-
-		deviceNames = GeneralHID.deviceList.collect{|dev,id|
-			if ( dev[1].name != "could not open device" ){
-				[this.makeShortName(dev[1].name.asString),id];
-			}
-		}.reject{ |it| it.isNil };
-		order = deviceNames.order{ arg a, b; a[0] < b[0] };
+		deviceNames = HID.available.collect{|dev,id|
+            this.makeShortName( (dev.productName.asString ++ dev.vendorName.asString ).asString)
+		}.asSortedArray;
+		order = deviceNames.order{ arg a, b; a[1] < b[1] };
 		deviceNames[order].do{|name, i|
-			(prevName == name[0]).if({
+			(prevName == name[1]).if({
 				j = j+1;
 			},{
 				j = 0;
 			});
-			prevName = name[0];
-			sourceDeviceDict.put((name[0] ++ j).asSymbol, GeneralHID.deviceList[ name[1] ])
+			prevName = name[1];
+			sourceDeviceDict.put((name[1] ++ j).asSymbol, HID.available[ name[0] ])
 		};
 
 		// put the available hid devices in MKtl's available devices
@@ -73,16 +57,16 @@ HIDMKtl : MKtl {
 			allAvailable[\hid].add( key );
 		});
 	}
-		// open all ports and display them in readable fashion, 
-		// copy/paste-able directly 
-	*find { |name, uid, post=true| 
+		// open all ports and display them in readable fashion,
+		// copy/paste-able directly
+	*find { |name, uid, post=true|
 		this.initHID( true );
 
 		/*
 		"\n///////// HIDMKtl.find - - - HID sources found: /////// ".postln;
 		"	index	locID (USB port ID)	device name         vendor  product".postln;
-		GeneralHID.deviceList.do { |pair, i| 
-			var rawdev, info; 
+		GeneralHID.deviceList.do { |pair, i|
+			var rawdev, info;
 			#rawdev, info = pair;
 			("\t" ++ i).post;
 			("\t\t[" ++ info.physical ++ "]").post;
@@ -97,10 +81,8 @@ HIDMKtl : MKtl {
 
 	*postPossible{
 		"\n// Available	HIDMKtls - just give them unique names: ".postln;
-		sourceDeviceDict.keysValuesDo{ |key,pair| 
-			var rawdev, info; 
-			#rawdev, info = pair;
-			"   HIDMKtl('%', %);  // %\n".postf(key, info.physical.asCompileString, info.name);
+		sourceDeviceDict.keysValuesDo{ |key,info|
+			"   HIDMKtl('%', %);  // % %\n".postf(key, info.serialNumber.asCompileString, info.vendorName, info.productName );
 		};
 		"\n-----------------------------------------------------".postln;
 	}
@@ -131,250 +113,112 @@ HIDMKtl : MKtl {
 		^this.new( name, dev );
 	}
 
-		// create with a uid, or access by name	
-	*new { |name, uid, devDescName| 
+    // create with a uid, or access by name
+	*new { |name, uid, devDescName|
 		var foundSource;
 		var foundKtl = all[name.asSymbol];
-		
-			// access by name
-		if (foundKtl.notNil) { 
-			if (uid.isNil) { 
-				^foundKtl	
-			} { 
-				if (uid == foundKtl.srcID) { 
+
+        // access by name
+		if (foundKtl.notNil) {
+			if (uid.isNil) {
+				^foundKtl
+			} {
+				if (uid == foundKtl.srcID) { // FIXME: where do I set the srcID?
 					^foundKtl
-				} { 
+				} {
 					warn("HIDMKtl: name % is in use for a different USB port ID!"
-					++ 	"	Please pick a different name.".format(name) 
+					++ 	"	Please pick a different name.".format(name)
 					++ 	"	Taken names:" + all.keys.asArray.sort ++ ".\n");
 					^nil
 				}
 			}
 		};
 
-		if (uid.isNil) { 
+		if (uid.isNil) {
 			foundSource = this.sourceDeviceDict[ name ];
 		}{
-			foundSource = GeneralHID.findBy( locID: uid );
+            //FIXME: uid is this a path?
+			foundSource = HID.findBy( path: uid );
 		};
-			// make a new one		
-		if (foundSource.isNil) { 
-			warn("HIDMKtl:" 
+			// make a new one
+		if (foundSource.isNil) {
+			warn("HIDMKtl:"
 			"	No HID source with USB port ID % exists! please check again.".format(uid));
 			^nil
 		};
-				
-		^super.basicNew(name,devDescName ? foundSource[1].name.asString ).initHIDMKtl(uid, foundSource);
+
+        ^super.basicNew(name,devDescName ? this.makeLongName( foundSource ) ).initHIDMKtl(uid, foundSource);
 	}
-	
+
+    *makeLongName{ |hidinfo|
+        ^(hidinfo.vendorName ++ hidinfo.productName).asString.select{|c| c.isAlpha };
+    }
+
 	postRawSpecs { this.class.postRawSpecsOf(srcDevice) }
-	
+
 	explore{ |mode=true|
 		if ( thisProcess.platform.name == \linux ){
 			srcDevice.debug_( mode );
 		};
-		// this is enough for osx
-		exploring = mode;
 	}
-	
+
 	initHIDMKtl { |argUid, argSource|
 		srcID = argUid;
-		srcDevice = GeneralHID.open(argSource);
+        // srcDevice = HID.open(argSource);
+        srcDevice = argSource.open;
 		all.put(name, this);
 
-		if ( thisProcess.platform.name == \osx ){
-			// srcDevice: GeneralHID
-			// device: MXHID
-			// device: HIDDevice
-			locIDtoKtl.put( srcDevice.device.device.locID, this );
-		};
-		
-		elemDict = ();
-		lookupDict = ();
-
-		this.setGeneralHIDActions;
-		
-		//		this.getDeviceDescription(  )
-		//		this.findDevSpecs(srcDevice.info.name.postln); 
-		
-//		// this.makeElements; 
-		//		this.prepareFuncDict;
-//
-//		this.addResponders; 
+        this.getDeviceElements;
+ 		this.setHIDActions;
 	}
 
-	setGeneralHIDActions{
-		var newElements = (); // make a new list of elements, so we only have the ones that are present for the OS
+    getDeviceElements{
+        deviceElements = srcDevice.elements;
+    }
 
-		/*
-		if ( thisProcess.platform.name == \osx ){					cookieslots = cookieslots ?? srcDevice.device.getSlotsForCookies;
-		};
-		*/
-		
+	setHIDActions{
+		var newElements = ();
+
 		this.elements.do{ |el|
-			var slot = el.elementDescription[\slot]; // linux
-			var cookie = el.elementDescription[\cookie]; // osx
-			
-			// on linux:
-			if ( slot.notNil ){
-				srcDevice.slots[ slot[0] ][ slot[1] ].action = { |v| el.rawValueAction_( v.value ) };
-				newElements.put( el.name, el );
-			};
-			// on osx:
-			if ( cookie.notNil ){
-				elemDict.put(  cookie, el );
-			//	srcDevice.dump;
-				
-				//cookieslots.at( cookie ).action = { |slot| this.elemDict[ cookie ].rawValueAction_( slot.rawValue ) };
-				srcDevice.device.slots.at( cookie ).action = { |slot| this.elemDict[ cookie ].rawValueAction_( slot.rawValue ) };
-				//	srcDevice.hidDeviceAction = { |ck,val| this.elemDict[ ck ].rawValueAction_( val ) };
-				newElements.put( el.name, el );
-			}
+            var theseElements;
+
+            var elid = el.elementDescription[\elid];
+            var page = el.elementDescription[\page];
+            var usage = el.elementDescription[\usage];
+
+            // device specs should primarily use usage and usagePage,
+            // only in specific instances - where the device has bad firmware use elementid's which will possibly be operating system dependent
+
+            if ( elid.notNil ){ // filter by element id
+                // HIDFunc.element( { |v| el.rawValueAction_( v ) }, elid, \devid, devid );
+                srcDevice.elements.at( elid ).action = { |v| el.rawValueAction_( v ) };
+            }{  // filter by usage and usagePage
+                // HIDFunc.usage( { |v| el.rawValueAction_( v ) }, usage, page, \devid, devid );
+                theseElements = srcDevice.findElementWithUsage( usage, page );
+                theseElements.do{ |it|
+                    it.action = { |v| el.rawValueAction_( v ) };
+                };
+            };
+            newElements.put( el.name, el );
 		};
 		this.replaceElements( newElements );
 	}
 
-	/*
-	prepareFuncDict { 
-		if (devSpecs.notNil) { 
-			// works only for scenes ATM;
-			devSpecs.pairsDo { |elName, descr| 
-				var ccKey = this.makeCCKey(descr[\chan], descr[\ccNum]);
-				descr.put(\ccKey, ccKey); // just in case ... 
-				
-				funcDict.put(
-					ccKey, FuncChain([\post, { |ktl, elName, value| 
-						[ktl, elName, value].postln;
-					}])
-				);
-				ccKeyToElNameDict.put(ccKey, elName);
-			}
-		}
-	}
-	*/
-
+    /*
 	verbose_ {|value=true|
 		value.if({
-			elements.do{|item| item.addFunc(\verbose, { |element| 
+			elements.do{|item|
+                item.addFunc(\verbose, { |element|
 					[element.source, element.name, element.value].postln;
-			})}
+                })
+            }
 		}, {
 			elements.do{|item| item.removeFunc(\verbose)}
 		})
 	}
+    */
 
-//		// interface methods
-//	addFunc { |elementKey, funcName, function| 
-//		//	 |elementKey, funcName, function, addAction=\addToTail, target|
-//		//super.addFunc(...);
-//
-//		var ccKey = ccKeyToElNameDict.findKeyForValue(elementKey);
-//		funcDict[ccKey].addLast(funcName, function);
-//	}
-//
-//	removeFunc { |elKey, name| 
-//		var ccKey = ccKeyToElNameDict.findKeyForValue(elKey); 
-//		funcDict[ccKey].removeAt(name);
-//	}
-//
-//		// convenience methods
-//	defaultValueFor { |elName| 
-//		^devSpecs[elName].spec.default
-//	}
-
-//	postSpecs { devSpecs.printcsAll; }
-//	
-//	elNames { 
-//		^(0, 2 .. devSpecs.size - 2).collect (devSpecs[_])
-//	}
-//
-//
-//		// plumbing	
-//	prepareFuncDict { 
-//		if (devSpecs.notNil) { 
-//			// works only for scenes ATM;
-//			devSpecs.pairsDo { |elName, descr| 
-//				var ccKey = this.makeCCKey(descr[\chan], descr[\ccNum]);
-//				descr.put(\ccKey, ccKey); // just in case ... 
-//				
-//				funcDict.put(
-//					ccKey, FuncChain([\post, { |ktl, elName, value| 
-//						[ktl, elName, value].postln;
-//					}])
-//				);
-//				ccKeyToElNameDict.put(ccKey, elName);
-//			}
-//		}
-//	}
-//	
-//
-//	addResponders { 	
-//		responders = (
-//			cc: CCResponder({ |src, chan, num, value| 
-//				var ccKey = this.makeCCKey(chan, num);
-//				var elName = ccKeyToElNameDict[ccKey]; 
-//				funcDict[ccKey].value(this, elName, value); 
-//			}, srcID), 
-//			
-//			noteon: NoteOnResponder({ |src, chan, note, vel|
-//				// [chan, note, vel].postln
-//			}, srcID)
-//		);
-//	}
-//
-		
-//	openTester {	// breaks responders for now.
-//
-//		var observedCCs = List[];
-//
-//		// if not there, make a template text file for them, 
-//		// and instructions where to save them so they can be found 
-//		// automatically. 
-//		this.addResponders;
-//		
-//			// just sketching - keep track of several of them
-//		
-//		responders[\cc].function = { |src, chan, num, value| 
-//			var oldCC = observedCCs.detect { |el| 
-//				el.keep(2) == [chan, num] 
-//			};
-//			if (oldCC.notNil) { 
-//				oldCC.put(2, min(value, oldCC[2])); 
-//				oldCC.put(3, max(value, oldCC[3])); 
-//			} { 
-//				observedCCs.add([chan, num, value, value]);
-//			};
-//			observedCCs.postln;
-//		};
-//	}
-//	
-//	endTester { 
-//		responders[\cc].function = { |src, chan, num, value| 
-//		
-//		};
-//	}	
-	
-
-//		// utilities for lookup 
-//	makeCCKey { |chan, cc| ^(chan.asString ++ "_" ++ cc).asSymbol }
-//	
-//	ccKeyToChanCtl { |ccKey| ^ccKey.asString.split($_).asInteger }
-//
-//	makeNoteKey { |chan, note| 
-//		var key = chan.asString; 
-//		if (note.notNil) { key = key ++ "_" ++ note };
-//		^key.asSymbol 
-//	}
-//
-//	noteKeyToChanNote { |noteKey| ^noteKey.asString.split($_).asInteger }
-	
 	storeArgs { ^[name] }
-	
+
 	printOn { |stream| ^this.storeOn(stream) }
 }
-
-/*
-
-	
-*/
-
