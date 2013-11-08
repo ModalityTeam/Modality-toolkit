@@ -1,3 +1,14 @@
+/*
+MAbstractElement
+    |        |
+   /          \
+  /            \
+MKtlElement   MDispatchOut
+
+MDispatchOut : MAbstractElement {}
+
+Why do we need this hierarchy ??
+*/
 MAbstractElement {
 
 	var <source; // the Ktl it belongs to

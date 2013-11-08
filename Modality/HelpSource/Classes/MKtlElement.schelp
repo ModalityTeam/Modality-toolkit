@@ -1,7 +1,7 @@
 CLASS:: MKtlElement
 summary:: An element of an MKtl.
 categories:: Undocumented classes
-related:: Classes/SomeRelatedClass, Reference/SomeRelatedStuff, etc.
+related:: Classes/MAbstractElement, Classes/MKtl
 
 DESCRIPTION::
 An element of an link::Classes/MKtl::.
@@ -24,12 +24,9 @@ A name.
 
 INSTANCEMETHODS::
 
-METHOD:: deviceDescription
-returns:: a dictionary containing the element description
-
 METHOD:: spec
 
-returns:: the element's spec 
+returns:: the element's spec
 
 private:: init
 
@@ -43,13 +40,50 @@ returns:: the element's current value (normed)
 
 METHOD:: rawValue
 
-argument:: newval
+argument:: newVal
 sets the element's value (raw)
 
 returns:: the element's current value (raw)
 
+METHOD:: sendMapped
+
+Send value back to the control. Value should be in 0.0-1.0 range, it will be automatically mapped to the correct range for this device (e.g. 0-127).
+
+argument:: newVal
+Float [0.0-1.0]
+
+returns:: MKtlElement
+
+discussion::
+
+Control a knob on the Behringer BCF2000
+
+code::
+MIDIMKtl('bcf20000').elements.at(\kn_1_1).sendMapped(0.5)
+::
+
+Classic knobs rotating demo:
+
+code::
+(
+x = 0;
+fork{
+	loop{
+		0.1.wait;
+		x = x + 0.1;
+		8.do{ |i|
+			MIDIMKtl('bcf20000').elements.at("kn_1_%".format(i+1).asSymbol).sendMapped(
+				(x + (i/7)).mod(1.0)
+			)
+		}
+	}
+}
+)
+::
 
 EXAMPLES::
+
+
 
 code::
 (some example code)
