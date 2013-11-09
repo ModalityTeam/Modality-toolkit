@@ -68,6 +68,8 @@ HIDExplorer {
         /// could infer type from the control
         /// could infer name from the control -> suggest a name
 
+        /// FIXME: ignore constant fields!
+
         #uniques, duplicates = this.detectDuplicateElements( elements.select{ |v| v.ioType == 1 } );
         if ( uniques.size + duplicates.size > 0 ){
             str = str + "\n\n// --------- input elements ----------";
@@ -94,6 +96,7 @@ HIDExplorer {
             };
         };
 
+        /*
         #uniques, duplicates = this.detectDuplicateElements( elements.select{ |v| v.ioType == 3 } );
         if ( uniques.size + duplicates.size > 0 ){
             str = str + "\n\n// --------- feature report ----------";
@@ -106,6 +109,8 @@ HIDExplorer {
                 .format(val.usageName, key, key, val.pageName );
             };
         };
+        */
+
 		str = str + "\n];";
 
 		^str;
