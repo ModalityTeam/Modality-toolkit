@@ -184,9 +184,9 @@ HIDMKtl : MKtl {
 		this.elements.do{ |el|
             var theseElements;
 
-            var elid = el.elementDescription[\elid];
-            var page = el.elementDescription[\usagePage];
-            var usage = el.elementDescription[\usage];
+            var elid = el.elementDescription[\hidElementID];
+            var page = el.elementDescription[\hidUsagePage];
+            var usage = el.elementDescription[\hidUsage];
 
             // device specs should primarily use usage and usagePage,
             // only in specific instances - where the device has bad firmware use elementid's which will possibly be operating system dependent
