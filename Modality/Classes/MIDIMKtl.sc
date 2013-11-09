@@ -6,8 +6,8 @@
 //	test noteOn  off responders, they are not working yet!
 
 
-MIDIMKtl : MKtl { 
-	
+MIDIMKtl : MKtl {
+
 	classvar <allMsgTypes = #[ \noteOn, \noteOff, \control, \touch, \polytouch, \bend, \program ];
 
 	classvar <initialized = false;
@@ -242,23 +242,8 @@ MIDIMKtl : MKtl {
 	}
 
 	explore { |flag=true|
-		if ( flag ){
-			if ( exploreFuncs.isNil ){ 
-				exploreFuncs = (); 
-				allMsgTypes.do { |msgType| 
-					exploreFuncs.put(msgType, 
-						MIDIFunc({ |...args| 
-							[this.class, name, msgType, args].postcs
-						}, msgType: msgType)
-					);
-				};
-			};
-			exploreFuncs.do(_.add);
-		} { 
-			exploreFuncs.do(_.remove);
-		};
-		
-		exploring = flag;
+		"Using MIDIExplorer - see \n MIDIExplorer.openHelpFile;".postln;
+		MIDIExplorer.start(this.srcID);
 	}
 
 	initMIDIMKtl { |argName, argSource, argDestination|
@@ -366,17 +351,17 @@ MIDIMKtl : MKtl {
 //			this.class.openTester(this);
 //		};
 //	}
-		// modularize - only make the ones that are needed? 
-		// make them only once, methods to activate/deactivate them 
-		// 
-	
-	makeResponders { |msgTypes| 
+		// modularize - only make the ones that are needed?
+		// make them only once, methods to activate/deactivate them
+		//
+
+	makeResponders { |msgTypes|
 		if (responders.isNil) { responders = () };
-		
-		msgTypes = msgTypes ? allMsgTypes;  
-		
+
+		msgTypes = msgTypes ? allMsgTypes;
+
 	}
-	
+
 	addResponders {
 		responders = (
 			cc: CCResponder({ |src, chan, num, value|
