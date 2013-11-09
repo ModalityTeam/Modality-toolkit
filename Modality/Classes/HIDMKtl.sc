@@ -20,7 +20,7 @@ HIDMKtl : MKtl {
 
     // classvar locIDtoKtl;
 	// optimisation for fast lookup,
-	// may go away of everything lives in the elements
+	// may go away of everything lives in the elementsDict
     // var <elemDict;
     // var <lookupDict;
     var <deviceElements;
@@ -181,7 +181,7 @@ HIDMKtl : MKtl {
 	setHIDActions{
 		var newElements = ();
 
-		this.elements.do{ |el|
+		this.elementsDict.do{ |el|
             var theseElements;
 
             var elid = el.elementDescription[\hidElementID];
@@ -209,13 +209,13 @@ HIDMKtl : MKtl {
 	verbose_ {|value=true|
     /*
 		value.if({
-			elements.do{|item|
+			elementsDict.do{|item|
                 item.addFunc(\verbose, { |element|
 					[element.source, element.name, element.value].postln;
                 })
             }
 		}, {
-			elements.do{|item| item.removeFunc(\verbose)}
+			elementsDict.do{|item| item.removeFunc(\verbose)}
 		})
     */
 	}
