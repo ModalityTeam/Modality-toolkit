@@ -2,6 +2,21 @@
 //	// only cc messages,
 //	// 4 hardware scenes, flattened out with underscores
 
+/* tests
+MIDIMKtl.find;
+m = MIDIMKtl('nnkn0');
+
+// not working yet.
+m.elementAt(\sl, 1, 1).addAction({ |mk| mk.value.post; "sl1 sc1 YO !".postln; });
+m.elementAt(\sl, 1, 1).action_({ |mk| mk.value.round(0.01).post; "sl1 sc1 YO !".postln; });
+m.elementAt(\sl, 2, 2).action_({ |mk| mk.value.round(0.01).post; "sl2 sc2 YO !".postln; });
+
+m.elementAt(\kn, 1, 1).action_({ |mk| mk.value.round(0.01).post; "kn1 sc1 YO !".postln; });
+m.elementAt(\kn, 2, 2).action_({ |mk| mk.value.round(0.01).post; "kn2 sc2 YO !".postln; });
+
+m.elementAt(\but, 1, 1, 1).addAction({ |mk| mk.value.post; "but1 bt1 YO !".postln; });
+m.elementAt(\but, 2, 2, 2).addAction({ |mk| mk.value.post; "sc2 chan2 bt2 YO !".postln; });
+*/
 (
 
 // the same in all scenes:
