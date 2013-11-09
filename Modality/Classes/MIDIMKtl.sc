@@ -280,10 +280,10 @@ MIDIMKtl : MKtl {
 		var hash;
 		// TODO: pitchbend, other miditypes, etc.
 		hash = descr[\midiType].switch(
-			\noteOn, {this.makeNoteOnKey(descr[\chan], descr[\midiNote]);},
-			\noteOff, {this.makeNoteOffKey(descr[\chan], descr[\midiNote]);},
+			\noteOn, {this.makeNoteOnKey(descr[\midiChan], descr[\midiNum]);},
+			\noteOff, {this.makeNoteOffKey(descr[\midiChan], descr[\midiNum]);},
 
-			\cc, {this.makeCCKey(descr[\chan], descr[\ccNum]);},
+			\cc, {this.makeCCKey(descr[\midiChan], descr[\midiNum]);},
 			{//default:
 				"MIDIMKtl:prepareElementHashDict (%): identifier in midiType for item % not known. Please correct.".format(this, elName).error;
 				this.dump;
@@ -306,8 +306,9 @@ MIDIMKtl : MKtl {
 					hash = this.makeHashKey( descr, elName );
 					elNameToMidiDescDict.put(elName,
 						[
-							descr[\midiType], descr[\chan],
-							descr[\midiType].switch(\note,{descr[\midiNote]},\cc,{descr[\ccNum]}),
+							descr[\midiType],
+							descr[\midiChan],
+							descr[\midiNum],
 							elementsDict[elName].spec
 						])
 				};
@@ -325,8 +326,9 @@ MIDIMKtl : MKtl {
 					if ( elementsDict[elName].ioType == \out  or:  elementsDict[elName].ioType == \inout ){
 						elNameToMidiDescDict.put(elName,
 							[
-								descr[\midiType], descr[\chan],
-								descr[\midiType].switch(\note,{descr[\midiNote]},\cc,{descr[\ccNum]}),
+								descr[\midiType],
+								descr[\midiChan],
+								descr[\midiNum],
 								elementsDict[elName].spec
 							])
 					};
@@ -368,8 +370,8 @@ MIDIMKtl : MKtl {
 				} {
 					"MIDIMKtl( % ) : cc element found for chan %, ccnum % !\n"
 					" - add it to the description file, e.g.: "
-					"\\<name>: (\\midiType: \\cc, \\type: \\button, \\chan: %,"
-					"\\ccNum: %, \\spec: \\midiBut, \\mode: \\push).\n\n"
+					"\\<name>: (\\midiType: \\cc, \\type: \\button, \\midiChan: %,"
+					"\\midiNum: %, \\spec: \\midiBut, \\mode: \\push).\n\n"
 						.postf(name, chan, num, chan, num);				};
 			}, srcID: srcID)
 		);
