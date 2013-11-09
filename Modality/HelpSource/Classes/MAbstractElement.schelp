@@ -1,47 +1,47 @@
-CLASS:: MBasicElement
-summary:: Base class for MKtl controller elements.
-categories:: Modality, Control
-related:: Classes/MKtlElement, Classes/MKtl, Classes/MDispatchOut
+CLASS:: MAbstractElement
+summary:: Base class for MKtl controller elements and MDispatchOut elements.
+categories:: Libraries>Modality, Control
+related:: Overviews/Modality, Classes/MKtl, Classes/MKtlElement, Classes/MDispatchOut
 
 DESCRIPTION::
-Abstract class for MKtl controller elements and MDispatchOut's.
+Abstract class for MKtl controller elements and code::MDispatchOut::s.
+
+note::this is a core and abstract class that sould, in normal usage, not be accessed directly.::
 
 CLASSMETHODS::
 
 METHOD:: new
-creates a new instance.
+create a new instance.
 
 argument:: source
-The source it belongs to.
+the MKtl/Dispatch it belongs to.
 
 argument:: name
-A name.
+a name.
 
 
 INSTANCEMETHODS::
 
 method:: source
-The MKtl it belongs to.
+the MKtl/Dispatch it belongs to.
 
 METHOD:: name
-The element's name.
+name
 
 METHOD:: type
-The element's type, cen be e.g. 
-code::
-\button, \slider, \knob
-::
+type of the element, e.g. code:: \button, \slider, \knob::. 
+See link::Reference/MKtl_description_files:: for a more detailed list.
+
 
 private:: init
 
 METHOD:: reset
-Reset the element to a neutral state without any functionality.
+reset element to neutral state, without any functionality.
 
 SUBSECTION:: setting and getting values
 
 METHOD:: value
-set/get the new value. 
-When setting, do not evaluate any actions.
+Setting does not evaluate any action
 
 argument:: newval
 the new value
@@ -52,7 +52,7 @@ METHOD:: prevValue
 the previous value
 
 METHOD:: valueAction
-Set value and evaluate assotiated FuncChain.
+set value and evaluate assotiated FuncChain.
 
 argument:: newval
 the new value

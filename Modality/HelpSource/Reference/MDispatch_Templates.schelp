@@ -1,7 +1,10 @@
 title:: MDispatch Templates
-categories:: Modality
-related:: Classes/MDispatch, Classes/MDispatchOut
+categories:: Libraries>Modality
+related:: Overviews/Modality, Classes/MDispatch, Classes/MDispatchOut
 summary:: Examples for the several templates available for MDispatch
+
+note::Experimental::
+
 
 paged:
 code::

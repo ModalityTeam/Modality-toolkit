@@ -1,7 +1,7 @@
 title:: MKtl description files
 summary:: describes the file format for MKtl desc files
-categories:: Modality
-related:: Classes/MKtl
+categories:: Libraries>Modality
+related:: Overviews/Modality, Classes/MKtl
 
 Section:: Introduction
 As agreed on by the modalityTeam on November, 9th 2013.

@@ -1,7 +1,7 @@
 title:: How to create a description file
 summary:: No description file available? Create one by these easy steps.
-categories:: Modality
-related:: Classes/MKtl, Reference/MKtl_description_files, Classes/MIDIExplorer, Classes/HIDExplorer
+categories:: Libraries>Modality
+related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Classes/MIDIExplorer, Classes/HIDExplorer
 
 Section:: Introduction
 
