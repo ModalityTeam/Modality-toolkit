@@ -153,7 +153,7 @@ MKtl : MAbstractKtl { // abstract class
 		name = argName;
 
 		//envir = ();
-		elements = ();
+		elementsDict = ();
 		if (deviceDescName.isNil) {
 			warn("no deviceDescription name given!");
 		} {
@@ -285,18 +285,18 @@ MKtl : MAbstractKtl { // abstract class
 
 	makeElements {
 		this.elementNames.do{|key|
-			elements[key] = MKtlElement(this, key);
+			elementsDict[key] = MKtlElement(this, key);
 		}
 	}
 
 	// needed for fixing elements that are not present for a specific OS
 	replaceElements{ |newelements|
-		elements = newelements;
+		elementsDict = newelements;
 	}
 
 		// convenience methods
 	defaultValueFor { |elName|
-		^this.elements[elName].defaultValue
+		^this.elementsDict[elName].defaultValue
 	}
 
 	makeElementName { |args|
@@ -305,26 +305,26 @@ MKtl : MAbstractKtl { // abstract class
 	}
 
 	elementAt { |...args|
-		^elements.at(this.makeElementName(args))
+		^elementsDict.at(this.makeElementName(args))
 	}
 
 	// should filter: those for my platform only
 	elementNames {
-		if ( elements.isEmpty ){
+		if ( elementsDict.isEmpty ){
 			^(0, 2 .. deviceDescription.size - 2).collect (deviceDescription[_])
 		}{
-			^elements.keys.asArray;
+			^elementsDict.keys.asArray;
 		}
 	}
 
 	elementsOfType { |type|
-		^elements.select { |elem|
+		^elementsDict.select { |elem|
    			elem.elementDescription[\type] == type
 		}
 	}
 
 	elementsNotOfType { |type|
-		^elements.select { |elem|
+		^elementsDict.select { |elem|
    			elem.elementDescription[\type] != type
 		}
 	}

@@ -4,7 +4,7 @@ MDispatch : MAbstractKtl {
 	classvar <>tempNamePrefix = "MDispatch_";
 	classvar tempDefCount = 0;
 	classvar <>maxTempDefNames = 512;
-	
+
 	//	classvar <all;
 
 	var <action;
@@ -24,24 +24,24 @@ MDispatch : MAbstractKtl {
 			[this.filenameSymbol.asString.dirname.dirname +/+ "DispatchTemplates",
 			Platform.userAppSupportDir++"/Extensions/DispatchTemplates/"];
 	}
-	
+
 	*generateTempName {
 		var name = tempNamePrefix ++ tempDefCount;
 		tempDefCount = tempDefCount + 1 % maxTempDefNames;
 		^name.asSymbol
 	}
-	
+
 	*new{ arg name;
 		^super.new.init( name ? MDispatch.generateTempName )
 	}
-	
+
 	*make{ arg name...args;
 		var template = this.getMDispatchTemplate(name);
 		if( template.notNil ) {
 			^template[\func].value(super.new.init(name), *args)
 		}
 	}
-	
+
 	*cleanTemplateName{ |name|
 		^name.asString.collect { |char| if (char.isAlphaNum, char, $_) };
 	}
@@ -50,7 +50,7 @@ MDispatch : MAbstractKtl {
 		var cleanTemplateName = this.cleanTemplateName(templateName);
 		^dispatchTemplateFolders.collect({|x| x +/+ cleanTemplateName ++ ".scd"});
 	}
-	
+
 	*getMDispatchTemplate{ arg name;
 		var path;
 		this.getTemplateFilePaths(name).do{ |testpath|
@@ -67,15 +67,15 @@ MDispatch : MAbstractKtl {
 			nil
 		}
 	}
-	
+
 	*availableTemplates{
 		^MDispatch.dispatchTemplateFolders.collect{ |x|
 			x.getPathsInDirectory.collect{ |y|
 				y.removeExtension
-			} 
+			}
 		}.flatten
 	}
-	
+
 	init{ |nm|
 		name = nm; // name is used to register with different controls in their functiondict
 		envir = Environment.new;
@@ -84,11 +84,11 @@ MDispatch : MAbstractKtl {
 		sourceKeyToSource = ();
 		mappedElems = ();
 
-		elements = ();
+		elementsDict = ();
 
 		//	this.mapSource( \me, this );
 	}
-	
+
 	changeSource{ |sourceKey, newSource|
 		var oldSource = sourceKeyToSource[sourceKey];
 		mappedElems[ sourceKey ].do{ |elem|
@@ -98,9 +98,9 @@ MDispatch : MAbstractKtl {
 			this.mapToElem( newSource, elem, sourceKey );
 		};
 	}
-	
+
 	//sourceKey is an abstract name for the source, source is either a Ktl or a MDispatch
-	prMapSourceToKey{ |source, sourceKey | 		
+	prMapSourceToKey{ |source, sourceKey |
 		if ( sourceKeyToSource.includesKey( sourceKey ) ){
 			if ( (sourceKeyToSource[sourceKey] === source).not ){
 				this.changeSource( sourceKey, source );
@@ -112,7 +112,7 @@ MDispatch : MAbstractKtl {
 			};
 		}
 	}
-	
+
 	prRegisterInputWithSource{ |source, elemKey, sourceKey|
 		source.addFuncElem( elemKey, this.name, this );
 		sources[sourceKey].put( elemKey, source.defaultValueFor( elemKey ) ? 0);
@@ -124,7 +124,7 @@ MDispatch : MAbstractKtl {
 
 	map{ |source, elemKeys, sourceKey|
 		sourceKey = (sourceKey ? source.name).asSymbol;
-		
+
 		if(elemKeys.isNil) {
 			//map all keys
 			this.prMapSourceToKey(source, sourceKey);
@@ -139,7 +139,7 @@ MDispatch : MAbstractKtl {
 		    }
 		}
 	}
-	
+
 	mapToElem{ |source, elemKey, sourceKey|
 		sourceKey = (sourceKey ? source.name).asSymbol;
 		this.prMapSourceToKey(source, sourceKey);
@@ -172,8 +172,8 @@ MDispatch : MAbstractKtl {
 
 	lookupSources{ |source|
 		^sourceKeyToSource.findKeysForValue( source );
-	}	
-	
+	}
+
 	valueArray{ arg args;
 		var element = args[0];
 		//("Dispatch "++this.name++" received input "++args.asString).postln;
@@ -192,12 +192,12 @@ MDispatch : MAbstractKtl {
 	getInput{ | sourceKey, elemKey|
 		^sources[sourceKey][elemKey.asSymbol]
 	}
-	
+
 	createOutput{ |elemkey|
 		elemkey = elemkey.asSymbol;
-		elements[elemkey] = MDispatchOut.new( this, elemkey );
+		elementsDict[elemkey] = MDispatchOut.new( this, elemkey );
 	}
-	
+
 	createOutputsFromInputs{
 		mappedElems.pairsDo{ |sourceKey,elemKeys|
 			elemKeys.do{ |elemKey|
@@ -210,36 +210,36 @@ MDispatch : MAbstractKtl {
 	    this.map(source, elemKeys, sourceKey);
 	    this.createOutputsFromInputs;
 	}
-	
+
 	getOutput{ |elemKey|
-		^elements[elemKey].value;
+		^elementsDict[elemKey].value;
 	}
 
 	setOutput{ |elemKey, value|
-		elements[elemKey].value_(value);
+		elementsDict[elemKey].value_(value);
 		changedOuts.add(elemKey);
 	}
-	
-	//addToOutput -> addFuncElem	
-	//removeFromOutput -> removeFuncElem	
+
+	//addToOutput -> addFuncElem
+	//removeFromOutput -> removeFuncElem
 	//removeAllFromOutput -> removeAllFromElems
-	
+
 	prProcessChain{
 	    //("processing chain for "++this.name).postln;
 		changedOuts = List.new;
 		envir.use({ action.value( this ) });
 		changedOuts.do{ |key|
-			if ( elements[key].notNil ){
-				elements[key].doAction; // this may need to pass more info
+			if ( elementsDict[key].notNil ){
+				elementsDict[key].doAction; // this may need to pass more info
 			};
 		};
 	}
-			// is funcName needed for action.add ?  
+			// is funcName needed for action.add ?
 	addToProc{ |funcName, function, addAction=\addLast, target|
 		funcName = funcName.asSymbol;
 		action.add( funcName, function, addAction, target );
 	}
-	
+
 	remove{
 		sources.keys.do{ |sourceKey|
 			var source = sourceKeyToSource[sourceKey];
@@ -250,7 +250,7 @@ MDispatch : MAbstractKtl {
 		sources = ();
         sourceKeyToSource = ();
 	}
-	
+
 	recursiveRemove{
 		sources.keys.do{ |sourceKey|
 			var source = sourceKeyToSource[sourceKey];
@@ -262,9 +262,9 @@ MDispatch : MAbstractKtl {
 				}
 			}
 		}
-			
+
 	}
-	
+
 	defaultValueFor{ ^0 }
 }
 

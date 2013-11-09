@@ -26,7 +26,7 @@ MIDIMKtl : MKtl {
 
 
 			// optimisation for fast lookup,
-			// may go away if everything lives in "elements" of superclass
+			// may go away if everything lives in "elementsDict" of superclass
 	var <elementHashDict;  //of type: ('c_ChannelNumber_CCNumber': MKtlElement, ...) i.e. ('c_0_21':a MKtlElement, ... )
 	var <hashToElNameDict; //of type: ('c_ChannelNumber_CCNumber':'elementName') i.e. ( 'c_0_108': prB2, ... )
 	var <elNameToMidiDescDict;//      ('elementName': [type, channel, midiNote or ccNum, ControlSpec], ... )
@@ -297,7 +297,7 @@ MIDIMKtl : MKtl {
 			}
 		);
 		elementHashDict.put(
-			hash, elements[elName];
+			hash, elementsDict[elName];
 		);
 	}
 		// plumbing
@@ -314,7 +314,7 @@ MIDIMKtl : MKtl {
 						[
 							descr[\midiType], descr[\chan],
 							descr[\midiType].switch(\note,{descr[\midiNote]},\cc,{descr[\ccNum]}),
-							elements[elName].spec
+							elementsDict[elName].spec
 						])
 				};
 				if ( descr[\in].notNil ){
@@ -325,15 +325,15 @@ MIDIMKtl : MKtl {
 				};
 				if ( descr[\in].isNil and: descr[\out].isNil ){
 					hash = this.makeHashKey( descr, elName );
-					if ( elements[elName].ioType == \in  or:  elements[elName].ioType == \inout ){
+					if ( elementsDict[elName].ioType == \in  or:  elementsDict[elName].ioType == \inout ){
 						hashToElNameDict.put(hash, elName);
 					};
-					if ( elements[elName].ioType == \out  or:  elements[elName].ioType == \inout ){
+					if ( elementsDict[elName].ioType == \out  or:  elementsDict[elName].ioType == \inout ){
 						elNameToMidiDescDict.put(elName,
 							[
 								descr[\midiType], descr[\chan],
 								descr[\midiType].switch(\note,{descr[\midiNote]},\cc,{descr[\ccNum]}),
-								elements[elName].spec
+								elementsDict[elName].spec
 							])
 					};
 

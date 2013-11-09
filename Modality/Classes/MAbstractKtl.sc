@@ -1,45 +1,45 @@
 
-//defines a common interface for Mktl and MDispatch, where outputs, called Elements are can be registered with for notifications. 
+//defines a common interface for Mktl and MDispatch, where outputs, called Elements are can be registered with for notifications.
 
 MAbstractKtl {
-	
+
 	var <verbose = false;
 	var <name;
-	
-	var <elements; //of type: ('elementName':MKtlElement, ...) -> elements to which stuff is registered
-	
+
+	var <elementsDict; //of type: ('elementName':MKtlElement, ...) -> elements to which stuff is registered
+
 	prMatchedElements { |elementKey|
 		if ( Main.versionAtLeast( 3.5 ) ){
-			^elements.asArray.select{ |elem| elem.name.matchOSCAddressPattern(elementKey) }
+			^elementsDict.asArray.select{ |elem| elem.name.matchOSCAddressPattern(elementKey) }
 		}{
-			^elements.asArray.select{ |elem| elementKey.asString.matchRegexp( elem.name.asString ) };
+			^elementsDict.asArray.select{ |elem| elementKey.asString.matchRegexp( elem.name.asString ) };
 		}
 	}
-	
+
 	prMatchDo{ |match, elementKey, func|
 		if( match ) {
 			//match only works on dev versions at the moment.
 			this.prMatchedElements(elementKey).do{ |element|
-				func.value(element)	
+				func.value(element)
 			}
 		} {
-			func.value(elements[elementKey])	
-		}	
+			func.value(elementsDict[elementKey])
+		}
 	}
-		
+
 	removeAllFromElems {
-		elements.do( _.reset )
+		elementsDict.do( _.reset )
 	}
-	
+
 	elementNames{
-		^elements.keys.asArray
+		^elementsDict.keys.asArray
 	}
 
 	printElementNames{
 
 		(
 			"\nElements available for %:\n".format(this.name)
-			++ elements.keys.as(Array).sort
+			++ elementsDict.keys.as(Array).sort
 			.collect{ |s| s.asString.padRight(14) }
 			.clump(4)
 			.collect{ |xs| xs.reduce('++') ++ "\n" }
@@ -51,48 +51,48 @@ MAbstractKtl {
 	recordRawValue { |key,value|
 	//		recordFunc.value( key, value );
 	}
-	
-	rawValueAt { |elName| 
-		if (elName.isKindOf(Collection).not) { 
-			^elements.at(elName).rawValue;
+
+	rawValueAt { |elName|
+		if (elName.isKindOf(Collection).not) {
+			^elementsDict.at(elName).rawValue;
 		};
 		^elName.collect { |name| this.rawValueAt(name) }
-	} 
+	}
 
-	valueAt { |elName| 
-		if (elName.isKindOf(Collection).not) { 
-			^elements.at(elName).value;
+	valueAt { |elName|
+		if (elName.isKindOf(Collection).not) {
+			^elementsDict.at(elName).value;
 		};
 		^elName.collect { |name| this.valueAt(name) }
-	} 
-	
-	setRawValueAt { |elName, val| 
-		if (elName.isKindOf(Collection).not) { 
+	}
+
+	setRawValueAt { |elName, val|
+		if (elName.isKindOf(Collection).not) {
 			^this.at(elName).rawValue_(val);
 		};
-		[elName, val].flop.do { |pair| 
-			elements[pair[0].postcs].rawValue_(pair[1].postcs)
+		[elName, val].flop.do { |pair|
+			elementsDict[pair[0].postcs].rawValue_(pair[1].postcs)
 		};
 	}
 
-	setValueAt { |elName, val| 
-		if (elName.isKindOf(Collection).not) { 
+	setValueAt { |elName, val|
+		if (elName.isKindOf(Collection).not) {
 			^this.at(elName).value_(val);
 		};
-		[elName, val].flop.do { |pair| 
-			elements[pair[0].postcs].value_(pair[1].postcs)
+		[elName, val].flop.do { |pair|
+			elementsDict[pair[0].postcs].value_(pair[1].postcs)
 		};
 	}
-	
+
 	reset{
-		elements.do( _.reset )
+		elementsDict.do( _.reset )
 	}
-	
+
 	// element access - support polyphonic name lists.
 	at { |elementKey|
 		//we can't distinguis [\kn1,\kn2] from [\kn,1]
 		//so [[\kn,1]] must be used instead
-		^elements.atKeys( elementKey.collectOrApply( this.prArgToElementKey(_) ) )
+		^elementsDict.atKeys( elementKey.collectOrApply( this.prArgToElementKey(_) ) )
 	}
 
 	prArgToElementKey { |argm|
@@ -102,25 +102,25 @@ MAbstractKtl {
 			{ String }{ argm.asSymbol }
 			{ (argm[..(argm.size-2)].inject("",{ |a,b| a++b.asString++"_"}).asSymbol ++ argm.last.asString).asSymbol }
 	}
-	
+
 	verbose_ {|value=true|
 		verbose = value;
 		value.if({
-			elements.do{ |item| item.funcChain.addFirst(\verbose, { |elem| 
+			elementsDict.do{ |item| item.funcChain.addFirst(\verbose, { |elem|
 					[elem.source.name, elem.name, elem.value].postln;
 			})}
 		}, {
-			elements.do{|item| item.funcChain.removeAt(\verbose)}
+			elementsDict.do{|item| item.funcChain.removeAt(\verbose)}
 		})
 	}
-	
+
 	//also can be used to simulate a non present hardware
 	receive { |key, val|
-		elements[ key ].update( val )
+		elementsDict[ key ].update( val )
 	}
-	
+
 	send { |key, val|
-			
+
 	}
 
 	fromTemplate{ arg name ...args;
