@@ -74,11 +74,11 @@ HIDExplorer {
         if ( uniques.size + duplicates.size > 0 ){
             str = str + "\n\n// --------- input elements ----------";
             uniques.sortedKeysValuesDo{ |key,val|
-                str = str + "\n'<element name %>': ('usage': %, 'usagePage': %, , 'type': '<type %>', 'ioType': 'in' ),"
+                str = str + "\n'<element name %>': ('hidUsage': %, 'hidUsagePage': %, , 'type': '<type %>', 'ioType': 'in' ),"
                 .format(val.usageName, val.usage, val.usagePage, val.pageName );
             };
             duplicates.sortedKeysValuesDo{ |key,val|
-                str = str + "\n'<element name %_%>': ('elid': %, 'type': '<type %>', 'ioType': 'in' ),"
+                str = str + "\n'<element name %_%>': ('hidElementID': %, 'type': '<type %>', 'ioType': 'in' ),"
                 .format(val.usageName, key, key, val.pageName );
             };
         };
@@ -87,11 +87,11 @@ HIDExplorer {
         if ( uniques.size + duplicates.size > 0 ){
             str = str + "\n\n// --------- output elements ----------";
             uniques.sortedKeysValuesDo{ |key,val|
-                str = str + "\n'<element name %>': ('usage': %, 'usagePage': %, , 'type': '<type %>', 'ioType': 'out' ),"
+                str = str + "\n'<element name %>': ('hidUsage': %, 'hidUsagePage': %, , 'type': '<type %>', 'ioType': 'out' ),"
                 .format(val.usageName, val.usage, val.usagePage, val.pageName );
             };
             duplicates.sortedKeysValuesDo{ |key,val|
-                str = str + "\n'<element name %_%>': ('elid': %, 'type': '<type %>', 'ioType': 'out' ),"
+                str = str + "\n'<element name %_%>': ('hidElementID': %, 'type': '<type %>', 'ioType': 'out' ),"
                 .format(val.usageName, key, key, val.pageName );
             };
         };
@@ -101,11 +101,11 @@ HIDExplorer {
         if ( uniques.size + duplicates.size > 0 ){
             str = str + "\n\n// --------- feature report ----------";
             uniques.sortedKeysValuesDo{ |key,val|
-                str = str + "\n'<element name %>': ('usage': %, 'usagePage': %, , 'type': '<type %>', 'ioType': 'feature' ),"
+                str = str + "\n'<element name %>': ('hidhidUsage': %, 'usagePage': %, , 'type': '<type %>', 'ioType': 'feature' ),"
                 .format(val.usageName, val.usage, val.usagePage, val.pageName );
             };
             duplicates.sortedKeysValuesDo{ |key,val|
-                str = str + "\n'<element name %_%>': ('elid': %, 'type': '<type %>', 'ioType': 'feature' ),"
+                str = str + "\n'<element name %_%>': ('hidElementID': %, 'type': '<type %>', 'ioType': 'feature' ),"
                 .format(val.usageName, key, key, val.pageName );
             };
         };
@@ -126,7 +126,7 @@ HIDExplorer {
 			str = str + "\n// ------ element ids -------------";
 			observeDict[\elid].sortedKeysValuesDo { |key, val|
 				#num, chan = key.split($_).collect(_.asInteger);
-				str = str + "\n'<element name %>': ('elid': %, 'type': '<type>'),"
+				str = str + "\n'<element name %>': ('hidElementID': %, 'type': '<type>'),"
 					.format(key, val);
 			};
 		};
@@ -135,8 +135,8 @@ HIDExplorer {
 			str = str + "\n\n// --------- usage ids ----------";
 			observeDict[\usage].sortedKeysValuesDo { |key, val|
 				#num, chan = key.split($_).collect(_.asInteger);
-				str = str + "\n'<element name %>': ('usage': %, 'usagePage': %, , 'type': '<type>' ),"
-				.format(key, val.usage, val.usagePage ); /// could infer type from the control
+				str = str + "\n'<element name %>': ('hidUsage': %, 'hidUsagePage': %, , 'type': '<type>' ),"
+				.format(key, val.usage, val.hidUsagePage ); /// could infer type from the control
 			};
 		};
 
@@ -162,3 +162,10 @@ HIDExplorer {
         // msgDict[hash] = [min(range[0], val), max(range[1], val)];
 	}
 }
+
+/// buttons:
+// generally: mode: push , spec: hidBut
+
+// hatswitch: mode: center, spec: hidHat
+
+// x,y : mode: center, spec: cent1
