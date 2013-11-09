@@ -8,7 +8,7 @@
 
 MIDIMKtl : MKtl {
 
-	classvar <allMsgTypes = #[ \noteOn, \noteOff, \control, \touch, \polytouch, \bend, \program ];
+	classvar <allMsgTypes = #[ \noteOn, \noteOff, \cc, \touch, \polytouch, \bend, \program ];
 
 	classvar <initialized = false;
 	classvar <sourceDeviceDict;         //      ('deviceName': MIDIEndPoint, ... )
@@ -266,20 +266,13 @@ MIDIMKtl : MKtl {
 
 		all.put(name, this);
 
-
-		// moved to superclass init
-		//	this.loadDeviceDescription(devDescName);
-
-		//this.findDeviceDescription(source.device);
-
 		elementHashDict = ();
 		hashToElNameDict = ();
 		elNameToMidiDescDict = ();
 
-		//	this.makeElements;
 		if ( deviceDescription.notNil ){
 			this.prepareElementHashDict;
-			this.addResponders;
+			this.makeRespFuncs;
 		}
 	}
 
@@ -287,7 +280,8 @@ MIDIMKtl : MKtl {
 		var hash;
 		// TODO: pitchbend, other miditypes, etc.
 		hash = descr[\midiType].switch(
-			\note, {this.makeNoteKey(descr[\chan], descr[\midiNote]);},
+			\noteOn, {this.makeNoteOnKey(descr[\chan], descr[\midiNote]);},
+			\noteOff, {this.makeNoteOffKey(descr[\chan], descr[\midiNote]);},
 
 			\cc, {this.makeCCKey(descr[\chan], descr[\ccNum]);},
 			{//default:
@@ -355,84 +349,139 @@ MIDIMKtl : MKtl {
 		// make them only once, methods to activate/deactivate them
 		//
 
-	makeResponders { |msgTypes|
-		if (responders.isNil) { responders = () };
-
-		msgTypes = msgTypes ? allMsgTypes;
-
-	}
-
-	addResponders {
-		responders = (
-			cc: CCResponder({ |src, chan, num, value|
+	makeCC {
+		var typeKey = \cc;
+		"make %func\n".postf(typeKey);
+		responders.put(typeKey,
+			MIDIFunc.cc({ |value, num, chan, src|
 				var hash = this.makeCCKey(chan, num);
 				var elName = hashToElNameDict[hash];
 				var el = elementHashDict[hash];
 
 				midiRawAction.value(\control, src, chan, num, value);
-				if (el.isNil) {
+
+				if(verbose) {
+				 	[MIDIMKtl, \control, value, num, chan, src].postln;
+				};
+				if (el.notNil) {
+					el.rawValueAction_(value, false);
+				} {
 					"MIDIMKtl( % ) : cc element found for chan %, ccnum % !\n"
 					" - add it to the description file, e.g.: "
-					"\\<name>: (\\midiType: \\cc, \\type: \\button, \\chan: %, \\ccNum: %, \\spec: \\midiBut, \\mode: \\push).\n\n"
-						.postf(name, chan, num, chan, num);
-				} {
-					try { el.rawValueAction_(value, false); } {
-						"MIDIMKtl( % ) : cc message for chan %, ccnum % failed.\n\n".postf(name, chan, num);
-					};
-				};
-			}, srcID),
+					"\\<name>: (\\midiType: \\cc, \\type: \\button, \\chan: %,"
+					"\\ccNum: %, \\spec: \\midiBut, \\mode: \\push).\n\n"
+						.postf(name, chan, num, chan, num);				};
+			}, srcID: srcID)
+		);
+	}
 
-			noteOn: NoteOnResponder({ |src, chan, note, vel|
-				var hash = this.makeNoteKey(chan, note);
+	makeNoteOn {
+		var typeKey = \noteOn;
+		"make %func\n".postf(typeKey);
+		responders.put(typeKey,
+			MIDIFunc.noteOn({ |vel, note, chan, src|
+				// look for per-key functions
+				var hash = this.makeNoteOnKey(chan, note);
 				var elName = hashToElNameDict[hash];
 				var el = elementHashDict[hash];
-				var global = this[\noteOn];
-				//	["noteOn", chan, note, vel, hash].postln;
 
 				midiRawAction.value(\noteOn, src, chan, note, vel);
 
-				// try the global noteOn function first
-				if( global.notNil) {
-					global.rawValueAction_(note, vel);
+				if(verbose) {
+				 	[MIDIMKtl, \noteOn, vel, note, chan, src].postln;
 				};
 
-				// then try an individual key func as well
-				if (el.isNil) {
-					"MIDIMKtl( % ) : noteon element found for chan %, ccnum % !\n"
-					" - add it to the description file, e.g.: "
-					"\\<name>: (\\midiType: \\note, \\type: \\button, \\chan: %, \\midiNote: %, \\spec: \\midiVel).\n\n"
-						.postf(name, chan, note, chan, vel);
-				} {
-					el.rawValueAction_(vel)
-				}
-			}, srcID),
+				"global note action here? how?".postln;
 
-			noteOff: NoteOffResponder({ |src, chan, note, vel|
-				var hash = this.makeNoteKey(chan, note);
+				if (el.notNil) {
+					"per-note element found.".postln;
+					el.rawValueAction_(vel);
+
+				};
+			}, srcID: srcID)
+		);
+	}
+
+	makeNoteOff {
+		var typeKey = \noteOff;
+		"make %func\n".postf(typeKey);
+		responders.put(typeKey,
+			MIDIFunc.noteOff({ |vel, note, chan, src|
+				// look for per-key functions
+				var hash = this.makeNoteOffKey(chan, note);
 				var elName = hashToElNameDict[hash];
 				var el = elementHashDict[hash];
-				var global = this[\noteOff];
 
-				//	["noteOff", chan, note, vel, hash].postln;
+				midiRawAction.value(\noteOn, src, chan, note, vel);
 
-				midiRawAction.value(\noteOff, src, chan, note, vel);
-
-				// try the global noteOn function first
-				if( global.notNil) {
-					global.rawValueAction_(note, vel);
+				if(verbose) {
+				 	[MIDIMKtl, \noteOff, vel, note, chan, src].postln;
 				};
 
-				// then try an individual key func as well
-				if (el.isNil) {
-					"MIDIMKtl( % ) : noteon element found for chan %, ccnum % !\n"
-					" - add it to the description file, e.g.: "
-					"\\<name>: (\\midiType: \\note, \\type: \\button, \\chan: %, \\midiNote: %, \\spec: \\midiVel).\n\n"
-						.postf(name, chan, note, chan, vel);
-				}{
-					el.rawValueAction_(vel)
+				"global note action here? how?".postln;
+
+				if (el.notNil) {
+					"per-note element found.".postln;
+					el.rawValueAction_(vel);
+
 				};
-			}, srcID)
+			}, srcID: srcID)
 		);
+	}
+
+	makeTouch {
+		var typeKey = \touch;
+		"make %func\n".postf(typeKey);
+		responders.put(typeKey,
+			MIDIFunc.touch({ |value, chan, src|
+				// look for per-key functions
+				var hash = this.makeTouchKey(chan);
+				var elName = hashToElNameDict[hash];
+				var el = elementHashDict[hash];
+
+				midiRawAction.value(\touch, src, chan, value);
+
+				if(verbose) {
+				 	[MIDIMKtl, \touch, value, chan, src].postln;
+				};
+
+				if (el.notNil) {
+					"per-note element found.".postln;
+					el.rawValueAction_(value);
+
+				};
+			}, srcID: srcID)
+		);
+	}
+
+	makePolytouch {
+		"makePolytouch".postln;
+
+	}
+
+	makeBend {
+		"makeBend".postln;
+	}
+
+	makeProgram {
+		"makeProgram".postln;
+	}
+
+	makeRespFuncs { |msgTypes|
+		msgTypes = msgTypes ? allMsgTypes;
+		responders = ();
+		msgTypes.postcs.do { |msgType|
+			switch(msgType,
+				\cc, { this.makeCC },
+				\noteOn, { this.makeNoteOn },
+				\noteOff, { this.makeNoteOff },
+				\noteOnOff, { this.makeNoteOn.makeNoteOff },
+				\touch, { this.makeTouch },
+				\polytouch, { this.makePolytouch },
+				\bend, { this.makeBend },
+				\program, { this.makeProgram }
+			);
+		};
 	}
 
 	send { |key,val|
@@ -448,6 +497,7 @@ MIDIMKtl : MKtl {
 		// not working like this anymore (relied onFuncChain)
 		// replace with a special verbose action
 	verbose_ {|value=true|
+
 //		value.if({
 //			elementHashDict.do{|item| item.addFunc(\verbose, { |element|
 //					[element.source, element.name, element.value].postln;
@@ -461,14 +511,26 @@ MIDIMKtl : MKtl {
 		// as class methods so we can do it without an instance
 	*makeCCKey { |chan, cc| ^("c_%_%".format(chan, cc)).asSymbol }
 	*ccKeyToChanCtl { |ccKey| ^ccKey.asString.drop(2).split($_).asInteger }
-	*makeNoteKey { |chan, note| ^("n_%_%".format(chan, note)).asSymbol }
-	*noteKeyToChanNote { |noteKey| ^noteKey.asString.drop(2).split($_).asInteger }
+	*makeNoteOnKey { |chan, note| ^("non_%_%".format(chan, note)).asSymbol }
+	*makeNoteOffKey { |chan, note| ^("nof_%_%".format(chan, note)).asSymbol }
+	*makePolytouchKey { |chan, note| ^("pt_%_%".format(chan, note)).asSymbol }
+    *noteKeyToChanNote { |noteKey| ^noteKey.asString.drop(2).split($_).asInteger }
 
-		// as instance methods so we done need to ask this.class
+	*makeTouchKey { |chan| ^("t_%".format(chan)).asSymbol }
+	*makeBendKey { |chan| ^("b_%".format(chan)).asSymbol }
+	*makeProgramKey { |chan| ^("p_%".format(chan)).asSymbol }
+
+	// as instance methods so we done need to ask this.class
 	makeCCKey { |chan, cc| ^("c_%_%".format(chan, cc)).asSymbol }
 	ccKeyToChanCtl { |ccKey| ^ccKey.asString.drop(2).split($_).asInteger }
-	makeNoteKey { |chan, note| ^("n_%_%".format(chan, note)).asSymbol }
+	makeNoteOnKey { |chan, note| ^("non_%_%".format(chan, note)).asSymbol }
+	makeNoteOffKey { |chan, note| ^("nof_%_%".format(chan, note)).asSymbol }
+	makePolytouchKey { |chan, note| ^("pt_%_%".format(chan, note)).asSymbol }
 	noteKeyToChanNote { |noteKey| ^noteKey.asString.drop(2).split($_).asInteger }
+
+	makeTouchKey { |chan| ^("t_%".format(chan)).asSymbol }
+	makeBendKey { |chan| ^("b_%".format(chan)).asSymbol }
+	makeProgramKey { |chan| ^("p_%".format(chan)).asSymbol }
 
 	storeArgs { ^[name] }
 	printOn { |stream| ^this.storeOn(stream) }

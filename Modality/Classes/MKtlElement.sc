@@ -58,9 +58,9 @@ MAbstractElement {
 		this.updateValueOnServer;
 	}
 
-	rawValueAction_{|newval, sendValue = true|
+	rawValueAction_{|newval|
 		this.rawValue_( newval );
-		this.doAction(sendValue);
+		this.doAction;
 	}
 
 	doAction {
