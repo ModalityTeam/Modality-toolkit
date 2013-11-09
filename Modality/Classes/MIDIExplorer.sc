@@ -115,7 +115,7 @@ MIDIExplorer {
 			str = str + "\n\n// ------- touch ------------";
 			observeDict[\touch].sortedKeysValuesDo { |key, val|
 				#chan, num = key.split($_).collect(_.asInteger);
-				str = str + "\n'_elName_%_': ('midiType': 'bend', 'type': 'chantouch', 'chan': %, 'midiNote':  %,'spec': 'midiBend'),".format(key, chan, num);
+				str = str + "\n'_elName_%_': ('midiType': 'touch', 'type': 'chantouch', 'chan': %, 'midiNote':  %,'spec': 'midiTouch'),".format(key, chan, num);
 			};
 		};
 
