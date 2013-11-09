@@ -7,6 +7,7 @@ MAbstractKtl {
 	var <name;
 
 	var <elementsDict; //of type: ('elementName':MKtlElement, ...) -> elements to which stuff is registered
+	var <elements;
 
 	prMatchedElements { |elementKey|
 		if ( Main.versionAtLeast( 3.5 ) ){

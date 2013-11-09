@@ -23,6 +23,7 @@ MKtl : MAbstractKtl { // abstract class
                         //'midiType': Symbol, 'spec':ControlSpec, 'ccNum': Int )
 	                    // i.e. [ prA1, ( 'mode': toggle, 'chan': 0, 'type': button, 'specName': midiBut,
                         //'midiType': cc, 'spec': a ControlSpec(0, 127, 'linear', 127, 0, ""), 'ccNum': 105 )
+	var <deviceDescriptionHierarch;
 
 	//var <>recordFunc; // what to do to record incoming control changes
 
@@ -149,6 +150,16 @@ MKtl : MAbstractKtl { // abstract class
 		^true
 	}
 
+	/*
+
+	init procedure:
+
+	- load description from file into deviceDescription var
+	- flattenDescription on each element
+	- substitute each spec in the element for the real ControlSpec corresponding to it
+
+
+	*/
 	init { |argName, deviceDescName|
 		name = argName;
 
@@ -216,13 +227,15 @@ MKtl : MAbstractKtl { // abstract class
 
 			path = deviceDescriptionFolder +/+ deviceFileName;
 
-			deviceDescription = try {
+			deviceDescriptionHierarch = try {
 				path.load;
 			} {
 				"//" + this.class ++ ": - no device description found for %: please make them!\n"
 				.postf(deviceName);
 				//	this.class.openTester(this);
 			};
+
+			deviceDescription = this.makeFlatDeviceDescription( deviceDescriptionHierarch );
 
 			deviceDescription.pairsDo{ |key,elem|
 				this.class.flattenDescription( elem )
@@ -243,6 +256,57 @@ MKtl : MAbstractKtl { // abstract class
 		}{ // no device file found:
 			warn( "// Mktl could not find a device file for this device" + deviceName + "\n You can start exploring the capabilities of this device with:\n" ++ this.class ++ "(" ++ name ++ ").explore" );
 		}
+	}
+
+	//traversal function for combinations of dictionaries and arrays
+	prTraverse {
+		var isLeaf = { |dict|
+			dict.values.any({|x| x.size > 1}).not
+		};
+
+		var f = { |x, state, stateFuncOnNodes, leafFunc|
+
+			if(x.isKindOf(Dictionary) ){
+				if( isLeaf.(x) ) {
+					leafFunc.( state , x )
+				}{
+					x.collect{ |val, key|
+						f.(val, stateFuncOnNodes.(state, key), stateFuncOnNodes, leafFunc )
+					}
+				}
+			} {
+				if(x.isKindOf(Array).postln ) {
+					x.collect{ |val, i|
+						f.(val, stateFuncOnNodes.(state, i),  stateFuncOnNodes, leafFunc )
+					}
+				} {
+					Error("MKtl:prTraverse Illegal data structure in device description").throw
+				}
+			}
+
+		};
+		^f
+	}
+
+	prUnderscorify {
+		^{ |a,b|
+			var c = if(b.isNumber){b+1}{b};
+			if(a != "") {
+				a++"_"++c.asString
+			} {
+				c.asString
+			}
+		};
+	}
+
+	makeFlatDeviceDescription { |devDesc|
+
+		var flatDict = ();
+
+		this.prTraverse.(devDesc, "", this.prUnderscorify, { |state, x| flatDict.put(state.asSymbol,  x) } );
+
+		^flatDict.asKeyValuePairs
+
 	}
 
 	*postAllDescriptions {
@@ -284,9 +348,13 @@ MKtl : MAbstractKtl { // abstract class
 	}
 
 	makeElements {
+		var leafFunc;
 		this.elementNames.do{|key|
 			elementsDict[key] = MKtlElement(this, key);
-		}
+		};
+		leafFunc = { |finalKey, x| elementsDict[finalKey.asSymbol] };
+		elements = this.prTraverse.(deviceDescriptionHierarch, "", this.prUnderscorify, leafFunc );
+
 	}
 
 	// needed for fixing elements that are not present for a specific OS
@@ -304,8 +372,12 @@ MKtl : MAbstractKtl { // abstract class
 		^(args[..n-2].collect({ |x| x.asString++"_"}).reduce('++')++args.last).asSymbol
 	}
 
-	elementAt { |...args|
+	elementAtOld { |...args|
 		^elementsDict.at(this.makeElementName(args))
+	}
+
+	elementAt { |...args|
+		^elements.deepAt1(*args)
 	}
 
 	// should filter: those for my platform only
