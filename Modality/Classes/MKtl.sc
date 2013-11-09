@@ -47,6 +47,7 @@ MKtl : MAbstractKtl { // abstract class
 		this.addSpec(\midiCC, [0, 127, \lin, 1, 0]);
 		this.addSpec(\midiVel, [0, 127, \lin, 1, 0]);
 		this.addSpec(\midiBut, [0, 127, \lin, 127, 0]);
+		this.addSpec(\midiTouch, [0, 127, \lin, 1, 0]);
 
 		// HID
 		this.addSpec(\hidBut, [0, 1, \lin, 1, 0]);

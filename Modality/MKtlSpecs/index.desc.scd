@@ -14,6 +14,7 @@ IdentityDictionary[
 	'UC-33' -> ( device: "UC-33 USB MIDI Controller", protocol: \midi, file: "UC-33.desc.scd" ),
 	\triggerfinger -> ( device: "USB Trigger Finger", protocol: \midi, file: "triggerfinger.desc.scd"),
 
+	'MPD18' -> ( device: "Akai MPD18", protocol: \midi, file: "MPD18.desc.scd" ),
 	\DanceMat -> (osx: ( device: "MP-8888 USB Joypad"), linux: (device: "WiseGroup.,Ltd MP-8888 USB Joypad"), protocol: \hid, file: "DanceMat.desc.scd" ), // device identifier might be specific to PS/2 to USB adapter...
 
 	\GamePad -> ( type: \template, protocol: \hid, file: "GamePad.desc.scd" ), // gamepad template

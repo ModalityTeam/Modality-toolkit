@@ -282,8 +282,8 @@ MIDIMKtl : MKtl {
 		hash = descr[\midiType].switch(
 			\noteOn, {this.makeNoteOnKey(descr[\midiChan], descr[\midiNum]);},
 			\noteOff, {this.makeNoteOffKey(descr[\midiChan], descr[\midiNum]);},
-
 			\cc, {this.makeCCKey(descr[\midiChan], descr[\midiNum]);},
+			\touch, { this.makeTouchKey(descr[\chan]) },
 			{//default:
 				"MIDIMKtl:prepareElementHashDict (%): identifier in midiType for item % not known. Please correct.".format(this, elName).error;
 				this.dump;
@@ -433,7 +433,12 @@ MIDIMKtl : MKtl {
 
 	makeTouch {
 		var typeKey = \touch;
+		var touchInfo = MIDIAnalysis.checkTouch(deviceDescription);
+		var touchChan = touchInfo[\chan];
+		var listenChan =if (touchChan.isKindOf(SimpleNumber)) { touchChan };
+
 		"make %func\n".postf(typeKey);
+
 		responders.put(typeKey,
 			MIDIFunc.touch({ |value, chan, src|
 				// look for per-key functions
@@ -450,9 +455,8 @@ MIDIMKtl : MKtl {
 				if (el.notNil) {
 					"per-note element found.".postln;
 					el.rawValueAction_(value);
-
 				};
-			}, srcID: srcID)
+			}, chan: listenChan, srcID: srcID)
 		);
 	}
 
@@ -470,6 +474,7 @@ MIDIMKtl : MKtl {
 	}
 
 	makeRespFuncs { |msgTypes|
+		msgTypes = MIDIAnalysis.checkMsgTypes(deviceDescription);
 		msgTypes = msgTypes ? allMsgTypes;
 		responders = ();
 		msgTypes.postcs.do { |msgType|
