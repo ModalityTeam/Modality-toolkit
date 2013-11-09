@@ -108,8 +108,8 @@ HIDMKtl : MKtl {
 	// how to deal with additional arguments (uids...)?
 	*newFromDesc{ |name,deviceDescName,devDesc|
 		//		var devDesc = this.getDeviceDescription( deviceDesc )
-		var dev = this.findSource( devDesc[ thisProcess.platform.name ] );
-		dev.postln;
+        // var dev = this.findSource( devDesc[ thisProcess.platform.name ] );
+        var dev = this.findSource( devDesc );
 		^this.new( name, dev );
 	}
 
@@ -147,11 +147,11 @@ HIDMKtl : MKtl {
 			^nil
 		};
 
-        ^super.basicNew(name,devDescName ? this.makeLongName( foundSource ) ).initHIDMKtl(uid, foundSource);
+        ^super.basicNew(name,devDescName ? this.makeDeviceName( foundSource ) ).initHIDMKtl(uid, foundSource);
 	}
 
-    *makeLongName{ |hidinfo|
-        ^(hidinfo.vendorName ++ hidinfo.productName).asString.select{|c| c.isAlpha };
+    *makeDeviceName{ |hidinfo|
+        ^(hidinfo.vendorName.asString ++ "_" ++ hidinfo.productName);
     }
 
 	postRawSpecs { this.class.postRawSpecsOf(srcDevice) }
@@ -168,13 +168,15 @@ HIDMKtl : MKtl {
         srcDevice = argSource.open;
 		all.put(name, this);
 
-        this.getDeviceElements;
+        // this.getDeviceElements;
  		this.setHIDActions;
 	}
 
+    /*
     getDeviceElements{
         deviceElements = srcDevice.elements;
     }
+    */
 
 	setHIDActions{
 		var newElements = ();
@@ -183,7 +185,7 @@ HIDMKtl : MKtl {
             var theseElements;
 
             var elid = el.elementDescription[\elid];
-            var page = el.elementDescription[\page];
+            var page = el.elementDescription[\usagePage];
             var usage = el.elementDescription[\usage];
 
             // device specs should primarily use usage and usagePage,
