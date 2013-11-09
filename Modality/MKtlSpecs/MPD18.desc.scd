@@ -8,19 +8,25 @@ channel aftertouch,sends on cahn 0, [0, 127, \lin, 1, 0]
 
 16 pads x 3 banks, pad 1, ... pad 16
 
-// scene
-    noteOn , scene A, pad1
-k.elementAt(\padOn, 1, 1).addAction({ \boing.postln });
-    noteOff , scene B, pad16
-k.elementAt(\padOff, 2, 16).addAction({ \letGo.postln });
+/****** TESTING ******/
 
+MIDIMKtl.find;
+m = MIDIMKtl('kmpd180');  // Akai MPD18
+// slider
+m.elements[\sl].addAction({ |...args| args.post; " slider YO!".postln; });
+// touch on any pad
+m.elements[\touch_0].addAction({ |...args| args.post; " touch YO !".postln; });
 
-k = MIDIMKtl.make('MPD','kmpd180');
-k = MIDIMKtl('Akai MPD18').elements
-k = MIDIMKtl('kmpd180');
-k.elements;
+// pad1 noteOn direct indexing
+m.elements[\padOn][0][0].addAction({ |...args| args.post; "pad1 sc1 on YO !".postln; });
+// pad16 scene B noteOff
+m.elements[\padOn][1][15].addAction({ |...args| args.post; "pad16 sc2 off YO !".postln; });
 
+// use nicer lookup
+m.elementAt(\padOn, 1, 2).addAction({ |...args| args.post; "pad2 sc1 on YO !".postln; });
+m.elementAt(\padOff, 1, 2).addAction({ |...args| args.post; "pad2 sc1 off YO !".postln; });
 
+/****** END TESTs ******/
 */
 (
 
