@@ -56,7 +56,7 @@ subsection::Technical information
 
 strong::<midi|hid|osc>Type::
 
-One of code::[ \midiType, \hidType, oscType ]:: has to be present. This also tells about the type of device on which it is implemented (MIDI/HID/OSC). 
+One of code::[ \midiMsgType, \hidElementID, \oscType ]:: has to be present. This also tells about the type of device on which it is implemented (MIDI/HID/OSC). 
 
 DEFINITIONLIST::
 ## \midiMsgType

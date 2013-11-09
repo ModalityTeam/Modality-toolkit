@@ -54,7 +54,7 @@ MIDIExplorer {
 	}
 
 	*stop {
-		resps.do(_.remove);
+		resps.do(_.clear);
 	}
 
 	*prepareObserve {
@@ -76,7 +76,7 @@ MIDIExplorer {
 			str = str + "\n// ------ noteOn -------------";
 			observeDict[\noteOn].sortedKeysValuesDo { |key, val|
 				#chan, num = key.split($_).collect(_.asInteger);
-				str = str + "\n'_elName_%_': ('midiType': 'noteOn', 'type': 'pianoKey', 'chan': %, 'midiNote':  %, 'spec': 'midiNote'),"
+				str = str + "\n'_elName_%_': ('midiMsgType': 'noteOn', 'type': 'pianoKey', 'midiChan': %, 'midiNum':  %, 'spec': 'midiNote'),"
 					.format(key, chan, num);
 			};
 		};
@@ -87,7 +87,7 @@ MIDIExplorer {
 			str = str + "\n\n// ---------noteOff ----------";
 			observeDict[\noteOff].sortedKeysValuesDo { |key, val|
 				#chan, num = key.split($_).collect(_.asInteger);
-				str = str + "\n'_elName_%_': ('midiType': 'noteOff', 'type': 'pianoKey', 'chan': %, 'midiNote':  %,'spec': 'midiNote'),"
+				str = str + "\n'_elName_%_': ('midiMsgType': 'midiNoteOff', 'type': 'pianoKey', 'midiChan': %, 'midiNum':  %,'spec': 'midiNote'),"
 				.format(key, chan, num);
 			};
 		};
@@ -97,7 +97,7 @@ MIDIExplorer {
 			str = str + "\n\n// ------ cc -------------";
 			observeDict[\cc].sortedKeysValuesDo { |key, val|
 				#chan, num = key.split($_).collect(_.asInteger);
-				str = str + "\n'_elName_%_': ('midiType': 'cc', 'type': '_slider_', 'chan': %, 'midiNote':  %,'spec': 'midiCC'),"
+				str = str + "\n'_elName_%_': ('midiMsgType': 'cc', 'type': '_slider_', 'midiChan': %, 'midiNum':  %,'spec': 'midiCC'),"
 					.format(key, chan, num);
 			};
 		};
@@ -106,7 +106,7 @@ MIDIExplorer {
 			str = str + "\n\n// ------ polytouch -------------";
 			observeDict[\polytouch].sortedKeysValuesDo { |key, val|
 				#chan, num = key.split($_).collect(_.asInteger);
-				str = str + "\n'_elName_%_': ('midiType': 'cc', 'type': 'keytouch', 'chan': %, 'midiNote':  %,'spec': 'midiCC'),"
+				str = str + "\n'_elName_%_': ('midiMsgType': 'cc', 'type': 'keytouch', 'midiChan': %, 'midiNum':  %,'spec': 'midiCC'),"
 					.format(key, chan, num);
 			};
 		};
@@ -115,7 +115,7 @@ MIDIExplorer {
 			str = str + "\n\n// ------- touch ------------";
 			observeDict[\touch].sortedKeysValuesDo { |key, val|
 				#chan, num = key.split($_).collect(_.asInteger);
-				str = str + "\n'_elName_%_': ('midiType': 'touch', 'type': 'chantouch', 'chan': %, 'midiNote':  %,'spec': 'midiTouch'),".format(key, chan, num);
+				str = str + "\n'_elName_%_': ('midiMsgType': 'touch', 'type': 'chantouch', 'midiChan': %, 'midiNum':  %,'spec': 'midiTouch'),".format(key, chan, num);
 			};
 		};
 
@@ -123,7 +123,7 @@ MIDIExplorer {
 			str = str + "\n\n// ------- bend ------------";
 			observeDict[\bend].sortedKeysValuesDo { |key, val|
 				#chan, num = key.split($_).collect(_.asInteger);
-				str = str + "\n'_elName_%_': ('midiType': 'bend', 'type': 'bender', 'chan': %, 'midiNote':  %,'spec': 'midiBend'),".format(key, chan, num);
+				str = str + "\n'_elName_%_': ('midiMsgType': 'bend', 'type': 'bender', 'midiChan': %, 'midiNum':  %,'spec': 'midiBend'),".format(key, chan, num);
 			};
 		};
 
