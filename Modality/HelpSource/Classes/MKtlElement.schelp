@@ -1,10 +1,11 @@
 CLASS:: MKtlElement
 summary:: An element of an MKtl.
-categories:: Undocumented classes
-related:: Classes/MAbstractElement, Classes/MKtl
+categories:: Libraries>Modality
+related:: Overviews/Modality, Classes/MAbstractElement, Classes/MKtl
 
 DESCRIPTION::
 An element of an link::Classes/MKtl::.
+
 
 CLASSMETHODS::
 
@@ -45,10 +46,6 @@ sets the element's value (raw)
 
 returns:: the element's current value (raw)
 
-METHOD:: value_
-
-Set the value to the element.
-
 argument:: newval
 Float [0.0-1.0]
 
@@ -68,7 +65,7 @@ MIDIMKtl('bcf20000').elements.at(\kn_1_1).value_(0.5)
 ::
 
 
-METHOD:: rawValue_
+METHOD:: rawValue
 
 Set the value to the element.
 

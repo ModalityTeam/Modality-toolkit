@@ -1,7 +1,7 @@
 CLASS:: FuncChain
 summary:: a named function list
-categories:: Modality, Collections, Function
-related:: Classes/MKtl, Classes/MDispatch, Reference/Modality, etc.
+categories:: Collections, Function, VMT
+related:: Classes/MKtl, Classes/MDispatch, Reference/Modality
 
 DESCRIPTION::
 FuncChain is an ordered list of functions that can be accessed, added and removed by name. 
