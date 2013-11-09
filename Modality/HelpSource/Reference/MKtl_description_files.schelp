@@ -1,0 +1,114 @@
+title:: MKtl description files
+summary:: describes the file format for MKtl desc files
+categories:: Modality
+related:: Classes/MKtl
+
+Section:: Introduction
+As agreed on by the modalityTeam on November, 9th 2013.
+
+A controller is always bound to one protocol. If there is a device that communicates on multiple protocols (e.g. EMPHASIS::ICON i-controls::), this has to be merged later in the processing chain.
+A control element is a part of a controller that does one or more of the following things
+
+list::
+## spits out a one-dimensional stream of events, 
+## accepts a one-dimensional stream of events.
+::
+
+
+A description file gathers information for each element.
+One description file line is a combination of 
+EMPHASIS::(a):: semantic information (e.g. for searching or automated grouping) and 
+EMPHASIS::(b):: technical information (mainly for MKtl-internal usage).
+
+It is of this form:
+code::
+\key: (\infoKey1: infoVal1, \infoKey2: infoVal2, ...),
+::
+
+subsection:: Semantic information
+
+STRONG::type::
+
+tells about the type of an element. Popular are
+LIST::
+## fader
+## button
+## knob
+## joyAxis
+## hatSwitch
+## pianoKey
+## pad
+## slider
+::
+
+
+STRONG::mode::
+
+optional extension to type, e.g. 
+
+LIST::
+## one-shot
+## push
+## etc.
+::
+
+subsection::Technical information
+
+strong::<midi|hid|osc>Type::
+
+One of code::[ \midiType, \hidType, oscType ]:: has to be present. This also tells about the type of device on which it is implemented (MIDI/HID/OSC). 
+
+DEFINITIONLIST::
+## \midiMsgType
+|| code::\noteOnOff | \noteOn | \noteOff | \bend | \cc | \touch | \polytouch | \program::
+## \hidElementID
+|| key usage. *We have to agree on this. possibly taking from the HID whitepaper?*
+##  \oscType
+|| *tbd. We have to agree on this.*
+::
+
+strong::\spec::
+
+The element code::\spec:: has to be present and is a symbol that, if called code::.asSpec:: upon, returns the (global) code::ControlSpec:: suitable for this element.
+
+strong::\midiChan, \midiNum::
+
+Needed, if code::\midiType:: is part of the config string. The identifiers code::\midiBend, \midiTouch, \midiProgram:: only need code::\midiChan:: to be specified.
+
+
+section::all elements
+A list of typical elements.
+code::
+[
+	// noteKeys				(OP-1)
+	\noteOn: 	(\midiType: \noteOnOff, \type: \keys,   \midiChan: 0, \midiNum: (29..64), \spec: \midiVel, \mode: \key),
+	
+	// bend position		(EOWave Ribbon)
+	\ribbonPos: (\midiType: \bend,      \type: \fader, \midiChan: 0, \midiNum: 0, \spec: \midiBend, 			\mode: \push	),
+	
+	// button 				(NanoKtl)
+	\play:  (\midiType: \cc, \type: \button,  \midiChan: 0, \midiNum: 45, \spec: \midiBut,					\mode: \push	),
+
+	// hat button of a knob	(BCF2000)
+	\tr_1:  (\midiType: \cc, \type: \hatSwitch, \midiChan: 0, \midiNum: 33, \spec: \midiCC,  \ioType: \in						),
+
+	// endless knob 		(BCF2000)
+	\kn_1:  (\midiType: \cc, \type: \knob, \midiChan: 0, \midiNum:  8, \spec: \midiCC,  \ioType: \inout					),
+
+	// fader 				(BCF2000)
+	\sl_1:  (\midiType: \cc, \type: \fader, \midiChan: 0, \midiNum: 81, \spec: \midiCC,  \ioType: \inout					),
+	
+	// joystick axis		(DanceMat)
+	\joy_X: (\type: \joyAxis, osx: ( cookie: 16, spec: \cent255),linux: ( slot: [3,0], spec: \cent1 ),	\mode: \center	),
+	// does not tell anything about being a HID thingie...
+	// has a linux-specific area... still needed?
+	
+	// HID button			(DanceMat)
+	\bt_select, (type: \button, spec: \hidBut, osx: ( cookie: 12), linux: ( slot: [ 1, 297] ),			\mode: \push	),
+	// spec tells about being HID...
+	
+	// Pad global aftertouch	(MPD18)
+	\padTouch: ('midiType': 'touch', 'type': 'padTouch', 'chan': 0, 'midiNote':  0,'spec': 'midiTouch'), 
+	
+]
+::
