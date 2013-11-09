@@ -16,9 +16,9 @@
 ]
 ++ 
 ((0, 16 .. 112) +.t (0..7)).flat.collect{|num, i|
-	[("bu_"++i).asSymbol, (\midiType: \note, \type: \button, \midiChan: 0, \midiNum: num, \spec: \midiBut, \mode: \push)]
+	[("bu_"++i).asSymbol, (\midiType: \note, \type: \button, \midiChan: 0, \midiNote: num, \spec: \midiBut, \mode: \push)]
 }.flat
 ++
 ((0, 16 .. 112) + 8).flat.collect{|num, i|
-	[("ar_"++i).asSymbol, (\midiType: \note, \type: \button, \midiChan: 0, \midiNum: num, \spec: \midiBut, \mode: \push)]
+	[("ar_"++i).asSymbol, (\midiType: \note, \type: \button, \midiChan: 0, \midiNote: num, \spec: \midiBut, \mode: \push)]
 }.flat

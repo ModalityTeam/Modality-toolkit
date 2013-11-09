@@ -13,7 +13,7 @@
 
 // BUTTONS :
 (1..16).collect{ |it,i|
- [ (\bt_P_++it).asSymbol, ( type: \pad, spec: \midiVel, \midiType: \note, \midiChan: 0, \midiNum: 35 + i ) ];
+ [ (\bt_P_++it).asSymbol, ( type: \pad, spec: \midiVel, \midiType: \note, \midiChan: 0, \midiNote: 35 + i ) ];
 }.flatten
 ++
 // SLIDERS : 
