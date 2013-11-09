@@ -49,8 +49,8 @@ MIDIAnalysis {
 		noteOnEls.postcs;
 		noteOffEls.postcs;
 
-		noteOnChan = this.compressInfo(noteOnEls, \chan);
-		noteOffChan = this.compressInfo(noteOffEls, \chan);
+		noteOnChan = this.compressInfo(noteOnEls, \midiChan);
+		noteOffChan = this.compressInfo(noteOffEls, \midiChan);
 		"".postln;
 
 		if (noteOnChan.isKindOf(SimpleNumber)) {
@@ -86,36 +86,15 @@ results = results ++ [
 	}
 
 	*checkTouch { |devDesc|
-		var touchEls = devDesc.select { |el, i| (i.odd and: { el.midiType == \cc }) };
-		var touchChan =  this.compressInfo(touchEls, \chan);
+		var touchEls = devDesc.select { |el, i| (i.odd and: { el.midiType == \touch }) };
+		var touchChan =  this.compressInfo(touchEls, \midiChan);
 		^(channel: touchChan, numEls: touchEls.size);
 	}
 
 	// not tested yet
-	*analyseBend {
-		var bendEls =elemDictByType[\bend];
-		var bendChan =  this.compressInfo(bendEls, \chan);
-
-		"bendEls:".postln; bendEls.postcs;
-		("bendChan: " + bendChan).postln;
-		"".postln;
-		results = results ++ [
-			bend: (channel: bendChan)
-		];
-	}
-
-	*analyseCC {
-		var ccEls =elemDictByType[\cc];
-		var ccChan = this.compressInfo(ccEls, \chan);
-		var ccnums;
-		"ccEls:".postln;
-		ccEls.postcs;
-		"".postln;
-
-		if (ccChan.isKindOf(SimpleNumber)) {
-			"cc uses single channel on ccnums: ".post;
-			ccnums = this.compressInfo(ccEls, \midiNote);
-			ccnums.postln;
-		};
+	*checkBend { |devDesc|
+		var touchEls = devDesc.select { |el, i| (i.odd and: { el.midiType == \bend }) };
+		var touchChan =  this.compressInfo(touchEls, \midiChan);
+		^(channel: touchChan, numEls: touchEls.size);
 	}
 }

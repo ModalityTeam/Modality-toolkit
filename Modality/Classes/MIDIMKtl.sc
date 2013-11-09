@@ -283,7 +283,7 @@ MIDIMKtl : MKtl {
 			\noteOn, {this.makeNoteOnKey(descr[\midiChan], descr[\midiNum]);},
 			\noteOff, {this.makeNoteOffKey(descr[\midiChan], descr[\midiNum]);},
 			\cc, {this.makeCCKey(descr[\midiChan], descr[\midiNum]);},
-			\touch, { this.makeTouchKey(descr[\chan]) },
+			\touch, { this.makeTouchKey(descr[\midiChan]) },
 			{//default:
 				"MIDIMKtl:prepareElementHashDict (%): identifier in midiType for item % not known. Please correct.".format(this, elName).error;
 				this.dump;
@@ -353,7 +353,7 @@ MIDIMKtl : MKtl {
 
 	makeCC {
 		var typeKey = \cc;
-		"make %func\n".postf(typeKey);
+		"make % func\n".postf(typeKey);
 		responders.put(typeKey,
 			MIDIFunc.cc({ |value, num, chan, src|
 				var hash = this.makeCCKey(chan, num);
@@ -362,9 +362,7 @@ MIDIMKtl : MKtl {
 
 				midiRawAction.value(\control, src, chan, num, value);
 
-				if(verbose) {
-				 	[MIDIMKtl, \control, value, num, chan, src].postln;
-				};
+				if(verbose) {[this, \cc, value, num, chan, src].postln; };
 				if (el.notNil) {
 					el.rawValueAction_(value, false);
 				} {
@@ -379,7 +377,7 @@ MIDIMKtl : MKtl {
 
 	makeNoteOn {
 		var typeKey = \noteOn;
-		"make %func\n".postf(typeKey);
+		"make % func\n".postf(typeKey);
 		responders.put(typeKey,
 			MIDIFunc.noteOn({ |vel, note, chan, src|
 				// look for per-key functions
@@ -389,24 +387,16 @@ MIDIMKtl : MKtl {
 
 				midiRawAction.value(\noteOn, src, chan, note, vel);
 
-				if(verbose) {
-				 	[MIDIMKtl, \noteOn, vel, note, chan, src].postln;
-				};
+				if(verbose) {[this, \noteOn, vel, note, chan, src].postln; };
 
-				"global note action here? how?".postln;
-
-				if (el.notNil) {
-					"per-note element found.".postln;
-					el.rawValueAction_(vel);
-
-				};
+				if (el.notNil) { el.rawValueAction_(vel); };
 			}, srcID: srcID)
 		);
 	}
 
 	makeNoteOff {
 		var typeKey = \noteOff;
-		"make %func\n".postf(typeKey);
+		"make % func\n".postf(typeKey);
 		responders.put(typeKey,
 			MIDIFunc.noteOff({ |vel, note, chan, src|
 				// look for per-key functions
@@ -416,17 +406,9 @@ MIDIMKtl : MKtl {
 
 				midiRawAction.value(\noteOn, src, chan, note, vel);
 
-				if(verbose) {
-				 	[MIDIMKtl, \noteOff, vel, note, chan, src].postln;
-				};
+				if(verbose) {[this, \noteOff, vel, note, chan, src].postln; };
 
-				"global note action here? how?".postln;
-
-				if (el.notNil) {
-					"per-note element found.".postln;
-					el.rawValueAction_(vel);
-
-				};
+				if (el.notNil) { el.rawValueAction_(vel); };
 			}, srcID: srcID)
 		);
 	}
@@ -434,10 +416,10 @@ MIDIMKtl : MKtl {
 	makeTouch {
 		var typeKey = \touch;
 		var touchInfo = MIDIAnalysis.checkTouch(deviceDescription);
-		var touchChan = touchInfo[\chan];
+		var touchChan = touchInfo[\midiChan];
 		var listenChan =if (touchChan.isKindOf(SimpleNumber)) { touchChan };
 
-		"make %func\n".postf(typeKey);
+		"make % func\n".postf(typeKey);
 
 		responders.put(typeKey,
 			MIDIFunc.touch({ |value, chan, src|
@@ -448,14 +430,9 @@ MIDIMKtl : MKtl {
 
 				midiRawAction.value(\touch, src, chan, value);
 
-				if(verbose) {
-				 	[MIDIMKtl, \touch, value, chan, src].postln;
-				};
+				if(verbose) {[this, \noteOff, value, chan, src].postln; };
 
-				if (el.notNil) {
-					"per-note element found.".postln;
-					el.rawValueAction_(value);
-				};
+				if (el.notNil) { el.rawValueAction_(value); };
 			}, chan: listenChan, srcID: srcID)
 		);
 	}
@@ -464,9 +441,29 @@ MIDIMKtl : MKtl {
 		"makePolytouch".postln;
 
 	}
-
+	// should work, can't test now.
 	makeBend {
-		"makeBend".postln;
+		var typeKey = \bend;
+		var bendInfo = MIDIAnalysis.checkBend(deviceDescription);
+		var bendChan = bendInfo[\midiChan];
+		var listenChan =if (bendChan.isKindOf(SimpleNumber)) { bendChan };
+
+		"make % func\n".postf(typeKey);
+
+		responders.put(typeKey,
+			MIDIFunc.bend({ |value, chan, src|
+				// look for per-key functions
+				var hash = this.makeBendKey(chan);
+				var elName = hashToElNameDict[hash];
+				var el = elementHashDict[hash];
+
+				midiRawAction.value(\bend, src, chan, value);
+
+				if(verbose) {[this, \bend, value, chan, src].postln; };
+
+				if (el.notNil) { el.rawValueAction_(value); };
+			}, chan: listenChan, srcID: srcID)
+		);
 	}
 
 	makeProgram {
@@ -504,6 +501,7 @@ MIDIMKtl : MKtl {
 		// not working like this anymore (relied onFuncChain)
 		// replace with a special verbose action
 	verbose_ {|value=true|
+		verbose = value;
 
 //		value.if({
 //			elementHashDict.do{|item| item.addFunc(\verbose, { |element|

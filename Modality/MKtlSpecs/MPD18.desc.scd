@@ -2,27 +2,39 @@
 
 MPD18
 
-slider
-chan 1, num, 1, [0, 127, \lin, 1, 0]
+one slider, sends on chan 1, ccnum, 1, [0, 127, \lin, 1, 0]
 
-16 pads (3 banks)
-\bu0_36: (\midiType: \cc, \type: \button, \chan: 0, \ccNum: 36, \spec: \midiBut, \mode: \push),
+channel aftertouch,sends on cahn 0, [0, 127, \lin, 1, 0]
 
-16.do({ |ii| ii = ii + 68;  ("\\bu0_" ++ ii ++ ": (\\midiType: \\cc, \\type: \\button, \\chan: 0, \\ccNum: " ++ ii ++ ", \\spec: \\midiBut, \\mode: \\push),").postln })
+16 pads x 3 banks, pad 1, ... pad 16
 
-MIDIMKtl.find
+// scene
+    noteOn , scene A, pad1
+k.elementAt(\padOn, 1, 1).addAction({ \boing.postln });
+    noteOff , scene B, pad16
+k.elementAt(\padOff, 2, 16).addAction({ \letGo.postln });
+
 
 k = MIDIMKtl.make('MPD','kmpd180');
 k = MIDIMKtl('Akai MPD18').elements
-k = MIDIMKtl('kmpd180', -1901746588, 1991991596);
-*/
-[
+k = MIDIMKtl('kmpd180');
+k.elements;
 
-\sl1_1: (\midiType: \cc, \type: \slider, \chan: 0, \ccNum:  1, \spec: \midiCC),
+
+*/
+(
+
+\sl: (\midiType: \cc, \type: \slider, \midiChan: 0, \midiNum:  1, \spec: \midiCC),
 
 	// // ------- touch ------------
-'touch_0': ('midiType': 'touch', 'type': 'chantouch', 'chan': 0, 'midiNote':  0,'spec': 'midiTouch'),
+'touch_0': ('midiType': 'touch', 'type': 'chantouch', 'midiChan': 0, 'midiNote':  0,'spec': 'midiTouch'),
 
-	'note': (\midiType: \noteOnOff, \type: \pad, \chan: 0, \ccNum: (36..83), \spec: \midiNote)
-
-]
+\padOn: (36..83).clump(16).collect{ |padNums|
+	padNums.collect {|padNum| (\midiType: \noteOn, \type: \pad, midiChan: 0,
+		\midiNum: padNum, \spec: \midiNote) }
+},
+\padOff: (36..83).clump(16).collect{ |padNums|
+	padNums.collect {|padNum| (\midiType: \noteOff, \type: \pad, midiChan: 0,
+		\midiNum: padNum, \spec: \midiNote) }
+}
+);

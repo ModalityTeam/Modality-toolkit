@@ -44,6 +44,7 @@ MKtl : MAbstractKtl { // abstract class
 		this.addSpec(\lin1inv,  [1, 0, \lin, 0, 1]);
 
 		// MIDI
+		this.addSpec(\midiNote, [0, 127, \lin, 1, 0]);
 		this.addSpec(\midiCC, [0, 127, \lin, 1, 0]);
 		this.addSpec(\midiVel, [0, 127, \lin, 1, 0]);
 		this.addSpec(\midiBut, [0, 127, \lin, 127, 0]);
