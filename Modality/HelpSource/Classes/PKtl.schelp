@@ -1,11 +1,12 @@
 CLASS:: PKtl
 summary:: access MKtl values in patterns
-categories:: Modality, Streams-Patterns-Events>Patterns
-related:: Classes/MKtl, Reference/UsingMKtlAndDispatch, etc.
+categories:: Libraries>Modality, Streams-Patterns-Events>Patterns
+related:: Overviews/Modality, Classes/MKtl, Reference/UsingMKtlAndDispatch, etc.
 
 DESCRIPTION::
 This class gives you access to MKtl elements from a pattern.
 
+warning::experimental::
 
 CLASSMETHODS::
 

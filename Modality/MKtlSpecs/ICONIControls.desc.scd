@@ -10,7 +10,7 @@
 
 	xs.collect{ |note, column|
 
-		["but_%_%".format(row+1,column+1).asSymbol, (\midiType: \note, \type: \button, \midiChan: 0, \midiNum:  note, \spec: \midiVel)]
+		["but_%_%".format(row+1,column+1).asSymbol, (\midiType: \note, \type: \button, \midiChan: 0, \midiNote:  note, \spec: \midiVel)]
 	}
 }++
 [
@@ -20,7 +20,7 @@
 
 	xs.collect{ |note, column|
 
-		["leftbut_%_%".format(row+1,column+1).asSymbol, (\midiType: \note, \type: \button, \midiChan: 0, \midiNum:  note, \spec: \midiVel)]
+		["leftbut_%_%".format(row+1,column+1).asSymbol, (\midiType: \note, \type: \button, \midiChan: 0, \midiNote:  note, \spec: \midiVel)]
 
 	}
 }++

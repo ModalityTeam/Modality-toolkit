@@ -12,14 +12,14 @@
 	\pdc_8: (\midiType: \cc, \type: \pad, \midiChan: 2, \midiNum:  9, \spec: \midiVel),
 
 // PAD pads: 
-	\pdp_1: (\midiType: \note, \type: \pad, \midiChan: 2, \midiNum:  60, \spec: \midiVel),
-	\pdp_2: (\midiType: \note, \type: \pad, \midiChan: 2, \midiNum:  62, \spec: \midiVel),
-	\pdp_3: (\midiType: \note, \type: \pad, \midiChan: 2, \midiNum:  64, \spec: \midiVel),
-	\pdp_4: (\midiType: \note, \type: \pad, \midiChan: 2, \midiNum:  65, \spec: \midiVel),
-	\pdp_5: (\midiType: \note, \type: \pad, \midiChan: 2, \midiNum:  67, \spec: \midiVel),
-	\pdp_6: (\midiType: \note, \type: \pad, \midiChan: 2, \midiNum:  69, \spec: \midiVel),
-	\pdp_7: (\midiType: \note, \type: \pad, \midiChan: 2, \midiNum:  71, \spec: \midiVel),
-	\pdp_8: (\midiType: \note, \type: \pad, \midiChan: 2, \midiNum:  72, \spec: \midiVel),
+	\pdp_1: (\midiType: \note, \type: \pad, \midiChan: 2, \midiNote:  60, \spec: \midiVel),
+	\pdp_2: (\midiType: \note, \type: \pad, \midiChan: 2, \midiNote:  62, \spec: \midiVel),
+	\pdp_3: (\midiType: \note, \type: \pad, \midiChan: 2, \midiNote:  64, \spec: \midiVel),
+	\pdp_4: (\midiType: \note, \type: \pad, \midiChan: 2, \midiNote:  65, \spec: \midiVel),
+	\pdp_5: (\midiType: \note, \type: \pad, \midiChan: 2, \midiNote:  67, \spec: \midiVel),
+	\pdp_6: (\midiType: \note, \type: \pad, \midiChan: 2, \midiNote:  69, \spec: \midiVel),
+	\pdp_7: (\midiType: \note, \type: \pad, \midiChan: 2, \midiNote:  71, \spec: \midiVel),
+	\pdp_8: (\midiType: \note, \type: \pad, \midiChan: 2, \midiNote:  72, \spec: \midiVel),
 
 // how to approach these?
 //// PAD prgch: 
