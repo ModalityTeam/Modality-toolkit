@@ -17,12 +17,14 @@ MKtl : MAbstractKtl { // abstract class
 	classvar <allAvailable; // ( 'midi': List['name1',... ], 'hid': List['name1',... ], ... )
 
 	// an array of keys and values with a description of all the elements on the device.
-	// is read in from an external file.
+	// generated from the hierarchical description read from the file
 	var <deviceDescription;
 	                    //of type: [ 'elemName', ( 'mode': Symbol, 'chan': Int, 'type': Symbol, 'specName': Symbol,
                         //'midiType': Symbol, 'spec':ControlSpec, 'ccNum': Int )
 	                    // i.e. [ prA1, ( 'mode': toggle, 'chan': 0, 'type': button, 'specName': midiBut,
                         //'midiType': cc, 'spec': a ControlSpec(0, 127, 'linear', 127, 0, ""), 'ccNum': 105 )
+	// a tree like data structure composed of dictionaries and arrays with a description of all the elements on the device.
+	// is read in from an external file.
 	var <deviceDescriptionHierarch;
 
 	//var <>recordFunc; // what to do to record incoming control changes
@@ -277,7 +279,7 @@ MKtl : MAbstractKtl { // abstract class
 					}
 				}
 			} {
-				if(x.isKindOf(Array).postln ) {
+				if(x.isKindOf(Array) ) {
 					x.collect{ |val, i|
 						f.(val, stateFuncOnNodes.(state, i),  stateFuncOnNodes, leafFunc )
 					}
