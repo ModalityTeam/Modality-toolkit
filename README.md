@@ -23,7 +23,7 @@ Please read the article on "Modality" in the SuperCollider help system.
 
 + [FPLib](https://github.com/miguel-negrao/FPLib) is a functional programming library for SuperCollider developed by Miguel Negrao and integrates into the modality toolkit.
 + [Unit Library](https://github.com/GameOfLife/Unit-Lib) provides high level abstractions on top of SuperCollider to help users without knowledge of computer programming languages to create (interactive) compositions.
-
++ [Controller Booklet](http://tai-studio.org/index.php/projects/controller-booklet/) is a set of paper templates for conceptualising, scribbling and experimenting with controllers and their typical layouts.
 
 ## ModalityTeam
 + [Jeff Carey](http://jeffcarey.foundation-one.org/)
@@ -42,7 +42,7 @@ Please read the article on "Modality" in the SuperCollider help system.
 + [BEK](http://www.bek.no/), Bergen Center for Electronic Arts, is a non-profit organisation situated in Bergen, Norway, functioning as a national resource centre for work within the field of arts and new technology.
 BEK works with both artistic and scientific research and development and puts into practice an amount of mixed artistic projects. It also practices an educational program that includes courses, workshops, talks and presentations.
 + [STEIM](http://steim.org/) (the STudio for Electro-Instrumental Music) is an independent electronic music center unique in its dedication to live performance. The foundation’s artistic and technical departments support an international community of performers, musicians, and visual artists, to develop unique instruments for their work. STEIM maintains a vibrant residency program whereby artists are provided with an artistic and technical environment in which concepts can be given concrete form. Ideas are catalysed by providing critical feedback grounded in professional experience. Finally, new creations are then exposed to a receptive responsive niche public at STEIM before being groomed for a larger audience.
-+ [3DMin](http://www.hybrid-plattform.org/en/projects/alle/34-aktuelle-projekte/663-design-development-and-dissemination-of-new-musical-instruments-4) is an interdisciplinary project to develop new electronic musical instruments for contemporary music practice.
++ [3DMin](http://www.hybrid-plattform.org/en/projects/alle/34-aktuelle-projekte/663-design-development-and-dissemination-of-new-musical-instruments-4) (Design, Development and Dissemination of New Musical Instruments) is an interdisciplinary project between [UdK Berlin](http://www.udk-berlin.de/) and [TU Berlin](http://www.tu-berlin.de/) to develop new electronic musical instruments for contemporary music practice.
 
 ## Acknowledgements
 Modality and its research meetings have kindly been supported by [BEK](http://www.bek.no/) and [STEIM](http://steim.org/).
