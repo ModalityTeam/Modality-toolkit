@@ -277,22 +277,29 @@ MIDIMKtl : MKtl {
 	}
 
 	makeHashKey{ |descr,elName|
-		var hash;
 		// TODO: pitchbend, other miditypes, etc.
-		hash = descr[\midiType].switch(
-			\noteOn, {this.makeNoteOnKey(descr[\midiChan], descr[\midiNum]);},
-			\noteOff, {this.makeNoteOffKey(descr[\midiChan], descr[\midiNum]);},
-			\cc, {this.makeCCKey(descr[\midiChan], descr[\midiNum]);},
-			\touch, { this.makeTouchKey(descr[\midiChan]) },
+		var hashs = descr[\midiType].switch(
+			\noteOn, {[this.makeNoteOnKey(descr[\midiChan], descr[\midiNum])]},
+			\noteOff, {[this.makeNoteOffKey(descr[\midiChan], descr[\midiNum])]},
+			\noteOnOff, {
+				[
+					this.makeNoteOnKey(descr[\midiChan], descr[\midiNum]),
+					this.makeNoteOffKey(descr[\midiChan], descr[\midiNum])
+				]
+			},
+			\cc, {[this.makeCCKey(descr[\midiChan], descr[\midiNum])]},
+			\touch, {[this.makeTouchKey(descr[\midiChan])] },
 			{//default:
 				"MIDIMKtl:prepareElementHashDict (%): identifier in midiType for item % not known. Please correct.".format(this, elName).error;
 				this.dump;
 				nil;
 			}
 		);
-		elementHashDict.put(
-			hash, elementsDict[elName];
-		);
+		hashs.do{ |hash|
+			elementHashDict.put(
+				hash, elementsDict[elName];
+			)
+		}
 	}
 		// plumbing
 	prepareElementHashDict {
