@@ -10,7 +10,7 @@ MIDIAnalysis {
 
 		"*** MIDICapture analysis: ***".postln;
 		MIDIMKtl.allMsgTypes.collect { |type|
-			var matchingEls = elements.select { |el| el[\midiType] == type };
+			var matchingEls = elements.select { |el| el[\midiMsgType] == type };
 			[ type, matchingEls.size].postln;
 			if (matchingEls.size > 0) {
 				respTypes = respTypes.add(type);
@@ -81,19 +81,19 @@ results = results ++ [
 
 	*checkMsgTypes { |devDesc|
 		var types = Set.new;
-		devDesc.collect { |el, i| if (i.odd) { types.add(el.midiType) } };
+		devDesc.collect { |el, i| if (i.odd) { types.add(el[\midiMsgType]) } };
 		^types.asArray;
 	}
 
 	*checkTouch { |devDesc|
-		var touchEls = devDesc.select { |el, i| (i.odd and: { el.midiType == \touch }) };
+		var touchEls = devDesc.select { |el, i| (i.odd and: { el[\midiMsgType] == \touch }) };
 		var touchChan =  this.compressInfo(touchEls, \midiChan);
 		^(channel: touchChan, numEls: touchEls.size);
 	}
 
 	// not tested yet
 	*checkBend { |devDesc|
-		var touchEls = devDesc.select { |el, i| (i.odd and: { el.midiType == \bend }) };
+		var touchEls = devDesc.select { |el, i| (i.odd and: { el[\midiMsgType] == \bend }) };
 		var touchChan =  this.compressInfo(touchEls, \midiChan);
 		^(channel: touchChan, numEls: touchEls.size);
 	}

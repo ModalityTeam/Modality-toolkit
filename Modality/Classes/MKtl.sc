@@ -20,9 +20,9 @@ MKtl : MAbstractKtl { // abstract class
 	// is read in from an external file.
 	var <deviceDescription;
 	                    //of type: [ 'elemName', ( 'mode': Symbol, 'chan': Int, 'type': Symbol, 'specName': Symbol,
-                        //'midiType': Symbol, 'spec':ControlSpec, 'ccNum': Int )
+                        //'midiMsgType': Symbol, 'spec':ControlSpec, 'ccNum': Int )
 	                    // i.e. [ prA1, ( 'mode': toggle, 'chan': 0, 'type': button, 'specName': midiBut,
-                        //'midiType': cc, 'spec': a ControlSpec(0, 127, 'linear', 127, 0, ""), 'ccNum': 105 )
+                        //'midiMsgType': cc, 'spec': a ControlSpec(0, 127, 'linear', 127, 0, ""), 'ccNum': 105 )
 	var <deviceDescriptionHierarch;
 
 	//var <>recordFunc; // what to do to record incoming control changes
@@ -49,6 +49,7 @@ MKtl : MAbstractKtl { // abstract class
 		this.addSpec(\midiVel, [0, 127, \lin, 1, 0]);
 		this.addSpec(\midiBut, [0, 127, \lin, 127, 0]);
 		this.addSpec(\midiTouch, [0, 127, \lin, 1, 0]);
+		this.addSpec(\midiBend, [0, 16383, \lin, 1, 8192]);
 
 		// HID
 		this.addSpec(\hidBut, [0, 1, \lin, 1, 0]);
