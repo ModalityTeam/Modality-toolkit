@@ -289,8 +289,9 @@ MIDIMKtl : MKtl {
 			},
 			\cc, {[this.makeCCKey(descr[\midiChan], descr[\midiNum])]},
 			\touch, {[this.makeTouchKey(descr[\midiChan])] },
+			\bend, { [this.makeBendKey(descr[\midiChan])] },
 			{//default:
-				"MIDIMKtl:prepareElementHashDict (%): identifier in midiType for item % not known. Please correct.".format(this, elName).error;
+				"MIDIMKtl:prepareElementHashDict (%): \n\t identifier '%'in descr['midiMsgType'] for item % not known. Please correct.".format(this, descr[\midiMsgType], elName).error;
 				this.dump;
 				nil;
 			}
@@ -313,7 +314,7 @@ MIDIMKtl : MKtl {
 					hash = this.makeHashKey( descr, elName );
 					elNameToMidiDescDict.put(elName,
 						[
-							descr[\midiType],
+							descr[\midiMsgType],
 							descr[\midiChan],
 							descr[\midiNum],
 							elementsDict[elName].spec
@@ -333,7 +334,7 @@ MIDIMKtl : MKtl {
 					if ( elementsDict[elName].ioType == \out  or:  elementsDict[elName].ioType == \inout ){
 						elNameToMidiDescDict.put(elName,
 							[
-								descr[\midiType],
+								descr[\midiMsgType],
 								descr[\midiChan],
 								descr[\midiNum],
 								elementsDict[elName].spec
@@ -374,7 +375,7 @@ MIDIMKtl : MKtl {
 				} {
 					"MIDIMKtl( % ) : cc element found for chan %, ccnum % !\n"
 					" - add it to the description file, e.g.: "
-					"\\<name>: (\\midiType: \\cc, \\type: \\button, \\midiChan: %,"
+					"\\<name>: (\\midiMsgType: \\cc, \\type: \\button, \\midiChan: %,"
 					"\\midiNum: %, \\spec: \\midiBut, \\mode: \\push).\n\n"
 						.postf(name, chan, num, chan, num);
 				};

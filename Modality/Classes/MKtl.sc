@@ -20,9 +20,9 @@ MKtl : MAbstractKtl { // abstract class
 	// generated from the hierarchical description read from the file
 	var <deviceDescription;
 	                    //of type: [ 'elemName', ( 'mode': Symbol, 'chan': Int, 'type': Symbol, 'specName': Symbol,
-                        //'midiType': Symbol, 'spec':ControlSpec, 'ccNum': Int )
+                        //'midiMsgType': Symbol, 'spec':ControlSpec, 'ccNum': Int )
 	                    // i.e. [ prA1, ( 'mode': toggle, 'chan': 0, 'type': button, 'specName': midiBut,
-                        //'midiType': cc, 'spec': a ControlSpec(0, 127, 'linear', 127, 0, ""), 'ccNum': 105 )
+                        //'midiMsgType': cc, 'spec': a ControlSpec(0, 127, 'linear', 127, 0, ""), 'ccNum': 105 )
 	// a tree like data structure composed of dictionaries and arrays with a description of all the elements on the device.
 	// is read in from an external file.
 	var <deviceDescriptionHierarch;
@@ -51,6 +51,7 @@ MKtl : MAbstractKtl { // abstract class
 		this.addSpec(\midiVel, [0, 127, \lin, 1, 0]);
 		this.addSpec(\midiBut, [0, 127, \lin, 127, 0]);
 		this.addSpec(\midiTouch, [0, 127, \lin, 1, 0]);
+		this.addSpec(\midiBend, [0, 16383, \lin, 1, 8192]);
 
 		// HID
 		this.addSpec(\hidBut, [0, 1, \lin, 1, 0]);

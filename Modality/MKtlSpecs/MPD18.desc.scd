@@ -30,17 +30,17 @@ m.elementAt(\padOff, 1, 2).addAction({ |...args| args.post; "pad2 sc1 off YO !".
 */
 (
 
-\sl: (\midiType: \cc, \type: \slider, \midiChan: 0, \midiNum:  1, \spec: \midiCC),
+\sl: (\midiMsgType: \cc, \type: \slider, \midiChan: 0, \midiNum:  1, \spec: \midiCC),
 
 	// // ------- touch ------------
-'touch_0': ('midiType': 'touch', 'type': 'chantouch', 'midiChan': 0, 'midiNote':  0,'spec': 'midiTouch'),
+'touch_0': ('midiMsgType': 'touch', 'type': 'chantouch', 'midiChan': 0, 'midiNote':  0,'spec': 'midiTouch'),
 
 \padOn: (36..83).clump(16).collect{ |padNums|
-	padNums.collect {|padNum| (\midiType: \noteOn, \type: \pad, midiChan: 0,
+	padNums.collect {|padNum| (\midiMsgType: \noteOn, \type: \pad, midiChan: 0,
 		\midiNum: padNum, \spec: \midiNote) }
 },
 \padOff: (36..83).clump(16).collect{ |padNums|
-	padNums.collect {|padNum| (\midiType: \noteOff, \type: \pad, midiChan: 0,
+	padNums.collect {|padNum| (\midiMsgType: \noteOff, \type: \pad, midiChan: 0,
 		\midiNum: padNum, \spec: \midiNote) }
 }
 );

@@ -102,9 +102,9 @@ MKtlElement : MAbstractElement{
 	classvar <types;
 
 	var <elementDescription;	 //its particular device description
-	                         //of type: ( 'chan':Int, 'midiType':symbol, 'spec':ControlSpec,
-	                         //           'ccNum': Int, 'specName':symbol, 'type':Symbol )
-	                         // i.e.   ( 'chan':0, 'midiType':'cc', 'spec': ControlSpec,
+	                         // of type: ( 'midiChan': Int, 'midiMsgType': symbol, 'spec': ControlSpec,
+	                         //           'ccNum': Int, 'specName': symbol, 'type': Symbol )
+	                         // i.e.   ( 'chan':0, 'midiMsgType':'cc', 'spec': ControlSpec,
 	                         //          'ccNum': 24, 'specName':'midiCC', 'type':'midiBut' )
 	var <spec; // ControlSpec -> its spec
 
