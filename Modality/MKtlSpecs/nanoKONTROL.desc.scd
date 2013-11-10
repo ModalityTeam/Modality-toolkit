@@ -26,12 +26,12 @@ MIDIMKtl('nnkn0').elementsDict.do{ |el| el.action_({ |v| "%: %".format( el.name,
 (
 
 // the same in all scenes:
-\rew:  (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 47, \spec: \midiBut, \mode: \push),
-\play: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 45, \spec: \midiBut, \mode: \push),
-\fwd:  (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 48, \spec: \midiBut, \mode: \push),
-\loop: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 49, \spec: \midiBut, \mode: \push),
-\stop: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 46, \spec: \midiBut, \mode: \push),
-\rec:  (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 44, \spec: \midiBut, \mode: \push),
+\rew:  (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 47, \spec: \midiBut, \mode: \push),
+\play: (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 45, \spec: \midiBut, \mode: \push),
+\fwd:  (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 48, \spec: \midiBut, \mode: \push),
+\loop: (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 49, \spec: \midiBut, \mode: \push),
+\stop: (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 46, \spec: \midiBut, \mode: \push),
+\rec:  (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 44, \spec: \midiBut, \mode: \push),
 
 \sl: [
 	[ (2..9)++[12,13], 0 ! 9 ],
@@ -40,7 +40,7 @@ MIDIMKtl('nnkn0').elementsDict.do{ |el| el.action_({ |v| "%: %".format( el.name,
 	[ 7 ! 9, (0..8) ]
 ].collect{ |page|
 	page.flop.collect{ |xs|
-		(\midiType: \cc, \type: \slider, \midiChan: xs[1], \midiNum: xs[0], \spec: \midiCC)
+		(\midiMsgType: \cc, \type: \slider, \midiChan: xs[1], \midiNum: xs[0], \spec: \midiCC)
 	}
 },
 
@@ -51,7 +51,7 @@ MIDIMKtl('nnkn0').elementsDict.do{ |el| el.action_({ |v| "%: %".format( el.name,
 	[ 10 ! 9, (0..8) ]
 ].collect{ |page|
 	page.flop.collect{ |xs|
-		(\midiType: \cc, \type: \slider, \midiChan: xs[1], \midiNum: xs[0], \spec: \midiCC)
+		(\midiMsgType: \cc, \type: \slider, \midiChan: xs[1], \midiNum: xs[0], \spec: \midiCC)
 	}
 },
 
@@ -63,7 +63,7 @@ MIDIMKtl('nnkn0').elementsDict.do{ |el| el.action_({ |v| "%: %".format( el.name,
 ].collect{ |page|
 	page.collect{ |row|
 		row.flop.collect{ |xs|
-			(\midiType: \cc, \type: \button, \midiChan: xs[1], \midiNum:  xs[0], \spec: \midiCC)
+			(\midiMsgType: \cc, \type: \button, \midiChan: xs[1], \midiNum:  xs[0], \spec: \midiCC)
 		}
 	}
 }
