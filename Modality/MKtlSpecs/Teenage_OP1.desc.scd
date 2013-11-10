@@ -3,15 +3,27 @@
 // and lots of buttons (mostly with icons)
 // knob hat presses missing!
 
+/* test that is works:
+
+MIDIMKtl.find;
+m = MIDIMKtl('pmdd10');
+m.verbose = true;
+
+m.elementAt(\but, 4).addAction({ |el| "but 4: %\n".postf(el.value); });
+m.elementAt(\btJoin).action_({ |el| "btJoin: %\n".postf(el.value); });
+m.elementAt(\keyOn, 1).action_({ |el| "keyOn: %\n".postf(el.value); });
+m.elementAt(\keyOff, 1).action_({ |el| "keyOff: %\n".postf(el.value); });
+
+m.elementAt(\kn, 1).action_({ |el| "el %: %\n".postf(el.name, el.value); });
+
+*/
 (
 
-keyOn: (36..83).clump(16).collect{ |padNums|
-	padNums.collect {|padNum| (\midiMsgType: \noteOn, \type: \pad, midiChan: 0,
-		\midiNum: padNum, \spec: \midiNote) }
+keyOn: (29..83).collect{|padNum| (\midiMsgType: \noteOn, \type: \pad, midiChan: 0,
+		\midiNum: padNum, \spec: \midiNote)
 },
-\keyOff: (36..83).clump(16).collect{ |padNums|
-	padNums.collect {|padNum| (\midiMsgType: \noteOff, \type: \pad, midiChan: 0,
-		\midiNum: padNum, \spec: \midiNote) }
+\keyOff: (29..83).collect{|padNum| (\midiMsgType: \noteOff, \type: \pad, midiChan: 0,
+		\midiNum: padNum, \spec: \midiNote)
 },
 
 \kn: (1..4).collect { |num|
