@@ -369,7 +369,6 @@ MIDIMKtl : MKtl {
 
 				midiRawAction.value(\control, src, chan, num, value);
 
-				if(verbose) {[this, \cc, value, num, chan, src].postln; };
 				if (el.notNil) {
 					el.rawValueAction_(value, false);
 				} {
@@ -377,7 +376,12 @@ MIDIMKtl : MKtl {
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiType: \\cc, \\type: \\button, \\midiChan: %,"
 					"\\midiNum: %, \\spec: \\midiBut, \\mode: \\push).\n\n"
-						.postf(name, chan, num, chan, num);				};
+						.postf(name, chan, num, chan, num);
+				};
+				if(verbose) {
+					"% - % > % | type: cc, ccValue:%, ccNum:%,  chan:%, src:%"
+					.format(this.name, el.name, el.value.asStringPrec(3), value, num, chan, src).postln
+				};
 			}, srcID: srcID)
 		);
 	}
@@ -397,6 +401,10 @@ MIDIMKtl : MKtl {
 				if(verbose) {[this, \noteOn, vel, note, chan, src].postln; };
 
 				if (el.notNil) { el.rawValueAction_(vel); };
+				if(verbose) {
+					"% - % > % | type: noteOn, vel:%, midiNote:%,  chan:%, src:%"
+					.format(this.name, el.name, el.value.asStringPrec(3), vel, note, chan, src).postln
+				};
 			}, srcID: srcID)
 		);
 	}
@@ -413,9 +421,12 @@ MIDIMKtl : MKtl {
 
 				midiRawAction.value(\noteOn, src, chan, note, vel);
 
-				if(verbose) {[this, \noteOff, vel, note, chan, src].postln; };
-
 				if (el.notNil) { el.rawValueAction_(vel); };
+
+				if(verbose) {
+					"% - % > % | type: noteOff, vel:%, midiNote:%,  chan:%, src:%"
+					.format(this.name, el.name, el.value.asStringPrec(3), vel, note, chan, src).postln
+				};
 			}, srcID: srcID)
 		);
 	}
@@ -437,9 +448,12 @@ MIDIMKtl : MKtl {
 
 				midiRawAction.value(\touch, src, chan, value);
 
-				if(verbose) {[this, \noteOff, value, chan, src].postln; };
-
 				if (el.notNil) { el.rawValueAction_(value); };
+
+				if(verbose) {
+					"% - % > % | type: touch, midiNum:%, chan:%, src:%"
+					.format(this.name, el.name, el.value.asStringPrec(3), value, chan, src).postln
+				};
 			}, chan: listenChan, srcID: srcID)
 		);
 	}
@@ -466,9 +480,12 @@ MIDIMKtl : MKtl {
 
 				midiRawAction.value(\bend, src, chan, value);
 
-				if(verbose) {[this, \bend, value, chan, src].postln; };
-
 				if (el.notNil) { el.rawValueAction_(value); };
+
+				if(verbose) {
+					"% - % > % | type: bend, midiNum:%, chan:%, src:%"
+					.format(this.name, el.name, el.value.asStringPrec(3), value, chan, src).postln
+				};
 			}, chan: listenChan, srcID: srcID)
 		);
 	}
