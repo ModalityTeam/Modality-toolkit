@@ -152,23 +152,23 @@ b = NdefGui(Ndef(\a), 8, parent: w);
 (
 n=8;
 
-
 w = Window("MultiSlider Options", Rect(200, Window.screenBounds.height-550, 300, 400));
     w.view.decorator = FlowLayout( w.view.bounds, 10@10, 10@2 );
 w.front;
 
 2.collect { |i|
-	StaticText(w, 100@30).string_("in_" ++ i);
+	StaticText(w, 100@30).string_(a.inNames[i]).align_(\center);
 };
 2.collect { |i|
     m = MultiSliderView(w, Rect(0,0,100,180)).indexThumbSize_(20);
 	m.indexIsHorizontal_(false);
-    m.value=Array.fill(n, {|v| 0.5+((0.3*v).sin*0.25)});
-    m.action = { arg q;q.value.postln; };
+	m.value = (a.weights.flop[i] + 1 / 2).postln;
+    // m.action = { arg msl; a.weights = msl.value * 2 - 1; };
 	m.isFilled = true;
-	m.reference = 0.5!n;
+	m.reference = {1.0.rand}!n;
+	m.drawLines_(false);
 };
 
 c = CompositeView(w, 40@180); c.addFlowLayout;
-n.do { |i| StaticText(c, 40@20).string_("out_" ++ i); };
+n.do { |i| StaticText(c, 40@20).string_(a.outNames[i]).align_(\center); };
 )
