@@ -278,7 +278,7 @@ MIDIMKtl : MKtl {
 
 	makeHashKey{ |descr,elName|
 		// TODO: pitchbend, other miditypes, etc.
-		var hashs = descr[\midiType].switch(
+		var hashs = descr[\midiMsgType].switch(
 			\noteOn, {[this.makeNoteOnKey(descr[\midiChan], descr[\midiNum])]},
 			\noteOff, {[this.makeNoteOffKey(descr[\midiChan], descr[\midiNum])]},
 			\noteOnOff, {
@@ -289,9 +289,8 @@ MIDIMKtl : MKtl {
 			},
 			\cc, {[this.makeCCKey(descr[\midiChan], descr[\midiNum])]},
 			\touch, {[this.makeTouchKey(descr[\midiChan])] },
-			\bend, { [this.makeBendKey(descr[\midiChan])] },
 			{//default:
-				"MIDIMKtl:prepareElementHashDict (%): \n\t identifier '%'in descr['midiMsgType'] for item % not known. Please correct.".format(this, descr[\midiMsgType], elName).error;
+				"MIDIMKtl:prepareElementHashDict (%): identifier in midiType for item % not known. Please correct.".format(this, elName).error;
 				this.dump;
 				nil;
 			}
