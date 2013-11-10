@@ -277,29 +277,65 @@ MIDIMKtl : MKtl {
 	}
 
 	makeHashKey{ |descr,elName|
-		// TODO: pitchbend, other miditypes, etc.
-		var hashs = descr[\midiMsgType].switch(
-			\noteOn, {[this.makeNoteOnKey(descr[\midiChan], descr[\midiNum])]},
-			\noteOff, {[this.makeNoteOffKey(descr[\midiChan], descr[\midiNum])]},
-			\noteOnOff, {
-				[
-					this.makeNoteOnKey(descr[\midiChan], descr[\midiNum]),
-					this.makeNoteOffKey(descr[\midiChan], descr[\midiNum])
-				]
-			},
-			\cc, {[this.makeCCKey(descr[\midiChan], descr[\midiNum])]},
-			\touch, {[this.makeTouchKey(descr[\midiChan])] },
-			{//default:
-				"MIDIMKtl:prepareElementHashDict (%): identifier in midiType for item % not known. Please correct.".format(this, elName).error;
+		var hashs;
+		"makeHashKey : %\n".postf(descr);
+		if( descr[\midiMsgType].isNil ) {
+			"MIDIMKtl:prepareElementHashDict (%): \\midiMsgType not found. Please add it."
+			.format(this, elName).error;
+			descr.postln;
+		} {
+			// TODO: pitchbend, other miditypes, etc.
+			var noMidiChan = descr[\midiChan].isNil;
+			var isTouch = descr[\midiMsgType] == \touch;
+			var noMidiNum = descr[\midiNum].isNil;
+
+			if( noMidiChan ) {
+				"MIDIMKtl:prepareElementHashDict (%): \\midiChan not found. Please add it."
+				.format(this, elName).error;
+				descr.postln;
+			};
+
+			if( isTouch && noMidiNum ) {
+				"MIDIMKtl:prepareElementHashDict (%): \\midiNum not found. Please add it."
+				.format(this, elName).error;
+				descr.postln;
+			};
+
+			if( noMidiChan.not || ( (isTouch && noMidiNum) ) ){
+				if( [\noteOn,\noteOff, \noteOnOff, \cc, \touch].includes( descr[\midiMsgType] ) ) {
+
+					hashs = descr[\midiMsgType].switch(
+						\noteOn, {[this.makeNoteOnKey(descr[\midiChan], descr[\midiNum])]},
+						\noteOff, {[this.makeNoteOffKey(descr[\midiChan], descr[\midiNum])]},
+						\noteOnOff, {
+							[
+								this.makeNoteOnKey(descr[\midiChan], descr[\midiNum]),
+								this.makeNoteOffKey(descr[\midiChan], descr[\midiNum])
+							]
+						},
+						\cc, {[this.makeCCKey(descr[\midiChan], descr[\midiNum])]},
+						\touch, {[this.makeTouchKey(descr[\midiChan])] }
+					);
+
+					hashs.do{ |hash|
+						elementHashDict.put(
+							hash, elementsDict[elName];
+						)
+					};
+					"doing hash".postln;
+					elementHashDict.postln;
+				} {
+					"MIDIMKtl:prepareElementHashDict (%): identifier in midiType for item % not known. Please correct."
+					.format(this, elName).error;
+					this.dump;
+					nil;
+				}
+			} {
+				"whoever programmed this is stupid, I shouldn't be here...".postln;
 				this.dump;
-				nil;
 			}
-		);
-		hashs.do{ |hash|
-			elementHashDict.put(
-				hash, elementsDict[elName];
-			)
-		}
+		};
+
 	}
 		// plumbing
 	prepareElementHashDict {
@@ -371,17 +407,18 @@ MIDIMKtl : MKtl {
 
 				if (el.notNil) {
 					el.rawValueAction_(value, false);
+					if(verbose) {
+						"% - % > % | type: cc, ccValue:%, ccNum:%,  chan:%, src:%"
+						.format(this.name, el.name, el.value.asStringPrec(3), value, num, chan, src).postln
+					};
 				} {
 					"MIDIMKtl( % ) : cc element found for chan %, ccnum % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\cc, \\type: \\button, \\midiChan: %,"
 					"\\midiNum: %, \\spec: \\midiBut, \\mode: \\push).\n\n"
 						.postf(name, chan, num, chan, num);
-				};
-				if(verbose) {
-					"% - % > % | type: cc, ccValue:%, ccNum:%,  chan:%, src:%"
-					.format(this.name, el.name, el.value.asStringPrec(3), value, num, chan, src).postln
-				};
+				}
+
 			}, srcID: srcID)
 		);
 	}
@@ -398,13 +435,20 @@ MIDIMKtl : MKtl {
 
 				midiRawAction.value(\noteOn, src, chan, note, vel);
 
-				if(verbose) {[this, \noteOn, vel, note, chan, src].postln; };
+				if (el.notNil) {
+					el.rawValueAction_(vel);
+					if(verbose) {
+						"% - % > % | type: noteOn, vel:%, midiNote:%,  chan:%, src:%"
+						.format(this.name, el.name, el.value.asStringPrec(3), vel, note, chan, src).postln
+					};
+				}{
+					"MIDIMKtl( % ) : noteOn element found for chan %, note % !\n"
+					" - add it to the description file, e.g.: "
+					"\\<name>: (\\midiMsgType: \\noteOn, \\type: \\pianoKey or \\button, \\midiChan: %,"
+					"\\midiNum: %, \\spec: \\midiVel).\n\n"
+						.postf(name, chan, note, chan, note);
+				}
 
-				if (el.notNil) { el.rawValueAction_(vel); };
-				if(verbose) {
-					"% - % > % | type: noteOn, vel:%, midiNote:%,  chan:%, src:%"
-					.format(this.name, el.name, el.value.asStringPrec(3), vel, note, chan, src).postln
-				};
 			}, srcID: srcID)
 		);
 	}
@@ -419,14 +463,21 @@ MIDIMKtl : MKtl {
 				var elName = hashToElNameDict[hash];
 				var el = elementHashDict[hash];
 
-				midiRawAction.value(\noteOn, src, chan, note, vel);
-
-				if (el.notNil) { el.rawValueAction_(vel); };
-
-				if(verbose) {
-					"% - % > % | type: noteOff, vel:%, midiNote:%,  chan:%, src:%"
-					.format(this.name, el.name, el.value.asStringPrec(3), vel, note, chan, src).postln
+				if (el.notNil) {
+					el.rawValueAction_(vel);
+					if(verbose) {
+						"% - % > % | type: noteOff, vel:%, midiNote:%,  chan:%, src:%"
+						.format(this.name, el.name, el.value.asStringPrec(3), vel, note, chan, src).postln
+					};
+				} {
+					"MIDIMKtl( % ) : noteOff element found for chan %, note % !\n"
+					" - add it to the description file, e.g.: "
+					"\\<name>: (\\midiMsgType: \\noteOff, \\type: \\pianoKey or \\button, \\midiChan: %,"
+					"\\midiNum: %, \\spec: \\midiVel).\n\n"
+						.postf(name, chan, note, chan, note);
 				};
+
+
 			}, srcID: srcID)
 		);
 	}
@@ -448,20 +499,29 @@ MIDIMKtl : MKtl {
 
 				midiRawAction.value(\touch, src, chan, value);
 
-				if (el.notNil) { el.rawValueAction_(value); };
-
-				if(verbose) {
-					"% - % > % | type: touch, midiNum:%, chan:%, src:%"
-					.format(this.name, el.name, el.value.asStringPrec(3), value, chan, src).postln
+				if (el.notNil) {
+					el.rawValueAction_(value);
+					if(verbose) {
+						"% - % > % | type: touch, midiNum:%, chan:%, src:%"
+						.format(this.name, el.name, el.value.asStringPrec(3), value, chan, src).postln
+					}
+				}{
+					"MIDIMKtl( % ) : touch element found for chan % !\n"
+					" - add it to the description file, e.g.: "
+					"\\<name>: (\\midiMsgType: \\touch, \\type: \\chantouch', \\midiChan: %,"
+					"\\spec: \\midiTouch).\n\n"
+						.postf(name, chan, chan);
 				};
+
+
 			}, chan: listenChan, srcID: srcID)
 		);
 	}
 
 	makePolytouch {
 		"makePolytouch".postln;
-
 	}
+
 	// should work, can't test now.
 	makeBend {
 		var typeKey = \bend;
@@ -480,12 +540,21 @@ MIDIMKtl : MKtl {
 
 				midiRawAction.value(\bend, src, chan, value);
 
-				if (el.notNil) { el.rawValueAction_(value); };
-
-				if(verbose) {
-					"% - % > % | type: bend, midiNum:%, chan:%, src:%"
-					.format(this.name, el.name, el.value.asStringPrec(3), value, chan, src).postln
+				if (el.notNil) {
+					el.rawValueAction_(value);
+					if(verbose) {
+						"% - % > % | type: bend, midiNum:%, chan:%, src:%"
+						.format(this.name, el.name, el.value.asStringPrec(3), value, chan, src).postln
+					};
+				}{
+					"MIDIMKtl( % ) : bend element found for chan % !\n"
+					" - add it to the description file, e.g.: "
+					"\\<name>: (\\midiMsgType: \\bend, \\type: ??', \\midiChan: %,"
+					"\\spec: \\midiBend).\n\n"
+					.postf(name, chan, chan);
 				};
+
+
 			}, chan: listenChan, srcID: srcID)
 		);
 	}

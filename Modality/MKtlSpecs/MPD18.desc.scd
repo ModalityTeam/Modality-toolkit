@@ -26,6 +26,7 @@ m.elements[\padOn][1][15].addAction({ |...args| args.post; "pad16 sc2 off YO !".
 m.elementAt(\padOn, 1, 2).addAction({ |...args| args.post; "pad2 sc1 on YO !".postln; });
 m.elementAt(\padOff, 1, 2).addAction({ |...args| args.post; "pad2 sc1 off YO !".postln; });
 
+
 /****** END TESTs ******/
 */
 (
@@ -33,7 +34,7 @@ m.elementAt(\padOff, 1, 2).addAction({ |...args| args.post; "pad2 sc1 off YO !".
 \sl: (\midiMsgType: \cc, \type: \slider, \midiChan: 0, \midiNum:  1, \spec: \midiCC),
 
 	// // ------- touch ------------
-'touch_0': ('midiMsgType': 'touch', 'type': 'chantouch', 'midiChan': 0, 'midiNote':  0,'spec': 'midiTouch'),
+'touch_0': ('midiMsgType': 'touch', 'type': 'chantouch', 'midiChan': 0, 'midiNum':  0,'spec': 'midiTouch'),
 
 \padOn: (36..83).clump(16).collect{ |padNums|
 	padNums.collect {|padNum| (\midiMsgType: \noteOn, \type: \pad, midiChan: 0,
