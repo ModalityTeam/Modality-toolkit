@@ -1,43 +1,48 @@
-Modality-toolkit
-================
+# Modality Toolkit
 
-Modality is a toolkit created by a loose collaboration between both developers and (advanced) users of SuperCollider (also called Modality, see below).
+The *Modality Toolkit* is a library to facilitate accessing (hardware) controllers in SuperCollider.
+It is designed and developed by the ModalityTeam, a group of people that see themselves as both developers and (advanced) users of SuperCollider.
 
-One of its basic ideas is to simplify the creation of your very personal instruments with SuperCollider, using controllers of many different kinds. To this end, a common code interface, MKtl, is used for connecting  controllers from different sources (and protocols) like HID and MIDI, Serial, OSC, GUI, etc.
+The central idea behind the Modality-toolkit is to simplify creation of individual (electronic) instruments with SuperCollider, using controllers of various kinds. To this end, a common code interface, MKtl, is used for connecting  controllers from various sources (and protocols). These are atm. HID and MIDI; OSC, Serialport and GUI-based are planned to be integrated.
 
-A second starting point is that the same physical interfaces (sets of sliders, buttons, motion sensors etc etc) can be used for many different purposes, and a highly modal approach to mapping and on-the-fly remapping can help to make a setup much more flexible, powerful, and interesting to play. For example, when improvising with acoustic musicians, highly modal interfaces allow much faster changes of overall direction.
+The name *Modality* arose from the idea to scaffold the creation of modal interfaces, i.e. to create interfaces where one physical controller can be used for different purposes and it is possible to *switch its functionality, even at runtime*.
+It is our believe that integration of such on-the-fly remapping features helps to create a setup much more flexible, powerful, and interesting to play. 
+Such a modal interface allows to cope with fast changes of overall direction as it can be necessary when e.g. improvising with musicians playing acoustic instruments.
 
-http://modality.bek.no/
+## Installation
 
-The Modality project was initiated by Jeff Carey and Bjoernar Habbestad, and collaborators so far have included: Marije Baalman, Alberto de Campo, Wouter Snoei, Till Bovermann, Miguel Negrao, Robert van Heumen, and Hannes Hoelzl.
+### github
 
+Clone [this repository](https://github.com/ModalityTeam/Modality-toolkit) to the SuperCollider Extensions folder.
 
-Acknowledgements:
-Modality and its research meetings have kindly been supported by BEK in Bergen, Norway, and STEIM, Amsterdam.
+### Getting started
 
-Installation
-============
+Please read the article on "Modality" in the SuperCollider help system.
 
-Drag this folder to the SuperCollider extensions folder
+## Associated Projects
 
-To use the functional reactive interface (FRP) to the toolkit first install the FP-Lib:
-https://github.com/miguel-negrao/FPLib
-
-Documentation
-===============
-
-Getting started:
-
-See the "Modality Lib" reference file in sc help.
-
-Writting a Ktl description for an unsupported controller:
-
-MKtlSpecs/_HowToMakeAKtlDescription_.scd
-
-FRP examples:
-
-modality/Examples/FRP/Modality FRP tutorial.scd
++ [FPLib](https://github.com/miguel-negrao/FPLib) is a functional programming library for SuperCollider developed by Miguel Negrao and integrates into the modality toolkit.
++ [Unit Library](https://github.com/GameOfLife/Unit-Lib) provides high level abstractions on top of SuperCollider to help users without knowledge of computer programming languages to create (interactive) compositions.
 
 
+## ModalityTeam
++ [Jeff Carey](http://jeffcarey.foundation-one.org/)
++ [Bjoernar Habbestad](http://www.bek.no/~bjornar/)
++ [Marije Baalman](http://www.nescivi.eu/)
++ [Alberto de Campo](http://albertodecampo.net/)
++ [Wouter Snoei](http://www.woutersnoei.nl/)
++ [Till Bovermann](http://tai-studio.org/)
++ [Miguel Negrao](http://www.friendlyvirus.org/miguelnegrao/)
++ [Robert van Heumen](http://west28.nl/)
++ [Hannes Hoelzl](http://www.earweego.net/)
 
 
+## Associated Organisations
+
++ [BEK](http://www.bek.no/), Bergen Center for Electronic Arts, is a non-profit organisation situated in Bergen, Norway, functioning as a national resource centre for work within the field of arts and new technology.
+BEK works with both artistic and scientific research and development and puts into practice an amount of mixed artistic projects. It also practices an educational program that includes courses, workshops, talks and presentations.
++ [STEIM](http://steim.org/) (the STudio for Electro-Instrumental Music) is an independent electronic music center unique in its dedication to live performance. The foundation’s artistic and technical departments support an international community of performers, musicians, and visual artists, to develop unique instruments for their work. STEIM maintains a vibrant residency program whereby artists are provided with an artistic and technical environment in which concepts can be given concrete form. Ideas are catalysed by providing critical feedback grounded in professional experience. Finally, new creations are then exposed to a receptive responsive niche public at STEIM before being groomed for a larger audience.
++ [3DMin](http://www.hybrid-plattform.org/en/projects/alle/34-aktuelle-projekte/663-design-development-and-dissemination-of-new-musical-instruments-4) is an interdisciplinary project to develop new electronic musical instruments for contemporary music practice.
+
+## Acknowledgements
+Modality and its research meetings have kindly been supported by [BEK](http://www.bek.no/) and [STEIM](http://steim.org/).
