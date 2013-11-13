@@ -285,7 +285,7 @@ MKtl : MAbstractKtl { // abstract class
 						f.(val, stateFuncOnNodes.(state, i),  stateFuncOnNodes, leafFunc )
 					}
 				} {
-					Error("MKtl:prTraverse Illegal data structure in device description. Got object % of type %".format(x,x.class)).throw
+					Error("MKtl:prTraverse Illegal data structure in device description.\nGot object % of type %. Only allowed objects are Arrays and Dictionaries".format(x,x.class)).throw
 				}
 			}
 
