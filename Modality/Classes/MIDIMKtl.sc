@@ -247,7 +247,7 @@ MIDIMKtl : MKtl {
 	}
 
 	initMIDIMKtl { |argName, argSource, argDestination|
-		[argName, argSource, argDestination].postln;
+		//[argName, argSource, argDestination].postln;
 		name = argName;
 
 		source = argSource;
@@ -278,7 +278,7 @@ MIDIMKtl : MKtl {
 
 	makeHashKey{ |descr,elName|
 		var hashs;
-		"makeHashKey : %\n".postf(descr);
+		//"makeHashKey : %\n".postf(descr);
 		if( descr[\midiMsgType].isNil ) {
 			"MIDIMKtl:prepareElementHashDict (%): \\midiMsgType not found. Please add it."
 			.format(this, elName).error;
@@ -322,8 +322,8 @@ MIDIMKtl : MKtl {
 							hash, elementsDict[elName];
 						)
 					};
-					"doing hash".postln;
-					elementHashDict.postln;
+					//"doing hash".postln;
+					//elementHashDict.postln;
 				} {
 					"MIDIMKtl:prepareElementHashDict (%): identifier in midiType for item % not known. Please correct."
 					.format(this, elName).error;
@@ -419,7 +419,7 @@ MIDIMKtl : MKtl {
 						.postf(name, chan, num, chan, num);
 				}
 
-			}, srcID: srcID)
+			}, srcID: srcID).permanent_(true);
 		);
 	}
 
@@ -449,7 +449,7 @@ MIDIMKtl : MKtl {
 						.postf(name, chan, note, chan, note);
 				}
 
-			}, srcID: srcID)
+			}, srcID: srcID).permanent_(true);
 		);
 	}
 
@@ -478,7 +478,7 @@ MIDIMKtl : MKtl {
 				};
 
 
-			}, srcID: srcID)
+			}, srcID: srcID).permanent_(true);
 		);
 	}
 
@@ -514,7 +514,7 @@ MIDIMKtl : MKtl {
 				};
 
 
-			}, chan: listenChan, srcID: srcID)
+			}, chan: listenChan, srcID: srcID).permanent_(true);
 		);
 	}
 
@@ -555,7 +555,7 @@ MIDIMKtl : MKtl {
 				};
 
 
-			}, chan: listenChan, srcID: srcID)
+			}, chan: listenChan, srcID: srcID).permanent_(true);
 		);
 	}
 
