@@ -34,7 +34,7 @@ MIDIMKtl('nnkn0').elementsDict.do{ |el| el.action_({ |v| "%: %".format( el.name,
 \rec:  (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 44, \spec: \midiBut, \mode: \push),
 
 \sl: [
-	[ (2..9)++[12,13], 0 ! 9 ],
+	[ (2..6)++[8,9]++[12,13], 0 ! 9 ],
 	[ [42,43]++(50..56),  0 ! 9 ],
 	[ (85..93), 0 ! 9 ],
 	[ 7 ! 9, (0..8) ]
