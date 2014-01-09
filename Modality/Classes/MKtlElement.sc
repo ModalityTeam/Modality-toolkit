@@ -166,11 +166,6 @@ MKtlElement : MAbstractElement{
 	// assuming that something setting the element's value will first set the value and then call doAction (like in Dispatch)
 	doAction { |sendValue = true|
 		super.doAction;
-		if ( ioType == \out or: ioType == \inout ){
-		    if(sendValue) {
-			    source.send( name, value );
-			}
-		};
 	}
 
 	rawValue { ^value }
