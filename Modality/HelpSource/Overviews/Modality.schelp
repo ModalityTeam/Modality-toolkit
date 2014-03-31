@@ -36,41 +36,32 @@ code::
 k = MIDIMKtl('bcr20000').elements
 ::
 
-Each element has a key:
+Each element can be retrieved from the elements data structure:
+
 code::
-k.elements.at(\kn_7_1)
-::
-or using a shortcut:
-code::
-k.at(\kn_7_1)
+k.elements[\kn][0][7]
 ::
 
-You can get multiple elements using arrays:
+Or it can be retrieved using a shortcut method with symbols:
+
 code::
-k.at([\kn_7_1,\kn_7_2]);
-::
-And you can use arrays instead of symbols
-code::
-k.at([[\kn,7,1],[\kn,7,2]]);
-::
-or
-code::
-k.at((1..8).collect{ |i| [\kn,7,i] });
+k.elementAt(\kn,1,7)
 ::
 
 Elements have a type:
+
 code::
-k.at(\kn_7_1).type
+k.elementAt(\kn,1,7).type
 ::
 
 It's possible to select elements by their type:
 code::
-k.elements.asArray.select{ |x| x.type == \encoder }
+k.allElements.select{ |x| x.type == \encoder }
 ::
 
 To send data back to a device one uses link::Classes/MAbstractElement#value_:: :
 
-MIDIMKtl('bcf20000').elementAt(\kn,1,i+1).value_(0.5)
+k.elementAt(\kn,1,7).value_(0.5)
 
 Classic knobs rotating demo for Behringed BCF2000:
 
