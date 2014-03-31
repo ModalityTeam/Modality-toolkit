@@ -1,3 +1,8 @@
+// TODO - but_4_2_1 overwrites kn_1_3 !
+// * fix - likely disable but 2 1 in scene 4, and leave kn 1 3 on.
+// * check whether there are any other clashes of cc numbers !
+
+
 //	// KORG nanoKONTROL specs:
 //	// only cc messages,
 //	// 4 hardware scenes, flattened out with underscores
