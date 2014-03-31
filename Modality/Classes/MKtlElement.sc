@@ -163,6 +163,10 @@ MKtlElement : MAbstractElement{
 		action = action.removeFunc(argAction);
 	}
 
+	clearAction {
+		action = nil
+	}
+
 	// assuming that something setting the element's value will first set the value and then call doAction (like in Dispatch)
 	doAction { |sendValue = true|
 		super.doAction;
