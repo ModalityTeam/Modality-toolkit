@@ -1,62 +1,31 @@
-//	// KORG nanoKONTROL2 specs: 
-//	// only cc messages, 
+//	// KORG nanoKONTROL2 specs:
+//	// only cc messages,
 
-[
-	\rew:  (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 43, \spec: \midiBut, \mode: \push),
-	\fwd:  (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 44, \spec: \midiBut, \mode: \push),
-	\stop: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 42, \spec: \midiBut, \mode: \push),
-	\play: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 41, \spec: \midiBut, \mode: \push),
-	\rec:  (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 45, \spec: \midiBut, \mode: \push),
-	\cycle: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 46, \spec: \midiBut, \mode: \push),
-	\mset: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 60, \spec: \midiBut, \mode: \push),
-	\mleft: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 61, \spec: \midiBut, \mode: \push),
-	\mright: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 62, \spec: \midiBut, \mode: \push),
-	\tleft: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 58, \spec: \midiBut, \mode: \push),
-	\tright: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 59, \spec: \midiBut, \mode: \push),
+(
+\rew:  (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 43, \spec: \midiBut, \mode: \push),
+\fwd:  (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 44, \spec: \midiBut, \mode: \push),
+\stop: (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 42, \spec: \midiBut, \mode: \push),
+\play: (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 41, \spec: \midiBut, \mode: \push),
+\rec:  (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 45, \spec: \midiBut, \mode: \push),
+\cycle: (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 46, \spec: \midiBut, \mode: \push),
+\mset: (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 60, \spec: \midiBut, \mode: \push),
+\mleft: (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 61, \spec: \midiBut, \mode: \push),
+\mright: (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 62, \spec: \midiBut, \mode: \push),
+\tleft: (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 58, \spec: \midiBut, \mode: \push),
+\tright: (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 59, \spec: \midiBut, \mode: \push),
 
-// scene: 
-	\sl_1: (\midiType: \cc, \type: \slider, \midiChan: 0, \midiNum:  0, \spec: \midiCC), 
-	\sl_2: (\midiType: \cc, \type: \slider, \midiChan: 0, \midiNum:  1, \spec: \midiCC), 
-	\sl_3: (\midiType: \cc, \type: \slider, \midiChan: 0, \midiNum:  2, \spec: \midiCC), 
-	\sl_4: (\midiType: \cc, \type: \slider, \midiChan: 0, \midiNum:  3, \spec: \midiCC), 
-	\sl_5: (\midiType: \cc, \type: \slider, \midiChan: 0, \midiNum:  4, \spec: \midiCC), 
-	\sl_6: (\midiType: \cc, \type: \slider, \midiChan: 0, \midiNum:  5, \spec: \midiCC), 
-	\sl_7: (\midiType: \cc, \type: \slider, \midiChan: 0, \midiNum:  6, \spec: \midiCC), 
-	\sl_8: (\midiType: \cc, \type: \slider, \midiChan: 0, \midiNum:  7, \spec: \midiCC), 
+// scene:
+\sl: (0..7).collect{ |i|
+	(\midiMsgType: \cc, \type: \slider, \midiChan: 0, \midiNum: i, \spec: \midiCC)
+},
 
-	\kn_1: (\midiType: \cc, \type: \knob, \midiChan: 0, \midiNum: 16, \spec: \midiCC),
-	\kn_2: (\midiType: \cc, \type: \knob, \midiChan: 0, \midiNum: 17, \spec: \midiCC),
-	\kn_3: (\midiType: \cc, \type: \knob, \midiChan: 0, \midiNum: 18, \spec: \midiCC),
-	\kn_4: (\midiType: \cc, \type: \knob, \midiChan: 0, \midiNum: 19, \spec: \midiCC),
-	\kn_5: (\midiType: \cc, \type: \knob, \midiChan: 0, \midiNum: 20, \spec: \midiCC),
-	\kn_6: (\midiType: \cc, \type: \knob, \midiChan: 0, \midiNum: 21, \spec: \midiCC),
-	\kn_7: (\midiType: \cc, \type: \knob, \midiChan: 0, \midiNum: 22, \spec: \midiCC),
-	\kn_8: (\midiType: \cc, \type: \knob, \midiChan: 0, \midiNum: 23, \spec: \midiCC),
+\kn: (16..23).collect{ |i|
+	(\midiMsgType: \cc, \type: \slider, \midiChan: 0, \midiNum: i, \spec: \midiCC)
+},
 
-	\br_1: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 64, \spec: \midiBut, \mode: \push),
-	\br_2: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 65, \spec: \midiBut, \mode: \push),
-	\br_3: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 66, \spec: \midiBut, \mode: \push),
-	\br_4: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 67, \spec: \midiBut, \mode: \push),
-	\br_5: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 68, \spec: \midiBut, \mode: \push),
-	\br_6: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 69, \spec: \midiBut, \mode: \push),
-	\br_7: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 70, \spec: \midiBut, \mode: \push),
-	\br_8: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 71, \spec: \midiBut, \mode: \push),
-	
-	\bm_1: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 48, \spec: \midiBut, \mode: \push),
-	\bm_2: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 49, \spec: \midiBut, \mode: \push),
-	\bm_3: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 50, \spec: \midiBut, \mode: \push),
-	\bm_4: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 51, \spec: \midiBut, \mode: \push),
-	\bm_5: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 52, \spec: \midiBut, \mode: \push),
-	\bm_6: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 53, \spec: \midiBut, \mode: \push),
-	\bm_7: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 54, \spec: \midiBut, \mode: \push),
-	\bm_8: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 55, \spec: \midiBut, \mode: \push),
-	
-	\bs_1: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 32, \spec: \midiBut, \mode: \push),
-	\bs_2: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 33, \spec: \midiBut, \mode: \push),
-	\bs_3: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 34, \spec: \midiBut, \mode: \push),
-	\bs_4: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 35, \spec: \midiBut, \mode: \push),
-	\bs_5: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 36, \spec: \midiBut, \mode: \push),
-	\bs_6: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 37, \spec: \midiBut, \mode: \push),
-	\bs_7: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 38, \spec: \midiBut, \mode: \push),
-	\bs_8: (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 39, \spec: \midiBut, \mode: \push),
-]
+\bt: [(32..39),(48..55),(64..71)].collect{ |xs|
+	xs.collect{ |i|
+		(\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum:  i, \spec: \midiCC)
+	}
+}
+)
