@@ -59,6 +59,12 @@ code::
 k.allElements.select{ |x| x.type == \encoder }
 ::
 
+To perform an action on an incoming event:
+
+code::
+k.elementAt(\kn,1,7).action_({ |el| el.value.postln })
+
+
 To send data back to a device one uses link::Classes/MAbstractElement#value_:: :
 
 k.elementAt(\kn,1,7).value_(0.5)
