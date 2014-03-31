@@ -65,6 +65,20 @@ code::
 k.elementAt(\kn,1,7).action_({ |el| el.value.postln })
 
 
+x = { Saw.ar(\freq.kr(440)) * 0.1 }.play;
+
+k.elementAt(\kn,1,7).action_({ |el| x.set(\freq, el.value.linlin(0.0,1.0,300,1000)) })
+::
+
+If you want to add multiple actions use addAction and removeAction:
+
+code::
+f = { |el| x.set(\freq, el.value.linlin(0.0,1.0,300,1000)) };
+
+k.elementAt(\kn,1,7).addAction(f)
+k.elementAt(\kn,1,7).removeAction(f)
+::
+
 To send data back to a device one uses link::Classes/MAbstractElement#value_:: :
 
 k.elementAt(\kn,1,7).value_(0.5)
