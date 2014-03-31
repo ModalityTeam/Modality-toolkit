@@ -241,8 +241,12 @@ MIDIMKtl : MKtl {
 		});
 	}
 
-	explore { |flag=true|
-		"Using MIDIExplorer - see \n MIDIExplorer.openHelpFile;".postln;
+	explore {
+		"Using MIDIExplorer. (see its Helpfile for Details)".postln;
+		"".postln;
+		"MIDIExplorer started. Wiggle all elements of your controller then".postln;
+		"\tMIDIExplorer.stop;".postln;
+		"\tMIDIExplorer.openDoc;".postln;
 		MIDIExplorer.start(this.srcID);
 	}
 

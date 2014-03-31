@@ -88,4 +88,6 @@ fork{
 )
 ::
 
+SECTION:: Undescribed Controller
 
+Have a controller that is not known to the system? See link::Reference/How_to_create_a_description_file:: on how to set it up.

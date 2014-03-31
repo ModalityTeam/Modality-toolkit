@@ -235,8 +235,8 @@ MKtl : MAbstractKtl { // abstract class
 			deviceDescriptionHierarch = try {
 				path.load;
 			} {
-				"//" + this.class ++ ": - no device description found for %: please make them!\n"
-				.postf(deviceName);
+				"%: - no device description found for %: please make it!\n"
+				.postf(this.class, deviceName);
 				//	this.class.openTester(this);
 			};
 
@@ -250,7 +250,7 @@ MKtl : MAbstractKtl { // abstract class
 			deviceDescription.pairsDo {|key, elem|
 				var foundSpec =  specs[elem[\spec]];
 				if (foundSpec.isNil) {
-					warn("// Mktl - in description %, el %, spec for '%' is missing! please add it with:"
+					warn("Mktl - in description %, el %, spec for '%' is missing! please add it via:"
 						"\nMktl.addSpec( '%', [min, max, warp, step, default]);\n"
 						.format(deviceName, key, elem[\spec], elem[\spec])
 				);
@@ -259,7 +259,7 @@ MKtl : MAbstractKtl { // abstract class
 				elem[\spec] = this.class.specs[elem[\specName]];
 			};
 		}{ // no device file found:
-			warn( "// Mktl could not find a device file for this device" + deviceName + "\n You can start exploring the capabilities of this device with:\n" ++ this.class ++ "(" ++ name ++ ").explore" );
+			warn( "Mktl could not find a device file for device %. You can start exploring the capabilities of it by evaluating:\n\t%(%).explore".format(deviceName, this.class, name.asCompileString) );
 		}
 	}
 
