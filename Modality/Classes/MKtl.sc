@@ -406,4 +406,8 @@ MKtl : MAbstractKtl { // abstract class
 		}
 	}
 
+	allElements {
+		^elementsDict.asArray
+	}
+
 }
