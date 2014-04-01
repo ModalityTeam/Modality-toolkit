@@ -56,7 +56,7 @@ MIDIMKtl('nnkn0').elementsDict.do{ |el| el.action_({ |v| "%: %".format( el.name,
 	[ 10 ! 9, (0..8) ]
 ].collect{ |page|
 	page.flop.collect{ |xs|
-		(\midiMsgType: \cc, \type: \slider, \midiChan: xs[1], \midiNum: xs[0], \spec: \midiCC)
+		(\midiMsgType: \cc, \type: \knob, \midiChan: xs[1], \midiNum: xs[0], \spec: \midiCC)
 	}
 },
 
