@@ -1,4 +1,4 @@
-[
+(
 
 // --------- input elements ----------
 'b1': ('hidUsage': 1, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', spec: \hidBut, mode: \push ),
@@ -27,4 +27,5 @@
 // --------- output elements ----------
 'rumbleR': ('hidUsage': 187, 'hidUsagePage': 1, 'type': 'rumble', 'ioType': 'out', spec: \lin255, mode: \minimum ),
 'rumbleL': ('hidUsage': 49, 'hidUsagePage': 1, 'type': 'rumble', 'ioType': 'out', spec: \lin255, mode: \minimum ),
-];
+
+)
