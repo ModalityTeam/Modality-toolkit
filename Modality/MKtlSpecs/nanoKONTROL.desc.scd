@@ -51,7 +51,7 @@ MIDIMKtl('nnkn0').elementsDict.do{ |el| el.action_({ |v| "%: %".format( el.name,
 
 \kn: [
 	[ (14..22), 0 ! 9 ],
-	[ (57..66),  0 ! 9 ],
+	[ (57..63)++[65,66],  0 ! 9 ],
 	[ (94..97)++(102..106), 0 ! 9 ],
 	[ 10 ! 9, (0..8) ]
 ].collect{ |page|
