@@ -322,6 +322,7 @@ MIDIMKtl : MKtl {
 						\touch, {[this.makeTouchKey(descr[\midiChan])] },
 						\polyTouch, {[this.makePolyTouchKey(descr[\midiChan],descr[\midiNum])] },
 						\bend, {[this.makeBendKey(descr[\midiChan])] },
+						\program, {[this.makeProgramKey(descr[\midiChan])] }
 
 					);
 
@@ -490,9 +491,9 @@ MIDIMKtl : MKtl {
 
 	makeTouch {
 		var typeKey = \touch;
-		var touchInfo = MIDIAnalysis.checkTouch(deviceDescription);
-		var touchChan = touchInfo[\midiChan];
-		var listenChan =if (touchChan.isKindOf(SimpleNumber)) { touchChan };
+		var info = MIDIAnalysis.checkForMultiple(deviceDescription, typeKey, \midiChan);
+		var chan = info[\midiChan];
+		var listenChan =if (chan.isKindOf(SimpleNumber)) { chan };
 
 		"make % func\n".postf(typeKey);
 
@@ -558,9 +559,9 @@ MIDIMKtl : MKtl {
 	// should work, can't test now.
 	makeBend {
 		var typeKey = \bend;
-		var bendInfo = MIDIAnalysis.checkBend(deviceDescription);
-		var bendChan = bendInfo[\midiChan];
-		var listenChan =if (bendChan.isKindOf(SimpleNumber)) { bendChan };
+		var info = MIDIAnalysis.checkForMultiple(deviceDescription, typeKey, \midiChan);
+		var chan = info[\midiChan];
+		var listenChan =if (chan.isKindOf(SimpleNumber)) { chan };
 
 		//"make % func\n".postf(typeKey);
 
@@ -593,7 +594,39 @@ MIDIMKtl : MKtl {
 	}
 
 	makeProgram {
-		//"makeProgram".postln;
+		var typeKey = \program;
+		var info = MIDIAnalysis.checkForMultiple(deviceDescription, typeKey, \midiChan);
+		var chan = info[\midiChan];
+		var listenChan =if (chan.isKindOf(SimpleNumber)) { chan };
+
+		//"make % func\n".postf(typeKey);
+
+		responders.put(typeKey,
+			MIDIFunc.program({ |value, chan, src|
+				// look for per-key functions
+				var hash = this.makeProgramKey(chan);
+				var elName = hashToElNameDict[hash];
+				var el = elementHashDict[hash];
+
+				midiRawAction.value(\program, src, chan, value);
+
+				if (el.notNil) {
+					el.rawValueAction_(value);
+					if(verbose) {
+						"% - % > % | type: program, midiNum:%, chan:%, src:%"
+						.format(this.name, el.name, el.value.asStringPrec(3), value, chan, src).postln
+					};
+				}{
+					"MIDIMKtl( % ) : program element found for chan % !\n"
+					" - add it to the description file, e.g.: "
+					"\\<name>: (\\midiMsgType: \\program, \\type: ??', \\midiChan: %,"
+					"\\spec: \\midiProgram).\n\n"
+					.postf(name, chan, chan);
+				};
+
+
+			}, chan: listenChan, srcID: srcID).permanent_(true);
+		);
 	}
 
 	makeRespFuncs { |msgTypes|

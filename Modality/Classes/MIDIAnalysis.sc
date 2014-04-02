@@ -90,16 +90,9 @@ results = results ++ [
 		^types.asArray;
 	}
 
-	*checkTouch { |devDesc|
-		var touchEls = devDesc.select { |el, i| (i.odd and: { el[\midiMsgType] == \touch }) };
-		var touchChan =  this.compressInfo(touchEls, \midiChan);
-		^(channel: touchChan, numEls: touchEls.size);
-	}
-
-	// not tested yet
-	*checkBend { |devDesc|
-		var touchEls = devDesc.select { |el, i| (i.odd and: { el[\midiMsgType] == \bend }) };
-		var touchChan =  this.compressInfo(touchEls, \midiChan);
+	*checkForMultiple { |devDesc, typeToFilterBy, dictKeyToCompress|
+		var touchEls = devDesc.select { |el, i| (i.odd and: { el[\midiMsgType] == typeToFilterBy }) };
+		var touchChan =  this.compressInfo(touchEls, dictKeyToCompress);
 		^(channel: touchChan, numEls: touchEls.size);
 	}
 }
