@@ -9,18 +9,28 @@ The first step is to discover which devices are available for use:
 
 code::
 (
-MKtl.find
+MIDIMKtl.find
 )
 ::
 
 This will post a description of all the devices available in Modality. Each line is a MIDIMKtl(...)  or HIDMKtl(...) followed by the name of that device in comments.
 
-Once you find a device you want to use, copy the MIDIMKtl(...) or HIDMKtl(...) line from the post window and assign it to a variable:
+Once you find a device you want to use, copy the MIDIMKtl(...) or HIDMKtl(...) line from the post window and assign it to a variable. You can ignore the numbers if you only have one controller.
 
 code::
 (
-k = MIDIMKtl('nnkn20', 1310720, 1310720);
+k = MIDIMKtl('nnkn20');
 )
+::
+
+If you don't have the nanoKontrol2 controller you can make a virtual vesion of it for this tutorial:
+
+code::
+(
+k = MIDIMKtl.make('fakeNano','nanoKONTROL2');
+k.gui
+)
+
 ::
 
 You can see the output from all elements by doing
