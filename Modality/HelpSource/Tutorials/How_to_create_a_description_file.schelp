@@ -14,18 +14,19 @@ section:: MIDI
 
 subsection:: Explore your device
 
-
-
 If the device is a MIDI device, evaluate
 code::
-MIDIIn.connectAll; // remember the name of the device posted here, it is needed later
+// remember the name of the device posted here, it is needed later
+MIDIIn.connectAll;
 MIDIExplorer.start;
 ::
+
 Now, move every element on your controller.
 Make sure to go through all of them and move them in all their degrees of freedom.
-Do this in an order that you can remember later bacause ::MIDIExplorer:: saves the data in the order you wiggle the knobs.
+Do this in an order that you can remember later because code::MIDIExplorer:: saves the data in the order you wiggle the knobs.
 
 warning::Make sure that no other device is sending any data.::
+
 By evaluating the following lines, the explorer is stopped.
 code::
 MIDIExplorer.stop;
@@ -49,10 +50,11 @@ code::
 '_elName_0_005_': ('midiType': 'noteOn', 'type': 'pianoKey', 'chan': 0, 'midiNote':  5, 'spec': 'midiNote'),
 ::
 
-subsection:: Build description file from raw data
+subsection:: Build a description file from raw data
 
-A description file has the following format:
+A description file has the following format (see link::Reference/MKtl_description_files:: for details):
 
+code::
 (
 \identifier: (key: value, key: value, ... ),
 \identifier: (key: value, key: value, ... ),
@@ -63,6 +65,7 @@ A description file has the following format:
 	(key: value, key: value, ... ),
 ]
 )
+::
 
 note::Naming conventions for identifiers are
 code::kn:: for knobs,

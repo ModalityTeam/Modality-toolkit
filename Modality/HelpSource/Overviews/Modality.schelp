@@ -1,6 +1,7 @@
 title:: Modality
 summary:: Interfacing with the outside world made easy.
 categories:: Libraries>Modality, External Control
+related:: Overviews/Modality, Classes/MKtl
 
 Section:: Introduction
 
@@ -17,6 +18,13 @@ The Modality project was initiated by Jeff Carey and Bjoernar Habbestad, and col
 
 Acknowledgements:
 Modality and its research meetings have kindly been supported by BEK in Bergen, Norway, and STEIM, Amsterdam.
+
+section:: Tutorials
+
+LIST::
+##link::Tutorials/ModalityTutorial::
+##link::Tutorials/How_to_create_a_description_file::
+::
 
 SECTION:: Overview
 
