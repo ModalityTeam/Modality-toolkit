@@ -31,8 +31,7 @@ FuncChain : FunctionList { // a named FunctionList
 		var index = names.indexOf(name);
 		^if (index.notNil, { array[index] }, nil);
 	}
-	// add supports anonymous adding
-	// remove
+	// add supports anonymous adding, as in FunctionList
 	add { |name, func, addAction, otherName|
 		if (name.isKindOf(Symbol)) {
 			if ( addAction.isNil ){
@@ -45,6 +44,7 @@ FuncChain : FunctionList { // a named FunctionList
 		};
 	}
 
+	// remove supports anonymous removing, as in FunctionList
 	remove { |func|
 		var where = array.indexOf(func);
 		if (where.notNil) {	this.remoceAt(where); }
@@ -59,11 +59,13 @@ FuncChain : FunctionList { // a named FunctionList
 
 	addFunc { arg ... functions;
 		super.addFunc(functions);
-		if(flopped) { Error("cannot add a function to a flopped FunctionList").throw };
+		if(flopped) {
+			Error("cannot add a function to a flopped FunctionList").throw
+		};
 		names = names.addAll(nil ! functions.size);
 	}
 
-	// don't reduce to single func or nil
+	// don't reduce to single func or nil, keep the empty FuncChain
 	removeFunc { arg function;
 		this.remove(function)
 	}
