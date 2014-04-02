@@ -398,7 +398,7 @@ MIDIMKtl : MKtl {
 
 	makeCC {
 		var typeKey = \cc;
-		"make % func\n".postf(typeKey);
+		//"make % func\n".postf(typeKey);
 		responders.put(typeKey,
 			MIDIFunc.cc({ |value, num, chan, src|
 				var hash = this.makeCCKey(chan, num);
@@ -427,7 +427,7 @@ MIDIMKtl : MKtl {
 
 	makeNoteOn {
 		var typeKey = \noteOn;
-		"make % func\n".postf(typeKey);
+		//"make % func\n".postf(typeKey);
 		responders.put(typeKey,
 			MIDIFunc.noteOn({ |vel, note, chan, src|
 				// look for per-key functions
@@ -457,7 +457,7 @@ MIDIMKtl : MKtl {
 
 	makeNoteOff {
 		var typeKey = \noteOff;
-		"make % func\n".postf(typeKey);
+		//"make % func\n".postf(typeKey);
 		responders.put(typeKey,
 			MIDIFunc.noteOff({ |vel, note, chan, src|
 				// look for per-key functions
@@ -521,7 +521,7 @@ MIDIMKtl : MKtl {
 	}
 
 	makePolytouch {
-		"makePolytouch".postln;
+		//"makePolytouch".postln;
 	}
 
 	// should work, can't test now.
@@ -562,7 +562,7 @@ MIDIMKtl : MKtl {
 	}
 
 	makeProgram {
-		"makeProgram".postln;
+		//"makeProgram".postln;
 	}
 
 	makeRespFuncs { |msgTypes|
