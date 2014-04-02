@@ -326,8 +326,6 @@ MIDIMKtl : MKtl {
 							hash, elementsDict[elName];
 						)
 					};
-					//"doing hash".postln;
-					//elementHashDict.postln;
 				} {
 					"MIDIMKtl:prepareElementHashDict (%): identifier in midiType for item % not known. Please correct."
 					.format(this, elName).error;

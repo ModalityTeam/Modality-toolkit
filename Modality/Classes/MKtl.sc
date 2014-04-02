@@ -372,10 +372,6 @@ MKtl : MAbstractKtl { // abstract class
 		^(args[..n-2].collect({ |x| x.asString++"_"}).reduce('++')++args.last).asSymbol
 	}
 
-	elementAtOld { |...args|
-		^elementsDict.at(this.makeElementName(args))
-	}
-
 	elementAt { |...args|
 		^elements.deepAt1(*args)
 	}
