@@ -1,4 +1,4 @@
-MktlGUI {
+MKtlGUI {
 
 	classvar <>makeElementDict;
 
@@ -136,7 +136,7 @@ MktlGUI {
 + MKtl {
 
 	gui { |parent, bounds|
-		^MktlGUI( parent, bounds, this );
+		^MKtlGUI( parent, bounds, this );
 	}
 
 }
