@@ -8,7 +8,7 @@
 
 MIDIMKtl : MKtl {
 
-	classvar <allMsgTypes = #[ \noteOn, \noteOff, \cc, \touch, \polytouch, \bend, \program ];
+	classvar <allMsgTypes = #[ \noteOn, \noteOff, \cc, \touch, \polyTouch, \bend, \program ];
 
 	classvar <initialized = false;
 	classvar <sourceDeviceDict;         //      ('deviceName': MIDIEndPoint, ... )
@@ -35,6 +35,7 @@ MIDIMKtl : MKtl {
 	var <responders;
 
 	var <exploreFuncs;
+	var <msgTypes;
 
 	    // open all ports
 	*initMIDI {|force= false|
@@ -306,7 +307,7 @@ MIDIMKtl : MKtl {
 			};
 
 			if( noMidiChan.not || ( (isTouch && noMidiNum) ) ){
-				if( [\noteOn,\noteOff, \noteOnOff, \cc, \touch].includes( descr[\midiMsgType] ) ) {
+				if( allMsgTypes.includes( descr[\midiMsgType] ) ) {
 
 					hashs = descr[\midiMsgType].switch(
 						\noteOn, {[this.makeNoteOnKey(descr[\midiChan], descr[\midiNum])]},
@@ -318,7 +319,10 @@ MIDIMKtl : MKtl {
 							]
 						},
 						\cc, {[this.makeCCKey(descr[\midiChan], descr[\midiNum])]},
-						\touch, {[this.makeTouchKey(descr[\midiChan])] }
+						\touch, {[this.makeTouchKey(descr[\midiChan])] },
+						\polyTouch, {[this.makePolyTouchKey(descr[\midiChan],descr[\midiNum])] },
+						\bend, {[this.makeBendKey(descr[\midiChan])] },
+
 					);
 
 					hashs.do{ |hash|
@@ -520,8 +524,35 @@ MIDIMKtl : MKtl {
 		);
 	}
 
-	makePolytouch {
+	makePolyTouch {
 		//"makePolytouch".postln;
+		var typeKey = \polyTouch; //decide on polyTouch vs polytouch
+		//"make % func\n".postf(typeKey);
+		responders.put(typeKey,
+			MIDIFunc.polytouch({ |vel, note, chan, src|
+				// look for per-key functions
+				var hash = this.makePolyTouchKey(chan, note);
+				var elName = hashToElNameDict[hash];
+				var el = elementHashDict[hash];
+
+				midiRawAction.value(\polyTouch, src, chan, note, vel);
+
+				if (el.notNil) {
+					el.rawValueAction_(vel);
+					if(verbose) {
+						"% - % > % | type: polyTouch, vel:%, midiNote:%,  chan:%, src:%"
+						.format(this.name, el.name, el.value.asStringPrec(3), vel, note, chan, src).postln
+					};
+				}{
+					"MIDIMKtl( % ) : polyTouch element found for chan %, note % !\n"
+					" - add it to the description file, e.g.: "
+					"\\<name>: (\\midiMsgType: \\polyTouch, \\type: \\keytouch, \\midiChan: %,"
+					"\\midiNum: %, \\spec: \\midiVel).\n\n"
+						.postf(name, chan, note, chan, note);
+				}
+
+			}, srcID: srcID).permanent_(true);
+		);
 	}
 
 	// should work, can't test now.
@@ -531,7 +562,7 @@ MIDIMKtl : MKtl {
 		var bendChan = bendInfo[\midiChan];
 		var listenChan =if (bendChan.isKindOf(SimpleNumber)) { bendChan };
 
-		"make % func\n".postf(typeKey);
+		//"make % func\n".postf(typeKey);
 
 		responders.put(typeKey,
 			MIDIFunc.bend({ |value, chan, src|
@@ -569,14 +600,14 @@ MIDIMKtl : MKtl {
 		msgTypes = MIDIAnalysis.checkMsgTypes(deviceDescription);
 		msgTypes = msgTypes ? allMsgTypes;
 		responders = ();
-		msgTypes.postcs.do { |msgType|
+		msgTypes.do { |msgType|
 			switch(msgType,
 				\cc, { this.makeCC },
 				\noteOn, { this.makeNoteOn },
 				\noteOff, { this.makeNoteOff },
 				\noteOnOff, { this.makeNoteOn.makeNoteOff },
 				\touch, { this.makeTouch },
-				\polytouch, { this.makePolytouch },
+				\polyTouch, { this.makePolyTouch },
 				\bend, { this.makeBend },
 				\program, { this.makeProgram }
 			);
@@ -593,18 +624,9 @@ MIDIMKtl : MKtl {
 	 	}
 	}
 
-		// not working like this anymore (relied onFuncChain)
-		// replace with a special verbose action
 	verbose_ {|value=true|
 		verbose = value;
 
-//		value.if({
-//			elementHashDict.do{|item| item.addFunc(\verbose, { |element|
-//					[element.source, element.name, element.value].postln;
-//			})}
-//		}, {
-//			elementHashDict.do{|item| item.removeFunc(\verbose)}
-//		})
 	}
 
 		// utilities for fast lookup :
@@ -613,7 +635,7 @@ MIDIMKtl : MKtl {
 	*ccKeyToChanCtl { |ccKey| ^ccKey.asString.drop(2).split($_).asInteger }
 	*makeNoteOnKey { |chan, note| ^("non_%_%".format(chan, note)).asSymbol }
 	*makeNoteOffKey { |chan, note| ^("nof_%_%".format(chan, note)).asSymbol }
-	*makePolytouchKey { |chan, note| ^("pt_%_%".format(chan, note)).asSymbol }
+	*makePolyTouchKey { |chan, note| ^("pt_%_%".format(chan, note)).asSymbol }
     *noteKeyToChanNote { |noteKey| ^noteKey.asString.drop(2).split($_).asInteger }
 
 	*makeTouchKey { |chan| ^("t_%".format(chan)).asSymbol }
@@ -625,7 +647,7 @@ MIDIMKtl : MKtl {
 	ccKeyToChanCtl { |ccKey| ^ccKey.asString.drop(2).split($_).asInteger }
 	makeNoteOnKey { |chan, note| ^("non_%_%".format(chan, note)).asSymbol }
 	makeNoteOffKey { |chan, note| ^("nof_%_%".format(chan, note)).asSymbol }
-	makePolytouchKey { |chan, note| ^("pt_%_%".format(chan, note)).asSymbol }
+	makePolyTouchKey { |chan, note| ^("pt_%_%".format(chan, note)).asSymbol }
 	noteKeyToChanNote { |noteKey| ^noteKey.asString.drop(2).split($_).asInteger }
 
 	makeTouchKey { |chan| ^("t_%".format(chan)).asSymbol }

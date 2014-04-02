@@ -99,13 +99,6 @@ MAbstractKtl {
 
 	verbose_ {|value=true|
 		verbose = value;
-		value.if({
-			elementsDict.do{ |item| item.funcChain.addFirst(\verbose, { |elem|
-					[elem.source.name, elem.name, elem.value].postln;
-			})}
-		}, {
-			elementsDict.do{|item| item.funcChain.removeAt(\verbose)}
-		})
 	}
 
 	//also can be used to simulate a non present hardware
