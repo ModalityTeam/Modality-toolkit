@@ -19,10 +19,10 @@ m.elementAt(\kn, 1).action_({ |el| "el %: %\n".postf(el.name, el.value); });
 */
 (
 
-keyOn: (29..83).collect{|padNum| (\midiMsgType: \noteOn, \type: \pad, midiChan: 0,
+keyOn: (29..83).collect{|padNum| (\midiMsgType: \noteOn, \type: \key, midiChan: 0,
 		\midiNum: padNum, \spec: \midiNote)
 },
-\keyOff: (29..83).collect{|padNum| (\midiMsgType: \noteOff, \type: \pad, midiChan: 0,
+\keyOff: (29..83).collect{|padNum| (\midiMsgType: \noteOff, \type: \key, midiChan: 0,
 		\midiNum: padNum, \spec: \midiNote)
 },
 
@@ -54,12 +54,12 @@ keyOn: (29..83).collect{|padNum| (\midiMsgType: \noteOn, \type: \pad, midiChan: 
 },
 
 \btArrUp: 		(\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 15, \spec: \midiBut, \mode: \push),
-\btArrDown: 		(\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 16, \spec: \midiBut, \mode: \push),
+\btArrDown: 	(\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 16, \spec: \midiBut, \mode: \push),
 \btJoin: 		(\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 17, \spec: \midiBut, \mode: \push),
 
 \btRec: 		(\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 38, \spec: \midiBut, \mode: \push),
 \btPlay: 		(\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 39, \spec: \midiBut, \mode: \push),
 \btStop: 		(\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 40, \spec: \midiBut, \mode: \push),
 
-'bend': ('midiMsgType': 'bend', 'type': 'bender', 'midiChan': 0, 'midiNum':  0,'spec': 'midiBend')
+'bend': 		('midiMsgType': 'bend', 'type': 'bender', 'midiChan': 0, 'midiNum':  0,'spec': 'midiBend')
 )
