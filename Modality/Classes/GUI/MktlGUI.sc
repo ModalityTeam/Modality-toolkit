@@ -76,7 +76,6 @@ MktlGUI {
 
 			mktl.prTraverse.(
 				item, [], { |a,b|
-					if( b.isNumber ) { b = b+1 };
 					a.asCollection.copy.add( b );
 				}, { |state, item|
 					var view, getValueFunc, value;
