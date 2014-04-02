@@ -288,6 +288,10 @@ MKtl : MAbstractKtl { // abstract class
 		^f
 	}
 
+	explore{ |mode=true|
+		this.subclassResponsibility(thisMethod)
+	}
+
 	prUnderscorify {
 		^{ |a,b|
 			var c = if(b.isNumber){b+1}{b};
