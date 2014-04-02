@@ -1,0 +1,199 @@
+title:: Modality Tutorial
+summary:: Learning how to use Modality
+categories:: Libraries>Modality, External Control
+
+
+section:: Discovering and initializing devices
+
+The first step is to discover which devices are available for use:
+
+code::
+(
+MKtl.find
+)
+::
+
+This will post a description of all the devices available in Modality. Each line is a MIDIMKtl(...)  or HIDMKtl(...) followed by the name of that device in comments.
+
+Once you find a device you want to use, copy the MIDIMKtl(...) or HIDMKtl(...) line from the post window and assign it to a variable:
+
+code::
+(
+k = MIDIMKtl('nnkn20', 1310720, 1310720);
+)
+::
+
+You can see the output from all elements by doing
+
+code::
+//turn it on
+k.verbose_(true)
+
+//turn it off
+k.verbose_(true)
+::
+
+section:: Identifying elements
+
+Each physical control on the device is mapped to an MKtlElement (knobs, sliders, buttons, etc). To discover which elements are available we should explore the "elements" data structure in the MKtl. This structure is composed of a base dictionary which can contain nested arrays where the final node is an MKtlElement. The structure of the arrays mimics the spatial organization of the controls on the device, for instance according to rows and columns.
+
+
+code::
+
+//all elements in a dictionary, possibly with nested arrays
+k.elements
+
+//all the base keys
+//some are individual elements others are arrays of elements (or arrays of arrays, etc).
+k.elements.keys
+
+//the play button
+k.elements[\play]
+
+//the first slider
+k.elements[\sl][0]
+
+//all sliders in an array
+k.elements[\sl]
+
+//the third knob
+k.elements[\kn][2]
+
+//the button on row 2 and column 5
+//buttons are organized first by rows and then columns.
+k.elements[\bt][1][4]
+
+//all buttons on row 2
+k.elements[\bt][1]
+
+//all buttons on column 5
+k.elements[\bt].flop[4]
+
+//flopping switches rows and columns
+(
+[
+	[1,2],
+	[3,4]
+].flop.postln
+)
+
+//If the controller had scenes, the button on row 2 and column 5 of scene 4 would be at
+//the order would be scene -> row -> column
+k.elements[\bt][3][1][4]
+
+::
+
+section:: Assigning actions
+
+Actions are assigned using either the "action_" or the "addAction" and "removeAction" methods of MKtlElement. These methods take a function as argument which receives one argument, the MKtlElement. To extract the current value of the element, one should call ".value". The value range of MKtlElement is [0,1].
+
+code::
+
+//Add an action to the third knob
+k.elements[\kn][2].action_({ |mktlElement| mktlElement.value.postln })
+
+//to remove the action
+k.elements[\kn][2].reset
+::
+
+An example with a SynthDef:
+
+For SynthDef building see for instance the "Tour of UGens" overview in the help system under "Guides".
+
+code::
+
+(
+SynthDef(\blippy, {
+	var out = Blip.ar(\freq.kr(440,0.1), \numHarmonics.kr(100,0.1), \amp.kr(1.0,0.1) ) * 0.5;
+	Out.ar(0, Pan2.ar(out, \pan.kr(0,0.1) ) )
+}).add
+)
+
+
+
+
+(
+//start it
+x = Synth(\blippy, [\freq, 440, \numHarmonics, 100, \amp, 0.5, \pan, 0]);
+
+//clear all actions first
+k.reset;
+
+//knob 1 -> amplitude
+k.elements[\kn][0].action_({ |mktlElement| x.set(\amp, mktlElement.value) });
+
+//knob 2 -> pan
+k.elements[\kn][1].action_({ |mktlElement| x.set(\pan, mktlElement.value.linlin(0.0, 1.0, -1.0, 1.0) ) });
+
+//slider 1 -> frequency
+k.elements[\sl][0].action_({ |mktlElement| x.set(\freq, mktlElement.value.linlin(0.0, 1.0, 200, 2000) ) });
+
+//slider 2 -> number of harmonics
+k.elements[\sl][1].action_({ |mktlElement| x.set(\numHarmonics, mktlElement.value.linexp(0.0, 1.0, 1, 200) ) });
+
+)
+::
+
+To clear all actions of the MKtl use reset:
+
+code::
+k.reset
+::
+
+To assign multiple actions to the same element use link::Classes/MKtlElement#addAction:: and link::Classes/MKtlElement#removeAction:: :
+
+
+code::
+(
+k.elements[\kn][0].addAction({ |mktlElement| ("1 :"++mktlElement.value).postln });
+k.elements[\kn][0].addAction({ |mktlElement| ("2 :"++mktlElement.value).postln });
+)
+//clear all
+k.elements[\kn][0].reset
+::
+
+To remove actions, the functions should be first assigned to a variable:
+code::
+(
+f = { |mktlElement| ("1 :"++mktlElement.value).postln };
+g = { |mktlElement| ("2 :"++mktlElement.value).postln };
+k.elements[\kn][0].addAction(f);
+k.elements[\kn][0].addAction(g);
+)
+
+//remove first action
+k.elements[\kn][0].removeAction(f);
+
+//clear all
+k.elements[\kn][0].reset
+::
+
+code::
+
+(
+//start it
+x = Synth(\blippy, [\freq, 440, \numHarmonics, 100, \amp, 0.5, \pan, 0]);
+
+//clear all actions first
+k.reset;
+
+//knob 1 -> amplitude and pan
+~action1 = { |mktlElement| x.set(\amp, mktlElement.value) };
+~action2 = { |mktlElement| x.set(\pan, mktlElement.value.linlin(0.0, 1.0, -1.0, 1.0) ) };
+k.elements[\kn][0].addAction(~action1);
+k.elements[\kn][0].addAction(~action2);
+
+//slider 1 -> frequency and number of harmonics
+~action3 = { |mktlElement| x.set(\freq, mktlElement.value.linlin(0.0, 1.0, 200, 2000) ) };
+~action4 = { |mktlElement| x.set(\numHarmonics, mktlElement.value.linlin(0.0, 1.0, 10, 300) ) };
+k.elements[\sl][0].addAction(~action3);
+k.elements[\sl][0].addAction(~action4);
+)
+
+//remove amp action and frequency action:
+(
+k.elements[\kn][0].removeAction(~action1);
+k.elements[\sl][0].removeAction(~action3);
+)
+::
+
