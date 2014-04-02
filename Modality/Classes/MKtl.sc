@@ -1,31 +1,26 @@
 // honouring Jeff's MKeys by keeping the M for prototyping the new Ktl
 
 
-// TODO:
-//	default deviceDescription files in quarks, custom ones in userAppSupportDir
-//		(Platform.userAppSupportDir +/+ "MKtlSpecs").standardizePath,
-//		if (deviceDescriptionFolders[0].pathMatch.isEmpty) {
-//			unixCmd("mkdir \"" ++ deviceDescriptionFolder ++ "\"");
-//		};
-
 MKtl : MAbstractKtl { // abstract class
 	classvar <deviceDescriptionFolder; //path of MKtlSpecs folder
 	classvar <allDevDescs; // contains the identity dictionary in index.desc.scd
 	//i.e. (BCR2000 -> ( 'osx': ( 'device': BCR2000 ), 'device': BCR2000, 'protocol': midi, 'file': BCR2000.desc.scd ))
-	classvar <all; // will hold all instances of MKtl
+	classvar <all; // holds all instances of MKtl
 	classvar <specs; // ( 'specName': ControlSpec, ...) -> all specs
 	classvar <allAvailable; // ( 'midi': List['name1',... ], 'hid': List['name1',... ], ... )
 
+	// tree structure composed of dictionaries and arrays with a description of all the elements on the device.
+	// read from an external file.
+	var <deviceDescriptionHierarch;
+
 	// an array of keys and values with a description of all the elements on the device.
-	// generated from the hierarchical description read from the file
+	// generated from the hierarchical description read from the file.
 	var <deviceDescription;
 	                    //of type: [ 'elemName', ( 'mode': Symbol, 'chan': Int, 'type': Symbol, 'specName': Symbol,
                         //'midiMsgType': Symbol, 'spec':ControlSpec, 'ccNum': Int )
 	                    // i.e. [ prA1, ( 'mode': toggle, 'chan': 0, 'type': button, 'specName': midiBut,
                         //'midiMsgType': cc, 'spec': a ControlSpec(0, 127, 'linear', 127, 0, ""), 'ccNum': 105 )
-	// a tree like data structure composed of dictionaries and arrays with a description of all the elements on the device.
-	// is read in from an external file.
-	var <deviceDescriptionHierarch;
+
 
 	//var <>recordFunc; // what to do to record incoming control changes
 
@@ -293,6 +288,10 @@ MKtl : MAbstractKtl { // abstract class
 		^f
 	}
 
+	explore{ |mode=true|
+		this.subclassResponsibility(thisMethod)
+	}
+
 	prUnderscorify {
 		^{ |a,b|
 			var c = if(b.isNumber){b+1}{b};
@@ -375,10 +374,6 @@ MKtl : MAbstractKtl { // abstract class
 	makeElementName { |args|
 		var n = args.size;
 		^(args[..n-2].collect({ |x| x.asString++"_"}).reduce('++')++args.last).asSymbol
-	}
-
-	elementAtOld { |...args|
-		^elementsDict.at(this.makeElementName(args))
 	}
 
 	elementAt { |...args|

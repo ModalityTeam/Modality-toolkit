@@ -70,13 +70,13 @@ MIDIExplorer {
 
 		var num, chan;
 
-		var str = "[";
+		var str = "(";
 
 		if (observeDict[\noteOn].notEmpty) {
 			str = str + "\n// ------ noteOn -------------";
 			observeDict[\noteOn].sortedKeysValuesDo { |key, val|
 				#chan, num = key.split($_).collect(_.asInteger);
-				str = str + "\n'_elName_%_': ('midiMsgType': 'noteOn', 'type': 'pianoKey', 'midiChan': %, 'midiNum':  %, 'spec': 'midiNote'),"
+				str = str + "\n'_elName_%_': ('midiMsgType': 'noteOn', 'type': 'key', 'midiChan': %, 'midiNum':  %, 'spec': 'midiNote'),"
 					.format(key, chan, num);
 			};
 		};
@@ -87,7 +87,7 @@ MIDIExplorer {
 			str = str + "\n\n// ---------noteOff ----------";
 			observeDict[\noteOff].sortedKeysValuesDo { |key, val|
 				#chan, num = key.split($_).collect(_.asInteger);
-				str = str + "\n'_elName_%_': ('midiMsgType': 'midiNoteOff', 'type': 'pianoKey', 'midiChan': %, 'midiNum':  %,'spec': 'midiNote'),"
+				str = str + "\n'_elName_%_': ('midiMsgType': 'midiNoteOff', 'type': 'key', 'midiChan': %, 'midiNum':  %,'spec': 'midiNote'),"
 				.format(key, chan, num);
 			};
 		};
@@ -97,7 +97,7 @@ MIDIExplorer {
 			str = str + "\n\n// ------ cc -------------";
 			observeDict[\cc].sortedKeysValuesDo { |key, val|
 				#chan, num = key.split($_).collect(_.asInteger);
-				str = str + "\n'_elName_%_': ('midiMsgType': 'cc', 'type': '_slider_', 'midiChan': %, 'midiNum':  %,'spec': 'midiCC'),"
+				str = str + "\n'_elName_%_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': %, 'midiNum':  %,'spec': 'midiCC'),"
 					.format(key, chan, num);
 			};
 		};
@@ -127,7 +127,9 @@ MIDIExplorer {
 			};
 		};
 
-		str = str + "\n];";
+		str = str + "\n";
+
+		str = str + ");";
 
 
 		if (includeSpecs) {

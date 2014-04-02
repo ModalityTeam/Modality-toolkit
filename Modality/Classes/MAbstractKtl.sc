@@ -89,13 +89,6 @@ MAbstractKtl {
 		elementsDict.do( _.reset )
 	}
 
-	// element access - support polyphonic name lists.
-	at { |elementKey|
-		//we can't distinguis [\kn1,\kn2] from [\kn,1]
-		//so [[\kn,1]] must be used instead
-		^elementsDict.atKeys( elementKey.collectOrApply( this.prArgToElementKey(_) ) )
-	}
-
 	prArgToElementKey { |argm|
 		//argm is either a symbol, a string or an array
 		^switch( argm.class)

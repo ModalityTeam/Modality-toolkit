@@ -31,37 +31,40 @@ FuncChain : FunctionList { // a named FunctionList
 		var index = names.indexOf(name);
 		^if (index.notNil, { array[index] }, nil);
 	}
+
 	// add supports anonymous adding, as in FunctionList
 	add { |name, func, addAction, otherName|
 		if (name.isKindOf(Symbol)) {
-			if ( addAction.isNil ){
+			if ( addAction.notNil ){
+				this.perform( addAction, name, func, otherName );
+			} {
 				this.put(name, func);
 			};
-			this.perform( addAction, name, func, otherName );
 		} {
 			// anonymously add
-			this.put(nil, name);
+			this.put(nil, func);
 		};
 	}
 
 	// remove supports anonymous removing, as in FunctionList
 	remove { |func|
 		var where = array.indexOf(func);
-		if (where.notNil) {	this.remoceAt(where); }
+		if (where.notNil) {	this.removeAtIndex(where); }
 	}
 
 	removeAt { |name|
 		var index;
-		if (name.isNil) { ^this }; // not allowed do this anonymously
+		if (name.isNil) { ^this }; // not allowed to removeAt(nil)
 		index = names.indexOf(name);
 		^if (index.notNil) { this.removeAtIndex(index) } { nil };
 	}
 
+	// support anonymous addFunc and removeFunc
 	addFunc { arg ... functions;
-		super.addFunc(functions);
 		if(flopped) {
 			Error("cannot add a function to a flopped FunctionList").throw
 		};
+		super.addFunc(functions);
 		names = names.addAll(nil ! functions.size);
 	}
 
@@ -115,50 +118,49 @@ FuncChain : FunctionList { // a named FunctionList
 
 	replaceAt { |name, func, otherName|
 		var index = names.indexOf(otherName);
-		this.removeAt(name);
-		if (index.notNil) {
+ 		if (index.notNil) {
 			this.putAtIndex(index, name, func)
 		} { 							// add if absent
 			warn("FuncChain:replaceAt - otherName % not present!\n adding to tail.".format(otherName, name));
 			this.put(name, func)
 		};
 	}
-			// later
-//	moveLast { |name|
-//		var func = this.at(name);
-//		if (func.isNil) {
-//			warn("FuncChain:moveLast - name % not present.\n".format(name));
-//		} {
-//			this.addLast(name, func)
-//		}
-//	}
-//
-//	moveFirst { |name|
-//		var func = this.at(name);
-//		if (func.isNil) {
-//			warn("FuncChain:moveFirst - name % not present.\n".format(name));
-//		} {
-//			this.addFirst(name, func)
-//		}
-//	}
-//
-//	moveAfter { |name, otherName|
-//		var func = this.at(name);
-//		if (func.isNil) {
-//			warn("FuncChain:moveLast - name % not present.\n".format(name));
-//		} {
-//			this.addAfter(name, func, otherName)
-//		}
-//	}
-//
-//	moveLast { |name|
-//		var func = this.at(name);
-//		if (func.isNil) {
-//			warn("FuncChain:moveLast - name % not present.\n".format(name));
-//		} {
-//			this.addLast(name, func)
-//		}
-//	}
+			// move within funcchain
+	moveFirst { |name|
+		var func = this.removeAt(name);
+		if (func.isNil) {
+			warn("FuncChain:moveFirst - name % not present.\n".format(name));
+			^this;
+		};
+ 		this.addFirst(name, func);
+	}
+
+	moveLast { |name|
+		var func = this.removeAt(name);
+		if (func.isNil) {
+			warn("FuncChain:moveLast - name % not present.\n".format(name));
+			^this;
+		};
+ 		this.addLast(name, func);
+	}
+
+	moveAfter { |name, otherName|
+		var func = this.removeAt(name);
+		if (func.isNil) {
+			warn("FuncChain:moveAfter - name % not present.\n".format(name));
+			^this;
+		};
+		this.addAfter(name, func, otherName);
+	}
+
+	moveBefore { |name, otherName|
+		var func = this.removeAt(name);
+		if (func.isNil) {
+			warn("FuncChain:moveBefore - name % not present.\n".format(name));
+			^this;
+		};
+ 		this.addBefore(name, func, otherName)
+ 	}
 
 		// internal methods
 	putAtIndex { |index, name, func|

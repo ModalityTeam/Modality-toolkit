@@ -20,7 +20,7 @@
 },
 
 \kn: (16..23).collect{ |i|
-	(\midiMsgType: \cc, \type: \slider, \midiChan: 0, \midiNum: i, \spec: \midiCC)
+	(\midiMsgType: \cc, \type: \knob, \midiChan: 0, \midiNum: i, \spec: \midiCC)
 },
 
 \bt: [(32..39),(48..55),(64..71)].collect{ |xs|

@@ -163,7 +163,7 @@ MKtlElement : MAbstractElement{
 		action = action.removeFunc(argAction);
 	}
 
-	clearAction {
+	reset {
 		action = nil
 	}
 
