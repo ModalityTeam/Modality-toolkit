@@ -8,7 +8,7 @@ Section:: Introduction
 The functionality of link::Classes/MKtl:: relies on descriptions of the used devices. For some Controllers, there are already descriptions available, chances are that your device is not among them.
 With the helper classes link::Classes/MIDIExplorer:: and link::Classes/HIDExplorer::, however, it is easy to create such a file.
 
-Find out the protocol your new device is operating on. Currently MIDI and HID are supported in MKtl. Next, physically attach your device to the computer. 
+Find out the protocol your new device is operating on. Currently MIDI and HID are supported in MKtl. Next, physically attach your device to the computer.
 
 section:: MIDI
 
@@ -18,10 +18,13 @@ subsection:: Explore your device
 
 If the device is a MIDI device, evaluate
 code::
-MIDIIn.connectAll;
+MIDIIn.connectAll; // remember the name of the device posted here, it is needed later
 MIDIExplorer.start;
 ::
-Now, move every element on your controller. Make sure to go through all of them and move them in all their degrees of freedom.
+Now, move every element on your controller.
+Make sure to go through all of them and move them in all their degrees of freedom.
+Do this in an order that you can remember later bacause ::MIDIExplorer:: saves the data in the order you wiggle the knobs.
+
 warning::Make sure that no other device is sending any data.::
 By evaluating the following lines, the explorer is stopped.
 code::
@@ -30,21 +33,142 @@ MIDIExplorer.stop;
 
 subsection:: Review exploration
 With the next code chunk, a document is opened that contains descriptions for all elements of the controller.
+Now, evaluate the following to open the generated raw description:
 code::
 MIDIExplorer.openDoc
 ::
+
+If openDoc does not work for you, try
+code::
+MIDIExplorer.compile
+::
+and copy the code from the post window manually to a new file.
+
 It should contain elements such as
 code::
-'_elName_0_005_': ('midiType': 'noteOn', 'type': 'pianoKey', 'chan': 0, 'midiNote':  5, 'spec': 'midiNote'), 
+'_elName_0_005_': ('midiType': 'noteOn', 'type': 'pianoKey', 'chan': 0, 'midiNote':  5, 'spec': 'midiNote'),
 ::
 
-Review each element, and name it according to its functionality.
+subsection:: Build description file from raw data
+
+A description file has the following format:
+
+(
+\identifier: (key: value, key: value, ... ),
+\identifier: (key: value, key: value, ... ),
+
+\groupIdentifier: [
+	(key: value, key: value, ... ),
+	(key: value, key: value, ... ),
+	(key: value, key: value, ... ),
+]
+)
+
+note::Naming conventions for identifiers are
+code::kn:: for knobs,
+code::sl:: for sliders,
+code::bt:: for buttons,
+code::key:: for keys,
+code::pad:: for pads
+::
+
+
+Open a new file and use the raw data from code::MIDIExplorer:: to build your new description file.
+
+Unless it does not make sense from the controller's layout (e.g. record buttons as opposed to paged sliders), elements of the same type should be grouped into a hierarchical description for maximum compatibility.
+
+Make sure to fill in appropriate descriptions for code::\type:: fields.
+
 note::
-You may want to restart the explore mode for this by evaluating code::MIDIexplorer.start::
+Naming conventions for type values are
+code::slider:: for sliders,
+code::knob:: for knobs,
+code::button:: for buttons,
+code::key:: for keys,
+code::pad:: for pads
 ::
 
-Make sure to also fill in appropriate descriptions in the code::\mode:: and code::type:: fields. 
 
-subsection:: Save description file
+The following raw output of the code::MIDIExplorer:: (three knobs):
 
-If you are happy with the document, save it to the descriptions folder located at code::MKtl.deviceDescriptionFolder::.
+code::
+(
+// ------ cc -------------
+'_elName_0_002_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  2,'spec': 'midiCC'),
+'_elName_0_003_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  3,'spec': 'midiCC'),
+'_elName_0_004_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  4,'spec': 'midiCC'),
+);
+::
+
+is then turned into a group:
+
+code::
+(
+// ------ cc -------------
+'sl': [
+	('midiMsgType': 'cc', 'type': 'knob', 'midiChan': 0, 'midiNum':  2,'spec': 'midiCC'),
+	('midiMsgType': 'cc', 'type': 'knob', 'midiChan': 0, 'midiNum':  3,'spec': 'midiCC'),
+	('midiMsgType': 'cc', 'type': 'knob', 'midiChan': 0, 'midiNum':  4,'spec': 'midiCC')
+]
+)
+::
+
+if there are banks of groups, the hierarchical structure would look like this:
+
+code::
+(
+// ------ cc -------------
+'_elName_0_002_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  2,'spec': 'midiCC'),
+'_elName_0_003_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  3,'spec': 'midiCC'),
+'_elName_0_004_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  4,'spec': 'midiCC'),
+'_elName_0_005_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  5,'spec': 'midiCC'),
+'_elName_0_006_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  6,'spec': 'midiCC'),
+'_elName_0_008_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  8,'spec': 'midiCC'),
+ );
+::
+
+hierarchically grouped faders into two banks:
+
+
+code::
+(
+sl: [
+	[ // bank 0
+		('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  2,'spec': 'midiCC'),
+		('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  3,'spec': 'midiCC'),
+		('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  4,'spec': 'midiCC'),
+	], [ // bank 1
+		('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  5,'spec': 'midiCC'),
+		('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  6,'spec': 'midiCC'),
+		('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  8,'spec': 'midiCC')
+	]
+]
+);
+::
+
+If a flat description for an element is required, it can be directly copied from the generated description skeleton. However, each element has to receive a name representing its functionality.
+
+
+note::
+You may want to restart the explore mode for this by evaluating
+code::MIDIexplorer.start::::
+
+
+subsection:: Save description file and test it
+
+If you are happy with the document, save it with a meaningful name to the descriptions folder located at code::MKtl.deviceDescriptionFolder::. I t has to have the ending code::".desc.scd"::.
+
+Additionally, a line has to be added to the code::index.desc.scd:: file in the same directory:
+
+code::
+\nanoKONTROL2 -> ( device: "devicename", protocol: \midi, file: "devicename.desc.scd" ),
+::
+
+
+code::"devicename":: is the name of the corresponding code::MIDIEndPoint:: listed when executing code::MIDIIn.connectAll:: (see above).
+code::"devicename.desc.scd":: is the name of the file.
+
+Now, restart SuperCollider and try your newly created description file by evaluating
+
+code::MIDIMktl.find::
+
