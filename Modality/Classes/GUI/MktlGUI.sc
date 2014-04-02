@@ -1,5 +1,20 @@
 MKtlGUI {
 
+	/*
+	MKtlGUI creates a GUI for MKtl instances. All sliders, knobs and buttons etc. are shown in a single window. Note that the layout on the display will not always reflect that of the actual controller, because it is organised according to how the objects are organised in the MKtl description. If devices have multiple "pages" or "scenes", they will all be displayed together in the same window. The GUI elements are updated every 0.2s to reflect the current value of the corresponding MKtlElement. The GUI can also be used as a "virtual controller", as pulling the sliders and pressing the buttons will also change the state of the MKtlElements and fire any connected actions.
+
+	Use case:
+
+	// if a physical NanoKONTROL 2 is present:
+	b = MIDIMKtl( 'nnkn20' );
+
+	// if not
+	b = MIDIMKtl.make( 'fakeNano2', 'nanoKONTROL2' );
+
+	b.gui; // show the GUI
+
+	*/
+
 	classvar <>makeElementDict;
 
 	var <mktl;
