@@ -37,17 +37,30 @@ Name of the spec
 argument:: spec
 The ControlSpec
 
+METHOD:: make
+Create a new MKtl using a device description without initializing it. Usefull for testing a controller when it is not connected to the system
+
+argument:: name
+name for the new MKtl
+
+argument:: deviceDescName
+The device description that you want to use. This is the filename of the descritption file with ".desc.scd" stripped.
+
+DISCUSSION::
+
+code::
+//create a virtual nanokontrol
+MIDIMKtl.make(\fakeNano, \nanoKONTROL)
+
+//create a gui to control it
+MIDIMKtl(\fakeNano).gui
+
+//assign an action
+MIDIMKtl(\fakeNano).elements[\sl][0][0].action_({ |elem| elem.value.postln })
+::
+
 
 SUBSECTION:: Private methods
-
-
-METHOD:: deviceDescriptionFor
-Find a description for a specific element.
-
-argument:: elname
-Name of the element.
-
-returns:: the description of the element.
 
 METHOD:: loadDeviceIndex
 This method loads the device index file. If the device index was already loaded, it will only reload the device index if reload is true. Normally this method is only used internally, but if you updated the device index file manually you may want to call this method manually.
@@ -98,8 +111,6 @@ The device description that you want to use. This is the name used in the device
 
 returns:: the instance of MKtl that is created.
 
-
-
 METHOD:: checkName
 Checks whether you are trying to make a new instance of MKtl with a specific deviceDescName with a name that is already in use.
 
@@ -114,7 +125,8 @@ returns:: true if the name is already taken, false if the name is not taken, or 
 METHOD:: getDeviceDescription
 Try to find a fitting device description.
 
-argument:: Name of the device description, or name of the controller name given.
+argument:: devName
+Name of the device description, or name of the controller name given.
 
 returns:: a device description.
 
@@ -126,14 +138,78 @@ The description to flatten
 
 returns:: the flattened description.
 
+PRIVATE::exploring,flattenDescriptionForIO, initClass
 
 INSTANCEMETHODS::
 
-METHOD:: storeArgs, printOn
-
-
 METHOD:: name
 retrieve the name of the MKtl.
+
+
+METHOD:: elements
+all control elements (MKtlElement) on the device you may want to listen or talk to. this returns a dictionary containing
+
+METHOD:: elementAt
+Access an element in the elements hierarchy by passing in the indexes to arrays/dictionaries as arguments of elementAt:
+
+discussion::
+
+code::
+myKtl.elementAt(\sl,0,0)
+
+//the same as
+
+myKtl.elements[\sl][0][0]
+::
+
+
+METHOD:: gui
+
+Create a gui representation of the device
+
+discussion::
+
+MIDIMKtl.make(\test,\nanoKONTROL).gui
+
+
+
+METHOD:: elementsNotOfType
+
+discussion::
+
+code::
+(
+k = MIDIMKtl.make(\test,\nanoKONTROL);
+k.elementsNotOfType(\slider)
+)
+::
+
+METHOD:: elementsOfType
+
+discussion::
+
+code::
+(
+k = MIDIMKtl.make(\test,\nanoKONTROL);
+k.elementsOfType(\slider)
+)
+::
+
+METHOD:: explore
+
+When a device doesn't yet have a description file, this can be used to help in creating one.
+
+
+
+SUBSECTION:: Private methods
+
+METHOD:: postDeviceDescription
+
+dump device description
+
+METHOD:: allElements
+
+returns:: an array with all the elements
 
 METHOD:: loadDeviceDescription
 Load a device description from either a given device description name, or a device name.
@@ -144,9 +220,6 @@ a given device description name, or a device name.
 
 METHOD:: deviceDescription
 The device description of the MKtl.
-
-METHOD:: elements
-all control elements (MKtlElement) on the device you may want to listen or talk to
 
 METHOD:: init
 Initializes the MKtl with its name, elements and puts it in all.
@@ -161,53 +234,8 @@ deviceDescName of the MKtl
 METHOD:: makeElements
 Populate the elements with MKtlElements.
 
-METHOD:: at
 
-Access the MKtlElements
-
-argument:: elementKey
-
-Can be a symbol, an array of symbols or an array of patterns (which are arrays) that define an element key.
-
-code::
- k = MKtl.basicNew(\fakeNanoKONTROL,'nanoKONTROL');
- k.at(\kn1_1);
- k.at([\kn1_1,\kn1_2])
- k.at([[\kn1,1]])
- k.at([[\kn1,1], [\kn1,2]])
-::
-
-METHOD:: esFor
-
-Access the the event source for a certain element key.
-
-argument:: elementKey
-
-Can be a symbol, an array of symbols or an array of patterns (which are arrays) that define an element key.
-
-code::
- k = MKtl.basicNew(\fakeNanoKONTROL,'nanoKONTROL');
- k.esFor(\kn1_1);
- k.esFor([\kn1_1,\kn1_2])
- k.esFor([[\kn1,1]])
- k.esFor([[\kn1,1], [\kn1,2]])
-::
-
-METHOD:: signalFor
-
-Access the the event source for a certain element key.
-
-argument:: elementKey
-
-Can be a symbol, an array of symbols or an array of patterns (which are arrays) that define an element key.
-
-code::
- k = MKtl.basicNew(\fakeNanoKONTROL,'nanoKONTROL');
- k.signalFor(\kn1_1);
- k.signalFor([\kn1_1,\kn1_2])
- k.signalFor([[\kn1,1]])
- k.signalFor([[\kn1,1], [\kn1,2]])
-::
+PRIVATE:: storeArgs, printOn, elementNames, elementDescriptionFor, deviceDescriptionHierarch, defaultValueFor, prUnderscorify, replaceElements, prTraverse, makeElementName, makeFlatDeviceDescription
 
 EXAMPLES::
 
