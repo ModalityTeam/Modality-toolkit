@@ -14,7 +14,7 @@ SoftSet returns a boolean whether the set message was accepted.
 code::
 // Some Basic Examples :
 
-// make an Ndef and set values for its parameters. 
+// make an Ndef and set values for its parameters.
 	Ndef(\a).clear;
 	Ndef(\a).gui.moveTo(0, 400).skipjack.dt = 0.05;
 
@@ -32,8 +32,8 @@ code::
    Ndef(\a, { Ringz.ar(PinkNoise.ar, \freq.kr(440), 0.3) }).play;
 
 
-// See examples for how to use in controllers, 
-// and to try their different behaviors with sliders: 
+// See examples for how to use in controllers,
+// and to try their different behaviors with sliders:
 (
 	var w = Window("SoftSet - compare 4 Variants").front;
 	var lastVal, lastValUni;
@@ -62,11 +62,11 @@ code::
 		SoftSet.defaultWithin = sl.value;
 	}, labelWidth: 150);
 )
-:: 
+::
 
 CLASSMETHODS::
 
-SoftSet only has class methods, to be used as pseudo methods in multiple classes. 
+SoftSet only has class methods, to be used as pseudo methods in multiple classes.
 
 METHOD:: uni
 SoftSet an object's parameters from a unipolar value. Convenient with many controllers that use unipolar values. The mapping spec is done by the receiving object's spec for that param name.
@@ -86,7 +86,7 @@ the range within which the value should match the current parameter value to all
 ARGUMENT:: lastVal
 the last value which the controller has sent; this helps to determine whether the controller has done the last set of the param in question.
 
-returns:: a Boolean whether the set has been accepted. 
+returns:: a Boolean whether the set has been accepted.
 
 
 METHOD:: new
@@ -110,7 +110,7 @@ the last value which the controller has sent; this helps to determine whether th
 ARGUMENT:: spec
 a spec to use for calculation of the unipolar distance within which values should match.
 
-returns:: a Boolean whether the set has been accepted. 
+returns:: a Boolean whether the set has been accepted.
 
 METHOD:: nextPair
 same as *new, but does not do the setting yet. Instead it returns a pair of values if setting would be accepted, or nil if not. This is intended for collecting multiple name value pairs for a single set message.
@@ -125,7 +125,7 @@ returns:: a pair of unipolar values if setting would be accepted, nil if not
 
 METHOD:: defaultWithin
 
-gets and set a default value for unipolar distance within which softset is accepted. 
+gets and set a default value for unipolar distance within which softset is accepted.
 
 METHOD:: getSpec
 ask an object for its spec for a given param name. this is used when no spec is given explicitly, and expects object to answer to getSpec.
