@@ -40,7 +40,7 @@ code::
 k.verbose_(true)
 
 //turn it off
-k.verbose_(true)
+k.verbose_(false)
 ::
 
 section:: Identifying elements
@@ -89,6 +89,7 @@ k.elements[\bt].flop[4]
 
 //If the controller had scenes, the button on row 2 and column 5 of scene 4 would be at
 //the order would be scene -> row -> column
+//note: this does not work with the nanoKONTROL2
 k.elements[\bt][3][1][4]
 
 ::
@@ -114,8 +115,8 @@ code::
 
 (
 SynthDef(\blippy, {
-	var out = Blip.ar(\freq.kr(440,0.1), \numHarmonics.kr(100,0.1), \amp.kr(1.0,0.1) ) * 0.5;
-	Out.ar(0, Pan2.ar(out, \pan.kr(0,0.1) ) )
+	var out = Blip.ar(\freq.kr(440).lag(0.1), \numHarmonics.kr(100), \amp.kr(1.0).lag(0.1) ) * 0.5;
+	Out.ar(0, Pan2.ar(out, \pan.kr(0).lag(0.1) ) )
 }).add
 )
 
@@ -150,6 +151,44 @@ code::
 k.reset
 ::
 
+To stop the synth:
+code::
+x.free
+::
+
+Starting and stopping the synth from the controller:
+code::
+(
+
+//clear all actions first
+k.reset;
+
+//knob 1 -> amplitude
+k.elements[\kn][0].action_({ |mktlElement| x !? _.set(\amp, mktlElement.value) });
+
+//knob 2 -> pan
+k.elements[\kn][1].action_({ |mktlElement| x !? _.set(\pan, mktlElement.value.linlin(0.0, 1.0, -1.0, 1.0) ) });
+
+//slider 1 -> frequency
+k.elements[\sl][0].action_({ |mktlElement| x !? _.set(\freq, mktlElement.value.linlin(0.0, 1.0, 200, 2000) ) });
+
+//slider 2 -> number of harmonics
+k.elements[\sl][1].action_({ |mktlElement| x !? _.set(\numHarmonics, mktlElement.value.linexp(0.0, 1.0, 1, 200) ) });
+
+//upper left button -> start and stop synth
+k.elements[\bt][0][0].action_({  |mktlElement|
+	if(mktlElement.value.booleanValue) {
+		x = Synth(\blippy, [\freq, 440, \numHarmonics, 100, \amp, 0.5, \pan, 0])
+	} {
+		x !? _.free;
+		x = nil;
+	}
+})
+)
+::
+
+if x is nil then x !? f doesn't do anything, while if x is not nil x !? f will run f.(x).
+
 To assign multiple actions to the same element use link::Classes/MKtlElement#addAction:: and link::Classes/MKtlElement#removeAction:: :
 
 
@@ -162,7 +201,7 @@ k.elements[\kn][0].addAction({ |mktlElement| ("2 :"++mktlElement.value).postln }
 k.elements[\kn][0].reset
 ::
 
-To remove actions, the functions should be first assigned to a variable:
+To remove individual actions, the functions should be first assigned to a variable:
 code::
 (
 f = { |mktlElement| ("1 :"++mktlElement.value).postln };
@@ -180,6 +219,7 @@ k.elements[\kn][0].reset
 
 code::
 
+//Assigning multiple synth controls to the same physical control:
 (
 //start it
 x = Synth(\blippy, [\freq, 440, \numHarmonics, 100, \amp, 0.5, \pan, 0]);
