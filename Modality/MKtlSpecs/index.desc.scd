@@ -12,6 +12,7 @@ IdentityDictionary[
 	\istage -> ( device: "iCON iStage V1.00", protocol: \midi, file: "ICONIStage.desc.scd"),
 	\icontrols -> ( device: "iCON iControls V2.00", file: "ICONIControls.desc.scd" ),
     \lpd8 -> ( device: "LPD8", protocol: \midi, file: "LPD8.desc.scd"),
+	\MPKmini -> ( device: "MPK mini", protocol: \midi, file: "MPKmini.desc.scd"),
 
 	'UC-33' -> ( device: "UC-33 USB MIDI Controller", protocol: \midi, file: "UC-33.desc.scd" ),
 	\triggerfinger -> ( device: "USB Trigger Finger", protocol: \midi, file: "triggerfinger.desc.scd"),
