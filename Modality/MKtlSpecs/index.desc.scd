@@ -27,6 +27,7 @@ IdentityDictionary[
 	\DragonRiseGamePad -> ( linux: ( device: "DragonRise Inc.   Generic   USB  Joystick  "), protocol: \hid, file: "DragonRiseGamePad.desc.scd" ),
 	\ZeroplusXbox -> ( linux: ( device: "Zeroplus Xbox Controller" ), protocol: \hid, file: "ZeroplusXbox.desc.scd" ),
 	\PuzzleSphere -> ( osx: ( device: "Real Play"), linux: (device: "In2Games Real Play"), protocol: \hid, file: "PuzzleSphere.desc.scd"),
+	\Thrustmaster -> (osx: ( device: "MegaWorldectronics_USB Joystick"), linux: (device: ""), protocol: \hid, file: "Thrustmaster.desc.scd" ),
 
 	'The Ribbon' -> ( device: "The Ribbon", protocol: \midi, file: "EOWave_Ribbon.desc.scd" ),
 
