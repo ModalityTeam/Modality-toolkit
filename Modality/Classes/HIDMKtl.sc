@@ -82,7 +82,15 @@ HIDMKtl : MKtl {
 	*postPossible{
 		"\n// Available	HIDMKtls - just give them unique names: ".postln;
 		sourceDeviceDict.keysValuesDo{ |key,info|
-			"   HIDMKtl('%', %);  // % %\n".postf(key, info.serialNumber.asCompileString, info.vendorName, info.productName );
+			var serial = info.serialNumber;
+			if( serial.isEmpty ) {
+				"   HIDMKtl('%');  // % %\n"
+				.postf(key, info.vendorName, info.productName )
+			} {
+				"   HIDMKtl('%', %);  // % %\n"
+				.postf(key, serial.asCompileString, info.vendorName, info.productName );
+
+			}
 		};
 		"\n-----------------------------------------------------".postln;
 	}
@@ -133,6 +141,8 @@ HIDMKtl : MKtl {
 				}
 			}
 		};
+
+		this.initHID;
 
 		if (uid.isNil) {
 			foundSource = this.sourceDeviceDict[ name ];
@@ -193,12 +203,24 @@ HIDMKtl : MKtl {
 
             if ( elid.notNil ){ // filter by element id
                 // HIDFunc.element( { |v| el.rawValueAction_( v ) }, elid, \devid, devid );
-                srcDevice.elements.at( elid ).action = { |v| el.rawValueAction_( v ) };
+                srcDevice.elements.at( elid ).action = { |v|
+					el.rawValueAction_( v );
+					if(verbose) {
+						"% - % > % | type: %, src:%"
+						.format(this.name, el.name, el.value.asStringPrec(3), el.type, el.source).postln
+					}
+				};
             }{  // filter by usage and usagePage
                 // HIDFunc.usage( { |v| el.rawValueAction_( v ) }, usage, page, \devid, devid );
                 theseElements = srcDevice.findElementWithUsage( usage, page );
                 theseElements.do{ |it|
-                    it.action = { |v| el.rawValueAction_( v ) };
+                    it.action = { |v|
+						el.rawValueAction_( v );
+						if(verbose) {
+							"% - % > % | type: %, src:%"
+							.format(this.name, el.name, el.value.asStringPrec(3), el.type, el.source).postln
+						}
+					};
                 };
             };
             newElements.put( el.name, el );
@@ -207,17 +229,7 @@ HIDMKtl : MKtl {
 	}
 
 	verbose_ {|value=true|
-    /*
-		value.if({
-			elementsDict.do{|item|
-                item.addFunc(\verbose, { |element|
-					[element.source, element.name, element.value].postln;
-                })
-            }
-		}, {
-			elementsDict.do{|item| item.removeFunc(\verbose)}
-		})
-    */
+		verbose = value;
 	}
 
 	storeArgs { ^[name] }
