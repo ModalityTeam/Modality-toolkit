@@ -113,6 +113,8 @@ For SynthDef building see for instance the "Tour of UGens" overview in the help 
 
 code::
 
+s.boot;
+
 (
 SynthDef(\blippy, {
 	var out = Blip.ar(\freq.kr(440).lag(0.1), \numHarmonics.kr(100), \amp.kr(1.0).lag(0.1) ) * 0.5;
