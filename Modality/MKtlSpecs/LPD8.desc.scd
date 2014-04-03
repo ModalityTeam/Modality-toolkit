@@ -2,6 +2,9 @@
 
 /*
 
+MIDIMKtl.find; // find all MDIDI devices and list them
+MIDIMKtl('lpd80'); // make a  MIDIMKtl for LPD8.
+
 (
 SynthDef(\test,{
 	var x = (SinOsc.ar( \freq.kr(400) ) * \amp.kr(1) ).clip * 0.5 * EnvGen.ar(Env.adsr,\gate.kr(1));
@@ -21,7 +24,7 @@ MIDIMKtl('lpd80').elements.padOff.do{ |el,i|
 */
 
 (
-kn: (1..8).collect{ |midiNum|
+\kn: (1..8).collect{ |midiNum|
 	(\midiMsgType: \cc, \type: \knob, \midiChan: 0, \midiNum: midiNum, \spec: \midiCC)
 },
 \padOn: (36..43).collect{ |note|

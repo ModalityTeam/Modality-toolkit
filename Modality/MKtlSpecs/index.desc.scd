@@ -3,6 +3,8 @@ IdentityDictionary[
 	\nanoKONTROL -> ( device: "nanoKONTROL", protocol: \midi, file: "nanoKONTROL.desc.scd" ),
 	\nanoKONTROL2 -> ( device: "nanoKONTROL2", protocol: \midi, file: "nanoKONTROL2.desc.scd" ),
 
+	\nanoPAD2 -> ( device: "nanoPAD2", protocol: \midi, file: "nanoPAD2.desc.scd" ),
+
 	\BCR2000 -> ( device: "BCR2000", protocol: \midi, file: "BCR2000.desc.scd" ),
 	\BCF2000 -> ( device: "BCF2000", protocol: \midi, file: "BCF2000.desc.scd" ),
 
