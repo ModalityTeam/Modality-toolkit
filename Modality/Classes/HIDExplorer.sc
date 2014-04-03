@@ -13,7 +13,7 @@ HIDExplorer {
 	*shutUp { verbose = false }
 
 	*init {
-        exploreFunction = { |devid, thisdevice, elid, page, usage, value, mappedvalue| this.updateRange( elid, page, usage ) };
+        exploreFunction = { |devid, thisdevice, elid, page, usage, value, mappedvalue| this.updateRange( elid, page, usage, value ) };
 	}
 
 	*start { |srcID|
@@ -33,7 +33,7 @@ HIDExplorer {
 	}
 
 	*openDoc {
-		Document("edit and save me", this.compile);
+		Document("edit and save me", this.compileFromObservation );
 	}
 
     *openDocFromDevice { |dev|
@@ -60,7 +60,7 @@ HIDExplorer {
     }
 
     *compileFromDevice { |dev|
-		var str = "[";
+		var str = "(";
         var elements = dev.elements;
         var uniques, duplicates;
 
@@ -74,7 +74,7 @@ HIDExplorer {
         if ( uniques.size + duplicates.size > 0 ){
             str = str + "\n\n// --------- input elements ----------";
             uniques.sortedKeysValuesDo{ |key,val|
-                str = str + "\n'<element name %>': ('hidUsage': %, 'hidUsagePage': %, , 'type': '<type %>', 'ioType': 'in' ),"
+                str = str + "\n'<element name %>': ('hidUsage': %, 'hidUsagePage': %, 'type': '<type %>', 'ioType': 'in' ),"
                 .format(val.usageName, val.usage, val.usagePage, val.pageName );
             };
             duplicates.sortedKeysValuesDo{ |key,val|
@@ -87,7 +87,7 @@ HIDExplorer {
         if ( uniques.size + duplicates.size > 0 ){
             str = str + "\n\n// --------- output elements ----------";
             uniques.sortedKeysValuesDo{ |key,val|
-                str = str + "\n'<element name %>': ('hidUsage': %, 'hidUsagePage': %, , 'type': '<type %>', 'ioType': 'out' ),"
+                str = str + "\n'<element name %>': ('hidUsage': %, 'hidUsagePage': %, 'type': '<type %>', 'ioType': 'out' ),"
                 .format(val.usageName, val.usage, val.usagePage, val.pageName );
             };
             duplicates.sortedKeysValuesDo{ |key,val|
@@ -111,7 +111,7 @@ HIDExplorer {
         };
         */
 
-		str = str + "\n];";
+		str = str + "\n);";
 
 		^str;
     }
@@ -145,21 +145,23 @@ HIDExplorer {
 		^str;
 	}
 
-	*updateRange { |elid, page, usage|
+	*updateRange { |elid, page, usage, hidElem|
         var hash, range;
         var msgDict = observeDict[\elid];
+		var val = hidElem.value;
 
-        if (verbose) { [elid, page, usage].postcs; } { ".".post; };
+        if (verbose) { [elid, page, usage, val].postcs; } { ".".post; };
         if (0.1.coin) { observeDict.collect(_.size).sum.postln };
 
-
-        // range = msgDict[hash];
-        // range.isNil.if{
-        // min max
-        // msgDict[hash] = range = [val, val];
-    // };
-
-        // msgDict[hash] = [min(range[0], val), max(range[1], val)];
+		/*
+		hash = "%_%_%".format(elid, page, usage).postln;
+        range = msgDict[hash];
+        range.isNil.if{
+			msgDict[hash] = [val, val];
+		} {
+			msgDict[hash] = [min(range[0], val), max(range[1], val)]
+		}
+		*/
 	}
 }
 

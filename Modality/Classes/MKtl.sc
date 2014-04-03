@@ -254,8 +254,7 @@ MKtl : MAbstractKtl { // abstract class
 				elem[\spec] = this.class.specs[elem[\specName]];
 			};
 		}{ // no device file found:
-			warn( "Mktl could not find a device file for device '%'. \nYou can start exploring the capabilities of it by evaluating:\n\t%(%).explore".format(deviceName, this.class, name.asCompileString) );
-
+			this.warnNoDeviceFileFound(deviceName);
 		}
 	}
 

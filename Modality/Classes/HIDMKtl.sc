@@ -166,10 +166,13 @@ HIDMKtl : MKtl {
 
 	postRawSpecs { this.class.postRawSpecsOf(srcDevice) }
 
-	explore{ |mode=true|
-		if ( thisProcess.platform.name == \linux ){
-			srcDevice.debug_( mode );
-		};
+	explore{
+		/*"Using HIDExplorer. (see its Helpfile for Details)\n\n".post;
+		"HIDExplorer started. Wiggle all elements of your controller then".postln;
+		"\tHIDExplorer.stop;".postln;
+		"\tHIDExplorer.openDoc;".postln;
+		HIDExplorer.start(this.srcID);*/
+		"HIDExplorer.explore is not implemented yet".postln;
 	}
 
 	initHIDMKtl { |argUid, argSource|
@@ -187,6 +190,22 @@ HIDMKtl : MKtl {
         deviceElements = srcDevice.elements;
     }
     */
+
+	warnNoDeviceFileFound { |deviceName|
+		var a = "Mktl could not find a device file for device %. You can generate a description file by evaluating\n\t".format(deviceName);
+		var b = "HIDMKtl(%).createDescFromDevice\n".format(name.asCompileString);
+		//var c = "or if that doesn't contain enough information you can start exploring the capabilities of it by evaluating\n";
+		//var d = "\tHIDMKtl(%).explore\n".format(name.asCompileString);
+		warn( [a,b].reduce('++') )
+	}
+
+	createDescFromDevice {
+		if(srcDevice.notNil){
+			HIDExplorer.openDocFromDevice(srcDevice)
+		} {
+			Error("HIDMKtl#createDescFromDevice - srcDevice is nil. HID probably could not open device").throw
+		}
+	}
 
 	setHIDActions{
 		var newElements = ();
