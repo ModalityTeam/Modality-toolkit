@@ -238,8 +238,8 @@ MKtl : MAbstractKtl { // abstract class
 		var deviceFileName;
 		var path;
 
-		// look the filename up in the index
-		deviceInfo = this.class.getDeviceDescription( deviceName );
+		//get device info from stored list
+		deviceInfo = this.class.getDeviceDescription( deviceName ).deepCopy;
 		//"class: % deviceName: % deviceInfo:%".format(deviceName.class, deviceName, deviceInfo).postln;
 		if ( deviceInfo.notNil ){
 
