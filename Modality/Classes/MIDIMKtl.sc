@@ -8,7 +8,7 @@
 
 MIDIMKtl : MKtl {
 
-	classvar <allMsgTypes = #[ \noteOn, \noteOff, \cc, \touch, \polyTouch, \bend, \program ];
+	classvar <allMsgTypes = #[ \noteOn, \noteOff, \noteOnOff, \cc, \touch, \polyTouch, \bend, \program ];
 
 	classvar <initialized = false;
 	classvar <sourceDeviceDict;         //      ('deviceName': MIDIEndPoint, ... )
@@ -336,7 +336,7 @@ MIDIMKtl : MKtl {
 						)
 					};
 				} {
-					"MIDIMKtl:prepareElementHashDict (%): identifier in midiType for item % not known. Please correct."
+					"MIDIMKtl:prepareElementHashDict (%): identifier in midiMsgType for item % not known. Please correct."
 					.format(this, elName).error;
 					this.dump;
 					nil;
