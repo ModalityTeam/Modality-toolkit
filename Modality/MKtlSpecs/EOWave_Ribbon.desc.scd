@@ -1,7 +1,7 @@
 (
 device: "The Ribbon",
 protocol: \midi,
-decription: (
+description: (
 	// ribbon
 	// [ noteOn, val, 127, num, 78, chan, 0, src, -1477523613 ]
 	// [ noteOff, val, 0, num, 78, chan, 0, src, -1477523613 ]
