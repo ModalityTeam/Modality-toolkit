@@ -16,6 +16,7 @@ MKtlGUI {
 	*/
 
 	classvar <>makeElementDict;
+	classvar <>labelWidth = 80;
 
 	var <mktl;
 	var <>parent, <>views, <>values, <>getValueFuncs, <>skipJack;
@@ -37,6 +38,9 @@ MKtlGUI {
 			'slider': { |parent, single = false|
 				Slider( parent, if( single != false ) { 100@20 } { 20@80 });
 			},
+			'ribbon': { |parent, single = false|
+				Slider( parent, if( single != false ) { 100@20 } { 20@80 });
+			},
 			'encoder': { |parent|
 				Knob( parent, 20@20 );
 			},
@@ -44,10 +48,12 @@ MKtlGUI {
 				Knob( parent, 20@20 );
 			},
 			'pad': { |parent|
-				Slider( parent, 40@40 ); // make this a slider for now
+				Slider( parent, 20@20 ); // make this a slider for now
 			},
-			'unknown': { |parent|
-				NumberBox( parent, 20@16 );
+			'unknown': { |parent, single = false|
+				NumberBox( parent,
+					if( single != false ) { 50@16 } { 20@16 }
+				).clipLo_(0).clipHi_(1);
 			}
 		);
 	}
@@ -64,7 +70,7 @@ MKtlGUI {
 		this.getSingleElements.sortedKeysValuesDo({ |key, item|
 			var view, getValueFunc, value;
 
-			StaticText( parent, 40@16 ).string_( key.asString );
+			StaticText( parent, labelWidth@16 ).string_( key.asString );
 
 			view = (makeElementDict[ item.type ] ?? { makeElementDict[ \unknown ] }).value( parent, true );
 
@@ -87,7 +93,7 @@ MKtlGUI {
 			var view, getValueFunc, value;
 			var currentState;
 
-			StaticText( parent, 40@16 ).string_( key.asString );
+			StaticText( parent, labelWidth@16 ).string_( key.asString );
 
 			mktl.prTraverse.(
 				item, [], { |a,b|
@@ -98,7 +104,7 @@ MKtlGUI {
 					if( currentState.isNil ) { currentState = state };
 					if( currentState.reverse[1].notNil && { currentState.reverse[1] != state.reverse[1] } ) {
 						parent.asView.decorator.nextLine;
-						parent.asView.decorator.shift( 44, 0 );
+						parent.asView.decorator.shift( labelWidth + 4, 0 );
 					};
 					if( currentState.reverse[2].notNil && { currentState.reverse[2] != state.reverse[2] } ) {
 						parent.asView.decorator.shift( 0, 5 );
