@@ -297,11 +297,10 @@ MKtl : MAbstractKtl { // abstract class
 
 	prUnderscorify {
 		^{ |a,b|
-			var c = if(b.isNumber){b+1}{b};
 			if(a != "") {
-				a++"_"++c.asString
+				a++"_"++b.asString
 			} {
-				c.asString
+				b.asString
 			}
 		};
 	}
