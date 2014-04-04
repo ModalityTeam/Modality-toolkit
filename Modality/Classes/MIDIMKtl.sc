@@ -336,8 +336,8 @@ MIDIMKtl : MKtl {
 						)
 					};
 				} {
-					"MIDIMKtl:prepareElementHashDict (%): identifier in midiMsgType for item % not known. Please correct."
-					.format(this, elName).error;
+					"MIDIMKtl:prepareElementHashDict (%): identifier '%' in midiMsgType for item '%' not known. Please correct."
+					.format(this, descr[\midiMsgType], elName).error;
 					this.dump;
 					nil;
 				}
