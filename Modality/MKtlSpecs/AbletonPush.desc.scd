@@ -13,8 +13,8 @@
 
 
 //------ ribbon -----------
-\ribbonOn: ('midiMsgType': 'noteOn', 'type': 'ribbon', 'midiChan': 0, 'midiNum': 12,  'spec': 'midiNote'),
-\ribbonOff: ('midiMsgType': 'noteOff', 'type': 'ribbon', 'midiChan': 0, 'midiNum': 12,  'spec': 'midiNote'),
+\ribbonOn: ('midiMsgType': 'noteOn', 'type': 'button', 'midiChan': 0, 'midiNum': 12,  'spec': 'midiNote'),
+\ribbonOff: ('midiMsgType': 'noteOff', 'type': 'button', 'midiChan': 0, 'midiNum': 12,  'spec': 'midiNote'),
 \ribbon: ('midiMsgType': 'bend', 'type': 'ribbon', 'midiChan': 0, 'spec': 'midiBend'),
 
 
