@@ -176,39 +176,50 @@ MKtl : MAbstractKtl { // abstract class
 		};
 		all.put(name, this);
 	}
-
 	storeArgs { ^[name] }
 	printOn { |stream| this.storeOn(stream) }
 
-	*loadDeviceIndex { |reload=false|
-		var path;
+	*loadAllDescs { |reload=false|
 		if ( allDevDescs.isNil or: reload ){
-			path = deviceDescriptionFolder +/+ "index.desc.scd";
-			allDevDescs = try {
-				path.load;
-			} {
-				"//" + this.class ++ ": - no device description index found!\n"
-				.post;
+			var paths = (deviceDescriptionFolder++"/*.desc.scd").pathMatch;
+			var descNames = paths.collect{ |x|
+				PathName(x).fileName.split($.)[0]
+			};
+			allDevDescs = IdentityDictionary.with(
+				*[descNames, paths].flop.collect{ |xs|
+					var dict = (xs[1].cs++".load").interpret;
+					dict ?? {
+						"%.desc.scd does not parse".format(xs[0]).warn;
+					};
+					xs[0].asSymbol -> dict
+				}.select(_.notNil)
+			)
+			//ignore entrys without a description
+			.select{ |val, key|
+				var bool = val.isKindOf(IdentityDictionary) and: {
+					val.keys.includes(\description)
+				};
+				if(bool.not) {
+					"%.desc.scd is not a valid description file".format(key).warn
+				};
+				bool
 			};
 		};
 	}
 
 	*getDeviceDescription { |devName|
 		var devDesc;
-		this.loadDeviceIndex;
+		this.loadAllDescs;
 		devDesc = allDevDescs.at( devName );
-		if ( devDesc.isNil ){
+		^devDesc ?? {
 			// see if we can find it from the device name:
-			allDevDescs.keysValuesDo{ |key,desc|
-				if ( desc[\type] != \template ){
-					desc = this.flattenDescription( desc );
-					if ( desc[ \device ] == devName ){
-						devDesc = desc;
-					};
-				};
-			};
-		};
-		^devDesc;
+			allDevDescs
+			.as(Array)
+			.select{ |desc| desc[\type] != \template }
+			.collect{ |desc| this.flattenDescription( desc ) }
+			.select{ |desc| desc[ \device ] == devName }
+			.at(0)
+		}
 	}
 
 	loadDeviceDescription { |deviceName|
@@ -218,18 +229,10 @@ MKtl : MAbstractKtl { // abstract class
 
 		// look the filename up in the index
 		deviceInfo = this.class.getDeviceDescription( deviceName );
-
+		//"class: % deviceName: % deviceInfo:%".format(deviceName.class, deviceName, deviceInfo).postln;
 		if ( deviceInfo.notNil ){
 
-			// deviceInfo also has information about protocol and os specific naming
-
-			deviceFileName = deviceInfo[ \file ];
-
-			path = deviceDescriptionFolder +/+ deviceFileName;
-
-			deviceDescriptionHierarch = try {
-				path.load;
-			} {
+			deviceDescriptionHierarch = deviceInfo !? _[\description] ?? {
 				"%: - no device description found for %: please make it!\n"
 				.postf(this.class, deviceName);
 				//	this.class.openTester(this);
