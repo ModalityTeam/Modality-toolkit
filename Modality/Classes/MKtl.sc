@@ -132,6 +132,17 @@ MKtl : MAbstractKtl { // abstract class
 		^super.new.init(name, deviceDescName);
 	}
 
+	*fake { |deviceDescName|
+		var g = { |i|
+			if(MKtl.all.keys.includes("virtual_%_%".format(i, deviceDescName).asSymbol)) {
+				g.(i+1)
+			} {
+				"virtual_%_%".format(i, deviceDescName).asSymbol
+			}
+		};
+		^this.make(g.(0), deviceDescName)
+	}
+
 	*make { |name, deviceDescName|
 		if (all[name].notNil ) {
 			warn("MKtl name '%' is in use already. Please use another name."
