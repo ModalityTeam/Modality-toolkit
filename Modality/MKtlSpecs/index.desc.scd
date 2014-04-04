@@ -1,5 +1,6 @@
 IdentityDictionary[
 
+	\push -> ( device: "Ableton Push", protocol: \midi, file: "AbletonPush.desc.scd" ),
 	\nanoKONTROL -> ( device: "nanoKONTROL", protocol: \midi, file: "nanoKONTROL.desc.scd" ),
 	\nanoKONTROL2 -> ( device: "nanoKONTROL2", protocol: \midi, file: "nanoKONTROL2.desc.scd" ),
 
