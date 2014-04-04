@@ -154,7 +154,7 @@ HIDMKtl : MKtl {
 		if (foundSource.isNil) {
 			warn("HIDMKtl:"
 			"	No HID source with USB port ID % exists! please check again.".format(uid));
-			^nil
+			^MKtl.prMakeVirtual(name)
 		};
 
         ^super.basicNew(name,devDescName ? this.makeDeviceName( foundSource ) ).initHIDMKtl(uid, foundSource);

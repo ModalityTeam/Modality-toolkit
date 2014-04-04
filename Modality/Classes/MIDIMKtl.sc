@@ -158,7 +158,7 @@ MIDIMKtl : MKtl {
 		if (foundSource.isNil) {
 			warn("MIDIMKtl:"
 			"	No MIDIIn source with USB port ID % exists! please check again.".format(uid));
-			^nil
+			^MKtl.prMakeVirtual(name)
 		};
 
 		// make a new destination

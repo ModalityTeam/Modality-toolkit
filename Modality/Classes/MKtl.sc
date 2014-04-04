@@ -152,6 +152,26 @@ MKtl : MAbstractKtl { // abstract class
 		^this.basicNew( name, deviceDescName )
 	}
 
+	*prMakeVirtual { |name|
+		var t,r,shortNames,deviceDescName;
+		if(MKtl.allDevDescs.isNil){
+			MKtl.loadAllDescs
+		};
+		t = name.asString;
+		r = t[..(t.size-2)].postln;
+		shortNames = Dictionary.with(*
+			MKtl.allDevDescs.keys.as(Array)
+			.collect({ |key| MKtl.makeShortName(key) -> key }));
+		deviceDescName = shortNames[r];
+		^if(deviceDescName.notNil) {
+			var temp = this.fake( deviceDescName );
+			temp.gui;
+			temp
+		} {
+			nil
+		}
+	}
+
 	*checkName { |name, deviceDescName|
 		if (all[name].notNil and: deviceDescName.notNil ) {
 			warn("MKtl name '%' is in use already. Please use another name."
