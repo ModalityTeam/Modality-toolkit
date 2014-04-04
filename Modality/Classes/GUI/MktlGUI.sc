@@ -59,13 +59,22 @@ MKtlGUI {
 	}
 
 	makeView { |parent, bounds|
+		var verboseButton;
+
 		parent = parent ?? { Window( mktl.name, bounds, scroll: true ).front; };
 
 		if( parent.asView.decorator.isNil ) { parent.addFlowLayout };
 
-		views = [];
-		values = [];
-		getValueFuncs = [];
+		verboseButton = Button( parent, labelWidth@16 )
+		.states_([["verbose"],["verbose", Color.black, Color.green]])
+		.action_({ |bt| mktl.verbose = bt.value.booleanValue })
+		.value_( mktl.verbose.binaryValue );
+
+		parent.asView.decorator.nextLine;
+
+		views = [ verboseButton ];
+		values = [ mktl.verbose.binaryValue ];
+		getValueFuncs = [ { mktl.verbose.binaryValue } ];
 
 		this.getSingleElements.sortedKeysValuesDo({ |key, item|
 			var view, getValueFunc, value;
@@ -79,7 +88,14 @@ MKtlGUI {
 
 			view.value_( value );
 			view.action_({ |vw|
-				mktl.elementAt( key ).valueAction = vw.value;
+				var el;
+				el = mktl.elementAt( key );
+				el.valueAction = vw.value;
+				if( mktl.verbose == true ) {
+					"% - % > % | via GUI\n".postf(
+						mktl.name, el.name, el.value;
+					);
+				};
 			});
 
 			getValueFuncs = getValueFuncs.add( getValueFunc );
@@ -118,7 +134,14 @@ MKtlGUI {
 
 					view.value_( value );
 					view.action_({ |vw|
-						mktl.elementAt( key, *state ).valueAction = vw.value;
+						var el;
+						el = mktl.elementAt( key, *state );
+						el.valueAction = vw.value;
+						if( mktl.verbose == true ) {
+							"% - % > % | via GUI\n".postf(
+								mktl.name, el.name, el.value;
+							);
+						};
 					});
 
 					getValueFuncs = getValueFuncs.add( getValueFunc );
@@ -142,6 +165,7 @@ MKtlGUI {
 	}
 
 	updateGUI {
+
 		values = values.collect({ |value, i|
 			var newValue;
 			newValue = getValueFuncs[i].value;
