@@ -1,0 +1,31 @@
+TITLE:: MIDIExplorer
+summary:: Explore a MIDI device
+categories:: Libraries>Modality
+related::  Overviews/Modality, Reference/MKtl_description_files
+
+DESCRIPTION::
+The functionality of link::Classes/MKtl:: relies on descriptions of the used devices. For some Controllers, there are already descriptions available, chances are that your device is not among them.
+With the this class, it is easy to create such a file for a MIDI device.
+For more info on how to use it, see  link::Tutorials/How_to_create_a_description_file::.
+
+CLASSMETHODS::
+
+METHOD:: compile
+compiles the discovered elements into a raw list of elements.
+
+ARGUMENT:: includeSpecs
+returns:: String containing a raw list of elements
+
+METHOD:: openDoc
+opens a new document containing the raw description of the discovered elements.
+
+METHOD:: start
+start exploration
+ARGUMENT:: srcID
+optional source ID
+
+METHOD:: stop
+stopexploration
+
+METHOD:: verbose
+print values.
