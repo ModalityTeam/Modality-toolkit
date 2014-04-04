@@ -1,4 +1,11 @@
-(
+(osx: (
+	device: "MegaWorldectronics_USB Joystick"
+),
+linux: (
+	device: ""
+),
+protocol: \hid,
+description: (
 
 // --------- input elements ----------
 'b1': ('hidUsage': 1, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', spec: \hidBut, mode: \push ),
@@ -9,4 +16,5 @@
 'X': ('hidUsage': 48, 'hidUsagePage': 1, 'type': 'slider', 'ioType': 'in',  spec: \cent1, mode: \center ),
 'Y': ('hidUsage': 49, 'hidUsagePage': 1, 'type': 'slider', 'ioType': 'in',  spec: \cent1, mode: \center ),
 'Slider': ('hidUsage': 187, 'hidUsagePage': 2, 'type': 'slider', 'ioType': 'in', spec: \cent1, mode: \center ),
-);
+)
+)

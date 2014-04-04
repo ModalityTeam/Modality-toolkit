@@ -1,9 +1,11 @@
-// Novation Launchpad specs: 
-// Mostly NoteOn / NoteOff, some cc messages, 
+// Novation Launchpad specs:
+// Mostly NoteOn / NoteOff, some cc messages,
 // no hardware scenes, flattened out with underscores
 
-[
-
+(
+device: "Launchpad",
+protocol: \midi,
+description: (
 	\up:      (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 104, \spec: \midiBut, \mode: \push),
 	\down:    (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 105, \spec: \midiBut, \mode: \push),
 	\left:    (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 106, \spec: \midiBut, \mode: \push),
@@ -13,12 +15,11 @@
 	\user2:   (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 110, \spec: \midiBut, \mode: \push),
 	\mixer:   (\midiType: \cc, \type: \button, \midiChan: 0, \midiNum: 111, \spec: \midiBut, \mode: \push),
 
-]
-++ 
-((0, 16 .. 112) +.t (0..7)).flat.collect{|num, i|
-	[("bu_"++i).asSymbol, (\midiType: \note, \type: \button, \midiChan: 0, \midiNote: num, \spec: \midiBut, \mode: \push)]
-}.flat
-++
-((0, 16 .. 112) + 8).flat.collect{|num, i|
-	[("ar_"++i).asSymbol, (\midiType: \note, \type: \button, \midiChan: 0, \midiNote: num, \spec: \midiBut, \mode: \push)]
-}.flat
+	bt: ((0, 16 .. 112) +.t (0..7)).flat.collect{|num, i|
+		(\midiType: \note, \type: \button, \midiChan: 0, \midiNote: num, \spec: \midiBut, \mode: \push)
+	},
+	ar: ((0, 16 .. 112) + 8).flat.collect{|num, i|
+		(\midiType: \note, \type: \button, \midiChan: 0, \midiNote: num, \spec: \midiBut, \mode: \push)
+	}
+)
+)

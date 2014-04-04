@@ -1,11 +1,11 @@
-// display still missing...
 (
+device: "Ableton Push",
+protocol: \midi,
+description: (// display still missing because SysEx and different MIDI port...
+
 //------ pads -------------
-\padOn: (36..99).collect{|num|
-	('midiMsgType': 'noteOn', 'type': 'pad', 'midiChan': 0, 'midiNum': num,  'spec': 'midiNote', \ioType: \inout)
-}.clump(8),
-\padOff: (36..99).collect{|num|
-	('midiMsgType': 'noteOff', 'type': 'pad', 'midiChan': 0, 'midiNum': num, 'spec': 'midiNote', \ioType: \in)
+\pad: (36..99).collect{|num|
+	('midiMsgType': 'noteOnOff', 'type': 'pad', 'midiChan': 0, 'midiNum': num,  'spec': 'midiNote', \ioType: \inout)
 }.clump(8),
 \poly: (36..99).collect{|num|
 	('midiMsgType': 'polyTouch', 'type': 'keytouch', 'midiChan': 0, 'midiNum': num,'spec': 'midiCC', \ioType: \in)
@@ -13,29 +13,23 @@
 
 
 //------ ribbon -----------
-\ribbonOn: ('midiMsgType': 'noteOn', 'type': 'button', 'midiChan': 0, 'midiNum': 12,  'spec': 'midiNote'),
-\ribbonOff: ('midiMsgType': 'noteOff', 'type': 'button', 'midiChan': 0, 'midiNum': 12,  'spec': 'midiNote'),
+\ribbonTouched: ('midiMsgType': 'noteOnOff', 'type': 'button', 'midiChan': 0, 'midiNum': 12,  'spec': 'midiNote'),
 \ribbon: ('midiMsgType': 'bend', 'type': 'ribbon', 'midiChan': 0, 'spec': 'midiBend'),
 
 
 //------ encoderTopRow
-\encHatOn: (0..8).collect{|num|
-	(midiMsgType: \noteOn, type: 'button', midiChan: 0, midiNum: num, spec: \midiVel)
-},
-\encHatOff: (0..8).collect{|num|
-	(midiMsgType: \noteOff, type: 'button', midiChan: 0, midiNum: num, spec: \midiVel)
+\encHat: (0..8).collect{|num|
+	(midiMsgType: \noteOnOff, type: 'button', midiChan: 0, midiNum: num, spec: \midiVel)
 },
 \enc: (71..79).collect{|num|
 	(midiMsgType: \cc, type: \encoder, midiChan: 0, midiNum: num, spec: \midiCC)
 },
 
 //------ left encoders (not in a group because very different in experience)
-lEncHatOn: (midiMsgType: \noteOn, type: \button, midiChan: 0, midiNum: 10, spec: \midiVel),
-lEncHatOff: (midiMsgType: \noteOff, type: \button, midiChan: 0, midiNum: 10, spec: \midiVel),
+lEncHat: (midiMsgType: \noteOnOff, type: \button, midiChan: 0, midiNum: 10, spec: \midiVel),
 lEnc: (midiMsgType: \cc, type: \encoder, midiChan: 0, midiNum: 14, spec: \midiBut),
 
-rEncHatOn: (midiMsgType: \noteOn, type: \button, midiChan: 0, midiNum: 9, spec: \midiVel),
-rEncHatOff: (midiMsgType: \noteOff, type: \button, midiChan: 0, midiNum: 9, spec: \midiVel),
+rEncHatOn: (midiMsgType: \noteOnOff, type: \button, midiChan: 0, midiNum: 9, spec: \midiVel),
 rEnc: (midiMsgType: \cc, type: \encoder, midiChan: 0, midiNum: 15, spec: \midiBut),
 
 //------ color button rows
@@ -97,4 +91,5 @@ rEnc: (midiMsgType: \cc, type: \encoder, midiChan: 0, midiNum: 15, spec: \midiBu
 \right:			 ('midiMsgType': 'cc', 'type': 'button', 'midiChan': 0, 'midiNum': 	 45,'spec': 'midiCC', ioType: \inout),
 \up:			 ('midiMsgType': 'cc', 'type': 'button', 'midiChan': 0, 'midiNum': 	 46,'spec': 'midiCC', ioType: \inout),
 \down:			 ('midiMsgType': 'cc', 'type': 'button', 'midiChan': 0, 'midiNum':	 47,'spec': 'midiCC', ioType: \inout)
+)
 )

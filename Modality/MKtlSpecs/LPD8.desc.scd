@@ -1,5 +1,26 @@
 // AKAI professional LPD8 Laptop Pad controller specs
 
+(
+device: "LPD8",
+protocol: \midi,
+description: (
+	\kn: (1..8).collect{ |midiNum|
+		(\midiMsgType: \cc, \type: \knob, \midiChan: 0, \midiNum: midiNum, \spec: \midiCC)
+	},
+	\padOn: (36..43).collect{ |note|
+		(\midiMsgType: \noteOn, \type: \pad, \midiChan: 0, \midiNum:  note, \spec: \midiVel)
+	},
+	\padOff: (36..43).collect{ |note|
+		(\midiMsgType: \noteOff, \type: \pad, \midiChan: 0, \midiNum:  note, \spec: \midiVel)
+	},
+	/*
+	//no pad cc because it uses the same cc numbers as knobs... dugh...
+	\padCC: ((1..6)++[8,9]).collect{ |cc|
+	(\midiMsgType: \cc, \type: \pad, \midiChan: 0, \midiNum:  cc, \spec: \midiCC)
+	}*/
+)
+)
+
 /*
 
 MIDIMKtl.find; // find all MDIDI devices and list them
@@ -22,20 +43,3 @@ MIDIMKtl('lpd80').elements.padOff.do{ |el,i|
 };
 )
 */
-
-(
-\kn: (1..8).collect{ |midiNum|
-	(\midiMsgType: \cc, \type: \knob, \midiChan: 0, \midiNum: midiNum, \spec: \midiCC)
-},
-\padOn: (36..43).collect{ |note|
-	(\midiMsgType: \noteOn, \type: \pad, \midiChan: 0, \midiNum:  note, \spec: \midiVel)
-},
-\padOff: (36..43).collect{ |note|
-	(\midiMsgType: \noteOff, \type: \pad, \midiChan: 0, \midiNum:  note, \spec: \midiVel)
-},
-/*
-//no pad cc because it uses the same cc numbers as knobs... dugh...
-\padCC: ((1..6)++[8,9]).collect{ |cc|
-	(\midiMsgType: \cc, \type: \pad, \midiChan: 0, \midiNum:  cc, \spec: \midiCC)
-}*/
-)
