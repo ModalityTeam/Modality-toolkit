@@ -5,19 +5,20 @@ related:: Overviews/Modality, Classes/MKtl
 
 Section:: Introduction
 
-Modality is a toolkit created by a loose collaboration between both developers and (advanced) users of SuperCollider (also called Modality, see below).
+Modality is a toolkit created by a team of developers and (advanced) users of SuperCollider.
 
 One of its basic ideas is to simplify the creation of your very personal instruments with SuperCollider, using controllers of many different kinds. To this end, a common code interface, MKtl, is used for connecting  controllers from different sources (and protocols) like HID and MIDI, Serial, OSC, GUI, etc.
 
-A second starting point is that the same physical interfaces (sets of sliders, buttons, motion sensors etc etc) can be used for many different purposes, and a highly modal approach to mapping and on-the-fly remapping can help to make a setup much more flexible, powerful, and interesting to play. For example, when improvising with acoustic musicians, highly modal interfaces allow much faster changes of overall direction.
+A second starting point is that the same physical interfaces (sets of sliders, buttons, motion sensors etc etc) can be used for many different purposes, and a highly modal approach to mapping and on-the-fly remapping can help to make a setup much more flexible, powerful, and interesting to play. For example, when improvising with acoustic musicians, highly modal interfaces allow much faster changes of overall (performing) direction.
 
 http://modality.bek.no/
 
-The Modality project was initiated by Jeff Carey and Bjoernar Habbestad, and collaborators so far have included: Marije Baalman, Alberto de Campo, Wouter Snoei, Till Bovermann, Miguel Negrao, Robert van Heumen, and Hannes Hoelzl.
 
 
-Acknowledgements:
+subsection:: Acknowledgements
 Modality and its research meetings have kindly been supported by BEK in Bergen, Norway, and STEIM, Amsterdam.
+The Modality project was initiated by Jeff Carey and Bjoernar Habbestad, and collaborators so far have included: Marije Baalman, Alberto de Campo, Wouter Snoei, Till Bovermann, Miguel Negrao, Robert van Heumen, Hannes Hoelzl, Amelie Hinrichsen, Dominik Hildebrand Marques Lopes, and Tim Blechmann.
+
 
 section:: Tutorials
 
@@ -28,20 +29,65 @@ LIST::
 
 SECTION:: Overview
 
-Each MKtl has 'elements' (i.e. a slider, a knob, etc).
+With code::MKtl:: it is possible to assign functionality to controller elements.
+
+Each code::MKtl:: has elements such as slider or knobs. It is possible to assign an action to such an element that is evauated every time, the value of that element gets updated. Below, there are two examples using popular MIDI controller.
+
+
+subsection:: NanoKontrol2
 
 code::
-MIDIMKtl.find
+// plug in your NanoKontrol2 and evaluate this line
+k = MIDIMKtl('nnkn20');
 
+// alternatively, create a fake NanoKontrol2
+k = MIDIMKtl.make('nnkn20', 'NanoKontrol2');
+
+k.gui; // opens a gui representation of the device
+
+s.boot; // boot the server
+s.latency = nil; // reduce latency for messages sent to the server
+
+( // make an Ndef to control
+Spec.add(\freq1, \freq);
+Spec.add(\freq2, \freq);
+Spec.add(\freq3, \freq);
+Ndef( \sine ).fadeTime = 0.1;
+Ndef( \sine, {
+	Pan2.ar(
+		Mix.new(
+			SinOsc.ar([
+				\freq1.kr(400).lag(0.3,0.5),
+				\freq2.kr(400).lag(0.3,0.5),
+				\freq3.kr(400).lag(0.3,0.5)
+			] * [3/4,1,4/3]
+		)) / 10,
+		0
+	)
+});
+)
+
+// set actions to the first three sliders
+k.elements[\sl][0].action_({|elem|Ndef(\sine).set(\freq1,\freq1.asSpec.map(elem.value))});
+k.elements[\sl][1].action_({|elem|Ndef(\sine).set(\freq2,\freq2.asSpec.map(elem.value))});
+k.elements[\sl][2].action_({|elem|Ndef(\sine).set(\freq3,\freq3.asSpec.map(elem.value))});
+::
+
+subsection:: BCR2000
+
+code::
 //create a non existing Controller according to template 'BCR2000'
 
 k = MIDIMKtl.make('fakeBCR','BCR2000');
-k.elements //Dictionary of controls keys to MKtlElements
+k.elements; //Dictionary of controls keys to MKtlElements
+k.gui; // open a gui representation of the device
 ::
 
 For a real BCR2000 we would use:
 code::
-k = MIDIMKtl('bcr20000').elements
+k = MIDIMKtl('bcr20000');
+k.elements; //Dictionary of controls keys to MKtlElements
+k.gui; // open a gui representation of the device
 ::
 
 Each element can be retrieved from the elements data structure:
