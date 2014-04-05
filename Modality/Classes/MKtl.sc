@@ -158,10 +158,11 @@ MKtl : MAbstractKtl { // abstract class
 			MKtl.loadAllDescs
 		};
 		t = name.asString;
-		r = t[..(t.size-2)].postln;
+		r = t[..(t.size-2)];
+		//shortnames are generated from 'device' entry of description file entries
 		shortNames = Dictionary.with(*
-			MKtl.allDevDescs.keys.as(Array)
-			.collect({ |key| MKtl.makeShortName(key) -> key }));
+			MKtl.allDevDescs.getPairs.clump(2)
+		.collect({ |xs| (MKtl.makeShortName(xs[1][\device]) -> xs[0]) }));
 		deviceDescName = shortNames[r];
 		^if(deviceDescName.notNil) {
 			var temp = this.fake( deviceDescName );
