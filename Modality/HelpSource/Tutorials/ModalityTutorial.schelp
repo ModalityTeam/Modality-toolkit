@@ -17,21 +17,16 @@ This will post a description of all the devices available in Modality. Each line
 
 Once you find a device you want to use, copy the MIDIMKtl(...) or HIDMKtl(...) line from the post window and assign it to a variable. You can ignore the numbers if you only have one controller.
 
+If you try to create a MIDIMKtl but the device is not connected a virtual representation using a GUI will automatically pop up.
+
+You can follow the rest of the tutorial using the virtual version of nanoKontrol2 by executing the line bellow.
+
 code::
 (
 k = MIDIMKtl('nnkn20');
 )
 ::
 
-If you don't have the nanoKontrol2 controller you can make a virtual vesion of it for this tutorial:
-
-code::
-(
-k = MIDIMKtl.make('fakeNano','nanoKONTROL2');
-k.gui
-)
-
-::
 
 You can see the output from all elements by doing
 
@@ -180,6 +175,7 @@ k.elements[\sl][1].action_({ |mktlElement| x !? _.set(\numHarmonics, mktlElement
 //upper left button -> start and stop synth
 k.elements[\bt][0][0].action_({  |mktlElement|
 	if(mktlElement.value.booleanValue) {
+		x !? _.free;
 		x = Synth(\blippy, [\freq, 440, \numHarmonics, 100, \amp, 0.5, \pan, 0])
 	} {
 		x !? _.free;
@@ -249,3 +245,6 @@ k.elements[\sl][0].removeAction(~action3);
 )
 ::
 
+To clean up do
+
+k.reset

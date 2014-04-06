@@ -78,6 +78,18 @@ discussion::
 
 This will not cause the action to be performed and will not send the value back to the device.
 
+METHOD:: addAction
+
+argument:: action
+
+Add the action to a FunctionList, creating the FunctionList if doesn't exist yet.
+
+METHOD:: removeAction
+
+argument:: action
+
+Remove an action from the list of current actions. Has no effect if 'action' is a function or nil, only removes the action if 'action' is a FunctionList.
+
 
 
 EXAMPLES::

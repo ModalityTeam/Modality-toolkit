@@ -25,7 +25,53 @@ If you supply the short name that was given by MKtl's find method, it will try t
 If you supply the name of an MKtl that already exists, the new method will return that instance (a la Ndef proxy style).
 
 argument:: deviceDescName
-The device description that you want to use. This is the name used in the device description index, or the long name of the device as reported.
+The device description that you want to use. This is the file name of the description file (without .desc.scd), or the long name of the device as reported.
+
+
+METHOD:: addSpec
+add a ControlSpec to MKtl's library of specs.
+
+argument:: key
+Name of the spec
+
+argument:: spec
+The ControlSpec
+
+METHOD:: make
+Create a new MKtl using a device description without initializing it. Usefull for testing a controller when it is not connected to the system
+
+argument:: name
+name for the new MKtl
+
+argument:: deviceDescName
+The device description that you want to use. This is the filename of the descritption file with ".desc.scd" stripped.
+
+DISCUSSION::
+
+code::
+//create a virtual nanokontrol
+MIDIMKtl.make(\fakeNano, \nanoKONTROL)
+
+//create a gui to control it
+MIDIMKtl(\fakeNano).gui
+
+//assign an action
+MIDIMKtl(\fakeNano).elements[\sl][0][0].action_({ |elem| elem.value.postln })
+::
+
+METHOD::fake
+
+Create a new MKtl using a device description with an automatically generated name.
+
+argument:: deviceDescName
+The device description that you want to use. This is the file name of the description file (without .desc.scd), or the long name of the device as reported.
+
+DISCUSSION::
+
+code::
+//create a virtual nanokontrol
+MIDIMKtl.fake(\nanoKONTROL)
+::
 
 
 METHOD:: addSpec
@@ -60,10 +106,11 @@ MIDIMKtl(\fakeNano).elements[\sl][0][0].action_({ |elem| elem.value.postln })
 ::
 
 
+
 SUBSECTION:: Private methods
 
-METHOD:: loadDeviceIndex
-This method loads the device index file. If the device index was already loaded, it will only reload the device index if reload is true. Normally this method is only used internally, but if you updated the device index file manually you may want to call this method manually.
+METHOD:: loadAllDescs
+load all device description files from the default folder. Done automatically when initializing an MKtl
 
 argument:: reload
 force a reload of the device index
@@ -79,7 +126,7 @@ This class variable holds the path where the device descriptions are located. It
 
 
 METHOD:: allDevDescs
-An IdentityDictionary holding all known device specs. These are read from a file in deviceDescriptionFolder +/+ "index.desc.scd".
+An IdentityDictionary holding all known device specs. These are read files in deviceDescriptionFolder.
 
 
 METHOD:: specs
@@ -111,6 +158,8 @@ The device description that you want to use. This is the name used in the device
 
 returns:: the instance of MKtl that is created.
 
+
+
 METHOD:: checkName
 Checks whether you are trying to make a new instance of MKtl with a specific deviceDescName with a name that is already in use.
 
@@ -138,7 +187,7 @@ The description to flatten
 
 returns:: the flattened description.
 
-PRIVATE::exploring,flattenDescriptionForIO, initClass
+PRIVATE::exploring,flattenDescriptionForIO, initClass, prMakeVirtual
 
 INSTANCEMETHODS::
 
@@ -179,7 +228,7 @@ discussion::
 
 code::
 (
-k = MIDIMKtl.make(\test,\nanoKONTROL);
+k = MIDIMKtl.fake(\nanoKONTROL);
 k.elementsNotOfType(\slider)
 )
 ::
@@ -190,7 +239,7 @@ discussion::
 
 code::
 (
-k = MIDIMKtl.make(\test,\nanoKONTROL);
+k = MIDIMKtl.fake(\nanoKONTROL);
 k.elementsOfType(\slider)
 )
 ::
@@ -237,13 +286,5 @@ Populate the elements with MKtlElements.
 
 PRIVATE:: storeArgs, printOn, elementNames, elementDescriptionFor, deviceDescriptionHierarch, defaultValueFor, prUnderscorify, replaceElements, prTraverse, makeElementName, makeFlatDeviceDescription
 
-EXAMPLES::
-
-code::
-(some example code)
-::
-
-SUBSECTION:: Private methods
-The following methods are used internally.
 
 

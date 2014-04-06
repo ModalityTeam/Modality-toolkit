@@ -29,7 +29,7 @@ METHOD:: name
 name
 
 METHOD:: type
-type of the element, e.g. code:: \button, \slider, \knob::. 
+type of the element, e.g. code:: \button, \slider, \knob::.
 See link::Reference/MKtl_description_files:: for a more detailed list.
 
 
@@ -66,94 +66,12 @@ The Link::Classes/FuncChain:: containing all functionality evaluated everytime a
 
 SUBSECTION:: Adding and removing functionality
 
-METHOD:: addFuncFirst
-Add a function to the link::Classes/FuncChain:: such that it is evaluated first.
+METHOD:: action_
 
-argument:: funcName
-The name, the function should be stored in.
+argument:: action
+a function
 
-argument:: function
-The function. It is called with this instance as its only argument.
-
-METHOD:: addFuncLast
-Add a function to the link::Classes/FuncChain:: such that it is evaluated last.
-
-argument:: funcName
-The name, the function should be stored in.
-
-argument:: function
-The function. It is called with this instance as its only argument.
-
-
-
-METHOD:: addFuncAfter
-Add a function to the link::Classes/FuncChain:: such that it is evaluated after the given function.
-
-argument:: funcName
-The name, the function should be stored in.
-
-argument:: function
-The function. It is called with this instance as its only argument.
-
-argument:: otherName
-Name of the function after which this function should be stored.
-
-
-
-
-METHOD:: addFuncBefore
-Add a function to the link::Classes/FuncChain:: such that it is evaluated before the given function.
-
-argument:: funcName
-The name, the function should be stored in.
-
-argument:: function
-The function. It is called with this instance as its only argument.
-
-argument:: otherName
-Name of the function before which this function should be stored.
-
-
-METHOD:: replaceFunc
-Replace a function in the link::Classes/FuncChain::.
-
-argument:: funcName
-The name, the function should be stored in.
-
-argument:: function
-The function. It is called with this instance as its only argument.
-
-argument:: otherName
-Name of the function to be replaced.
-
-
-METHOD:: removeFunc
-Remove the function in the link::Classes/FuncChain::.
-
-argument:: funcName
-The name of the function.
-
-METHOD:: addFunc
-Add a function to the link::Classes/FuncChain::.
-
-argument:: funcName
-The name, the function should be stored in.
-
-argument:: function
-The function. It is called with this instance as its only argument.
-
-argument:: addAction
-an identifier for the storing strategy. valid addActions are: 
-code::
-\addLast, \addFirst, \addBefore, \addAfter, \replaceAt
-::
-
-argument:: otherName
-Name of the other function.
-
-discussion::
-By default, adds the action to the end of the list.
-
+Add an action to the element. The action can be removed by setting 'action' to nil.
 
 
 SUBSECTION:: UGen support
@@ -162,7 +80,7 @@ METHOD:: kr
 Use the value directly on the server.
 
 argument:: server
-optional argument that you only have to set once, and only if the server for the bus is not link::Classes/Server#-default::. 
+optional argument that you only have to set once, and only if the server for the bus is not link::Classes/Server#-default::.
 
 returns:: an link::Classes/In#-kr:: holding the current value of this element. Reflects changes of the value.
 
