@@ -3,13 +3,11 @@
 // downloadable from "http://www.akaipro.com/product/mpkmini#downloads"
 // made by Joost van Dalen
 
-
-"\n\t MPK mini: This desc file is made for the Factory Preset: Preset3-MPC,
-\t downloadable from http://www.akaipro.com/product/mpkmini#downloads \n".postln;
-
 (
 device: "MPK mini",
 protocol: \midi,
+infoMessage: "\n\t MPK mini: This desc file is made for the Factory Preset: Preset3-MPC,
+\t downloadable from http://www.akaipro.com/product/mpkmini#downloads \n",
 description: (
 	\kn: (13..20).collect{ |midiNum|
 		(\midiMsgType: \cc, \type: \knob, \midiChan: 0, \midiNum: midiNum, \spec: \midiCC)
