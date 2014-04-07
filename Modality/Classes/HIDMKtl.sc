@@ -15,6 +15,7 @@ HIDMKtl('ferrari').srcDevice.slots
 HIDMKtl : MKtl {
 	classvar <initialized = false;
 	classvar <sourceDeviceDict;
+	classvar <protocol = \hid;
 
 	var <srcID, <srcDevice;
 

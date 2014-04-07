@@ -10,6 +10,7 @@ MIDIMKtl : MKtl {
 
 	classvar <allMsgTypes = #[ \noteOn, \noteOff, \noteOnOff, \cc, \touch, \polyTouch, \bend, \program ];
 
+	classvar <protocol = \midi;
 	classvar <initialized = false;
 	classvar <sourceDeviceDict;         //      ('deviceName': MIDIEndPoint, ... )
 	                                    //i.e.  ( 'bcr0': MIDIEndPoint("BCR2000", "Port 1"), ... )
