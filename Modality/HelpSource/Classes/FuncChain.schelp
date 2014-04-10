@@ -18,35 +18,41 @@ FuncChain is fully compatible with FunctionList, and also supports anonymous add
 When the method valueArray is called, all functions in the list will be called in the order specified.
 
 code::
-// make a FuncChain: 	 
+// make a FuncChain:
 (
 a = FuncChain([
-	\ada, { |x| x }, 
+	\ada, { |x| x },
 	\bob, { |x| x[1] }
 ]);
 )
 a.value("funchain").postcs;
 
-// add by name, by default to the end 
+
+// add by name, by default to the end
 a.put(\x, { |x| x.reverse });
 a.value("func");
 a.at(\x).postcs;
 a.add(\bob, {|x| x.keep(3) }); // replace at name
 a.value("func");
 
+
 // use with anonymous functions, like FunctionList:
 f = {|x| x.scramble.keep(3) }; // remember the func ...
 f.postcs;
-a.addFunc(f); 
+a.addFunc(f);
 f.value("quick");
 a.value("quick");
 a.removeFunc(f);  // so we can remove it here
 
+
+// add relative to existing names
 a.addLast(\x, {3});
 a.addFirst(\y, {3});
 a.addBefore(\ci, {6}, \y);
 a.addAfter(\dodo, {x}, \ci);
 
+
+// move funcs around within FuncChain
 a.moveLast(\ada);
 a.moveBefore(\ada, \x);
 a.moveFirst(\bob);
@@ -107,11 +113,11 @@ METHOD:: removeAt
 remove function at name
 
 
-METHOD:: addFunc 
+METHOD:: addFunc
 add a function anonymously. dummy name used will be nil.
 
-METHOD:: removeFunc 
-remove a function anonymously. 
+METHOD:: removeFunc
+remove a function anonymously.
 
 
 METHOD:: addFirst
@@ -176,13 +182,13 @@ The name of the function after which the function needs to be placed.
 
 
 METHOD:: moveFirst
-Move the function at that name to the beginning of the list. 
+Move the function at that name to the beginning of the list.
 If name is not present, you are given a warning.
 argument:: name
 The name of the function.
 
 METHOD:: moveLast
-Move the function at that name to the end of the list. 
+Move the function at that name to the end of the list.
 If name is not present, you are given a warning.
 argument:: name
 The name of the function.
@@ -245,10 +251,10 @@ returns:: the function at the index
 EXAMPLES::
 
 code::
-// make a FuncChain: 	 
+// make a FuncChain:
 (
 a = FuncChain([
-	\ada, { |x| x }, 
+	\ada, { |x| x },
 	\bob, { |x| x[1] }
 ]);
 )
@@ -258,7 +264,7 @@ a.value("funchain").postcs;
 a.put(\x, { |x| x.reverse });
 a.value("func");
 
-// at 
+// at
 a.at(\x).postcs;
 
 // add adds or replaces at name
