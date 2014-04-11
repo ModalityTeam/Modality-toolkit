@@ -44,7 +44,7 @@ LIST::
 ## midiMsgTypeOnlyChan = "\bend" | "\touch"  | "\program"
 
 ## hidElem = "( \hidUsage:" int ", \hidUsagePage: " int ", spec:" symbol ", type:" type [", ioType:" ioType] [", mode:" mode] ")"
-## type = "\button" | "\knob" | "\joyAxis" | "\hatSwitch" | "\key" | "\pad" | "\slider"
+## type = "\knob" | "\button" | "\key" | "\slider" | "\chantouch" | "\polytouch" | "\joyaxis" | "\hatswitch" | "\encoder" | "\pad"
 ## mode = "\one-shot" | "\push" | "\minimum" | "\center" | "\toggle"
 ## ioType = "\in" | "\out" | "\inout"
 ## int = digitFromOne *digitFromZero
