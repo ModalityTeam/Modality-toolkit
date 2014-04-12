@@ -74,25 +74,7 @@ CLASSMETHODS::
 
 SoftSet only has class methods, to be used as pseudo methods in multiple classes.
 
-METHOD:: uni
-SoftSet an object's parameters from a unipolar value. Convenient with many controllers that use unipolar values. The mapping spec is done by the receiving object's spec for that param name.
-
-ARGUMENT:: obj
-the object whose parameter is to be set
-
-ARGUMENT:: paramName
-the name of the parameter to be set
-
-ARGUMENT:: value
-the unipolar value to set it to, will be mapped by a spec
-
-ARGUMENT:: within
-the range within which the value should match the current parameter value to allow the softset
-
-ARGUMENT:: lastVal
-the last value which the controller has sent; this helps to determine whether the controller has done the last set of the param in question.
-
-returns:: a Boolean whether the set has been accepted.
+strong::NB on using lastVal: :: lastVal represents the previous physical position of the controller element (slider, knob etc). The simplest way is to store the normalized  value sent from the controller as the next lastVal. When switching pages, it is best to keep a lastVal for the physical controller element, NOT for the logical control element which is most likely different on the new page! Alternatively, one can clear any cached lastVals whenever paging between scenes.
 
 
 METHOD:: new
@@ -117,6 +99,28 @@ ARGUMENT:: spec
 a spec to use for calculation of the unipolar distance within which values should match.
 
 returns:: a Boolean whether the set has been accepted.
+
+
+METHOD:: uni
+SoftSet an object's parameters from a unipolar value. Convenient with many controllers that use unipolar values. The mapping spec is done by the receiving object's spec for that param name.
+
+ARGUMENT:: obj
+the object whose parameter is to be set
+
+ARGUMENT:: paramName
+the name of the parameter to be set
+
+ARGUMENT:: value
+the unipolar value to set it to, will be mapped by a spec
+
+ARGUMENT:: within
+the range within which the value should match the current parameter value to allow the softset
+
+ARGUMENT:: lastVal
+the last value which the controller has sent; this helps to determine whether the controller has done the last set of the param in question.
+
+returns:: a Boolean whether the set has been accepted.
+
 
 METHOD:: nextPair
 same as *new, but does not do the setting yet. Instead it returns a pair of values if setting would be accepted, or nil if not. This is intended for collecting multiple name value pairs for a single set message.
@@ -202,7 +206,7 @@ code::
 
 	Ndef(\a).addSpec(\freq, \freq);  // back to global default
 
-	// Compare how the 4 Variants feel on sliders, 
+	// Compare how the 4 Variants feel on sliders,
 	// and how the different calls to SoftSet read in code:
 (
     var w = Window("SoftSet - compare 4 Variants").front;
