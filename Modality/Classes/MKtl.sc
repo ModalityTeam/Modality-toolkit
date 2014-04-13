@@ -310,7 +310,7 @@ MKtl : MAbstractKtl { // abstract class
 	//traversal function for combinations of dictionaries and arrays
 	prTraverse {
 		var isLeaf = { |dict|
-			dict.values.any({|x| x.size > 1}).not
+			Set[\hidUsage, \midiMsgType].sect(dict.keys).notEmpty
 		};
 
 		var f = { |x, state, stateFuncOnNodes, leafFunc|
