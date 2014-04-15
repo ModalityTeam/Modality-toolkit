@@ -18,16 +18,27 @@ description: (
 
 	'hat': ('hidUsage': 57, 'hidUsagePage': 1, 'type': 'hatSwitch', 'ioType': 'in', spec: \cent1, mode: \center),
 
-	'joyLX': ('hidUsage': 48, 'hidUsagePage': 1, 'type': 'joyAxis', 'ioType': 'in', spec: \cent1, mode: \center ),
-	'joyLY': ('hidUsage': 49, 'hidUsagePage': 1, 'type': 'joyAxis', 'ioType': 'in', spec: \cent1, mode: \center ),
-	'joyRX': ('hidUsage': 50, 'hidUsagePage': 1, 'type': 'joyAxis', 'ioType': 'in', spec: \cent1, mode: \center ),
-	'throtL': ('hidUsage': 51, 'hidUsagePage': 1, 'type': 'springFader', 'ioType': 'in', mode: \minimum, spec: \lin1inv ),
-	'throtR': ('hidUsage': 52, 'hidUsagePage': 1, 'type': 'springFader', 'ioType': 'in', mode: \minimum, spec: \lin1inv ),
-	'joyRY': ('hidUsage': 53, 'hidUsagePage': 1, 'type': 'joyAxis', 'ioType': 'in', spec: \cent1, mode: 'center' ),
+	'joy': (\l:
+		(
+			\x: ('hidUsage': 48, 'hidUsagePage': 1, 'type': 'joyAxis', 'ioType': 'in', spec: \cent1, mode: \center ),
+			\y: ('hidUsage': 49, 'hidUsagePage': 1, 'type': 'joyAxis', 'ioType': 'in', spec: \cent1, mode: \center )
+		),
+		\r:(
+			\x: ('hidUsage': 50, 'hidUsagePage': 1, 'type': 'joyAxis', 'ioType': 'in', spec: \cent1, mode: \center ),
+			\y: ('hidUsage': 53, 'hidUsagePage': 1, 'type': 'joyAxis', 'ioType': 'in', spec: \cent1, mode: 'center' )
+		)
+	),
+
+	'throt': (
+		\l: ('hidUsage': 51, 'hidUsagePage': 1, 'type': 'springFader', 'ioType': 'in', mode: \minimum, spec: \lin1inv ),
+		\r: ('hidUsage': 52, 'hidUsagePage': 1, 'type': 'springFader', 'ioType': 'in', mode: \minimum, spec: \lin1inv )
+	),
 	'wheel': ('hidUsage': 54, 'hidUsagePage': 1, 'type': 'springFader', 'ioType': 'in', spec: \cent1inv, mode: \center ),
 
 	// --------- output elements ----------
-	'rumbleR': ('hidUsage': 187, 'hidUsagePage': 1, 'type': 'rumble', 'ioType': 'out', spec: \lin255, mode: \minimum ),
-	'rumbleL': ('hidUsage': 49, 'hidUsagePage': 1, 'type': 'rumble', 'ioType': 'out', spec: \lin255, mode: \minimum ),
+	'rumble':(
+		\l: ('hidUsage': 187, 'hidUsagePage': 1, 'type': 'rumble', 'ioType': 'out', spec: \lin255, mode: \minimum ),
+		\r: ('hidUsage': 49, 'hidUsagePage': 1, 'type': 'rumble', 'ioType': 'out', spec: \lin255, mode: \minimum )
+	)
 )
 )
