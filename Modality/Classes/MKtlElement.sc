@@ -177,11 +177,36 @@ MKtlElement : MAbstractElement{
 	rawValue_ {|newVal|
 		super.rawValue_(newVal)
 	}
+
+	//for patterns
+	embedInStream { arg inval;
+		inf.do {
+			this.value.embedInStream(inval);
+		}
+	}
+
+	asPattern { |repeats=inf|
+		^PKtlElement(this, repeats)
+	}
 }
 
 
 
+PKtlElement : Pattern {
+	var <>element;
+	var <>repeats;
 
+	*new { |element, repeats=inf|
+		^super.newCopyArgs(element, repeats);
+	}
+
+	embedInStream { arg inval;
+		repeats.value.do {
+			inval = element.value.embedInStream(inval);
+		};
+		^inval;
+	}
+}
 
 
 
