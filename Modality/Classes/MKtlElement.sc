@@ -177,6 +177,16 @@ MKtlElement : MAbstractElement{
 	rawValue_ {|newVal|
 		super.rawValue_(newVal)
 	}
+
+	// pattern support
+	embedInStream { |inval|
+		this.value.embedInStream(inval);
+		^inval
+	}
+
+	asStream {
+		^Pfunc({ |inval| this.value }).asStream
+	}
 }
 
 
