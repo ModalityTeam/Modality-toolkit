@@ -26,30 +26,29 @@ A name.
 INSTANCEMETHODS::
 
 METHOD:: spec
-
-returns:: the element's spec
+the element's spec
 
 private:: init
 
 METHOD:: defaultValue
+the element's default value
 
-returns:: the element's default value
-
-METHOD:: value
-
-returns:: the element's current value (normed)
 
 METHOD:: rawValue
+get the element's value (raw)
 
 argument:: newVal
-sets the element's value (raw)
+set the element's value (raw)
 
-returns:: the element's current value (raw)
+
+METHOD:: value
+get the element's current value (normed)
+
+METHOD:: value_
+set the element's current value (normed)
 
 argument:: newval
-Float [0.0-1.0]
-
-returns:: MKtlElement
+a Float between 0.0 and 1.0
 
 discussion::
 
@@ -89,6 +88,40 @@ METHOD:: removeAction
 argument:: action
 
 Remove an action from the list of current actions. Has no effect if 'action' is a function or nil, only removes the action if 'action' is a FunctionList.
+
+METHOD:: reset
+
+Set action to nil.
+
+METHOD:: asStream
+pattern support - convert MKtlElement to a stream
+
+METHOD:: embedInStream
+pattern support - embed MKtlElement in a stream.
+
+code::
+// examples for direct pattern usage:
+n = MKtl.make(\nk1, 'nanoKONTROL');
+x = n.elementsDict[\play];
+
+// test asStream method - simple endless lookup
+Pbind(\test, x).trace.play;
+
+// switch value while playing, pattern gets current value
+x.value = 1;
+x.value = 0;
+
+// test embedInStream method:
+(
+Pbind(
+	\test, Pseq([x, 4, 7], 8),
+	\dur, 0.5
+).trace.play;
+)
+// switch value while playing
+x.value = 1;
+x.value = 0;
+::
 
 
 
