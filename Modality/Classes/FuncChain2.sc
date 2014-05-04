@@ -1,8 +1,8 @@
 // dis/en-able indiv. funcs,
 // keep flags in an array  - maybe not the best way
 
-// possible optimization for value method:
-// make an array of activeFuncs and do value on that.
+// possible speed optimization for value method:
+// make an array of all activeFuncs and call .value on that only
 
 FuncChain2 : FuncChain { // a named FunctionList
 	var <flags, <tracing = false;
@@ -23,12 +23,14 @@ FuncChain2 : FuncChain { // a named FunctionList
 	}
 
 	enable { |which|
+		if (which == \all) { which = names };
 		which.do { |name|
 			flags.put(names.indexOf(name), true);
 		}
 	}
 
 	disable { |which|
+		if (which == \all) { which = names };
 		which.do { |name|
 			flags.put(names.indexOf(name), false);
 		}
@@ -156,4 +158,66 @@ FuncChain2 : FuncChain { // a named FunctionList
 		flags.removeAt(index);
 		^array.removeAt(index);
 	}
+}
+
+FCdef : FuncChain {
+	classvar <all;
+	var <key;
+
+	*initClass { all = (); }
+
+	*at { |key| ^all[key]; }
+
+	// access by name - how to handle extra args if name exists?
+	*new { |key, pairs|
+		var res = this.at(key);
+		if(res.isNil) {
+			res = super.new(pairs).prAdd(key);
+		} {
+			// not sure that this is really smart
+			// better block setting like this?
+			if(pairs.notNil) {
+				pairs.postln.pairsDo(res.add(_, _));
+			};
+		}
+		^res
+	}
+	prAdd { |argKey|
+		key = argKey;
+		all.put(key, this);
+	}
+
+	storeArgs { ^[key] }
+	printOn { |stream| ^this.storeOn(stream) }
+}
+
+FC2def : FuncChain2 {
+	classvar <all;
+	var <key;
+
+	*initClass { all = (); }
+
+	*at { |key| ^all[key]; }
+
+	// access by name - how to handle extra args if name exists?
+	*new { |key ... pairs|
+		var res = this.at(key);
+		if(res.isNil) {
+			res = super.new(*pairs).prAdd(key);
+		} {
+			// not sure that this is really smart
+			// better block setting like this?
+			if(pairs.notNil) {
+				pairs.pairsDo(res.add(_));
+			};
+		}
+		^res
+	}
+	prAdd { |argKey|
+		key = argKey;
+		all.put(key, this);
+	}
+
+	storeArgs { ^[key] }
+	printOn { |stream| ^this.storeOn(stream) }
 }

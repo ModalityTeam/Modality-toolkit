@@ -1,5 +1,8 @@
+// FuncChain is a FunctionList with ordered, named functions
+// FuncChain2 is a FuncChain with on/off flags for each function
+// FCdef - a named FuncChain2
 
-FuncChain : FunctionList { // a named FunctionList
+FuncChain : FunctionList {
 	var <names;
 
 	storeArgs { ^[names, array].flop.flat.bubble }

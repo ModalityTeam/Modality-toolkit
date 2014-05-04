@@ -5,14 +5,14 @@ related:: Classes/FuncChain, MKtl, Overviews/Modality
 DESCRIPTION::
 Like FuncChain, FuncChain2 is an ordered list of functions that can be accessed, added, removed and reordered by name.
 
-FuncChain2 also has ways to enable and disable functions in the list by name, 
+FuncChain2 also has ways to enable and disable functions in the list by name,
 and can trace evaluations for debugging.
-When the method valueArray is called, all functions in the list that have true flags will be called in the specified order.
+When .value is called, all functions in the list that have true flags will be called in the specified order.
 
 code::
 (
 a = FuncChain2([
-    \ada, { |x| x }, 
+    \ada, { |x| x },
     \bob, { |x| x[1] }
 ]);
 )
@@ -35,7 +35,7 @@ a.trace(false);
 a.trace;
 
 ::
-CLASSMETHODS:: 
+CLASSMETHODS::
 
 METHOD:: new
 make a new FuncChain2 from name/value pairs
@@ -46,10 +46,11 @@ METHOD:: flags
 an array of flags that determines whether each functions will be evaluated or not.
 
 METHOD:: trace
-set whether FuncChain2 should be tracing evaluations or not. 
+set whether FuncChain2 should be tracing evaluations or not.
 METHOD:: tracing
 ask whether tracing is on
 returns:: a boolean
+
 
 METHOD:: addFirst, addLast, addBefore, addAfter
 add a function at a specific place in the chain.
@@ -59,13 +60,16 @@ ARGUMENT:: name
 name for the function
 
 ARGUMENT:: func
-the function to add 
+the function to add
 
 ARGUMENT:: otherName
 the name of the function realtive to which the new one is added
 
 ARGUMENT:: flag
 flag whetehr the function will be enabled or not.
+
+METHOD:: add, addFunc, put, replaceAt, value
+as in FuncChain, but with optional flag argument added.
 
 METHOD:: putAtIndex, insertAtIndex, removeAtIndex
 same as in FuncChain, but flag argument added.
