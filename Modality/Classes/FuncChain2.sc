@@ -22,19 +22,15 @@ FuncChain2 : FuncChain { // a named FunctionList
 		flags =  argnames.collect(true);
 	}
 
-	enable { |which|
+	enable { |which, flag = true|
 		if (which == \all) { which = names };
 		which.do { |name|
-			flags.put(names.indexOf(name), true);
+			var index = names.indexOf(name);
+			if (index.notNil) { flags.put(index, flag) };
 		}
 	}
 
-	disable { |which|
-		if (which == \all) { which = names };
-		which.do { |name|
-			flags.put(names.indexOf(name), false);
-		}
-	}
+	disable { |which| this.enable(which, false) }
 
 	isEnabled { |name| ^flags[names.indexOf(name)] }
 

@@ -14,7 +14,7 @@ SoftSet {
 		^willSet
 	}
 
-	*uniNextPair { |obj, paramName, value,  within = (defaultWithin), lastVal|
+	*uniNextPair { |obj, paramName, value, within = (defaultWithin), lastVal|
 		var currVal, closeEnough;
 		currVal = obj.getUni(paramName);
 
@@ -74,5 +74,42 @@ SoftSet {
 
 	*getSpec { |obj, paramName|
 		^obj.getSpec(paramName);
+	}
+
+	*multi { |obj ... pairs|
+		var lastValDict, myWithin, nextPair, pairList;
+
+		if (pairs.size.odd) {
+			lastValDict = pairs.pop;
+			myWithin = lastValDict[\within] ? defaultWithin;
+			pairs.pairsDo { |key, val|
+				nextPair = this.nextPair(obj, key, val, myWithin, lastValDict[key]);
+				pairList = pairList ++ nextPair;
+			};
+		//	[\lastValDict, lastValDict].postln;
+		} {
+			pairs.pairsDo { |key, val|
+				nextPair = this.nextPair(obj, key, val, myWithin);
+				pairList = pairList ++ nextPair;
+			};
+		};
+
+		obj.set(*pairList.postln);
+	}
+
+	*multiUni { |obj ... pairs|
+		var lastValDict, myWithin, nextPair, pairList;
+
+		if (pairs.size.odd) {
+			lastValDict = pairs.pop ?? {()};
+			myWithin = lastValDict[\within] ? defaultWithin;
+		};
+	//	[\lastValDict, lastValDict].postln;
+		pairs.pairsDo { |key, val|
+			nextPair = this.uniNextPair(obj, key, val, myWithin, lastValDict[key]);
+			pairList = pairList ++ nextPair;
+		};
+
+		obj.setUni(*pairList);
 	}
 }

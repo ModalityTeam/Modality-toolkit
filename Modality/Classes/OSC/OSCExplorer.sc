@@ -19,7 +19,7 @@ OSCExplorer {
 			});
 		};
 
-		// key as in allSrcDict
+		// key as put by hand in allSrcDict
 		if (addrItem.isKindOf(Symbol)) {
 			dict = allSrcDict[addrItem]
 		} {

@@ -42,10 +42,7 @@ set the element's value (raw)
 
 
 METHOD:: value
-get the element's current value (normed)
-
-METHOD:: value_
-set the element's current value (normed)
+get and set the element's current value (normed)
 
 argument:: newval
 a Float between 0.0 and 1.0
