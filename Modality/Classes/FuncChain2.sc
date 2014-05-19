@@ -1,8 +1,11 @@
 // dis/en-able indiv. funcs,
-// keep flags in an array  - maybe not the best way
+// keep flags in a separate array - maybe not the best way
 
 // possible speed optimization for value method:
 // make an array of all activeFuncs and call .value on that only
+
+// where to keep lists of func names that belong together?
+// in Halo for now
 
 FuncChain2 : FuncChain { // a named FunctionList
 	var <flags, <tracing = false;
@@ -31,6 +34,10 @@ FuncChain2 : FuncChain { // a named FunctionList
 	}
 
 	disable { |which| this.enable(which, false) }
+
+	enableFrom { |which, groupList|
+		this.disable(groupList).enable(which);
+	}
 
 	isEnabled { |name| ^flags[names.indexOf(name)] }
 
