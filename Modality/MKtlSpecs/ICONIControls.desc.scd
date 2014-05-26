@@ -12,7 +12,7 @@ description:(
 	].collect{ |xs, row|
 
 		xs.collect{ |note, column|
-			(\midiType: \noteOnOff, \type: \button, \midiChan: 0, \midiNum:  note, \spec: \midiVel)
+			(\midiMsgType: \noteOnOff, \type: \button, \midiChan: 0, \midiNum:  note, \spec: \midiVel)
 		}
 	},
 
@@ -23,17 +23,17 @@ description:(
 	].collect{ |xs, row|
 
 		xs.collect{ |note, column|
-			(\midiType: \noteOnOff, \type: \button, \midiChan: 0, \midiNum:  note, \spec: \midiVel)
+			(\midiMsgType: \noteOnOff, \type: \button, \midiChan: 0, \midiNum:  note, \spec: \midiVel)
 		}
 	},
 
 	\sl:
 	(0..8).collect{ |i, n|
-		(\midiType: \cc, \type: \slider, \midiChan: i, \midiNum:  13, \spec: \midiCC)
+		(\midiMsgType: \cc, \type: \slider, \midiChan: i, \midiNum:  13, \spec: \midiCC)
 	},
 
 	\kn:((16..23)++[12]).collect{ |i, n|
-		(\midiType: \cc, \type: \slider, \midiChan: 0, \midiNum:  i, \spec: \midiCC)
+		(\midiMsgType: \cc, \type: \slider, \midiChan: 0, \midiNum:  i, \spec: \midiCC)
 	}
 )
 )
