@@ -7,6 +7,10 @@ OSCMktl : MKtl {
 		sourceDeviceDict = ();
 	}
 
+	*postPossible{
+		// should implement
+	}
+
 	// *newFromDesc { |name,deviceDescName,devDesc|
 	// 	^super.new(;
 	// 	}
