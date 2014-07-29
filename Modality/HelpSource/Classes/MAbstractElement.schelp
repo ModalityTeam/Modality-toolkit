@@ -66,12 +66,12 @@ The Link::Classes/FuncChain:: containing all functionality evaluated everytime a
 
 SUBSECTION:: Adding and removing functionality
 
-METHOD:: action
+METHOD:: action_
 
 argument:: action
 a function
 
-Get and set an action to the element. The action can be removed by setting 'action' to nil.
+Add an action to the element. The action can be removed by setting 'action' to nil.
 
 
 SUBSECTION:: UGen support
