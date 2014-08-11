@@ -66,7 +66,7 @@ The Link::Classes/FuncChain:: containing all functionality evaluated everytime a
 
 SUBSECTION:: Adding and removing functionality
 
-METHOD:: action_
+METHOD:: action
 
 argument:: action
 a function
