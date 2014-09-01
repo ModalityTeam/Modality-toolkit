@@ -22,10 +22,16 @@ device: "BCR2000",
 protocol: \midi,
 description: (
 	//buttons at bottom right
-	\pr_u_l: (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 105, \spec: \midiBut, \mode: \toggle, \ioType: \inout),
-	\pr_u_r: (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 106, \spec: \midiBut, \mode: \toggle, \ioType: \inout),
-	\pr_d_l: (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 107, \spec: \midiBut, \mode: \toggle, \ioType: \inout),
-	\pr_d_r: (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 108, \spec: \midiBut, \mode: \toggle, \ioType: \inout),
+	\pr: [
+		[
+			(\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 105, \spec: \midiBut, \mode: \toggle, \ioType: \inout),
+			(\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 106, \spec: \midiBut, \mode: \toggle, \ioType: \inout)
+		],
+		[
+			(\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 107, \spec: \midiBut, \mode: \toggle, \ioType: \inout),
+			(\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 108, \spec: \midiBut, \mode: \toggle, \ioType: \inout)
+		]
+	],
 
 	//upper row of encoders when pressed
 	\tr:4.collect{ |j|
