@@ -449,6 +449,18 @@ MKtl : MAbstractKtl { // abstract class
 		}
 	}
 
+	inputElements{
+		^elementsDict.select { |elem|
+			[ \in, \inout ].includes( elem.elementDescription[\ioType] ?? \in);
+		}
+	}
+
+	outputElements{
+		^elementsDict.select { |elem|
+			[ \out, \inout ].includes( elem.elementDescription[\ioType] ?? \in);
+		}
+	}
+
 	allElements {
 		^elementsDict.asArray
 	}
