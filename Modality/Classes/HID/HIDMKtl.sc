@@ -248,6 +248,17 @@ HIDMKtl : MKtl {
 		this.replaceElements( newElements );
 	}
 
+	send { |key,val|
+		var thisMktlElement, thisHIDElement;
+		thisMktlElement = this.elementDescriptionFor( key );
+		if ( this.notNil ){
+			thisHIDElement = srcDevice.findElementWithUsage( thisMktlElement.at( 'hidUsage' ), thisMktlElement.at( 'hidUsagePage' ) ).first;
+			if ( thisHIDElement.notNil ){
+				thisHIDElement.value = val;
+			};
+		};
+	}
+
 	verbose_ {|value=true|
 		verbose = value;
 	}
