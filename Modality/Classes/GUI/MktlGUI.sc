@@ -38,8 +38,20 @@ MKtlGUI {
 			'slider': { |parent, single = false|
 				Slider( parent, if( single != false ) { 100@20 } { 20@80 });
 			},
+			'joyAxis': { |parent, single = false|
+				Slider( parent, if( single != false ) { 100@20 } { 20@80 });
+			},
+			'springFader': { |parent, single = false|
+				Slider( parent, if( single != false ) { 100@20 } { 20@80 });
+			},
+			'rumble': { |parent, single = false|
+				Slider( parent, if( single != false ) { 100@20 } { 20@80 });
+			},
 			'ribbon': { |parent, single = false|
 				Slider( parent, if( single != false ) { 100@20 } { 20@80 });
+			},
+			'hatSwitch': { |parent|
+				Knob( parent, 20@20 );
 			},
 			'encoder': { |parent|
 				Knob( parent, 20@20 );
@@ -75,7 +87,6 @@ MKtlGUI {
 		views = [ verboseButton ];
 		values = [ mktl.verbose.binaryValue ];
 		getValueFuncs = [ { mktl.verbose.binaryValue } ];
-
 		this.getSingleElements.sortedKeysValuesDo({ |key, item|
 			var view, getValueFunc, value;
 
@@ -153,11 +164,62 @@ MKtlGUI {
 			parent.asView.decorator.nextLine;
 		});
 
+		this.getDictionedElements.sortedKeysValuesDo({ |key, item|
+			var view, getValueFunc, value;
+			var currentState;
+
+			StaticText( parent, labelWidth@16 ).string_( key.asString );
+
+			mktl.prTraverse.(
+				item, [], { |a,b|
+					a.asCollection.copy.add( b );
+				}, { |state, item|
+					var view, getValueFunc, value;
+
+					if( currentState.isNil ) { currentState = state };
+					if( currentState.reverse[1].notNil && { currentState.reverse[1] != state.reverse[1] } ) {
+						parent.asView.decorator.nextLine;
+						parent.asView.decorator.shift( labelWidth + 4, 0 );
+					};
+					if( currentState.reverse[2].notNil && { currentState.reverse[2] != state.reverse[2] } ) {
+						parent.asView.decorator.shift( 0, 5 );
+					};
+					currentState = state;
+
+					view = (makeElementDict[ item.type ] ?? { makeElementDict[ \unknown ] }).value( parent, false );
+
+					getValueFunc = { mktl.elementAt( key, *state ).value; };
+					value = getValueFunc.value;
+
+					view.value_( value );
+					view.action_({ |vw|
+						var el;
+						el = mktl.elementAt( key, *state );
+						el.valueAction = vw.value;
+						if( mktl.verbose == true ) {
+							"% - % > % | via GUI\n".postf(
+								mktl.name, el.name, el.value;
+							);
+						};
+					});
+
+					getValueFuncs = getValueFuncs.add( getValueFunc );
+					values = values.add( value );
+					views = views.add( view );
+				};
+			);
+			parent.asView.decorator.nextLine;
+		});
+
 		skipJack = SkipJack( { this.updateGUI }, 0.2, { parent.isClosed } );
 	}
 
 	getSingleElements {
-		^mktl.deviceDescriptionHierarch.select({ |item| item.isKindOf( Array ).not });
+		^mktl.deviceDescriptionHierarch.select({ |item| (item.isKindOf( Array ).not) and: (item.isKindOf( Dictionary ).not) });
+	}
+
+	getDictionedElements {
+		^mktl.deviceDescriptionHierarch.select({ |item| item.isKindOf( Dictionary ) });
 	}
 
 	getArrayedElements {
