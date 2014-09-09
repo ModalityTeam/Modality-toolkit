@@ -28,9 +28,9 @@ HIDMKtl : MKtl {
 
 	*initHID { |force=false|
 		(initialized && {force.not}).if{^this};
-        HID.findAvailable;
+		HID.findAvailable;
 
-        sourceDeviceDict = IdentityDictionary.new;
+		sourceDeviceDict = IdentityDictionary.new;
 		this.prepareDeviceDicts;
 
 		initialized = true;
