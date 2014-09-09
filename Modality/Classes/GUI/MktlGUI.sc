@@ -17,6 +17,7 @@ MKtlGUI {
 
 	classvar <>makeElementDict;
 	classvar <>labelWidth = 80;
+	classvar <>smallLabelWidth = 20;
 
 	var <mktl;
 	var <>parent, <>views, <>values, <>getValueFuncs, <>skipJack;
@@ -64,7 +65,7 @@ MKtlGUI {
 			},
 			'unknown': { |parent, single = false|
 				NumberBox( parent,
-					if( single != false ) { 50@16 } { 20@16 }
+					if( single != false ) { 50@16 } { 30@16 }
 				).clipLo_(0).clipHi_(1);
 			}
 		);
@@ -172,6 +173,7 @@ MKtlGUI {
 
 			mktl.prTraverse.(
 				item, [], { |a,b|
+					StaticText( parent, smallLabelWidth@16 ).string_( b.asString );
 					a.asCollection.copy.add( b );
 				}, { |state, item|
 					var view, getValueFunc, value;

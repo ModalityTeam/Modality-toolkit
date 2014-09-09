@@ -327,7 +327,7 @@ MKtl : MAbstractKtl { // abstract class
 				if( isLeaf.(x) ) {
 					leafFunc.( state , x )
 				}{
-					x.collect{ |val, key|
+					x.sortedKeysValuesCollect{ |val, key|
 						f.(val, stateFuncOnNodes.(state, key), stateFuncOnNodes, leafFunc )
 					}
 				}
