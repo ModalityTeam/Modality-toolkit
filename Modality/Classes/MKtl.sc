@@ -172,6 +172,7 @@ MKtl : MAbstractKtl { // abstract class
 	}
 
 	*prShortnamesToDevices {
+		if( MKtl.allDevDescs.isNil ){ MKtl.loadAllDescs };
 		^Dictionary.with(*
 			MKtl.allDevDescs.getPairs.clump(2)
 			.collect({ |xs| (MKtl.makeShortName(xs[1][\device]) -> xs[0]) }))
