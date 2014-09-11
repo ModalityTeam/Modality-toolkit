@@ -189,6 +189,9 @@ MKtl : MAbstractKtl { // abstract class
 		^this.prShortnamesToDevices[r] !? { |deviceDescName|
 			MKtl.matchClass(allDevDescs[deviceDescName][ \protocol ]) !? { |class|
 				var temp = class.fake( deviceDescName );
+				if ( all[name].isNil ){
+					all.put( name, temp );
+				};
 				temp.gui;
 				temp
 			}
