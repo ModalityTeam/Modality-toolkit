@@ -83,9 +83,10 @@ MKtl : MAbstractKtl { // abstract class
 		specs.put(key, spec.asSpec);
 	}
 
-	*makeShortName {|deviceID|
+	*makeShortName {|deviceID,protocol="n"|
 		^(deviceID.asString.toLower.select{|c| c.isAlpha && { c.isVowel.not }}.keep(4)
 			++ deviceID.asString.select({|c| c.isDecDigit}))
+			++ protocol
 	}
 
 	*matchClass { |symbol|
@@ -177,7 +178,7 @@ MKtl : MAbstractKtl { // abstract class
 		if( MKtl.allDevDescs.isNil ){ MKtl.loadAllDescs };
 		^Dictionary.with(*
 			MKtl.allDevDescs.getPairs.clump(2)
-			.collect({ |xs| (MKtl.makeShortName(xs[1][\device]) -> xs[0]) }))
+			.collect({ |xs| (MKtl.makeShortName(xs[1][\device], xs[1][\protocol].asString.first) -> xs[0]) }))
 	}
 
 	*prMakeVirtual { |name|

@@ -205,7 +205,7 @@ MIDIMKtl : MKtl {
 
 		deviceNames = MIDIClient.sources.collect {|src|
 			tempName = this.getMIDIdeviceName( src.device );
-			this.makeShortName(tempName);
+			this.makeShortName(tempName,"m");
 		};
 
 		if (deviceNames.isEmpty) {
@@ -228,7 +228,7 @@ MIDIMKtl : MKtl {
 		j = 0; prevName = nil;
 		deviceNames = MIDIClient.destinations.collect{|src|
 			tempName = this.getMIDIdeviceName( src.device );
-			this.makeShortName(tempName);
+			this.makeShortName(tempName, "m");
 		};
 		order = deviceNames.order;
 

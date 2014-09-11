@@ -39,7 +39,7 @@ HIDMKtl : MKtl {
 	*prepareDeviceDicts{
 		var prevName = nil, j = 0, order, deviceNames;
 		deviceNames = HID.available.collect{|dev,id|
-			this.makeShortName( (dev.productName.asString ++ "_" ++ dev.vendorName.asString ).asString)
+			this.makeShortName( (dev.productName.asString ++ "_" ++ dev.vendorName.asString ).asString, "h")
 		}.asSortedArray;
 		order = deviceNames.order{ arg a, b; a[1] < b[1] };
 		deviceNames[order].do{|name, i|
