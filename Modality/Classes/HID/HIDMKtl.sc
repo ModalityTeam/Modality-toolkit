@@ -162,7 +162,8 @@ HIDMKtl : MKtl {
 	}
 
     *makeDeviceName{ |hidinfo|
-        ^(hidinfo.vendorName.asString ++ "_" ++ hidinfo.productName);
+		// ^(hidinfo.vendorName.asString ++ "_" ++ hidinfo.productName);
+		^(hidinfo.productName.asString ++ "_" ++ hidinfo.vendorName);
     }
 
 	postRawSpecs { this.class.postRawSpecsOf(srcDevice) }
