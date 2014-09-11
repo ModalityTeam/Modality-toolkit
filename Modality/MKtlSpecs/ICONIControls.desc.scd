@@ -16,16 +16,12 @@ description:(
 		}
 	},
 
-	\leftbt:
-	[
-		[ 91, 94, 92 ],
-		[ 86, 93, 95 ]
-	].collect{ |xs, row|
-
-		xs.collect{ |note, column|
-			(\midiMsgType: \noteOnOff, \type: \button, \midiChan: 0, \midiNum:  note, \spec: \midiVel)
-		}
-	},
+	\rew: (\midiMsgType: \noteOnOff, \type: \button, \midiChan: 0, \midiNum:  91, \spec: \midiVel),
+	\play: (\midiMsgType: \noteOnOff, \type: \button, \midiChan: 0, \midiNum:  94, \spec: \midiVel),
+	\fwd: (\midiMsgType: \noteOnOff, \type: \button, \midiChan: 0, \midiNum:  92, \spec: \midiVel),
+	\cycle: (\midiMsgType: \noteOnOff, \type: \button, \midiChan: 0, \midiNum:  86, \spec: \midiVel),
+	\stop: (\midiMsgType: \noteOnOff, \type: \button, \midiChan: 0, \midiNum:  93, \spec: \midiVel),
+	\rec: (\midiMsgType: \noteOnOff, \type: \button, \midiChan: 0, \midiNum:  95, \spec: \midiVel),
 
 	\sl:
 	(0..8).collect{ |i, n|
