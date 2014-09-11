@@ -43,6 +43,10 @@ MIDIMKtl : MKtl {
 
 		(initialized && {force.not}).if{^this};
 
+		if ( MIDIClient.initialized ){
+			MIDIClient.disposeClient;
+			MIDIClient.init;
+		};
 		MIDIIn.connectAll;
 		sourceDeviceDict = ();
 		destinationDeviceDict = ();
@@ -57,8 +61,10 @@ MIDIMKtl : MKtl {
 		// this could also live in /--where?--/
 	*find { |post=true|
 
-			// was true, make it false for now while MIDI re-init is broken
-		this.initMIDI(false);
+		// was true, make it false for now while MIDI re-init is broken on OSX
+		// this.initMIDI(false);
+		this.initMIDI( thisProcess.platform.name != \osx );
+
 
 		if (MIDIClient.sources.isEmpty) {
 			"// MIDIMKtl did not find any sources - you may want to connect some first.".inform;
