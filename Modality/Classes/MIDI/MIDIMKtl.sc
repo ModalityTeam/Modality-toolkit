@@ -48,7 +48,7 @@ MIDIMKtl : MKtl {
 			MIDIClient.disposeClient;
 			MIDIClient.init;
 		};
-		if ( thisProcess.platform.name == \osx ){
+		if ( thisProcess.platform.name == \osx and: Main.versionAtMost( 3,6 ) ){
 			"next time you recompile the language, reboot the interpreter instead to get MIDI working again.".warn;
 		};
 		MIDIIn.connectAll;
