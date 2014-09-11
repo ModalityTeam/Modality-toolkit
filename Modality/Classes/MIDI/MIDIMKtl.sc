@@ -43,9 +43,13 @@ MIDIMKtl : MKtl {
 
 		(initialized && {force.not}).if{^this};
 
-		if ( MIDIClient.initialized ){
+		// workaround for inconsistent behaviour between linux and osx
+		if ( MIDIClient.initialized and: (thisProcess.platform.name == \linux) ){
 			MIDIClient.disposeClient;
 			MIDIClient.init;
+		};
+		if ( thisProcess.platform.name == \osx ){
+			"next time you recompile the language, reboot the interpreter instead to get MIDI working again.".warn;
 		};
 		MIDIIn.connectAll;
 		sourceDeviceDict = ();
@@ -61,10 +65,7 @@ MIDIMKtl : MKtl {
 		// this could also live in /--where?--/
 	*find { |post=true|
 
-		// was true, make it false for now while MIDI re-init is broken on OSX
-		// this.initMIDI(false);
-		this.initMIDI( thisProcess.platform.name != \osx );
-
+		this.initMIDI( true );
 
 		if (MIDIClient.sources.isEmpty) {
 			"// MIDIMKtl did not find any sources - you may want to connect some first.".inform;
