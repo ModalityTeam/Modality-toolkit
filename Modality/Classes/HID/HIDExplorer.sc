@@ -60,9 +60,13 @@ HIDExplorer {
     }
 
     *compileFromDevice { |dev|
-		var str = "(";
+		var str = "(\n";
         var elements = dev.elements;
         var uniques, duplicates;
+
+		str = str ++ "device: \"" ++ dev.info.productName.asString ++ "_" ++ dev.info.vendorName.asString ++ "\",\n";
+		str = str ++ "protocol: 'hid',\n";
+		str = str ++ "description: (\n";
 
         /// todo: check the device elements whether any duplicate usages occur, if so, then we need to filter by element id
         /// could infer type from the control
@@ -111,7 +115,7 @@ HIDExplorer {
         };
         */
 
-		str = str + "\n);";
+		str = str + "\n)\n);";
 
 		^str;
     }
