@@ -49,6 +49,8 @@ MKtl : MAbstractKtl { // abstract class
 		this.addSpec(\midiBend, [0, 16383, \lin, 1, 8192]);
 
 		// HID
+		this.addSpec(\mouseAxis, [0, 1, \lin, 0, 0.5]);
+
 		this.addSpec(\hidBut, [0, 1, \lin, 1, 0]);
 		this.addSpec(\hidHat, [0, 1, \lin, 1, 0]);
 		this.addSpec(\compass8, [0, 8, \lin, 1, 1]); // probably wrong, check again!
