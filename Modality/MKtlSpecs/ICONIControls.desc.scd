@@ -6,7 +6,7 @@ device: "iCON iControls V2.00",
 protocol: \midi,
 description:(
 
-	\but: [
+	\bt: [
 		[ 16, 17, 18, 19, 20, 21, 22, 23, 48 ],
 		[ 8, 9, 10, 11, 12, 13, 14, 15, 49 ]
 	].collect{ |xs, row|
@@ -16,7 +16,7 @@ description:(
 		}
 	},
 
-	\leftbut:
+	\leftbt:
 	[
 		[ 91, 94, 92 ],
 		[ 86, 93, 95 ]

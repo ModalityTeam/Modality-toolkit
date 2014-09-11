@@ -23,7 +23,7 @@ description: (
 	\btTape: 		(\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 9, \spec: \midiBut, \mode: \push),
 	\btLevels: 	(\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 10, \spec: \midiBut, \mode: \push),
 
-	\but: (11..14).collect { |num|
+	\bt: (11..14).collect { |num|
 		(\midiMsgType: \cc, \type: \knob, \midiChan: 0, \midiNum: num, \spec: \midiBut)
 	},
 	\butsm: [50, 51, 52, 21, 22, 23, 24, 25].collect { |num|
@@ -34,7 +34,7 @@ description: (
 	\btCom: 		(\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 49, \spec: \midiBut, \mode: \push),
 	\btSlot: 		(\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 48, \spec: \midiBut, \mode: \push),
 
-	\but: (11..14).collect { |num|
+	\bt: (11..14).collect { |num|
 		(\midiMsgType: \cc, \type: \knob, \midiChan: 0, \midiNum: num, \spec: \midiBut)
 	},
 

@@ -6,7 +6,7 @@ related:: Overviews/Modality, Classes/MKtl, Classes/MKtlElement, Classes/MDispat
 DESCRIPTION::
 Abstract class for MKtl controller elements and code::MDispatchOut::s.
 
-note::this is a core and abstract class that sould, in normal usage, not be accessed directly.::
+note::this is an and abstract class that should usually not be accessed directly.::
 
 CLASSMETHODS::
 
@@ -52,16 +52,13 @@ METHOD:: prevValue
 the previous value
 
 METHOD:: valueAction
-set value and evaluate assotiated FuncChain.
+Set value and evaluate the associated action.
 
 argument:: newval
 the new value
 
 METHOD:: doAction
-Evaluate assotiated FuncChain
-
-METHOD:: funcChain
-The Link::Classes/FuncChain:: containing all functionality evaluated everytime a link::#-valueAction:: is set.
+Evaluate the associated action
 
 
 SUBSECTION:: Adding and removing functionality
@@ -71,8 +68,7 @@ METHOD:: action
 argument:: action
 a function
 
-Add an action to the element. The action can be removed by setting 'action' to nil.
-
+Get and set the action to evaluate when element is activated.
 
 SUBSECTION:: UGen support
 
