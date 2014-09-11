@@ -1,6 +1,6 @@
 (
 protocol: \hid,
-device: "Jess Tech_Dual Analog Pad",
+device: "Dual Analog Pad_Jess Tech",
 description: (
 	// --------- input elements ----------
 	'b1': ('hidUsage': 5, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', spec: \hidBut, mode: \push ),

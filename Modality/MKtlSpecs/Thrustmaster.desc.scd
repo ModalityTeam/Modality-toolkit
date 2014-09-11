@@ -1,5 +1,5 @@
 (osx: (
-	device: "MegaWorldectronics_USB Joystick"
+	device: "USB Joystick_MegaWorldectronics"
 ),
 linux: (
 	device: ""
