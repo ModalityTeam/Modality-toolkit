@@ -26,7 +26,7 @@ description: (
 	\bt: (11..14).collect { |num|
 		(\midiMsgType: \cc, \type: \knob, \midiChan: 0, \midiNum: num, \spec: \midiBut)
 	},
-	\butsm: [50, 51, 52, 21, 22, 23, 24, 25].collect { |num|
+	\btsm: [50, 51, 52, 21, 22, 23, 24, 25].collect { |num|
 		(\midiMsgType: \cc, \type: \knob, \midiChan: 0, \midiNum: num, \spec: \midiBut)
 	},
 
@@ -50,13 +50,13 @@ description: (
 )
 )
 
-/* test that is works:
+/* test that this works:
 
 MIDIMKtl.find;
 m = MIDIMKtl('pmdd10');
 m.verbose = true;
 
-m.elementAt(\but, 4).addAction({ |el| "but 4: %\n".postf(el.value); });
+m.elementAt(\bt, 4).addAction({ |el| "but 4: %\n".postf(el.value); });
 m.elementAt(\btJoin).action_({ |el| "btJoin: %\n".postf(el.value); });
 m.elementAt(\keyOn, 1).action_({ |el| "keyOn: %\n".postf(el.value); });
 m.elementAt(\keyOff, 1).action_({ |el| "keyOff: %\n".postf(el.value); });
