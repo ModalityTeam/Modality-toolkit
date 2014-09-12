@@ -75,7 +75,7 @@ DEFINITIONLIST::
 || Needed, if code::\midiType:: is part of the config string. The identifiers code::\bend, \touch, \program:: only need code::\midiChan:: to be specified.
 ::
 
-	The 'description' field contains a dictionary that can contain other dictionaries or arrays. At the leafs of this data structure must be a dictionary describing an element. An example:
+	The 'description' field contains a dictionary that can contain other dictionaries or arrays. At the leaves of this data structure must be a dictionary describing an element. An example:
 
 	code::
 \key: [
@@ -88,3 +88,27 @@ DEFINITIONLIST::
 	]
 ]
 ::
+
+	subsection::  Naming Conventions
+	The file for the "nanoKontrol 2" is an example for good element naming, and the examples here are taken from there. Generally, element names should be as clear as possible, and reasonably short to allow for compact code. The main advantage of following the conventions is that similar elements across devices will have identical or at least simlar names, and thus allow substituting one device for a similar one with minimal code changes.
+
+	Unnamed buttons should be called \bt, sliders \sl, knobs \kn, pads \pad, etc., and when they are physically in arrays, they should be given as, e.g.
+code::
+ \kn: (16..23).collect{ |i|
+		(\midiMsgType: \cc, \type: \knob, \midiChan: 0, \midiNum: i, \spec: \midiCC)
+	}.
+::
+	When in rows and columns, these can be nested:
+code::
+	\bt: [(32..39),(48..55),(64..71)].collect{ |xs|
+		xs.collect{ |i|
+			(\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum:  i, \spec: \midiCC)
+		}
+	}
+::
+	Elements with names or symbols on them should be given that name,
+	e.g.  a button name "play" or with a > sign on it  should be
+	called \play or \playBt. in the nanoKontrol 2 file, such button names include transport buttons \rew, \fwd, \stop, \play, \rec,
+	\cycle, track buttons \tleft, \tright, and marker buttons \mset, \mleft, \mright.
+
+	When in doubt, consult files of devices with similar elements, and follow the naming schemes there. 

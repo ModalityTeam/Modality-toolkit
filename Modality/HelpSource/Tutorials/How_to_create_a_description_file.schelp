@@ -67,12 +67,13 @@ code::
 )
 ::
 
-note::Naming conventions for identifiers are
-code::kn:: for knobs,
+note::Naming conventions for identifiers are:
+ code::kn:: for knobs,
 code::sl:: for sliders,
 code::bt:: for buttons,
 code::key:: for keys,
-code::pad:: for pads
+code::pad:: for pads, etc. Elements with names or symbols on them should have that name, e.g. a play button should be called \play, a rewind button \rew, etc. See also Naming conventions here:
+link::Reference/MKtl_description_files::
 ::
 
 
@@ -83,8 +84,8 @@ Unless it does not make sense from the controller's layout (e.g. record buttons 
 Make sure to fill in appropriate descriptions for code::\type:: fields.
 
 note::
-Naming conventions for type values are
-code::slider:: for sliders,
+Naming conventions for type values are:
+ code::slider:: for sliders,
 code::knob:: for knobs,
 code::button:: for buttons,
 code::key:: for keys,
