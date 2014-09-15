@@ -34,8 +34,7 @@ MIDIMKtl : MKtl {
 	                          //i.e.  ( 'trD1': [ cc, 0, 57, a ControlSpec(0, 127, 'linear', 1, 0, "") ], ... )
 
 	var <responders;
-
-	var <exploreFuncs;
+	var <respTopFuncs;
 	var <msgTypes;
 
 	    // open all ports
@@ -268,7 +267,7 @@ MIDIMKtl : MKtl {
 		name = argName;
 
 		source = argSource;
-		srcID = source.uid;
+		source.notNil.if { srcID = source.uid };
 
 		// destination is optional
 		destination = argDestination;
@@ -423,6 +422,7 @@ MIDIMKtl : MKtl {
 				var el = elementHashDict[hash];
 
 				midiRawAction.value(\control, src, chan, num, value);
+				respTopFuncs[typeKey].value(chan, value);
 
 				if (el.notNil) {
 					el.rawValueAction_(value, false);
@@ -453,6 +453,7 @@ MIDIMKtl : MKtl {
 				var el = elementHashDict[hash];
 
 				midiRawAction.value(\noteOn, src, chan, note, vel);
+				respTopFuncs[typeKey].value(chan, note, vel);
 
 				if (el.notNil) {
 					el.rawValueAction_(vel);
@@ -481,6 +482,9 @@ MIDIMKtl : MKtl {
 				var hash = this.makeNoteOffKey(chan, note);
 				var elName = hashToElNameDict[hash];
 				var el = elementHashDict[hash];
+
+				midiRawAction.value(\noteOff, src, chan, note, vel);
+				respTopFuncs[typeKey].value(chan, note, vel);
 
 				if (el.notNil) {
 					el.rawValueAction_(vel);
@@ -517,6 +521,7 @@ MIDIMKtl : MKtl {
 				var el = elementHashDict[hash];
 
 				midiRawAction.value(\touch, src, chan, value);
+				respTopFuncs[typeKey].value(chan, value);
 
 				if (el.notNil) {
 					el.rawValueAction_(value);
@@ -549,6 +554,7 @@ MIDIMKtl : MKtl {
 				var el = elementHashDict[hash];
 
 				midiRawAction.value(\polyTouch, src, chan, note, vel);
+				respTopFuncs[typeKey].value(chan, note, vel);
 
 				if (el.notNil) {
 					el.rawValueAction_(vel);
@@ -585,6 +591,7 @@ MIDIMKtl : MKtl {
 				var el = elementHashDict[hash];
 
 				midiRawAction.value(\bend, src, chan, value);
+				respTopFuncs[typeKey].value(chan, value);
 
 				if (el.notNil) {
 					el.rawValueAction_(value);
@@ -621,6 +628,7 @@ MIDIMKtl : MKtl {
 				var el = elementHashDict[hash];
 
 				midiRawAction.value(\program, src, chan, value);
+				respTopFuncs[typeKey].value(chan, value);
 
 				if (el.notNil) {
 					el.rawValueAction_(value);
@@ -645,6 +653,7 @@ MIDIMKtl : MKtl {
 		msgTypes = MIDIAnalysis.checkMsgTypes(deviceDescription);
 		msgTypes = msgTypes ? allMsgTypes;
 		responders = ();
+		respTopFuncs = ();
 		msgTypes.do { |msgType|
 			switch(msgType,
 				\cc, { this.makeCC },
