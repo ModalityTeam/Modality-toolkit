@@ -6,7 +6,7 @@ HIDExplorer {
 	classvar <results;
 	classvar <observeDict;
 	classvar <>verbose = true;
-	classvar <observedSrcID;
+	classvar <observedSrcDev;
 
     classvar <exploreFunction;
 
@@ -16,15 +16,22 @@ HIDExplorer {
         exploreFunction = { |devid, thisdevice, elid, page, usage, value, mappedvalue| this.updateRange( elid, page, usage, value ) };
 	}
 
-	*start { |srcID|
-		if (exploreFunction.isNil) { this.init };
-		observedSrcID = srcID;
-		this.prepareObserve;
-        HID.addRecvFunc( exploreFunction );
+	*start { |srcDev|
+		if ( srcDev.notNil ){
+			srcDev.debug_( true );
+			observedSrcDev = srcDev;
+		}{
+			HID.debug_( true );
+		}
 	}
 
-	*stop {
-        HID.removeRecvFunc( exploreFunction );
+	*stop { |srcDev|
+		srcDev = srcDev ? observedSrcDev;
+		if ( srcDev.notNil ){
+			srcDev.debug_( false );
+		}{
+			HID.debug_( false );
+		}
 	}
 
 	*prepareObserve {

@@ -169,12 +169,15 @@ HIDMKtl : MKtl {
 	postRawSpecs { this.class.postRawSpecsOf(srcDevice) }
 
 	explore{
-		/*"Using HIDExplorer. (see its Helpfile for Details)\n\n".post;
+		/*
+		"Using HIDExplorer. (see its Helpfile for Details)\n\n".post;
 		"HIDExplorer started. Wiggle all elements of your controller then".postln;
 		"\tHIDExplorer.stop;".postln;
 		"\tHIDExplorer.openDoc;".postln;
-		HIDExplorer.start(this.srcID);*/
-		"HIDExplorer.explore is not implemented yet".postln;
+		HIDExplorer.start(this.srcID);
+		*/
+		HIDExplorer.start( this.srcDevice );
+		// "HIDExplorer.explore is not implemented yet".postln;
 	}
 
 	initHIDMKtl { |argUid, argSource|
