@@ -19,10 +19,13 @@ all open MKtl controllers.
 METHOD:: find
 Find all currently connected controllers.
 This method calls the find method on all of MKtl's subclasses.
+code::
+MKtl.find;
+::
 
 METHOD:: new
 Creates a new instance of MKtl, or accesses an existing instance with that name.
-
+For devices which have descriptions already, this works by using the shortname given by *find.
 argument:: name
 The name of the controller as you want to refer to it.
 If you supply the short name that was given by MKtl's find method, it will try to open this device.
@@ -31,37 +34,21 @@ If you supply the name of an MKtl that already exists, the method will return th
 argument:: deviceDescName
 The device description that you want to use. This is the file name of the description file (without .desc.scd), or the long name of the device as reported.
 
-
-METHOD:: addSpec
-add a ControlSpec to MKtl's global library of specs.
-
-argument:: key
-Name of the spec
-
-argument:: spec
-The ControlSpec
-
-DISCUSSION::
-
 code::
-//create a virtual nanokontrol
-MKtl.make(\fakeNano, "nanoKONTROL")
-
-//create a gui to control it
-MKtl(\fakeNano).gui
-
-//assign an action
-MIDIMKtl(\fakeNano).elements[\sl][0][0].action_({ |elem| elem.value.postln })
+MKtl.find;
+// use auto-name, assuming you have one nanoKontrol 2 connected.
+// if you have not, a virtual nanoKontrol2 will be generated
+k = MKtl('nnkn20');
 ::
 
-METHOD::fake
+METHOD::make
 
 Create a new MKtl using a device description with an automatically generated name.
 
+argument::name
+name for the new MKtl
 argument:: deviceDescName
 The device description that you want to use. This is the file name of the description file (without .desc.scd), or the long name of the device as reported.
-
-DISCUSSION::
 
 code::
 //create a virtual nanokontrol
@@ -74,6 +61,24 @@ MIDIMKtl(\fakeNano).gui
 MIDIMKtl(\fakeNano).elements[\sl][0][0].action_({ |elem| elem.value.postln })
 ::
 
+METHOD::fake
+
+Create a new MKtl using a device description with an automatically generated name.
+
+argument:: deviceDescName
+The device description that you want to use. This is the file name of the description file (without .desc.scd), or the long name of the device as reported.
+
+code::
+//create a virtual nanokontrol2
+MIDIMKtl.fake("nanoKONTROL2");
+
+//create a gui to control it
+MIDIMKtl('virtual_0_nanoKONTROL2').gui
+
+//assign an action
+MIDIMKtl(\virtual_0_nanoKONTROL2).elements[\sl][0][0].action_({ |elem| elem.value.postln })
+::
+
 
 METHOD:: addSpec
 add a ControlSpec to MKtl's library of specs.
@@ -84,14 +89,6 @@ Name of the spec
 argument:: spec
 The ControlSpec
 
-METHOD:: make
-Create a new MKtl using a device description without initializing it. Usefull for testing a controller when it is not connected to the system
-
-argument:: name
-name for the new MKtl
-
-argument:: deviceDescName
-The device description that you want to use. This is the filename of the description file with ".desc.scd" stripped.
 
 METHOD:: loadMatching
 load device description file(s) by matching to a name.

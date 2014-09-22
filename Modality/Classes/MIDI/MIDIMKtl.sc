@@ -1,10 +1,14 @@
-///////// how to make anonymous ones? when would they be used anonymously? /////
+/***
 
-// TODO
-//   addFunc should conform to super.addFunc.
-//	convert all responders to midifuncs
-//	test noteOn  off responders, they are not working yet!
+** Questions :
 
+-- OLD: how to make anonymous ones? when would MKtls ever be used anonymously?
+
+** TODO
+*
+*   test noteOn noteOff responders, they are not working yet!
+
+***/
 
 MIDIMKtl : MKtl {
 
@@ -99,10 +103,11 @@ MIDIMKtl : MKtl {
 		// TODO: what happens to MIDI devs that are only destinations?
 	}
 
-	*postPossible{
-		"\n// Available MIDIMKtls - you may want to change the names: ".postln;
+	*postPossible {
+		"\n// Available MIDIMKtls: ".postln;
+		"// MKtl(shortName, sourceID, destinationID) // name".postln;
 		sourceDeviceDict.keysValuesDo { |key, src|
-			"   MIDIMKtl('%', %, %);  // %\n".postf(
+			"   MKtl('%', %, %);  // %\n".postf(
 				key,
 				src.uid,
 				destinationDeviceDict[key].notNil.if({destinationDeviceDict[key].uid},{nil}),
