@@ -1,11 +1,15 @@
 CLASS:: MKtl
-summary:: The class to use external controllers
+summary:: A class for creating and accessing external controllers
 categories:: Libraries>Modality, External Control
 related:: Overviews/Modality, Classes/MDispatch, Classes/PKtl, Classes/MKtlElement
 
 DESCRIPTION::
-MKtl gives an easy to use interface for devices you can connect to your computer through MIDI, HID, OSC, Serial and other protocols. Even more, you can also use it for GUI based controllers (yet to be implemented).
+MKtl provides an easy to use interface for devices you can connect to your computer through MIDI, HID, OSC, Serial and eventually other protocols. Beyond that, you will be able to use it for GUI based controllers (yet to be implemented).
+
 MKtl searches for controllers connected to your machine, and gives you a list of available devices. Or, if you already know which controller you want to use, it will look through this list and returns you the controller with that name. If it cannot find it, it will replace it with a graphical representation of the controller to simulate it.
+
+For most devices, this requires that someone has already made a description file for the device; if there is none, it is easy to make one following the instructions here:
+link::Tutorials/How_to_create_a_description_file::
 
 CLASSMETHODS::
 
@@ -17,19 +21,19 @@ Find all currently connected controllers.
 This method calls the find method on all of MKtl's subclasses.
 
 METHOD:: new
-Creates a new instance of MKtl
+Creates a new instance of MKtl, or accesses an existing instance with that name.
 
 argument:: name
 The name of the controller as you want to refer to it.
 If you supply the short name that was given by MKtl's find method, it will try to open this device.
-If you supply the name of an MKtl that already exists, the new method will return that instance (a la Ndef proxy style).
+If you supply the name of an MKtl that already exists, the method will return that instance, as with e.g. JITLib proxies, oder OSCdef, MIDIdef etc.
 
 argument:: deviceDescName
 The device description that you want to use. This is the file name of the description file (without .desc.scd), or the long name of the device as reported.
 
 
 METHOD:: addSpec
-add a ControlSpec to MKtl's library of specs.
+add a ControlSpec to MKtl's global library of specs.
 
 argument:: key
 Name of the spec
@@ -37,23 +41,14 @@ Name of the spec
 argument:: spec
 The ControlSpec
 
-METHOD:: make
-Create a new MKtl using a device description without initializing it. Usefull for testing a controller when it is not connected to the system
-
-argument:: name
-name for the new MKtl
-
-argument:: deviceDescName
-The device description that you want to use. This is the filename of the descritption file with ".desc.scd" stripped.
-
 DISCUSSION::
 
 code::
 //create a virtual nanokontrol
-MIDIMKtl.make(\fakeNano, \nanoKONTROL)
+MKtl.make(\fakeNano, "nanoKONTROL")
 
 //create a gui to control it
-MIDIMKtl(\fakeNano).gui
+MKtl(\fakeNano).gui
 
 //assign an action
 MIDIMKtl(\fakeNano).elements[\sl][0][0].action_({ |elem| elem.value.postln })
@@ -70,7 +65,13 @@ DISCUSSION::
 
 code::
 //create a virtual nanokontrol
-MIDIMKtl.fake(\nanoKONTROL)
+MIDIMKtl.make(\fakeNano, "nanoKONTROL")
+
+//create a gui to control it
+MIDIMKtl(\fakeNano).gui
+
+//assign an action
+MIDIMKtl(\fakeNano).elements[\sl][0][0].action_({ |elem| elem.value.postln })
 ::
 
 
@@ -90,20 +91,17 @@ argument:: name
 name for the new MKtl
 
 argument:: deviceDescName
-The device description that you want to use. This is the filename of the descritption file with ".desc.scd" stripped.
+The device description that you want to use. This is the filename of the description file with ".desc.scd" stripped.
 
-DISCUSSION::
+METHOD:: loadMatching
+load device description file(s) by matching to a name.
 
-code::
-//create a virtual nanokontrol
-MIDIMKtl.make(\fakeNano, \nanoKONTROL)
+argument:: name
+local name by which to match; e.g. "RunNDrive" will find
+"RunNDrive_Wireless.desc.scd" in the description folder.
 
-//create a gui to control it
-MIDIMKtl(\fakeNano).gui
-
-//assign an action
-MIDIMKtl(\fakeNano).elements[\sl][0][0].action_({ |elem| elem.value.postln })
-::
+METHOD:: postAllDescriptions
+Posts all descriptions found in the deviceDescriptionFolder.
 
 
 
@@ -113,11 +111,10 @@ METHOD:: loadAllDescs
 load all device description files from the default folder. Done automatically when initializing an MKtl
 
 argument:: reload
-force a reload of the device index
+flag whether to force a reload of the device description dictionary.
 
-
-METHOD:: postAllDescriptions
-Posts all descriptions found in the deviceDescriptionFolder.
+METHOD:: loadSingleDesc
+load a single device description file from full path.
 
 METHOD:: initClass
 
@@ -130,8 +127,7 @@ An IdentityDictionary holding all known device specs. These are read files in de
 
 
 METHOD:: specs
-All the ControlSpecs used by controller elements.
-
+A global dictionary of all preset ControlSpecs used by various controller elements.
 
 METHOD:: allAvailable
 List of available controllers (by name) per protocol.
@@ -218,47 +214,49 @@ Create a gui representation of the device
 
 discussion::
 
-MIDIMKtl.make(\test,\nanoKONTROL).gui
-
+MKtl.make(\test, "nanoKONTROL");
+k = MKtl(\test);
+k.gui
 
 
 METHOD:: elementsNotOfType
 
-discussion::
-
+return all elements that are not of the type given
 code::
-(
-k = MIDIMKtl.fake(\nanoKONTROL);
 k.elementsNotOfType(\slider)
-)
 ::
 
 METHOD:: elementsOfType
 
-discussion::
+return all elements that are of the type given
 
 code::
-(
-k = MIDIMKtl.fake(\nanoKONTROL);
 k.elementsOfType(\slider)
-)
 ::
 
 METHOD:: explore
 
-When a device doesn't yet have a description file, this can be used to help in creating one.
-
+When a device doesn't have a description file yet, explore can be used to help in creating one.
 
 
 SUBSECTION:: Private methods
 
 METHOD:: postDeviceDescription
 
-dump device description
+p device description
 
 METHOD:: allElements
 
-returns:: an array with all the elements
+returns an array with all the elements
+
+METHOD:: inputElements
+
+returns an array with all the elements that provide inputs
+
+METHOD:: outputElements
+
+returns an array with all the elements that provide outputs
+
 
 METHOD:: loadDeviceDescription
 Load a device description from either a given device description name, or a device name.

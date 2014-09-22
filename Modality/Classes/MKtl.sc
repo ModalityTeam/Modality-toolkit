@@ -164,6 +164,11 @@ MKtl : MAbstractKtl { // abstract class
 		^this.make(g.(0), deviceDescName)
 	}
 
+	warnNoDeviceFileFound { |deviceName|
+			warn( "Mktl could not find a device file for device %. You can start exploring the capabilities of it by evaluating:\n\t%(%).explore;\n".format(
+			deviceName.asCompileString, this.class, name.asCompileString) )
+	}
+
 	*make { |name, deviceDescName|
 		if (all[name].notNil ) {
 			warn("MKtl name '%' is in use already. Please use another name."
@@ -239,31 +244,34 @@ MKtl : MAbstractKtl { // abstract class
 	printOn { |stream| this.storeOn(stream) }
 
 	*loadAllDescs { |reload=false|
-		if ( allDevDescs.isNil or: reload ){
-			var paths = (deviceDescriptionFolder++"/*.desc.scd").pathMatch;
-			var descNames = paths.collect{ |x|
-				PathName(x).fileName.split($.)[0]
-			};
-			allDevDescs = IdentityDictionary.with(
-				*[descNames, paths].flop.collect{ |xs|
-					var dict = (xs[1].cs++".load").interpret;
-					dict ?? {
-						"%.desc.scd does not parse".format(xs[0]).warn;
-					};
-					xs[0].asSymbol -> dict
-				}.select(_.notNil)
-			)
-			//ignore entrys without a description
-			.select{ |val, key|
-				var bool = val.isKindOf(IdentityDictionary) and: {
-					val.keys.includes(\description)
-				};
-				if(bool.not) {
-					"%.desc.scd is not a valid description file".format(key).warn
-				};
-				bool
-			};
+		if (reload) { allDevDescs = nil };
+		if ( allDevDescs.isNil ){
+			this.loadMatching("");
 		};
+	}
+
+	*loadMatching { |name|
+		var paths = (deviceDescriptionFolder +/+
+			("*" ++ name ++ "*.desc.scd")).pathMatch;
+		var descNames = paths.collect{ |x| PathName(x).fileName.split($.)[0] };
+		"MKtl loadMatching - found: %.\n".postf(descNames);
+		paths.do (this.loadSingleDesc(_));
+	}
+
+	*loadSingleDesc { |path|
+		// path has been tested to exist already
+		var descName = path.basename.split($.)[0];
+		var descDict = path.load;
+		var isDesc = descDict.isKindOf(Dictionary) and: {
+			descDict[\description].notNil };
+		if (isDesc.not) {
+			"% is not a valid description file.".format(path.basename).warn;
+		} {
+			allDevDescs = allDevDescs ?? { IdentityDictionary.new };
+			allDevDescs.put(descName, descDict);
+			"MKtl: loaded %.".format(path.basename).inform;
+		};
+		^descDict
 	}
 
 	*getDeviceDescription { |devName|

@@ -25,4 +25,5 @@ description: (
 	),
 	'hat': ('hidUsage': 57, 'hidUsagePage': 1, 'type': 'hatSwitch', 'ioType': 'in', spec: \cent1inv, mode: \center ),
 	'slider': ('hidUsage': 54, 'hidUsagePage': 1, 'type': 'slider', 'ioType': 'in', spec: \cent1inv, mode: \center )
+)
 );

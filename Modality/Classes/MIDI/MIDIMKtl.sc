@@ -249,10 +249,6 @@ MIDIMKtl : MKtl {
 		});
 	}
 
-	warnNoDeviceFileFound { |deviceName|
-			warn( "Mktl could not find a device file for device %. You can start exploring the capabilities of it by evaluating:\n\t%(%).explore".format(deviceName, this.class, name.asCompileString) )
-	}
-
 	explore {
 		"Using MIDIExplorer. (see its Helpfile for Details)".postln;
 		"".postln;
