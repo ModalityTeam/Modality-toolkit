@@ -1,0 +1,139 @@
+CLASS:: MIDIMKtl
+summary:: A class for creating and accessing external midi controllers
+categories:: Libraries>Modality, External Control
+related:: Overviews/Modality, Classes/MKtl, Classes/MKtlElement
+
+DESCRIPTION::
+MIDIMKtl provides an easy to use interface for MIDI devices you can connect to your computer. It can search for controllers connected to your computer, and gives you a list of available devices. Or, if you already know which controller you want to use, it will look through this list and returns you the controller with that name. If it cannot find it, it will replace it with a graphical representation of the controller to simulate it.
+
+For most devices, this requires that someone has already made a description file for the device; if there is none, it is easy to make one following the instructions here:
+link::Tutorials/How_to_create_a_description_file::
+
+More general info can be found in link::Classes/MKtl::.
+
+CLASSMETHODS::
+
+PRIVATE:: initialized, initMIDI, sourceDeviceDict, destinationDeviceDict, findSource, newFromDesc, getMIDIdeviceName, prepareDeviceDicts
+PRIVATE:: makeNoteOnKey, makeNoteOffKey, makeCCKey, makeBendKey, makeProgramKey,  makePolyTouchKey, makeTouchKey, noteKeyToChanNote, ccKeyToChanCtl
+
+METHOD:: find
+Find all currently connected MIDI controllers.
+
+METHOD:: new
+Creates a new instance of MIDIMKtl, or accesses an existing instance with that name.
+
+argument:: name
+The name of the controller as you want to refer to it.
+If you supply the short name that was given by MKtl's find method, it will try to open this device.
+If you supply the name of an MKtl that already exists, the method will return that instance, as with e.g. JITLib proxies, oder OSCdef, MIDIdef etc.
+
+argument:: uid
+The source uid of the device if present.
+
+argument:: destID
+The destination uid of the device if present.
+
+argument:: devDescName
+The file name of the description file (without .desc.scd), or the long name of the device as reported.
+
+DISCUSSION::
+
+code::
+//create a virtual nanokontrol
+MIDIMKtl.make(\fakeNano, "nanoKONTROL")
+
+//create a gui to control it
+MKtl(\fakeNano).gui
+
+//assign an action
+MKtl(\fakeNano).elements[\sl][0][0].action_({ |elem| elem.value.postln })
+::
+
+METHOD::fake
+
+Create a new MKtl using a device description with an automatically generated name.
+
+argument:: deviceDescName
+The device description that you want to use. This is the file name of the description file (without .desc.scd), or the long name of the device as reported.
+
+code::
+MIDIMKtl.fake("nanoKONTROL");
+::
+
+METHOD:: loadMatching
+(re-)load device description file(s) by matching to a name.
+
+argument:: name
+local name by which to match; e.g. "RunNDrive" will find
+"RunNDrive_Wireless.desc.scd" in the description folder.
+
+METHOD:: allMsgTypes
+All midi message types supported by MIDIMKtl.
+
+METHOD:: protocol
+protocol name, \midi.
+
+METHOD:: postPossible
+post all access code for device that could be used by name.
+
+INSTANCEMETHODS::
+
+PRIVATE:: elementHashDict, prepareElementHashDict, hashToElNameDict, elNameToMidiDescDict, destination, dstID, srcID, initMIDIMKtl, makeHashKey
+PRIVATE:: makeRespFuncs, makeNoteOff, makeNoteOn, makeBend, makeTouch, makeCC, makePolyTouch, makeProgram
+
+PRIVATE:: makeNoteOnKey, makeNoteOffKey, makeCCKey, makeBendKey, makeProgramKey,  makePolyTouchKey, makeTouchKey, noteKeyToChanNote, ccKeyToChanCtl
+
+METHOD:: msgTypes
+the midi messages types used by this device
+
+METHOD:: global
+a dict of global response functions for all msgTypes used by this device. This can be used for global responders, e.g. to noteOn/Off messages :
+
+code::
+// make a virtual qunexus keyboard
+z = MIDIMKtl('qnxs0');
+// access individual element actions on lowest key
+z.elementAt(\keyOn, 24).action = { |el| [el.name, el.value].postln };
+z.elementAt(\keyOff, 24).action = { |el| [el.name, el.value].postln };
+
+// add a global noteOn function:
+z.global.put(\noteOn, MFunc([ \debug, { |...args| [\noteOnGlob, args].postln } ]));
+
+// make an NPVoicer
+v = NPVoicer(Ndef(\piano)).play;
+v.prime(\default); // prepare with \default synthdef
+
+// add global noteOn function using the Voicer
+z.global[\noteOn].add(\note1, { |chan, note, vel|
+	v.put(note, [\freq, note.midicps, \amp, (vel/127) ].postln);
+});
+
+// add global noteOff function for v
+z.global[\noteOff] = MFunc();
+z.global[\noteOff].add(\note1, { |chan, note| v.release(note.postln); });
+::
+
+METHOD:: midiOut
+a midiout for this device if present
+
+METHOD:: midiRawAction
+an action to perform with all incoming midi messages, e.g. for logging.
+
+METHOD:: responders
+all responders built for this device
+
+METHOD:: send
+send a value from sclang to the device, e.g. to set LED displays or motor fader positions to a new cc value.
+
+METHOD:: source
+the MIDI source
+
+METHOD:: srcID
+and its uid
+
+METHOD:: verbose
+flag whether to post a lot of information or not.
+
+METHOD:: explore
+When a device doesn't have a description file yet, explore can be used to help in creating one.
+
