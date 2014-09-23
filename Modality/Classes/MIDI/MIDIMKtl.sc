@@ -679,11 +679,6 @@ MIDIMKtl : MKtl {
 	 	}
 	}
 
-	verbose_ {|value=true|
-		verbose = value;
-
-	}
-
 		// utilities for fast lookup :
 		// as class methods so we can do it without an instance
 	*makeCCKey { |chan, cc| ^("c_%_%".format(chan, cc)).asSymbol }
@@ -709,6 +704,4 @@ MIDIMKtl : MKtl {
 	makeBendKey { |chan| ^("b_%".format(chan)).asSymbol }
 	makeProgramKey { |chan| ^("p_%".format(chan)).asSymbol }
 
-	storeArgs { ^[name] }
-	printOn { |stream| ^this.storeOn(stream) }
 }

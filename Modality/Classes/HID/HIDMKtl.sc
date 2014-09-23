@@ -263,8 +263,4 @@ HIDMKtl : MKtl {
 	verbose_ {|value=true|
 		verbose = value;
 	}
-
-	storeArgs { ^[name] }
-
-	printOn { |stream| ^this.storeOn(stream) }
 }

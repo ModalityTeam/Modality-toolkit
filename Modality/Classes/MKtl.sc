@@ -3,13 +3,13 @@
 
 MKtl : MAbstractKtl { // abstract class
 	classvar <deviceDescriptionFolder; //path of MKtlSpecs folder
-	classvar <allDevDescs; // contains the identity dictionary in index.desc.scd
-	//i.e. (BCR2000 -> ( 'osx': ( 'device': BCR2000 ), 'device': BCR2000, 'protocol': midi, 'file': BCR2000.desc.scd ))
+	classvar <allDevDescs; // an identity dictionary of device descriptions
 	classvar <all; // holds all instances of MKtl
 	classvar <specs; // ( 'specName': ControlSpec, ...) -> all specs
 	classvar <allAvailable; // ( 'midi': List['name1',... ], 'hid': List['name1',... ], ... )
 
-	// tree structure composed of dictionaries and arrays with a description of all the elements on the device.
+	// tree structure composed of dictionaries and arrays
+	// with a description of all the elements on the device.
 	// read from an external file.
 	var <deviceDescriptionHierarch;
 
