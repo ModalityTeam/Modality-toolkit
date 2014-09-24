@@ -1,13 +1,24 @@
 /*
+
+// TODO / TESTS
 HIDMKtl.find;
 
-HIDMKtl('ferrari', 102760448);  // Run'N' Drive
+// works:
+MKtl('rnnd0');  // ThrustMaster Ferrari Run'N' Drive
+MKtl('rnnd0').verbose = true;
 
-HIDMKtl( 'ferrari', "usb-0000:00:1d.0-1.2/input0"); // Run 'N' Drive on Linux
+MKtl( 'ferrari'); // no deviceDescName given, but still creates it,
+// so trying to make it with description fails because of the name being taken:
+MKtl.make( 'ferrari', "RunNDrive");
 
-HIDMKtl('ferrari').srcDevice.slots
+// take out broken MKtl
+MKtl.all.removeAt('ferrari');
 
+// proposal for how to decommission devices:
+MKtl.remove(\ferrari);
+// should remove all responders etc etc
 */
+
 // TODO
 //    addFunc should conform to super.addFunc.
 
@@ -258,9 +269,5 @@ HIDMKtl : MKtl {
 				thisHIDElement.value = val;
 			};
 		};
-	}
-
-	verbose_ {|value=true|
-		verbose = value;
 	}
 }
