@@ -1,13 +1,15 @@
 /*
-todo:
-QuNexus has other modes with  tilt and poly pressure.
+TODO:
 
-* add the missing controls.
+QuNexus has other modes which add tilt and poly pressure
 
-* how to do rotating allocation of ccs?
-* add global noteOn/Off MIDIdefs to MIDIMKtl
+* Add controls from Presets C and D.
 
-// mini code example:
+Q: how to do the rotating allocation of ccs and bend?
+
+
+// mini code example of global note resp + voicer:
+
 z = MIDIMKtl('qnxs0');
 // indiv element actions on lowest key
 z.elementAt(\keyOn, 24).action = { |el| [el.name, el.value].postln };
@@ -47,7 +49,7 @@ description: (
 
 
 
-	// Togl A mode has these:
+	// Preset A mode has these:
 // ------ noteOn -------------
 
 	keyOn: (24..108).collect { |midinote|
@@ -60,13 +62,15 @@ description: (
 // ------- bend ------------
 	'bend': ('midiMsgType': 'bend', 'type': 'bender', 'midiChan': 0, 'midiNum':  0,'spec': 'midiBend'),
 
-// Velo B mode adds single channel pressure from all keys :
+// Preset B mode adds single channel pressure from all keys :
 
 // ------- cc ------------
 'monotouch': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  1,'spec': 'midiCC'),
 )
+
+// Preset C mode adds Poly Pitch Bend on up to 10 channels rotating,
+// plus pressure on cc1 (also rotating?)
+
+// Preset D mode for drums and clips
+
 );
-
-
-
- 
