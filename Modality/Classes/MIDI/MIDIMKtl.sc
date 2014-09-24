@@ -105,13 +105,10 @@ MIDIMKtl : MKtl {
 
 	*postPossible {
 		"\n// Available MIDIMKtls: ".postln;
-		"// MKtl(shortName, sourceID, destinationID) // name".postln;
+		"// MKtl(autoName);    // make with own name and descName".postln;
 		sourceDeviceDict.keysValuesDo { |key, src|
-			"   MKtl('%', %, %);  // %\n".postf(
-				key,
-				src.uid,
-				destinationDeviceDict[key].notNil.if({destinationDeviceDict[key].uid},{nil}),
-				this.getMIDIdeviceName(src.device)
+			"    MKtl('%');  // MKtl.make('nameMe', \"%\");\n".postf(
+				key, this.getMIDIdeviceName(src.device)
 			);
 		};
 		"\n-----------------------------------------------------".postln;
