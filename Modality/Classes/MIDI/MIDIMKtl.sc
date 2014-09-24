@@ -261,7 +261,7 @@ MIDIMKtl : MKtl {
 	}
 
 	createDescriptionFile{
-		MIDIExplorer.openDoc( this.source.device );
+		MIDIExplorer.openDoc;
 	}
 
 	initMIDIMKtl { |argName, argSource, argDestination|
