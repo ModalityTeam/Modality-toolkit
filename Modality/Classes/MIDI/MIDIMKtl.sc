@@ -420,7 +420,7 @@ MIDIMKtl : MKtl {
 				var el = elementHashDict[hash];
 
 				midiRawAction.value(\control, src, chan, num, value);
-				global[typeKey].value(chan, value);
+				global[typeKey].value(chan, num, value);
 
 				if (el.notNil) {
 					el.rawValueAction_(value, false);
@@ -429,11 +429,13 @@ MIDIMKtl : MKtl {
 						.format(this.name, el.name, el.value.asStringPrec(3), value, num, chan, src).postln
 					};
 				} {
+					if (verbose) {
 					"MIDIMKtl( % ) : cc element found for chan %, ccnum % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\cc, \\type: \\button, \\midiChan: %,"
 					"\\midiNum: %, \\spec: \\midiBut, \\mode: \\push).\n\n"
 						.postf(name, chan, num, chan, num);
+					};
 				}
 
 			}, srcID: srcID).permanent_(true);
@@ -460,11 +462,13 @@ MIDIMKtl : MKtl {
 						.format(this.name, el.name, el.value.asStringPrec(3), vel, note, chan, src).postln
 					};
 				}{
+					if (verbose) {
 					"MIDIMKtl( % ) : noteOn element found for chan %, note % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\noteOn, \\type: \\pianoKey or \\button, \\midiChan: %,"
 					"\\midiNum: %, \\spec: \\midiVel).\n\n"
 						.postf(name, chan, note, chan, note);
+					};
 				}
 
 			}, srcID: srcID).permanent_(true);
@@ -491,11 +495,13 @@ MIDIMKtl : MKtl {
 						.format(this.name, el.name, el.value.asStringPrec(3), vel, note, chan, src).postln
 					};
 				} {
+					if (verbose) {
 					"MIDIMKtl( % ) : noteOff element found for chan %, note % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\noteOff, \\type: \\pianoKey or \\button, \\midiChan: %,"
 					"\\midiNum: %, \\spec: \\midiVel).\n\n"
 						.postf(name, chan, note, chan, note);
+					};
 				};
 
 
@@ -528,11 +534,13 @@ MIDIMKtl : MKtl {
 						.format(this.name, el.name, el.value.asStringPrec(3), value, chan, src).postln
 					}
 				}{
+					if (verbose) {
 					"MIDIMKtl( % ) : touch element found for chan % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\touch, \\type: \\chantouch', \\midiChan: %,"
 					"\\spec: \\midiTouch).\n\n"
 						.postf(name, chan, chan);
+					};
 				};
 
 
@@ -561,11 +569,13 @@ MIDIMKtl : MKtl {
 						.format(this.name, el.name, el.value.asStringPrec(3), vel, note, chan, src).postln
 					};
 				}{
+					if (verbose) {
 					"MIDIMKtl( % ) : polyTouch element found for chan %, note % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\polyTouch, \\type: \\keytouch, \\midiChan: %,"
 					"\\midiNum: %, \\spec: \\midiVel).\n\n"
 						.postf(name, chan, note, chan, note);
+					};
 				}
 
 			}, srcID: srcID).permanent_(true);
@@ -598,11 +608,13 @@ MIDIMKtl : MKtl {
 						.format(this.name, el.name, el.value.asStringPrec(3), value, chan, src).postln
 					};
 				}{
+					if (verbose) {
 					"MIDIMKtl( % ) : bend element found for chan % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\bend, \\type: ??', \\midiChan: %,"
 					"\\spec: \\midiBend).\n\n"
 					.postf(name, chan, chan);
+					};
 				};
 
 
@@ -635,11 +647,13 @@ MIDIMKtl : MKtl {
 						.format(this.name, el.name, el.value.asStringPrec(3), value, chan, src).postln
 					};
 				}{
+					if (verbose) {
 					"MIDIMKtl( % ) : program element found for chan % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\program, \\type: ??', \\midiChan: %,"
 					"\\spec: \\midiProgram).\n\n"
 					.postf(name, chan, chan);
+					};
 				};
 
 

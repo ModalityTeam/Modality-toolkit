@@ -1,42 +1,61 @@
 /*
 TODO:
 
-QuNexus has other modes which add tilt and poly pressure
+QuNexus has four modes:
+	Preset A uses just noteOn/Off and channel bend
+	Preset B adds channel pressure
+	Preset C allocates notes to 10 rotating midi chans,
+		and sends poly bend and pressure mod (cc1) on those chans
+	Preset D is for drums (uses chan 10) and clips
 
-* Add controls from Presets C and D.
 
-Q: how to do the rotating allocation of ccs and bend?
-
-
-// mini code example of global note resp + voicer:
-
+// mini code example for global note resp + voicer:
 z = MIDIMKtl('qnxs0');
-// indiv element actions on lowest key
-z.elementAt(\keyOn, 24).action = { |el| [el.name, el.value].postln };
-z.elementAt(\keyOff, 24).action = { |el| [el.name, el.value].postln };
+z.verbose = true;
+z.verbose = false;
+// make an NPVoicer, use with \default synthdef:
+s.boot; s.latency = nil;
+v = NPVoicer(Ndef(\piano)).play;
+v.prime(\default);
 
-// add a global noteOn function:
-z.global.put(\noteOn, MFunc([
-	\debug, { |...args| [\noteOn, \global, args].postln }
-]));
-
-// make an NPVoicer
-s.boot;
-v = NPVoicer(Ndef(\piano));
-v.prime(\default); // prepare with \default synthdef
-v.play;
-
-// test playing and releasing a note from code
-v.put(51, [\freq, 51.midicps]);
-v.release(51);
-
-// add global noteOn function
+// add a global noteOn function
+z.global.put(\noteOn, MFunc([ \debug, { |...args| [\noteOnGlob, args].postln }]));
 z.global[\noteOn].add(\note1, { |chan, note, vel|
-	v.put(note, [\freq, note.midicps, \amp, (vel/127).squared ].postln);
+	v.put(note, [\freq, note.midicps, \amp, (vel/127) ].postln);
+});
+// and a global noteOff function
+z.global[\noteOff] = MFunc();
+z.global[\noteOff].add(\note1, { |chan, note| v.release(note); });
+
+
+Preset C, poly bend and pressure:
+Rather than using multiple bend and cc elements for each channel,
+use global responders, and use channel as info for an NPVoicer.
+
+// same as above, switch to Preset C
+// works in principle,
+// but better write a synthdef that has nice responses.
+
+q = q ? (); q.chanNotes =  q.chanNotes ? ();
+
+z.global[\noteOn].add(\note1, { |chan, note, vel|
+	q.chanNotes.put(chan, note);
+	v.put(chan, [\freq, note.midicps, \amp, (vel/127) ].postln);
+});
+z.global[\noteOff].add(\note1, { |chan, note|
+	v.release(chan);
+	q.chanNotes.removeAt(chan);
 });
 
-z.global[\noteOff] = MFunc();
-z.global[\noteOff].add(\note1, { |chan, note| v.release(note.postln); });
+z.global[\cc] = MFunc();
+z.global[\cc].add(\mod, { |chan, ccnum, val|
+	if (ccnum == 1) { v.setAt(chan, \amp, val/127) };
+});
+z.global[\bend] = MFunc();
+z.global[\bend].add(\pitch, { |chan, val|
+	var bend = (val - 8192).linlin(-1500, 1500, -2, 2).postln;
+	v.setAt(chan, \freq, (q.chanNotes[chan] + bend).postln.midicps.postln);
+});
 
 */
 
@@ -46,8 +65,6 @@ z.global[\noteOff].add(\note1, { |chan, note| v.release(note.postln); });
 device: "QuNexus",
 protocol: \midi,
 description: (
-
-
 
 	// Preset A mode has these:
 // ------ noteOn -------------
