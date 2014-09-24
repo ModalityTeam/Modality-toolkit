@@ -198,17 +198,17 @@ HIDMKtl : MKtl {
 
 	warnNoDeviceFileFound { |deviceName|
 		var a = "Mktl could not find a device file for device %. You can generate a description file by evaluating\n\t".format(deviceName);
-		var b = "HIDMKtl(%).createDescFromDevice\n".format(name.asCompileString);
+		var b = "HIDMKtl(%).createDescriptionFile".format(name.asCompileString);
 		//var c = "or if that doesn't contain enough information you can start exploring the capabilities of it by evaluating\n";
 		//var d = "\tHIDMKtl(%).explore\n".format(name.asCompileString);
 		warn( [a,b].reduce('++') )
 	}
 
-	createDescFromDevice {
+	createDescriptionFile {
 		if(srcDevice.notNil){
 			HIDExplorer.openDocFromDevice(srcDevice)
 		} {
-			Error("HIDMKtl#createDescFromDevice - srcDevice is nil. HID probably could not open device").throw
+			Error("HIDMKtl#createDescriptionFile - srcDevice is nil. HID probably could not open device").throw
 		}
 	}
 

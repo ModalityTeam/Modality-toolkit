@@ -262,6 +262,10 @@ MIDIMKtl : MKtl {
 		MIDIExplorer.start(this.srcID);
 	}
 
+	createDescriptionFile{
+		MIDIExplorer.openDoc( this.source.device );
+	}
+
 	initMIDIMKtl { |argName, argSource, argDestination|
 		//[argName, argSource, argDestination].postln;
 		name = argName;

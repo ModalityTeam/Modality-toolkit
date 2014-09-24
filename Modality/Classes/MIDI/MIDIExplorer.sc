@@ -62,16 +62,20 @@ MIDIExplorer {
 		allMsgTypes.do(observeDict.put(_, Dictionary()));
 	}
 
-	*openDoc {
-		Document("edit and save me", this.compile);
+	*openDoc { |name|
+		name = name ? "edit and save me";
+		Document( name ++ ".desc.scd", this.compile( name: name ) );
 	}
 
-	*compile { |includeSpecs = false|
+	*compile { |includeSpecs = false, name|
 
 		var num, chan;
 
-		var str = "(";
+		var str = "(\n";
 
+		str = str + "device: \"" ++ name ++ "\",\n";
+		str = str + "protocol: 'midi', \n";
+		str = str + "decription: (\n";
 		if (observeDict[\noteOn].notEmpty) {
 			str = str + "\n// ------ noteOn -------------";
 			observeDict[\noteOn].sortedKeysValuesDo { |key, val|
@@ -129,6 +133,7 @@ MIDIExplorer {
 
 		str = str + "\n";
 
+		str = str + ");\n";
 		str = str + ");";
 
 
