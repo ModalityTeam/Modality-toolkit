@@ -1,10 +1,14 @@
-///////// how to make anonymous ones? when would they be used anonymously? /////
+/***
 
-// TODO
-//   addFunc should conform to super.addFunc.
-//	convert all responders to midifuncs
-//	test noteOn  off responders, they are not working yet!
+** Questions :
 
+-- OLD: how to make anonymous ones? when would MKtls ever be used anonymously?
+
+** TODO
+*
+*   test noteOn noteOff responders, they are not working yet!
+
+***/
 
 MIDIMKtl : MKtl {
 
@@ -34,7 +38,7 @@ MIDIMKtl : MKtl {
 	                          //i.e.  ( 'trD1': [ cc, 0, 57, a ControlSpec(0, 127, 'linear', 1, 0, "") ], ... )
 
 	var <responders;
-	var <respTopFuncs;
+	var <global;
 	var <msgTypes;
 
 	    // open all ports
@@ -99,14 +103,12 @@ MIDIMKtl : MKtl {
 		// TODO: what happens to MIDI devs that are only destinations?
 	}
 
-	*postPossible{
-		"\n// Available MIDIMKtls - you may want to change the names: ".postln;
+	*postPossible {
+		"\n// Available MIDIMKtls: ".postln;
+		"// MKtl(autoName);    // make with own name and descName".postln;
 		sourceDeviceDict.keysValuesDo { |key, src|
-			"   MIDIMKtl('%', %, %);  // %\n".postf(
-				key,
-				src.uid,
-				destinationDeviceDict[key].notNil.if({destinationDeviceDict[key].uid},{nil}),
-				this.getMIDIdeviceName(src.device)
+			"    MKtl('%');  // MKtl.make('nameMe', \"%\");\n".postf(
+				key, this.getMIDIdeviceName(src.device)
 			);
 		};
 		"\n-----------------------------------------------------".postln;
@@ -247,10 +249,6 @@ MIDIMKtl : MKtl {
 		sourceDeviceDict.keysDo({ |key|
 			allAvailable[\midi].add( key );
 		});
-	}
-
-	warnNoDeviceFileFound { |deviceName|
-			warn( "Mktl could not find a device file for device %. You can start exploring the capabilities of it by evaluating:\n\t%(%).explore".format(deviceName, this.class, name.asCompileString) )
 	}
 
 	explore {
@@ -426,7 +424,7 @@ MIDIMKtl : MKtl {
 				var el = elementHashDict[hash];
 
 				midiRawAction.value(\control, src, chan, num, value);
-				respTopFuncs[typeKey].value(chan, value);
+				global[typeKey].value(chan, num, value);
 
 				if (el.notNil) {
 					el.rawValueAction_(value, false);
@@ -435,11 +433,13 @@ MIDIMKtl : MKtl {
 						.format(this.name, el.name, el.value.asStringPrec(3), value, num, chan, src).postln
 					};
 				} {
+					if (verbose) {
 					"MIDIMKtl( % ) : cc element found for chan %, ccnum % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\cc, \\type: \\button, \\midiChan: %,"
 					"\\midiNum: %, \\spec: \\midiBut, \\mode: \\push).\n\n"
 						.postf(name, chan, num, chan, num);
+					};
 				}
 
 			}, srcID: srcID).permanent_(true);
@@ -457,7 +457,7 @@ MIDIMKtl : MKtl {
 				var el = elementHashDict[hash];
 
 				midiRawAction.value(\noteOn, src, chan, note, vel);
-				respTopFuncs[typeKey].value(chan, note, vel);
+				global[typeKey].value(chan, note, vel);
 
 				if (el.notNil) {
 					el.rawValueAction_(vel);
@@ -466,11 +466,13 @@ MIDIMKtl : MKtl {
 						.format(this.name, el.name, el.value.asStringPrec(3), vel, note, chan, src).postln
 					};
 				}{
+					if (verbose) {
 					"MIDIMKtl( % ) : noteOn element found for chan %, note % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\noteOn, \\type: \\pianoKey or \\button, \\midiChan: %,"
 					"\\midiNum: %, \\spec: \\midiVel).\n\n"
 						.postf(name, chan, note, chan, note);
+					};
 				}
 
 			}, srcID: srcID).permanent_(true);
@@ -488,7 +490,7 @@ MIDIMKtl : MKtl {
 				var el = elementHashDict[hash];
 
 				midiRawAction.value(\noteOff, src, chan, note, vel);
-				respTopFuncs[typeKey].value(chan, note, vel);
+				global[typeKey].value(chan, note, vel);
 
 				if (el.notNil) {
 					el.rawValueAction_(vel);
@@ -497,11 +499,13 @@ MIDIMKtl : MKtl {
 						.format(this.name, el.name, el.value.asStringPrec(3), vel, note, chan, src).postln
 					};
 				} {
+					if (verbose) {
 					"MIDIMKtl( % ) : noteOff element found for chan %, note % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\noteOff, \\type: \\pianoKey or \\button, \\midiChan: %,"
 					"\\midiNum: %, \\spec: \\midiVel).\n\n"
 						.postf(name, chan, note, chan, note);
+					};
 				};
 
 
@@ -525,7 +529,7 @@ MIDIMKtl : MKtl {
 				var el = elementHashDict[hash];
 
 				midiRawAction.value(\touch, src, chan, value);
-				respTopFuncs[typeKey].value(chan, value);
+				global[typeKey].value(chan, value);
 
 				if (el.notNil) {
 					el.rawValueAction_(value);
@@ -534,11 +538,13 @@ MIDIMKtl : MKtl {
 						.format(this.name, el.name, el.value.asStringPrec(3), value, chan, src).postln
 					}
 				}{
+					if (verbose) {
 					"MIDIMKtl( % ) : touch element found for chan % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\touch, \\type: \\chantouch', \\midiChan: %,"
 					"\\spec: \\midiTouch).\n\n"
 						.postf(name, chan, chan);
+					};
 				};
 
 
@@ -558,7 +564,7 @@ MIDIMKtl : MKtl {
 				var el = elementHashDict[hash];
 
 				midiRawAction.value(\polyTouch, src, chan, note, vel);
-				respTopFuncs[typeKey].value(chan, note, vel);
+				global[typeKey].value(chan, note, vel);
 
 				if (el.notNil) {
 					el.rawValueAction_(vel);
@@ -567,11 +573,13 @@ MIDIMKtl : MKtl {
 						.format(this.name, el.name, el.value.asStringPrec(3), vel, note, chan, src).postln
 					};
 				}{
+					if (verbose) {
 					"MIDIMKtl( % ) : polyTouch element found for chan %, note % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\polyTouch, \\type: \\keytouch, \\midiChan: %,"
 					"\\midiNum: %, \\spec: \\midiVel).\n\n"
 						.postf(name, chan, note, chan, note);
+					};
 				}
 
 			}, srcID: srcID).permanent_(true);
@@ -595,7 +603,7 @@ MIDIMKtl : MKtl {
 				var el = elementHashDict[hash];
 
 				midiRawAction.value(\bend, src, chan, value);
-				respTopFuncs[typeKey].value(chan, value);
+				global[typeKey].value(chan, value);
 
 				if (el.notNil) {
 					el.rawValueAction_(value);
@@ -604,11 +612,13 @@ MIDIMKtl : MKtl {
 						.format(this.name, el.name, el.value.asStringPrec(3), value, chan, src).postln
 					};
 				}{
+					if (verbose) {
 					"MIDIMKtl( % ) : bend element found for chan % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\bend, \\type: ??', \\midiChan: %,"
 					"\\spec: \\midiBend).\n\n"
 					.postf(name, chan, chan);
+					};
 				};
 
 
@@ -632,7 +642,7 @@ MIDIMKtl : MKtl {
 				var el = elementHashDict[hash];
 
 				midiRawAction.value(\program, src, chan, value);
-				respTopFuncs[typeKey].value(chan, value);
+				global[typeKey].value(chan, value);
 
 				if (el.notNil) {
 					el.rawValueAction_(value);
@@ -641,11 +651,13 @@ MIDIMKtl : MKtl {
 						.format(this.name, el.name, el.value.asStringPrec(3), value, chan, src).postln
 					};
 				}{
+					if (verbose) {
 					"MIDIMKtl( % ) : program element found for chan % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\program, \\type: ??', \\midiChan: %,"
 					"\\spec: \\midiProgram).\n\n"
 					.postf(name, chan, chan);
+					};
 				};
 
 
@@ -657,7 +669,7 @@ MIDIMKtl : MKtl {
 		msgTypes = MIDIAnalysis.checkMsgTypes(deviceDescription);
 		msgTypes = msgTypes ? allMsgTypes;
 		responders = ();
-		respTopFuncs = ();
+		global = ();
 		msgTypes.do { |msgType|
 			switch(msgType,
 				\cc, { this.makeCC },
@@ -680,11 +692,6 @@ MIDIMKtl : MKtl {
 	 			{\cc}{ midiOut.control(ch, num, val ) }
 	 			{\note}{ /*TODO: check type for noteOn, noteOff, etc*/ }
 	 	}
-	}
-
-	verbose_ {|value=true|
-		verbose = value;
-
 	}
 
 		// utilities for fast lookup :
@@ -712,6 +719,4 @@ MIDIMKtl : MKtl {
 	makeBendKey { |chan| ^("b_%".format(chan)).asSymbol }
 	makeProgramKey { |chan| ^("p_%".format(chan)).asSymbol }
 
-	storeArgs { ^[name] }
-	printOn { |stream| ^this.storeOn(stream) }
 }
