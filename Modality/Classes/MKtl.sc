@@ -182,7 +182,7 @@ MKtl : MAbstractKtl { // abstract class
 		if( MKtl.allDevDescs.isNil ){ MKtl.loadAllDescs };
 		^Dictionary.with(*
 			MKtl.allDevDescs.getPairs.clump(2)
-			.collect({ |xs| (MKtl.makeShortName(xs[1][\device]) -> xs[0]) }))
+			.collect({ |xs| (MKtl.makeShortName(xs[1][\device]).asSymbol -> xs[0]) }))
 	}
 
 	*prMakeVirtual { |name|
@@ -192,6 +192,7 @@ MKtl : MAbstractKtl { // abstract class
 		};
 		t = name.asString;
 		r = t[..(t.size-2)];
+		r = r.asSymbol;
 		//shortnames are generated from 'device' entry of description file entries
 		^this.prShortnamesToDevices[r] !? { |deviceDescName|
 			MKtl.matchClass(allDevDescs[deviceDescName][ \protocol ]) !? { |class|
@@ -253,7 +254,7 @@ MKtl : MAbstractKtl { // abstract class
 	*loadMatching { |name|
 		var paths = (deviceDescriptionFolder +/+
 			("*" ++ name ++ "*.desc.scd")).pathMatch;
-		var descNames = paths.collect{ |x| PathName(x).fileName.split($.)[0] };
+		var descNames = paths.collect{ |x| PathName(x).fileName.split($.)[0]; };
 		"MKtl loadMatching - found: %.\n".postf(descNames);
 		paths.do (this.loadSingleDesc(_));
 	}
@@ -268,7 +269,7 @@ MKtl : MAbstractKtl { // abstract class
 			"% is not a valid description file.".format(path.basename).warn;
 		} {
 			allDevDescs = allDevDescs ?? { IdentityDictionary.new };
-			allDevDescs.put(descName, descDict);
+			allDevDescs.put(descName.asSymbol, descDict);
 			"MKtl: loaded %.".format(path.basename).inform;
 		};
 		^descDict
