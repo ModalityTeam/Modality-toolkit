@@ -61,7 +61,7 @@ MKtlGUI {
 				Knob( parent, 20@20 );
 			},
 			'pad': { |parent|
-				Slider( parent, 20@20 ); // make this a slider for now
+				Slider( parent, 20@80 ); // make this a slider for now
 			},
 			'unknown': { |parent, single = false|
 				NumberBox( parent,
