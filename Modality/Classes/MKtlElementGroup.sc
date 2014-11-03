@@ -45,8 +45,9 @@ MKtlElementGroup : MAbstractElement {
 
 	// assuming that something setting the element's value will first set the value and then call doAction (like in Dispatch)
 	doAction { |...children|
-		action.value( this, *children );
-		parent !? _.doAction( *[this] ++ children );
+		children = children.add( this );
+		action.value( *children );
+		parent !? _.doAction( *children );
 	}
 
 }
