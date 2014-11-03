@@ -82,7 +82,8 @@ MIDIExplorer {
 
 	*openDoc { |name|
 		name = name ? "edit and save me";
-		Document( name ++ ".desc.scd", this.compile( name: name ) );
+		// works only on 3.7:
+		Document( name ++ ".desc.scd", this.compile );
 	}
 
 	*devName {
@@ -127,9 +128,9 @@ k.elementAt(\sl, 0).action = { \yo.postln; };
 
 		var str = "(\n";
 
-		str = str + "device: \"" ++ name ++ "\",\n";
-		str = str + "protocol: 'midi', \n";
-		str = str + "decription: (\n";
+		// str = str + "device: \"" ++ name ++ "\",\n";
+		// str = str + "protocol: 'midi', \n";
+		// str = str + "decription: (\n";
 		if (observeDict[\noteOn].notEmpty) {
 			str = str + "\n// ------ noteOn -------------";
 			observeDict[\noteOn].sortedKeysValuesDo { |key, val|
