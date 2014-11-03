@@ -359,6 +359,38 @@ MKtl : MAbstractKtl { // abstract class
 		};
 		^f
 	}
+	
+	prMakeElements {
+		var isLeaf = { |dict|
+			dict.values.any({|x| x.size > 1}).not
+		};
+
+		var f = { |x, state, stateFuncOnNodes, leafFunc|
+
+			if(x.isKindOf(Dictionary) ){
+				if( isLeaf.(x) ) {
+					leafFunc.( state , x )
+				}{
+					MKtlElementDict(this,state).elements_(						x.sortedKeysValuesCollect{ |val, key|
+							f.(val, stateFuncOnNodes.(state, key), stateFuncOnNodes, leafFunc )
+						}
+					)
+				}
+			} {
+				if(x.isKindOf(Array) ) {
+					MKtlElementArray(this,state).elements_(
+						x.collect{ |val, i|
+							f.(val, stateFuncOnNodes.(state, i),  stateFuncOnNodes, leafFunc )
+						}
+					);
+				} {
+					Error("MKtl:prTraverse Illegal data structure in device description.\nGot object % of type %. Only allowed objects are Arrays and Dictionaries".format(x,x.class)).throw
+				}
+			}
+
+		};
+		^f
+	}
 
 	explore{ |mode=true|
 		this.subclassResponsibility(thisMethod)
@@ -428,7 +460,7 @@ MKtl : MAbstractKtl { // abstract class
 			elementsDict[key] = MKtlElement(this, key);
 		};
 		leafFunc = { |finalKey, x| elementsDict[finalKey.asSymbol] };
-		elements = this.prTraverse.(deviceDescriptionHierarch, "", this.prUnderscorify, leafFunc );
+		elements = this.prMakeElements.(deviceDescriptionHierarch, "", this.prUnderscorify, leafFunc );
 
 	}
 
