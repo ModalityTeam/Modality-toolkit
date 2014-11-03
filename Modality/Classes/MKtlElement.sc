@@ -25,6 +25,7 @@ MAbstractElement {
 
 	// server support, currently only one server per element supported.
 	var <bus;
+	var <>parent;
 
 	*new { |source, name|
 		^super.newCopyArgs( source, name).init;
@@ -66,6 +67,7 @@ MAbstractElement {
 	doAction {
 		source.recordRawValue( name, value );
 		action.value( this );
+		parent !? _.doAction( this );
 	}
 
 	// UGen support
