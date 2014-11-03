@@ -61,7 +61,7 @@ MKtlGUI {
 				Knob( parent, 20@20 );
 			},
 			'pad': { |parent|
-				Slider( parent, 20@20 ); // make this a slider for now
+				Slider( parent, 20@80 ); // make this a slider for now
 			},
 			'unknown': { |parent, single = false|
 				NumberBox( parent,
@@ -167,13 +167,13 @@ MKtlGUI {
 
 		this.getDictionedElements.sortedKeysValuesDo({ |key, item|
 			var view, getValueFunc, value;
-			var currentState;
+			var currentState, hasStateName = false;
 
 			StaticText( parent, labelWidth@16 ).string_( key.asString );
 
 			mktl.prTraverse.(
 				item, [], { |a,b|
-					StaticText( parent, smallLabelWidth@16 ).string_( b.asString );
+					//StaticText( parent, smallLabelWidth@16 ).string_( b.asString );
 					a.asCollection.copy.add( b );
 				}, { |state, item|
 					var view, getValueFunc, value;
@@ -187,9 +187,15 @@ MKtlGUI {
 						parent.asView.decorator.shift( 0, 5 );
 					};
 					currentState = state;
-
+					hasStateName =  state.size > 0;
+					if( hasStateName ) {
+						StaticText( parent, smallLabelWidth@16 ).string_( state[0].asString ).align_(\center);
+						parent.asView.decorator.shift( (smallLabelWidth + 4).neg, 16 );
+					};
 					view = (makeElementDict[ item.type ] ?? { makeElementDict[ \unknown ] }).value( parent, false );
-
+					if( hasStateName ) {
+						parent.asView.decorator.shift( 0, -16 );
+					};
 					getValueFunc = { mktl.elementAt( key, *state ).value; };
 					value = getValueFunc.value;
 
@@ -210,7 +216,9 @@ MKtlGUI {
 					views = views.add( view );
 				};
 			);
+			if( hasStateName ) { parent.asView.decorator.shift( 0, 16 ); };
 			parent.asView.decorator.nextLine;
+			hasStateName = false;
 		});
 
 		skipJack = SkipJack( { this.updateGUI }, 0.2, { parent.isClosed } );
