@@ -101,6 +101,10 @@ MAbstractKtl {
 		verbose = value;
 	}
 
+	trace_{ |value=true|
+		this.verbose_( value );
+	}
+
 	//also can be used to simulate a non present hardware
 	receive { |key, val|
 		elementsDict[ key ].update( val )
