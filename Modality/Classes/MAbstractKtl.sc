@@ -101,7 +101,7 @@ MAbstractKtl {
 		verbose = value;
 	}
 
-	trace_{ |value=true|
+	trace{ |value=true|
 		this.verbose_( value );
 	}
 
