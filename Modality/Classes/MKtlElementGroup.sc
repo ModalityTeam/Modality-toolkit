@@ -1,4 +1,4 @@
-MKtlElementGroup : MAbstractElement {
+MKtlAbstractElementGroup : MAbstractElement {
 	
 	var <elements;
 
@@ -52,7 +52,7 @@ MKtlElementGroup : MAbstractElement {
 
 }
 
-MKtlElementArray : MKtlElementGroup {
+MKtlElementArray : MKtlAbstractElementGroup {
 	
 	elements_ { |newElements|
 		elements = newElements.asArray;
@@ -61,7 +61,7 @@ MKtlElementArray : MKtlElementGroup {
 
 }
 
-MKtlElementDict : MKtlElementGroup {
+MKtlElementDict : MKtlAbstractElementGroup {
 	
 	var <>keys;
 	
