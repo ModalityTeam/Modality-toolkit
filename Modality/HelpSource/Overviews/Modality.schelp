@@ -1,7 +1,7 @@
 title:: Modality
 summary:: Toolkit to simplify the creation of personal (electronic) instruments utilising hardware and software controllers of any kind.
 categories:: Libraries>Modality, External Control
-related:: Overviews/Modality, Classes/MKtl
+related:: Overviews/Modality, Classes/MKtl, Reference/SupportedDevices
 
 Section:: Introduction
 

@@ -1,0 +1,60 @@
+title:: Supported Devices in Modality
+summary:: Devices currently known by the Modality toolkit.
+categories:: Libraries>Modality, External Control
+related:: Overviews/Modality, Classes/MKtl
+
+Section:: Supported Devices
+
+subsection:: buttons and faders
+LIST::
+## ICON iControl Pro
+image::media/ICONIControlPro.desc.png#ICON IControlPro::
+## LaunchControl XL
+image::media/LaunchControlXL.desc.png#LaunchControl XL::
+## LaunchPad
+image::media/Launchpad.desc.png#Launchpad::
+## LPD 8
+image::media/LPD8.desc.png#LPD8::
+## MPD18
+image::media/MPD18.desc.png#MPD18::
+## OP-1
+image::media/Teenage_OP1.desc.png#Teenage Engineering OP1::
+::
+
+subsection::Gamepads
+list::
+## Impact
+image::media/impact_gamepad.desc.png#impact gamepad::
+## Run'n Drive
+image::media/RunNDrive.desc.png#RunNDrive::
+::
+
+subsection::Joysticks
+list::
+## Thrustmaster
+image::media/Thrustmaster.desc.png#Thrustmaster::
+## Generic Keyboard
+image::media/keyboard.desc.png#keyboard::
+::
+
+
+subsection::Keypads
+list::
+## Generic Keypad
+image::media/keypad.desc.png#keypad::
+## G13
+image::media/g13.desc.png#g13::
+## image::media/mouse.desc.png#mouse::
+## image::media/nanoKONTROL2.desc.png#nanoKONTROL2::
+## image::media/softStep2.desc.png#softStep2::
+::
+
+subsection::Misc
+list::
+## 3DConnection Space Navigator image::media/3DConnection.desc.png#3DConnection::
+::
+
+
+Section:: Undescribed Controller
+
+Have a controller that is not known to the system? See link::Tutorials/How_to_create_a_description_file:: on how to set it up.
