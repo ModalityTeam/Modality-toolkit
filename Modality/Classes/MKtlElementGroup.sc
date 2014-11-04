@@ -41,7 +41,6 @@ MKtlAbstractElementGroup : MAbstractElement {
 		action = nil
 	}
 
-	// assuming that something setting the element's value will first set the value and then call doAction (like in Dispatch)
 	doAction { |...children|
 		children = children.add( this );
 		action.value( *children );
