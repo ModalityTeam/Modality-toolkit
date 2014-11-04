@@ -1,7 +1,7 @@
 title:: Modality
 summary:: Toolkit to simplify the creation of personal (electronic) instruments utilising hardware and software controllers of any kind.
 categories:: Libraries>Modality, External Control
-related:: Overviews/Modality, Classes/MKtl, Reference/SupportedDevices
+related:: Overviews/Modality, Classes/MKtl, Tutorials/ModalityTutorial
 
 Section:: Introduction
 
@@ -14,148 +14,132 @@ A second starting point is that the same physical interfaces (sets of sliders, b
 http://modality.bek.no/
 
 
-
-subsection:: Acknowledgements
-Modality and its research meetings have kindly been supported by BEK in Bergen, Norway, and STEIM, Amsterdam.
-The ModalityTeam is, in no obvious order: Jeff Carey, Bjoernar Habbestad, Marije Baalman, Alberto de Campo, Wouter Snoei, Till Bovermann, Miguel Negrao, Robert van Heumen, Hannes Hoelzl, Tim Blechmann, Amelie Hinrichsen, and Dominik Hildebrand Marques Lopes.
-
-
-section:: Tutorials
+section:: Tutorials and further reads
 
 LIST::
 ##link::Tutorials/ModalityTutorial::
 ##link::Tutorials/How_to_create_a_description_file::
+##link::Reference/SupportedDevices::
 ::
 
 SECTION:: Overview
 
 With code::MKtl:: it is possible to assign functionality to controller elements.
 
-Each code::MKtl:: has elements such as slider or knobs. It is possible to assign an action to such an element that is evauated every time, the value of that element gets updated. Below, there are two examples using popular MIDI controller.
+Each code::MKtl:: has elements such as sliders or knobs. It is possible to assign an action to such an element that is evaulated every time the value of that element gets updated.
 
+Below two examples of what you can do with this toolkit. For further explanation, refer to link::Tutorials/ModalityTutorial::.
 
-subsection:: NanoKontrol2
+subsection:: Example NanoKontrol2
 
 code::
-// plug in your NanoKontrol2 and evaluate this line
-k = MIDIMKtl('nnkn20');
-
-// alternatively, create a fake NanoKontrol2
-k = MIDIMKtl.make('nnkn20', 'NanoKontrol2');
+// plug in your NanoKontrol2 and evaluate this line.
+// If there is no such controller connected, it opens a fake gui-based controller for you.
+k = MKtl('nnkn20');
 
 k.gui; // opens a gui representation of the device
 
 s.boot; // boot the server
-s.latency = nil; // reduce latency for messages sent to the server
 
-( // make an Ndef to control
-Spec.add(\freq1, \freq);
-Spec.add(\freq2, \freq);
-Spec.add(\freq3, \freq);
-Ndef( \sine ).fadeTime = 0.1;
-Ndef( \sine, {
-	Pan2.ar(
-		Mix.new(
-			SinOsc.ar([
-				\freq1.kr(400).lag(0.3,0.5),
-				\freq2.kr(400).lag(0.3,0.5),
-				\freq3.kr(400).lag(0.3,0.5)
-			] * [3/4,1,4/3]
-		)) / 10,
-		0
-	)
-});
+(
+// play a sound
+x = {
+	Splay.ar(
+		SinOsc.ar([
+			\freq1.kr(700, lag: 0.3),
+			\freq2.kr(150, lag: 0.3),
+			\freq3.kr(100, lag: 0.3)
+	]))/3
+}.play;
+
+// add specs for the controls
+Spec.add(\freq1, [100, 1000, \exp]);
+Spec.add(\freq2, \freq1);
+Spec.add(\freq3, \freq1);
 )
 
 // set actions to the first three sliders
-k.elements[\sl][0].action_({|elem|Ndef(\sine).set(\freq1,\freq1.asSpec.map(elem.value))});
-k.elements[\sl][1].action_({|elem|Ndef(\sine).set(\freq2,\freq2.asSpec.map(elem.value))});
-k.elements[\sl][2].action_({|elem|Ndef(\sine).set(\freq3,\freq3.asSpec.map(elem.value))});
+k.elementAt(\sl, 0).action = {arg el;
+	x.set(\freq1, \freq1.asSpec.map(el.value))
+};
+k.elementAt(\sl, 1).action = {arg el;
+	x.set(\freq2, \freq2.asSpec.map(el.value))
+};
+k.elementAt(\sl, 2).action = {arg el;
+	x.set(\freq3, \freq3.asSpec.map(el.value))
+};
+
+
+// after testing, free sound
+x.free;
 ::
 
-subsection:: BCR2000
+subsection:: Example BCR2000
 
 code::
-//create a non existing Controller according to template 'BCR2000'
+// plug in your BCR2000 and evaluate this line.
+// If there is no such controller connected, it opens a fake gui-based controller for you.
+k = MKtl('bcr20000');
 
-k = MIDIMKtl.make('fakeBCR','BCR2000');
-k.elements; //Dictionary of controls keys to MKtlElements
-k.gui; // open a gui representation of the device
+k.gui;      // open a gui representation of the device
+
+k.elements; // dictionary of controls keys to MKtlElements
+
+// elements can be accessed through their hierarchy:
+k.elementAt(\kn, 0, 0);
+
+// all knobs of the first row
+k.elementAt(\kn, 0); // -> MktElementArray
+
+// elements have a type:
+k.elementAt(\kn, 0, 0).type;
+
+// select elements by their type:
+k.allElements.select{ |x| x.type == \encoder };
+
+// perform an action on turning knob [0,0] (upper left)
+k.elementAt(\kn, 0, 0).action = { |el| el.value.postln };
+
+// simple sound example
+x = { RLPF.ar(Saw.ar(\freq.kr(440, 0.1), mul: 0.1), 1000)}.play;
+
+(
+k.elementAt(\kn, 0, 0).action_({ |el|
+	x.set(\freq, el.value.linlin(0.0, 1, 300.0, 600));
+});
+)
+
+// after testing, free sound
+x.free;
+
+// send data back to the device
+k.elementAt(\kn,0,0).value_(0.5);
 ::
 
-For a real BCR2000 we would use:
-code::
-k = MIDIMKtl('bcr20000');
-k.elements; //Dictionary of controls keys to MKtlElements
-k.gui; // open a gui representation of the device
-::
 
-Each element can be retrieved from the elements data structure:
-
-code::
-k.elements[\kn][0][7]
-::
-
-Or it can be retrieved using a shortcut method with symbols:
-
-code::
-k.elementAt(\kn,1,7)
-::
-
-Elements have a type:
-
-code::
-k.elementAt(\kn,1,7).type
-::
-
-It's possible to select elements by their type:
-code::
-k.allElements.select{ |x| x.type == \encoder }
-::
-
-To perform an action on an incoming event:
-
-code::
-k.elementAt(\kn,1,7).action_({ |el| el.value.postln })
-
-
-x = { Saw.ar(\freq.kr(440)) * 0.1 }.play;
-
-k.elementAt(\kn,1,7).action_({ |el| x.set(\freq, el.value.linlin(0.0,1.0,300,1000)) })
-::
-
-If you want to add multiple actions use addAction and removeAction:
-
-code::
-f = { |el| x.set(\freq, el.value.linlin(0.0,1.0,300,1000)) };
-
-k.elementAt(\kn,1,7).addAction(f)
-k.elementAt(\kn,1,7).removeAction(f)
-::
-
-To send data back to a device one uses link::Classes/MAbstractElement#value_:: :
-
-k.elementAt(\kn,1,7).value_(0.5)
-
-Classic knobs rotating demo for Behringed BCF2000:
-
+subsection::Bonus: Knob rotation demo
 code::
 (
-x = 0;
-fork{
+d = 0;
+{
 	loop{
-		0.1.wait;
-		x = x + 0.1;
+		0.05.wait;
+		d = d + 0.01;
 		8.do{ |i|
-			MIDIMKtl('bcf20000').elementAt(\kn,1,i+1).value_(
-				(x + (i/7)).mod(1.0)
-			)
-		}
+			k.elementAt(\kn, 0, i).value_(
+				(d + (i/7)).mod(1.0);
+			);
+		};
 	}
-}
+}.fork;
 )
 ::
 
-SECTION:: Undescribed Controller
+SECTION:: Controllers not yet recognised
 
-Have a controller that is not known to the system? See link::Tutorials/How_to_create_a_description_file:: on how to set it up.
+Have a controller that is not yet known to the system? You can fix this by yourself!
+To do so, look at link::Tutorials/How_to_create_a_description_file::.
+
+section:: Acknowledgements
+Modality and its research meetings have kindly been supported by BEK in Bergen, Norway, and STEIM, Amsterdam.
+The ModalityTeam is, in no obvious order: Jeff Carey, Bjoernar Habbestad, Marije Baalman, Alberto de Campo, Tijs Ham, Wouter Snoei, Till Bovermann, Miguel Negrao, Robert van Heumen, Hannes Hoelzl, Tim Blechmann, Amelie Hinrichsen, and Dominik Hildebrand Marques Lopes.
