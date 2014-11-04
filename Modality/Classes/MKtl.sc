@@ -92,6 +92,10 @@ MKtl : MAbstractKtl { // abstract class
 		^this.allSubclasses.detect({ |x| x.protocol == symbol })
 	}
 
+	*allKnown{
+		^this.prShortnamesToDevices;
+	}
+
 	// new returns existing instances
 	// of subclasses that exist in .all,
 	// or returns a new empty instance.
