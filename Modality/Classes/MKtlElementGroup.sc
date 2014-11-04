@@ -59,6 +59,11 @@ MKtlElementArray : MKtlAbstractElementGroup {
 		elements = newElements.asArray;
 		this.init;
 	}
+	
+	remove { |element|
+		if( element.parent === this ) { element.parent = nil };
+		 ^this.elements.remove( element );
+	}
 
 }
 
