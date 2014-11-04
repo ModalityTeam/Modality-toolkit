@@ -88,14 +88,14 @@ MKtlGUI {
 		views = [ verboseButton ];
 		values = [ mktl.verbose.binaryValue ];
 		getValueFuncs = [ { mktl.verbose.binaryValue } ];
-		this.getSingleElements.sortedKeysValuesDo({ |key, item|
+		this.getSingleElements.pairsDo({ |key, element|
 			var view, getValueFunc, value;
 
-			StaticText( parent, labelWidth@16 ).string_( key.asString );
+			StaticText( parent, labelWidth@16 ).string_( key.asString ++ " " ).align_( \right );
 
-			view = (makeElementDict[ item.type ] ?? { makeElementDict[ \unknown ] }).value( parent, true );
+			view = (makeElementDict[ element.type ] ?? { makeElementDict[ \unknown ] }).value( parent, true );
 
-			getValueFunc = { mktl.elementAt( key ).value; };
+			getValueFunc = { element.value; };
 			value = getValueFunc.value;
 
 			view.value_( value );
@@ -114,14 +114,18 @@ MKtlGUI {
 			values = values.add( value );
 			views = views.add( view );
 
-			parent.asView.decorator.nextLine;
+			if( parent.asView.decorator.left > (parent.asView.bounds.width - (labelWidth + 100)) ) {
+				parent.asView.decorator.nextLine;
+			};
 		});
+		
+		parent.asView.decorator.nextLine;
 
 		this.getArrayedElements.sortedKeysValuesDo({ |key, item|
 			var view, getValueFunc, value;
 			var currentState;
 
-			StaticText( parent, labelWidth@16 ).string_( key.asString );
+			StaticText( parent, labelWidth@16 ).string_( key.asString ++ " " ).align_( \right );
 
 			mktl.prTraverse.(
 				item, [], { |a,b|
@@ -169,7 +173,7 @@ MKtlGUI {
 			var view, getValueFunc, value;
 			var currentState, hasStateName = false;
 
-			StaticText( parent, labelWidth@16 ).string_( key.asString );
+			StaticText( parent, labelWidth@16 ).string_( key.asString ++ " " ).align_( \right );
 
 			mktl.prTraverse.(
 				item, [], { |a,b|
@@ -225,11 +229,12 @@ MKtlGUI {
 	}
 
 	getSingleElements {
-		^mktl.deviceDescriptionHierarch.select({ |item| (item.isKindOf( Array ).not) and: (item.isKindOf( Dictionary ).not) });
+		//^mktl.deviceDescriptionHierarch.select({ |item| (item.isKindOf( Array ).not) and: (item.isKindOf( Dictionary ).not) });
+		^mktl.elements.getElementsForGUI( { |element| element.size == 0 } );
 	}
 
 	getDictionedElements {
-		^mktl.deviceDescriptionHierarch.select({ |item| item.isKindOf( Dictionary ) });
+		^mktl.deviceDescriptionHierarch.select({ |item| item.isKindOf( Dictionary ) && { item[ \type ] == nil }; });
 	}
 
 	getArrayedElements {
