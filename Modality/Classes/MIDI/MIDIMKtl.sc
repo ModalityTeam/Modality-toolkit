@@ -124,6 +124,15 @@ MIDIMKtl : MKtl {
 		^devKey;
 	}
 
+	*newFromNameAndDesc{|name,deviceDescName,devDesc|
+		var srcID, destID;
+		var source = this.sourceDeviceDict.at( name );
+		var dest = this.destinationDeviceDict.at( name );
+		if ( source.notNil ){ srcID = source.uid };
+		if ( dest.notNil ){ destID = dest.uid };
+		^this.new( name, srcID, destID, deviceDescName );
+	}
+
 	// how to deal with additional arguments (uids...)?
 	*newFromDesc{ |name,deviceDescName,devDesc|
 		//		var devDesc = this.getDeviceDescription( deviceDesc )

@@ -141,9 +141,14 @@ MKtl : MAbstractKtl { // abstract class
 			} {
 				// create an instance of the right subclass based on the protocol given in the device description
 				devDesc = this.getDeviceDescription( deviceDescName );
-				MKtl.matchClass(devDesc[ \protocol ]) !?
-				_.newFromDesc( name, deviceDescName, devDesc ) ?? {
-					this.basicNew(name, deviceDescName)
+				if ( this.allAvailable[devDesc[ \protocol ]].includes( name ) ){
+					// shortName exists in available devices, so open it with the given deviceDescName
+					MKtl.matchClass(devDesc[ \protocol ]).newFromNameAndDesc( name, deviceDescName );
+				}{
+					MKtl.matchClass(devDesc[ \protocol ]) !?
+					_.newFromDesc( name, deviceDescName, devDesc ) ?? {
+						this.basicNew(name, deviceDescName)
+					}
 				}
 			}
 		}
@@ -359,7 +364,7 @@ MKtl : MAbstractKtl { // abstract class
 		};
 		^f
 	}
-	
+
 	prMakeElementsFunc {
 		var isLeaf = { |dict|
 			dict.values.any({|x| x.size > 1}).not
@@ -371,7 +376,7 @@ MKtl : MAbstractKtl { // abstract class
 				if( isLeaf.(x) ) {
 					leafFunc.( state , x )
 				}{
-					MKtlElementDict(this, state, 
+					MKtlElementDict(this, state,
 						x.sortedKeysValuesCollect{ |val, key|
 							f.(val, stateFuncOnNodes.(state, key), stateFuncOnNodes, leafFunc )
 						}
@@ -485,7 +490,7 @@ MKtl : MAbstractKtl { // abstract class
 	elementAt { |...args|
 		^elements.deepAt1(*args)
 	}
-	
+
 	at { |index|
 		^elements.at( index );
 	}

@@ -125,6 +125,11 @@ HIDMKtl : MKtl {
 		^devKey;
 	}
 
+	*newFromNameAndDesc{|name,deviceDescName,devDesc|
+		var dev = this.sourceDeviceDict.at( name );
+		^this.new( name, dev.path, deviceDescName );
+	}
+
 	// how to deal with additional arguments (uids...)?
 	*newFromDesc{ |name,deviceDescName,devDesc|
 		//		var devDesc = this.getDeviceDescription( deviceDesc )
@@ -160,7 +165,7 @@ HIDMKtl : MKtl {
 			foundSource = this.sourceDeviceDict[ name ];
 		}{
             //FIXME: uid is this a path?
-			foundSource = HID.findBy( path: uid );
+			foundSource = HID.findBy( path: uid ).asArray.first;
 		};
 			// make a new one
 		if (foundSource.isNil) {
