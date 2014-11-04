@@ -11,8 +11,8 @@ Why do we need this hierarchy ??
 */
 MAbstractElement {
 
-	var <source; // the Ktl it belongs to
-	var <name; // its name in Ktl.elements
+	var <source; // the MKtl it belongs to
+	var <name; // its name in MKtl.elements
 	var <type; // its type.
 
 	var <ioType; // can be \in, \out, \inout
@@ -27,7 +27,7 @@ MAbstractElement {
 	var <bus;
 	var <>parent;
 	var <groups;
-	
+
 	classvar <>addGroupsAsParent = false;
 
 	*new { |source, name|
@@ -101,15 +101,24 @@ MAbstractElement {
 		this.initBus(server);
 		^In.kr(bus.index, bus.numChannels)
 	}
-	
+
 	index {
 		^this.parent !? _.indexOf( this );
 	}
-	
+
 	indices {
 		^this.parent !? { |x| x.indices ++ [ this.index ] };
 	}
-	
+
+	printAll {|level = 0|
+		(" ".wrapExtend(level) ++ this.asCompileString).postln;
+	}
+
+	// allKeys {
+	// 	^(parent.indexOf(this))
+	// }
+
+
 	// MKtlElementGroup support
 	prAddGroup { |group|
 		if( addGroupsAsParent ) {
@@ -120,7 +129,7 @@ MAbstractElement {
 			};
 		};
 	}
-	
+
 	prRemoveGroup { |group|
 		if( parent === group ) {
 			parent = nil;

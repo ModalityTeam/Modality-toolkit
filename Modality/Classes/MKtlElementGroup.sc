@@ -1,48 +1,48 @@
 MKtlAbstractElementGroup : MAbstractElement {
-	
+
 	var <elements;
 
 	*new { |source, name, elements|
 		^super.newCopyArgs( source, name ).elements_(elements);
 	}
-	
+
 	init { }
-	
+
 	elements_ { |newElements|
 		elements = newElements;
 		this.init;
 	}
-	
+
 	at { |index| ^elements[index] }
-	
+
 	put { |index, element|
 		this.elements = this.elements.put( index, element );
 	}
-	
+
 	add { |element|
 		this.elements = this.elements.add( element );
 	}
-	
+
 	size { ^elements.size }
 	
 	removeAll {
 		elements.do(_.prRemoveGroup( this ));
 		this.elements = nil;
 	}
-	
+
 	remove { |element|
 		element.prRemoveGroup( this );
 		 ^this.elements.remove( element );
 	}
-	
+
 	indexOf { |element| ^this.elements.indexOf( element ); }
-	
+
 	do { |function| elements.do( function ); }
-	
+
 	flat {
 		^this.elements.flat;
 	}
-	
+
 	prFlat { |list|
 		this.do({ arg item, i;
 			if (item.respondsTo('prFlat'), {
@@ -53,7 +53,7 @@ MKtlAbstractElementGroup : MAbstractElement {
 		});
 		^list
 	}
-	
+
 	value { ^elements.collect(_.value) }
 
 	addAction { |argAction|
@@ -80,8 +80,8 @@ MKtlAbstractElementGroup : MAbstractElement {
 }
 
 MKtlElementArray : MKtlAbstractElementGroup {
-	
-	init { 
+
+	init {
 		elements = elements ?? {[]};
 		if( elements.size > 0 ) {
 			type = elements.first.type;
@@ -93,7 +93,7 @@ MKtlElementArray : MKtlAbstractElementGroup {
 			});
 		};
 	}
-	
+
 	elements_ { |newElements|
 		elements = newElements.asArray;
 		this.init;
@@ -134,15 +134,15 @@ MKtlElementDict : MKtlAbstractElementGroup {
 		elements = newElements; // this should be made into a dictionary somehow
 		this.init;
 	}
-	
+
 	flat { ^this.elements.values.flat }
-	
+
 	flatSize { ^this.values.flatSize }
 	
 	at { |index|
 		^elements[index]
 	}
-	
+
 	put { |key, element|
 		this.elements = this.elements.put( key, element );
 	}
@@ -150,7 +150,7 @@ MKtlElementDict : MKtlAbstractElementGroup {
 	add { |association|
 		this.put( association.key, association.value );
 	}
-	
+
 	indexOf { |element|
 		^elements.findKeyForValue( element );
 	}
