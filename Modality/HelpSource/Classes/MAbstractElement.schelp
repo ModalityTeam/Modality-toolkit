@@ -1,10 +1,10 @@
 CLASS:: MAbstractElement
-summary:: Base class for MKtl controller elements and MDispatchOut elements.
+summary:: Base class for MKtl controller elements elements.
 categories:: Libraries>Modality, Control
-related:: Overviews/Modality, Classes/MKtl, Classes/MKtlElement, Classes/MDispatchOut
+related:: Overviews/Modality, Classes/MKtl, Classes/MKtlElement
 
 DESCRIPTION::
-Abstract class for MKtl controller elements and code::MDispatchOut::s.
+Abstract class for MKtl controller elements.
 
 note::this is an and abstract class that should usually not be accessed directly.::
 

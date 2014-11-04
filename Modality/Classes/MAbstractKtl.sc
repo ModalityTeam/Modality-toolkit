@@ -1,5 +1,5 @@
 
-//defines a common interface for Mktl and MDispatch, where outputs, called Elements can be registered with for notifications.
+//defines a common interface for Mktl, where outputs, called Elements can be registered with for notifications.
 
 MAbstractKtl {
 
@@ -114,8 +114,8 @@ MAbstractKtl {
 
 	}
 
-	fromTemplate{ arg name ...args;
-	    ^MDispatch.make(name, *([this]++args))
-	}
+	// fromTemplate{ arg name ...args;
+	//     ^MDispatch.make(name, *([this]++args))
+	// }
 
 }
