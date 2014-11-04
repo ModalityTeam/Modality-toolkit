@@ -360,7 +360,7 @@ MKtl : MAbstractKtl { // abstract class
 		^f
 	}
 	
-	prMakeElements {
+	prMakeElementsFunc {
 		var isLeaf = { |dict|
 			dict.values.any({|x| x.size > 1}).not
 		};
@@ -461,7 +461,7 @@ MKtl : MAbstractKtl { // abstract class
 			elementsDict[key] = MKtlElement(this, key);
 		};
 		leafFunc = { |finalKey, x| elementsDict[finalKey.asSymbol] };
-		elements = this.prMakeElements.(deviceDescriptionHierarch, "", this.prUnderscorify, leafFunc );
+		elements = this.prMakeElementsFunc.(deviceDescriptionHierarch, "", this.prUnderscorify, leafFunc );
 
 	}
 
