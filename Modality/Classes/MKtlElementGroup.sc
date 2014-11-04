@@ -2,8 +2,8 @@ MKtlAbstractElementGroup : MAbstractElement {
 	
 	var <elements;
 
-	*new { |source, name|
-		^super.newCopyArgs( source, name ).init;
+	*new { |source, name, elements|
+		^super.newCopyArgs( source, name ).elements_(elements);
 	}
 	
 	init { }
@@ -72,6 +72,7 @@ MKtlElementArray : MKtlAbstractElementGroup {
 	
 	init { 
 		elements.do(_.parent_(this));
+		elements = elements ?? {[]};
 	}
 	
 	elements_ { |newElements|
