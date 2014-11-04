@@ -23,6 +23,8 @@ MKtlAbstractElementGroup : MAbstractElement {
 		this.elements = this.elements.add( element );
 	}
 	
+	size { ^elements.size }
+	
 	remove { |element| ^this.elements.remove( element ); }
 	
 	indexOf { |element| ^this.elements.indexOf( element ); }
