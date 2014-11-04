@@ -26,7 +26,24 @@ MKtlAbstractElementGroup : MAbstractElement {
 	remove { |element| ^this.elements.remove( element ); }
 	
 	indexOf { |element| ^this.elements.indexOf( element ); }
-
+	
+	do { |function| elements.do( function ); }
+	
+	flat {
+		^this.elements.flat;
+	}
+	
+	prFlat { |list|
+		this.do({ arg item, i;
+			if (item.respondsTo('prFlat'), {
+				list = item.prFlat(list);
+			},{
+				list = list.add(item);
+			});
+		});
+		^list
+	}
+	
 	value { ^elements.collect(_.value) }
 
 	addAction { |argAction|
@@ -88,6 +105,10 @@ MKtlElementDict : MKtlAbstractElementGroup {
 		elements = newElements; // this should be made into a dictionary somehow
 		this.init;
 	}
+	
+	flat { ^this.elements.values.flat }
+	
+	flatSize { ^this.values.flatSize }
 	
 	at { |index| 
 		if( index.isNumber ) { index = keys[ index ] };
