@@ -485,6 +485,10 @@ MKtl : MAbstractKtl { // abstract class
 	elementAt { |...args|
 		^elements.deepAt1(*args)
 	}
+	
+	at { |index|
+		^elements.at( index );
+	}
 
 	// should filter: those for my platform only
 	elementNames {
