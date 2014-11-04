@@ -99,5 +99,9 @@ MKtlElementDict : MKtlAbstractElementGroup {
 	add { |association|
 		this.put( association.key, association.value );
 	}
+	
+	indexOf { |element|
+		^elements.findKeyForValue( element );
+	}
 
 }
