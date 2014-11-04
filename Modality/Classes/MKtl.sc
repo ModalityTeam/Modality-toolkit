@@ -461,7 +461,9 @@ MKtl : MAbstractKtl { // abstract class
 			elementsDict[key] = MKtlElement(this, key);
 		};
 		leafFunc = { |finalKey, x| elementsDict[finalKey.asSymbol] };
+		MKtlElement.addGroupsAsParent = true;
 		elements = this.prMakeElementsFunc.(deviceDescriptionHierarch, "", this.prUnderscorify, leafFunc );
+		MKtlElement.addGroupsAsParent = false;
 
 	}
 

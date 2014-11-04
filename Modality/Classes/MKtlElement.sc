@@ -26,6 +26,9 @@ MAbstractElement {
 	// server support, currently only one server per element supported.
 	var <bus;
 	var <>parent;
+	var <groups;
+	
+	classvar <>addGroupsAsParent = false;
 
 	*new { |source, name|
 		^super.newCopyArgs( source, name).init;
@@ -68,6 +71,7 @@ MAbstractElement {
 		source.recordRawValue( name, value );
 		action.value( this );
 		parent !? _.doAction( this );
+		groups.do( _.doAction( this ) );
 	}
 
 	// UGen support
@@ -96,6 +100,26 @@ MAbstractElement {
 		// and only if the server for your bus is not the defualt one.
 		this.initBus(server);
 		^In.kr(bus.index, bus.numChannels)
+	}
+	
+	// MKtlElementGroup support
+	prAddGroup { |group|
+		if( addGroupsAsParent ) {
+			parent = group;
+		} {
+			if( groups.isNil or: { groups.includes( group ).not }) {
+				groups = groups.add( group );
+			};
+		};
+	}
+	
+	prRemoveGroup { |group|
+		if( parent === group ) {
+			parent = nil;
+		};
+		if( groups.notNil ) {
+			groups.remove( group );
+		};
 	}
 
 }

@@ -25,7 +25,15 @@ MKtlAbstractElementGroup : MAbstractElement {
 	
 	size { ^elements.size }
 	
-	remove { |element| ^this.elements.remove( element ); }
+	removeAll {
+		elements.do(_.prRemoveGroup( this ));
+		this.elements = nil;
+	}
+	
+	remove { |element|
+		element.prRemoveGroup( this );
+		 ^this.elements.remove( element );
+	}
 	
 	indexOf { |element| ^this.elements.indexOf( element ); }
 	
@@ -64,6 +72,7 @@ MKtlAbstractElementGroup : MAbstractElement {
 		children = children.add( this );
 		action.value( *children );
 		parent !? _.doAction( *children );
+		groups.do( _.doAction( *children ) );
 	}
 
 }
@@ -71,18 +80,13 @@ MKtlAbstractElementGroup : MAbstractElement {
 MKtlElementArray : MKtlAbstractElementGroup {
 	
 	init { 
-		elements.do(_.parent_(this));
 		elements = elements ?? {[]};
+		elements.do(_.prAddGroup(this));
 	}
 	
 	elements_ { |newElements|
 		elements = newElements.asArray;
 		this.init;
-	}
-	
-	remove { |element|
-		if( element.parent === this ) { element.parent = nil };
-		 ^this.elements.remove( element );
 	}
 
 }
@@ -101,7 +105,7 @@ MKtlElementDict : MKtlAbstractElementGroup {
 				};
 			});
 		};
-		elements.do(_.parent_(this));
+		elements.do(_.prAddGroup(this));
 	}
 	
 	elements_ { |newElements|
