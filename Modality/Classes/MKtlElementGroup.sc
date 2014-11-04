@@ -75,13 +75,23 @@ MKtlAbstractElementGroup : MAbstractElement {
 		groups.do( _.doAction( *children ) );
 	}
 
+	select { |function| ^elements.select( function ) }
+
 }
 
 MKtlElementArray : MKtlAbstractElementGroup {
 	
 	init { 
 		elements = elements ?? {[]};
-		elements.do(_.prAddGroup(this));
+		if( elements.size > 0 ) {
+			type = elements.first.type;
+			elements.do({ |item|
+				item.prAddGroup(this);
+				if( item.type != type ) {
+					type = 'mixed';
+				};
+			});
+		};
 	}
 	
 	elements_ { |newElements|
@@ -93,21 +103,23 @@ MKtlElementArray : MKtlAbstractElementGroup {
 
 MKtlElementDict : MKtlAbstractElementGroup {
 	
-	var <>keys;
 	
-	init { 
+	var >guiKeys;
+	init {
 		elements = elements ?? {()};
-		keys = keys ? [];
-		if( elements.size < keys.size ) {
-			elements.keys.asArray.do({ |key|
-				if( keys.includes( key ).not ) {
-					keys = keys.add( key );
+		if( elements.size > 0 ) {
+			type = elements.values.first.type;
+			elements.do({ |item|
+				item.prAddGroup(this);
+				if( item.type != type ) {
+					type = 'mixed';
 				};
 			});
 		};
-		elements.do(_.prAddGroup(this));
 	}
 	
+	keys { ^elements.keys }
+
 	elements_ { |newElements|
 		elements = newElements; // this should be made into a dictionary somehow
 		this.init;
@@ -117,15 +129,11 @@ MKtlElementDict : MKtlAbstractElementGroup {
 	
 	flatSize { ^this.values.flatSize }
 	
-	at { |index| 
-		if( index.isNumber ) { index = keys[ index ] };
-		^elements[index] 
+	at { |index|
+		^elements[index]
 	}
 	
 	put { |key, element|
-		if( keys.includes( key ).not ) {
-			keys = keys.add( key );
-		};
 		this.elements = this.elements.put( key, element );
 	}
 
@@ -137,4 +145,29 @@ MKtlElementDict : MKtlAbstractElementGroup {
 		^elements.findKeyForValue( element );
 	}
 
+
+	// gui support
+	guiKeys {
+		var order;
+		order = [ MKtlElement, MKtlElementDict, MKtlElementArray ];
+		^guiKeys ?? {
+			guiKeys = elements.keys.asArray.sort({ |a,b|
+				(order.indexOf( elements[a].class ) ? -1) <= (order.indexOf( elements[b].class ) ? -1);
+			}).separate({ |a,b|
+				elements[a].class != elements[b].class
+			}).collect(_.sort).flatten(1);
+		};
+	}
+
+	getElementsForGUI { |function = true|
+		var array = Array.new(this.elements.size * 2);
+		this.guiKeys.do({ |key|
+			var val;
+			val = elements[ key ];
+			if( function.( val, key ) ) {
+				array.add( key ); array.add( val );
+			};
+		});
+		^array
+	}
 }
