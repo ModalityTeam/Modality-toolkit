@@ -102,6 +102,14 @@ MAbstractElement {
 		^In.kr(bus.index, bus.numChannels)
 	}
 	
+	index {
+		^this.parent !? _.indexOf( this );
+	}
+	
+	indices {
+		^this.parent !? { |x| x.indices ++ [ this.index ] };
+	}
+	
 	// MKtlElementGroup support
 	prAddGroup { |group|
 		if( addGroupsAsParent ) {
