@@ -5,10 +5,8 @@ MKtlAbstractElementGroup : MAbstractElement {
 	*new { |source, name|
 		^super.newCopyArgs( source, name ).init;
 	}
-
-	init { 
-		elements.do(_.parent_(this));
-	}
+	
+	init { }
 	
 	elements_ { |newElements|
 		elements = newElements;
@@ -53,6 +51,10 @@ MKtlAbstractElementGroup : MAbstractElement {
 }
 
 MKtlElementArray : MKtlAbstractElementGroup {
+	
+	init { 
+		elements.do(_.parent_(this));
+	}
 	
 	elements_ { |newElements|
 		elements = newElements.asArray;
