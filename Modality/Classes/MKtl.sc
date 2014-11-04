@@ -149,10 +149,21 @@ MKtl : MAbstractKtl { // abstract class
 					// shortName exists in available devices, so open it with the given deviceDescName
 					MKtl.matchClass(devDesc[ \protocol ]).newFromNameAndDesc( name, deviceDescName );
 				}{
+					// either there is a hardware device for the given deviceDescName and it should open that with the given name,
+					return = MKtl.matchClass(devDesc[ \protocol ]).newFromDesc( name, deviceDescName, devDesc );
+					// or, the given deviceDescName does not match any open hardware device, and we want to fake it
+					return.postln;
+					if ( return.isNil ){
+						"making fake device".postln;
+						return = MKtl.make( name, deviceDescName );
+					};
+					/*
 					MKtl.matchClass(devDesc[ \protocol ]) !?
 					_.newFromDesc( name, deviceDescName, devDesc ) ?? {
 						this.basicNew(name, deviceDescName)
 					}
+					*/
+					return;
 				}
 			}
 		}

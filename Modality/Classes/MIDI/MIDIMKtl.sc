@@ -117,7 +117,7 @@ MIDIMKtl : MKtl {
 	*findSource { |rawDeviceName|
 		var devKey;
 		this.sourceDeviceDict.keysValuesDo{ |key,endpoint|
-			if ( endpoint.name == rawDeviceName ){
+			if ( endpoint.device == rawDeviceName ){
 				devKey = key;
 			};
 		};
@@ -136,7 +136,10 @@ MIDIMKtl : MKtl {
 	// how to deal with additional arguments (uids...)?
 	*newFromDesc{ |name,deviceDescName,devDesc|
 		//		var devDesc = this.getDeviceDescription( deviceDesc )
-		var devKey = this.findSource( devDesc[ thisProcess.platform.name ] );
+		var devKey = this.findSource( devDesc[ \device ] );
+		if ( devKey.isNil ){
+			^nil;
+		};
 		this.sourceDeviceDict.swapKeys( name, devKey );
 		^this.new( name, devDescName: deviceDescName );
 	}
