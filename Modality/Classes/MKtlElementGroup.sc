@@ -98,6 +98,16 @@ MKtlElementArray : MKtlAbstractElementGroup {
 		elements = newElements.asArray;
 		this.init;
 	}
+	
+	asArray {
+		^elements.collect({ |item|
+			if( item.isKindOf( MKtlElementArray ) ) {
+				item.asArray;
+			} {
+				item;
+			};
+		});
+	}
 
 }
 
