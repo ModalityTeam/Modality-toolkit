@@ -16,13 +16,6 @@ MKtl : MAbstractKtl { // abstract class
 	// an array of keys and values with a description of all the elements on the device.
 	// generated from the hierarchical description read from the file.
 	var <deviceDescription;
-	//of type: [ 'elemName', ( 'mode': Symbol, 'chan': Int, 'type': Symbol, 'specName': Symbol,
-	//'midiMsgType': Symbol, 'spec':ControlSpec, 'ccNum': Int )
-	// i.e. [ prA1, ( 'mode': toggle, 'chan': 0, 'type': button, 'specName': midiBut,
-	//'midiMsgType': cc, 'spec': a ControlSpec(0, 127, 'linear', 127, 0, ""), 'ccNum': 105 )
-
-
-	//var <>recordFunc; // what to do to record incoming control changes
 
 	classvar <exploring = false;
 
@@ -67,16 +60,9 @@ MKtl : MAbstractKtl { // abstract class
 		}{
 			protocols = protocols ? [\midi];
 		};
-		/*
-		if ( protocols.isNil ){
-			this.allSubclasses.do(_.find( post: false ) );
-			"\n-----------------------------------------------------".postln;
-			this.allSubclasses.do(_.postPossible() );
-		}{*/
 		protocols.asCollection.do{ |pcol|
 			this.matchClass(pcol) !? _.find
 		}
-	// };
 	}
 
 	*addSpec {|key, spec|
