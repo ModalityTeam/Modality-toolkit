@@ -61,6 +61,7 @@ MKtlElementGUI {
 
 	makeView { |inParent, bounds|
 		var createdWindow = false;
+		var verboseButton;
 
 		parent = inParent ? parent ?? {
 			createdWindow = true;
@@ -68,10 +69,22 @@ MKtlElementGUI {
 		 };
 
 		if( parent.asView.decorator.isNil ) { parent.addFlowLayout };
-
-		views = [ ];
-		values = [ ];
-		getValueFuncs = [ ];
+		
+		if( createdWindow ) {
+			verboseButton = Button( parent, labelWidth@16 )
+				.states_([["verbose"],["verbose", Color.black, Color.green]])
+				.action_({ |bt| element.source.trace( bt.value.booleanValue ) })
+				.value_( element.source.traceRunning.binaryValue );
+			parent.asView.decorator.nextLine;
+			
+			views = [ verboseButton ];
+			values = [ element.source.traceRunning.binaryValue ];
+			getValueFuncs = [ { element.source.traceRunning.binaryValue } ];
+		} {
+			views = [ ];
+			values = [ ];
+			getValueFuncs = [ ];
+		};
 
 		this.makeSubViews;
 
