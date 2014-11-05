@@ -114,12 +114,24 @@ HIDMKtl : MKtl {
 		^devKey;
 	}
 
-	*newWithDesc{ |name, devDesc|
-		"TODO: to implement!".warn;
+
+	// *newWithDesc{ |name, devDesc|
+	// var dev = this.sourceDeviceDict.at( name );
+	// ^this.new( name, dev.path, devDesc );
+// }
+
+	*newFromVirtual{ |name, virtualMKtl|
+		// var devDescName = virtualMKtl.usedDeviceDescName;
+		// ^this.newWithDesc( name, devDescName );
+		/// TODO: should actually copy the contents!
+		var dev = this.sourceDeviceDict.at( name );
+		^virtualMKtl.as( HIDMKtl ).initHIDMKtl(dev.path, dev);
 	}
 
+
 	*newWithoutDesc{ |name|
-		"TODO: to implement!".warn;
+		var dev = this.sourceDeviceDict.at( name );
+		^this.new( name, dev.path );
 	}
 
 /*
@@ -176,7 +188,8 @@ HIDMKtl : MKtl {
 		if (foundSource.isNil) {
 			warn("HIDMKtl:"
 			"	No HID source with USB port ID % exists! please check again.".format(uid));
-			^MKtl.prMakeVirtual(name)
+			// ^MKtl.prMakeVirtual(name);
+			^MKtl.new(name);
 		};
 
         ^super.basicNew(name,devDescName ? this.makeDeviceName( foundSource ) ).initHIDMKtl(uid, foundSource);

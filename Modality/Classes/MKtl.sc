@@ -8,6 +8,9 @@ MKtl : MAbstractKtl { // abstract class
 	classvar <specs; // ( 'specName': ControlSpec, ...) -> all specs
 	classvar <allAvailable; // ( 'midi': List['name1',... ], 'hid': List['name1',... ], ... )
 
+
+	classvar <exploring = false;
+
 	// tree structure composed of dictionaries and arrays
 	// with a description of all the elements on the device.
 	// read from an external file.
@@ -17,10 +20,8 @@ MKtl : MAbstractKtl { // abstract class
 	// generated from the hierarchical description read from the file.
 	var <deviceDescription;
 
-	classvar <exploring = false;
-
 	var <usedDeviceDescName;
-	var <virtual;
+	// var <virtual;
 
 	*initClass {
 		Class.initClassTree(Spec);
@@ -166,6 +167,10 @@ MKtl : MAbstractKtl { // abstract class
 		};
 	}
 
+	*newFrom{ |otherMKtl|
+		^this.newCopyArgs( otherMKtl.verbose, otherMKtl.name, otherMKtl.elementsDict, otherMKtl.elements, otherMKtl.deviceDescriptionHierarch, otherMKtl.deviceDescription, otherMKtl.usedDeviceDescName );
+	}
+
 	// new returns existing instances
 	// of subclasses that exist in .all,
 	// or returns a new empty instance.
@@ -257,7 +262,7 @@ MKtl : MAbstractKtl { // abstract class
 					^newMKtl;
 				};
 				// newMKtl: already an MKtl
-				newMKtl = subClass.newWithDesc( name, newMKtl );
+				newMKtl = subClass.newFromVirtual( name, newMKtl );
 				^newMKtl;
 			};
 		}
