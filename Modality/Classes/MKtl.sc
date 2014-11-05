@@ -92,7 +92,10 @@ MKtl : MAbstractKtl { // abstract class
 		^this.allSubclasses.detect({ |x| x.protocol == symbol })
 	}
 
-	*allKnown{
+	*allDescriptions{
+		if(MKtl.allDevDescs.isNil){
+			MKtl.loadAllDescs
+		};
 		^this.prShortnamesToDevices;
 	}
 
