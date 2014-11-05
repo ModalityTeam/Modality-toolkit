@@ -76,6 +76,8 @@ MKtlAbstractElementGroup : MAbstractElement {
 	}
 
 	select { |function| ^elements.select( function ) }
+	
+	collect { |function| ^elements.collect( function ) }
 
 }
 
