@@ -11,6 +11,10 @@ OSCMktl : MKtl {
 		// should implement
 	}
 
+	*findSource{
+		^nil;
+	}
+
 	// *newFromDesc { |name,deviceDescName,devDesc|
 	// 	^super.new(;
 	// 	}

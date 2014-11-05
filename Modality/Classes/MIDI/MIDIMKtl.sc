@@ -30,8 +30,8 @@ MIDIMKtl : MKtl {
 	var <>midiRawAction;
 
 
-			// optimisation for fast lookup,
-			// may go away if everything lives in "elementsDict" of superclass
+	// optimisation for fast lookup,
+	// may go away if everything lives in "elementsDict" of superclass
 	var <elementHashDict;  //of type: ('c_ChannelNumber_CCNumber': MKtlElement, ...) i.e. ('c_0_21':a MKtlElement, ... )
 	var <hashToElNameDict; //of type: ('c_ChannelNumber_CCNumber':'elementName') i.e. ( 'c_0_108': prB2, ... )
 	var <elNameToMidiDescDict;//      ('elementName': [type, channel, midiNote or ccNum, ControlSpec], ... )
@@ -92,11 +92,17 @@ MIDIMKtl : MKtl {
 		"\n-----------------------------------------------------".postln;
 	}
 
-	*findSource { |rawDeviceName|
+	*findSource { |rawDeviceName, rawPortName|
 		var devKey;
 		this.sourceDeviceDict.keysValuesDo{ |key,endpoint|
 			if ( endpoint.device == rawDeviceName ){
-				devKey = key;
+				if ( rawPortName.isNil ){
+					devKey = key;
+				}{
+					if ( endpoint.name == rawPortName ){
+						devKey = key;
+					}
+				}
 			};
 		};
 		^devKey;
@@ -106,27 +112,35 @@ MIDIMKtl : MKtl {
 		"TODO: to implement!".warn;
 	}
 
+	*newWithoutDesc{ |name|
+		"TODO: to implement!".warn;
+	}
+
+	/*
 	*newFromNameAndDesc{|name,deviceDescName,devDesc| // doesn't use devDesc yet
-		"TODO: to remove!".warn;
 		var srcID, destID;
 		var source = this.sourceDeviceDict.at( name );
 		var dest = this.destinationDeviceDict.at( name );
+		"TODO: to remove!".warn;
 		if ( source.notNil ){ srcID = source.uid };
 		if ( dest.notNil ){ destID = dest.uid };
 		^this.new( name, srcID, destID, deviceDescName );
 	}
+	*/
 
+	/*
 	// how to deal with additional arguments (uids...)?
 	*newFromDesc{ |name,deviceDescName,devDesc|
-		"TODO: to remove!".warn;
 		//		var devDesc = this.getDeviceDescription( deviceDesc )
 		var devKey = this.findSource( devDesc[ \device ] );
+		"TODO: to remove!".warn;
 		if ( devKey.isNil ){
 			^nil;
 		};
 		this.sourceDeviceDict.swapKeys( name, devKey );
 		^this.new( name, devDescName: deviceDescName );
 	}
+	*/
 
 		// create with a uid, or access by name
 	*new { |name, uid, destID, devDescName|
