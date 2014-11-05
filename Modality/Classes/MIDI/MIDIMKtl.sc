@@ -54,6 +54,7 @@ MIDIMKtl : MKtl {
 		if ( thisProcess.platform.name == \osx and: Main.versionAtMost( 3,6 ) ){
 			"next time you recompile the language, reboot the interpreter instead to get MIDI working again.".warn;
 		};
+
 		MIDIIn.connectAll;
 		sourceDeviceDict = ();
 		destinationDeviceDict = ();
@@ -67,7 +68,6 @@ MIDIMKtl : MKtl {
 		// copy/paste-able directly
 		// this could also live in /--where?--/
 	*find { |post=true|
-
 		this.initMIDI( true );
 
 		if ( MIDIClient.sources.isEmpty and: MIDIClient.destinations.isEmpty ) {
@@ -75,28 +75,6 @@ MIDIMKtl : MKtl {
 			^this
 		};
 
-		/*
-			"\nMIDI sources found by MIDIMKtl.find:".postln;
-		"key	uid (USB port ID)	device	name".postln;
-		sourceDeviceDict.keysValuesDo({ |key, src|
-			"%\t[%]\t\t[%]\t[%]\n".postf(
-				key,
-				src.uid,
-				src.device.asSymbol.asCompileString,
-				src.name.asSymbol.asCompileString
-			);
-		});
-		"\nMIDI destinations found by MIDIMKtl.find:".postln;
-		"key	uid (USB port ID)	device	name".postln;
-		destinationDeviceDict.keysValuesDo({ |key, src|
-			"%\t[%]\t\t[%]\t[%]\n".postf(
-				key,
-				src.uid,
-				src.device.asSymbol.asCompileString,
-				src.name.asSymbol.asCompileString
-			);
-		});
-			*/
 		if ( post ){
 			this.postPossible;
 		};
