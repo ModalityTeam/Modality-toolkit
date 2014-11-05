@@ -261,7 +261,7 @@ MIDIMKtl : MKtl {
 		"MIDIExplorer started. Wiggle all elements of your controller then".postln;
 		"\tMIDIExplorer.stop;".postln;
 		"\tMIDIExplorer.openDoc;".postln;
-		MIDIExplorer.start(this.srcID);
+		^MIDIExplorer.start(this.srcID);
 	}
 
 	createDescriptionFile{
