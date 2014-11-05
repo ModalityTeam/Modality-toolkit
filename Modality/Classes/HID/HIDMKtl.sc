@@ -74,18 +74,6 @@ HIDMKtl : MKtl {
 	*find { |name, uid, post=true|
 		this.initHID( true );
 
-		/*
-		"\n///////// HIDMKtl.find - - - HID sources found: /////// ".postln;
-		"	index	locID (USB port ID)	device name         vendor  product".postln;
-		GeneralHID.deviceList.do { |pair, i|
-			var rawdev, info;
-			#rawdev, info = pair;
-			("\t" ++ i).post;
-			("\t\t[" ++ info.physical ++ "]").post;
-			("\t\t[" ++ info.name.asSymbol.asCompileString ++ "]").post;
-			("    " ++ info.vendor + info.product).postln;
-		};
-		*/
 		if ( post ){
 			this.postPossible;
 		};
