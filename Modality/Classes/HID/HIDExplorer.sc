@@ -85,12 +85,12 @@ HIDExplorer {
         if ( uniques.size + duplicates.size > 0 ){
             str = str + "\n\n// --------- input elements ----------";
             uniques.sortedKeysValuesDo{ |key,val|
-                str = str + "\n'<element name %>': ('hidUsage': %, 'hidUsagePage': %, 'type': '<type %>', 'ioType': 'in' ),"
-                .format(val.usageName, val.usage, val.usagePage, val.pageName );
+				str = str + "\n'<element name %>': ('hidUsage': %, 'hidUsagePage': %, 'type': '<type %>', 'ioType': 'in', 'spec': <spec %> ),"
+                .format(val.usageName, val.usage, val.usagePage, val.pageName, val.usageName );
             };
             duplicates.sortedKeysValuesDo{ |key,val|
-                str = str + "\n'<element name %_%>': ('hidElementID': %, 'type': '<type %>', 'ioType': 'in' ),"
-                .format(val.usageName, key, key, val.pageName );
+                str = str + "\n'<element name %_%>': ('hidElementID': %, 'type': '<type %>', 'ioType': 'in', 'spec': <spec %> ),"
+                .format(val.usageName, key, key, val.pageName, val.usageName );
             };
         };
 
@@ -98,12 +98,12 @@ HIDExplorer {
         if ( uniques.size + duplicates.size > 0 ){
             str = str + "\n\n// --------- output elements ----------";
             uniques.sortedKeysValuesDo{ |key,val|
-                str = str + "\n'<element name %>': ('hidUsage': %, 'hidUsagePage': %, 'type': '<type %>', 'ioType': 'out' ),"
-                .format(val.usageName, val.usage, val.usagePage, val.pageName );
+				str = str + "\n'<element name %>': ('hidUsage': %, 'hidUsagePage': %, 'type': '<type %>', 'ioType': 'out', 'spec': <spec %> ),"
+                .format(val.usageName, val.usage, val.usagePage, val.pageName, val.usageName );
             };
             duplicates.sortedKeysValuesDo{ |key,val|
-                str = str + "\n'<element name %_%>': ('hidElementID': %, 'type': '<type %>', 'ioType': 'out' ),"
-                .format(val.usageName, key, key, val.pageName );
+				str = str + "\n'<element name %_%>': ('hidElementID': %, 'type': '<type %>', 'ioType': 'out', 'spec': <spec> ),"
+                .format(val.usageName, key, key, val.pageName, val.usageName );
             };
         };
 
