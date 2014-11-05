@@ -13,6 +13,7 @@ section:: Explore your device
 First, find your device in the list posted by the following code and assign the MKtl to a variable.
 code::
 MKtl.find;
+// copy and change 'pcr0' to the shortname of your device
 a = MKtl('pcr0');
 ::
 
@@ -32,21 +33,18 @@ When done, create a raw description file which you will edit and review in the n
 code::
 a.createDescriptionFile;
 ::
-If this does not work for you, try
-code::
-MIDIExplorer.compile
-::
-and copy the code from the post window manually to a new file.
+note::If this does not work for you, try: code::e.compile:: and copy the code from the post window manually to a new file.::
 
-section:: Review exploration
+section:: Reviewing the exploration
 
-If the device you plugged in is an HID device, you are more or less done.
-Skip to Section link::#Save description file and test it::.
+We now have a file that contains all of the raw data that we need for our description file. However, before we can use it in Modality, we will first need to review the data and make sure that the different functions of the controller are properly named.
 
-subsection:: Build a description file from raw MIDI data
+subsection:: Build a description file from the raw data
 
-For MIDI, there is a bit of bookkeeping to be done.
-The opened file contains lines such as:
+The examples below are written for a MIDI device, but the same steps need to be taken for HID or other devices.
+
+So first there is a bit of bookkeeping to be done.
+The file we opened earlier contains lines such as:
 
 code::
 '_elName_0_005_': ('midiType': 'noteOn', 'type': 'pianoKey', 'chan': 0, 'midiNote':  5, 'spec': 'midiNote'),
@@ -71,7 +69,7 @@ code::
 note::Naming conventions apply. You can find them at link::Reference/MKtl_description_files#Naming Conventions::.
 ::
 
-Open a new file and use the raw data from above to assemble your new description file.
+Edit the code::edit and save me.desc.scd:: document to assemble your new description file. Make sure you pay attention to the following points:
 
 Unless it does not make sense from the controller's layout (e.g. for record buttons as opposed to a collection of similar elements such as sliders), elements of the same type should be grouped into a hierarchical description for maximum compatibility.
 
