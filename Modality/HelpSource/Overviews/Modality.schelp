@@ -31,6 +31,8 @@ code::
 MKtl.find;
 ::
 
+NOTE:: You may have to install drivers before code::MKtl.find:: is able to find your device.::
+
 Each code::MKtl:: has elements such as sliders or knobs. It is possible to assign an action to such an element that is evaluated every time the value of that element gets updated.
 
 Below two examples of what you can do with this toolkit. For further explanation, refer to link::Tutorials/ModalityTutorial::.
