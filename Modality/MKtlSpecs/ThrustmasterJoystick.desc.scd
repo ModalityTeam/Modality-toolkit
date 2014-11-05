@@ -1,9 +1,5 @@
-(osx: (
-	device: "USB Joystick_MegaWorldectronics"
-),
-linux: (
-	device: ""
-),
+(
+device: "USB Joystick_MegaWorldectronics",
 protocol: \hid,
 description: (
 
