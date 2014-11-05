@@ -33,6 +33,14 @@ MKtlElementGUI {
 				};
 				Knob( parent, 20@20 );
 			},
+			'pad': { |parent, label|
+				if( label.notNil ) {
+					StaticText( parent, labelWidth@16 ).string_( label.asString ++ " " ).align_( \right );
+				};
+				MPadView( parent, 20@20 )
+					.useUpValue_( true )
+					.autoUpTime_( 0.2 );
+			},
 			'unknown': { |parent, label|
 				if( label.notNil ) {
 					StaticText( parent, labelWidth@16 ).string_( label.asString ++ " " ).align_( \right );
@@ -46,7 +54,6 @@ MKtlElementGUI {
 			'springFader': \slider,
 			'rumble':\slider,
 			'ribbon': \slider,
-			'pad': \slider,
 			'hatSwitch': \knob,
 			'encoder': \knob,
 		);
