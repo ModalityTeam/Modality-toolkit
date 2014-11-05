@@ -118,12 +118,9 @@ HIDMKtl : MKtl {
 	// *newWithDesc{ |name, devDesc|
 	// var dev = this.sourceDeviceDict.at( name );
 	// ^this.new( name, dev.path, devDesc );
-// }
+	// }
 
 	*newFromVirtual{ |name, virtualMKtl|
-		// var devDescName = virtualMKtl.usedDeviceDescName;
-		// ^this.newWithDesc( name, devDescName );
-		/// TODO: should actually copy the contents!
 		var dev = this.sourceDeviceDict.at( name );
 		^virtualMKtl.as( HIDMKtl ).initHIDMKtl(dev.path, dev);
 	}
