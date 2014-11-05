@@ -108,12 +108,28 @@ MIDIMKtl : MKtl {
 		^devKey;
 	}
 
+	/*
 	*newWithDesc{ |name, devDesc|
 		"TODO: to implement!".warn;
 	}
+	*/
+
+	*newFromVirtual{ |name, virtualMKtl|
+		var srcID, destID;
+		var source = this.sourceDeviceDict.at( name );
+		var dest = this.destinationDeviceDict.at( name );
+		if ( source.notNil ){ srcID = source.uid };
+		if ( dest.notNil ){ destID = dest.uid };
+		^virtualMKtl.as( MIDIMKtl ).initMIDIMKtl( name, srcID, destID );
+	}
 
 	*newWithoutDesc{ |name|
-		"TODO: to implement!".warn;
+		var srcID, destID;
+		var source = this.sourceDeviceDict.at( name );
+		var dest = this.destinationDeviceDict.at( name );
+		if ( source.notNil ){ srcID = source.uid };
+		if ( dest.notNil ){ destID = dest.uid };
+		^this.new( name, srcID, destID );
 	}
 
 	/*
