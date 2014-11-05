@@ -73,9 +73,12 @@ MKtlAbstractElementGroup : MAbstractElement {
 		action.value( *children );
 		parent !? _.doAction( *children );
 		groups.do( _.doAction( *children ) );
+		this.changed( \doAction, *children );
 	}
 
 	select { |function| ^elements.select( function ) }
+	
+	collect { |function| ^elements.collect( function ) }
 
 }
 

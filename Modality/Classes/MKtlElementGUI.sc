@@ -33,6 +33,14 @@ MKtlElementGUI {
 				};
 				Knob( parent, 20@20 );
 			},
+			'pad': { |parent, label|
+				if( label.notNil ) {
+					StaticText( parent, labelWidth@16 ).string_( label.asString ++ " " ).align_( \right );
+				};
+				MPadView( parent, 20@20 )
+					.useUpValue_( true )
+					.autoUpTime_( 0.2 );
+			},
 			'unknown': { |parent, label|
 				if( label.notNil ) {
 					StaticText( parent, labelWidth@16 ).string_( label.asString ++ " " ).align_( \right );
@@ -46,7 +54,6 @@ MKtlElementGUI {
 			'springFader': \slider,
 			'rumble':\slider,
 			'ribbon': \slider,
-			'pad': \slider,
 			'hatSwitch': \knob,
 			'encoder': \knob,
 		);
@@ -54,6 +61,7 @@ MKtlElementGUI {
 
 	makeView { |inParent, bounds|
 		var createdWindow = false;
+		var verboseButton;
 
 		parent = inParent ? parent ?? {
 			createdWindow = true;
@@ -61,10 +69,22 @@ MKtlElementGUI {
 		 };
 
 		if( parent.asView.decorator.isNil ) { parent.addFlowLayout };
-
-		views = [ ];
-		values = [ ];
-		getValueFuncs = [ ];
+		
+		if( createdWindow ) {
+			verboseButton = Button( parent, labelWidth@16 )
+				.states_([["verbose"],["verbose", Color.black, Color.green]])
+				.action_({ |bt| element.source.trace( bt.value.booleanValue ) })
+				.value_( element.source.traceRunning.binaryValue );
+			parent.asView.decorator.nextLine;
+			
+			views = [ verboseButton ];
+			values = [ element.source.traceRunning.binaryValue ];
+			getValueFuncs = [ { element.source.traceRunning.binaryValue } ];
+		} {
+			views = [ ];
+			values = [ ];
+			getValueFuncs = [ ];
+		};
 
 		this.makeSubViews;
 
@@ -109,7 +129,7 @@ MKtlElementGUI {
 		values = values.collect({ |value, i|
 			var newValue;
 			newValue = getValueFuncs[i].value;
-			if( value != newValue ) {
+			if( newValue.notNil ) {
 				views[ i ].value = newValue
 			};
 			newValue;
@@ -160,7 +180,7 @@ MKtlElementArrayGUI : MKtlElementGUI {
 			StaticText( parent, labelWidth@16 ).string_( element.name.asString ++ " " ).align_( \right );
 
 			element.elements.do({ |element, i|
-					var view, getValueFunc, value;
+					var view, getValueFunc, value, ctrl, changed = true;
 
 					if( (i != 0) && ((i % division) == 0)) {
 						parent.asView.decorator.nextLine;
@@ -168,11 +188,15 @@ MKtlElementArrayGUI : MKtlElementGUI {
 					};
 
 					view = this.getMakeViewFunc( element.type ).value( parent );
+					
+					ctrl = SimpleController( element )
+						.put( \value, { |obj| changed = true });
 
-					getValueFunc = { element.value; };
+					getValueFunc = { if( changed == true ) { changed = false; element.value; }; };
 					value = getValueFunc.value;
 
 					view.value_( value );
+					view.onClose_( { ctrl.remove } );
 					view.action_({ |vw|
 						element.valueAction = vw.value;
 						if( element.source.verbose == true ) {
@@ -210,3 +234,8 @@ MKtlElementArrayGUI : MKtlElementGUI {
 	}
 }
 
++ MKtl {
+	gui { |parent, bounds|
+		^this.elements.gui( parent, bounds );
+	}
+}

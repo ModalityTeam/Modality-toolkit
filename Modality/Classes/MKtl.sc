@@ -174,8 +174,9 @@ MKtl : MAbstractKtl { // abstract class
 	}
 
 	warnNoDeviceFileFound { |deviceName|
-			warn( "Mktl could not find a device file for device %. You can start exploring the capabilities of it by evaluating:\n\t%(%).explore;\n".format(
-			deviceName.asCompileString, this.class, name.asCompileString) )
+		warn( "Mktl could not find a device file for device %. Please follow instruction in \"Tutorials/How_to_create_a_description_file\".openHelpFile
+""\n".format(
+			deviceName.asCompileString) )
 	}
 
 	*make { |name, deviceDescName|

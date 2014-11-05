@@ -188,7 +188,7 @@ HIDMKtl : MKtl {
 		"\tHIDExplorer.openDoc;".postln;
 		HIDExplorer.start(this.srcID);
 		*/
-		HIDExplorer.start( this.srcDevice );
+		^HIDExplorer.start( this.srcDevice );
 		// "HIDExplorer.explore is not implemented yet".postln;
 	}
 

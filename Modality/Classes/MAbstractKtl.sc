@@ -104,6 +104,10 @@ MAbstractKtl {
 	trace{ |value=true|
 		this.verbose_( value );
 	}
+	
+	traceRunning { 
+		^this.verbose
+	}
 
 	//also can be used to simulate a non present hardware
 	receive { |key, val|

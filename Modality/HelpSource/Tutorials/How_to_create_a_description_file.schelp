@@ -6,53 +6,54 @@ related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Cl
 Section:: Introduction
 
 The functionality of link::Classes/MKtl:: relies on descriptions of the used devices. For some Controllers, there are already descriptions available, chances are that your device is not among them.
-With the helper classes link::Classes/MIDIExplorer:: and link::Classes/HIDExplorer::, however, it is easy to create such a file.
+It is easy to create such a file. So first, attach your device to the computer.
 
-Find out the protocol your new device is operating on. Currently MIDI and HID are supported in MKtl. Next, physically attach your device to the computer.
+section:: Explore your device
 
-section:: MIDI
-
-subsection:: Explore your device
-
-If the device is a MIDI device, evaluate
+First, find your device in the list posted by the following code and assign the MKtl to a variable.
 code::
-// remember the name of the device posted here, it is needed later
-MIDIIn.connectAll;
-MIDIExplorer.start;
+MKtl.find;
+a = MKtl('pcr0');
 ::
 
-Now, move every element on your controller.
-Make sure to go through all of them and move them in all their degrees of freedom.
-Do this in an order that you can remember later because code::MIDIExplorer:: saves the data in the order you wiggle the knobs.
-
+Now, turn on the explore mode and move every element on your controller. Make sure to go through all of them and move them in all their degrees of freedom.
 warning::Make sure that no other device is sending any data.::
 
-By evaluating the following lines, the explorer is stopped.
 code::
-MIDIExplorer.stop;
+e = a.explore;
+
+// MIDI: if you want more information on what is happening, turn on verbose mode:
+e.verbose = true;
+e.verbose = false; // turn it off again
 ::
 
-subsection:: Review exploration
-With the next code chunk, a document is opened that contains descriptions for all elements of the controller.
-Now, evaluate the following to open the generated raw description:
-code::
-MIDIExplorer.openDoc
-::
+When done, create a raw description file which you will edit and review in the next step.
 
-If openDoc does not work for you, try
+code::
+a.createDescriptionFile;
+::
+If this does not work for you, try
 code::
 MIDIExplorer.compile
 ::
 and copy the code from the post window manually to a new file.
 
-It should contain elements such as
+section:: Review exploration
+
+If the device you plugged in is an HID device, you are more or less done.
+Skip to Section link::#Save description file and test it::.
+
+subsection:: Build a description file from raw MIDI data
+
+For MIDI, there is a bit of bookkeeping to be done.
+The opened file contains lines such as:
+
 code::
 '_elName_0_005_': ('midiType': 'noteOn', 'type': 'pianoKey', 'chan': 0, 'midiNote':  5, 'spec': 'midiNote'),
 ::
 
-subsection:: Build a description file from raw data
 
-A description file has the following format (see link::Reference/MKtl_description_files:: for details):
+To bring these into a form useable as a description file for Modality, we have to put it into the format specified in link::Reference/MKtl_description_files:::
 
 code::
 (
@@ -67,33 +68,18 @@ code::
 )
 ::
 
-note::Naming conventions for identifiers are:
- code::kn:: for knobs,
-code::sl:: for sliders,
-code::bt:: for buttons,
-code::key:: for keys,
-code::pad:: for pads, etc. Elements with names or symbols on them should have that name, e.g. a play button should be called \play, a rewind button \rew, etc. See also Naming conventions here:
-link::Reference/MKtl_description_files::
+note::Naming conventions apply. You can find them at link::Reference/MKtl_description_files#Naming Conventions::.
 ::
 
+Open a new file and use the raw data from above to assemble your new description file.
 
-Open a new file and use the raw data from code::MIDIExplorer:: to build your new description file.
+Unless it does not make sense from the controller's layout (e.g. for record buttons as opposed to a collection of similar elements such as sliders), elements of the same type should be grouped into a hierarchical description for maximum compatibility.
 
-Unless it does not make sense from the controller's layout (e.g. record buttons as opposed to paged sliders), elements of the same type should be grouped into a hierarchical description for maximum compatibility.
-
-Make sure to fill in appropriate descriptions for code::\type:: fields.
-
-note::
-Naming conventions for type values are:
- code::slider:: for sliders,
-code::knob:: for knobs,
-code::button:: for buttons,
-code::key:: for keys,
-code::pad:: for pads
-::
+Also, make sure to fill in appropriate descriptions for code::\type:: fields.
 
 
-The following raw output of the code::MIDIExplorer:: (three knobs):
+We here exemplify the process at hand of the following raw data (as it could possibly fall out from the code::MKtl().explore:: function mentioned above.
+It contains information of a device with three knobs:
 
 code::
 (
@@ -104,12 +90,15 @@ code::
 );
 ::
 
-is then turned into a group:
+NOTE::Although the type should be code::\knob::, it registers as code::\slider::. This is because only a cc value is coming in, and it does not state what kind of hardware element is producing it.
+::
+
+Edit the raw data and add it to a group:
 
 code::
 (
 // ------ cc -------------
-'sl': [
+'kn': [
 	('midiMsgType': 'cc', 'type': 'knob', 'midiChan': 0, 'midiNum':  2,'spec': 'midiCC'),
 	('midiMsgType': 'cc', 'type': 'knob', 'midiChan': 0, 'midiNum':  3,'spec': 'midiCC'),
 	('midiMsgType': 'cc', 'type': 'knob', 'midiChan': 0, 'midiNum':  4,'spec': 'midiCC')
@@ -117,9 +106,10 @@ code::
 )
 ::
 
-if there are banks of groups, the hierarchical structure would look like this:
+In case, the controller has banks of groups, the hierarchical structure would look like this:
 
 code::
+	// raw data of two by three sliders
 (
 // ------ cc -------------
 '_elName_0_002_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  2,'spec': 'midiCC'),
@@ -131,7 +121,7 @@ code::
  );
 ::
 
-hierarchically grouped faders into two banks:
+
 
 
 code::
@@ -150,29 +140,26 @@ sl: [
 );
 ::
 
-If a flat description for an element is required, it can be directly copied from the generated description skeleton. However, each element has to receive a name representing its functionality.
+If a flat description for an element is required, it can be directly copied from the generated description skeleton. However, each element has to have a name that represents its functionality.
 
 
 note::
 You may want to restart the explore mode for this by evaluating
-code::MIDIexplorer.start::::
+	code::e.start.verbose_(true)::::
 
+NOTE::
+A proper description on how to combine code::\noteOn, \noteOff, \polyTouch:: is still missing in this tutorial. While the developer team is working on it, have a look at similar description files. You can find them in the folder opening when you evaluate
+code::
+MKtl.deviceDescriptionFolder.openOS;
+::
+::
 
 subsection:: Save description file and test it
 
-If you are happy with the document, save it with a meaningful name to the descriptions folder located at code::MKtl.deviceDescriptionFolder::. I t has to have the ending code::".desc.scd"::.
-
-Additionally, a line has to be added to the code::index.desc.scd:: file in the same directory:
-
+If you are happy with the generated document, save it with a meaningful name to the descriptions folder. You can open it with
 code::
-\nanoKONTROL2 -> ( device: "devicename", protocol: \midi, file: "devicename.desc.scd" ),
+MKtl.deviceDescriptionFolder.openOS;
 ::
+The filename should give a meaningful hint to the device it is made for. It further needs to end in code::".desc.scd"::.
 
-
-code::"devicename":: is the name of the corresponding code::MIDIEndPoint:: listed when executing code::MIDIIn.connectAll:: (see above).
-code::"devicename.desc.scd":: is the name of the file.
-
-Now, restart SuperCollider and try your newly created description file by evaluating
-
-code::MIDIMktl.find::
-
+To test your description file, restart SuperCollider and follow instructions in link::Tutorials/ModalityTutorial::.

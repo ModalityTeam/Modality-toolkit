@@ -13,7 +13,7 @@ MIDIExplorer {
 
 	classvar <resps;
 	classvar <observeDict;
-	classvar <>verbose = true;
+	classvar <>verbose = false;
 	classvar <observedSrcID;
 	classvar <totalSum = 0;
 
@@ -115,7 +115,7 @@ k.elementAt(\sl, 0).action = { \yo.postln; };
 ****/\n\n"
 
 		"\n(\nvar dict = (device: %, \nprotocol: 'midi');\n\n"
-		"dict.put('description', %\n);\n)";
+		"dict.put('description', %\n);";
 
 		^string.format(this.devName.asCompileString, this.compileDesc);
 	}
