@@ -267,22 +267,32 @@ MKtl : MAbstractKtl { // abstract class
 	storeArgs { ^[name] }
 	printOn { |stream| this.storeOn(stream) }
 
-	*loadAllDescs { |reload=false|
-		if (reload) { allDevDescs = nil };
+	*loadAllDescs { |reload=false, verbose=false|
+		if (reload) { allDevDescs = nil }{
+			if ( verbose ){
+				"Not reloading the MKtl descriptions; to do so, use MKtl.loadAllDescs( true )".inform;
+			}
+		};
 		if ( allDevDescs.isNil ){
-			this.loadMatching("");
+			reload = true;
+			this.loadMatching("", verbose );
+		};
+		if ( reload ){
+			"MKtl loaded all device descriptions - see them with MKtl.allDescriptions".inform;
 		};
 	}
 
-	*loadMatching { |name|
+	*loadMatching { |name,verbose = false|
 		var paths = (deviceDescriptionFolder +/+
 			("*" ++ name ++ "*.desc.scd")).pathMatch;
 		var descNames = paths.collect{ |x| PathName(x).fileName.split($.)[0]; };
-		"MKtl loadMatching - found: %.\n".postf(descNames);
-		paths.do (this.loadSingleDesc(_));
+		if ( verbose ){
+			"MKtl loadMatching - found: %.\n".postf(descNames);
+		};
+		paths.do (this.loadSingleDesc(_, verbose));
 	}
 
-	*loadSingleDesc { |path|
+	*loadSingleDesc { |path, verbose = false|
 		// path has been tested to exist already
 		var descName = path.basename.split($.)[0];
 		var descDict = path.load;
@@ -293,7 +303,9 @@ MKtl : MAbstractKtl { // abstract class
 		} {
 			allDevDescs = allDevDescs ?? { IdentityDictionary.new };
 			allDevDescs.put(descName.asSymbol, descDict);
-			"MKtl: loaded %.".format(path.basename).inform;
+			if ( verbose ){
+				"MKtl: loaded %.".format(path.basename).inform;
+			}
 		};
 		^descDict
 	}
