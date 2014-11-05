@@ -61,6 +61,7 @@ MAbstractElement {
 		prevValue = value;
 		// updates the state with the latest value
 		value = newval;
+		this.changed( \value, value );
 		this.updateValueOnServer;
 	}
 
@@ -215,6 +216,7 @@ MKtlElement : MAbstractElement{
 	// assuming that something setting the element's value will first set the value and then call doAction (like in Dispatch)
 	doAction { |sendValue = true|
 		super.doAction;
+		this.changed( \doAction, this );
 	}
 
 	rawValue { ^value }

@@ -109,7 +109,7 @@ MKtlElementGUI {
 		values = values.collect({ |value, i|
 			var newValue;
 			newValue = getValueFuncs[i].value;
-			if( value != newValue ) {
+			if( newValue.notNil ) {
 				views[ i ].value = newValue
 			};
 			newValue;
@@ -160,7 +160,7 @@ MKtlElementArrayGUI : MKtlElementGUI {
 			StaticText( parent, labelWidth@16 ).string_( element.name.asString ++ " " ).align_( \right );
 
 			element.elements.do({ |element, i|
-					var view, getValueFunc, value;
+					var view, getValueFunc, value, ctrl, changed = true;
 
 					if( (i != 0) && ((i % division) == 0)) {
 						parent.asView.decorator.nextLine;
@@ -168,11 +168,15 @@ MKtlElementArrayGUI : MKtlElementGUI {
 					};
 
 					view = this.getMakeViewFunc( element.type ).value( parent );
+					
+					ctrl = SimpleController( element )
+						.put( \value, { |obj| changed = true });
 
-					getValueFunc = { element.value; };
+					getValueFunc = { if( changed == true ) { changed = false; element.value; }; };
 					value = getValueFunc.value;
 
 					view.value_( value );
+					view.onClose_( { ctrl.remove } );
 					view.action_({ |vw|
 						element.valueAction = vw.value;
 						if( element.source.verbose == true ) {
