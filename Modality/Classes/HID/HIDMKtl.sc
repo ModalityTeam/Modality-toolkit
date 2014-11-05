@@ -92,16 +92,16 @@ HIDMKtl : MKtl {
 	}
 
 	*postPossible{
-		"\n// Available	HIDMKtls - just give them unique names: ".postln;
+		"\n// Available HIDMKtls:".postln;
+		"// MKtl(autoName);  // hid vendor, product(, serial number)".postln;
 		sourceDeviceDict.keysValuesDo{ |key,info|
 			var serial = info.serialNumber;
 			if( serial.isEmpty ) {
-				"   HIDMKtl('%');  // % %\n"
+				"    MKtl('%');  // %, %\n"
 				.postf(key, info.vendorName, info.productName )
 			} {
-				"   HIDMKtl('%', %);  // % %\n"
-				.postf(key, serial.asCompileString, info.vendorName, info.productName );
-
+				"    MKtl('%');  // %, %, %\n"
+				.postf(key, info.vendorName, info.productName, serial.asCompileString );
 			}
 		};
 		"\n-----------------------------------------------------".postln;

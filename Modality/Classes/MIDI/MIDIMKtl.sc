@@ -104,11 +104,12 @@ MIDIMKtl : MKtl {
 	}
 
 	*postPossible {
+		"\n-----------------------------------------------------".postln;
 		"\n// Available MIDIMKtls: ".postln;
-		"// MKtl(autoName);    // make with own name and descName".postln;
+		"// MKtl(autoName);  // midi device, midi port".postln;
 		sourceDeviceDict.keysValuesDo { |key, src|
-			"    MKtl('%');  // MKtl.make('nameMe', \"%\");\n".postf(
-				key, this.getMIDIdeviceName(src.device)
+			"    MKtl('%');  // %, % \n".postf(
+				key, src.device, src.name
 			);
 		};
 		"\n-----------------------------------------------------".postln;
@@ -199,17 +200,8 @@ MIDIMKtl : MKtl {
 
 		[ devDescName, foundSource.device].postln;
 		//		^super.basicNew(name, foundSource.device)
-		^super.basicNew(name, devDescName ? this.getMIDIdeviceName( foundSource.device ) )
+		^super.basicNew(name, devDescName ? foundSource.device )
 			.initMIDIMKtl(name, foundSource, foundDestination );
-	}
-
-	// convenience method to get the right name on linux.
-	*getMIDIdeviceName{ |fullDeviceName|
-		if ( thisProcess.platform.name == \linux ){
-			^fullDeviceName.split( $- ).first;
-		}{
-			^fullDeviceName;
-		};
 	}
 
 	*prepareDeviceDicts {
@@ -217,7 +209,7 @@ MIDIMKtl : MKtl {
 		var tempName;
 
 		deviceNames = MIDIClient.sources.collect {|src|
-			tempName = this.getMIDIdeviceName( src.device );
+			tempName = src.device;
 			this.makeShortName(tempName);
 		};
 
@@ -240,7 +232,7 @@ MIDIMKtl : MKtl {
 		// prepare destinationDeviceDict
 		j = 0; prevName = nil;
 		deviceNames = MIDIClient.destinations.collect{|src|
-			tempName = this.getMIDIdeviceName( src.device );
+			tempName = src.device;
 			this.makeShortName(tempName);
 		};
 		order = deviceNames.order;
