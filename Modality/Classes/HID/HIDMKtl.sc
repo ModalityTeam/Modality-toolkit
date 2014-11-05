@@ -117,13 +117,19 @@ HIDMKtl : MKtl {
 		^devKey;
 	}
 
+	*newWithDesc{ |name, devDesc|
+		"TODO: to implement!".warn;
+	}
+
 	*newFromNameAndDesc{|name,deviceDescName,devDesc|
+		"TODO: to remove!".warn;
 		var dev = this.sourceDeviceDict.at( name );
 		^this.new( name, dev.path, deviceDescName );
 	}
 
 	// how to deal with additional arguments (uids...)?
 	*newFromDesc{ |name,deviceDescName,devDesc|
+		"TODO: to remove!".warn;
 		var devString = devDesc.at( \device );
         var devKey = this.findSource( devString );
 		var dev;

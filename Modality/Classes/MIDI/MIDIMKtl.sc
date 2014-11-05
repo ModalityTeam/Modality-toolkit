@@ -78,7 +78,6 @@ MIDIMKtl : MKtl {
 		if ( post ){
 			this.postPossible;
 		};
-		// TODO: what happens to MIDI devs that are only destinations?
 	}
 
 	*postPossible {
@@ -103,7 +102,12 @@ MIDIMKtl : MKtl {
 		^devKey;
 	}
 
-	*newFromNameAndDesc{|name,deviceDescName,devDesc|
+	*newWithDesc{ |name, devDesc|
+		"TODO: to implement!".warn;
+	}
+
+	*newFromNameAndDesc{|name,deviceDescName,devDesc| // doesn't use devDesc yet
+		"TODO: to remove!".warn;
 		var srcID, destID;
 		var source = this.sourceDeviceDict.at( name );
 		var dest = this.destinationDeviceDict.at( name );
@@ -114,6 +118,7 @@ MIDIMKtl : MKtl {
 
 	// how to deal with additional arguments (uids...)?
 	*newFromDesc{ |name,deviceDescName,devDesc|
+		"TODO: to remove!".warn;
 		//		var devDesc = this.getDeviceDescription( deviceDesc )
 		var devKey = this.findSource( devDesc[ \device ] );
 		if ( devKey.isNil ){
