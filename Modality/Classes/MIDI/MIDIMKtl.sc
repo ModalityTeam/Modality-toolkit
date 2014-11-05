@@ -70,8 +70,8 @@ MIDIMKtl : MKtl {
 
 		this.initMIDI( true );
 
-		if (MIDIClient.sources.isEmpty) {
-			"// MIDIMKtl did not find any sources - you may want to connect some first.".inform;
+		if ( MIDIClient.sources.isEmpty and: MIDIClient.destinations.isEmpty ) {
+			"// MIDIMKtl did not find any sources or destinations - you may want to connect some first.".inform;
 			^this
 		};
 
