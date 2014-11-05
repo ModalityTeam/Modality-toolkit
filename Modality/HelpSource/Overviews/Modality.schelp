@@ -26,7 +26,12 @@ SECTION:: Overview
 
 With code::MKtl:: it is possible to assign functionality to controller elements.
 
-Each code::MKtl:: has elements such as sliders or knobs. It is possible to assign an action to such an element that is evaulated every time the value of that element gets updated.
+To find your device, evaluate
+code::
+MKtl.find;
+::
+
+Each code::MKtl:: has elements such as sliders or knobs. It is possible to assign an action to such an element that is evaluated every time the value of that element gets updated.
 
 Below two examples of what you can do with this toolkit. For further explanation, refer to link::Tutorials/ModalityTutorial::.
 
