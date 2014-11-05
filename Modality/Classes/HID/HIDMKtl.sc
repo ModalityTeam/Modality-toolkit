@@ -107,11 +107,20 @@ HIDMKtl : MKtl {
 		"\n-----------------------------------------------------".postln;
 	}
 
-	*findSource{ |rawDeviceName|
+	*findSource{ |rawDeviceName, rawVendorName|
 		var devKey;
 		this.sourceDeviceDict.keysValuesDo{ |key,hidinfo|
-			if ( (hidinfo.productName ++ "_" ++ hidinfo.vendorName) == rawDeviceName ){
-				devKey = key;
+			if ( rawVendorName.notNil ){
+				if ( hidinfo.productName == rawDeviceName and: ( hidinfo.vendorName == rawVendorName ) ){
+					devKey = key;
+				}
+			}{
+				if ( hidinfo.productName == rawDeviceName ){
+					devKey = key;
+				};
+				if ( (hidinfo.productName ++ "_" ++ hidinfo.vendorName) == rawDeviceName ){
+					devKey = key;
+				};
 			};
 		};
 		^devKey;
@@ -121,24 +130,30 @@ HIDMKtl : MKtl {
 		"TODO: to implement!".warn;
 	}
 
-	*newFromNameAndDesc{|name,deviceDescName,devDesc|
-		"TODO: to remove!".warn;
+	*newWithoutDesc{ |name|
+		"TODO: to implement!".warn;
+	}
+
+/*
+	*newFromNameAndDesc{ |name,deviceDescName,devDesc|
 		var dev = this.sourceDeviceDict.at( name );
+		"TODO: to remove!".warn;
 		^this.new( name, dev.path, deviceDescName );
 	}
 
 	// how to deal with additional arguments (uids...)?
 	*newFromDesc{ |name,deviceDescName,devDesc|
-		"TODO: to remove!".warn;
 		var devString = devDesc.at( \device );
         var devKey = this.findSource( devString );
 		var dev;
+		"TODO: to remove!".warn;
 		if ( devKey.isNil ){
 			^nil;
 		};
 		dev = this.sourceDeviceDict.at( devKey );
 		^this.new( name, dev.path );
 	}
+*/
 
     // create with a uid, or access by name
 	*new { |name, uid, devDescName|
