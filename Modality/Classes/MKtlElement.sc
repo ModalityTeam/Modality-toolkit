@@ -25,6 +25,8 @@ MAbstractElement {
 
 	// server support, currently only one server per element supported.
 	var <bus;
+	
+	// nested MKtlElement / MKtlElementDict / MKtlElementArray support
 	var <>parent;
 	var <groups;
 
