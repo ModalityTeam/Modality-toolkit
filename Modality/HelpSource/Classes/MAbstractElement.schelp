@@ -106,6 +106,8 @@ Tagging allows you to add your own tags to controller elements.
 The tagging system is flat, i.e. only elements have tags, link::Classes/MKtlAbstractElementGroup:: (and its derivatites) do not. link::Classes/MKtlAbstractElementGroup:: forwards tagging requests to its child elements.
 
 code::
+m = MKtl(\nnkn20)
+
 // add a tag
 m.elementAt(\sl, 0).addTag(\a);
 m.elementAt(\sl, 0).tags; // retrieve it
@@ -134,16 +136,17 @@ m.elementAt(\sl).tags;
 
 
 // all elements containing the tag \vol
-a = m.elements.flat.select{|el|
-	el.tags.includes(\vol)
-};
+a = m.elements.elementsForTag(\vol);
+
 // their indices
-a.collect{|el| el.type}
+a.collect{|el| el.indices};
 
-
-
-// create an MKtlElementArray containing them
-MKtlElementArray(m, \myVolumes, a).gui
+// create an MKtlElementArray containing a
+MKtlElementArray(
+	m,
+	\myVolumes,
+	m.elements.elementsForTag(\vol)
+).gui;
 
 
 

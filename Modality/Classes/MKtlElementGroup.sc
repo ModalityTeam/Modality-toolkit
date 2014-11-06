@@ -82,8 +82,8 @@ MKtlAbstractElementGroup : MAbstractElement {
 	inject { |thisValue, function|
 		^elements.inject(thisValue, function)
 	}
+
 	// tagging support
-	//tagging support
 	addTag {|... newTags|
 		this.collect{|elem|
 			elem.addTag(*newTags);
@@ -99,9 +99,11 @@ MKtlAbstractElementGroup : MAbstractElement {
 			all.union(item.tags)
 		})
 	}
-	// includesTag {|... tag|
-	// 	^tag.isSubsetOf(tags)
-	// }
+	elementsForTag {|... tag|
+		^this.flat.select{|el|
+			el.tags.includes(*tag)
+		};
+	}
 }
 
 MKtlElementArray : MKtlAbstractElementGroup {
