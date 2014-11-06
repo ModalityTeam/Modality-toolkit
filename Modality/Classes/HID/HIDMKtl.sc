@@ -226,6 +226,7 @@ HIDMKtl : MKtl {
         srcDevice = argSource.open;
 		all.put(name, this);
 
+		virtual = false;
         // this.getDeviceElements;
  		this.setHIDActions;
 	}
