@@ -101,16 +101,18 @@ MKtlElementGUI {
 		};
 		^func;
 	}
+	
+	makeGetValueFunc { |element, view|
+		var getValueFunc, value, ctrl, changed = true;
+		
+		ctrl = SimpleController( element )
+			.put( \value, { |obj| changed = true });
 
-	makeSubViews {
-		var view, getValueFunc, value;
-
-		view = this.getMakeViewFunc( element.type ).value( parent, element.name );
-
-		getValueFunc = { element.value; };
+		getValueFunc = { if( changed == true ) { changed = false; element.value; }; };
 		value = getValueFunc.value;
 
 		view.value_( value );
+		view.onClose_( { ctrl.remove } );
 		view.action_({ |vw|
 			element.valueAction = vw.value;
 			if( element.source.verbose == true ) {
@@ -120,19 +122,25 @@ MKtlElementGUI {
 			};
 		});
 
-		getValueFuncs = getValueFuncs.add( getValueFunc );
-		values = values.add( value );
+		^getValueFunc;
+	}
+
+	makeSubViews {
+		var view, getValueFunc;
+		
+		view = this.getMakeViewFunc( element.type ).value( parent, element.name );
+		
+		getValueFuncs = getValueFuncs.add( this.makeGetValueFunc( element, view ) );
 		views = views.add( view );
 	}
 
 	updateGUI {
-		values = values.collect({ |value, i|
+		views.do({ |view, i|
 			var newValue;
 			newValue = getValueFuncs[i].value;
 			if( newValue.notNil ) {
-				views[ i ].value = newValue
+				view.value = newValue
 			};
-			newValue;
 		});
 		subGUIs.do(_.updateGUI);
 	}
@@ -140,20 +148,32 @@ MKtlElementGUI {
 }
 
 MKtlElementDictGUI : MKtlElementGUI {
+	
+	classvar <>makeSubViewsFuncDict;
+	
+	*initClass {
+		makeSubViewsFuncDict = (
+			\mixed: { |gui|
+				var lastElement;
+				gui.element.getElementsForGUI.pairsDo({ |key, item|
+					if( item.size == 0 ) {
+						if( lastElement.notNil && { lastElement.type != item.type }) {
+							gui.parent.asView.decorator.nextLine;
+						};
+						lastElement = item;
+					} {
+						gui.parent.asView.decorator.nextLine;
+					};
+					gui.subGUIs = gui.subGUIs.add( item.gui( gui.parent ) );
+				});
+			},
+		);
+	}
 
 	makeSubViews {
-		var lastElement;
-		element.getElementsForGUI.pairsDo({ |key, item|
-			if( item.size == 0 ) {
-				if( lastElement.notNil && { lastElement.type != item.type }) {
-					parent.asView.decorator.nextLine;
-				};
-				lastElement = item;
-			} {
-				parent.asView.decorator.nextLine;
-			};
-			subGUIs = subGUIs.add( item.gui( parent ) );
-		});
+		var func;
+		func = makeSubViewsFuncDict[ element.type ] ?? { makeSubViewsFuncDict[ \mixed ] };
+		func.value( this );
 	}
 
 }
@@ -180,7 +200,7 @@ MKtlElementArrayGUI : MKtlElementGUI {
 			StaticText( parent, labelWidth@16 ).string_( element.name.asString ++ " " ).align_( \right );
 
 			element.elements.do({ |element, i|
-					var view, getValueFunc, value, ctrl, changed = true;
+					var view, getValueFunc;
 
 					if( (i != 0) && ((i % division) == 0)) {
 						parent.asView.decorator.nextLine;
@@ -188,26 +208,8 @@ MKtlElementArrayGUI : MKtlElementGUI {
 					};
 
 					view = this.getMakeViewFunc( element.type ).value( parent );
-					
-					ctrl = SimpleController( element )
-						.put( \value, { |obj| changed = true });
-
-					getValueFunc = { if( changed == true ) { changed = false; element.value; }; };
-					value = getValueFunc.value;
-
-					view.value_( value );
-					view.onClose_( { ctrl.remove } );
-					view.action_({ |vw|
-						element.valueAction = vw.value;
-						if( element.source.verbose == true ) {
-							"% - % > % | via GUI\n".postf(
-								element.source.name, element.name, element.value;
-							);
-						};
-					});
-
-					getValueFuncs = getValueFuncs.add( getValueFunc );
-					values = values.add( value );
+										
+					getValueFuncs = getValueFuncs.add( this.makeGetValueFunc( element, view ) );
 					views = views.add( view );
 			});
 		};
