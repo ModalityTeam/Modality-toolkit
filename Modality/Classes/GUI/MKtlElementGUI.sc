@@ -72,7 +72,7 @@ MKtlElementGUI {
 		
 		if( createdWindow ) {
 			verboseButton = Button( parent, labelWidth@16 )
-				.states_([["verbose"],["verbose", Color.black, Color.green]])
+				.states_([["trace"],["trace", Color.black, Color.green]])
 				.action_({ |bt| element.source.trace( bt.value.booleanValue ) })
 				.value_( element.source.traceRunning.binaryValue );
 			parent.asView.decorator.nextLine;
