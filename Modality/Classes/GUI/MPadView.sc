@@ -5,6 +5,9 @@ MPadView : SCViewHolder {
 	var <useUpValue = false;
 	var <>autoUpTime = inf;
 	var <baseColor, <hiliteColor;
+	var <label;
+	var <font;
+	var <vShiftLabel = 0;
 	var <>action;
 
 	var <>upAction;
@@ -39,6 +42,13 @@ MPadView : SCViewHolder {
 				Pen.fillRect( fillRect );
 			};
 			Pen.strokeRect( rect );
+			if( label.notNil ) {
+				Pen.use({
+					Pen.font = font;
+					Pen.color = baseColor.complementary;
+					Pen.stringCenteredIn( label.asString, rect.insetAll( 0, vShiftLabel * 2, 0, 0 ) );
+				});
+			};
 		};
 
 		this.view.mouseDownAction = { |vw, x, y|
@@ -112,6 +122,21 @@ MPadView : SCViewHolder {
 		this.upValue = newValue;
 		this.doUpAction;
 	}
+	
+	label_ { |string| 
+		label = string;
+		this.refresh;
+	}
+	
+	vShiftLabel_ { |number = 0|
+		vShiftLabel = number;
+		this.refresh;
+	}
+	
+	font_ { |aFont|
+		font = aFont;
+		this.refresh;
+	}
 
 	pressed_ { |bool = false|
 		pressed = bool;
@@ -131,5 +156,36 @@ MPadView : SCViewHolder {
 	hiliteColor_ { |color|
 		hiliteColor = color;
 		this.refresh;
+	}
+}
+
+MPadUpViewRedirect {
+	
+	// creates a spoof View object which redirects upValue and upAction to value and action
+	var <view, <action;
+	
+	*new { |view| // must be an MPadView
+		^super.newCopyArgs( view );
+	}
+	
+	value { ^view.upValue }
+	value_ { |val| view.upValue_( val ) }
+	valueAction_ { |val| view.upValueAction_( val ) }
+	
+	action_ { |func| 
+		action = func;
+		view.upAction = { action.value( this ) }; 
+	}
+	
+	addAction { |act| this.action = action.addFunc( act ) }
+	
+	removeAction { |act| this.action = action.removeFunc( act ) }
+	
+	doesNotUnderstand { |selector ...args|
+		var res;
+		res = view.perform( selector, *args );
+		if( res != view ) {
+			^res;
+		};
 	}
 }

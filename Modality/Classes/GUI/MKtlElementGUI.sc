@@ -112,7 +112,7 @@ MKtlElementGUI {
 		value = getValueFunc.value;
 
 		view.value_( value );
-		view.onClose_( { ctrl.remove } );
+		view.onClose = view.onClose.addFunc( { ctrl.remove } );
 		view.action_({ |vw|
 			element.valueAction = vw.value;
 			if( element.source.verbose == true ) {
@@ -166,6 +166,69 @@ MKtlElementDictGUI : MKtlElementGUI {
 					};
 					gui.subGUIs = gui.subGUIs.add( item.gui( gui.parent ) );
 				});
+			},
+			\pad: { |gui|
+				var lastElement;
+				var allElements, onElements, offElements;
+				var offViews;
+				var size, division;
+				allElements = gui.element.flat;
+				onElements = allElements.select({ |item| item.name.asString.find( "on" ).notNil });
+				offElements = allElements.select({ |item| item.name.asString.find( "off" ).notNil });
+				
+				if( (onElements.size == 0) && (offElements.size == 0) ) {
+					makeSubViewsFuncDict[ \mixed ].value( gui ); // fallback to normal behavior
+				} {	
+					
+					size = onElements.size;
+					
+					if( gui.parent.asView.decorator.left != 4 ) {
+						gui.parent.asView.decorator.nextLine;
+					};
+	
+					StaticText( gui.parent, labelWidth@16 ).string_( gui.element.name.asString ++ " " ).align_( \right );
+					
+					if( size == 0 ) {
+						onElements = offElements;
+						offElements = [];
+						size = offElements.size;
+					};
+					
+					division = [8,9,10,6,7].detect({ |item|
+							(size / item).frac == 0;
+					}) ? 8;
+					
+					onElements.do({ |element, i|
+						var view, getValueFunc;
+	
+						if( (i != 0) && ((i % division) == 0)) {
+							gui.parent.asView.decorator.nextLine;
+							gui.parent.asView.decorator.shift( labelWidth + 4, 0 );
+						};
+						
+						view = MPadView( gui.parent, 20@20 ).useUpValue_(true);
+						if( offElements.size == 0 ) {
+							view.autoUpTime_(0.2);
+						};
+							
+						offViews = offViews.add( MPadUpViewRedirect( view ) );
+										
+						gui.getValueFuncs = gui.getValueFuncs.add( gui.makeGetValueFunc( element, view ) );
+						gui.views = gui.views.add( view );
+					});
+					
+					offElements.do({ |element, i|
+						var view, getValueFunc;
+	
+						view = offViews[ i ];
+						
+						if( offViews[i].notNil ) {
+							gui.getValueFuncs = gui.getValueFuncs.add( gui.makeGetValueFunc( element, view ) );
+							gui.views = gui.views.add( view );
+						};
+					});
+				};
+				
 			},
 		);
 	}
