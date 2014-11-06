@@ -95,7 +95,7 @@ MKtlElementGUI {
 
 	getMakeViewFunc { |type|
 		var func;
-		func = makeViewFuncDict[ element.type ] ?? { makeViewFuncDict[ \unknown ] };
+		func = makeViewFuncDict[ type ? element.type ] ?? { makeViewFuncDict[ \unknown ] };
 		if( func.isKindOf( Symbol ) ) {
 			func = makeViewFuncDict[ func ];
 		};
