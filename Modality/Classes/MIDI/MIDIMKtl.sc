@@ -108,12 +108,6 @@ MIDIMKtl : MKtl {
 		^devKey;
 	}
 
-	/*
-	*newWithDesc{ |name, devDesc|
-		"TODO: to implement!".warn;
-	}
-	*/
-
 	*newFromVirtual{ |name, virtualMKtl|
 		var srcID, destID;
 		var source = this.sourceDeviceDict.at( name );
@@ -132,33 +126,7 @@ MIDIMKtl : MKtl {
 		^this.new( name, srcID, destID );
 	}
 
-	/*
-	*newFromNameAndDesc{|name,deviceDescName,devDesc| // doesn't use devDesc yet
-		var srcID, destID;
-		var source = this.sourceDeviceDict.at( name );
-		var dest = this.destinationDeviceDict.at( name );
-		"TODO: to remove!".warn;
-		if ( source.notNil ){ srcID = source.uid };
-		if ( dest.notNil ){ destID = dest.uid };
-		^this.new( name, srcID, destID, deviceDescName );
-	}
-	*/
-
-	/*
-	// how to deal with additional arguments (uids...)?
-	*newFromDesc{ |name,deviceDescName,devDesc|
-		//		var devDesc = this.getDeviceDescription( deviceDesc )
-		var devKey = this.findSource( devDesc[ \device ] );
-		"TODO: to remove!".warn;
-		if ( devKey.isNil ){
-			^nil;
-		};
-		this.sourceDeviceDict.swapKeys( name, devKey );
-		^this.new( name, devDescName: deviceDescName );
-	}
-	*/
-
-		// create with a uid, or access by name
+	// create with a uid, or access by name
 	*new { |name, uid, destID, devDescName|
 		var foundSource, foundDestination;
 		var foundKtl = all[name.asSymbol];
