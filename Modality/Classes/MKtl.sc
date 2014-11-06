@@ -270,7 +270,16 @@ MKtl : MAbstractKtl { // abstract class
 
 	replaceDeviceDesc{ |devDesc, newDeviceDescName| // could be a string/symbol or dictionary
 		// should return true or false, and keep old if no new one found, or not matching protocol
-		"TODO: to implement!".warn;
+		if ( devDesc.isNil ){
+			#devDesc, newDeviceDescName = MKtl.findDeviceDesc( newDeviceDescName );
+		};
+
+		if ( virtual ){
+			this.init( name, newDeviceDescName, devDesc );
+		}{
+			this.replaceDescription( newDeviceDescName, devDesc );
+		};
+
 		^false;
 	}
 

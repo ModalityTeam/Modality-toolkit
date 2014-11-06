@@ -179,6 +179,7 @@ MIDIMKtl : MKtl {
 			destinationDeviceDict.changeKeyForValue(name, foundDestination);
 		};
 
+		// "MIDIMKtl.new".postln;
 		[ devDescName, foundSource.device].postln;
 		//		^super.basicNew(name, foundSource.device)
 		^super.basicNew(name, devDescName ? foundSource.device )
@@ -251,6 +252,12 @@ MIDIMKtl : MKtl {
 
 	stopExplore{
 		MIDIExplorer.stop;
+	}
+
+	replaceDescription { |newDeviceDescName, devDesc|
+		this.removeRespFuncs;
+		this.init( name, newDeviceDescName, devDesc );
+		this.initMIDIMKtl( name, source, destination );
 	}
 
 	initMIDIMKtl { |argName, argSource, argDestination|
@@ -653,6 +660,14 @@ MIDIMKtl : MKtl {
 
 			}, chan: listenChan, srcID: srcID).permanent_(true);
 		);
+	}
+
+
+	removeRespFuncs{
+		responders.do{ |resp|
+			resp.postln;
+			resp.free;
+		}
 	}
 
 	makeRespFuncs { |msgTypes|

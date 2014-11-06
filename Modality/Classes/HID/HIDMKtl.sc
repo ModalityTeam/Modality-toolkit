@@ -245,6 +245,13 @@ HIDMKtl : MKtl {
 		warn( [a,b].reduce('++') )
 	}
 
+
+	replaceDescription { |newDeviceDescName, devDesc|
+		this.removeHIDActions;
+		this.init( name, newDeviceDescName, devDesc );
+		this.setHIDActions;
+	}
+
 	/// TO IMPLEMENT
 	removeHIDActions{
 		this.elementsDict.do{ |el|
