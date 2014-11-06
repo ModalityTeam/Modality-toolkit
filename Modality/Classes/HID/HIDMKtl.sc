@@ -37,6 +37,13 @@ HIDMKtl : MKtl {
     // var <lookupDict;
     var <deviceElements;
 
+	/*
+	*newFrom{ |otherMKtl|
+		^this.newCopyArgs( otherMKtl.verbose, otherMKtl.name, otherMKtl.elementsDict, otherMKtl.elements, otherMKtl.deviceDescriptionHierarch, otherMKtl.deviceDescription, otherMKtl.usedDeviceDescName );
+	}
+	*/
+
+
 	*initHID { |force=false|
 		(initialized && {force.not}).if{^this};
 		HID.findAvailable;
@@ -226,7 +233,6 @@ HIDMKtl : MKtl {
         srcDevice = argSource.open;
 		all.put(name, this);
 
-		virtual = false;
         // this.getDeviceElements;
  		this.setHIDActions;
 	}

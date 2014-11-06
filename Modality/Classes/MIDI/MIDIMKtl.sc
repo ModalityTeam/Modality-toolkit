@@ -41,6 +41,11 @@ MIDIMKtl : MKtl {
 	var <global;
 	var <msgTypes;
 
+	*newFrom{ |otherMKtl|
+		^this.newCopyArgs( otherMKtl.verbose, otherMKtl.name, otherMKtl.elementsDict, otherMKtl.elements, otherMKtl.deviceDescriptionHierarch, otherMKtl.deviceDescription, otherMKtl.usedDeviceDescName );
+	}
+
+
 	    // open all ports
 	*initMIDI {|force= false|
 
@@ -262,7 +267,6 @@ MIDIMKtl : MKtl {
 
 	initMIDIMKtl { |argName, argSource, argDestination|
 		//[argName, argSource, argDestination].postln;
-		virtual = false;
 		name = argName;
 
 		source = argSource;
@@ -299,7 +303,6 @@ MIDIMKtl : MKtl {
 			.format(this, elName).error;
 			descr.postln;
 		} {
-			// TODO: pitchbend, other miditypes, etc.
 			var noMidiChan = descr[\midiChan].isNil;
 			var isTouch = descr[\midiMsgType] == \touch;
 			var noMidiNum = descr[\midiNum].isNil;
