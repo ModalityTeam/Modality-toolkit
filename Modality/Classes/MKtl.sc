@@ -21,7 +21,7 @@ MKtl : MAbstractKtl { // abstract class
 	var <deviceDescription;
 
 	var <usedDeviceDescName;
-	// var <virtual;
+	var <virtual;
 
 	*initClass {
 		Class.initClassTree(Spec);
@@ -279,6 +279,10 @@ MKtl : MAbstractKtl { // abstract class
 		var shortName = this.class.makeShortName( usedDeviceDescName );
 // TODO: this still needs to look for the trailing numbers!!!
 		this.initHardwareDevices( lookAgain );
+		if ( virtual.not ){
+			"WARNING: Already a device opened for MKtl(%)\n".postf(name);
+			^this;
+		};
 		// look for device
 		matchingProtocols = allAvailable.select(_.includes(name)).keys.as(Array);
 		// not attached, just return the virtual one if it was found:
@@ -294,7 +298,7 @@ MKtl : MAbstractKtl { // abstract class
 		subClass = MKtl.matchClass(matchingProtocols);
 		if( subClass.notNil ) {
 			// newMKtl: already an MKtl
-			newMKtl = subClass.newWithDesc( name, this );
+			newMKtl = subClass.newFromVirtual( name, this );
 			^newMKtl;
 		}{
 			"WARNING: MKtl - % - not implemented yet\n".postf( matchingProtocols );
@@ -329,6 +333,7 @@ MKtl : MAbstractKtl { // abstract class
 
 	init { |argName, deviceDescName, devDesc|
 		var deviceInfo;
+		virtual = true;
 		name = argName;
 		elementsDict = ();
 		if (deviceDescName.isNil) {

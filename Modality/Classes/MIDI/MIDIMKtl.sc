@@ -114,7 +114,7 @@ MIDIMKtl : MKtl {
 		var dest = this.destinationDeviceDict.at( name );
 		if ( source.notNil ){ srcID = source.uid };
 		if ( dest.notNil ){ destID = dest.uid };
-		^virtualMKtl.as( MIDIMKtl ).initMIDIMKtl( name, srcID, destID );
+		^virtualMKtl.as( MIDIMKtl ).initMIDIMKtl( name, source, dest );
 	}
 
 	*newWithoutDesc{ |name|
@@ -255,6 +255,7 @@ MIDIMKtl : MKtl {
 
 	initMIDIMKtl { |argName, argSource, argDestination|
 		//[argName, argSource, argDestination].postln;
+		virtual = false;
 		name = argName;
 
 		source = argSource;
