@@ -80,7 +80,6 @@ optional argument that you only have to set once, and only if the server for the
 
 returns:: an link::Classes/In#-kr:: holding the current value of this element. Reflects changes of the value.
 
-
 private:: updateValueOnServer
 
 METHOD:: initBus
@@ -99,3 +98,101 @@ A link::Classes/Bus:: that holds the element's value.
 discussion::
 Normally, you should just reference to this bus via the link::#-kr:: which will also take care of creating the bus when needed.
 
+
+SUBSECTION:: Tagging
+
+
+Tagging allows you to add your own tags to controller elements.
+The tagging system is flat, i.e. only elements have tags, link::Classes/MKtlAbstractElementGroup:: (and its derivatites) do not. link::Classes/MKtlAbstractElementGroup:: forwards tagging requests to its child elements.
+
+code::
+// add a tag
+m.elementAt(\sl, 0).addTag(\a);
+m.elementAt(\sl, 0).tags; // retrieve it
+
+// add several tags at once
+m.elementAt(\sl, 0).addTag([\freq, \amp]);
+m.elementAt(\sl, 0).tags; // retrieve it
+
+// remove a tag
+m.elementAt(\sl, 0).removeTag(\a);
+m.elementAt(\sl, 0).tags; // retrieve it
+
+// add tags to specific elements
+m.elementAt(\sl, [0, 1, 2, 4]).do(_.addTag(\vol));
+m.elementAt(\kn, [0, 1, 2, 4]).do(_.addTag(\vol));
+
+// add tag to all elements of a group
+m.elementAt(\sl).addTag(\allSliders);
+
+
+// return tags used in a group, hierarchically
+m.elements.flat.collect(_.tags).select(_.notEmpty).printAll; ""
+
+// return all tags used in that group
+m.elementAt(\sl).tags;
+
+
+// all elements containing the tag \vol
+a = m.elements.flat.select{|el|
+	el.tags.includes(\vol)
+};
+// their indices
+a.collect{|el| el.type}
+
+
+
+// create an MKtlElementArray containing them
+MKtlElementArray(m, \myVolumes, a).gui
+
+
+
+// remove a tag from all elements in a group
+m.elementAt(\sl).removeTag(\vol)
+m.elementAt(\sl).collect(_.tags)
+
+// clear all tags
+m.elementAt(\sl, 0).clearTags
+::
+
+
+METHOD:: tags
+all tags of this element.
+returns::
+list of Symbols
+
+discussion::
+If code::this:: is an link::Classes/MKtlAbstractElementGroup::, it returns a combined list of all tags of its child elements.
+
+
+METHOD:: addTag
+add tags to the element
+argument:: ... newTags
+list of Symbols
+
+discussion::
+If code::this:: is an link::Classes/MKtlAbstractElementGroup::, it forwards this call to its child elements.
+
+METHOD:: removeTag
+remove tags from the element
+argument:: ... newTags
+list of Symbols
+
+discussion::
+If code::this:: is an link::Classes/MKtlAbstractElementGroup::, it forwards this call to its child elements.
+
+METHOD:: includesTag
+searches for specific tag
+argument:: ... tag
+list of Symbols
+returns::
+true, if all tags specified in the argument are found, otherwise false.
+
+discussion::
+If code::this:: is an link::Classes/MKtlAbstractElementGroup::, it forwards this call to its child elements.
+
+METHOD:: clearTags
+wipes all tags from the element
+
+discussion::
+If code::this:: is an link::Classes/MKtlAbstractElementGroup::, it forwards this call to its child elements.

@@ -14,6 +14,7 @@ MAbstractElement {
 	var <source; // the MKtl it belongs to
 	var <name; // its name in MKtl.elements
 	var <type; // its type.
+	var <tags; // array of user-assignable tags
 
 	var <ioType; // can be \in, \out, \inout
 
@@ -25,7 +26,7 @@ MAbstractElement {
 
 	// server support, currently only one server per element supported.
 	var <bus;
-	
+
 	// nested MKtlElement / MKtlElementDict / MKtlElementArray support
 	var <>parent;
 	var <groups;
@@ -36,7 +37,9 @@ MAbstractElement {
 		^super.newCopyArgs( source, name).init;
 	}
 
-	init { }
+	init {
+		tags = Set[];
+	}
 
 	prMaybeSend {
 		if( [\out, \inout].includes( this.elementDescription.ioType ) ) {
@@ -142,6 +145,19 @@ MAbstractElement {
 		};
 	}
 
+	//tagging support
+	addTag {|... newTags|
+		tags = tags.union(newTags.flat);
+	}
+	removeTag {|... newTags|
+		tags = tags - newTags.flat;
+	}
+	includesTag {|... tag|
+		^tag.isSubsetOf(tags)
+	}
+	clearTags {
+		tags = Set[];
+	}
 }
 
 MKtlElement : MAbstractElement{

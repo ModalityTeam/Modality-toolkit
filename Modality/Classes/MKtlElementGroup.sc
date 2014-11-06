@@ -24,7 +24,7 @@ MKtlAbstractElementGroup : MAbstractElement {
 	}
 
 	size { ^elements.size }
-	
+
 	removeAll {
 		elements.do(_.prRemoveGroup( this ));
 		this.elements = nil;
@@ -77,9 +77,31 @@ MKtlAbstractElementGroup : MAbstractElement {
 	}
 
 	select { |function| ^elements.select( function ) }
-	
-	collect { |function| ^elements.collect( function ) }
 
+	collect { |function| ^elements.collect( function ) }
+	inject { |thisValue, function|
+		^elements.inject(thisValue, function)
+	}
+	// tagging support
+	//tagging support
+	addTag {|... newTags|
+		this.collect{|elem|
+			elem.addTag(*newTags);
+		}
+	}
+	removeTag {|... newTags|
+		this.collect{|elem|
+			elem.removeTag(*newTags);
+		}
+	}
+	tags {
+		^this.inject(Set[], {|all, item|
+			all.union(item.tags)
+		})
+	}
+	// includesTag {|... tag|
+	// 	^tag.isSubsetOf(tags)
+	// }
 }
 
 MKtlElementArray : MKtlAbstractElementGroup {
@@ -101,7 +123,7 @@ MKtlElementArray : MKtlAbstractElementGroup {
 		elements = newElements.asArray;
 		this.init;
 	}
-	
+
 	asArray {
 		^elements.collect({ |item|
 			if( item.isKindOf( MKtlElementArray ) ) {
@@ -115,8 +137,8 @@ MKtlElementArray : MKtlAbstractElementGroup {
 }
 
 MKtlElementDict : MKtlAbstractElementGroup {
-	
-	
+
+
 	var >guiKeys;
 	init {
 		elements = elements ?? {()};
@@ -130,7 +152,7 @@ MKtlElementDict : MKtlAbstractElementGroup {
 			});
 		};
 	}
-	
+
 	keys { ^elements.keys }
 
 	elements_ { |newElements|
@@ -141,7 +163,7 @@ MKtlElementDict : MKtlAbstractElementGroup {
 	flat { ^this.elements.values.flat }
 
 	flatSize { ^this.values.flatSize }
-	
+
 	at { |index|
 		^elements[index]
 	}
