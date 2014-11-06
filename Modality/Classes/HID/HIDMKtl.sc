@@ -245,6 +245,11 @@ HIDMKtl : MKtl {
 		warn( [a,b].reduce('++') )
 	}
 
+	/// TO IMPLEMENT
+	removeHIDActions{
+		this.elementsDict.do{ |el|
+			el.postln;
+		};
 	}
 
 	setHIDActions{
