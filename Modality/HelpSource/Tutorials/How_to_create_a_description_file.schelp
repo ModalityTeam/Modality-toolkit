@@ -140,12 +140,14 @@ sl: [
 
 If a flat description for an element is required, it can be directly copied from the generated description skeleton. However, each element has to have a name that represents its functionality.
 
-
 note::
 You may want to restart the explore mode for this by evaluating
 	code::e.start.verbose_(true)::::
 
-NOTE::
+note::
+Its also possible to create a description file without an actual device being attached. As long as you keep the naming conventions in mind you will be able to create a working GUI version.
+::
+note::
 A proper description on how to combine code::\noteOn, \noteOff, \polyTouch:: is still missing in this tutorial. While the developer team is working on it, have a look at similar description files. You can find them in the folder opening when you evaluate
 code::
 MKtl.deviceDescriptionFolder.openOS;
