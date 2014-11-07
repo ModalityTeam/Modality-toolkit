@@ -36,7 +36,6 @@ MAbstractKtl {
 	}
 
 	printElementNames{
-
 		(
 			"\nElements available for %:\n".format(this.name)
 			++ elementsDict.keys.as(Array).sort
@@ -105,9 +104,5 @@ MAbstractKtl {
 	send { |key, val|
 
 	}
-
-	// fromTemplate{ arg name ...args;
-	//     ^MDispatch.make(name, *([this]++args))
-	// }
 
 }
