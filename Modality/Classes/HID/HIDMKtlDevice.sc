@@ -136,6 +136,7 @@ HIDMKtlDevice : MKtlDevice {
 			HIDExplorer.start( this.srcDevice );
 		}{
 			HIDExplorer.stop;
+			"HIDExplorer stopped.".postln;
 		}
 	}
 
