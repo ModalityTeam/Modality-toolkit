@@ -23,6 +23,22 @@ MKtl : MAbstractKtl { // abstract class
 
 	*protocol{
 		^nil
+	var <verbose = false;
+
+	verbose_ {|value=true|
+		verbose = value;
+		if ( mktlDevice.notNil ){ mktlDevice.verbose = verbose; };
+	}
+
+	trace{ |value=true|
+		this.verbose_( value );
+	}
+
+	traceRunning {
+		^this.verbose
+	}
+
+
 	}
 
 	*initClass {

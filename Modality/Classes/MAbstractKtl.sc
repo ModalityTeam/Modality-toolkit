@@ -3,7 +3,6 @@
 
 MAbstractKtl {
 
-	var <verbose = false;
 	var <name;
 
 	var <elementsDict; //of type: ('elementName':MKtlElement, ...) -> elements to which stuff is registered
@@ -97,17 +96,6 @@ MAbstractKtl {
 			{ (argm[..(argm.size-2)].inject("",{ |a,b| a++b.asString++"_"}).asSymbol ++ argm.last.asString).asSymbol }
 	}
 
-	verbose_ {|value=true|
-		verbose = value;
-	}
-
-	trace{ |value=true|
-		this.verbose_( value );
-	}
-	
-	traceRunning { 
-		^this.verbose
-	}
 
 	//also can be used to simulate a non present hardware
 	receive { |key, val|
