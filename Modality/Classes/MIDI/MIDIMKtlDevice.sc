@@ -1,4 +1,3 @@
-/*
 MIDIMKtlDevice : MKtlDevice {
 
 	classvar <allMsgTypes = #[ \noteOn, \noteOff, \noteOnOff, \cc, \touch, \polyTouch, \bend, \program ];
@@ -30,10 +29,6 @@ MIDIMKtlDevice : MKtlDevice {
 	var <global;
 	var <msgTypes;
 
-	*newFrom{ |otherMKtl|
-		^this.newCopyArgs( otherMKtl.verbose, otherMKtl.name, otherMKtl.elementsDict, otherMKtl.elements, otherMKtl.deviceDescriptionHierarch, otherMKtl.deviceDescription, otherMKtl.usedDeviceDescName );
-	}
-
 
 	// open all ports
 	*initDevices {|force= false|
@@ -62,7 +57,7 @@ MIDIMKtlDevice : MKtlDevice {
 		// copy/paste-able directly
 		// this could also live in /--where?--/
 	*find { |post=true|
-		this.initMIDI( true );
+		this.initDevices( true );
 
 		if ( MIDIClient.sources.isEmpty and: MIDIClient.destinations.isEmpty ) {
 			"// MIDIMKtl did not find any sources or destinations - you may want to connect some first.".inform;
@@ -77,10 +72,10 @@ MIDIMKtlDevice : MKtlDevice {
 	*postPossible {
 		"\n-----------------------------------------------------".postln;
 		"\n// Available MIDIMKtls: ".postln;
-		"// MKtl(autoName);  // midi device, midi port".postln;
+		"// MKtl(autoName);  // [ midi device, midi port ]".postln;
 		sourceDeviceDict.keysValuesDo { |key, src|
-			"    MKtl('%');  // %, % \n".postf(
-				key, src.device, src.name
+			"    MKtl('%');  // [ %, % ] \n".postf(
+				key, src.device.asCompileString, src.name.asCompileString
 			);
 		};
 		"\n-----------------------------------------------------".postln;
@@ -102,81 +97,63 @@ MIDIMKtlDevice : MKtlDevice {
 		^devKey;
 	}
 
-	*newFromVirtual{ |name, virtualMKtl|
-		var srcID, destID;
-		var source = this.sourceDeviceDict.at( name );
-		var dest = this.destinationDeviceDict.at( name );
-		if ( source.notNil ){ srcID = source.uid };
-		if ( dest.notNil ){ destID = dest.uid };
-		^virtualMKtl.as( MIDIMKtl ).initMIDIMKtl( name, source, dest );
-	}
-
-	*newWithoutDesc{ |name|
-		var srcID, destID;
-		var source = this.sourceDeviceDict.at( name );
-		var dest = this.destinationDeviceDict.at( name );
-		if ( source.notNil ){ srcID = source.uid };
-		if ( dest.notNil ){ destID = dest.uid };
-		^this.new( name, srcID, destID );
-	}
-
 	// create with a uid, or access by name
-	*new { |name, uid, destID, devDescName|
+	*new { |name, srcUID, destUID, devDescName, parentMKtl|
 		var foundSource, foundDestination;
-		var foundKtl = all[name.asSymbol];
+		var deviceName;
 
-			// access by name
-		if (foundKtl.notNil) {
-			if (uid.isNil) {
-				^foundKtl
-			} {
-				if (uid == foundKtl.srcID) {
-					^foundKtl
-				} {
-					warn("MIDIMKtl: name % is in use for a different USB port ID!"
-					++ 	"	Please pick a different name.".format(name)
-					++ 	"	Taken names:" + all.keys.asArray.sort ++ ".\n");
-					^nil
-				}
-			}
-		};
+		this.initDevices;
 
-
-		this.initMIDI;
-			// make a new source
-		foundSource = uid.notNil.if({
+		[ name, srcUID, destUID, devDescName, parentMKtl ].postln;
+		// make a new source
+		foundSource = srcUID.notNil.if({
 			MIDIClient.sources.detect { |src|
-				src.uid == uid;
+				src.uid == srcUID;
 			};
 		}, {
 			sourceDeviceDict[name.asSymbol];
 		});
 
+		[ name, srcUID, destUID, devDescName, parentMKtl ].postln;
+
 		if (foundSource.isNil) {
-			warn("MIDIMKtl:"
-			"	No MIDIIn source with USB port ID % exists! please check again.".format(uid));
-			^MKtl.prMakeVirtual(name)
+			warn("MIDIMKtlDevice:"
+			"	No MIDIIn source with USB port ID % exists! please check again.".format(srcUID));
 		};
 
 		// make a new destination
-		foundDestination = destID.notNil.if({
+		foundDestination = destUID.notNil.if({
 			MIDIClient.destinations.detect { |src|
-				src.uid == destID;
+				src.uid == destUID;
 			};
 		}, {
 			destinationDeviceDict[name.asSymbol];
 		});
 
+		[ name, srcUID, destUID, devDescName, parentMKtl ].postln;
 
-		sourceDeviceDict.changeKeyForValue(name, foundSource);
-		foundDestination.notNil.if{
-			destinationDeviceDict.changeKeyForValue(name, foundDestination);
+		if (foundDestination.isNil) {
+			warn("MIDIMKtlDevice:"
+			"	No MIDIOut destination with USB port ID % exists! please check again.".format(destUID));
 		};
 
-		// "MIDIMKtl.new".postln;
-		[ devDescName, foundSource.device].postln;
-		//		^super.basicNew(name, foundSource.device)
-		^super.basicNew(name, devDescName ? foundSource.device )
+		if ( foundSource.isNil and: foundDestination.isNil ){
+			warn("MIDIMKtl:"
+			"	No MIDIIn source nor destination with USB port ID %, % exists! please check again.".format(srcUID, destUID));
+			^nil;
+		};
+
+		foundDestination.notNil.if{
+			destinationDeviceDict.changeKeyForValue(name, foundDestination);
+			deviceName = foundDestination.device;
+		};
+		foundSource.notNil.if{
+			sourceDeviceDict.changeKeyForValue(name, foundSource);
+			deviceName = foundSource.device;
+		};
+
+		[ devDescName, foundSource.device, foundDestination.device ].postln;
+		^super.basicNew(name, deviceName, parentMKtl )
 			.initMIDIMKtl(name, foundSource, foundDestination );
 	}
 
@@ -186,7 +163,7 @@ MIDIMKtlDevice : MKtlDevice {
 
 		deviceNames = MIDIClient.sources.collect {|src|
 			tempName = src.device;
-			this.makeShortName(tempName);
+			MKtl.makeShortName(tempName);
 		};
 
 		if (deviceNames.isEmpty) {
@@ -209,7 +186,7 @@ MIDIMKtlDevice : MKtlDevice {
 		j = 0; prevName = nil;
 		deviceNames = MIDIClient.destinations.collect{|src|
 			tempName = src.device;
-			this.makeShortName(tempName);
+			MKtl.makeShortName(tempName);
 		};
 		order = deviceNames.order;
 
@@ -233,16 +210,17 @@ MIDIMKtlDevice : MKtlDevice {
 
 	/// ----(((((----- EXPLORING ---------
 	explore { |mode=true|
-if ( mode ){
-		"Using MIDIExplorer. (see its Helpfile for Details)".postln;
-		"".postln;
-		"MIDIExplorer started. Wiggle all elements of your controller then".postln;
-"\tMKtl(%).explore(false);\n".postf( name );
-		"\tMKtl(%).createDescriptionFile;\n".postf( name );
-		MIDIExplorer.start(this.srcID);
-}{
-		MIDIExplorer.stop;
-}
+		if ( mode ){
+			"Using MIDIExplorer. (see its Helpfile for Details)".postln;
+			"".postln;
+			"MIDIExplorer started. Wiggle all elements of your controller then".postln;
+			"\tMKtl(%).explore(false);\n".postf( name );
+			"\tMKtl(%).createDescriptionFile;\n".postf( name );
+			MIDIExplorer.start(this.srcID);
+		}{
+			MIDIExplorer.stop;
+			"MIDIExplorer stopped.".postln;
+		}
 	}
 
 	createDescriptionFile{
@@ -252,7 +230,7 @@ if ( mode ){
 
 	/// --------- EXPLORING -----)))))---------
 
-	initDeviceAndElements{ |argName, argSource, argDestination|
+	initElements{ |argName, argSource, argDestination|
 		this.initMIDIMKtl( argName, argSource, argDestination );
 	}
 
@@ -261,7 +239,7 @@ if ( mode ){
 	}
 
 	initMIDIMKtl { |argName, argSource, argDestination|
-		//[argName, argSource, argDestination].postln;
+		[argName, argSource, argDestination].postln;
 		name = argName;
 
 		source = argSource;
@@ -277,14 +255,11 @@ if ( mode ){
 			};
 		};
 
-
-		all.put(name, this);
-
 		elementHashDict = ();
 		hashToElNameDict = ();
 		elNameToMidiDescDict = ();
 
-		if ( deviceDescription.notNil ){
+		if ( mktl.deviceDescription.notNil ){
 			this.prepareElementHashDict;
 			this.makeRespFuncs;
 		}
@@ -294,7 +269,7 @@ if ( mode ){
 		var hashs;
 		//"makeHashKey : %\n".postf(descr);
 		if( descr[\midiMsgType].isNil ) {
-			"MIDIMKtl:prepareElementHashDict (%): \\midiMsgType not found. Please add it."
+			"MIDIMKtlDevice:prepareElementHashDict (%): \\midiMsgType not found. Please add it."
 			.format(this, elName).error;
 			descr.postln;
 		} {
@@ -303,13 +278,13 @@ if ( mode ){
 			var noMidiNum = descr[\midiNum].isNil;
 
 			if( noMidiChan ) {
-				"MIDIMKtl:prepareElementHashDict (%): \\midiChan not found. Please add it."
+				"MIDIMKtlDevice:prepareElementHashDict (%): \\midiChan not found. Please add it."
 				.format(this, elName).error;
 				descr.postln;
 			};
 
 			if( isTouch && noMidiNum ) {
-				"MIDIMKtl:prepareElementHashDict (%): \\midiNum not found. Please add it."
+				"MIDIMKtlDevice:prepareElementHashDict (%): \\midiNum not found. Please add it."
 				.format(this, elName).error;
 				descr.postln;
 			};
@@ -336,11 +311,11 @@ if ( mode ){
 
 					hashs.do{ |hash|
 						elementHashDict.put(
-							hash, elementsDict[elName];
+							hash, mktl.elementsDict[elName];
 						)
 					};
 				} {
-					"MIDIMKtl:prepareElementHashDict (%): identifier '%' in midiMsgType for item '%' not known. Please correct."
+					"MIDIMKtlDevice:prepareElementHashDict (%): identifier '%' in midiMsgType for item '%' not known. Please correct."
 					.format(this, descr[\midiMsgType], elName).error;
 					this.dump;
 					nil;
@@ -352,10 +327,13 @@ if ( mode ){
 		};
 
 	}
-		// plumbing
+
+	// plumbing
 	prepareElementHashDict {
-		if (deviceDescription.notNil) {
-			deviceDescription.pairsDo { |elName, descr|
+		var elementsDict = mktl.elementsDict;
+
+		if ( mktl.deviceDescription.notNil) {
+			mktl.deviceDescription.pairsDo { |elName, descr|
 				var hash;
 
 				if ( descr[\out].notNil ){
@@ -396,18 +374,8 @@ if ( mode ){
 		}
 	}
 
-//	findDeviceDescription { |devicename|
-//		var path = deviceDescriptionFolder +/+ devicename ++ ".scd";
-//		deviceDescription = try {
-//			path.load
-//		} {
-//			"MIDIMKtl - no deviceSpecs found for %: please make them!\n".postf(devicename);
-//			this.class.openTester(this);
-//		};
-//	}
-		// modularize - only make the ones that are needed?
-		// make them only once, methods to activate/deactivate them
-		//
+	// modularize - only make the ones that are needed?
+	// make them only once, methods to activate/deactivate them
 
 	makeCC {
 		var typeKey = \cc;
@@ -510,7 +478,7 @@ if ( mode ){
 
 	makeTouch {
 		var typeKey = \touch;
-		var info = MIDIAnalysis.checkForMultiple(deviceDescription, typeKey, \midiChan);
+		var info = MIDIAnalysis.checkForMultiple( mktl.deviceDescription, typeKey, \midiChan);
 		var chan = info[\midiChan];
 		var listenChan =if (chan.isKindOf(SimpleNumber)) { chan };
 
@@ -584,7 +552,7 @@ if ( mode ){
 	// should work, can't test now.
 	makeBend {
 		var typeKey = \bend;
-		var info = MIDIAnalysis.checkForMultiple(deviceDescription, typeKey, \midiChan);
+		var info = MIDIAnalysis.checkForMultiple( mktl.deviceDescription, typeKey, \midiChan);
 		var chan = info[\midiChan];
 		var listenChan =if (chan.isKindOf(SimpleNumber)) { chan };
 
@@ -623,7 +591,7 @@ if ( mode ){
 
 	makeProgram {
 		var typeKey = \program;
-		var info = MIDIAnalysis.checkForMultiple(deviceDescription, typeKey, \midiChan);
+		var info = MIDIAnalysis.checkForMultiple( mktl.deviceDescription, typeKey, \midiChan);
 		var chan = info[\midiChan];
 		var listenChan =if (chan.isKindOf(SimpleNumber)) { chan };
 
@@ -669,7 +637,7 @@ if ( mode ){
 	}
 
 	makeRespFuncs { |msgTypes|
-		msgTypes = MIDIAnalysis.checkMsgTypes(deviceDescription);
+		msgTypes = MIDIAnalysis.checkMsgTypes( mktl.deviceDescription);
 		msgTypes = msgTypes ? allMsgTypes;
 		responders = ();
 		global = ();
@@ -723,4 +691,3 @@ if ( mode ){
 	makeProgramKey { |chan| ^("p_%".format(chan)).asSymbol }
 
 }
-*/
