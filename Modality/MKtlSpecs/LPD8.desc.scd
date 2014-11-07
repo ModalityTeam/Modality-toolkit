@@ -8,10 +8,10 @@ description: (
 		(\midiMsgType: \cc, \type: \knob, \midiChan: 0, \midiNum: midiNum, \spec: \midiCC)
 	},
 	\padOn: (36..43).collect{ |note|
-		(\midiMsgType: \noteOn, \type: \pad, \midiChan: 0, \midiNum:  note, \spec: \midiVel)
+		(\midiMsgType: \noteOn, \type: \pad, \midiChan: 0, \midiNum:  note, \spec: \midiVel, \ioType: \inout )
 	},
 	\padOff: (36..43).collect{ |note|
-		(\midiMsgType: \noteOff, \type: \pad, \midiChan: 0, \midiNum:  note, \spec: \midiVel)
+		(\midiMsgType: \noteOff, \type: \pad, \midiChan: 0, \midiNum:  note, \spec: \midiVel, \ioType: \inout )
 	},
 	/*
 	//no pad cc because it uses the same cc numbers as knobs... dugh...
