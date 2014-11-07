@@ -685,9 +685,11 @@ MKtl { // abstract class
 		).postln
 	}
 
-		recordRawValue { |key,value|
+	/*
+	recordRawValue { |key,value|
 	//		recordFunc.value( key, value );
 	}
+	*/
 
 	rawValueAt { |elName|
 		if (elName.isKindOf(Collection).not) {

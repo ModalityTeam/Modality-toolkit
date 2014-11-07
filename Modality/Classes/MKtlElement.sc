@@ -25,7 +25,7 @@ MAbstractElement {
 
 	// server support, currently only one server per element supported.
 	var <bus;
-	
+
 	// nested MKtlElement / MKtlElementDict / MKtlElementArray support
 	var <>parent;
 	var <groups;
@@ -71,7 +71,7 @@ MAbstractElement {
 	}
 
 	doAction {
-		source.recordRawValue( name, value );
+	//	source.recordRawValue( name, value );
 		action.value( this );
 		parent !? _.doAction( this );
 		groups.do( _.doAction( this ) );
