@@ -122,7 +122,7 @@ MAbstractElement {
 
 	// MKtlElementGroup support
 	prAddGroup { |group|
-		if( groups.isNil or: { groups.includes( group ).not }) {
+		if( ( parent != group ) && { groups.isNil or: { groups.includes( group ).not } }) {
 			groups = groups.add( group );
 		};
 	}
