@@ -6,9 +6,6 @@ MKtl : MAbstractKtl { // abstract class
 	classvar <allDevDescs; // an identity dictionary of device descriptions
 	classvar <all; // holds all instances of MKtl
 	classvar <specs; // ( 'specName': ControlSpec, ...) -> all specs
-	classvar <allAvailable; // ( 'midi': List['name1',... ], 'hid': List['name1',... ], ... )
-
-	classvar <exploring = false;
 
 	// tree structure composed of dictionaries and arrays
 	// with a description of all the elements on the device.
@@ -21,8 +18,8 @@ MKtl : MAbstractKtl { // abstract class
 
 	var <usedDeviceDescName;
 
-	*protocol{
-		^nil
+	var <mktlDevice; // references to the device used
+
 	var <verbose = false;
 
 	verbose_ {|value=true|
@@ -39,12 +36,22 @@ MKtl : MAbstractKtl { // abstract class
 	}
 
 
+	*allAvailable{
+		^MKtlDevice.allAvailable;
+	}
+
+	*find { |protocols|
+		MKtlDevice.find( protocols );
+	}
+
+	/// shouldn't exploring be an instance flag?
+	*exploring{
+		^MKtlDevice.exploring;
 	}
 
 	*initClass {
 		Class.initClassTree(Spec);
 		all = ();
-		allAvailable = ();
 
 		specs = ().parent_(Spec.specs);
 
@@ -80,17 +87,6 @@ MKtl : MAbstractKtl { // abstract class
 		deviceDescriptionFolder = this.filenameSymbol.asString.dirname.dirname +/+ "MKtlSpecs";
 	}
 
-	*find { |protocols|
-		if ( Main.versionAtLeast( 3, 7 ) ){
-			protocols = protocols ? [\midi,\hid];
-		}{
-			protocols = protocols ? [\midi];
-		};
-		protocols.asCollection.do{ |pcol|
-			this.matchClass(pcol) !? _.find
-		}
-	}
-
 	*addSpec {|key, spec|
 		specs.put(key, spec.asSpec);
 	}
@@ -100,25 +96,12 @@ MKtl : MAbstractKtl { // abstract class
 			++ deviceID.asString.select({|c| c.isDecDigit}))
 	}
 
-	*matchClass { |symbol|
-		^this.allSubclasses.detect({ |x| x.protocol == symbol })
-	}
-
 	*allDescriptions{
 		if(MKtl.allDevDescs.isNil){
 			MKtl.loadAllDescs
 		};
-		^this.prShortnamesToDevices;
+		^this.prShortnamesToDeviceDescriptions;
 	}
-
-	*initHardwareDevices{ |force=false|
-		//get available devices
-		MIDIMKtl.initMIDI( force );
-		if ( Main.versionAtLeast( 3, 7 ) ){
-			HIDMKtl.initHID( force );
-		};
-	}
-
 
 	*getMatchingDescsForShortname{ |shortName|
 		var r,t, descName, namesToDescs;
@@ -167,40 +150,13 @@ MKtl : MAbstractKtl { // abstract class
 		^this.basicNew( name, deviceDescName, devDesc );
 	}
 
-	*findDeviceShortNameFromLongName{ |devLongName|
-		var devKey, newDevKey;
-		if ( devLongName.isKindOf( String ) ){
-			this.subclasses.do{ |subClass|
-				newDevKey = subClass.findSource( devLongName );
-				if ( newDevKey.notNil ){
-					devKey = newDevKey;
-				};
-			};
-			^devKey;
-		};
-		if (devLongName.isKindOf( Array ) ){
-			this.subclasses.do{ |subClass|
-				newDevKey = subClass.findSource( *devLongName );
-				if ( newDevKey.notNil ){
-					devKey = newDevKey;
-				};
-			};
-			^devKey;
-		};
-	}
-
-	*newFrom{ |otherMKtl|
-		^this.newCopyArgs( otherMKtl.verbose, otherMKtl.name, otherMKtl.elementsDict, otherMKtl.elements, otherMKtl.deviceDescriptionHierarch, otherMKtl.deviceDescription, otherMKtl.usedDeviceDescName );
-	}
-
 	// new returns existing instances
 	// of subclasses that exist in .all,
 	// or returns a new empty instance.
 	// this is to allow virtual MKtls eventually.
 	*new { |name, deviceDescName, lookForNew = false|
-		var matchingProtocols, subClass, return;
 		var devDescFromShortName, devDesc;
-		var newMKtl;
+		var newMKtl, newMKtlDevice;
 		var newDeviceDescName;
 		var isUnknownDevice = false;
 		var longDeviceName;
@@ -208,7 +164,7 @@ MKtl : MAbstractKtl { // abstract class
 		// --- generate overview of attached and available description if necessary ---
 		if ( name.notNil ){
 			// we want to know what is attached if we look with a name
-			this.initHardwareDevices( lookForNew );
+			MKtlDevice.initHardwareDevices( lookForNew );
 		};
 		this.loadAllDescs( lookForNew ); // will look for deviceDescs
 
@@ -224,7 +180,7 @@ MKtl : MAbstractKtl { // abstract class
 			// name is a string, and thus a long device name
 			longDeviceName = name;
 			// try and find short name from devices
-			name = this.findDeviceShortNameFromLongName( longDeviceName );
+			name = MKtlDevice.findDeviceShortNameFromLongName( longDeviceName );
 		};
 
 		// --- name is given, see if it is there in all: ---
@@ -239,17 +195,25 @@ MKtl : MAbstractKtl { // abstract class
 					^all[name];
 				};
 				#devDesc, newDeviceDescName = this.findDeviceDesc( deviceDescName );
-				if ( devDesc.notNil ){
-					all[name].replaceDeviceDesc( devDesc, newDeviceDescName );
-					"MKtl( % ) now has device description %\n".postf( name, deviceDescName );
-					^all[name];
-				}{ // not succesfull, keeping the old
-					"WARNING: Could not change deviceDescription! MKtl( % ) still has device description %\n".postf( name, all[name].usedDeviceDescName );
-					^all[name];
-				};
+			}{
+				devDesc = deviceDescName;
+				newDeviceDescName = ( devDesc.at( \device ) );
 			};
+			if ( devDesc.notNil ){
+				all[name].replaceDeviceDesc( devDesc, newDeviceDescName );
+				"MKtl( % ) now has device description %\n".postf( name, newDeviceDescName );
+			}{ // not succesfull, keeping the old
+				"WARNING: Could not change deviceDescription! MKtl( % ) still has device description %\n".postf( name, all[name].usedDeviceDescName );
+			};
+			^all[name];
 		}{
-			#devDesc, deviceDescName = this.findDeviceDesc( deviceDescName, name );
+			if ( deviceDescName.isKindOf( Dictionary ).not ){
+				#devDesc, deviceDescName = this.findDeviceDesc( deviceDescName, name );
+			}{
+				devDesc = deviceDescName;
+				deviceDescName = devDesc.at( \device );
+			};
+
 			if ( devDesc.isNil ){ // name given, but no devDesc found:
 				isUnknownDevice = true;
 			};
@@ -258,115 +222,80 @@ MKtl : MAbstractKtl { // abstract class
 				newMKtl = this.newFromDeviceDesc( devDesc, deviceDescName, name );
 			};
 
-			// then see if it is attached:
-			matchingProtocols = allAvailable.select(_.includes(name)).keys.as(Array);
+			newMKtl.prTryOpenDevice( name );
 
-			if ( matchingProtocols.size == 0 ){
-				// not attached, just return the virtual one if it was found:
-				^newMKtl;
+			if ( isUnknownDevice ){ // no desc found
+				this.warnNoDeviceDescriptionFileFound( name );
 			};
+			^newMKtl;
+		}
+	}
 
-			if ( matchingProtocols.size > 1 ){ // more than one matching protocol:
-				"WARNING: multiple protocol devices not implemented yet, using %\n".postf( matchingProtocols.first );
-			};
-
-			// taking the first:
-			matchingProtocols = matchingProtocols.first;
-			subClass = MKtl.matchClass(matchingProtocols);
-			if( subClass.isNil ){
-				"WARNING: MKtl: device not found with name %, and no matching device description found\n".postf( name );
-				^nil;
-			};
-			if( subClass.notNil ) {
-				if ( isUnknownDevice ){ // no desc found
-					newMKtl = subClass.newWithoutDesc( name );
-					this.warnNoDeviceFileFound( name );
-					^newMKtl;
-				};
-				// newMKtl: already an MKtl
-				newMKtl = subClass.newFromVirtual( name, newMKtl );
-				^newMKtl;
-			};
+	prTryOpenDevice{ |devName|
+		var newMKtlDevice;
+		newMKtlDevice = MKtlDevice.tryOpenDevice( name, this );
+		if ( newMKtlDevice.notNil ){
+			// cross reference:
+			mktlDevice = newMKtlDevice;
 		}
 	}
 
 	replaceDeviceDesc{ |devDesc, newDeviceDescName| // could be a string/symbol or dictionary
-		// should return true or false, and keep old if no new one found, or not matching protocol
-		/// does the GUI copy the elements? -> remove dependents there in replaceDescription
-
+		var foundDeviceDescName;
 		if ( devDesc.isNil ){
-			#devDesc, newDeviceDescName = MKtl.findDeviceDesc( newDeviceDescName );
+			#devDesc, foundDeviceDescName = MKtl.findDeviceDesc( newDeviceDescName );
+			if ( devDesc.isNil ){
+				this.warnNoDeviceDescriptionFileFound( newDeviceDescName );
+				^this; // don't change anything, early return
+			};
+			newDeviceDescName = foundDeviceDescName;
+		}{
+			if ( newDeviceDescName.isNil ){
+				newDeviceDescName = devDesc.at( \device );
+			}
+		};
+		if ( mktlDevice.notNil ){
+			mktlDevice.cleanupElements;
+		};
+		this.init( name, newDeviceDescName, devDesc );
+		if ( mktlDevice.notNil ){
+			mktlDevice.initElements( name );
 		};
 
-		if ( this.class.protocol.isNil ){
-			this.init( name, newDeviceDescName, devDesc );
-		}{
-			this.replaceDescription( newDeviceDescName, devDesc );
-		};
 		this.changed( \elements );
 	}
 
+	closeDevice{
+		mktlDevice.closeDevice;
+		mktlDevice = nil;
+	}
+
 	openDeviceFor{ |deviceName, lookAgain=true|
-		var matchingProtocols, subClass, newMKtl;
 		var shortName;
-		this.class.protocol.postln;
-		if ( this.class.protocol.notNil ){
-			"WARNING: Already a device opened for MKtl(%)\n".postf(name);
+
+		if ( this.mktlDevice.notNil ){
+			"WARNING: Already a device opened for MKtl(%). Close it first with MKtl(%).closeDevice;\n".postf(name,name);
 			^this;
 		};
-
-		this.class.initHardwareDevices( lookAgain );
+		MKtlDevice.initHardwareDevices( lookAgain );
 		if ( deviceName.notNil ){
 			if ( deviceName.isKindOf( Symbol ) ){
 				shortName = deviceName;
 			}{
-				shortName = this.findDeviceShortNameFromLongName( deviceName );
+				shortName = MKtlDevice.findDeviceShortNameFromLongName( deviceName );
 			}
 		}{
 			shortName = this.class.makeShortName( usedDeviceDescName );
 		};
-		shortName.postln;
-		// look for device
-		matchingProtocols = allAvailable.select(_.includes(name)).keys.as(Array);
-		matchingProtocols.postln;
-		// not attached, just return the virtual one if it was found:
-		if ( matchingProtocols.size == 0 ){
-			^this;
-		};
-		// more than one matching protocol:
-		if ( matchingProtocols.size > 1 ){
-			"WARNING: multiple protocol devices not implemented yet, using %\n".postf( matchingProtocols.first );
-		};
-		// taking the first:
-		matchingProtocols = matchingProtocols.first;
-		subClass = MKtl.matchClass(matchingProtocols);
-		if( subClass.notNil ) {
-			// newMKtl: already an MKtl
-
-			newMKtl = subClass.newFromVirtual( name, this );
-			^newMKtl;
-		}{
-			"WARNING: MKtl - % - not implemented yet\n".postf( matchingProtocols );
-			^this;
-		};
+		this.prTryOpenDevice( shortName );
 	}
 
-	*initDevices{ |force=false|
-		//get available devices
-		MIDIMKtl.initMIDI( force );
-		if ( Main.versionAtLeast( 3, 7 ) ){
-			HIDMKtl.initHID( force );
-		};
+	warnNoDeviceDescriptionFileFound { |deviceName|
+		warn( "Mktl could not find a device description file for device %. Please follow instructions in \"Tutorials/How_to_create_a_description_file\".openHelpFile;
+""\n".format( deviceName.asCompileString) )
 	}
 
-
-	warnNoDeviceFileFound { |deviceName|
-		warn( "Mktl could not find a device file for device %. Please follow instructions in \"Tutorials/How_to_create_a_description_file\".openHelpFile;
-""\n".format(
-			deviceName.asCompileString) )
-	}
-
-	*prShortnamesToDevices {
+	*prShortnamesToDeviceDescriptions {
 		if( MKtl.allDevDescs.isNil ){ MKtl.loadAllDescs };
 		^Dictionary.with(*
 			MKtl.allDevDescs.getPairs.clump(2)
@@ -399,7 +328,7 @@ MKtl : MAbstractKtl { // abstract class
 		if ( devDesc.notNil ){
 			deviceInfo = devDesc.deepCopy;
 			if ( deviceInfo.isNil )	{ // no device file found:
-				this.warnNoDeviceFileFound( argName );
+				this.warnNoDeviceDescriptionFileFound( argName );
 			}{
 				this.loadDeviceDescription( deviceInfo );
 			}
@@ -407,7 +336,7 @@ MKtl : MAbstractKtl { // abstract class
 		if ( deviceDescription.notNil ){
 			usedDeviceDescName = deviceDescName;
 			this.makeElements;
-			( "Opened device:" + name + "using device description" + deviceDescName ).postln;
+			( "Created MKtl:" + name + "using device description" + deviceDescName ).postln;
 		};
 		all.put(name, this);
 	}
@@ -565,8 +494,21 @@ MKtl : MAbstractKtl { // abstract class
 	}
 
 	explore{ |mode=true|
-		this.subclassResponsibility(thisMethod)
+		if ( mktlDevice.notNil ){
+			mktlDevice.explore( mode );
+		}{
+			"MKtl(%) has no open device, nothing to explore\n".postf( name );
+		};
 	}
+
+	createDescriptionFile{
+		if ( mktlDevice.notNil ){
+			mktlDevice.createDescriptionFile;
+		}{
+			"MKtl(%) has no open device, cannot create description file\n".postf( name );
+		};
+	}
+
 
 	prUnderscorify {
 		^{ |a,b|
@@ -698,4 +640,11 @@ MKtl : MAbstractKtl { // abstract class
 		^elementsDict.asArray
 	}
 
+}
+
+/// --- stubs until device descriptions are fixed
+HIDMKtl : MKtl{
+}
+
+MIDIMKtl : MKtl{
 }
