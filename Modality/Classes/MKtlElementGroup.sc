@@ -55,17 +55,54 @@ MKtlAbstractElementGroup : MAbstractElement {
 	}
 
 	value { ^elements.collect(_.value) }
+	
+	attachChildren {
+		elements.do(_.prAddGroup(this));
+	}
+	
+	detachChildren { |ignoreAction = false|
+		if( ignoreAction or: { action.isNil } ) {
+			elements.do({ |element|
+				element.prRemoveGroup( this );
+				if( element.respondsTo( \detachChildren ) ) {
+					element.detachChildren( ignoreAction );
+				};
+			});
+		};
+	}
+	
+	prAddGroup { |group|
+		if( groups.isNil or: { groups.includes( group ).not }) {
+			groups = groups.add( group );
+			elements.do(_.prAddGroup(this));
+		};
+	}
+	
+	prRemoveGroup { |group|
+		if( groups.notNil ) {
+			groups.remove( group );
+		};
+	}
+
+	action_ { |func|
+		action = func;
+		if( action.notNil ) {
+			this.attachChildren;
+		} {
+			this.detachChildren;
+		};
+	}
 
 	addAction { |argAction|
-		action = action.addFunc(argAction);
+		this.action = action.addFunc(argAction);
 	}
 
 	removeAction { |argAction|
-		action = action.removeFunc(argAction);
+		this.action = action.removeFunc(argAction);
 	}
 
 	reset {
-		action = nil
+		this.action = nil
 	}
 
 	doAction { |...children|
@@ -113,7 +150,7 @@ MKtlElementArray : MKtlAbstractElementGroup {
 		if( elements.size > 0 ) {
 			type = elements.first.type;
 			elements.do({ |item|
-				item.prAddGroup(this);
+				if( addGroupsAsParent ) { item.parent = this };
 				if( item.type != type ) {
 					type = 'mixed';
 				};
@@ -147,7 +184,7 @@ MKtlElementDict : MKtlAbstractElementGroup {
 		if( elements.size > 0 ) {
 			type = elements.values.first.type;
 			elements.do({ |item|
-				item.prAddGroup(this);
+				if( addGroupsAsParent ) { item.parent = this };
 				if( item.type != type ) {
 					type = 'mixed';
 				};
