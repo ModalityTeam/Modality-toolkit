@@ -160,12 +160,15 @@ MKtl { // abstract class
 	// of subclasses that exist in .all,
 	// or returns a new empty instance.
 	// this is to allow virtual MKtls eventually.
-	*new { |name, deviceDescName, lookForNew = false|
-		var devDescFromShortName, devDesc;
-		var newMKtl, newMKtlDevice;
-		var newDeviceDescName;
-		var isUnknownDevice = false;
-		var longDeviceName;
+	*new { |name, deviceDesc, lookForNew = false|
+		if ( name.notNil ){ // first do a lookup
+			if ( all[name].notNil ){
+				if ( deviceDescName.notNil ){
+					"WARNING: MKtl: if you want to change the device specification, use MKtl(%).rebuildFrom(%)\n".postf( name, deviceDesc );
+				};
+				^all[name];
+			}
+		};
 
 		// --- generate overview of attached and available description if necessary ---
 		if ( name.notNil ){
@@ -173,6 +176,36 @@ MKtl { // abstract class
 			MKtlDevice.initHardwareDevices( lookForNew );
 		};
 		this.loadAllDescs( lookForNew ); // will look for deviceDescs
+
+		^super.new.init( name, deviceDesc );
+	}
+
+	*newFromDevice{ |name, deviceInfo, deviceDesc, lookForNew = false|  // autogenerates a shortName if not given
+
+		// --- generate overview of attached and available description if necessary ---
+		if ( name.notNil ){
+			// we want to know what is attached if we look with a name
+			MKtlDevice.initHardwareDevices( lookForNew );
+		};
+		this.loadAllDescs( lookForNew ); // will look for deviceDescs
+
+		if ( name.notNil ){ // first do a lookup
+			if ( all[name].notNil ){
+				if ( deviceDescName.notNil ){
+					"WARNING: MKtl: if you want to change the device specification, use MKtl(%).rebuildFrom(%)\n".postf( name, deviceDesc );
+				};
+				^all[name];
+			}
+		};
+		^super.new.initFromDevice( name, deviceInfo, deviceDesc );
+	}
+
+	init{ |name, deviceDesc|
+		var devDescFromShortName, devDesc;
+		var newMKtl, newMKtlDevice;
+		var newDeviceDescName;
+		var isUnknownDevice = false;
+		var longDeviceName;
 
 		// --- if name is not given, create one ---
 		if ( name.isNil ){
@@ -189,6 +222,7 @@ MKtl { // abstract class
 			name = MKtlDevice.findDeviceShortNameFromLongName( longDeviceName );
 		};
 
+		/*
 		// --- name is given, see if it is there in all: ---
 		if ( all[name].notNil ){
 			// no deviceDescName given, so just return
@@ -212,7 +246,9 @@ MKtl { // abstract class
 				"WARNING: Could not change deviceDescription! MKtl( % ) still has device description %\n".postf( name, all[name].usedDeviceDescName );
 			};
 			^all[name];
-		}{
+		}
+		*/
+		{
 			if ( deviceDescName.isKindOf( Dictionary ).not ){
 				#devDesc, deviceDescName = this.findDeviceDesc( deviceDescName, name );
 			}{

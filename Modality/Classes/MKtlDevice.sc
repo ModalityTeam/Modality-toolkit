@@ -70,7 +70,10 @@ MKtlDevice{
 	*tryOpenDevice{ |name, parentMKtl|
 		var matchingProtocols, subClass;
 		// then see if it is attached:
+
 		matchingProtocols = this.findMatchingProtocols( name );
+		matchingProtocols.postln;
+
 		if ( matchingProtocols.size == 0 ){
 			// not attached, just return the virtual one if it was found:
 			^nil;
