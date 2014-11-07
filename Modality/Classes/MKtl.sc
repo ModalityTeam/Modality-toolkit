@@ -11,6 +11,9 @@ MKtl { // abstract class
 	var <elementsDict; //of type: ('elementName':MKtlElement, ...) -> elements to which stuff is registered
 	var <elements;
 
+
+	classvar <exploring = false;
+
 	// tree structure composed of dictionaries and arrays
 	// with a description of all the elements on the device.
 	// read from an external file.
@@ -19,7 +22,6 @@ MKtl { // abstract class
 	// an array of keys and values with a description of all the elements on the device.
 	// generated from the hierarchical description read from the file.
 	var <deviceDescription;
-
 	var <usedDeviceDescName;
 
 	var <mktlDevice; // references to the device used

@@ -227,7 +227,6 @@ MIDIMKtlDevice : MKtlDevice {
 		MIDIExplorer.openDoc;
 	}
 
-
 	/// --------- EXPLORING -----)))))---------
 
 	initElements{ |argName, argSource, argDestination|
