@@ -740,7 +740,9 @@ MKtl { // abstract class
 	}
 
 	send { |key, val|
-
+		if ( mktlDevice.notNil ){
+			mktlDevice.send( key, val );
+		}
 	}
 
 
