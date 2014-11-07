@@ -10,6 +10,6 @@ description: (
 	),
 	x: ('hidUsage': 48, 'hidUsagePage': 1, 'type': 'mouseAxis', 'ioType': 'in', \spec: \mouseAxis ),
 	y: ('hidUsage': 49, 'hidUsagePage': 1, 'type': 'mouseAxis', 'ioType': 'in', \spec: \mouseAxis ),
-	wheel: ('hidUsage': 56, 'hidUsagePage': 1, 'type': 'mouseWheel', 'ioType': 'in', \spec: \mouseAxis ),
+	wheel: ('hidUsage': 56, 'hidUsagePage': 1, 'type': 'mouseWheel', 'ioType': 'in', \spec: \mouseWheel ),
 )
 );
