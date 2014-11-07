@@ -1,7 +1,6 @@
 // honouring Jeff's MKeys by keeping the M for prototyping the new Ktl
 
-
-MKtl : MAbstractKtl { // abstract class
+MKtl { // abstract class
 	classvar <deviceDescriptionFolder; //path of MKtlSpecs folder
 	classvar <allDevDescs; // an identity dictionary of device descriptions
 	classvar <all; // holds all instances of MKtl
@@ -648,7 +647,7 @@ MKtl : MAbstractKtl { // abstract class
 
 	// from MAbstractKtl:
 
-		prMatchedElements { |elementKey|
+	prMatchedElements { |elementKey|
 		if ( Main.versionAtLeast( 3.5 ) ){
 			^elementsDict.asArray.select{ |elem| elem.name.matchOSCAddressPattern(elementKey) }
 		}{
@@ -669,10 +668,6 @@ MKtl : MAbstractKtl { // abstract class
 
 	removeAllFromElems {
 		elementsDict.do( _.reset )
-	}
-
-	elementNames{
-		^elementsDict.keys.asArray
 	}
 
 	printElementNames{
