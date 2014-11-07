@@ -64,7 +64,11 @@ MKtl : MAbstractKtl { // abstract class
 		this.addSpec(\midiBend, [0, 16383, \lin, 1, 8192]);
 
 		// HID
-		this.addSpec(\mouseAxis, [0, 1, \lin, 0, 0.5]);
+		// this.addSpec(\mouseAxis, [-5, 5, \lin, 0, 0]);
+		// this.addSpec(\mouseWheel, [-5, 5, \lin, 0, 0]);
+
+		this.addSpec(\mouseAxis, [0.4,0.6, \lin, 0, 0.5]);
+		this.addSpec(\mouseWheel, [0.4,0.6, \lin, 0, 0.5]);
 
 		this.addSpec(\hidBut, [0, 1, \lin, 1, 0]);
 		this.addSpec(\hidHat, [0, 1, \lin, 1, 0]);
