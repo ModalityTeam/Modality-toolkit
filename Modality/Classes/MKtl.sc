@@ -219,10 +219,8 @@ MKtl { // abstract class
 			};
 
 			if ( devDesc.isNil ){ // name given, but no devDesc found:
-				isUnknownDevice = true;
-			};
-
-			if( isUnknownDevice.not ){ // create a virtual device first:
+				newMKtl = this.basicNew( name );
+			}{ // create a virtual device first:
 				newMKtl = this.newFromDeviceDesc( devDesc, deviceDescName, name );
 			};
 
@@ -241,7 +239,10 @@ MKtl { // abstract class
 		if ( newMKtlDevice.notNil ){
 			// cross reference:
 			mktlDevice = newMKtlDevice;
-		}
+			"Opened device for MKtl(%)\n".postf( name );
+		}{
+			"Could not open device for MKtl(%)\n".postf( name );
+		};
 	}
 
 	replaceDeviceDesc{ |devDesc, newDeviceDescName| // could be a string/symbol or dictionary
@@ -324,7 +325,7 @@ MKtl { // abstract class
 		name = argName;
 		elementsDict = ();
 		if (deviceDescName.isNil) {
-				warn("no deviceDescription name given!");
+			warn("no deviceDescription name given!");
 		};
 		if ( devDesc.isNil ){
 			devDesc = this.class.getDeviceDescription( deviceDescName )
@@ -336,6 +337,8 @@ MKtl { // abstract class
 			}{
 				this.loadDeviceDescription( deviceInfo );
 			}
+		}{
+			this.warnNoDeviceDescriptionFileFound( argName );
 		};
 		if ( deviceDescription.notNil ){
 			usedDeviceDescName = deviceDescName;
