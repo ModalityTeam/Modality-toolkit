@@ -117,7 +117,7 @@ MAbstractElement {
 	}
 
 	printOn { | stream |
-		stream << "an " << this.class.name << "(" << this.type.cs << ", " << this.index << ")" ;
+		stream << "an " << this.class.name << "(" << this.name.cs << ", " << this.type.cs << ", " << this.index << ")" ;
 	}
 
 	// MKtlElementGroup support
