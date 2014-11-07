@@ -116,14 +116,9 @@ MAbstractElement {
 		^this.parent !? { |x| x.indices ++ [ this.index ] };
 	}
 
-	printAll {|level = 0|
-		(" ".wrapExtend(level) ++ this.asCompileString).postln;
+	printOn { | stream |
+		stream << "an " << this.class.name << "(" << this.type.cs << ", " << this.index << ")" ;
 	}
-
-	// allKeys {
-	// 	^(parent.indexOf(this))
-	// }
-
 
 	// MKtlElementGroup support
 	prAddGroup { |group|
