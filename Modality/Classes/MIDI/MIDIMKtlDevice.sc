@@ -1,16 +1,5 @@
-/***
-
-** Questions :
-
--- OLD: how to make anonymous ones? when would MKtls ever be used anonymously?
-
-** TODO
-*
-*   test noteOn noteOff responders, they are not working yet!
-
-***/
-
-MIDIMKtl : MKtl {
+/*
+MIDIMKtlDevice : MKtlDevice {
 
 	classvar <allMsgTypes = #[ \noteOn, \noteOff, \noteOnOff, \cc, \touch, \polyTouch, \bend, \program ];
 
@@ -46,8 +35,8 @@ MIDIMKtl : MKtl {
 	}
 
 
-	    // open all ports
-	*initMIDI {|force= false|
+	// open all ports
+	*initDevices {|force= false|
 
 		(initialized && {force.not}).if{^this};
 
@@ -242,27 +231,33 @@ MIDIMKtl : MKtl {
 		});
 	}
 
-	explore {
+	/// ----(((((----- EXPLORING ---------
+	explore { |mode=true|
+if ( mode ){
 		"Using MIDIExplorer. (see its Helpfile for Details)".postln;
 		"".postln;
 		"MIDIExplorer started. Wiggle all elements of your controller then".postln;
-		"\tMKtl(%).stopExplore;\n".postf( name );
+"\tMKtl(%).explore(false);\n".postf( name );
 		"\tMKtl(%).createDescriptionFile;\n".postf( name );
 		MIDIExplorer.start(this.srcID);
+}{
+		MIDIExplorer.stop;
+}
 	}
 
 	createDescriptionFile{
 		MIDIExplorer.openDoc;
 	}
 
-	stopExplore{
-		MIDIExplorer.stop;
+
+	/// --------- EXPLORING -----)))))---------
+
+	initDeviceAndElements{ |argName, argSource, argDestination|
+		this.initMIDIMKtl( argName, argSource, argDestination );
 	}
 
-	replaceDescription { |newDeviceDescName, devDesc|
+	cleanupElements{
 		this.removeRespFuncs;
-		this.init( name, newDeviceDescName, devDesc );
-		this.initMIDIMKtl( name, source, destination );
 	}
 
 	initMIDIMKtl { |argName, argSource, argDestination|
@@ -728,3 +723,4 @@ MIDIMKtl : MKtl {
 	makeProgramKey { |chan| ^("p_%".format(chan)).asSymbol }
 
 }
+*/
