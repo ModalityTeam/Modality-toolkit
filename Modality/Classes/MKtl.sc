@@ -277,7 +277,13 @@ MKtl { // abstract class
 				#devDesc, devDescName = this.class.findDeviceDesc( deviceDescriptionNameOrDict );
 			};
 		};
+
 		if ( mktlDevice.notNil ){
+			// check whether new device spec mathces protocol
+			if ( devDesc.at( \protocol ) != mktlDevice.protocol ){
+				"WARNING: MKtl(%): protocol % of device description %, does match protocol % of device % \n".postf( name, devDesc.at( \protocol ), devDescName, mktlDevice.protocol, mktlDevice.deviceName );
+				^this;
+			};
 			mktlDevice.cleanupElements;
 		};
 
