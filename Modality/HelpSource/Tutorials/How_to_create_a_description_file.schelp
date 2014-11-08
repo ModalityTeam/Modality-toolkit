@@ -153,6 +153,11 @@ A proper description on how to combine code::\noteOn, \noteOff, \polyTouch:: is 
 code::
 MKtl.openDescriptionFolder;
 ::
+
+::
+
+note::
+When exploring a MIDI device only the incoming MIDI is analysed. You will have to add the MIDI output elements manually. You will have to look up in the manual of your device or online to find out which MIDI messages your device responds to.
 ::
 
 subsection:: Save description file and test it
