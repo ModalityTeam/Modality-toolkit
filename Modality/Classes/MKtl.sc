@@ -252,12 +252,17 @@ MKtl { // abstract class
 	prTryOpenDevice{ |devName,devDesc| // is a shortname
 		var newMKtlDevice;
 
-		// maybe I gave a funky name, and can find the device from the spec
-		if ( devDesc.notNil ){
-			devName = MKtlDevice.findDeviceShortNameFromLongName( devDesc.at( \device ) );
+		newMKtlDevice = MKtlDevice.tryOpenDevice( devName, this );
+		if ( newMKtlDevice.isNil ){
+			// maybe I gave a funky name, and can find the device from the spec
+			if ( devDesc.notNil ){
+				devName = MKtlDevice.findDeviceShortNameFromLongName( devDesc.at( \device ) );
+				if ( devName.notNil ){
+					newMKtlDevice = MKtlDevice.tryOpenDevice( devName, this );
+				};
+			};
 		};
 
-		newMKtlDevice = MKtlDevice.tryOpenDevice( devName, this );
 		if ( newMKtlDevice.notNil ){
 			// cross reference:
 			mktlDevice = newMKtlDevice;
