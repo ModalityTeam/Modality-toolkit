@@ -49,7 +49,7 @@ MKtl { // abstract class
 		if(MKtl.allDevDescs.isNil){
 			MKtl.loadAllDescs
 		};
-		^this.prShortnamesToDeviceDescriptions;
+		^this.prShortNamesToDeviceDescriptions;
 	}
 
 	*find { |protocols|
@@ -103,7 +103,7 @@ MKtl { // abstract class
 			++ deviceID.asString.select({|c| c.isDecDigit}))
 	}
 
-	*getMatchingDescsForShortname{ |shortName|
+	*getMatchingDescsForShortName{ |shortName|
 		var r,t, descName, namesToDescs;
 		t = shortName.asString;
 		r = t[..(t.size-2)];
@@ -116,7 +116,7 @@ MKtl { // abstract class
 
 	*findDeviceDescFromShortName{ |shortName|
 		var devDescFromShortName, deviceDescName, devDesc;
-		devDescFromShortName = this.getMatchingDescsForShortname( shortName );
+		devDescFromShortName = this.getMatchingDescsForShortName( shortName );
 		if ( devDescFromShortName.size == 0 ){
 			^[nil,nil];
 		};
@@ -355,7 +355,7 @@ MKtl { // abstract class
 ""\n".format( deviceName.asCompileString) )
 	}
 
-	*prShortnamesToDeviceDescriptions {
+	*prShortNamesToDeviceDescriptions {
 		if( MKtl.allDevDescs.isNil ){ MKtl.loadAllDescs };
 		^Dictionary.with(*
 			MKtl.allDevDescs.getPairs.clump(2)
