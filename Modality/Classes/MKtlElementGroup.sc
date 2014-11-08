@@ -46,7 +46,7 @@ MKtlElementGroup : MAbstractElement {
 	
 	sortElementsByType {
 		var order;
-		order = [ MKtlElement, MKtlElementDict, MKtlElementGroup ];
+		order = [ MKtlElement, MKtlElementGroup ];
 		elements = elements.sort({ |a,b|
 				(order.indexOf( a.class ) ? -1) <= (order.indexOf( b.class ) ? -1);
 			}).separate({ |a,b|
