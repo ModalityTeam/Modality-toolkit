@@ -257,7 +257,7 @@ MKtl { // abstract class
 			mktlDevice = newMKtlDevice;
 			"Opened device % for MKtl(%)\n".postf( devName, name );
 		}{
-			"Could not open device for MKtl(%)\n".postf( name );
+			"WARNING: Could not open device for MKtl(%)\n".postf( name );
 		};
 	}
 
