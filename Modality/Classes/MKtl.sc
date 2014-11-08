@@ -47,6 +47,11 @@ MKtl { // abstract class
 
 	*find { |protocols|
 		MKtlDevice.find( protocols );
+	*allDescriptions{
+		if(MKtl.allDevDescs.isNil){
+			MKtl.loadAllDescs
+		};
+		^this.prShortnamesToDeviceDescriptions;
 	}
 
 	}
@@ -96,13 +101,6 @@ MKtl { // abstract class
 	*makeShortName {|deviceID|
 		^(deviceID.asString.toLower.select{|c| c.isAlpha && { c.isVowel.not }}.keep(4)
 			++ deviceID.asString.select({|c| c.isDecDigit}))
-	}
-
-	*allDescriptions{
-		if(MKtl.allDevDescs.isNil){
-			MKtl.loadAllDescs
-		};
-		^this.prShortnamesToDeviceDescriptions;
 	}
 
 	*getMatchingDescsForShortname{ |shortName|
