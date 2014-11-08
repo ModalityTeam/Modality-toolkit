@@ -1,9 +1,9 @@
 
-OSCMktl : MKtl {
+OSCMktlDevice : MKtlDevice {
 	classvar <protocol = \osc;
 	classvar <sourceDeviceDict;
 
-	*initOSC {
+	*initDevices {
 		sourceDeviceDict = ();
 	}
 
