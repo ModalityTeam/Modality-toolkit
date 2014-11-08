@@ -56,6 +56,28 @@ MKtl { // abstract class
 		MKtlDevice.find( protocols );
 	}
 
+	*openDescFolder {
+		this.deviceDescriptionFolder.openOS;
+	}
+
+	openDescFile {
+		var descfilepath;
+		var mydesc = MKtl.allDevDescs.detect { |desc|
+			desc[\device] == MKtl(\rnnd0).deviceDescriptionName
+		};
+
+		if (mydesc.isNil or: {
+			descfilepath = mydesc[\filepath];
+			descfilepath.isNil;
+		}) {
+			"% : could not find a description file to open.".postf(this);
+			^this
+		};
+
+		descfilepath.openOS;
+
+	}
+
 	*initClass {
 		Class.initClassTree(Spec);
 		all = ();
