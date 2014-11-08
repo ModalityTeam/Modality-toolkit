@@ -47,11 +47,11 @@ MKtl { // abstract class
 		MKtlDevice.find( protocols );
 	}
 
-	*openDescFolder {
+	*openDescriptionFolder {
 		this.deviceDescriptionFolder.openOS;
 	}
 
-	openDescFile {
+	openDescriptionFile {
 		var descfilepath;
 		var mydesc = MKtl.allDevDescs.detect { |desc|
 			desc[\device] == MKtl(\rnnd0).deviceDescriptionName
