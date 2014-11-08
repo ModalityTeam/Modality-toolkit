@@ -49,9 +49,6 @@ MKtl { // abstract class
 		MKtlDevice.find( protocols );
 	}
 
-	exploring{
-		if ( mktlDevice.isNil ){ ^false };
-		^mktlDevice.exploring;
 	}
 
 	*initClass {
@@ -509,6 +506,11 @@ MKtl { // abstract class
 
 		};
 		^f
+	}
+
+	exploring{
+		if ( mktlDevice.isNil ){ ^false };
+		^mktlDevice.exploring;
 	}
 
 	explore{ |mode=true|
