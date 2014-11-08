@@ -205,7 +205,7 @@ HIDMKtlDevice : MKtlDevice {
                 // HIDFunc.element( { |v| el.rawValueAction_( v ) }, elid, \devid, devid );
                 srcDevice.elements.at( elid ).action = { |v, hidele| // could get raw value hidele.rawValue
 					el.rawValueAction_( v );
-					if(verbose) {
+					if(traceRunning) {
 						"% - % > % | type: %, src:%"
 						.format(this.name, el.name, el.value.asStringPrec(3), el.type, el.source).postln
 					}
@@ -216,7 +216,7 @@ HIDMKtlDevice : MKtlDevice {
                 theseElements.do{ |it|
                     it.action = { |v, hidele| // could get raw value hidele.rawValue
 						el.rawValueAction_( v );
-						if(verbose) {
+						if(traceRunning) {
 							"% - % > % | type: %, src:%"
 							.format(this.name, el.name, el.value.asStringPrec(3), el.type, el.source).postln
 						}

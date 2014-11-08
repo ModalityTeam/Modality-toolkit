@@ -28,7 +28,7 @@ MKtl { // abstract class
 	var <traceRunning = false;
 
 	trace{ |value=true|
-		if ( mktlDevice.notNil ){ mktlDevice.verbose = value; };
+		if ( mktlDevice.notNil ){ mktlDevice.trace( value ); };
 		traceRunning = value;
 	}
 

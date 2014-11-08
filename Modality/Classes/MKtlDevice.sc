@@ -2,26 +2,19 @@ MKtlDevice{
 
 	classvar <allAvailable; // ( 'midi': List['name1',... ], 'hid': List['name1',... ], ... )
 
-	/// shouldn't exploring be an instance flag?
-	classvar <exploring = false;
-
-	classvar <initialized = false;
+	classvar <allInitialized = false;
 
 	var <name, <deviceName; // short name + full device name
 	var <>mktl;
 
-	var <>verbose = false;
+	var <traceRunning = false;
 
 	trace{ |mode=true|
-		this.verbose = mode;
+		this.traceRunning = mode;
 	}
 
 	*initClass{
 			allAvailable = ();
-	}
-
-	*protocol{
-		^nil
 	}
 
 	*find { |protocols|
@@ -33,7 +26,7 @@ MKtlDevice{
 		protocols.asCollection.do{ |pcol|
 			this.matchClass(pcol) !? _.find
 		};
-		initialized = true;
+		allInitialized = true;
 	}
 
 	*matchClass { |symbol|
@@ -48,14 +41,14 @@ MKtlDevice{
 				protocols = protocols ? [\midi];
 			};
 		};
-		if ( initialized.not or: force ){
+		if ( allInitialized.not or: force ){
 			this.allSubclasses.do{ |it|
 				if ( protocols.includes( it.protocol ) ){
 					it.initDevices( force );
 				};
 			};
 		};
-		initialized = true;
+		allInitialized = true;
 	}
 
 	*findMatchingProtocols{ |name|
@@ -143,10 +136,9 @@ MKtlDevice{
 		mktl = parentMKtl;
 	}
 
-	replaceDeviceDescription{ |newDeviceDescName, devDesc|
-		this.cleanupElements;
-		mktl.init( name, newDeviceDescName, devDesc );
-		this.initElements( name );
+
+	*protocol{
+		this.subclassResponsibility(thisMethod)
 	}
 
 	cleanupElements{
@@ -160,7 +152,6 @@ MKtlDevice{
 	closeDevice{
 		this.subclassResponsibility(thisMethod)
 	}
-
 
 	// exploration:
 
