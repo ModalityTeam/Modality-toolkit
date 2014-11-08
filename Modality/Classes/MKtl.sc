@@ -307,7 +307,9 @@ MKtl { // abstract class
 	}
 
 	closeDevice{
-		mktlDevice.closeDevice;
+		if ( mktlDevice.notNil ){
+			mktlDevice.closeDevice;
+		};
 		mktlDevice = nil;
 	}
 
