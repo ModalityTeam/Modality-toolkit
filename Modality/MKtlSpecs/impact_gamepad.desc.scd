@@ -2,7 +2,7 @@
 MKtl.deviceDescriptionFolder.openOS
 */
 
-HIDMKtl.addSpec(\compassImpact, [0, 1.0]);
+MKtl.addSpec(\compassImpact, [0, 1.0]);
 
 (
 device: "USB Game Controllers_Mega World",

@@ -1,4 +1,4 @@
-HIDMKtl.addSpec(\compassShanWan, [0, 7]);
+MKtl.addSpec(\compassShanWan, [0, 7]);
 
 (
 device: "USB WirelessGamepad _ShanWan",

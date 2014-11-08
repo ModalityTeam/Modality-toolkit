@@ -1,4 +1,4 @@
-MIDIMKtl.addSpec(\selectNumark, [0, 4]);
+MKtl.addSpec(\selectNumark, [0, 4]);
 
 (
 device: "Numark ORBIT",
