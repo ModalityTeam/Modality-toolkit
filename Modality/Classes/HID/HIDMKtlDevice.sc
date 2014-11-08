@@ -77,6 +77,7 @@ HIDMKtlDevice : MKtlDevice {
 
 	*findSource{ |rawDeviceName, rawVendorName|
 		var devKey;
+		if ( initialized.not ){ ^nil };
 		this.sourceDeviceDict.keysValuesDo{ |key,hidinfo|
 			if ( rawVendorName.notNil ){
 				if ( hidinfo.productName == rawDeviceName and: ( hidinfo.vendorName == rawVendorName ) ){

@@ -313,27 +313,39 @@ MKtl { // abstract class
 		mktlDevice = nil;
 	}
 
-	openDevice{ |deviceName, lookAgain=true|
-		var shortName, devDesc;
+	checkWhetherDeviceIsThere{ |deviceName|
+		var shortDeviceName, devDesc;
 
-		if ( this.mktlDevice.notNil ){
-			"WARNING: Already a device opened for MKtl(%). Close it first with MKtl(%).closeDevice;\n".postf(name,name);
-			^this;
-		};
-		MKtlDevice.initHardwareDevices( lookAgain ); // this may be an issue
 		if ( deviceName.notNil ){
 			if ( deviceName.isKindOf( Symbol ) ){
-				shortName = deviceName;
+				shortDeviceName = deviceName;
 			}{
-				shortName = MKtlDevice.findDeviceShortNameFromLongName( deviceName );
+				shortDeviceName = MKtlDevice.findDeviceShortNameFromLongName( deviceName );
 			}
 		}{
 			devDesc = MKtl.getDeviceDescription( deviceDescriptionName );
 			if ( devDesc.notNil ){
 				deviceName = devDesc.at( \device );
-				shortName = MKtlDevice.findDeviceShortNameFromLongName( deviceName );
+				shortDeviceName = MKtlDevice.findDeviceShortNameFromLongName( deviceName );
 			};
 		};
+		^[shortDeviceName, deviceName, devDesc]
+	}
+
+	openDevice{ |deviceName, lookAgain=true|
+		var shortName, devDesc, protocol;
+
+		if ( this.mktlDevice.notNil ){
+			"WARNING: Already a device opened for MKtl(%). Close it first with MKtl(%).closeDevice;\n".postf(name,name);
+			^this;
+		};
+
+		#shortName, deviceName, devDesc = this.checkWhetherDeviceIsThere( deviceName );
+		if ( shortName.isNil ){
+			protocol = devDesc.at( \protocol );
+			MKtlDevice.initHardwareDevices( lookAgain, protocol.bubble ); // this may be an issue, only look for appropriate protocol
+		};
+
 		// [deviceName, shortName ].postln;
 		this.prTryOpenDevice( shortName, devDesc );
 	}

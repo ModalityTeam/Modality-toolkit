@@ -107,6 +107,7 @@ MIDIMKtlDevice : MKtlDevice {
 
 	*findSource { |rawDeviceName, rawPortName| // or destination
 		var devKey;
+		if ( initialized.not ){ ^nil };
 		this.sourceDeviceDict.keysValuesDo{ |key,endpoint|
 			if ( endpoint.device == rawDeviceName ){
 				if ( rawPortName.isNil ){

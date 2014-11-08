@@ -40,9 +40,20 @@ MKtlDevice{
 		^this.allSubclasses.detect({ |x| x.protocol == symbol })
 	}
 
-	*initHardwareDevices{ |force=false|
+	*initHardwareDevices{ |force=false, protocols|
+		if ( protocols.isNil ){
+			if ( Main.versionAtLeast( 3, 7 ) ){
+				protocols = protocols ? [\midi,\hid];
+			}{
+				protocols = protocols ? [\midi];
+			};
+		};
 		if ( initialized.not or: force ){
-			this.allSubclasses.do{ |it| it.initDevices( force ) };
+			this.allSubclasses.do{ |it|
+				if ( protocols.includes( it.protocol ) ){
+					it.initDevices( force );
+				};
+			};
 		};
 		initialized = true;
 	}
