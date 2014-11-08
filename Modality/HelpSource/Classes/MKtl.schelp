@@ -205,10 +205,46 @@ m.openDevice; // finds it automatically
 m.openDevice( "Run'N' Drive" ); // works
 ::
 
+METHOD:: closeDevice
+Closes the hardware device if it was open.
+
+METHOD:: free
+Frees the MKtl again and forgets about its existance. Closes the device if there was one open.
 
 METHOD:: name
 retrieve the name of the MKtl.
 
+
+METHOD:: gui
+
+Create a gui representation of the device
+
+discussion::
+
+MKtl(\test, "nanoKONTROL");
+k = MKtl(\test);
+k.gui
+
+
+METHOD:: postDeviceDescription
+
+Post device description.
+
+code::
+MKtl( \funky, \RunNDrive ).postDeviceDescription;
+::
+
+METHOD:: deviceDescriptionName
+
+Return the name of the device description that is in use.
+
+METHOD:: trace
+Post incoming data if the flag is set to true.
+
+METHOD:: traceRunning
+Whether or not we are printing incoming data currently.
+
+SUBSECTION:: Accessing elements
 
 METHOD:: elements
 all control elements (MKtlElement) on the device you may want to listen or talk to. this returns an link::Classes/MKtlElementDict:: containing a hierarchical tree of link::Classes/MKtlElement::s, organised via MKtlElementDicts and link::Classes/MKtlElementArray::s.
@@ -232,17 +268,17 @@ Access an element in the elements hierarchy by passing in one index.
 argument:: index
 Index to get from the elements.
 
+METHOD:: valueAt
+Access an element's value by the element key
 
-METHOD:: gui
+argument:: elName
+The key of the element.
 
-Create a gui representation of the device
-
-discussion::
-
-MKtl(\test, "nanoKONTROL");
-k = MKtl(\test);
-k.gui
-
+code::
+m = MKtl( 'funky', \RunNDrive );
+m.valueAt( \compass );
+m.valueAt( \bt_2 );
+::
 
 METHOD:: elementsNotOfType
 
@@ -259,6 +295,8 @@ code::
 k.elementsOfType(\slider)
 ::
 
+SUBSECTION:: Exploration of a device
+
 METHOD:: explore
 
 When a device doesn't have a description file yet, explore can be used to help in creating one.
@@ -266,12 +304,15 @@ When a device doesn't have a description file yet, explore can be used to help i
 METHOD:: exploring
 Returns a Boolean whether or not a device is currently being explored.
 
+METHOD:: createDescriptionFile
+When a device doesn't have a description file yet, this method can be used to create a description file.
+
+See link::Tutorials/How_to_create_a_description_file:: for a full discussion on this.
+
+
 
 SUBSECTION:: Private methods
 
-METHOD:: postDeviceDescription
-
-p device description
 
 METHOD:: allElements
 
@@ -314,7 +355,7 @@ METHOD:: makeElements
 Populate the elements with MKtlElements.
 
 
-PRIVATE:: storeArgs, printOn, elementNames, elementDescriptionFor, deviceDescriptionHierarch, defaultValueFor, prUnderscorify, replaceElements, prTraverse, makeElementName, makeFlatDeviceDescription, checkWhetherDeviceIsThere
+PRIVATE:: storeArgs, printOn, elementNames, elementDescriptionFor, deviceDescriptionHierarch, defaultValueFor, prUnderscorify, replaceElements, prTraverse, makeElementName, makeFlatDeviceDescription, checkWhetherDeviceIsThere, warnNoDeviceDescriptionFileFound, verbose
 
 
 
