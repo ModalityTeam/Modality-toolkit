@@ -294,7 +294,7 @@ MKtl { // abstract class
 		mktlDevice = nil;
 	}
 
-	openDeviceFor{ |deviceName, lookAgain=true|
+	openDevice{ |deviceName, lookAgain=true|
 		var shortName;
 
 		if ( this.mktlDevice.notNil ){
