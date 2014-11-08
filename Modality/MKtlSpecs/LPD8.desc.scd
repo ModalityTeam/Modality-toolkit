@@ -4,22 +4,30 @@
 device: "LPD8",
 protocol: \midi,
 description: (
-	\kn: (1..8).collect{ |midiNum|
-		(\midiMsgType: \cc, \type: \knob, \midiChan: 0, \midiNum: midiNum, \spec: \midiCC)
-	},
-	\padOn: (36..43).collect{ |note|
-		(\midiMsgType: \noteOn, \type: \pad, \midiChan: 0, \midiNum:  note, \spec: \midiVel, \ioType: \inout )
-	},
-	\padOff: (36..43).collect{ |note|
-		(\midiMsgType: \noteOff, \type: \pad, \midiChan: 0, \midiNum:  note, \spec: \midiVel, \ioType: \inout )
-	},
+	\kn: Event.newFrom( (1..8).collect{ |midiNum|
+		[ midiNum, (\midiMsgType: \cc, \type: \knob, \midiChan: 0, \midiNum: midiNum, \spec: \midiCC) ]
+	}.flatten ),
+	\pad: (
+		\on: Event.newFrom( (36..43).collect{ |note|
+			[
+				note,
+				(\midiMsgType: \noteOn, \type: \pad, \midiChan: 0, \midiNum:  note, \spec: \midiVel)
+			]
+		}.flatten ),
+		\off: Event.newFrom( (36..43).collect{ |note|
+			[
+				note,
+				(\midiMsgType: \noteOff, \type: \pad, \midiChan: 0, \midiNum:  note, \spec: \midiVel)
+			]
+		}.flatten )
+	),
 	/*
 	//no pad cc because it uses the same cc numbers as knobs... dugh...
 	\padCC: ((1..6)++[8,9]).collect{ |cc|
 	(\midiMsgType: \cc, \type: \pad, \midiChan: 0, \midiNum:  cc, \spec: \midiCC)
 	}*/
-)
-)
+);
+);
 
 /*
 
