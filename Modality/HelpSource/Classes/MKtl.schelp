@@ -208,6 +208,9 @@ m.openDevice( "Run'N' Drive" ); // works
 METHOD:: closeDevice
 Closes the hardware device if it was open.
 
+METHOD:: mktlDevice
+The instance of MKtlDevice that this MKtl uses.
+
 METHOD:: free
 Frees the MKtl again and forgets about its existance. Closes the device if there was one open.
 
@@ -226,6 +229,8 @@ k = MKtl(\test);
 k.gui
 
 
+SUBSECTION:: The device description
+
 METHOD:: postDeviceDescription
 
 Post device description.
@@ -237,6 +242,9 @@ MKtl( \funky, \RunNDrive ).postDeviceDescription;
 METHOD:: deviceDescriptionName
 
 Return the name of the device description that is in use.
+
+METHOD:: openDescriptionFile
+Opens the device description file.
 
 METHOD:: trace
 Post incoming data if the flag is set to true.
@@ -355,7 +363,6 @@ METHOD:: makeElements
 Populate the elements with MKtlElements.
 
 
-PRIVATE:: storeArgs, printOn, elementNames, elementDescriptionFor, deviceDescriptionHierarch, defaultValueFor, prUnderscorify, replaceElements, prTraverse, makeElementName, makeFlatDeviceDescription, checkWhetherDeviceIsThere, warnNoDeviceDescriptionFileFound, verbose
-
+PRIVATE:: storeArgs, printOn, elementNames, elementDescriptionFor, deviceDescriptionHierarch, defaultValueFor, prUnderscorify, replaceElements, prTraverse, makeElementName, makeFlatDeviceDescription, checkWhetherDeviceIsThere, warnNoDeviceDescriptionFileFound, initFromDeviceName, prArgToElementKey, prInitFromDeviceDescription, prMakeElementsFunc, prMatchDo, prMatchedElements, prTryOpenDevice
 
 
