@@ -5,6 +5,15 @@ HIDMKtlDevice : MKtlDevice {
 
 	var <srcID, <srcDevice;
 
+	*getSourceName{ |shortName|
+		var srcName;
+		var src = this.sourceDeviceDict.at( shortName );
+		if ( src.notNil ){
+			srcName = this.makeDeviceName( src );
+		};
+		^srcName;
+	}
+
 	*initDevices { |force=false|
 		if ( Main.versionAtLeast( 3, 7 ) ){
 			(initialized && {force.not}).if{^this};
@@ -52,15 +61,15 @@ HIDMKtlDevice : MKtlDevice {
 
 	*postPossible{
 		"\n// Available HIDMKtlDevices:".postln;
-		"// MKtl(autoName);  // [ hid vendor, product(, serial number) ]".postln;
+		"// MKtl(autoName);  // [ hid product, vendor(, serial number) ]".postln;
 		sourceDeviceDict.keysValuesDo{ |key,info|
 			var serial = info.serialNumber;
 			if( serial.isEmpty ) {
 				"    MKtl('%');  // [ %, % ]\n"
-				.postf(key, info.vendorName.asCompileString, info.productName.asCompileString )
+				.postf(key, info.productName.asCompileString, info.vendorName.asCompileString )
 			} {
 				"    MKtl('%');  // [ %, %, % ]\n"
-				.postf(key, info.vendorName.asCompileString, info.productName.asCompileString, serial.asCompileString );
+				.postf(key, info.productName.asCompileString, info.vendorName.asCompileString, serial.asCompileString );
 			}
 		};
 		"\n-----------------------------------------------------".postln;
@@ -96,7 +105,7 @@ HIDMKtlDevice : MKtlDevice {
 			foundSource = HID.findBy( path: uid ).asArray.first;
 		};
 
-		foundSource.postln;
+		// foundSource.postln;
 
 		// make a new one
 		if (foundSource.isNil) {
@@ -126,6 +135,10 @@ HIDMKtlDevice : MKtlDevice {
     }
 
 	postRawSpecs { this.class.postRawSpecsOf(srcDevice) }
+
+	exploring{
+		^(HIDExplorer.observedSrcDev == this.srcDevice);
+	}
 
 	explore{ |mode=true|
 		if ( mode ){

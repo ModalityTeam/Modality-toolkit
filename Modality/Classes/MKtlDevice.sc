@@ -45,6 +45,34 @@ MKtlDevice{
 		^allAvailable.select(_.includes(name)).keys.as(Array);
 	}
 
+	*getMatchingProtocol{ |name|
+		var matchingProtocols = this.findMatchingProtocols( name );
+		if ( matchingProtocols.size == 0 ){
+			// not attached, just return the virtual one if it was found:
+			^nil;
+		};
+		if ( matchingProtocols.size > 1 ){ // more than one matching protocol:
+			"WARNING: multiple protocol devices not implemented yet, using %\n".postf( matchingProtocols.first );
+		};
+		matchingProtocols = matchingProtocols.first;
+		^matchingProtocols;
+	}
+
+	*getDeviceNameFromShortName{ |shortName|
+		var subClass;
+		var matchingProtocol = this.getMatchingProtocol( shortName );
+		// "matching protocol : ".post; matchingProtocol.postln;
+		if ( matchingProtocol.isNil ){
+			^nil;
+		};
+		subClass = MKtlDevice.matchClass(matchingProtocol);
+		if( subClass.isNil ){
+			^nil;
+		}{
+			^subClass.getSourceName( shortName );
+		};
+	}
+
 	*findDeviceShortNameFromLongName{ |devLongName|
 		var devKey, newDevKey;
 		if ( devLongName.isKindOf( String ) ){
@@ -68,24 +96,16 @@ MKtlDevice{
 	}
 
 	*tryOpenDevice{ |name, parentMKtl|
-		var matchingProtocols, subClass;
+		var matchingProtocol, subClass;
 		// then see if it is attached:
 
-		matchingProtocols = this.findMatchingProtocols( name );
-		matchingProtocols.postln;
+		matchingProtocol = this.getMatchingProtocol( name );
 
-		if ( matchingProtocols.size == 0 ){
-			// not attached, just return the virtual one if it was found:
+		if ( matchingProtocol.isNil ){
 			^nil;
 		};
 
-		if ( matchingProtocols.size > 1 ){ // more than one matching protocol:
-			"WARNING: multiple protocol devices not implemented yet, using %\n".postf( matchingProtocols.first );
-		};
-
-		// taking the first:
-		matchingProtocols = matchingProtocols.first;
-		subClass = MKtlDevice.matchClass(matchingProtocols);
+		subClass = MKtlDevice.matchClass(matchingProtocol);
 		if( subClass.isNil ){
 			"WARNING: MKtl: device not found with name %, and no matching device description found\n".postf( name );
 			^nil;
@@ -94,12 +114,6 @@ MKtlDevice{
 			^subClass.new( name, parentMKtl: parentMKtl );
 		};
 	}
-
-	/*
-	*new{ |name|
-		^super.new.init( name );
-	}
-	*/
 
 	*basicNew { |name, deviceName, parentMKtl |
 		^super.new.init(name, deviceName, parentMKtl );
@@ -132,6 +146,11 @@ MKtlDevice{
 
 
 	// exploration:
+
+	exploring{
+		this.subclassResponsibility(thisMethod)
+	}
+
 	explore{ |mode=true|
 		this.subclassResponsibility(thisMethod)
 	}

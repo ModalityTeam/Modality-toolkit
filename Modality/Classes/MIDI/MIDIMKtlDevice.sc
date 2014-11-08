@@ -81,7 +81,21 @@ MIDIMKtlDevice : MKtlDevice {
 		"\n-----------------------------------------------------".postln;
 	}
 
-	*findSource { |rawDeviceName, rawPortName|
+	*getSourceName{ |shortName|
+		var srcName;
+		var src = this.sourceDeviceDict.at( shortName );
+		if ( src.notNil ){
+			srcName = src.device;
+		}{
+			src = this.destinationDeviceDict.at( shortName );
+			if ( src.notNil ){
+				srcName = src.device;
+			};
+		};
+		^srcName;
+	}
+
+	*findSource { |rawDeviceName, rawPortName| // or destination
 		var devKey;
 		this.sourceDeviceDict.keysValuesDo{ |key,endpoint|
 			if ( endpoint.device == rawDeviceName ){
@@ -94,6 +108,19 @@ MIDIMKtlDevice : MKtlDevice {
 				}
 			};
 		};
+		if ( devKey.isNil ){
+			this.destinationDeviceDict.keysValuesDo{ |key,endpoint|
+				if ( endpoint.device == rawDeviceName ){
+					if ( rawPortName.isNil ){
+						devKey = key;
+					}{
+						if ( endpoint.name == rawPortName ){
+							devKey = key;
+						}
+					}
+				};
+			};
+		};
 		^devKey;
 	}
 
@@ -104,7 +131,7 @@ MIDIMKtlDevice : MKtlDevice {
 
 		this.initDevices;
 
-		[ name, srcUID, destUID, devDescName, parentMKtl ].postln;
+		// [ name, srcUID, destUID, devDescName, parentMKtl ].postln;
 		// make a new source
 		foundSource = srcUID.notNil.if({
 			MIDIClient.sources.detect { |src|
@@ -114,7 +141,7 @@ MIDIMKtlDevice : MKtlDevice {
 			sourceDeviceDict[name.asSymbol];
 		});
 
-		[ name, srcUID, destUID, devDescName, parentMKtl ].postln;
+		// [ name, srcUID, destUID, devDescName, parentMKtl ].postln;
 
 		if (foundSource.isNil) {
 			warn("MIDIMKtlDevice:"
@@ -130,7 +157,7 @@ MIDIMKtlDevice : MKtlDevice {
 			destinationDeviceDict[name.asSymbol];
 		});
 
-		[ name, srcUID, destUID, devDescName, parentMKtl ].postln;
+		// [ name, srcUID, destUID, devDescName, parentMKtl ].postln;
 
 		if (foundDestination.isNil) {
 			warn("MIDIMKtlDevice:"
@@ -152,7 +179,7 @@ MIDIMKtlDevice : MKtlDevice {
 			deviceName = foundSource.device;
 		};
 
-		[ devDescName, foundSource.device, foundDestination.device ].postln;
+		// [ devDescName, foundSource.device, foundDestination.device ].postln;
 		^super.basicNew(name, deviceName, parentMKtl )
 			.initMIDIMKtl(name, foundSource, foundDestination );
 	}
@@ -209,6 +236,11 @@ MIDIMKtlDevice : MKtlDevice {
 	}
 
 	/// ----(((((----- EXPLORING ---------
+
+	exploring{
+		^(MIDIExplorer.observedSrcID == srcID );
+	}
+
 	explore { |mode=true|
 		if ( mode ){
 			"Using MIDIExplorer. (see its Helpfile for Details)".postln;
@@ -258,7 +290,7 @@ MIDIMKtlDevice : MKtlDevice {
 		hashToElNameDict = ();
 		elNameToMidiDescDict = ();
 
-		if ( mktl.deviceDescription.notNil ){
+		if ( mktl.deviceDescriptionArray.notNil ){
 			this.prepareElementHashDict;
 			this.makeRespFuncs;
 		}
@@ -331,8 +363,8 @@ MIDIMKtlDevice : MKtlDevice {
 	prepareElementHashDict {
 		var elementsDict = mktl.elementsDict;
 
-		if ( mktl.deviceDescription.notNil) {
-			mktl.deviceDescription.pairsDo { |elName, descr|
+		if ( mktl.deviceDescriptionArray.notNil) {
+			mktl.deviceDescriptionArray.pairsDo { |elName, descr|
 				var hash;
 
 				if ( descr[\out].notNil ){
@@ -477,7 +509,7 @@ MIDIMKtlDevice : MKtlDevice {
 
 	makeTouch {
 		var typeKey = \touch;
-		var info = MIDIAnalysis.checkForMultiple( mktl.deviceDescription, typeKey, \midiChan);
+		var info = MIDIAnalysis.checkForMultiple( mktl.deviceDescriptionArray, typeKey, \midiChan);
 		var chan = info[\midiChan];
 		var listenChan =if (chan.isKindOf(SimpleNumber)) { chan };
 
@@ -551,7 +583,7 @@ MIDIMKtlDevice : MKtlDevice {
 	// should work, can't test now.
 	makeBend {
 		var typeKey = \bend;
-		var info = MIDIAnalysis.checkForMultiple( mktl.deviceDescription, typeKey, \midiChan);
+		var info = MIDIAnalysis.checkForMultiple( mktl.deviceDescriptionArray, typeKey, \midiChan);
 		var chan = info[\midiChan];
 		var listenChan =if (chan.isKindOf(SimpleNumber)) { chan };
 
@@ -590,7 +622,7 @@ MIDIMKtlDevice : MKtlDevice {
 
 	makeProgram {
 		var typeKey = \program;
-		var info = MIDIAnalysis.checkForMultiple( mktl.deviceDescription, typeKey, \midiChan);
+		var info = MIDIAnalysis.checkForMultiple( mktl.deviceDescriptionArray, typeKey, \midiChan);
 		var chan = info[\midiChan];
 		var listenChan =if (chan.isKindOf(SimpleNumber)) { chan };
 
@@ -636,7 +668,7 @@ MIDIMKtlDevice : MKtlDevice {
 	}
 
 	makeRespFuncs { |msgTypes|
-		msgTypes = MIDIAnalysis.checkMsgTypes( mktl.deviceDescription);
+		msgTypes = MIDIAnalysis.checkMsgTypes( mktl.deviceDescriptionArray);
 		msgTypes = msgTypes ? allMsgTypes;
 		responders = ();
 		global = ();

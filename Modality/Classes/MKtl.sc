@@ -12,8 +12,6 @@ MKtl { // abstract class
 	var <elements;
 
 
-	classvar <exploring = false;
-
 	// tree structure composed of dictionaries and arrays
 	// with a description of all the elements on the device.
 	// read from an external file.
@@ -21,8 +19,9 @@ MKtl { // abstract class
 
 	// an array of keys and values with a description of all the elements on the device.
 	// generated from the hierarchical description read from the file.
-	var <deviceDescription;
-	var <usedDeviceDescName;
+	var <deviceDescriptionArray;
+
+	var <deviceDescriptionName;
 
 	var <mktlDevice; // references to the device used
 
@@ -50,9 +49,9 @@ MKtl { // abstract class
 		MKtlDevice.find( protocols );
 	}
 
-	/// shouldn't exploring be an instance flag?
-	*exploring{
-		^MKtlDevice.exploring;
+	exploring{
+		if ( mktlDevice.isNil ){ ^false };
+		^mktlDevice.exploring;
 	}
 
 	*initClass {
@@ -136,24 +135,32 @@ MKtl { // abstract class
 		^[devDesc, deviceDescName];
 	}
 
-	*findDeviceDesc{ |deviceDescName, shortName|
-		var devDesc;
-		if ( deviceDescName.isNil ){
-			if ( shortName.isNil ){ ^[nil,nil]; };
-			#devDesc, deviceDescName = this.findDeviceDescFromShortName( shortName );
+	*findDeviceDescFromDeviceName{ |deviceName|
+		^allDevDescs.select{ |desc,key|
+			desc.at( \device ) == deviceName;
+		}.asArray.first;
+	}
+
+	*findDeviceDesc{ |deviceDesc, shortName|
+		var devDesc, deviceDescName;
+
+		if ( deviceDesc.isNil ){
+			if ( shortName.isNil ){
+				^[nil,nil];
+			}{
+				#devDesc, deviceDescName = this.findDeviceDescFromShortName( shortName );
+			}
 		}{
-			if ( deviceDescName.isKindOf( Dictionary ) ){
-				devDesc = deviceDescName;
+			if ( deviceDesc.isKindOf( Dictionary ) ){
+				devDesc = deviceDesc;
+				deviceDescName = devDesc.at( \device );
 			}{
 				// look up deviceDescName in allDescriptions
-				devDesc = this.getDeviceDescription( deviceDescName );
+				devDesc = this.getDeviceDescription( deviceDesc );
+				deviceDescName = deviceDesc;
 			}
 		};
 		^[devDesc, deviceDescName]
-	}
-
-	*newFromDeviceDesc{ |devDesc, deviceDescName, name|
-		^this.basicNew( name, deviceDescName, devDesc );
 	}
 
 	// new returns existing instances
@@ -163,8 +170,8 @@ MKtl { // abstract class
 	*new { |name, deviceDesc, lookForNew = false|
 		if ( name.notNil ){ // first do a lookup
 			if ( all[name].notNil ){
-				if ( deviceDescName.notNil ){
-					"WARNING: MKtl: if you want to change the device specification, use MKtl(%).rebuildFrom(%)\n".postf( name, deviceDesc );
+				if ( deviceDesc.notNil ){
+					"WARNING: MKtl: if you want to change the device specification, use MKtl(%).rebuildFrom(%)\n".postf( name.asCompileString, deviceDesc.asCompileString );
 				};
 				^all[name];
 			}
@@ -183,91 +190,56 @@ MKtl { // abstract class
 	*newFromDevice{ |name, deviceInfo, deviceDesc, lookForNew = false|  // autogenerates a shortName if not given
 
 		// --- generate overview of attached and available description if necessary ---
-		if ( name.notNil ){
-			// we want to know what is attached if we look with a name
-			MKtlDevice.initHardwareDevices( lookForNew );
-		};
+		MKtlDevice.initHardwareDevices( lookForNew );
 		this.loadAllDescs( lookForNew ); // will look for deviceDescs
 
 		if ( name.notNil ){ // first do a lookup
 			if ( all[name].notNil ){
-				if ( deviceDescName.notNil ){
+				if ( deviceDesc.notNil ){
 					"WARNING: MKtl: if you want to change the device specification, use MKtl(%).rebuildFrom(%)\n".postf( name, deviceDesc );
 				};
 				^all[name];
 			}
 		};
-		^super.new.initFromDevice( name, deviceInfo, deviceDesc );
+		^super.new.initFromDeviceName( name, deviceInfo, deviceDesc );
 	}
 
-	init{ |name, deviceDesc|
-		var devDescFromShortName, devDesc;
-		var newMKtl, newMKtlDevice;
-		var newDeviceDescName;
-		var isUnknownDevice = false;
-		var longDeviceName;
+	init{ |argName, deviceDesc|
+		var devDesc, deviceDescName;
 
+		name = argName;
 		// --- if name is not given, create one ---
 		if ( name.isNil ){
-			#devDesc, deviceDescName = this.findDeviceDesc( deviceDescName );
-			name = this.makeShortName( deviceDescName ).asSymbol;
-			newMKtl = this.newFromDeviceDesc( devDesc, deviceDescName, name );
-			^newMKtl;
+			if ( deviceDesc.isKindOf( Dictionary ) ){
+				deviceDescName = deviceDesc.at( \device );
+			}{
+				deviceDescName = deviceDesc;
+			};
+			name = this.class.makeShortName( deviceDescName ).asSymbol;
 		};
 
-		if ( name.isKindOf( String ) or: name.isKindOf( Array ) ){
-			// name is a string, and thus a long device name
-			longDeviceName = name;
-			// try and find short name from devices
-			name = MKtlDevice.findDeviceShortNameFromLongName( longDeviceName );
+		#devDesc, deviceDescName = this.class.findDeviceDesc( deviceDesc, name );
+
+		if ( devDesc.isNil ){
+			this.warnNoDeviceDescriptionFileFound( name );
 		};
 
-		/*
-		// --- name is given, see if it is there in all: ---
-		if ( all[name].notNil ){
-			// no deviceDescName given, so just return
-			if ( deviceDescName.isNil ){
-				^all[name];
-			};
-			// name exists, check if the desired spec matches, if yes, just return
-			if ( deviceDescName.isKindOf( Dictionary ).not ){
-				if ( deviceDescName == all[name].usedDeviceDescName ){
-					^all[name];
-				};
-				#devDesc, newDeviceDescName = this.findDeviceDesc( deviceDescName );
-			}{
-				devDesc = deviceDescName;
-				newDeviceDescName = ( devDesc.at( \device ) );
-			};
-			if ( devDesc.notNil ){
-				all[name].replaceDeviceDesc( devDesc, newDeviceDescName );
-				"MKtl( % ) now has device description %\n".postf( name, newDeviceDescName );
-			}{ // not succesfull, keeping the old
-				"WARNING: Could not change deviceDescription! MKtl( % ) still has device description %\n".postf( name, all[name].usedDeviceDescName );
-			};
-			^all[name];
-		}
-		*/
-		{
-			if ( deviceDescName.isKindOf( Dictionary ).not ){
-				#devDesc, deviceDescName = this.findDeviceDesc( deviceDescName, name );
-			}{
-				devDesc = deviceDescName;
-				deviceDescName = devDesc.at( \device );
-			};
+		this.prInitFromDeviceDescription( devDesc, deviceDescName );
+		this.prTryOpenDevice( name );
 
-			if ( devDesc.isNil ){ // name given, but no devDesc found:
-				newMKtl = this.basicNew( name );
-			}{ // create a virtual device first:
-				newMKtl = this.newFromDeviceDesc( devDesc, deviceDescName, name );
-			};
+		all.put(name, this);
+	}
 
-			newMKtl.prTryOpenDevice( name );
-
-			if ( isUnknownDevice ){ // no desc found
-				this.warnNoDeviceDescriptionFileFound( name );
-			};
-			^newMKtl;
+	initFromDeviceName{  | name, deviceInfo, deviceDesc |
+		var deviceDescName, deviceName;
+		var shortName = MKtlDevice.findDeviceShortNameFromLongName( deviceInfo );
+		if( name.isNil ){ name = shortName; };
+		if ( deviceDesc.notNil ){
+			this.init( name, deviceDesc );
+		}{
+			deviceName = MKtlDevice.getDeviceNameFromShortName( shortName );
+			deviceDesc = this.class.findDeviceDescFromDeviceName( deviceName );
+			this.init( name, deviceDescName );
 		}
 	}
 
@@ -283,24 +255,27 @@ MKtl { // abstract class
 		};
 	}
 
-	replaceDeviceDesc{ |devDesc, newDeviceDescName| // could be a string/symbol or dictionary
-		var foundDeviceDescName;
-		if ( devDesc.isNil ){
-			#devDesc, foundDeviceDescName = MKtl.findDeviceDesc( newDeviceDescName );
+	rebuildFrom{ |deviceDescriptionNameOrDict| // could be a string/symbol or dictionary
+		var devDescName, devDesc;
+		if ( deviceDescriptionNameOrDict.isNil ){
+			#devDesc, devDescName = this.class.findDeviceDesc( shortName: name );
 			if ( devDesc.isNil ){
-				this.warnNoDeviceDescriptionFileFound( newDeviceDescName );
+				this.warnNoDeviceDescriptionFileFound( devDescName );
 				^this; // don't change anything, early return
 			};
-			newDeviceDescName = foundDeviceDescName;
 		}{
-			if ( newDeviceDescName.isNil ){
-				newDeviceDescName = devDesc.at( \device );
-			}
+			if ( deviceDescriptionNameOrDict.isKindOf( Dictionary ) ){
+				devDescName = deviceDescriptionNameOrDict.at( \device );
+				devDesc = deviceDescriptionNameOrDict;
+			}{
+				#devDesc, devDescName = this.class.findDeviceDesc( deviceDescriptionNameOrDict );
+			};
 		};
 		if ( mktlDevice.notNil ){
 			mktlDevice.cleanupElements;
 		};
-		this.init( name, newDeviceDescName, devDesc );
+
+		this.prInitFromDeviceDescription( devDesc, devDescName );
 		if ( mktlDevice.notNil ){
 			mktlDevice.initElements( name );
 		};
@@ -328,7 +303,7 @@ MKtl { // abstract class
 				shortName = MKtlDevice.findDeviceShortNameFromLongName( deviceName );
 			}
 		}{
-			shortName = this.class.makeShortName( usedDeviceDescName );
+			shortName = this.class.makeShortName( deviceDescriptionName );
 		};
 		this.prTryOpenDevice( shortName );
 	}
@@ -354,36 +329,20 @@ MKtl { // abstract class
 
 	*/
 
-	*basicNew { |name, deviceDescName, devDesc|
-		^super.new.init(name, deviceDescName, devDesc);
-	}
-
-	init { |argName, deviceDescName, devDesc|
+	prInitFromDeviceDescription { |devDesc, devDescName|
 		var deviceInfo;
-		name = argName;
 		elementsDict = ();
-		if (deviceDescName.isNil) {
-			warn("no deviceDescription name given!");
-		};
-		if ( devDesc.isNil ){
-			devDesc = this.class.getDeviceDescription( deviceDescName )
-		};
-		if ( devDesc.notNil ){
-			deviceInfo = devDesc.deepCopy;
-			if ( deviceInfo.isNil )	{ // no device file found:
-				this.warnNoDeviceDescriptionFileFound( argName );
-			}{
-				this.loadDeviceDescription( deviceInfo );
-			}
+		deviceInfo = devDesc.deepCopy;
+		if ( deviceInfo.isNil )	{ // no device file found:
+			this.warnNoDeviceDescriptionFileFound( name );
 		}{
-			this.warnNoDeviceDescriptionFileFound( argName );
+			this.loadDeviceDescription( deviceInfo );
 		};
-		if ( deviceDescription.notNil ){
-			usedDeviceDescName = deviceDescName;
+		if ( deviceDescriptionArray.notNil ){
+			deviceDescriptionName = devDescName;
 			this.makeElements;
-			( "Created MKtl:" + name + "using device description" + deviceDescName ).postln;
+			( "Created MKtl:" + name + "using device description" + deviceDescriptionName ).postln;
 		};
-		all.put(name, this);
 	}
 
 	storeArgs { ^[name] }
@@ -453,14 +412,14 @@ MKtl { // abstract class
 		//"class: % deviceName: % deviceInfo:%".format(deviceName.class, deviceName, deviceInfo).postln;
 
 		deviceDescriptionHierarch = deviceInfo[\description];
-		deviceDescription = this.makeFlatDeviceDescription( deviceDescriptionHierarch );
+		deviceDescriptionArray = this.makeFlatDeviceDescription( deviceDescriptionHierarch );
 
-		deviceDescription.pairsDo{ |key,elem|
+		deviceDescriptionArray.pairsDo{ |key,elem|
 			this.class.flattenDescription( elem )
 		};
 
 		// create specs
-		deviceDescription.pairsDo {|key, elem|
+		deviceDescriptionArray.pairsDo {|key, elem|
 			var foundSpec =  specs[elem[\spec]];
 			if (foundSpec.isNil) {
 				warn("Mktl - in description %, el %, spec for '%' is missing! please add it via:"
@@ -606,11 +565,11 @@ MKtl { // abstract class
 
 
 	elementDescriptionFor { |elname|
-		^deviceDescription[deviceDescription.indexOf(elname) + 1]
+		^deviceDescriptionArray[deviceDescriptionArray.indexOf(elname) + 1]
 	}
 
 	postDeviceDescription {
-		deviceDescription.pairsDo {|a, b| "% : %\n".postf(a, b); }
+		deviceDescriptionArray.pairsDo {|a, b| "% : %\n".postf(a, b); }
 	}
 
 	makeElements {
@@ -651,7 +610,7 @@ MKtl { // abstract class
 	// should filter: those for my platform only
 	elementNames {
 		if ( elementsDict.isEmpty ){
-			^(0, 2 .. deviceDescription.size - 2).collect (deviceDescription[_])
+			^(0, 2 .. deviceDescriptionArray.size - 2).collect (deviceDescriptionArray[_])
 		}{
 			^elementsDict.keys.asArray;
 		}
