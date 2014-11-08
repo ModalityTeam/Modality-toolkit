@@ -332,6 +332,11 @@ MKtl { // abstract class
 		^[shortDeviceName, deviceName, devDesc]
 	}
 
+	free{
+		this.closeDevice;
+		all.removeAt( name );
+	}
+
 	openDevice{ |deviceName, lookAgain=true|
 		var shortName, devDesc, protocol;
 
