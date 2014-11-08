@@ -25,21 +25,12 @@ MKtl { // abstract class
 
 	var <mktlDevice; // references to the device used
 
-	var <verbose = false;
-
-	verbose_ {|value=true|
-		verbose = value;
-		if ( mktlDevice.notNil ){ mktlDevice.verbose = verbose; };
-	}
+	var <traceRunning = false;
 
 	trace{ |value=true|
-		this.verbose_( value );
+		if ( mktlDevice.notNil ){ mktlDevice.verbose = value; };
+		traceRunning = value;
 	}
-
-	traceRunning {
-		^this.verbose
-	}
-
 
 	*allAvailable{
 		^MKtlDevice.allAvailable;
