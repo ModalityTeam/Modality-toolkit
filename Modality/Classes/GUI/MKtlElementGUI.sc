@@ -133,7 +133,7 @@ MKtlElementGUI {
 	makeSubViews {
 		var view, getValueFunc;
 		
-		view = this.getMakeViewFunc( element.type ).value( parent, element.key ? element.name );
+		view = this.getMakeViewFunc( element.type ).value( parent, element.name );
 		
 		getValueFuncs = getValueFuncs.add( this.makeGetValueFunc( element, view ) );
 		views = views.add( view );
@@ -152,7 +152,7 @@ MKtlElementGUI {
 
 }
 
-MKtlElementDictGUI : MKtlElementGUI {
+MKtlElementGroupGUI : MKtlElementGUI {
 	
 	classvar <>makeSubViewsFuncDict;
 	
@@ -239,18 +239,8 @@ MKtlElementDictGUI : MKtlElementGUI {
 	}
 
 	makeSubViews {
-		var func;
-		func = makeSubViewsFuncDict[ element.type ] ?? { makeSubViewsFuncDict[ \mixed ] };
-		func.value( this );
-	}
-
-}
-
-MKtlElementArrayGUI : MKtlElementDictGUI {
-
-	makeSubViews {
 		var division, size, func;
-		if( element.keys.any(_.notNil) ) {
+		if( element.keys.any(_.isKindOf( Symbol )) ) {
 			var func;
 			func = makeSubViewsFuncDict[ element.type ] ?? { makeSubViewsFuncDict[ \mixed ] };
 			func.value( this );
@@ -291,22 +281,15 @@ MKtlElementArrayGUI : MKtlElementDictGUI {
 
 }
 
-
 + MKtlElement {
 	gui { |parent, bounds|
 		^MKtlElementGUI( parent, bounds, this );
 	}
 }
 
-+ MKtlElementDict {
++ MKtlElementGroup {
 	gui { |parent, bounds|
-		^MKtlElementDictGUI( parent, bounds, this );
-	}
-}
-
-+ MKtlElementArray {
-	gui { |parent, bounds|
-		^MKtlElementArrayGUI( parent, bounds, this );
+		^MKtlElementGroupGUI( parent, bounds, this );
 	}
 }
 

@@ -1,12 +1,59 @@
-MKtlAbstractElementGroup : MAbstractElement {
+MKtlElementGroup : MAbstractElement {
 
 	var <elements;
+	var <dict;
 
 	*new { |source, name, elements|
 		^super.newCopyArgs( source, name ).elements_(elements);
 	}
 
-	init { }
+	init {		
+		var array;
+		dict = dict ? ();
+		elements = elements ?? { Array.new };
+		case { elements.postln.isKindOf( Dictionary ).postln } {
+			elements.sortedKeysValuesDo({ |key, value|
+				dict.put( key, value );
+				array = array.add( value );
+			});
+			elements = array;
+			this.sortElementsByType;
+		} { elements.isKindOf( Array ) } {
+			elements = elements.collect({ |item|
+				if( item.isKindOf( Association ) ) {
+					dict.put( item.key, item.value );
+					item.value;
+				} {
+					item;
+				};
+			}).postln;
+		};
+		dict.values.do({ |item|
+			if( elements.includes( item ).not ) {
+				dict.remove( item );
+			};
+		});
+		if( elements.size > 0 ) {
+			type = elements.first.type;
+			elements.do({ |item|
+				if( addGroupsAsParent ) { item.parent = this };
+				if( item.type != type ) {
+					type = 'mixed';
+				};
+			});
+		};
+	}
+	
+	sortElementsByType {
+		var order;
+		order = [ MKtlElement, MKtlElementDict, MKtlElementGroup ];
+		elements = elements.sort({ |a,b|
+				(order.indexOf( a.class ) ? -1) <= (order.indexOf( b.class ) ? -1);
+			}).separate({ |a,b|
+				a.class != b.class
+			})
+			.flatten(1);
+	}
 
 	elements_ { |newElements|
 		elements = newElements;
@@ -15,7 +62,13 @@ MKtlAbstractElementGroup : MAbstractElement {
 
 	// array / dict manipulation support
 
-	at { |index| ^elements[index] }
+	at { |index|
+		if( index.size > 0 ) {
+			^index.collect({ |item| this.at( item ) });
+		} {
+			^elements.detect({ |item| item.key === index }) ?? { elements[ index ]; }
+		};
+	}
 
 	put { |index, element|
 		this.elements = this.elements.put( index, element );
@@ -56,7 +109,7 @@ MKtlAbstractElementGroup : MAbstractElement {
 		 ^this.elements.remove( element );
 	}
 
-	indexOf { |element| ^this.elements.indexOf( element ); }
+	indexOf { |item| ^dict.findKeyForValue( item ) ?? { this.elements.indexOf( item ); } }
 
 	do { |function| elements.do( function ); }
 
@@ -74,8 +127,24 @@ MKtlAbstractElementGroup : MAbstractElement {
 		});
 		^list
 	}
+	
+	asArray {
+		^elements.collect({ |item|
+			if( item.isKindOf( MKtlElementGroup ) ) {
+				item.asArray;
+			} {
+				item;
+			};
+		});
+	}
 
 	value { ^elements.collect(_.value) }
+	
+	keys { ^elements.collect({ |item| dict.findKeyForValue( item ) }) }
+	
+	shape { ^elements.shape }
+	
+	flop { ^elements.flopTogether } /// a bit dirty but it works
 
 	attachChildren {
 		elements.do(_.prAddGroup(this));
@@ -160,82 +229,6 @@ MKtlAbstractElementGroup : MAbstractElement {
 		};
 	}
 
-
-}
-
-MKtlElementArray : MKtlAbstractElementGroup {
-
-	init {
-		var array;
-		elements = elements ?? { Array.new };
-		case { elements.postln.isKindOf( Dictionary ).postln } {
-			elements.sortedKeysValuesDo({ |key, value|
-				array = array.add( value.key_(key) );
-			});
-			elements = array;
-			this.sortElementsByType;
-		} { elements.isKindOf( Array ) } {
-			elements = elements.collect({ |item|
-				if( item.isKindOf( Association ) ) {
-					item.value.key_( item.key );
-				} {
-					item;
-				};
-			});
-		};
-		if( elements.size > 0 ) {
-			type = elements.first.type;
-			elements.do({ |item|
-				if( addGroupsAsParent ) { item.parent = this };
-				if( item.type != type ) {
-					type = 'mixed';
-				};
-			});
-		};
-	}
-	
-	sortElementsByType {
-		var order;
-		order = [ MKtlElement, MKtlElementDict, MKtlElementArray ];
-		elements = elements.sort({ |a,b|
-				(order.indexOf( a.class ) ? -1) <= (order.indexOf( b.class ) ? -1);
-			}).separate({ |a,b|
-				a.class != b.class
-			})
-			.flatten(1);
-	}
-
-	elements_ { |newElements|
-		elements = newElements;
-		this.init;
-	}
-
-	asArray {
-		^elements.collect({ |item|
-			if( item.isKindOf( MKtlElementArray ) ) {
-				item.asArray;
-			} {
-				item;
-			};
-		});
-	}
-	
-	at { |index|
-		case { index.isKindOf( Number ) } {
-			^elements[ index ];
-		} { index.isKindOf( Symbol ) } {
-			^elements.detect({ |item| item.key === index });
-		} { index.size > 0 } {
-			^index.collect({ |item| this.at( item ) });
-		};
-	}
-	
-	keys { ^elements.collect(_.key) }
-	
-	shape { ^elements.shape }
-	
-	flop { ^elements.flopTogether } /// a bit dirty but it works
-	
 	doesNotUnderstand { |selector ...args|
 		var res;
 		if( elements.respondsTo( selector ) ) {
@@ -250,77 +243,4 @@ MKtlElementArray : MKtlAbstractElementGroup {
 	}
 	
 	getElementsForGUI { ^elements.collect({ |item| [ item.key, item ] }).flatten(1); }
-
-}
-
-MKtlElementDict : MKtlAbstractElementGroup {
-
-
-	var >guiKeys;
-	init {
-		elements = elements ?? {Event.new};
-		elements.postln;
-		if( elements.size > 0 ) {
-			type = elements.values.first.type;
-			elements.do({ |item|
-				if( addGroupsAsParent ) { item.parent = this };
-				if( item.type != type ) {
-					type = 'mixed';
-				};
-			});
-		};
-	}
-
-	keys { ^elements.keys }
-
-	elements_ { |newElements|
-		elements = newElements; // this should be made into a dictionary somehow
-		this.init;
-	}
-
-	flat { ^this.elements.values.flat }
-
-	flatSize { ^this.values.flatSize }
-
-	at { |index|
-		^elements[index]
-	}
-
-	put { |key, element|
-		this.elements = this.elements.put( key, element );
-	}
-
-	add { |association|
-		this.put( association.key, association.value );
-	}
-
-	indexOf { |element|
-		^elements.findKeyForValue( element );
-	}
-
-
-	// gui support
-	guiKeys {
-		var order;
-		order = [ MKtlElement, MKtlElementDict, MKtlElementArray ];
-		^guiKeys ?? {
-			guiKeys = elements.keys.asArray.sort({ |a,b|
-				(order.indexOf( elements[a].class ) ? -1) <= (order.indexOf( elements[b].class ) ? -1);
-			}).separate({ |a,b|
-				elements[a].class != elements[b].class
-			}).collect(_.sort).flatten(1);
-		};
-	}
-
-	getElementsForGUI { |function = true|
-		var array = Array.new(this.elements.size * 2);
-		this.guiKeys.do({ |key|
-			var val;
-			val = elements[ key ];
-			if( function.( val, key ) ) {
-				array.add( key ); array.add( val );
-			};
-		});
-		^array
-	}
 }

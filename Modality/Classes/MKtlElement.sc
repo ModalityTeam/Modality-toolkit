@@ -16,8 +16,6 @@ MAbstractElement {
 	var <type; // its type.
 	var <tags; // array of user-assignable tags
 	
-	var <>key;
-
 	var <ioType; // can be \in, \out, \inout
 
 	var <>action;
@@ -29,7 +27,7 @@ MAbstractElement {
 	// server support, currently only one server per element supported.
 	var <bus;
 
-	// nested MKtlElement / MKtlElementDict / MKtlElementArray support
+	// nested MKtlElement / MKtlElementGroup support
 	var <>parent;
 	var <groups;
 
@@ -113,6 +111,8 @@ MAbstractElement {
 	index {
 		^this.parent !? _.indexOf( this );
 	}
+	
+	key { ^this.index }
 
 	indices {
 		^this.parent !? { |x| x.indices ++ [ this.index ] };
