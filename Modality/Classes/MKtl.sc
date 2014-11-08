@@ -231,7 +231,7 @@ MKtl { // abstract class
 		};
 
 		this.prInitFromDeviceDescription( devDesc, deviceDescName );
-		this.prTryOpenDevice( name );
+		this.prTryOpenDevice( name, devDesc );
 
 		all.put(name, this);
 	}
@@ -249,8 +249,14 @@ MKtl { // abstract class
 		}
 	}
 
-	prTryOpenDevice{ |devName|
+	prTryOpenDevice{ |devName,devDesc| // is a shortname
 		var newMKtlDevice;
+
+		// maybe I gave a funky name, and can find the device from the spec
+		if ( devDesc.notNil ){
+			devName = MKtlDevice.findDeviceShortNameFromLongName( devDesc.at( \device ) );
+		};
+
 		newMKtlDevice = MKtlDevice.tryOpenDevice( devName, this );
 		if ( newMKtlDevice.notNil ){
 			// cross reference:
@@ -301,13 +307,13 @@ MKtl { // abstract class
 	}
 
 	openDevice{ |deviceName, lookAgain=true|
-		var shortName;
+		var shortName, devDesc;
 
 		if ( this.mktlDevice.notNil ){
 			"WARNING: Already a device opened for MKtl(%). Close it first with MKtl(%).closeDevice;\n".postf(name,name);
 			^this;
 		};
-		MKtlDevice.initHardwareDevices( lookAgain );
+		MKtlDevice.initHardwareDevices( lookAgain ); // this may be an issue
 		if ( deviceName.notNil ){
 			if ( deviceName.isKindOf( Symbol ) ){
 				shortName = deviceName;
@@ -315,14 +321,14 @@ MKtl { // abstract class
 				shortName = MKtlDevice.findDeviceShortNameFromLongName( deviceName );
 			}
 		}{
-			deviceName = MKtl.getDeviceDescription( deviceDescriptionName );
-			if ( deviceName.notNil ){
-				deviceName = deviceName.at( \device );
+			devDesc = MKtl.getDeviceDescription( deviceDescriptionName );
+			if ( devDesc.notNil ){
+				deviceName = devDesc.at( \device );
 				shortName = MKtlDevice.findDeviceShortNameFromLongName( deviceName );
 			};
 		};
-		[deviceName, shortName ].postln;
-		this.prTryOpenDevice( shortName );
+		// [deviceName, shortName ].postln;
+		this.prTryOpenDevice( shortName, devDesc );
 	}
 
 	warnNoDeviceDescriptionFileFound { |deviceName|
