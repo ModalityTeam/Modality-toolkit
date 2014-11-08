@@ -746,10 +746,3 @@ MKtl { // abstract class
 
 
 }
-
-/// --- stubs until device descriptions are fixed
-HIDMKtl : MKtl{
-}
-
-MIDIMKtl : MKtl{
-}
