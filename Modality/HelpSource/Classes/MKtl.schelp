@@ -18,65 +18,34 @@ all open MKtl controllers.
 
 METHOD:: find
 Find all currently connected controllers.
-This method calls the find method on all of MKtl's subclasses.
+This method calls the find method on all of MKtlDevice's subclasses, and will post a list of available MKtl devices.
 code::
 MKtl.find;
 ::
 
 METHOD:: new
-Creates a new instance of MKtl, or accesses an existing instance with that name.
+Accesses an existing instance of MKtl with the given name, or creates a new instance of MKtl.
 For devices which have descriptions already, this works by using the shortname given by *find.
 argument:: name
 The name of the controller as you want to refer to it.
 If you supply the short name that was given by MKtl's find method, it will try to open this device.
 If you supply the name of an MKtl that already exists, the method will return that instance, as with e.g. JITLib proxies, oder OSCdef, MIDIdef etc.
 
-argument:: deviceDescName
-The device description that you want to use. This is the file name of the description file (without .desc.scd), or the long name of the device as reported.
+argument:: deviceDesc
+The device description that you want to use. This is the file name of the description file (without .desc.scd), or a Dictionary with a valid device description.
+
+argument:: lookForNew
+Boolean flag whether or not to look for newly attached devices or newly added device descriptions. Default is false. It will always look for devices and device descriptions the first time you open an MKtl.
 
 code::
-MKtl.find;
 // use auto-name, assuming you have one nanoKontrol 2 connected.
 // if you have not, a virtual nanoKontrol2 will be generated
 k = MKtl('nnkn20');
-::
 
-METHOD::make
+// use an explicit device spec name
+k = MKtl('nnkn20', 'nanoKONTROL2' ); // explicitly use a device spec name
 
-Create a new MKtl using a device description with an automatically generated name.
-
-argument::name
-name for the new MKtl
-argument:: deviceDescName
-The device description that you want to use. This is the file name of the description file (without .desc.scd), or the long name of the device as reported.
-
-code::
-//create a virtual nanokontrol
-MIDIMKtl.make(\fakeNano, "nanoKONTROL")
-
-//create a gui to control it
-MIDIMKtl(\fakeNano).gui
-
-//assign an action
-MIDIMKtl(\fakeNano).elements[\sl][0][0].action_({ |elem| elem.value.postln })
-::
-
-METHOD::fake
-
-Create a new MKtl using a device description with an automatically generated name.
-
-argument:: deviceDescName
-The device description that you want to use. This is the file name of the description file (without .desc.scd), or the long name of the device as reported.
-
-code::
-//create a virtual nanokontrol2
-MIDIMKtl.fake("nanoKONTROL2");
-
-//create a gui to control it
-MIDIMKtl('virtual_0_nanoKONTROL2').gui
-
-//assign an action
-MIDIMKtl(\virtual_0_nanoKONTROL2).elements[\sl][0][0].action_({ |elem| elem.value.postln })
+// a longer example passing in a dictionary is below
 ::
 
 
@@ -95,7 +64,14 @@ load device description file(s) by matching to a name.
 
 argument:: name
 local name by which to match; e.g. "RunNDrive" will find
-"RunNDrive_Wireless.desc.scd" in the description folder.
+"RunNDrive_Wireless.desc.scd" and "RunNDrive.desc.scd" in the description folder.
+
+argument:: verbose
+whether or not to post which device descriptions were loaded. Default is true;
+
+code::
+MKtl.loadMatching( "RunNDrive" );
+::
 
 METHOD:: postAllDescriptions
 Posts all descriptions found in the deviceDescriptionFolder.
@@ -111,6 +87,16 @@ load all device description files from the default folder. Done automatically wh
 
 argument:: reload
 flag whether to force a reload of the device description dictionary.
+
+argument:: verbose
+flag whether to post a lot of info about the device descriptions.
+
+code::
+MKtl.loadAllDescs(); // load all descs
+MKtl.loadAllDescs(false, verbose: true ); // warns that you already loaded them
+MKtl.loadAllDescs(true, verbose: true ); // reload them anyways and be verbose about it
+MKtl.loadAllDescs(true, verbose: false ); // reload them anyways, without verbosity
+::
 
 METHOD:: loadSingleDesc
 load a single device description file from full path.
@@ -139,32 +125,6 @@ argument:: deviceID
 The long name given by the controller.
 
 returns:: the short name
-
-METHOD:: basicNew
-This is the basic method to create a new MKtl, which is called by the subclasses to do the basic initialisation of the MKtl.
-
-argument:: name
-The name of the controller as you want to refer to it.
-If you supply the short name that was given by MKtl's find method, it will try to open this device.
-If you supply the name of an MKtl that already exists, the new method will return that instance (a la Ndef proxy style).
-
-argument:: deviceDescName
-The device description that you want to use. This is the name used in the device description index, or the long name of the device as reported.
-
-returns:: the instance of MKtl that is created.
-
-
-
-METHOD:: checkName
-Checks whether you are trying to make a new instance of MKtl with a specific deviceDescName with a name that is already in use.
-
-argument:: name
-The name of the controller as you want to refer to it.
-
-argument:: deviceDescName
-The device description that you want to use.
-
-returns:: true if the name is already taken, false if the name is not taken, or if you did not specify a deviceDescName
 
 METHOD:: getDeviceDescription
 Try to find a fitting device description.
