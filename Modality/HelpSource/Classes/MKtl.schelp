@@ -100,6 +100,8 @@ local name by which to match; e.g. "RunNDrive" will find
 METHOD:: postAllDescriptions
 Posts all descriptions found in the deviceDescriptionFolder.
 
+METHOD:: allDescriptions
+Return a Dictionary with all open loaded device descriptions.
 
 
 SUBSECTION:: Private methods
@@ -259,11 +261,15 @@ METHOD:: prLoadDeviceDescription
 Load a device description from either a given device description dictionary.
 Also creates the specs for them.
 
-argument:: deviceName
+argument:: deviceInfo
 a given device description name, or a device name.
 
-METHOD:: deviceDescription
-The device description of the MKtl.
+
+METHOD:: deviceDescriptionArray
+The device description of the MKtl in Array form
+
+METHOD:: deviceDescriptionHierarch
+The device description of the MKtl in a hierarchical Dictionary form
 
 METHOD:: init
 Initializes the MKtl with its name, elements and puts it in all.
@@ -271,8 +277,8 @@ Initializes the MKtl with its name, elements and puts it in all.
 argument:: argName
 name of the MKtl
 
-argument:: deviceDescName
-deviceDescName of the MKtl
+argument:: deviceDesc
+either a dictionary with a valid device description, or a name of a device description.
 
 
 METHOD:: makeElements
