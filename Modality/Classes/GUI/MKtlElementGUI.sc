@@ -72,7 +72,7 @@ MKtlElementGUI {
 		
 		if( createdWindow ) {
 			verboseButton = Button( parent, labelWidth@16 )
-				.states_([["verbose"],["verbose", Color.black, Color.green]])
+				.states_([["trace"],["trace", Color.black, Color.green]])
 				.action_({ |bt| element.source.trace( bt.value.booleanValue ) })
 				.value_( element.source.traceRunning.binaryValue );
 			parent.asView.decorator.nextLine;
@@ -95,22 +95,24 @@ MKtlElementGUI {
 
 	getMakeViewFunc { |type|
 		var func;
-		func = makeViewFuncDict[ element.type ] ?? { makeViewFuncDict[ \unknown ] };
+		func = makeViewFuncDict[ type ? element.type ] ?? { makeViewFuncDict[ \unknown ] };
 		if( func.isKindOf( Symbol ) ) {
 			func = makeViewFuncDict[ func ];
 		};
 		^func;
 	}
+	
+	makeGetValueFunc { |element, view|
+		var getValueFunc, value, ctrl, changed = true;
+		
+		ctrl = SimpleController( element )
+			.put( \value, { |obj| changed = true });
 
-	makeSubViews {
-		var view, getValueFunc, value;
-
-		view = this.getMakeViewFunc( element.type ).value( parent, element.name );
-
-		getValueFunc = { element.value; };
+		getValueFunc = { if( changed == true ) { changed = false; element.value; }; };
 		value = getValueFunc.value;
 
 		view.value_( value );
+		view.onClose = view.onClose.addFunc( { ctrl.remove } );
 		view.action_({ |vw|
 			element.valueAction = vw.value;
 			if( element.source.verbose == true ) {
@@ -120,19 +122,25 @@ MKtlElementGUI {
 			};
 		});
 
-		getValueFuncs = getValueFuncs.add( getValueFunc );
-		values = values.add( value );
+		^getValueFunc;
+	}
+
+	makeSubViews {
+		var view, getValueFunc;
+		
+		view = this.getMakeViewFunc( element.type ).value( parent, element.name );
+		
+		getValueFuncs = getValueFuncs.add( this.makeGetValueFunc( element, view ) );
 		views = views.add( view );
 	}
 
 	updateGUI {
-		values = values.collect({ |value, i|
+		views.do({ |view, i|
 			var newValue;
 			newValue = getValueFuncs[i].value;
 			if( newValue.notNil ) {
-				views[ i ].value = newValue
+				view.value = newValue
 			};
-			newValue;
 		});
 		subGUIs.do(_.updateGUI);
 	}
@@ -140,20 +148,95 @@ MKtlElementGUI {
 }
 
 MKtlElementDictGUI : MKtlElementGUI {
+	
+	classvar <>makeSubViewsFuncDict;
+	
+	*initClass {
+		makeSubViewsFuncDict = (
+			\mixed: { |gui|
+				var lastElement;
+				gui.element.getElementsForGUI.pairsDo({ |key, item|
+					if( item.size == 0 ) {
+						if( lastElement.notNil && { lastElement.type != item.type }) {
+							gui.parent.asView.decorator.nextLine;
+						};
+						lastElement = item;
+					} {
+						gui.parent.asView.decorator.nextLine;
+					};
+					gui.subGUIs = gui.subGUIs.add( item.gui( gui.parent ) );
+				});
+			},
+			\pad: { |gui|
+				var lastElement;
+				var allElements, onElements, offElements;
+				var offViews;
+				var size, division;
+				allElements = gui.element.flat;
+				onElements = allElements.select({ |item| item.name.asString.find( "on" ).notNil });
+				offElements = allElements.select({ |item| item.name.asString.find( "off" ).notNil });
+				
+				if( (onElements.size == 0) && (offElements.size == 0) ) {
+					makeSubViewsFuncDict[ \mixed ].value( gui ); // fallback to normal behavior
+				} {	
+					
+					size = onElements.size;
+					
+					if( gui.parent.asView.decorator.left != 4 ) {
+						gui.parent.asView.decorator.nextLine;
+					};
+	
+					StaticText( gui.parent, labelWidth@16 ).string_( gui.element.name.asString ++ " " ).align_( \right );
+					
+					if( size == 0 ) {
+						onElements = offElements;
+						offElements = [];
+						size = offElements.size;
+					};
+					
+					division = [8,9,10,6,7].detect({ |item|
+							(size / item).frac == 0;
+					}) ? 8;
+					
+					onElements.do({ |element, i|
+						var view, getValueFunc;
+	
+						if( (i != 0) && ((i % division) == 0)) {
+							gui.parent.asView.decorator.nextLine;
+							gui.parent.asView.decorator.shift( labelWidth + 4, 0 );
+						};
+						
+						view = MPadView( gui.parent, 20@20 ).useUpValue_(true);
+						if( offElements.size == 0 ) {
+							view.autoUpTime_(0.2);
+						};
+							
+						offViews = offViews.add( MPadUpViewRedirect( view ) );
+										
+						gui.getValueFuncs = gui.getValueFuncs.add( gui.makeGetValueFunc( element, view ) );
+						gui.views = gui.views.add( view );
+					});
+					
+					offElements.do({ |element, i|
+						var view, getValueFunc;
+	
+						view = offViews[ i ];
+						
+						if( offViews[i].notNil ) {
+							gui.getValueFuncs = gui.getValueFuncs.add( gui.makeGetValueFunc( element, view ) );
+							gui.views = gui.views.add( view );
+						};
+					});
+				};
+				
+			},
+		);
+	}
 
 	makeSubViews {
-		var lastElement;
-		element.getElementsForGUI.pairsDo({ |key, item|
-			if( item.size == 0 ) {
-				if( lastElement.notNil && { lastElement.type != item.type }) {
-					parent.asView.decorator.nextLine;
-				};
-				lastElement = item;
-			} {
-				parent.asView.decorator.nextLine;
-			};
-			subGUIs = subGUIs.add( item.gui( parent ) );
-		});
+		var func;
+		func = makeSubViewsFuncDict[ element.type ] ?? { makeSubViewsFuncDict[ \mixed ] };
+		func.value( this );
 	}
 
 }
@@ -180,7 +263,7 @@ MKtlElementArrayGUI : MKtlElementGUI {
 			StaticText( parent, labelWidth@16 ).string_( element.name.asString ++ " " ).align_( \right );
 
 			element.elements.do({ |element, i|
-					var view, getValueFunc, value, ctrl, changed = true;
+					var view, getValueFunc;
 
 					if( (i != 0) && ((i % division) == 0)) {
 						parent.asView.decorator.nextLine;
@@ -188,26 +271,8 @@ MKtlElementArrayGUI : MKtlElementGUI {
 					};
 
 					view = this.getMakeViewFunc( element.type ).value( parent );
-					
-					ctrl = SimpleController( element )
-						.put( \value, { |obj| changed = true });
-
-					getValueFunc = { if( changed == true ) { changed = false; element.value; }; };
-					value = getValueFunc.value;
-
-					view.value_( value );
-					view.onClose_( { ctrl.remove } );
-					view.action_({ |vw|
-						element.valueAction = vw.value;
-						if( element.source.verbose == true ) {
-							"% - % > % | via GUI\n".postf(
-								element.source.name, element.name, element.value;
-							);
-						};
-					});
-
-					getValueFuncs = getValueFuncs.add( getValueFunc );
-					values = values.add( value );
+										
+					getValueFuncs = getValueFuncs.add( this.makeGetValueFunc( element, view ) );
 					views = views.add( view );
 			});
 		};

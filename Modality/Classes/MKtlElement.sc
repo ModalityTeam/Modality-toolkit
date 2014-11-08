@@ -14,6 +14,7 @@ MAbstractElement {
 	var <source; // the MKtl it belongs to
 	var <name; // its name in MKtl.elements
 	var <type; // its type.
+	var <tags; // array of user-assignable tags
 
 	var <ioType; // can be \in, \out, \inout
 
@@ -36,7 +37,9 @@ MAbstractElement {
 		^super.newCopyArgs( source, name).init;
 	}
 
-	init { }
+	init {
+		tags = Set[];
+	}
 
 	prMaybeSend {
 		if( [\out, \inout].includes( this.elementDescription.ioType ) ) {
@@ -113,35 +116,36 @@ MAbstractElement {
 		^this.parent !? { |x| x.indices ++ [ this.index ] };
 	}
 
-	printAll {|level = 0|
-		(" ".wrapExtend(level) ++ this.asCompileString).postln;
+	printOn { | stream |
+		stream << "an " << this.class.name << "(" << this.name.cs << ", " << this.type.cs << ", " << this.index << ")" ;
 	}
-
-	// allKeys {
-	// 	^(parent.indexOf(this))
-	// }
-
 
 	// MKtlElementGroup support
 	prAddGroup { |group|
-		if( addGroupsAsParent ) {
-			parent = group;
-		} {
-			if( groups.isNil or: { groups.includes( group ).not }) {
-				groups = groups.add( group );
-			};
+		if( ( parent != group ) && { groups.isNil or: { groups.includes( group ).not } }) {
+			groups = groups.add( group );
 		};
 	}
 
 	prRemoveGroup { |group|
-		if( parent === group ) {
-			parent = nil;
-		};
 		if( groups.notNil ) {
 			groups.remove( group );
 		};
 	}
 
+	//tagging support
+	addTag {|... newTags|
+		tags = tags.union(newTags.flat);
+	}
+	removeTag {|... newTags|
+		tags = tags - newTags.flat;
+	}
+	includesTag {|... tag|
+		^tag.isSubsetOf(tags)
+	}
+	clearTags {
+		tags = Set[];
+	}
 }
 
 MKtlElement : MAbstractElement{

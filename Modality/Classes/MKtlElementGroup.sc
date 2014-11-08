@@ -13,6 +13,8 @@ MKtlAbstractElementGroup : MAbstractElement {
 		this.init;
 	}
 
+	// array / dict manipulation support
+
 	at { |index| ^elements[index] }
 
 	put { |index, element|
@@ -24,7 +26,16 @@ MKtlAbstractElementGroup : MAbstractElement {
 	}
 
 	size { ^elements.size }
-	
+
+	select { |function| ^elements.select( function ) }
+
+	collect { |function| ^elements.collect( function ) }
+
+	inject { |thisValue, function|
+		^elements.inject(thisValue, function)
+	}
+
+
 	removeAll {
 		elements.do(_.prRemoveGroup( this ));
 		this.elements = nil;
@@ -56,16 +67,54 @@ MKtlAbstractElementGroup : MAbstractElement {
 
 	value { ^elements.collect(_.value) }
 
+	attachChildren {
+		elements.do(_.prAddGroup(this));
+	}
+
+	detachChildren { |ignoreAction = false|
+		if( ignoreAction or: { action.isNil } ) {
+			elements.do({ |element|
+				element.prRemoveGroup( this );
+				if( element.respondsTo( \detachChildren ) ) {
+					element.detachChildren( ignoreAction );
+				};
+			});
+		};
+	}
+
+	prAddGroup { |group|
+		if( ( parent != group ) && { groups.isNil or: { groups.includes( group ).not } }) {
+			groups = groups.add( group );
+			elements.do(_.prAddGroup(this));
+		};
+	}
+
+	prRemoveGroup { |group|
+		if( groups.notNil ) {
+			groups.remove( group );
+		};
+	}
+
+	// action support
+	action_ { |func|
+		action = func;
+		if( action.notNil ) {
+			this.attachChildren;
+		} {
+			this.detachChildren;
+		};
+	}
+
 	addAction { |argAction|
-		action = action.addFunc(argAction);
+		this.action = action.addFunc(argAction);
 	}
 
 	removeAction { |argAction|
-		action = action.removeFunc(argAction);
+		this.action = action.removeFunc(argAction);
 	}
 
 	reset {
-		action = nil
+		this.action = nil
 	}
 
 	doAction { |...children|
@@ -76,20 +125,42 @@ MKtlAbstractElementGroup : MAbstractElement {
 		this.changed( \doAction, *children );
 	}
 
-	select { |function| ^elements.select( function ) }
-	
-	collect { |function| ^elements.collect( function ) }
+	// tagging support
+	addTag {|... newTags|
+		this.collect{|elem|
+			elem.addTag(*newTags);
+		}
+	}
+
+	removeTag {|... newTags|
+		this.collect{|elem|
+			elem.removeTag(*newTags);
+		}
+	}
+
+	tags {
+		^this.inject(Set[], {|all, item|
+			all.union(item.tags)
+		})
+	}
+
+	elementsForTag {|... tag|
+		^this.flat.select{|el|
+			el.tags.includes(*tag)
+		};
+	}
+
 
 }
 
 MKtlElementArray : MKtlAbstractElementGroup {
 
 	init {
-		elements = elements ?? {[]};
+		elements = elements ?? { Array.new };
 		if( elements.size > 0 ) {
 			type = elements.first.type;
 			elements.do({ |item|
-				item.prAddGroup(this);
+				if( addGroupsAsParent ) { item.parent = this };
 				if( item.type != type ) {
 					type = 'mixed';
 				};
@@ -101,7 +172,7 @@ MKtlElementArray : MKtlAbstractElementGroup {
 		elements = newElements.asArray;
 		this.init;
 	}
-	
+
 	asArray {
 		^elements.collect({ |item|
 			if( item.isKindOf( MKtlElementArray ) ) {
@@ -115,22 +186,22 @@ MKtlElementArray : MKtlAbstractElementGroup {
 }
 
 MKtlElementDict : MKtlAbstractElementGroup {
-	
-	
+
+
 	var >guiKeys;
 	init {
-		elements = elements ?? {()};
+		elements = elements ?? {Event.new};
 		if( elements.size > 0 ) {
 			type = elements.values.first.type;
 			elements.do({ |item|
-				item.prAddGroup(this);
+				if( addGroupsAsParent ) { item.parent = this };
 				if( item.type != type ) {
 					type = 'mixed';
 				};
 			});
 		};
 	}
-	
+
 	keys { ^elements.keys }
 
 	elements_ { |newElements|
@@ -141,7 +212,7 @@ MKtlElementDict : MKtlAbstractElementGroup {
 	flat { ^this.elements.values.flat }
 
 	flatSize { ^this.values.flatSize }
-	
+
 	at { |index|
 		^elements[index]
 	}

@@ -7,9 +7,15 @@
 device: "OP-1 Midi Device",
 protocol: \midi,
 description: (
-	key: (29..83).collect{|padNum| (\midiMsgType: \noteOnOff, \type: \key, midiChan: 0,
-		\midiNum: padNum, \spec: \midiNote)
-},
+	\key: (
+		\on: (5..124).collect{ |num|
+			(\midiMsgType: \noteOn , \type: \key, \midiChan: 0, \midiNum: num, \spec: \midiNote)
+		},
+		\off: (5..124).collect{ |num|
+			(\midiMsgType: \noteOff, \type: \key, \midiChan: 0, \midiNum: num, \spec: \midiNote)
+		}
+	),
+
 	\kn: (1..4).collect { |num|
 		(\midiMsgType: \cc, \type: \knob, \midiChan: 0, \midiNum: num, \spec: \midiCC)
 	},

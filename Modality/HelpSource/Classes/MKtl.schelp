@@ -189,7 +189,7 @@ retrieve the name of the MKtl.
 
 
 METHOD:: elements
-all control elements (MKtlElement) on the device you may want to listen or talk to. this returns a dictionary containing
+all control elements (MKtlElement) on the device you may want to listen or talk to. this returns an link::Classes/MKtlElementDict:: containing a hierarchical tree of link::Classes/MKtlElement::s, organised via MKtlElementDicts and link::Classes/MKtlElementArray::s.
 
 METHOD:: elementAt
 Access an element in the elements hierarchy by passing in the indexes to arrays/dictionaries as arguments of elementAt:
