@@ -120,7 +120,7 @@ MKtlElementGUI {
 		view.onClose = view.onClose.addFunc( { ctrl.remove } );
 		view.action_({ |vw|
 			element.valueAction = vw.value;
-			if( element.source.verbose == true ) {
+			if( element.source.traceRunning == true ) {
 				"% - % > % | via GUI\n".postf(
 					element.source.name, element.name, element.value;
 				);
