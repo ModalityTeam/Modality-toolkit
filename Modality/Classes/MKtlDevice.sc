@@ -9,8 +9,8 @@ MKtlDevice{
 
 	var <traceRunning = false;
 
-	trace{ |mode=true|
-		this.traceRunning = mode;
+	trace { |mode=true|
+		traceRunning = mode;
 	}
 
 	*initClass{

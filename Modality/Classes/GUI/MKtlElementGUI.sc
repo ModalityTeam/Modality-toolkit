@@ -42,12 +42,17 @@ MKtlElementGUI {
 					.autoUpTime_( 0.2 );
 			},
 			'unknown': { |parent, label|
+				var vw;
 				if( label.notNil ) {
 					StaticText( parent, labelWidth@16 ).string_( label.asString ++ " " ).align_( \right );
 				};
-				NumberBox( parent,
+				vw = NumberBox( parent,
 					if( label.notNil ) { 80@16 } { 30@16 }
 				).clipLo_(0).clipHi_(1);
+				if( vw.respondsTo( \maxDecimals_ ) ) {
+					vw.maxDecimals = 4;
+				};
+				vw;
 			},
 			'midiBut': \button,
 			'joyAxis': \slider,
@@ -115,7 +120,7 @@ MKtlElementGUI {
 		view.onClose = view.onClose.addFunc( { ctrl.remove } );
 		view.action_({ |vw|
 			element.valueAction = vw.value;
-			if( element.source.verbose == true ) {
+			if( element.source.traceRunning == true ) {
 				"% - % > % | via GUI\n".postf(
 					element.source.name, element.name, element.value;
 				);
@@ -128,7 +133,7 @@ MKtlElementGUI {
 	makeSubViews {
 		var view, getValueFunc;
 		
-		view = this.getMakeViewFunc( element.type ).value( parent, element.key ? element.name );
+		view = this.getMakeViewFunc( element.type ).value( parent, element.name );
 		
 		getValueFuncs = getValueFuncs.add( this.makeGetValueFunc( element, view ) );
 		views = views.add( view );
@@ -147,7 +152,7 @@ MKtlElementGUI {
 
 }
 
-MKtlElementDictGUI : MKtlElementGUI {
+MKtlElementGroupGUI : MKtlElementGUI {
 	
 	classvar <>makeSubViewsFuncDict;
 	
@@ -234,18 +239,8 @@ MKtlElementDictGUI : MKtlElementGUI {
 	}
 
 	makeSubViews {
-		var func;
-		func = makeSubViewsFuncDict[ element.type ] ?? { makeSubViewsFuncDict[ \mixed ] };
-		func.value( this );
-	}
-
-}
-
-MKtlElementArrayGUI : MKtlElementDictGUI {
-
-	makeSubViews {
 		var division, size, func;
-		if( element.keys.any(_.notNil) ) {
+		if( element.keys.any(_.isKindOf( Symbol )) ) {
 			var func;
 			func = makeSubViewsFuncDict[ element.type ] ?? { makeSubViewsFuncDict[ \mixed ] };
 			func.value( this );
@@ -286,22 +281,15 @@ MKtlElementArrayGUI : MKtlElementDictGUI {
 
 }
 
-
 + MKtlElement {
 	gui { |parent, bounds|
 		^MKtlElementGUI( parent, bounds, this );
 	}
 }
 
-+ MKtlElementDict {
++ MKtlElementGroup {
 	gui { |parent, bounds|
-		^MKtlElementDictGUI( parent, bounds, this );
-	}
-}
-
-+ MKtlElementArray {
-	gui { |parent, bounds|
-		^MKtlElementArrayGUI( parent, bounds, this );
+		^MKtlElementGroupGUI( parent, bounds, this );
 	}
 }
 

@@ -515,8 +515,12 @@ MKtl { // abstract class
 				}
 			} {
 				if(x.isKindOf(Array) ) {
-					x.collect{ |val, i|
-						f.(val, stateFuncOnNodes.(state, i),  stateFuncOnNodes, leafFunc )
+					if( x.first.isKindOf( Association ) ) {
+						f.(IdentityDictionary.with( *x ), state, stateFuncOnNodes, leafFunc );
+					} {
+						x.collect{ |val, i|
+							f.(val, stateFuncOnNodes.(state, i),  stateFuncOnNodes, leafFunc )
+						}
 					}
 				} {
 					Error("MKtl:prTraverse Illegal data structure in device description.\nGot object % of type %. Only allowed objects are Arrays and Dictionaries".format(x,x.class)).throw
@@ -538,7 +542,7 @@ MKtl { // abstract class
 				if( isLeaf.(x) ) {
 					leafFunc.( state , x )
 				}{
-					MKtlElementArray(this, state,
+					MKtlElementGroup(this, state,
 						x.sortedKeysValuesCollect{ |val, key|
 							f.(val, stateFuncOnNodes.(state, key), stateFuncOnNodes, leafFunc )
 						}
@@ -546,9 +550,15 @@ MKtl { // abstract class
 				}
 			} {
 				if(x.isKindOf(Array) ) {
-					MKtlElementArray(this, state,
+					MKtlElementGroup(this, state,
 						x.collect{ |val, i|
-							f.(val, stateFuncOnNodes.(state, i),  stateFuncOnNodes, leafFunc )
+							if( val.isKindOf( Association ) ) {
+								(val.key -> f.(val.value, 
+									stateFuncOnNodes.(state, val.key),  stateFuncOnNodes, leafFunc ) 
+								)
+							} {
+								f.(val, stateFuncOnNodes.(state, i),  stateFuncOnNodes, leafFunc )
+							};
 						}
 					);
 				} {
