@@ -166,7 +166,9 @@ MKtl { // abstract class
 		if ( name.notNil ){ // first do a lookup
 			if ( all[name].notNil ){
 				if ( deviceDesc.notNil ){
-					"WARNING: MKtl: if you want to change the device specification, use MKtl(%).rebuildFrom(%)\n".postf( name.asCompileString, deviceDesc.asCompileString );
+					if ( deviceDesc != all[name].deviceDescriptionName ){
+						"WARNING: MKtl: if you want to change the device specification, use MKtl(%).rebuildFrom(%)\n".postf( name.asCompileString, deviceDesc.asCompileString );
+					};
 				};
 				^all[name];
 			}
