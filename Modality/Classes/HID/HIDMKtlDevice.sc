@@ -96,14 +96,14 @@ HIDMKtlDevice : MKtlDevice {
 	}
 
     // create with a uid, or access by name
-	*new { |name, uid, parentMKtl|
+	*new { |name, path, parentMKtl|
 		var foundSource;
 
-		if (uid.isNil) {
+		if (path.isNil) {
 			foundSource = this.sourceDeviceDict[ name ];
 		}{
             //FIXME: uid is this a path?
-			foundSource = HID.findBy( path: uid ).asArray.first;
+			foundSource = HID.findBy( path: path ).asArray.first;
 		};
 
 		// foundSource.postln;
@@ -111,12 +111,12 @@ HIDMKtlDevice : MKtlDevice {
 		// make a new one
 		if (foundSource.isNil) {
 			warn("HIDMKtl:"
-			"	No HID source with USB port ID % exists! please check again.".format(uid));
+			"	No HID source with USB port ID % exists! please check again.".format(path));
 			// ^MKtl.prMakeVirtual(name);
 			^nil;
 		};
 
-		^super.basicNew( name, this.makeDeviceName( foundSource ), parentMKtl ).initHIDMKtl( foundSource, uid );
+		^super.basicNew( name, this.makeDeviceName( foundSource ), parentMKtl ).initHIDMKtl( foundSource, path );
 	}
 
 	initHIDMKtl{ |argSource,argUid|
@@ -135,7 +135,7 @@ HIDMKtlDevice : MKtlDevice {
 		^(hidinfo.productName.asString ++ "_" ++ hidinfo.vendorName);
     }
 
-	postRawSpecs { this.class.postRawSpecsOf(srcDevice) }
+	// postRawSpecs { this.class.postRawSpecsOf(srcDevice) }
 
 	exploring{
 		^(HIDExplorer.observedSrcDev == this.srcDevice);

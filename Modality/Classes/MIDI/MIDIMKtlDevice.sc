@@ -136,13 +136,12 @@ MIDIMKtlDevice : MKtlDevice {
 	}
 
 	// create with a uid, or access by name
-	*new { |name, srcUID, destUID, devDescName, parentMKtl|
+	*new { |name, srcUID, destUID, parentMKtl|
 		var foundSource, foundDestination;
 		var deviceName;
 
 		this.initDevices;
 
-		// [ name, srcUID, destUID, devDescName, parentMKtl ].postln;
 		// make a new source
 		foundSource = srcUID.notNil.if({
 			MIDIClient.sources.detect { |src|
@@ -151,8 +150,6 @@ MIDIMKtlDevice : MKtlDevice {
 		}, {
 			sourceDeviceDict[name.asSymbol];
 		});
-
-		// [ name, srcUID, destUID, devDescName, parentMKtl ].postln;
 
 		if (foundSource.isNil) {
 			warn("MIDIMKtlDevice:"
@@ -167,8 +164,6 @@ MIDIMKtlDevice : MKtlDevice {
 		}, {
 			destinationDeviceDict[name.asSymbol];
 		});
-
-		// [ name, srcUID, destUID, devDescName, parentMKtl ].postln;
 
 		if (foundDestination.isNil) {
 			warn("MIDIMKtlDevice:"
@@ -190,7 +185,6 @@ MIDIMKtlDevice : MKtlDevice {
 			deviceName = foundSource.device;
 		};
 
-		// [ devDescName, foundSource.device, foundDestination.device ].postln;
 		^super.basicNew(name, deviceName, parentMKtl )
 			.initMIDIMKtl(name, foundSource, foundDestination );
 	}
