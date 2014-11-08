@@ -240,7 +240,7 @@ MKtl { // abstract class
 	}
 
 	initFromDeviceName{  | name, deviceInfo, deviceDesc |
-		var deviceDescName, deviceName;
+		var deviceName;
 		var shortName = MKtlDevice.findDeviceShortNameFromLongName( deviceInfo );
 		if( name.isNil ){ name = shortName; };
 		if ( deviceDesc.notNil ){
@@ -248,7 +248,7 @@ MKtl { // abstract class
 		}{
 			deviceName = MKtlDevice.getDeviceNameFromShortName( shortName );
 			deviceDesc = this.class.findDeviceDescFromDeviceName( deviceName );
-			this.init( name, deviceDescName );
+			this.init( name, deviceDesc );
 		}
 	}
 

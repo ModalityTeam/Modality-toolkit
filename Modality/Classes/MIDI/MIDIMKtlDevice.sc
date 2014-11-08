@@ -29,6 +29,16 @@ MIDIMKtlDevice : MKtlDevice {
 	var <global;
 	var <msgTypes;
 
+	closeDevice{
+		destination.notNil.if{
+			if ( thisProcess.platform.name == \linux ){
+				midiOut.disconnect( MIDIClient.destinations.indexOf(destination) )
+			};
+			midiOut = nil;
+		};
+		source = nil;
+		destination = nil;
+	}
 
 	// open all ports
 	*initDevices {|force= false|
@@ -270,7 +280,7 @@ MIDIMKtlDevice : MKtlDevice {
 	}
 
 	initMIDIMKtl { |argName, argSource, argDestination|
-		[argName, argSource, argDestination].postln;
+		// [argName, argSource, argDestination].postln;
 		name = argName;
 
 		source = argSource;
