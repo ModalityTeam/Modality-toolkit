@@ -542,7 +542,7 @@ MKtl { // abstract class
 				if( isLeaf.(x) ) {
 					leafFunc.( state , x )
 				}{
-					MKtlElementGroup(this, state,
+					MKtlElementGroup(state,
 						x.sortedKeysValuesCollect{ |val, key|
 							f.(val, stateFuncOnNodes.(state, key), stateFuncOnNodes, leafFunc )
 						}
@@ -550,7 +550,7 @@ MKtl { // abstract class
 				}
 			} {
 				if(x.isKindOf(Array) ) {
-					MKtlElementGroup(this, state,
+					MKtlElementGroup(state,
 						x.collect{ |val, i|
 							if( val.isKindOf( Association ) ) {
 								(val.key -> f.(val.value, 
