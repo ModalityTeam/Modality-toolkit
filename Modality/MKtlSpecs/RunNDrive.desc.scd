@@ -45,7 +45,7 @@ f.elementAt(\joy, \r, \hat).action = { |el| [el.name, el.value].postln };
 
 var dict;
 // a spec to fix the falsely reported spec:
-HIDMKtl.addSpec(\compassRND, [0, 15/7]);
+MKtl.addSpec(\compassRND, [0, 15/7]);
 
 dict = (
 	device: "Run'N' Drive_Thrustmaster",
