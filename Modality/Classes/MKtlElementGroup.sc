@@ -13,6 +13,8 @@ MKtlAbstractElementGroup : MAbstractElement {
 		this.init;
 	}
 
+	// array / dict manipulation support
+
 	at { |index| ^elements[index] }
 
 	put { |index, element|
@@ -24,6 +26,15 @@ MKtlAbstractElementGroup : MAbstractElement {
 	}
 
 	size { ^elements.size }
+
+	select { |function| ^elements.select( function ) }
+
+	collect { |function| ^elements.collect( function ) }
+
+	inject { |thisValue, function|
+		^elements.inject(thisValue, function)
+	}
+
 
 	removeAll {
 		elements.do(_.prRemoveGroup( this ));
@@ -55,11 +66,11 @@ MKtlAbstractElementGroup : MAbstractElement {
 	}
 
 	value { ^elements.collect(_.value) }
-	
+
 	attachChildren {
 		elements.do(_.prAddGroup(this));
 	}
-	
+
 	detachChildren { |ignoreAction = false|
 		if( ignoreAction or: { action.isNil } ) {
 			elements.do({ |element|
@@ -70,20 +81,21 @@ MKtlAbstractElementGroup : MAbstractElement {
 			});
 		};
 	}
-	
+
 	prAddGroup { |group|
 		if( ( parent != group ) && { groups.isNil or: { groups.includes( group ).not } }) {
 			groups = groups.add( group );
 			elements.do(_.prAddGroup(this));
 		};
 	}
-	
+
 	prRemoveGroup { |group|
 		if( groups.notNil ) {
 			groups.remove( group );
 		};
 	}
 
+	// action support
 	action_ { |func|
 		action = func;
 		if( action.notNil ) {
@@ -113,40 +125,38 @@ MKtlAbstractElementGroup : MAbstractElement {
 		this.changed( \doAction, *children );
 	}
 
-	select { |function| ^elements.select( function ) }
-
-	collect { |function| ^elements.collect( function ) }
-	inject { |thisValue, function|
-		^elements.inject(thisValue, function)
-	}
-
 	// tagging support
 	addTag {|... newTags|
 		this.collect{|elem|
 			elem.addTag(*newTags);
 		}
 	}
+
 	removeTag {|... newTags|
 		this.collect{|elem|
 			elem.removeTag(*newTags);
 		}
 	}
+
 	tags {
 		^this.inject(Set[], {|all, item|
 			all.union(item.tags)
 		})
 	}
+
 	elementsForTag {|... tag|
 		^this.flat.select{|el|
 			el.tags.includes(*tag)
 		};
 	}
+
+
 }
 
 MKtlElementArray : MKtlAbstractElementGroup {
 
 	init {
-		elements = elements ?? {[]};
+		elements = elements ?? { Array.new };
 		if( elements.size > 0 ) {
 			type = elements.first.type;
 			elements.do({ |item|
@@ -180,7 +190,7 @@ MKtlElementDict : MKtlAbstractElementGroup {
 
 	var >guiKeys;
 	init {
-		elements = elements ?? {()};
+		elements = elements ?? {Event.new};
 		if( elements.size > 0 ) {
 			type = elements.values.first.type;
 			elements.do({ |item|
