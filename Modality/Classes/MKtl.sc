@@ -280,8 +280,8 @@ MKtl { // abstract class
 
 		if ( mktlDevice.notNil ){
 			// check whether new device spec mathces protocol
-			if ( devDesc.at( \protocol ) != mktlDevice.protocol ){
-				"WARNING: MKtl(%): protocol % of device description %, does match protocol % of device % \n".postf( name, devDesc.at( \protocol ), devDescName, mktlDevice.protocol, mktlDevice.deviceName );
+			if ( devDesc.at( \protocol ) != mktlDevice.class.protocol ){
+				"WARNING: MKtl(%): protocol % of device description %, does match protocol % of device %. Keeping the device description as it was.\n".postf( name, devDesc.at( \protocol ), devDescName, mktlDevice.class.protocol, mktlDevice.deviceName );
 				^this;
 			};
 			mktlDevice.cleanupElements;
