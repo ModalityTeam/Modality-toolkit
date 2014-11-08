@@ -41,6 +41,9 @@ k.elementAt(\sl, 1).action = { 1.postcs; };
    it makes sense to organize them into Arrays.
 
 Instructions to be continued when canonical format is been finalized.
+More information can be found here:
+'Tutorials/How_to_create_a_description_file'.openHelpFile;
+
 
 ****/\n\n"
 
