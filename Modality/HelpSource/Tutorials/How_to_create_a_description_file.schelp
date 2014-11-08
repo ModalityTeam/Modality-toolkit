@@ -18,7 +18,6 @@ a = MKtl('pcr0');
 ::
 
 Now, turn on the explore mode and move every element on your controller. Make sure to go through all of them and move them in all their degrees of freedom.
-warning::Make sure that no other device is sending any data.::
 
 code::
 e = a.explore;
@@ -32,6 +31,8 @@ When done, create a raw description file which you will edit and review in the n
 
 code::
 a.createDescriptionFile;
+// and stop the exploring:
+a.explore( false );
 ::
 note::If this does not work for you, try: code::e.compile:: and copy the code from the post window manually to a new file.::
 
@@ -150,7 +151,7 @@ Its also possible to create a description file without an actual device being at
 note::
 A proper description on how to combine code::\noteOn, \noteOff, \polyTouch:: is still missing in this tutorial. While the developer team is working on it, have a look at similar description files. You can find them in the folder opening when you evaluate
 code::
-MKtl.deviceDescriptionFolder.openOS;
+MKtl.openDescriptionFolder;
 ::
 ::
 
@@ -158,7 +159,7 @@ subsection:: Save description file and test it
 
 If you are happy with the generated document, save it with a meaningful name to the descriptions folder. You can open it with
 code::
-MKtl.deviceDescriptionFolder.openOS;
+MKtl.openDescriptionFolder;
 ::
 The filename should give a meaningful hint to the device it is made for. It further needs to end in code::".desc.scd"::.
 
