@@ -374,7 +374,7 @@ MKtl { // abstract class
 		};
 	}
 
-	*loadMatching { |name,verbose = false|
+	*loadMatching { |name,verbose = true|
 		var paths = (deviceDescriptionFolder +/+
 			("*" ++ name ++ "*.desc.scd")).pathMatch;
 		var descNames = paths.collect{ |x| PathName(x).fileName.split($.)[0]; };
