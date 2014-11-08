@@ -9,16 +9,30 @@ With MIDIExplorer, it is easy to create such a file for a MIDI device.
 For more info on how to use it, see  link::Tutorials/How_to_create_a_description_file::.
 
 code::
-MIDIMKtl.find;
+MKtl.find(\midi);
+
+// to pick a specific device you want to explore:
 MIDIExplorer.postSrcInfo;
-// pick the device you want to explore, and enter its uid here
-MIDIExplorer.start(1110865138);
-// if only a single device is connected, or you want to catch all sources,
-// you can also just do
+
+// and enter its uid here
+MIDIExplorer.start( paste_uid_here );
+
+// or to get the uid of e.g. the first connected HID:
+MIDIClient.sources[0].uid.postln;
+MIDIExplorer.start(MIDIClient.sources[0].uid);
+
+// if only a single device is connected, you can also just do
 MIDIExplorer.start;
 
-// now play on all elements - MIDIExplorer will post info for every event.
-// to post less info, do:
+// check we are listening to the intended device only:
+MIDIExplorer.observedSrcID;
+MIDIExplorer.devName;
+
+
+// now play with all elements to generate info for the device.
+// To get info for every incoming control, do:
+MIDIExplorer.verbose = true;
+// to post only an overview/count when a new one comes in:
 MIDIExplorer.verbose = false;
 
 // if no more new controllers are found, do:
@@ -27,6 +41,10 @@ MIDIExplorer.compile;
 
 // and save here:
 MKtl.deviceDescriptionFolder.openOS;
+
+MKtl.openDescFolder;
+
+(\name
 ::
 
 CLASSMETHODS::

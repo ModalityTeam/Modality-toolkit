@@ -35,6 +35,16 @@ MKtlAbstractElementGroup : MAbstractElement {
 		^elements.inject(thisValue, function)
 	}
 
+	asBaseClass {|recursive = true|
+		^recursive.if({
+			this.elements.collect{|el| el.asBaseClass(recursive)};
+		},{
+			elements;
+		})
+	}
+
+	makePlain {
+	}
 
 	removeAll {
 		elements.do(_.prRemoveGroup( this ));
@@ -156,7 +166,23 @@ MKtlAbstractElementGroup : MAbstractElement {
 MKtlElementArray : MKtlAbstractElementGroup {
 
 	init {
+		var array;
 		elements = elements ?? { Array.new };
+		case { elements.postln.isKindOf( Dictionary ).postln } {
+			elements.sortedKeysValuesDo({ |key, value|
+				array = array.add( value.key_(key) );
+			});
+			elements = array;
+			this.sortElementsByType;
+		} { elements.isKindOf( Array ) } {
+			elements = elements.collect({ |item|
+				if( item.isKindOf( Association ) ) {
+					item.value.key_( item.key );
+				} {
+					item;
+				};
+			});
+		};
 		if( elements.size > 0 ) {
 			type = elements.first.type;
 			elements.do({ |item|
@@ -167,9 +193,20 @@ MKtlElementArray : MKtlAbstractElementGroup {
 			});
 		};
 	}
+	
+	sortElementsByType {
+		var order;
+		order = [ MKtlElement, MKtlElementDict, MKtlElementArray ];
+		elements = elements.sort({ |a,b|
+				(order.indexOf( a.class ) ? -1) <= (order.indexOf( b.class ) ? -1);
+			}).separate({ |a,b|
+				a.class != b.class
+			})
+			.flatten(1);
+	}
 
 	elements_ { |newElements|
-		elements = newElements.asArray;
+		elements = newElements;
 		this.init;
 	}
 
@@ -182,6 +219,37 @@ MKtlElementArray : MKtlAbstractElementGroup {
 			};
 		});
 	}
+	
+	at { |index|
+		case { index.isKindOf( Number ) } {
+			^elements[ index ];
+		} { index.isKindOf( Symbol ) } {
+			^elements.detect({ |item| item.key === index });
+		} { index.size > 0 } {
+			^index.collect({ |item| this.at( item ) });
+		};
+	}
+	
+	keys { ^elements.collect(_.key) }
+	
+	shape { ^elements.shape }
+	
+	flop { ^elements.flopTogether } /// a bit dirty but it works
+	
+	doesNotUnderstand { |selector ...args|
+		var res;
+		if( elements.respondsTo( selector ) ) {
+			res = elements.perform( selector, *args );
+			"performing %.%(%)\n".format( elements.cs, selector, args.collect(_.cs).join(", ") );
+			if( res !== elements ) {
+				^res;
+			}
+		} {
+			^super.doesNotUnderstand( selector, *args );
+		};
+	}
+	
+	getElementsForGUI { ^elements.collect({ |item| [ item.key, item ] }).flatten(1); }
 
 }
 
@@ -191,6 +259,7 @@ MKtlElementDict : MKtlAbstractElementGroup {
 	var >guiKeys;
 	init {
 		elements = elements ?? {Event.new};
+		elements.postln;
 		if( elements.size > 0 ) {
 			type = elements.values.first.type;
 			elements.do({ |item|

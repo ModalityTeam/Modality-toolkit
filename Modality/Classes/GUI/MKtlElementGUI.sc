@@ -128,7 +128,7 @@ MKtlElementGUI {
 	makeSubViews {
 		var view, getValueFunc;
 		
-		view = this.getMakeViewFunc( element.type ).value( parent, element.name );
+		view = this.getMakeViewFunc( element.type ).value( parent, element.key ? element.name );
 		
 		getValueFuncs = getValueFuncs.add( this.makeGetValueFunc( element, view ) );
 		views = views.add( view );
@@ -241,41 +241,47 @@ MKtlElementDictGUI : MKtlElementGUI {
 
 }
 
-MKtlElementArrayGUI : MKtlElementGUI {
+MKtlElementArrayGUI : MKtlElementDictGUI {
 
 	makeSubViews {
-		var division, size;
-		if( element.elements.any({ |item| item.size > 0 }) ) {
-			subGUIs = element.elements.collect({ |element|
-				element.gui( parent );
-			});
-		} {
-			size = element.size;
-
-			division = [8,9,10,6,7].detect({ |item|
-					(size / item).frac == 0;
-			}) ? 8;
-
-			if( parent.asView.decorator.left != 4 ) {
-				parent.asView.decorator.nextLine;
+		var division, size, func;
+		if( element.keys.any(_.notNil) ) {
+			var func;
+			func = makeSubViewsFuncDict[ element.type ] ?? { makeSubViewsFuncDict[ \mixed ] };
+			func.value( this );
+		} {	
+			if( element.elements.any({ |item| item.size > 0 }) ) {
+				subGUIs = element.elements.collect({ |element|
+					element.gui( parent );
+				});
+			} {
+				size = element.size;
+	
+				division = [8,9,10,6,7].detect({ |item|
+						(size / item).frac == 0;
+				}) ? 8;
+	
+				if( parent.asView.decorator.left != 4 ) {
+					parent.asView.decorator.nextLine;
+				};
+	
+				StaticText( parent, labelWidth@16 ).string_( element.name.asString ++ " " ).align_( \right );
+	
+				element.elements.do({ |element, i|
+						var view, getValueFunc;
+	
+						if( (i != 0) && ((i % division) == 0)) {
+							parent.asView.decorator.nextLine;
+							parent.asView.decorator.shift( labelWidth + 4, 0 );
+						};
+	
+						view = this.getMakeViewFunc( element.type ).value( parent );
+											
+						getValueFuncs = getValueFuncs.add( this.makeGetValueFunc( element, view ) );
+						views = views.add( view );
+				});
 			};
-
-			StaticText( parent, labelWidth@16 ).string_( element.name.asString ++ " " ).align_( \right );
-
-			element.elements.do({ |element, i|
-					var view, getValueFunc;
-
-					if( (i != 0) && ((i % division) == 0)) {
-						parent.asView.decorator.nextLine;
-						parent.asView.decorator.shift( labelWidth + 4, 0 );
-					};
-
-					view = this.getMakeViewFunc( element.type ).value( parent );
-										
-					getValueFuncs = getValueFuncs.add( this.makeGetValueFunc( element, view ) );
-					views = views.add( view );
-			});
-		};
+		}
 	}
 
 }
