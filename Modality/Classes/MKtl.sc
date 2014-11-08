@@ -393,7 +393,7 @@ MKtl : MAbstractKtl { // abstract class
 				if( isLeaf.(x) ) {
 					leafFunc.( state , x )
 				}{
-					MKtlElementDict(this, state,
+					MKtlElementArray(this, state,
 						x.sortedKeysValuesCollect{ |val, key|
 							f.(val, stateFuncOnNodes.(state, key), stateFuncOnNodes, leafFunc )
 						}

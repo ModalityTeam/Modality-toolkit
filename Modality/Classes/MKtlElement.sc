@@ -15,6 +15,8 @@ MAbstractElement {
 	var <name; // its name in MKtl.elements
 	var <type; // its type.
 	var <tags; // array of user-assignable tags
+	
+	var <>key;
 
 	var <ioType; // can be \in, \out, \inout
 
