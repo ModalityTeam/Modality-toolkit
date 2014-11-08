@@ -255,8 +255,8 @@ METHOD:: outputElements
 returns an array with all the elements that provide outputs
 
 
-METHOD:: loadDeviceDescription
-Load a device description from either a given device description name, or a device name.
+METHOD:: prLoadDeviceDescription
+Load a device description from either a given device description dictionary.
 Also creates the specs for them.
 
 argument:: deviceName

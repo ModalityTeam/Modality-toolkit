@@ -345,7 +345,7 @@ MKtl { // abstract class
 		if ( deviceInfo.isNil )	{ // no device file found:
 			this.warnNoDeviceDescriptionFileFound( name );
 		}{
-			this.loadDeviceDescription( deviceInfo );
+			this.prLoadDeviceDescription( deviceInfo );
 		};
 		if ( deviceDescriptionArray.notNil ){
 			deviceDescriptionName = devDescName;
@@ -414,7 +414,7 @@ MKtl { // abstract class
 		}
 	}
 
-	loadDeviceDescription { |deviceInfo|
+	prLoadDeviceDescription { |deviceInfo|
 		var deviceFileName;
 		var path;
 
