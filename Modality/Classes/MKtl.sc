@@ -206,6 +206,7 @@ MKtl { // abstract class
 
 	init{ |argName, deviceDesc|
 		var devDesc, deviceDescName;
+		var deviceName;
 
 		name = argName;
 		// --- if name is not given, create one ---
@@ -216,6 +217,14 @@ MKtl { // abstract class
 				deviceDescName = deviceDesc;
 			};
 			name = this.class.makeShortName( deviceDescName ).asSymbol;
+		};
+
+		if ( deviceDesc.isNil ){
+			// if device is attached, use the device name from that to find the spec
+			deviceName = MKtlDevice.getDeviceNameFromShortName( name );
+			if ( deviceName.notNil ){
+				deviceDesc = this.class.findDeviceDescFromDeviceName( deviceName );
+			}
 		};
 
 		#devDesc, deviceDescName = this.class.findDeviceDesc( deviceDesc, name );
@@ -245,11 +254,11 @@ MKtl { // abstract class
 
 	prTryOpenDevice{ |devName|
 		var newMKtlDevice;
-		newMKtlDevice = MKtlDevice.tryOpenDevice( name, this );
+		newMKtlDevice = MKtlDevice.tryOpenDevice( devName, this );
 		if ( newMKtlDevice.notNil ){
 			// cross reference:
 			mktlDevice = newMKtlDevice;
-			"Opened device for MKtl(%)\n".postf( name );
+			"Opened device % for MKtl(%)\n".postf( devName, name );
 		}{
 			"Could not open device for MKtl(%)\n".postf( name );
 		};
@@ -303,8 +312,13 @@ MKtl { // abstract class
 				shortName = MKtlDevice.findDeviceShortNameFromLongName( deviceName );
 			}
 		}{
-			shortName = this.class.makeShortName( deviceDescriptionName );
+			deviceName = MKtl.getDeviceDescription( deviceDescriptionName );
+			if ( deviceName.notNil ){
+				deviceName = deviceName.at( \device );
+				shortName = MKtlDevice.findDeviceShortNameFromLongName( deviceName );
+			};
 		};
+		[deviceName, shortName ].postln;
 		this.prTryOpenDevice( shortName );
 	}
 
