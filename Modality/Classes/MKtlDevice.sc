@@ -5,6 +5,8 @@ MKtlDevice{
 	/// shouldn't exploring be an instance flag?
 	classvar <exploring = false;
 
+	classvar <initialized = false;
+
 	var <name, <deviceName; // short name + full device name
 	var <>mktl;
 
@@ -30,7 +32,8 @@ MKtlDevice{
 		};
 		protocols.asCollection.do{ |pcol|
 			this.matchClass(pcol) !? _.find
-		}
+		};
+		initialized = true;
 	}
 
 	*matchClass { |symbol|
@@ -38,7 +41,10 @@ MKtlDevice{
 	}
 
 	*initHardwareDevices{ |force=false|
-		this.allSubclasses.do{ |it| it.initDevices( force ) };
+		if ( initialized.not or: force ){
+			this.allSubclasses.do{ |it| it.initDevices( force ) };
+		};
+		initialized = true;
 	}
 
 	*findMatchingProtocols{ |name|
