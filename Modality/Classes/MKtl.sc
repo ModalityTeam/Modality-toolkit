@@ -802,9 +802,9 @@ MKtl { // abstract class
 
 
 	//also can be used to simulate a non present hardware
-	receive { |key, val|
-		elementsDict[ key ].update( val )
-	}
+	// receive { |key, val|
+	// 	elementsDict[ key ].update( val )
+	// }
 
 	send { |key, val|
 		if ( mktlDevice.notNil ){
