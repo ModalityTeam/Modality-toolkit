@@ -3,8 +3,8 @@ MKtlElementGroup : MAbstractElement {
 	var <elements;
 	var <dict;
 
-	*new { |source, name, elements|
-		^super.newCopyArgs( source, name ).elements_(elements);
+	*new { |name, elements|
+		^super.newCopyArgs( nil, name ).elements_(elements);
 	}
 
 	init {		
@@ -43,6 +43,8 @@ MKtlElementGroup : MAbstractElement {
 			});
 		};
 	}
+	
+	source { ^elements.first.source }
 	
 	sortElementsByType {
 		var order;

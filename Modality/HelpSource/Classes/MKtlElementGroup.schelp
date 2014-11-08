@@ -59,7 +59,7 @@ m.elementAt( \bt ); // returns the MKtlElementGroup containing the buttons
 m.elementAt( \bt, 0 ).flat; // creates and returns an Array with the first row of buttons
 
 // make a group of the upper row of buttons
-a = MKtlElementGroup( m, 'group', m.elementAt( \bt, 0 ).flat );
+a = MKtlElementGroup( 'group', m.elementAt( \bt, 0 ).flat );
 
 // assign an action to be fired when any element in the group is touched
 // the first argument will be the touched MKtlElement, the second argument
