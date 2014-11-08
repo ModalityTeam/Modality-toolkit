@@ -22,6 +22,10 @@ LIST::
 ##link::Reference/SupportedDevices::
 ::
 
+There are tutorial files and examples of common usage cases of MKtl available here:
+link::https://github.com/ModalityTeam/ModalityWorkshop::
+
+
 SECTION:: Overview
 
 With code::MKtl:: it is possible to assign functionality to controller elements.
