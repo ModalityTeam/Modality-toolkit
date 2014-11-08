@@ -342,8 +342,10 @@ MKtl { // abstract class
 
 		#shortName, deviceName, devDesc = this.checkWhetherDeviceIsThere( deviceName );
 		if ( shortName.isNil ){
+			devDesc = this.class.getDeviceDescription(deviceDescriptionName);
 			protocol = devDesc.at( \protocol );
 			MKtlDevice.initHardwareDevices( lookAgain, protocol.bubble ); // this may be an issue, only look for appropriate protocol
+			#shortName, deviceName, devDesc = this.checkWhetherDeviceIsThere( deviceName );
 		};
 
 		// [deviceName, shortName ].postln;

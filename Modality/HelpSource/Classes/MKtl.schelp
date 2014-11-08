@@ -53,11 +53,12 @@ k = MKtl('nnkn20', 'nanoKONTROL2' ); // explicitly use a device spec name
 METHOD:: newFromDevice
 Accesses an existing instance of MKtl with the given name, or creates a new instance of MKtl.
 
-
 argument:: name
 The name of the controller as you want to refer to it.
-If you supply the short name that was given by MKtl's find method, it will try to open this device.
 If you supply the name of an MKtl that already exists, the method will return that instance, as with e.g. JITLib proxies, oder OSCdef, MIDIdef etc.
+
+argument:: deviceInfo
+Either a String or an Array with device information as reported in the comment after the MKtl shortnames.
 
 argument:: deviceDesc
 The device description that you want to use. This is the file name of the description file (without .desc.scd), or a Dictionary with a valid device description.
@@ -66,14 +67,17 @@ argument:: lookForNew
 Boolean flag whether or not to look for newly attached devices or newly added device descriptions. Default is false. It will always look for devices and device descriptions the first time you open an MKtl.
 
 code::
-// use auto-name, assuming you have one nanoKontrol 2 connected.
-// if you have not, a virtual nanoKontrol2 will be generated
-k = MKtl('nnkn20');
+MKtl.find;
+// prints:
+MKtl('rnnd0');  // [ "Run'N' Drive", "Thrustmaster" ]
 
-// use an explicit device spec name
-k = MKtl('nnkn20', 'nanoKONTROL2' ); // explicitly use a device spec name
+k = MKtl.newFromDevice('rnnd0', "Run'N' Drive" );
 
-// a longer example passing in a dictionary is below
+k = MKtl.newFromDevice( deviceInfo: "Run'N' Drive" );
+
+k = MKtl.newFromDevice( deviceInfo: [ "Run'N' Drive", "Thrustmaster" ] );
+
+k = MKtl.newFromDevice( \myGamePad, [ "Run'N' Drive", "Thrustmaster" ], \RunNDrive );
 ::
 
 
@@ -181,6 +185,27 @@ returns:: the flattened description.
 
 INSTANCEMETHODS::
 
+METHOD:: openDevice
+Open the device for this MKtl if it was not opened already. It will look automatically for an appropriate device.
+
+argument:: deviceName
+Optional argument to be explicit about the device name.
+
+argument:: lookAgain
+Whether or not to use for newly attached hardware devices.
+
+code::
+// while the run'n'drive is not yet attached:
+m = MKtl( 'funky', \RunNDrive ); // just opens the spec
+
+// now I found my run'n'drive and plugged it in:
+m.openDevice; // finds it automatically
+
+// I want to use the device name
+m.openDevice( "Run'N' Drive" ); // works
+::
+
+
 METHOD:: name
 retrieve the name of the MKtl.
 
@@ -201,6 +226,12 @@ myKtl.elementAt(\sl,0,0)
 myKtl.elements[\sl][0][0]
 ::
 
+METHOD:: at
+Access an element in the elements hierarchy by passing in one index.
+
+argument:: index
+Index to get from the elements.
+
 
 METHOD:: gui
 
@@ -208,7 +239,7 @@ Create a gui representation of the device
 
 discussion::
 
-MKtl.make(\test, "nanoKONTROL");
+MKtl(\test, "nanoKONTROL");
 k = MKtl(\test);
 k.gui
 
@@ -231,6 +262,9 @@ k.elementsOfType(\slider)
 METHOD:: explore
 
 When a device doesn't have a description file yet, explore can be used to help in creating one.
+
+METHOD:: exploring
+Returns a Boolean whether or not a device is currently being explored.
 
 
 SUBSECTION:: Private methods
@@ -280,7 +314,7 @@ METHOD:: makeElements
 Populate the elements with MKtlElements.
 
 
-PRIVATE:: storeArgs, printOn, elementNames, elementDescriptionFor, deviceDescriptionHierarch, defaultValueFor, prUnderscorify, replaceElements, prTraverse, makeElementName, makeFlatDeviceDescription
+PRIVATE:: storeArgs, printOn, elementNames, elementDescriptionFor, deviceDescriptionHierarch, defaultValueFor, prUnderscorify, replaceElements, prTraverse, makeElementName, makeFlatDeviceDescription, checkWhetherDeviceIsThere
 
 
 
