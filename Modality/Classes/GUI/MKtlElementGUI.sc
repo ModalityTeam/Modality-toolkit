@@ -42,12 +42,17 @@ MKtlElementGUI {
 					.autoUpTime_( 0.2 );
 			},
 			'unknown': { |parent, label|
+				var vw;
 				if( label.notNil ) {
 					StaticText( parent, labelWidth@16 ).string_( label.asString ++ " " ).align_( \right );
 				};
-				NumberBox( parent,
+				vw = NumberBox( parent,
 					if( label.notNil ) { 80@16 } { 30@16 }
 				).clipLo_(0).clipHi_(1);
+				if( vw.respondsTo( \maxDecimals_ ) ) {
+					vw.maxDecimals = 4;
+				};
+				vw;
 			},
 			'midiBut': \button,
 			'joyAxis': \slider,
