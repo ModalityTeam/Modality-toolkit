@@ -11,7 +11,7 @@ MKtlElementGroup : MAbstractElement {
 		var array;
 		dict = dict ? ();
 		elements = elements ?? { Array.new };
-		case { elements.postln.isKindOf( Dictionary ).postln } {
+		case { elements.isKindOf( Dictionary ) } {
 			elements.sortedKeysValuesDo({ |key, value|
 				dict.put( key, value );
 				array = array.add( value );
@@ -26,7 +26,7 @@ MKtlElementGroup : MAbstractElement {
 				} {
 					item;
 				};
-			}).postln;
+			});
 		};
 		dict.values.do({ |item|
 			if( elements.includes( item ).not ) {
