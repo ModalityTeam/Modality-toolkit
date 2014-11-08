@@ -424,6 +424,7 @@ MKtl { // abstract class
 		if (isDesc.not) {
 			"% is not a valid description file.".format(path.basename).warn;
 		} {
+			descDict.put( \filepath, path );
 			allDevDescs = allDevDescs ?? { IdentityDictionary.new };
 			allDevDescs.put(descName.asSymbol, descDict);
 			if ( verbose ){
