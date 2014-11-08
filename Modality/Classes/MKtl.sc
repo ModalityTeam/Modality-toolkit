@@ -45,8 +45,6 @@ MKtl { // abstract class
 		^MKtlDevice.allAvailable;
 	}
 
-	*find { |protocols|
-		MKtlDevice.find( protocols );
 	*allDescriptions{
 		if(MKtl.allDevDescs.isNil){
 			MKtl.loadAllDescs
@@ -54,6 +52,8 @@ MKtl { // abstract class
 		^this.prShortnamesToDeviceDescriptions;
 	}
 
+	*find { |protocols|
+		MKtlDevice.find( protocols );
 	}
 
 	*initClass {
