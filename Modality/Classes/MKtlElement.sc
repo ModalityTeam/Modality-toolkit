@@ -133,6 +133,11 @@ MAbstractElement {
 		};
 	}
 
+	asBaseClass {
+		^this;
+	}
+
+
 	//tagging support
 	addTag {|... newTags|
 		tags = tags.union(newTags.flat);

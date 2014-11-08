@@ -35,6 +35,16 @@ MKtlAbstractElementGroup : MAbstractElement {
 		^elements.inject(thisValue, function)
 	}
 
+	asBaseClass {|recursive = true|
+		^recursive.if({
+			this.elements.collect{|el| el.asBaseClass(recursive)};
+		},{
+			elements;
+		})
+	}
+
+	makePlain {
+	}
 
 	removeAll {
 		elements.do(_.prRemoveGroup( this ));
