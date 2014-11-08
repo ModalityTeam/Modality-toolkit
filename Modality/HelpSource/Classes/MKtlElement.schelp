@@ -15,7 +15,7 @@ Available types.
 private:: initClass
 
 METHOD:: new
-creates a new instance.
+Creates a new instance.
 
 argument:: source
 The link::Classes/MKtl:: it belongs to.
@@ -26,23 +26,23 @@ A name.
 INSTANCEMETHODS::
 
 METHOD:: spec
-the element's spec
+The element's spec
 
 private:: init
 
 METHOD:: defaultValue
-the element's default value
+The element's default value
 
 
 METHOD:: rawValue
-get the element's value (raw)
+Get the element's value (raw)
 
 argument:: newVal
-set the element's value (raw)
+Set the element's value (raw)
 
 
 METHOD:: value
-get and set the element's current value (normed)
+Get and set the element's current value (normed)
 
 argument:: newval
 a Float between 0.0 and 1.0
@@ -57,7 +57,7 @@ Example:
 Control a knob on the Behringer BCF2000
 
 code::
-MIDIMKtl('bcf20000').elements.at(\kn_1_1).value_(0.5)
+MKtl('bcf20000').elements.at(\kn_1_1).value_(0.5)
 ::
 
 
@@ -86,6 +86,14 @@ argument:: action
 
 Remove an action from the list of current actions. Has no effect if 'action' is a function or nil, only removes the action if 'action' is a FunctionList.
 
+METHOD:: doAction
+
+Perform any actions related to this element.
+
+argument:: sendValue
+Whether or not to send the value out to the device if this is an output element.
+
+
 METHOD:: reset
 
 Set action to nil.
@@ -98,19 +106,21 @@ pattern support - embed MKtlElement in a stream.
 
 code::
 // examples for direct pattern usage:
-n = MKtl.make(\nk1, 'nanoKONTROL');
+n = MKtl(\nk1, 'nanoKONTROL');
 x = n.elementsDict[\play];
 
 // test asStream method - simple endless lookup
-Pbind(\test, x).trace.play;
+p = Pbind(\test, x).trace.play;
 
 // switch value while playing, pattern gets current value
 x.value = 1;
 x.value = 0;
 
+p.stop;
+
 // test embedInStream method:
 (
-Pbind(
+p = Pbind(
 	\test, Pseq([x, 4, 7], 8),
 	\dur, 0.5
 ).trace.play;
@@ -118,15 +128,25 @@ Pbind(
 // switch value while playing
 x.value = 1;
 x.value = 0;
+
+p.stop;
 ::
 
+
+METHOD:: elementDescription
+An Event/dictionary with the description for the element.
+
+METHOD:: gui
+Create a gui for this elements.
 
 
 EXAMPLES::
 
 Sending data back to MIDI device, one should use link::Classes/MAbstractElement#value_:: :
 
-MIDIMKtl('bcf20000').elementAt(\kn,1,i+1).value_(0.5)
+code::
+MKtl('bcf20000').elementAt(\kn,1,1).value_(0.5)
+::
 
 Classic knobs rotating demo for B:
 
@@ -138,7 +158,7 @@ fork{
 		0.1.wait;
 		x = x + 0.1;
 		8.do{ |i|
-			MIDIMKtl('bcf20000').elementAt(\kn,1,i+1).value_(
+			MKtl('bcf20000').elementAt(\kn,1,i).value_(
 				(x + (i/7)).mod(1.0)
 			)
 		}
