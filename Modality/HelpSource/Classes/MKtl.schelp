@@ -139,7 +139,7 @@ Full path to the description file to load.
 argument:: verbose
 Whether or not to post about having loaded the device description file.
 
-METHOD:: deviceDescriptionFolder
+METHOD:: defaultDeviceDescriptionFolder
 This class variable holds the path where the device descriptions are located. It is automatically inferred from the location where the class is residing on your system.
 
 METHOD:: openDescriptionFolder

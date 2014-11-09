@@ -15,7 +15,7 @@ list::
 
 A description file gathers information for each element. It consists of a SuperCollider dictionary with a certain structure. Description files are located at
 code::
-MKtl.deviceDescriptionFolder.openOS;
+MKtl.openDescriptionFolder;
 ::
 
 This document gives an overview on
