@@ -37,6 +37,14 @@ q.manta.mktl.elementAt(\pad, \con, 0).action = { |el|
 Ndef(\test).setUni(\freq, el.value);
 };
 
+// try adding a custom group:
+var grp = MKtlElementGroup( 'padBot8', q.manta.mktl.elementAt( \pad, \vel, (0..7)) );
+
+
+q.manta.mktl.addCustomGroup('padBot8', grp);
+
+q.manta.mktl
+
 */
 
 
@@ -70,13 +78,15 @@ description: (
 			i -> (
 				msgName: '/manta/continuous/button',
 				num: i, 'type': 'pad', spec: \mantaPad
-		) },
-
-		'sl': (0..1).collect { |i|
-			i -> (
-				msgName: '/manta/continuous/slider',
-				num: i, 'type': 'slider', spec: \mantaPad
 		) }
-	)
+	),
+
+	'sl': (0..1).collect { |i|
+		i -> (
+			msgName: '/manta/continuous/slider',
+			num: i, 'type': 'slider', spec: \mantaPad
+	) }
 )
 )
+
+
