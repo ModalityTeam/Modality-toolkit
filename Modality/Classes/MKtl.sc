@@ -1,7 +1,7 @@
 // honouring Jeff's MKeys by keeping the M for prototyping the new Ktl
 
 MKtl { // abstract class
-	classvar <deviceDescriptionFolder; //path of MKtlSpecs folder
+	classvar <defaultDeviceDescriptionFolder; //path of MKtlDescriptions folder
 	classvar <allDevDescs; // an identity dictionary of device descriptions
 	classvar <all; // holds all instances of MKtl
 	classvar <specs; // ( 'specName': ControlSpec, ...) -> all specs
@@ -48,7 +48,7 @@ MKtl { // abstract class
 	}
 
 	*openDescriptionFolder {
-		this.deviceDescriptionFolder.openOS;
+		this.defaultDeviceDescriptionFolder.openOS;
 	}
 
 	openDescriptionFile {
@@ -104,7 +104,7 @@ MKtl { // abstract class
 		this.addSpec(\cent1,  [0, 1, \lin, 0, 0.5].asSpec);
 		this.addSpec(\cent1inv,  [1, 0, \lin, 0, 0.5].asSpec);
 
-		deviceDescriptionFolder = this.filenameSymbol.asString.dirname.dirname +/+ "MKtlSpecs";
+		defaultDeviceDescriptionFolder = this.filenameSymbol.asString.dirname.dirname +/+ "MKtlDescriptions";
 	}
 
 	*addSpec {|key, spec|
@@ -426,7 +426,7 @@ MKtl { // abstract class
 	}
 
 	*loadMatching { |name,verbose = true|
-		var paths = (deviceDescriptionFolder +/+
+		var paths = (defaultDeviceDescriptionFolder +/+
 			("*" ++ name ++ "*.desc.scd")).pathMatch;
 		var descNames = paths.collect{ |x| PathName(x).fileName.split($.)[0]; };
 		if ( verbose ){
@@ -613,7 +613,7 @@ MKtl { // abstract class
 	}
 
 	*postAllDescriptions {
-		(MKtl.deviceDescriptionFolder +/+ "*").pathMatch
+		(MKtl.defaultDeviceDescriptionFolder +/+ "*").pathMatch
 		.collect { |path| path.basename.splitext.first }
 		.reject(_.beginsWith("_"))
 		.do { |path| ("['" ++ path ++"']").postln }
