@@ -119,23 +119,25 @@ OSCMktlDevice : MKtlDevice {
 
 	*findSource{ |host,port|
 		var devKey;
-		this.sourceDeviceDict.keysValuesDo{ |key,addr|
-			if ( host.notNil ){
-				if ( port.notNil ){
-					if ( addr.port == port and: (addr.host == host ) ){
-						devKey = key;
+		if ( initialized ){
+			this.sourceDeviceDict.keysValuesDo{ |key,addr|
+				if ( host.notNil ){
+					if ( port.notNil ){
+						if ( addr.port == port and: (addr.host == host ) ){
+							devKey = key;
+						}
+					}{ // just match host
+						if ( addr.host == host ){
+							devKey = key;
+						}
 					}
-				}{ // just match host
-					if ( addr.host == host ){
+				}{ // just match port
+					if ( addr.port == port ){
 						devKey = key;
 					}
 				}
-			}{ // just match port
-				if ( addr.port == port ){
-					devKey = key;
-				}
-			}
-		};
+			};
+		}
 		^devKey;
 	}
 
