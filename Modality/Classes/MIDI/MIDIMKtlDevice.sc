@@ -666,7 +666,7 @@ MIDIMKtlDevice : MKtlDevice {
 		responders.do{ |resp|
 			// resp.postln;
 			resp.free;
-		}
+		};
 		elementHashDict = nil;
 		hashToElNameDict = nil;
 		elNameToMidiDescDict = nil;
