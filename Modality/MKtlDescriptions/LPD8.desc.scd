@@ -4,20 +4,20 @@
 device: "LPD8",
 protocol: \midi,
 description: (
-	\kn: Event.newFrom( (1..8).collect{ |midiNum|
-		[ midiNum, (\midiMsgType: \cc, \type: \knob, \midiChan: 0, \midiNum: midiNum, \spec: \midiCC) ]
+	\kn: Event.newFrom( (1..8).collect{ |midiNum, i|
+		[ i+1, (\midiMsgType: \cc, \type: \knob, \midiChan: 0, \midiNum: midiNum, \spec: \midiCC, \ioType: \inout ) ]
 	}.flatten ),
 	\pad: (
-		\on: Event.newFrom( (36..43).collect{ |note|
+		\on: Event.newFrom( (36..43).collect{ |note, i|
 			[
-				note,
-				(\midiMsgType: \noteOn, \type: \pad, \midiChan: 0, \midiNum:  note, \spec: \midiVel)
+				i+1,
+				(\midiMsgType: \noteOn, \type: \pad, \midiChan: 0, \midiNum:  note, \spec: \midiVel, \ioType: \inout)
 			]
 		}.flatten ),
-		\off: Event.newFrom( (36..43).collect{ |note|
+		\off: Event.newFrom( (36..43).collect{ |note, i|
 			[
-				note,
-				(\midiMsgType: \noteOff, \type: \pad, \midiChan: 0, \midiNum:  note, \spec: \midiVel)
+				i+1,
+				(\midiMsgType: \noteOff, \type: \pad, \midiChan: 0, \midiNum:  note, \spec: \midiVel, \ioType: \inout)
 			]
 		}.flatten )
 	),
