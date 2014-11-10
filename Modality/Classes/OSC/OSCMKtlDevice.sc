@@ -159,14 +159,6 @@ OSCMktlDevice : MKtlDevice {
 	}
 
 	initElements{
-		this.setOSCFuncs;
-	}
-
-	cleanupElements{
-		this.removeOSCFuncs;
-	}
-
-	setOSCFuncs{
 		oscFuncDictionary = IdentityDictionary.new;
 		mktl.elementsDict.do{ |el|
 			var tag = el.elementDescription[ \oscTag ];
@@ -193,7 +185,7 @@ OSCMktlDevice : MKtlDevice {
 		};
 	}
 
-	removeOSCFuncs{
+	cleanupElements{
 		oscFuncDictionary.do{ |it| it.free };
 		oscFuncDictionary = nil;
 	}

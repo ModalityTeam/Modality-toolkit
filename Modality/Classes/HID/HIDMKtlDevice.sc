@@ -162,15 +162,7 @@ HIDMKtlDevice : MKtlDevice {
 		}
 	}
 
-	initElements{
-		this.setHIDActions;
-	}
-
 	cleanupElements{
-		this.removeHIDActions;
-	}
-
-	removeHIDActions{
 		mktl.elementsDict.do{ |el|
 			var theseElements;
             var elid = el.elementDescription[\hidElementID];
@@ -188,7 +180,7 @@ HIDMKtlDevice : MKtlDevice {
 		};
 	}
 
-	setHIDActions{
+	initElements{
 		var newElements = ();
 
 		mktl.elementsDict.do{ |el|

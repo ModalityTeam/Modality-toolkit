@@ -266,12 +266,15 @@ MIDIMKtlDevice : MKtlDevice {
 
 	/// --------- EXPLORING -----)))))---------
 
-	initElements{ |argName, argSource, argDestination|
-		this.initMIDIMKtl( argName, argSource, argDestination );
-	}
+	initElements{
+		elementHashDict = ();
+		hashToElNameDict = ();
+		elNameToMidiDescDict = ();
 
-	cleanupElements{
-		this.removeRespFuncs;
+		if ( mktl.deviceDescriptionArray.notNil ){
+			this.prepareElementHashDict;
+			this.makeRespFuncs;
+		}
 	}
 
 	initMIDIMKtl { |argName, argSource, argDestination|
@@ -291,14 +294,8 @@ MIDIMKtlDevice : MKtlDevice {
 			};
 		};
 
-		elementHashDict = ();
-		hashToElNameDict = ();
-		elNameToMidiDescDict = ();
+		this.initElements;
 
-		if ( mktl.deviceDescriptionArray.notNil ){
-			this.prepareElementHashDict;
-			this.makeRespFuncs;
-		}
 	}
 
 	makeHashKey{ |descr,elName|
@@ -665,11 +662,14 @@ MIDIMKtlDevice : MKtlDevice {
 	}
 
 
-	removeRespFuncs{
+	cleanupElements{
 		responders.do{ |resp|
-			resp.postln;
+			// resp.postln;
 			resp.free;
 		}
+		elementHashDict = nil;
+		hashToElNameDict = nil;
+		elNameToMidiDescDict = nil;
 	}
 
 	makeRespFuncs { |msgTypes|
