@@ -19,23 +19,23 @@ description: (
 	'acc': (
 			x: (
 				oscTag: '/minibee/data',
-				filterBy: [ 0 ], match: [ 1 ], valueAt: 1,
+				filterAt: [ 0 ], match: [ 1 ], valueAt: 1,
 			'type': 'accelerationAxis', spec: \minibeeData
 		),
 		y: (
 			oscTag: '/minibee/data',
-			filterBy: [ 0 ], match: [ 1 ], valueAt: 2,
+			filterAt: [ 0 ], match: [ 1 ], valueAt: 2,
 			'type': 'accelerationAxis', spec: \minibeeData
 		),
 		z: (
 			oscTag: '/minibee/data',
-			filterBy: [ 0 ], match: [ 1 ], valueAt: 3,
+			filterAt: [ 0 ], match: [ 1 ], valueAt: 3,
 			'type': 'accelerationAxis', spec: \minibeeData
 		)
 	),
 	'rssi': (
 		oscTag: '/minibee/data',
-		filterBy: [ 0 ], match: [ 1 ], valueAt: 4,
+		filterAt: [ 0 ], match: [ 1 ], valueAt: 4,
 		'type': 'rssi', spec: \minibeeData
 	)
 )
@@ -59,6 +59,7 @@ OSCMktlDevice : MKtlDevice {
 	var <srcDevice;
 
 	var <oscFuncDictionary;
+	var <oscOutTagDictionary;
 
 	classvar <initialized = false;
 
@@ -117,17 +118,17 @@ OSCMktlDevice : MKtlDevice {
 		}
 	}
 
-	*findSource{ |host,port|
+	*findSource{ |name,host,port| // does not do anything useful yet...
 		var devKey;
 		if ( initialized ){
 			this.sourceDeviceDict.keysValuesDo{ |key,addr|
 				if ( host.notNil ){
 					if ( port.notNil ){
-						if ( addr.port == port and: (addr.host == host ) ){
+						if ( addr.port == port and: (addr.hostname == host ) ){
 							devKey = key;
 						}
 					}{ // just match host
-						if ( addr.host == host ){
+						if ( addr.hostname == host ){
 							devKey = key;
 						}
 					}
@@ -142,11 +143,14 @@ OSCMktlDevice : MKtlDevice {
 	}
 
 	*deviceNameFromAddr{ |addr|
-		^(addr.host ++ "_" ++ addr.port);
+		^( "host" ++ addr.hash.asDigits.sum ++ "_" ++ addr.port);
 	}
 
 	*new { |name, addr, parentMKtl|
 		// could have a host/port combination from which messages come?
+		if ( addr.isNil ){
+			addr = sourceDeviceDict.at( name );
+		};
 		^super.basicNew( name, this.deviceNameFromAddr( addr ), parentMKtl ).initOSCMKtl( addr );
 	}
 
@@ -162,33 +166,69 @@ OSCMktlDevice : MKtlDevice {
 
 	initElements{
 		oscFuncDictionary = IdentityDictionary.new;
+		oscOutTagDictionary = IdentityDictionary.new;
 		mktl.elementsDict.do{ |el|
 			var tag = el.elementDescription[ \oscTag ];
-			var valueIndex = el.elementDescription[ \valueAt ] + 1;
-			var filtering = [
-				el.elementDescription[ \filterBy ] + 1,
-				el.elementDescription[ \match ]
-			].flop;
-			oscFuncDictionary.put( el.key,
-				OSCFunc.new( { |msg|
-					var matching = true;
-					filtering.do{ |f|
-						if ( msg.at( f[0] ) != f[1] ){ matching = false };
-					};
-					if ( matching ){
-						el.rawValueAction_( msg.at( valueIndex ) );
-						if(traceRunning) {
-							"% - % > % | type: %, src:%"
-							.format(this.name, el.name, el.value.asStringPrec(3), el.type, el.source).postln;
-						}
-					};
-				}, tag, srcDevice ); // optional add host/port
-			);
+			var ioType = el.elementDescription[ \ioType ];
+			var valueIndex = el.elementDescription[ \valueAt ];
+			var filterAt = el.elementDescription[ \filterAt ];
+			var match = el.elementDescription[ \match ];
+			var filtering;
+			if ( [\in,\inout].includes( ioType ) or: ioType.isNil ){
+				if ( filterAt.size != match.size ){
+					"WARNING: Element %, with tag % has different sizes for filterAt (%) and match (%)\n".postf( el.key, tag, filterAt, match );
+				};
+				filtering = [
+					el.elementDescription[ \filterAt ] + 1,
+					el.elementDescription[ \match ]
+				].flop;
+				oscFuncDictionary.put( el.key,
+					OSCFunc.new( { |msg|
+						var matching = true;
+						filtering.do{ |f|
+							if ( msg.at( f[0] ) != f[1] ){ matching = false };
+						};
+						if ( matching ){
+							el.rawValueAction_( msg.at( valueIndex+1 ) );
+							if(traceRunning) {
+								"% - % > % | type: %, src:%"
+								.format(this.name, el.name, el.value.asStringPrec(3), el.type, el.source).postln;
+							}
+						};
+					}, tag, srcDevice ); // optional add host/port
+				);
+			};
+			if ( [ \out, \inout ].includes( ioType ) ) {
+				if ( oscOutTagDictionary.at( tag ).isNil ){
+					oscOutTagDictionary.put( tag.asSymbol,
+						el.elementDescription[ \valueDefaults ]
+					);
+				};
+				oscOutTagDictionary.at( tag ).put( valueIndex, el.name );
+			};
 		};
 	}
 
 	cleanupElements{
 		oscFuncDictionary.do{ |it| it.free };
 		oscFuncDictionary = nil;
+		oscOutTagDictionary = nil;
+	}
+
+	// does not take care yet of multidimensional output messages
+	send{ |key,val|
+		var el, tag, values;
+		el = mktl.elementDescriptionFor( key );
+		tag = el.oscTag;
+		values = oscOutTagDictionary.at( tag );
+		values = values.collect{ |it|
+			it.postcs;
+			if ( it.isKindOf( Symbol ) ){
+				mktl.rawValueAt( it );
+			}{
+				it;
+			}
+		};
+		srcDevice.sendMsg( *( [ el.oscTag ] ++ values ) );
 	}
 }

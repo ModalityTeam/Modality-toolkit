@@ -500,7 +500,8 @@ MKtl { // abstract class
 	//traversal function for combinations of dictionaries and arrays
 	prTraverse {
 		var isLeaf = { |dict|
-			dict.values.any({|x| x.size > 1}).not
+			dict.keys.includes( \type ) or:
+			dict.values.any({|x| (x.size > 1) }).not;
 		};
 
 		var f = { |x, state, stateFuncOnNodes, leafFunc|
@@ -533,6 +534,7 @@ MKtl { // abstract class
 
 	prMakeElementsFunc {
 		var isLeaf = { |dict|
+			dict.keys.includes( \type ) or:
 			dict.values.any({|x| x.size > 1}).not
 		};
 
@@ -553,8 +555,8 @@ MKtl { // abstract class
 					MKtlElementGroup(state,
 						x.collect{ |val, i|
 							if( val.isKindOf( Association ) ) {
-								(val.key -> f.(val.value, 
-									stateFuncOnNodes.(state, val.key),  stateFuncOnNodes, leafFunc ) 
+								(val.key -> f.(val.value,
+									stateFuncOnNodes.(state, val.key),  stateFuncOnNodes, leafFunc )
 								)
 							} {
 								f.(val, stateFuncOnNodes.(state, i),  stateFuncOnNodes, leafFunc )

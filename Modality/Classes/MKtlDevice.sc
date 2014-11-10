@@ -19,9 +19,9 @@ MKtlDevice{
 
 	*find { |protocols|
 		if ( Main.versionAtLeast( 3, 7 ) ){
-			protocols = protocols ? [\midi,\hid];
+			protocols = protocols ? [\midi,\hid,\osc];
 		}{
-			protocols = protocols ? [\midi];
+			protocols = protocols ? [\midi,\osc];
 		};
 		protocols.asCollection.do{ |pcol|
 			this.matchClass(pcol) !? _.find
