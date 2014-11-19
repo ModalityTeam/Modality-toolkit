@@ -54,7 +54,7 @@ MKtl { // abstract class
 	openDescriptionFile {
 		var descfilepath;
 		var mydesc = MKtl.allDevDescs.detect { |desc|
-			desc[\device] == MKtl(\rnnd0).deviceDescriptionName
+			desc[\device] == this.deviceDescriptionName
 		};
 
 		if (mydesc.isNil or: {
