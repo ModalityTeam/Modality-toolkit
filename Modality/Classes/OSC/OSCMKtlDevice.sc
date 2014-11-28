@@ -6,7 +6,6 @@
 /// and testing;
 /*
 
-
 (
 MKtl.addSpec(\minibeeData, [0, 1]);
 
@@ -51,7 +50,7 @@ m = MKtl( \testMinibee );
 
 */
 
-OSCMktlDevice : MKtlDevice {
+OSCMKtlDevice : MKtlDevice {
 	classvar <protocol = \osc;
 	classvar <sourceDeviceDict;
 	classvar <checkIncomingOSCFunction;
@@ -101,7 +100,7 @@ OSCMktlDevice : MKtlDevice {
 		});
 	}
 
-	*deinitDevices{
+	*deinitDevices {
 		thisProcess.removeOSCRecvFunc( checkIncomingOSCFunction );
 	}
 
@@ -112,7 +111,7 @@ OSCMktlDevice : MKtlDevice {
 			"// MKtl(autoName);  // [ host, port ]".postln;
 			sourceDeviceDict.keysValuesDo{ |key,addr|
 				"    MKtl('%');  // [ %, % ]\n"
-				.postf(key, addr.host.asCompileString, addr.port.asCompileString )
+				.postf(key, addr.hostname.asCompileString, addr.port.asCompileString )
 			};
 			"\n-----------------------------------------------------".postln;
 		}
