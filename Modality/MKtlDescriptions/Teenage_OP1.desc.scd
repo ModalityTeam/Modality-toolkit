@@ -1,7 +1,6 @@
 //	// Teenage Engineering OP-1
 //	// cc messages from four knobs,
 // and lots of buttons (mostly with icons)
-// knob hat presses missing!
 
 (
 device: "OP-1 Midi Device",
@@ -16,13 +15,18 @@ description: (
 		}
 	),
 
-	\kn: [(1..4), [\blue, \green, \white, \red]].flop.collect { |desc, i|
-		var num, label;
-		#num, label = desc;
-		(\midiMsgType: \cc, \type: \knob, \label: label, \midiChan: 0, \midiNum: num, \spec: \midiCC)
-	},
-	// \knHat: FIXME: add knob hats
-
+	\kn: (
+		\turn: [(1..4), [\blue, \green, \white, \red]].flop.collect { |desc, i|
+			var num, label;
+			#num, label = desc;
+			(\midiMsgType: \cc, \type: \knob, \label: label, \midiChan: 0, \midiNum: num, \spec: \midiCC)
+		},
+		\hat:  [(64..67), [\blue, \green, \white, \red]].flop.collect { |desc, i|
+			var num, label;
+			#num, label = desc;
+			(midiMsgType: \cc, type: \button, \label: label, \midiChan: 0, \midiNum: num, \spec: \midiBut, \mode: \push)
+		}
+	),
 	\bt: (11..14).collect { |num|
 		(\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: num, \spec: \midiBut)
 	},
