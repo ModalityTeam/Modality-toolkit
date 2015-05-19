@@ -11,6 +11,9 @@ MKtl searches for controllers connected to your machine, and gives you a list of
 For most devices, this requires that someone has already made a description file for the device; if there is none, it is easy to make one following the instructions here:
 link::Tutorials/How_to_create_a_description_file::
 
+MKtls can also be nested by composing several MKtls; for instance, the iControl ... creates both MIDI and HID devices for communication. For an example and background, see link::Tutorials/Composing_MKtls::
+
+
 CLASSMETHODS::
 PRIVATE:: initClass, flattenDescriptionForIO, prShortNamesToDeviceDescriptions, getMatchingDescsForShortName, findDeviceDescFromDeviceName, findDeviceDescFromShortName, findDeviceDesc
 

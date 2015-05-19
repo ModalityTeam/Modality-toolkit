@@ -60,7 +60,7 @@ MKtlElementGUI {
 			'rumble':\slider,
 			'ribbon': \slider,
 			'hatSwitch': \knob,
-			'encoder': \knob,
+			'encoder': \knob
 		);
 	}
 
@@ -74,14 +74,14 @@ MKtlElementGUI {
 		 };
 
 		if( parent.asView.decorator.isNil ) { parent.addFlowLayout };
-		
+
 		if( createdWindow ) {
 			verboseButton = Button( parent, labelWidth@16 )
 				.states_([["trace"],["trace", Color.black, Color.green]])
 				.action_({ |bt| element.source.trace( bt.value.booleanValue ) })
 				.value_( element.source.traceRunning.binaryValue );
 			parent.asView.decorator.nextLine;
-			
+
 			views = [ verboseButton ];
 			values = [ element.source.traceRunning.binaryValue ];
 			getValueFuncs = [ { element.source.traceRunning.binaryValue } ];
@@ -106,10 +106,10 @@ MKtlElementGUI {
 		};
 		^func;
 	}
-	
+
 	makeGetValueFunc { |element, view|
 		var getValueFunc, value, ctrl, changed = true;
-		
+
 		ctrl = SimpleController( element )
 			.put( \value, { |obj| changed = true });
 
@@ -132,9 +132,9 @@ MKtlElementGUI {
 
 	makeSubViews {
 		var view, getValueFunc;
-		
+
 		view = this.getMakeViewFunc( element.type ).value( parent, element.name );
-		
+
 		getValueFuncs = getValueFuncs.add( this.makeGetValueFunc( element, view ) );
 		views = views.add( view );
 	}
@@ -153,9 +153,9 @@ MKtlElementGUI {
 }
 
 MKtlElementGroupGUI : MKtlElementGUI {
-	
+
 	classvar <>makeSubViewsFuncDict;
-	
+
 	*initClass {
 		makeSubViewsFuncDict = (
 			\mixed: { |gui|
@@ -180,61 +180,60 @@ MKtlElementGroupGUI : MKtlElementGUI {
 				allElements = gui.element.flat;
 				onElements = allElements.select({ |item| item.name.asString.find( "on" ).notNil });
 				offElements = allElements.select({ |item| item.name.asString.find( "off" ).notNil });
-				
+
 				if( (onElements.size == 0) && (offElements.size == 0) ) {
 					makeSubViewsFuncDict[ \mixed ].value( gui ); // fallback to normal behavior
-				} {	
-					
+				} {
+
 					size = onElements.size;
-					
+
 					if( gui.parent.asView.decorator.left != 4 ) {
 						gui.parent.asView.decorator.nextLine;
 					};
-	
+
 					StaticText( gui.parent, labelWidth@16 ).string_( gui.element.name.asString ++ " " ).align_( \right );
-					
+
 					if( size == 0 ) {
 						onElements = offElements;
 						offElements = [];
 						size = offElements.size;
 					};
-					
+
 					division = [8,9,10,6,7].detect({ |item|
 							(size / item).frac == 0;
 					}) ? 8;
-					
+
 					onElements.do({ |element, i|
 						var view, getValueFunc;
-	
+
 						if( (i != 0) && ((i % division) == 0)) {
 							gui.parent.asView.decorator.nextLine;
 							gui.parent.asView.decorator.shift( labelWidth + 4, 0 );
 						};
-						
+
 						view = MPadView( gui.parent, 20@20 ).useUpValue_(true);
 						if( offElements.size == 0 ) {
 							view.autoUpTime_(0.2);
 						};
-							
+
 						offViews = offViews.add( MPadUpViewRedirect( view ) );
-										
+
 						gui.getValueFuncs = gui.getValueFuncs.add( gui.makeGetValueFunc( element, view ) );
 						gui.views = gui.views.add( view );
 					});
-					
+
 					offElements.do({ |element, i|
 						var view, getValueFunc;
-	
+
 						view = offViews[ i ];
-						
+
 						if( offViews[i].notNil ) {
 							gui.getValueFuncs = gui.getValueFuncs.add( gui.makeGetValueFunc( element, view ) );
 							gui.views = gui.views.add( view );
 						};
 					});
 				};
-				
-			},
+			}
 		);
 	}
 
@@ -244,34 +243,34 @@ MKtlElementGroupGUI : MKtlElementGUI {
 			var func;
 			func = makeSubViewsFuncDict[ element.type ] ?? { makeSubViewsFuncDict[ \mixed ] };
 			func.value( this );
-		} {	
+		} {
 			if( element.elements.any({ |item| item.size > 0 }) ) {
 				subGUIs = element.elements.collect({ |element|
 					element.gui( parent );
 				});
 			} {
 				size = element.size;
-	
+
 				division = [8,9,10,6,7].detect({ |item|
 						(size / item).frac == 0;
 				}) ? 8;
-	
+
 				if( parent.asView.decorator.left != 4 ) {
 					parent.asView.decorator.nextLine;
 				};
-	
+
 				StaticText( parent, labelWidth@16 ).string_( element.name.asString ++ " " ).align_( \right );
-	
+
 				element.elements.do({ |element, i|
 						var view, getValueFunc;
-	
+
 						if( (i != 0) && ((i % division) == 0)) {
 							parent.asView.decorator.nextLine;
 							parent.asView.decorator.shift( labelWidth + 4, 0 );
 						};
-	
+
 						view = this.getMakeViewFunc( element.type ).value( parent );
-											
+
 						getValueFuncs = getValueFuncs.add( this.makeGetValueFunc( element, view ) );
 						views = views.add( view );
 				});

@@ -1,0 +1,50 @@
+title:: Composing MKtls
+summary:: How to create a composite MKtl with the Modality toolkit.
+categories:: Libraries>Modality
+related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Classes/MIDIExplorer, Classes/HIDExplorer
+
+MKtls can be composed of several individual MKtls; for instance, the iCON iControl creates both MIDI and HID devices for communication.
+
+This example takes two popular devices, a Korg nanoKontrol 2, and a Ferrari gamepad.
+
+code::
+// Here is the example file "nanoFerri" in
+MKtl.openDescriptionFolder; //
+---
+// test example for a nested device
+(
+name: "nanoFerri", // a name for the nested device
+device: "NestedDevice001", // dummy long name here
+description: (), // info can go here later if needed
+components: [
+	'nanoKONTROL2', // a nanoKONTROL2 faderbox
+	'RunNDrive'		// and a Ferrari gamepad
+]
+);
+---
+
+// Make a new composite MKtl based on 'nanoFerri':
+MKtl.composite(\nnFr, "nanoFerri");
+
+MKtl(\nnFr); // the composite
+MKtl.all; // ahas two components that MKtl(\nnFr) created:
+MKtl('nnFr_nnkn2_0'); // the nano
+MKtl('nnFr_rnnd_1');  // the ferrari
+
+// the elements are joined together in a single group
+MKtl(\nnFr).elements;
+// and the elementsDict contains all elements of both components
+MKtl(\nnFr).elementsDict;
+
+// set some actions for things
+MKtl(\nnFr).elementAt(\sl, 1).action = { \yo_slider.postln };
+MKtl(\nnFr).elementAt(\play).action = { \but_kik.postln };
+
+MKtl(\nnFr).elementAt(\joy, \l, \x).action = { \joyLX.postln };
+MKtl(\nnFr).elementsDict[\joy_r_y].action = { \joyjoyRYRY.postln };
+
+// note that the component MKtls contain the same elements,
+// so they contain the same actions now:
+MKtl('nnFr_rnnd_1').elementsDict[\joy_r_y].action.postcs;
+MKtl('nnFr_nnkn2_0').elementAt(\sl, 1).action.postcs;
+::
