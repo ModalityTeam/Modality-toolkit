@@ -438,7 +438,9 @@ MKtl { // abstract class
 	printOn { |stream| this.storeOn(stream) }
 
 	*loadAllDescs { |reload=false, verbose=false|
-		if (reload) { allDevDescs = nil }{
+		if (reload) {
+			allDevDescs = nil
+		}{
 			if ( verbose ){
 				"Not reloading the MKtl descriptions; to do so, use MKtl.loadAllDescs( true )".inform;
 			}
@@ -654,8 +656,8 @@ MKtl { // abstract class
 
 	}
 
-	*postAllDescriptions {
-		(MKtl.defaultDeviceDescriptionFolder +/+ "*").pathMatch
+	*postAllDescriptionFilenames {
+		("%/*.desc.scd".format(MKtl.defaultDeviceDescriptionFolder)).pathMatch
 		.collect { |path| path.basename.splitext.first }
 		.reject(_.beginsWith("_"))
 		.do { |path| ("['" ++ path ++"']").postln }

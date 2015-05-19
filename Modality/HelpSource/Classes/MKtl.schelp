@@ -108,11 +108,11 @@ code::
 MKtl.loadMatching( "RunNDrive" );
 ::
 
-METHOD:: postAllDescriptions
-Posts all descriptions found in the deviceDescriptionFolder.
+METHOD:: postAllDescriptionFilenames
+Posts all description filenames found in code::deviceDescriptionFolder::.
 
 METHOD:: allDescriptions
-Return a Dictionary with all open loaded device descriptions.
+Returns a Dictionary with all device descriptions. Loads them into memory if necessary.
 
 
 SUBSECTION:: Private methods
