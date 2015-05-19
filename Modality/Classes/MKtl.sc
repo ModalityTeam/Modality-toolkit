@@ -1,5 +1,8 @@
 // honouring Jeff's MKeys by keeping the M for prototyping the new Ktl
 
+// TODO: rename Meta_MKtl:specs to globalSpecs
+// TODO: rename MKtl.localSpecs to specs
+
 MKtl { // abstract class
 	classvar <defaultDeviceDescriptionFolder; //path of MKtlDescriptions folder
 	classvar <allDevDescs; // an identity dictionary of device descriptions
@@ -18,7 +21,7 @@ MKtl { // abstract class
 	var <deviceDescriptionHierarch;
 
 	// global info on the device, holding all information but the description
-	var <deviceInformation;
+	var <deviceInfoDict;
 
 	// an array of keys and values with a description of all the elements on the device.
 	// generated from the hierarchical description read from the file.
@@ -114,6 +117,10 @@ MKtl { // abstract class
 		specs.put(key, spec.asSpec);
 	}
 
+	addSpec {|key, spec|
+		this.addLocalSpec(key, spec)
+	}
+
 	addLocalSpec {|key, spec|
 		var theSpec;
 
@@ -124,7 +131,6 @@ MKtl { // abstract class
 		if (theSpec.isNil) { // no, it's not...
 			theSpec = spec.asSpec; // convert spec via standard method
 		};
-
 		localSpecs.put(key, theSpec);
 	}
 
@@ -416,10 +422,10 @@ MKtl { // abstract class
 			this.warnNoDeviceDescriptionFileFound( name );
 		}{
 			this.prLoadDeviceDescription( deviceInfo );
-			deviceInformation = deviceInfo.deepCopy;
+			deviceInfoDict = deviceInfo.deepCopy;
 
 			// remove description as it is stored in deviceDescriptionHierarch
-			deviceInformation[\description] = nil;
+			deviceInfoDict[\description] = nil;
 		};
 		if ( deviceDescriptionArray.notNil ){
 			deviceDescriptionName = devDescName;
@@ -496,6 +502,7 @@ MKtl { // abstract class
 		//"class: % deviceName: % deviceInfo:%".format(deviceName.class, deviceName, deviceInfo).postln;
 
 		localSpecs = ();
+		localSpecs.parent = specs;
 
 		// load specs from description file to specs
 		deviceInfo[\specs].notNil.if({
@@ -514,17 +521,11 @@ MKtl { // abstract class
 		};
 
 		// assign specs to elements,
-		// first look up specs from
 		deviceDescriptionArray.pairsDo {|key, elem|
 			var foundSpec;
 			var specKey = elem[\spec];
 
-			foundSpec = localSpecs[specKey];
-
-			// if not found locally, look globally
-			if (foundSpec.isNil) {
-				foundSpec =  specs[specKey];
-			};
+			foundSpec = localSpecs[specKey]; // implicitely looks in global spec, too
 
 			if (foundSpec.isNil) {
 				warn("Mktl - in description %, el %, spec for '%' is missing! please add it to the description file."
@@ -594,8 +595,8 @@ MKtl { // abstract class
 					MKtlElementGroup(state,
 						x.collect{ |val, i|
 							if( val.isKindOf( Association ) ) {
-								(val.key -> f.(val.value, 
-									stateFuncOnNodes.(state, val.key),  stateFuncOnNodes, leafFunc ) 
+								(val.key -> f.(val.value,
+									stateFuncOnNodes.(state, val.key),  stateFuncOnNodes, leafFunc )
 								)
 							} {
 								f.(val, stateFuncOnNodes.(state, i),  stateFuncOnNodes, leafFunc )
