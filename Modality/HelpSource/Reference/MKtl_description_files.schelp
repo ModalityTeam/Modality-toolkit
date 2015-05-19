@@ -32,6 +32,8 @@ DEFINITIONLIST::
 || The protocol used by the device
 ## device | osx | linux
 	|| device name as reported by the HID class. If the reported name is different in osx and linux then use the 'osx' and 'linux' dictionaries.
+## specs
+|| A dictionary with serialized specs like code::(\key: [0, 144, \lin])::. These overwrite existing definition locally for this description only.
 ## description
 || A dictionary describing the controls on the device
 ## infoMessage [optional]
@@ -56,6 +58,16 @@ DEFINITIONLIST::
 		(\infoKey1: infoVal1, \infoKey2: infoVal2, ...),
 	]
 ]
+::
+
+
+	The 'specs' field contains a dictionary of specifications of controller ranges. An example:
+
+code::
+(
+	\shaper:  [0, 128, \lin],
+	\mover:   [1, 4096, \exp]
+)
 ::
 
 section::  Naming Conventions

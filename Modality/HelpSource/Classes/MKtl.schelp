@@ -199,6 +199,14 @@ k = MKtl(\test);
 k.gui;
 ::
 
+
+METHOD:: deviceInfoDict
+holds all device information acquired via the description file.
+
+returns:: a Dictionary.
+
+
+
 METHOD:: openDevice
 Open the device for this MKtl if it was not opened already. It will look automatically for an appropriate device.
 
@@ -272,7 +280,7 @@ This prints a nice list of available element names.
 
 
 METHOD:: elements
-all control elements (MKtlElement) on the device you may want to listen or talk to. this returns an link::Classes/MKtlElementDict:: containing a hierarchical tree of link::Classes/MKtlElement::s, organised via MKtlElementDicts and link::Classes/MKtlElementArray::s.
+all control elements (MKtlElement) on the device you may want to listen or talk to. this returns an link::Classes/MKtlElementGroup:: containing a hierarchical tree of link::Classes/MKtlElement::s, organised via link::Classes/MKtlElementGroup::.
 
 
 METHOD:: elementsNotOfType
