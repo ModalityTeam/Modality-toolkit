@@ -36,9 +36,9 @@ MKtlDevice{
 	*initHardwareDevices{ |force=false, protocols|
 		if ( protocols.isNil ){
 			if ( Main.versionAtLeast( 3, 7 ) ){
-				protocols = protocols ? [\midi,\hid];
+				protocols = protocols ? [\midi,\hid,\osc];
 			}{
-				protocols = protocols ? [\midi];
+				protocols = protocols ? [\midi,\osc];
 			};
 		};
 		if ( allInitialized.not or: force ){
