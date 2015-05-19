@@ -10,12 +10,15 @@ MKtl { // abstract class
 	var <name;
 	var <elementsDict; //of type: ('elementName':MKtlElement, ...) -> elements to which stuff is registered
 	var <elements;
-
+	var <localSpecs; // specs added from description file
 
 	// tree structure composed of dictionaries and arrays
 	// with a description of all the elements on the device.
 	// read from an external file.
 	var <deviceDescriptionHierarch;
+
+	// global info on the device, holding all information but the description
+	var <deviceInformation;
 
 	// an array of keys and values with a description of all the elements on the device.
 	// generated from the hierarchical description read from the file.
@@ -109,6 +112,20 @@ MKtl { // abstract class
 
 	*addSpec {|key, spec|
 		specs.put(key, spec.asSpec);
+	}
+
+	addLocalSpec {|key, spec|
+		var theSpec;
+
+		// is it in MKtl.spec?
+		if (spec.isKindOf(Symbol)) {
+			theSpec = specs[spec];
+		};
+		if (theSpec.isNil) { // no, it's not...
+			theSpec = spec.asSpec; // convert spec via standard method
+		};
+
+		localSpecs.put(key, theSpec);
 	}
 
 	*makeShortName {|deviceID|
@@ -399,6 +416,10 @@ MKtl { // abstract class
 			this.warnNoDeviceDescriptionFileFound( name );
 		}{
 			this.prLoadDeviceDescription( deviceInfo );
+			deviceInformation = deviceInfo.deepCopy;
+
+			// remove description as it is stored in deviceDescriptionHierarch
+			deviceInformation[\description] = nil;
 		};
 		if ( deviceDescriptionArray.notNil ){
 			deviceDescriptionName = devDescName;
@@ -474,24 +495,44 @@ MKtl { // abstract class
 
 		//"class: % deviceName: % deviceInfo:%".format(deviceName.class, deviceName, deviceInfo).postln;
 
-		deviceDescriptionHierarch = deviceInfo[\description];
+		localSpecs = ();
+
+		// load specs from description file to specs
+		deviceInfo[\specs].notNil.if({
+			deviceInfo[\specs].postln;
+			deviceInfo[\specs].keysValuesDo{|key, spec|
+				this.addLocalSpec(key, spec); //adding locally
+			};
+		});
+
+
+		deviceDescriptionHierarch = deviceInfo[\description]; // TODO: fix name
 		deviceDescriptionArray = this.makeFlatDeviceDescription( deviceDescriptionHierarch );
 
 		deviceDescriptionArray.pairsDo{ |key,elem|
 			this.class.flattenDescription( elem )
 		};
 
-		// create specs
+		// assign specs to elements,
+		// first look up specs from
 		deviceDescriptionArray.pairsDo {|key, elem|
-			var foundSpec =  specs[elem[\spec]];
+			var foundSpec;
+			var specKey = elem[\spec];
+
+			foundSpec = localSpecs[specKey];
+
+			// if not found locally, look globally
 			if (foundSpec.isNil) {
-				warn("Mktl - in description %, el %, spec for '%' is missing! please add it via:"
-					"\nMktl.addSpec( '%', [min, max, warp, step, default]);\n"
-					.format(name, key, elem[\spec], elem[\spec])
+				foundSpec =  specs[specKey];
+			};
+
+			if (foundSpec.isNil) {
+				warn("Mktl - in description %, el %, spec for '%' is missing! please add it to the description file."
+					.format(name, key, specKey, specKey)
 				);
 			};
-			elem[\specName] = elem[\spec];
-			elem[\spec] = this.class.specs[elem[\specName]];
+			elem[\specName] = specKey;
+			elem[\spec] = foundSpec;
 		};
 
 		deviceInfo[\infoMessage] !? _.postln;
