@@ -741,7 +741,7 @@ MKtl { // abstract class
 	}
 
 	elementAt { |...args|
-		^elements.deepAt1(*args)
+		^elements.deepAt(*args)
 	}
 
 	at { |index|
