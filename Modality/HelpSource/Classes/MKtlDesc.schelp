@@ -1,0 +1,205 @@
+TITLE:: MKtlDesc
+summary:: objects to store descriptions of MKtls
+categories:: Modality
+related:: Classes/MKtl, Reference/Modality
+
+DESCRIPTION::
+MKtlDesc can read files from its folders,
+and convert them into MKtlDesc objects.
+
+code::
+MKtlDesc.folderName
+MKtlDesc.defaultFolder
+MKtlDesc.addFolder("~/scwork/");
+MKtlDesc.descFolders;
+
+// filename, no extension
+MKtlDesc.loadDesc("nano*");
+MKtlDesc.loadDesc("nanoKEY2");
+MKtlDesc.makeShortName("nanoKEY2");
+
+x = MKtlDesc.fromFile("nanoKEY2");
+MKtlDesc.allDescs;
+
+// not working yet :
+// MKtlDesc('nnky2');
+
+MKtlDesc.findDict('nnky2');
+MKtlDesc.findDict("nanoKEY2");
+::
+
+
+CLASSMETHODS::
+
+METHOD:: fromFile
+create an MKtlDesc from a file
+
+ARGUMENT:: filename
+
+METHOD:: basicNew
+
+ARGUMENT:: desc
+
+
+ARGUMENT:: path
+
+
+
+
+
+METHOD:: initClass
+
+
+
+
+METHOD:: writeFile
+
+
+ARGUMENT:: path
+
+
+
+
+METHOD:: makeShortName
+
+
+ARGUMENT:: deviceKey
+
+
+
+
+METHOD:: at
+
+
+ARGUMENT:: descName
+
+
+
+
+METHOD:: defaultFolder
+
+
+
+
+METHOD:: addFolder
+
+
+ARGUMENT:: path
+
+
+ARGUMENT:: name
+
+
+
+
+METHOD:: findDict
+
+
+ARGUMENT:: symbolStringOrDict
+
+
+
+
+METHOD:: isValidDescDict
+
+
+ARGUMENT:: dict
+
+
+
+
+METHOD:: folderName
+
+
+
+
+METHOD:: descFolders
+
+
+
+
+METHOD:: findFile
+
+
+ARGUMENT:: filename
+
+
+
+
+METHOD:: loadAllDescs
+
+
+ARGUMENT:: folders
+
+
+
+
+METHOD:: new
+
+
+ARGUMENT:: key
+
+
+ARGUMENT:: info
+
+
+
+
+METHOD:: allDescs
+
+
+
+
+METHOD:: fromDict
+
+
+ARGUMENT:: dict
+
+
+
+
+
+INSTANCEMETHODS::
+
+METHOD:: descDict
+
+
+ARGUMENT:: dict
+
+
+
+
+METHOD:: path
+
+
+
+
+METHOD:: shortName
+
+
+
+
+METHOD:: storeArgs
+
+
+
+
+METHOD:: printOn
+
+
+ARGUMENT:: stream
+
+
+
+
+METHOD:: init
+
+
+
+
+
+EXAMPLES::
+
+code::
+(some example code)
+::
