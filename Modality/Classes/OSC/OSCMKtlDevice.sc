@@ -66,7 +66,7 @@ OSCMKtlDevice : MKtlDevice {
 	var <srcDevice;
 
 	var <oscFuncDictionary;
-	var <oscOutPathDictionary;
+	// var <oscOutPathDictionary;
 
 	classvar <initialized = false;
 
@@ -179,74 +179,63 @@ OSCMKtlDevice : MKtlDevice {
 
 	initElements{
 		oscFuncDictionary = IdentityDictionary.new;
-		oscOutPathDictionary = IdentityDictionary.new;
+		// oscOutPathDictionary = IdentityDictionary.new;
 		mktl.elementsDict.do{ |el|
 			var oscPath = el.elementDescription[ \oscPath ];
 			var ioType = el.elementDescription[ \ioType ];
 			var argTemplate = el.elementDescription[ \argTemplate ];
 			var valueIndex = el.elementDescription[ \valueAt ];
-			// var filterAt = el.elementDescription[ \filterAt ];
-			// var match = el.elementDescription[ \match ];
 			var filtering;
 			if ( [\in,\inout].includes( ioType ) or: ioType.isNil ){
-				/*
-				if ( filterAt.size != match.size ){
-					"WARNING: Element %, with tag % has different sizes for filterAt (%) and match (%)\n".postf( el.key, tag, filterAt, match );
-				};
-				filtering = [
-					el.elementDescription[ \filterAt ] + 1,
-					el.elementDescription[ \match ]
-				].flop;
-				*/
 				oscFuncDictionary.put( el.key,
 					OSCFunc.new( { |msg|
-						/*
-						var matching = true;
-						filtering.do{ |f|
-							if ( msg.at( f[0] ) != f[1] ){ matching = false };
-						};
-						if ( matching ){
-						*/
 						el.rawValueAction_( msg.at( valueIndex ) );
 						if(traceRunning) {
 							"% - % > % | type: %, src:%"
 							.format(this.name, el.name, el.value.asStringPrec(3), el.type, el.source).postln;
 						}
-						//};
 					}, oscPath, srcDevice, argTemplate: argTemplate ); // optional add host/port
 				);
 			};
-			if ( [ \out, \inout ].includes( ioType ) ) {
-				if ( oscOutPathDictionary.at( oscPath ).isNil ){
-					oscOutPathDictionary.put( oscPath.asSymbol,
-						el.elementDescription[ \valueDefaults ]
-					);
-				};
-				oscOutPathDictionary.at( oscPath ).put( valueIndex, el.name );
-			};
+			/*
+			if ( [\in,\inout].includes( ioType ) and: ( el.elementDescription[ \type ] == \oscMessage) ){
+				// create special MKtlElementGroup from the elements referred to
+			}
+			*/
 		};
 	}
 
 	cleanupElements{
 		oscFuncDictionary.do{ |it| it.free };
 		oscFuncDictionary = nil;
-		oscOutPathDictionary = nil;
 	}
 
-	// does not take care yet of multidimensional output messages
+	// this should work for the simple usecase (not the group yet)
+	// from the group: \output, val: [ 0, 0, 0, 0 ]
 	send{ |key,val|
-		var el, oscPath, values;
+		var el, oscPath, outvalues, valIndex;
 		el = mktl.elementDescriptionFor( key );
-		oscPath = el.oscPath;
-		values = oscOutPathDictionary.at( oscPath );
-		values = values.collect{ |it|
-			it.postcs;
-			if ( it.isKindOf( Symbol ) ){
-				mktl.rawValueAt( it );
+		oscPath = el[\oscPath];
+		if ( val.isKindOf( Array ) ){
+			outvalues = List.new;
+			el[\argTemplate].do{ |it|
+				if ( it.isNil ){
+					outvalues.add( val.at( valIndex ) ); valIndex = valIndex + 1;
+				}{
+					outvalues.add( it )
+				};
+			};
+			if ( valIndex < val.size ){ outvalues = outvalues ++ (val.copyToEnd( valIndex ) ) };
+			outvalues = outvalues.asArray;
+		}{
+			outvalues = el[\argTemplate].copy; // we will modify it maybe, so make a copy
+			if ( outvalues.includes( nil ) ){
+				outvalues.put( outvalues.indexOf( nil ), val );
 			}{
-				it;
-			}
+				outvalues = outvalues ++ val;
+			};
 		};
-		srcDevice.sendMsg( *( [ el.oscPath ] ++ values ) );
+		srcDevice.sendMsg( *( [ oscPath ] ++ outvalues ) );
 	}
+
 }
