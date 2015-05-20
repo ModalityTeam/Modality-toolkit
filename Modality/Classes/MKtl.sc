@@ -80,8 +80,16 @@ MKtl { // abstract class
 		all = ();
 
 		specs = ().parent_(Spec.specs);
+		this.prAddDefaultSpecs();
 
-		// general
+		defaultDeviceDescriptionFolder = this.filenameSymbol.asString.dirname.dirname +/+ "MKtlDescriptions";
+	}
+
+
+
+	/////////// specs
+	*prAddDefaultSpecs{
+				// general
 		this.addSpec(\cent255, [0, 255, \lin, 1, 128]);
 		this.addSpec(\cent255inv, [255, 0, \lin, 1, 128]);
 		this.addSpec(\lin255,  [0, 255, \lin, 1, 0]);
@@ -110,7 +118,6 @@ MKtl { // abstract class
 		this.addSpec(\cent1,  [0, 1, \lin, 0, 0.5].asSpec);
 		this.addSpec(\cent1inv,  [1, 0, \lin, 0, 0.5].asSpec);
 
-		defaultDeviceDescriptionFolder = this.filenameSymbol.asString.dirname.dirname +/+ "MKtlDescriptions";
 	}
 
 	*addSpec {|key, spec|
@@ -134,24 +141,35 @@ MKtl { // abstract class
 		localSpecs.put(key, theSpec);
 	}
 
+
+
 	*makeShortName {|deviceID|
 		^(deviceID.asString.toLower.select{|c| c.isAlpha && { c.isVowel.not }}.keep(4)
 			++ deviceID.asString.select({|c| c.isDecDigit}))
 	}
 
 	*getMatchingDescsForShortName{ |shortName|
-		var r,t, descName, namesToDescs;
-		t = shortName.asString;
-		r = t[..(t.size-2)];
-		r = r.asSymbol;
-		descName = this.allDescriptions.select{ |val,key| key == r; }.collect{ |it| it };
+		var searchKey, descName, namesToDescs;
+
+		searchKey = shortName.asString;
+		searchKey = (searchKey[..(searchKey.size-2)]).asSymbol;
+
+		descName = this.allDescriptions.select{ |val,key| 
+			key == searchKey; 
+		};
+
 		namesToDescs = IdentityDictionary.new;
-		descName.do{ |dname,key| namesToDescs.put( dname , this.allDevDescs.at( dname ) ) };
+		
+		descName.do{ |dname,key| 
+			namesToDescs.put( dname , this.allDevDescs.at( dname ) ) 
+		};
+		
 		^namesToDescs;
 	}
 
 	*findDeviceDescFromShortName{ |shortName|
 		var devDescFromShortName, deviceDescName, devDesc;
+
 		devDescFromShortName = this.getMatchingDescsForShortName( shortName );
 		if ( devDescFromShortName.size == 0 ){
 			^[nil,nil];
@@ -203,7 +221,8 @@ MKtl { // abstract class
 			if ( all[name].notNil ){
 				if ( deviceDesc.notNil ){
 					if ( deviceDesc != all[name].deviceDescriptionName ){
-						"WARNING: MKtl: if you want to change the device specification, use MKtl(%).rebuildFrom(%)\n".postf( name.asCompileString, deviceDesc.asCompileString );
+						"MKtl: if you want to change the device specification, use MKtl(%).rebuildFrom(%)"
+							.format(name.asCompileString, deviceDesc.asCompileString).warn;
 					};
 				};
 				^all[name];
@@ -229,7 +248,7 @@ MKtl { // abstract class
 		if ( name.notNil ){ // first do a lookup
 			if ( all[name].notNil ){
 				if ( deviceDesc.notNil ){
-					"WARNING: MKtl: if you want to change the device specification, use MKtl(%).rebuildFrom(%)\n".postf( name, deviceDesc );
+						"MKtl: if you want to change the device specification, use MKtl(%).rebuildFrom(%)".format( name, deviceDesc ).warn;
 				};
 				^all[name];
 			}
