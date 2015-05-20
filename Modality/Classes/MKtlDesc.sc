@@ -1,3 +1,10 @@
+/*
+PLANS:
+* only load on demand
+* make a directory of filenames -> devicenames as reported
+* update only when files newer than cache were added
+*/
+
 MKtlDesc {
 	classvar <defaultFolder, <folderName = "MKtlDescriptions";
 	classvar fileExt = ".desc.scd";
@@ -30,7 +37,7 @@ MKtlDesc {
 
 	*findFile { |filename|
 		var found = descFolders.collect { |dir|
-			(dir +/+ filename ++ fileExt).postcs.pathMatch
+			(dir +/+ filename ++ fileExt).pathMatch
 		}.flatten(1);
 		if (found.isEmpty) {
 			warn("MKtlDesc - no file found for '%'.".format(filename));
@@ -50,28 +57,13 @@ MKtlDesc {
 		if (path.notNil) {
 			dict = path.load;
 			if (this.isValidDescDict(dict)) {
-				^this.basicNew(dict, path);
+				^this.new(dict, path);
 			};
 		}
 	}
 
 	*fromDict { |dict|
-		^super.basicNew(dict).init;
-	}
-
-	// lookup first,
-	// if not there, make it
-	// if dict is new, plug it in
-	*new { |key, info|
-		var dict, res = this.at(key);
-		if (info.notNil) { dict = this.findDict(info); };
-		if (res.isNil) {
-			var newdesc = this.fromDict(dict);
-			// // good idea to change name here?
-			// newdesc.shortName_(key);
-			// allDescs.put(shortName, newdesc);
-			^newdesc
-		}
+		^super.new.descDict_(dict);
 	}
 
 	descDict_ { |dict|
@@ -82,7 +74,7 @@ MKtlDesc {
 	}
 
 	*writeFile { |path|
-		"not done yet ".postln;
+		"! more than nice to have ! - not done yet.".postln;
 	}
 
 	// do more tests
@@ -96,20 +88,16 @@ MKtlDesc {
 		++ str.select({|c| c.isDecDigit}))
 	}
 
-	*basicNew { |desc, path|
-		^super.newCopyArgs(desc, path).init;
-	}
-
-	storeArgs { ^[shortName] }
-	printOn { |stream| ^this.storeOn(stream) }
-
-	init {
-		shortName = MKtlDesc.makeShortName(descDict[\device]).asSymbol;
-		allDescs.put (shortName, this);
-	}
-
 	*loadAllDescs { |folders|
-
+		var count = 0;
+		descFolders.do {|folder|
+			(folder +/+ "*").pathMatch.do {|descPath|
+				count = count + 1;
+				this.fromFile(descPath.basename.drop(fileExt.size.neg));
+			}
+		};
+		"\n// MKtlDesc loaded % description files - see "
+		"\nMKtlDesc.allDescs;\n".postf(count);
 	}
 
 	*at { |descName|
@@ -120,12 +108,24 @@ MKtlDesc {
 		var dict = symbolStringOrDict.class.switch(
 			Symbol, { this.at(symbolStringOrDict).descDict },
 			String, { this.findFile(symbolStringOrDict).load },
-			Dictionary, { symbolStringOrDict }
+			Event, { symbolStringOrDict }
 		);
 		if (dict.isNil) {
 		//	this.warnNoDescFound(symbolStringOrDict);
 			"warnNoDescFound".warn;
 		};
 		^dict
+	}
+
+	*new { |desc, path|
+		^super.newCopyArgs(desc, path).init;
+	}
+
+	storeArgs { ^[shortName] }
+	printOn { |stream| ^this.storeOn(stream) }
+
+	init {
+		shortName = MKtlDesc.makeShortName(descDict[\device]).asSymbol;
+		allDescs.put (shortName, this);
 	}
 }

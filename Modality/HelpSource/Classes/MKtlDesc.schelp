@@ -8,14 +8,16 @@ MKtlDesc can read files from its folders,
 and convert them into MKtlDesc objects.
 
 code::
-MKtlDesc.folderName
-MKtlDesc.defaultFolder
-MKtlDesc.addFolder("~/scwork/");
+MKtlDesc.loadAllDescs;
+MKtlDesc.allDescs.choose.dump;
+MKtlDesc.folderName;
+MKtlDesc.defaultFolder;
+MKtlDesc.addFolder("~/scgit/");
 MKtlDesc.descFolders;
 
 // filename, no extension
-MKtlDesc.loadDesc("nano*");
-MKtlDesc.loadDesc("nanoKEY2");
+MKtlDesc.findFile("nano*");
+MKtlDesc.findFile("nanoKEY2");
 MKtlDesc.makeShortName("nanoKEY2");
 
 x = MKtlDesc.fromFile("nanoKEY2");
@@ -26,62 +28,42 @@ MKtlDesc.allDescs;
 
 MKtlDesc.findDict('nnky2');
 MKtlDesc.findDict("nanoKEY2");
+MKtlDesc.findDict((description: ()));
+
+MKtlDesc.at('nnky2');
 ::
 
 
 CLASSMETHODS::
 
+METHOD:: defaultFolder
+
+METHOD:: addFolder
+
 METHOD:: fromFile
 create an MKtlDesc from a file
 
 ARGUMENT:: filename
+filename without path or extension, will be looked for in
+
+METHOD:: at
+access an MKtlDesc by name in the global repository
 
 METHOD:: basicNew
 
 ARGUMENT:: desc
-
+create an MKtlDesc from a well-formed dictionary.
 
 ARGUMENT:: path
 
-
-
-
-
-METHOD:: initClass
-
-
-
+PRIVATE:: initClass
 
 METHOD:: writeFile
 
-
 ARGUMENT:: path
-
-
-
 
 METHOD:: makeShortName
 
-
-ARGUMENT:: deviceKey
-
-
-
-
-METHOD:: at
-
-
-ARGUMENT:: descName
-
-
-
-
-METHOD:: defaultFolder
-
-
-
-
-METHOD:: addFolder
 
 
 ARGUMENT:: path
