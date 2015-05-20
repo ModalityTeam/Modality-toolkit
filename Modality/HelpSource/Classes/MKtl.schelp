@@ -11,6 +11,9 @@ MKtl searches for controllers connected to your machine, and gives you a list of
 For most devices, this requires that someone has already made a description file for the device; if there is none, it is easy to make one following the instructions here:
 link::Tutorials/How_to_create_a_description_file::
 
+MKtls can also be nested by composing several MKtls; for instance, the iControl ... creates both MIDI and HID devices for communication. For an example and background, see link::Tutorials/Composing_MKtls::
+
+
 CLASSMETHODS::
 PRIVATE:: initClass, flattenDescriptionForIO, prShortNamesToDeviceDescriptions, getMatchingDescsForShortName, findDeviceDescFromDeviceName, findDeviceDescFromShortName, findDeviceDesc
 
@@ -105,11 +108,11 @@ code::
 MKtl.loadMatching( "RunNDrive" );
 ::
 
-METHOD:: postAllDescriptions
-Posts all descriptions found in the deviceDescriptionFolder.
+METHOD:: postAllDescriptionFilenames
+Posts all description filenames found in code::deviceDescriptionFolder::.
 
 METHOD:: allDescriptions
-Return a Dictionary with all open loaded device descriptions.
+Returns a Dictionary with all device descriptions. Loads them into memory if necessary.
 
 
 SUBSECTION:: Private methods
@@ -199,6 +202,14 @@ k = MKtl(\test);
 k.gui;
 ::
 
+
+METHOD:: deviceInfoDict
+holds all device information acquired via the description file.
+
+returns:: a Dictionary.
+
+
+
 METHOD:: openDevice
 Open the device for this MKtl if it was not opened already. It will look automatically for an appropriate device.
 
@@ -272,7 +283,7 @@ This prints a nice list of available element names.
 
 
 METHOD:: elements
-all control elements (MKtlElement) on the device you may want to listen or talk to. this returns an link::Classes/MKtlElementDict:: containing a hierarchical tree of link::Classes/MKtlElement::s, organised via MKtlElementDicts and link::Classes/MKtlElementArray::s.
+all control elements (MKtlElement) on the device you may want to listen or talk to. this returns an link::Classes/MKtlElementGroup:: containing a hierarchical tree of link::Classes/MKtlElement::s, organised via link::Classes/MKtlElementGroup::.
 
 
 METHOD:: elementsNotOfType

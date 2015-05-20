@@ -1,6 +1,6 @@
 + Object {
 
-	deepAt1 { |...args|
+	deepAt { |...args|
 		^args.inject(this, {|state,x|
 			state.at(x)
 		})

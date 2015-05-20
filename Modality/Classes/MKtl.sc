@@ -1,5 +1,8 @@
 // honouring Jeff's MKeys by keeping the M for prototyping the new Ktl
 
+// TODO: rename Meta_MKtl:specs to globalSpecs
+// TODO: rename MKtl.localSpecs to specs
+
 MKtl { // abstract class
 	classvar <defaultDeviceDescriptionFolder; //path of MKtlDescriptions folder
 	classvar <allDevDescs; // an identity dictionary of device descriptions
@@ -10,12 +13,15 @@ MKtl { // abstract class
 	var <name;
 	var <elementsDict; //of type: ('elementName':MKtlElement, ...) -> elements to which stuff is registered
 	var <elements;
-
+	var <localSpecs; // specs added from description file
 
 	// tree structure composed of dictionaries and arrays
 	// with a description of all the elements on the device.
 	// read from an external file.
 	var <deviceDescriptionHierarch;
+
+	// global info on the device, holding all information but the description
+	var <deviceInfoDict;
 
 	// an array of keys and values with a description of all the elements on the device.
 	// generated from the hierarchical description read from the file.
@@ -74,8 +80,16 @@ MKtl { // abstract class
 		all = ();
 
 		specs = ().parent_(Spec.specs);
+		this.prAddDefaultSpecs();
 
-		// general
+		defaultDeviceDescriptionFolder = this.filenameSymbol.asString.dirname.dirname +/+ "MKtlDescriptions";
+	}
+
+
+
+	/////////// specs
+	*prAddDefaultSpecs{
+				// general
 		this.addSpec(\cent255, [0, 255, \lin, 1, 128]);
 		this.addSpec(\cent255inv, [255, 0, \lin, 1, 128]);
 		this.addSpec(\lin255,  [0, 255, \lin, 1, 0]);
@@ -104,12 +118,30 @@ MKtl { // abstract class
 		this.addSpec(\cent1,  [0, 1, \lin, 0, 0.5].asSpec);
 		this.addSpec(\cent1inv,  [1, 0, \lin, 0, 0.5].asSpec);
 
-		defaultDeviceDescriptionFolder = this.filenameSymbol.asString.dirname.dirname +/+ "MKtlDescriptions";
 	}
 
 	*addSpec {|key, spec|
 		specs.put(key, spec.asSpec);
 	}
+
+	addSpec {|key, spec|
+		this.addLocalSpec(key, spec)
+	}
+
+	addLocalSpec {|key, spec|
+		var theSpec;
+
+		// is it in MKtl.spec?
+		if (spec.isKindOf(Symbol)) {
+			theSpec = specs[spec];
+		};
+		if (theSpec.isNil) { // no, it's not...
+			theSpec = spec.asSpec; // convert spec via standard method
+		};
+		localSpecs.put(key, theSpec);
+	}
+
+
 
 	*makeShortName {|deviceID|
 		^(deviceID.asString.toLower.select{|c| c.isAlpha && { c.isVowel.not }}.keep(4)
@@ -117,18 +149,27 @@ MKtl { // abstract class
 	}
 
 	*getMatchingDescsForShortName{ |shortName|
-		var r,t, descName, namesToDescs;
-		t = shortName.asString;
-		r = t[..(t.size-2)];
-		r = r.asSymbol;
-		descName = this.allDescriptions.select{ |val,key| key == r; }.collect{ |it| it };
+		var searchKey, descName, namesToDescs;
+
+		searchKey = shortName.asString;
+		searchKey = (searchKey[..(searchKey.size-2)]).asSymbol;
+
+		descName = this.allDescriptions.select{ |val,key| 
+			key == searchKey; 
+		};
+
 		namesToDescs = IdentityDictionary.new;
-		descName.do{ |dname,key| namesToDescs.put( dname , this.allDevDescs.at( dname ) ) };
+		
+		descName.do{ |dname,key| 
+			namesToDescs.put( dname , this.allDevDescs.at( dname ) ) 
+		};
+		
 		^namesToDescs;
 	}
 
 	*findDeviceDescFromShortName{ |shortName|
 		var devDescFromShortName, deviceDescName, devDesc;
+
 		devDescFromShortName = this.getMatchingDescsForShortName( shortName );
 		if ( devDescFromShortName.size == 0 ){
 			^[nil,nil];
@@ -180,7 +221,8 @@ MKtl { // abstract class
 			if ( all[name].notNil ){
 				if ( deviceDesc.notNil ){
 					if ( deviceDesc != all[name].deviceDescriptionName ){
-						"WARNING: MKtl: if you want to change the device specification, use MKtl(%).rebuildFrom(%)\n".postf( name.asCompileString, deviceDesc.asCompileString );
+						"MKtl: if you want to change the device specification, use MKtl(%).rebuildFrom(%)"
+							.format(name.asCompileString, deviceDesc.asCompileString).warn;
 					};
 				};
 				^all[name];
@@ -206,7 +248,7 @@ MKtl { // abstract class
 		if ( name.notNil ){ // first do a lookup
 			if ( all[name].notNil ){
 				if ( deviceDesc.notNil ){
-					"WARNING: MKtl: if you want to change the device specification, use MKtl(%).rebuildFrom(%)\n".postf( name, deviceDesc );
+						"MKtl: if you want to change the device specification, use MKtl(%).rebuildFrom(%)".format( name, deviceDesc ).warn;
 				};
 				^all[name];
 			}
@@ -399,6 +441,10 @@ MKtl { // abstract class
 			this.warnNoDeviceDescriptionFileFound( name );
 		}{
 			this.prLoadDeviceDescription( deviceInfo );
+			deviceInfoDict = deviceInfo.deepCopy;
+
+			// remove description as it is stored in deviceDescriptionHierarch
+			deviceInfoDict[\description] = nil;
 		};
 		if ( deviceDescriptionArray.notNil ){
 			deviceDescriptionName = devDescName;
@@ -411,7 +457,9 @@ MKtl { // abstract class
 	printOn { |stream| this.storeOn(stream) }
 
 	*loadAllDescs { |reload=false, verbose=false|
-		if (reload) { allDevDescs = nil }{
+		if (reload) {
+			allDevDescs = nil
+		}{
 			if ( verbose ){
 				"Not reloading the MKtl descriptions; to do so, use MKtl.loadAllDescs( true )".inform;
 			}
@@ -474,24 +522,39 @@ MKtl { // abstract class
 
 		//"class: % deviceName: % deviceInfo:%".format(deviceName.class, deviceName, deviceInfo).postln;
 
-		deviceDescriptionHierarch = deviceInfo[\description];
+		localSpecs = ();
+		localSpecs.parent = specs;
+
+		// load specs from description file to specs
+		deviceInfo[\specs].notNil.if({
+			deviceInfo[\specs].postln;
+			deviceInfo[\specs].keysValuesDo{|key, spec|
+				this.addLocalSpec(key, spec); //adding locally
+			};
+		});
+
+
+		deviceDescriptionHierarch = deviceInfo[\description]; // TODO: fix name
 		deviceDescriptionArray = this.makeFlatDeviceDescription( deviceDescriptionHierarch );
 
 		deviceDescriptionArray.pairsDo{ |key,elem|
 			this.class.flattenDescription( elem )
 		};
 
-		// create specs
+		// assign specs to elements,
 		deviceDescriptionArray.pairsDo {|key, elem|
-			var foundSpec =  specs[elem[\spec]];
+			var foundSpec;
+			var specKey = elem[\spec];
+
+			foundSpec = localSpecs[specKey]; // implicitely looks in global spec, too
+
 			if (foundSpec.isNil) {
-				warn("Mktl - in description %, el %, spec for '%' is missing! please add it via:"
-					"\nMktl.addSpec( '%', [min, max, warp, step, default]);\n"
-					.format(name, key, elem[\spec], elem[\spec])
+				warn("Mktl - in description %, el %, spec for '%' is missing! please add it to the description file."
+					.format(name, key, specKey, specKey)
 				);
 			};
-			elem[\specName] = elem[\spec];
-			elem[\spec] = this.class.specs[elem[\specName]];
+			elem[\specName] = specKey;
+			elem[\spec] = foundSpec;
 		};
 
 		deviceInfo[\infoMessage] !? _.postln;
@@ -614,8 +677,8 @@ MKtl { // abstract class
 
 	}
 
-	*postAllDescriptions {
-		(MKtl.defaultDeviceDescriptionFolder +/+ "*").pathMatch
+	*postAllDescriptionFilenames {
+		("%/*.desc.scd".format(MKtl.defaultDeviceDescriptionFolder)).pathMatch
 		.collect { |path| path.basename.splitext.first }
 		.reject(_.beginsWith("_"))
 		.do { |path| ("['" ++ path ++"']").postln }
@@ -680,7 +743,7 @@ MKtl { // abstract class
 	}
 
 	elementAt { |...args|
-		^elements.deepAt1(*args)
+		^elements.deepAt(*args)
 	}
 
 	at { |index|

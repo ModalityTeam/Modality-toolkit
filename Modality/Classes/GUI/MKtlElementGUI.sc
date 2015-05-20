@@ -233,7 +233,6 @@ MKtlElementGroupGUI : MKtlElementGUI {
 						};
 					});
 				};
-
 			}
 		);
 	}
