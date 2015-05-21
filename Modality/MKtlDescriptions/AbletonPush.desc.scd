@@ -3,7 +3,7 @@ idInfo: "Ableton Push",
 protocol: \midi,
 //deviceType: ,
 status: "untested",
-infoURL: "https://www.ableton.com/en/push/"
+infoURL: "https://www.ableton.com/en/push/",
 description: (// display still missing because SysEx and different MIDI port...
 
 //------ pads -------------
