@@ -277,6 +277,10 @@ MIDIMKtlDevice : MKtlDevice {
 		}
 	}
 
+	// nothing here yet, but needed
+	initCollectives{
+	}
+
 	initMIDIMKtl { |argName, argSource, argDestination|
 		// [argName, argSource, argDestination].postln;
 		name = argName;
@@ -670,6 +674,10 @@ MIDIMKtlDevice : MKtlDevice {
 		elementHashDict = nil;
 		hashToElNameDict = nil;
 		elNameToMidiDescDict = nil;
+	}
+
+	// nothing here yet, but needed
+	cleanupCollectives{
 	}
 
 	makeRespFuncs { |msgTypes|

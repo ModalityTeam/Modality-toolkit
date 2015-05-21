@@ -180,6 +180,13 @@ HIDMKtlDevice : MKtlDevice {
 		};
 	}
 
+	// nothing here yet, but needed
+	cleanupCollectives{
+	}
+
+	initCollectives{
+	}
+
 	initElements{
 		var newElements = ();
 
