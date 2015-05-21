@@ -46,7 +46,7 @@ MAbstractElement {
 
 	prMaybeSend {
 		if( [\out, \inout].includes( this.elementDescription.ioType ) ) {
-			source.send(name, value)
+			source.send(name, this.rawValue)
 		}
 	}
 
