@@ -8,29 +8,54 @@ OSCMon monitors captures incoming OSC messages, keeping recent ones around for a
 
 code::
 
-
 o = OSCMon.new; 	// make one
 o.enable;			// turn it on
-o.show;				// show them on gui, no po
+o.show;				// show them on gui, no posting yet
+
+// add server as source
 o.watchStatus = true; s.boot;
 
-o.verbose = true;	// post messages
-// show status messages from server too
-o.watchStatus = false;
-o.list.size;
-o.anaDict.nicknames.as(Event);
-o.addresses;
+// add client as second source
 (
 n = NetAddr.localAddr;
-Tdef(\test, {
+Tdef(\clientSend, {
 	loop {
 		(exprand(0.03, 0.3) * 3).wait;
 		n.sendMsg([\test, \yo, \mama].choose,
 			*{ 10.rand }.dup(rrand(3, 10)));
 	};
 });
-Tdef(\test).play;
+Tdef(\\clientSend).play;
 )
+Tdef(\clientSend).stop;
+
+// The userview responds to keyDownActions: type
+" " to enable,
+"." to disable
+
+			u.keyDownAction = { |u, char|
+				"OSCMon keyDown: %\n".postf(char);
+				if (char.isDecDigit) {
+					this.postMessagesFrom(char.asString.interpret);
+				};
+				if (char == $ ) { this.enable; "enable".postln };
+				if (char == $.) { this.disable; "disable".postln };
+				if (char == $s) { this.watchStatus = true; "status".postln };
+				if (char == $x) { this.watchStatus = false; "nostatus".postln };
+				if (char == $?) { this.postInfo; };
+				if (char == $h) { "/* this.postHelp; */".postln };
+			};
+
+
+// DanO's new little OSC sonar sensor
+thisProcess.openUDPPort(8266);
+
+o.verbose = false;	// post messages
+// show status messages from server too
+o.watchStatus = false;
+o.list.size;
+o.anaDict.nicknames.as(Event);
+o.addresses;
 
 o.anaDict[\nicknames];
 o.anaDict[\messagesByAddr];
@@ -39,7 +64,7 @@ o.anaDict[\msgNamesByAddr];
 
 o.timeWindow = 25;
 
-o.verbose = false; 	// no posting
+o.verbose = true; 	// no posting
 o.postInfo;			// and post current state
 
 o.disable;
@@ -56,18 +81,6 @@ o.addNickname(\manta, NetAddr("127.0.0.1", 8000));
 
 o.anaDict[\messagesByAddr][\homeclient];
 
-// make a local net address to send/receive messages to monitor;
-(
-n = NetAddr.localAddr;
-Tdef(\test, {
-	loop {
-		(exprand(0.03, 0.3) * 3).wait;
-		n.sendMsg([\test, \yo, \mama].choose,
-			*{ 10.rand }.dup(rrand(3, 10)));
-	};
-});
-Tdef(\test).play;
-)
 	// addresses and msgNames are kept
 o.addresses;
 o.msgNames;
