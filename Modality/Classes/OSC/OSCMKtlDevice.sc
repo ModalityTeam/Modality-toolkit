@@ -218,6 +218,7 @@ OSCMKtlDevice : MKtlDevice {
 		source = nil;
 		destination = nil;
 		recvPort = nil;
+		// should this remove from sourceDictionary too?
 	}
 
 	initElements{
@@ -256,19 +257,24 @@ OSCMKtlDevice : MKtlDevice {
 			var oscPath = el.elementDescription[ \oscPath ];
 			var ioType = el.elementDescription[ \ioType ];
 			var argTemplate = el.elementDescription[ \argTemplate ];
+			var valueIndices = el.elementDescription[ \valueAt ];
 			var msgIndices, templEnd;
 			if ( [\in,\inout].includes( ioType ) and: ( el.elementDescription[ \oscPath ].notNil) ){
-				if ( argTemplate.notNil ){
-					templEnd = argTemplate.size + 1; // + 1 because argTemplate does not contain the oscpath as the first msg element
-					msgIndices = argTemplate.indicesOfEqual( nil );
-					if ( msgIndices.notNil) { msgIndices = msgIndices + 1; }; // + 1 because argTemplate does not contain the oscpath as the first msg element
+				if ( valueIndices.notNil ){
+					msgIndices = valueIndices;
+					templEnd = valueIndices.maxItem + 1;
 				}{
-					templEnd = 1;
+					if ( argTemplate.notNil ){
+						templEnd = argTemplate.size + 1; // + 1 because argTemplate does not contain the oscpath as the first msg element
+						msgIndices = argTemplate.indicesOfEqual( nil );
+						if ( msgIndices.notNil) { msgIndices = msgIndices + 1; }; // + 1 because argTemplate does not contain the oscpath as the first msg element
+					}{
+						templEnd = 1;
+					};
 				};
 				if ( oscFuncDictionary.at( el.key ).notNil ){ oscFuncDictionary.at( el.key ).free };
 				oscFuncDictionary.put( el.key,
 					OSCFunc.new( { |msg|
-						[ msg, msgIndices, templEnd ].postln;
 						// clever msg index parsing
 						if ( msgIndices.notNil ){
 							el.rawValueAction_( msg.at( msgIndices) ++ msg.copyToEnd( templEnd ) );
