@@ -259,7 +259,7 @@ MKtl.addSpec(\pwm8bit, [0, 255, \linear, 1]);
 	description: (
 		'led': (
 			oscPath: '/output',
-			argTemplate: [ 2, 3 ], // message will be: "/minibee/output" 2 3 <val>
+			argTemplate: [ 2, 3 ], // message will be: "/output" 2 3 <val>
 			'type': 'led', spec: \pwm8bit,
 			\ioType: \out
 		);
@@ -448,12 +448,143 @@ n.sendMsg( "/buttons", "blah".scramble, 4, 0, 1, 1, 0, 1 );
 ::
 
 
+Cleaning up:
+
 code::
-// cleanup:
 m.closeDevice;
 ::
 
 section:: Collective output
+
+Some OSC devices will listen for data of several elements within one OSC message. For example an OSC message updating all 3 leds of a device:
+
+code::
+/leds 1 1 0
+::
+
+In this case, we can create a code::collective:: that will send the code::/leds:: message, whenever the value of one of the elements of the collective changes:
+
+code::
+(
+MKtl.addSpec(\pwm8bit, [0, 255, \linear, 1]);
+
+~descCollectiveOut = (
+	idInfo: ( ipAddress: "127.0.0.1", destPort: NetAddr.langPort ),
+	protocol: \osc,
+	'collectives': (
+		leds: (
+			oscPath: '/leds',
+			elements: [ [\led,0], [\led, 1], [\led, 2] ], // elements that make up the group in order that they should appear in the output message
+			argTemplate: [ 7 ], // default arguments to send
+			ioType: \out
+		)
+	),
+	description: (
+		'led': [
+			(
+				default: 0, // we need a default value to send out the first time any element changes
+				type: 'led', spec: \pwm8bit,
+				ioType: \collectiveOut // use a group method to create the output
+			),
+			(
+				default: 0, // we need a default value to send out the first time any element changes
+				type: 'led', spec: \pwm8bit,
+				ioType: \collectiveOut // use a group method to create the output
+			),
+			(
+				default: 0, // we need a default value to send out the first time any element changes
+				type: 'led', spec: \pwm8bit,
+				ioType: \collectiveOut // use a group method to create the output
+			)
+		]
+	);
+);
+);
+
+m = MKtl( \exampleCollectiveOut, ~descCollectiveOut );
+
+// test to see what OSC messages are coming in:
+OSCFunc.trace( true );
+
+m.elementAt( \led, 1 ).value_( 0.5 );
+
+m.elementAt( \led, 2 ).value_( 0.8 );
+
+m.elementAt( \led, 0 ).value_( 0.1 );
+
+(
+Tdef( \autoaction, {
+	loop{
+		m.elementAt( \led, 0 ).value_( 1.0.rand );
+		1.0.wait;
+
+		m.elementAt( \led, 1 ).value_( 1.0.rand );
+		1.0.wait;
+
+		m.elementAt( \led, 2 ).value_( 1.0.rand );
+		1.0.wait;
+	};
+}).play;
+);
+
+m.gui;
+
+Tdef( \autoaction ).stop;
+
+::
+
+If the value needs to be inserted in between identifiers for the message, you can use code::nil:: as the place holder in the code::argTemplate::
+
+code::
+
+(
+MKtl.addSpec(\pwm8bit, [0, 255, \linear, 1]);
+
+~descCollectiveOut = (
+	idInfo: ( ipAddress: "127.0.0.1", destPort: NetAddr.langPort ),
+	protocol: \osc,
+	'collectives': (
+		leds: (
+			oscPath: '/leds',
+			elements: [ [\led,0], [\led, 1], [\led, 2] ], // elements that make up the group in order that they should appear in the output message
+			argTemplate: [ nil, 7, nil, 9, 10 ], // default arguments to send elements take up position 0, 2 and 5 and so on.
+			ioType: \out
+		)
+	),
+	description: (
+		'led': [
+			(
+				default: 0, // we need a default value to send out the first time any element changes
+				type: 'led', spec: \pwm8bit,
+				ioType: \collectiveOut // use a group method to create the output
+			),
+			(
+				default: 0, // we need a default value to send out the first time any element changes
+				type: 'led', spec: \pwm8bit,
+				ioType: \collectiveOut // use a group method to create the output
+			),
+			(
+				default: 0, // we need a default value to send out the first time any element changes
+				type: 'led', spec: \pwm8bit,
+				ioType: \collectiveOut // use a group method to create the output
+			)
+		]
+	);
+);
+);
+
+m.rebuildFrom( ~descCollectiveOut );
+
+Tdef( \autoaction ).play;
+
+::
+
+
+Cleaning up:
+
+code::
+m.closeDevice;
+::
 
 
 section:: Explore your device
