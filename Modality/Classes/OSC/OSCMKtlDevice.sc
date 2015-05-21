@@ -233,7 +233,11 @@ OSCMKtlDevice : MKtlDevice {
 				if ( oscFuncDictionary.at( el.key ).notNil ){ oscFuncDictionary.at( el.key ).free };
 				oscFuncDictionary.put( el.key,
 					OSCFunc.new( { |msg|
-						el.rawValueAction_( msg.at( valueIndex ) );
+						if ( valueIndex.notNil ){
+							el.rawValueAction_( msg.at( valueIndex ) );
+						}{
+							el.rawValueAction_( msg.last );
+						};
 						if(traceRunning) {
 							"% - % > % | type: %, src:%"
 							.format(this.name, el.name, el.value.asStringPrec(3), el.type, el.source).postln;
