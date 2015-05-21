@@ -30,6 +30,7 @@ MAbstractElement {
 	// nested MKtlElement / MKtlElementGroup support
 	var <>parent;
 	var <groups;
+	var <collectives;
 
 	var <elementDescription;	 //its particular device description
 	                         // of type: ( 'midiChan': Int, 'midiMsgType': symbol, 'spec': ControlSpec,
@@ -43,10 +44,6 @@ MAbstractElement {
 		^super.newCopyArgs( source, name).init;
 	}
 
-	init {
-		tags = Set[];
-	}
-
 	prMaybeSend {
 		if( [\out, \inout].includes( this.elementDescription.ioType ) ) {
 			source.send(name, value)
@@ -57,6 +54,7 @@ MAbstractElement {
 	//rawValue_ is not mapped and does not send out value
 	value_ { | newval |
 		this.rawValue_( newval );
+		collectives.do(_.prMaybeSend);
 		this.prMaybeSend
 	}
 
@@ -141,6 +139,19 @@ MAbstractElement {
 		};
 	}
 
+	// MKtlElementCollective support
+	prAddCollective { |collective|
+		if( collectives.isNil or: { collectives.includes( collective ).not }) {
+			collectives = collectives.add( collective );
+		};
+	}
+
+	prRemoveCollective { |collective|
+		if( collectives.notNil ) {
+			collectives.remove( collective );
+		};
+	}
+
 	asBaseClass {
 		^this;
 	}
@@ -180,25 +191,20 @@ MKtlElement : MAbstractElement{
 	}
 
 	init {
-		super.init;
+		tags = Set[];
 		elementDescription = source.elementDescriptionFor(name);
-		spec = elementDescription[\spec];
-		if (spec.isNil) {
-			warn("spec for '%' is missing!".format(spec));
-		} {
+		if( elementDescription.notNil ) {
+			spec = elementDescription[\spec];
+			if (spec.isNil) {
+				warn("spec for '%' is missing! using [0,1].asSpec instead".format(spec));
+				spec = [0,1].asSpec;
+			};
 			value = prevValue = spec.default ? 0;
-		};
-		type = elementDescription[\type];
-		ioType = elementDescription[\ioType];
-		if ( ioType.isNil ){
-			ioType = \in; // default is in
-		};
-
-		spec = elementDescription[\spec];
-		if (spec.isNil) {
-			warn("spec for '%' is missing!".format(spec));
-		} {
-			value = prevValue = spec.default ? 0;
+			type = elementDescription[\type];
+			ioType = elementDescription[\ioType];
+			if ( ioType.isNil ){
+				ioType = \in; // default is in
+			};
 		};
 
 	}
