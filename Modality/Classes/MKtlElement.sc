@@ -196,7 +196,8 @@ MKtlElement : MAbstractElement{
 		if( elementDescription.notNil ) {
 			spec = elementDescription[\spec];
 			if (spec.isNil) {
-				warn("spec for '%' is missing! using [0,1].asSpec instead".format(spec));
+				//NB: warning is done in MKtl
+				// warn("spec for '%' is missing! using [0,1].asSpec instead".format(spec));
 				spec = [0,1].asSpec;
 			};
 			value = prevValue = spec.default ? 0;

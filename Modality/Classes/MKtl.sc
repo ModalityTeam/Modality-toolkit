@@ -557,7 +557,7 @@ MKtl { // abstract class
 			foundSpec = localSpecs[specKey]; // implicitely looks in global spec, too
 
 			if (foundSpec.isNil) {
-				warn("Mktl - in description %, el %, spec for '%' is missing! please add it to the description file."
+				warn("Mktl - in description %, el %, spec for '%' is missing! please add it to the description file. For now using [0,1].asSpec instead"
 					.format(name, key, specKey, specKey)
 				);
 			};
