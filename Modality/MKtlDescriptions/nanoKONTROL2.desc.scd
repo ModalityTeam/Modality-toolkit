@@ -1,7 +1,7 @@
 //	// KORG nanoKONTROL2 specs:
 //	// only cc messages,
 (
-device: "nanoKONTROL2",
+idInfo: "nanoKONTROL2",
 protocol: \midi,
 description: [
 	\rew -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 43, \spec: \midiBut, \mode: \push),

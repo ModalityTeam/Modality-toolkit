@@ -1,5 +1,5 @@
 (
-device: "USB Optical Mouse_",
+idInfo: "USB Optical Mouse_",
 protocol: 'hid',
 description: (
 // --------- input elements ----------

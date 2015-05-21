@@ -1,5 +1,5 @@
 (
-device: "USB Joystick_MegaWorldectronics",
+idInfo: "USB Joystick_MegaWorldectronics",
 protocol: \hid,
 description: (
 

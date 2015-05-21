@@ -8,7 +8,7 @@
 //	// 4 hardware scenes, flattened out with underscores
 
 (
-device: "nanoKONTROL",
+idInfo: "nanoKONTROL",
 protocol: \midi,
 description: (
 

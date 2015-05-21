@@ -1,5 +1,5 @@
 (
-device: "Run'N' Drive Wireless_Thrustmaster",
+idInfo: "Run'N' Drive Wireless_Thrustmaster",
 protocol: \hid,
 description: (
 	// --------- input elements ----------

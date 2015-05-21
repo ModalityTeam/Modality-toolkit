@@ -3,7 +3,7 @@
 // hardware scenes: DJ, Effector and Drummer seems to work, flattened out with underscores.
 
 (
-device: "iCON iStage V1.00",
+idInfo: "iCON iStage V1.00",
 protocol: \midi,
 
 description: (

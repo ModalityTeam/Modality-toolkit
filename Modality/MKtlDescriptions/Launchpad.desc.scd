@@ -3,7 +3,7 @@
 // no hardware scenes, flattened out with underscores
 
 (
-device: "Launchpad",
+idInfo: "Launchpad",
 protocol: \midi,
 description: (
 	\up:      (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 104, \spec: \midiBut, \mode: \push),

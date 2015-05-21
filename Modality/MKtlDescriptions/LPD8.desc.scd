@@ -1,7 +1,7 @@
 // AKAI professional LPD8 Laptop Pad controller specs
 
 (
-device: "LPD8",
+idInfo: "LPD8",
 protocol: \midi,
 description: (
 	\kn: Event.newFrom( (1..8).collect{ |midiNum, i|

@@ -53,7 +53,7 @@ MKtl.addSpec(\mantaPad, [0, 200]);
 MKtl.addSpec(\mantaPad, [10, 4086]);
 
 (
-device: "manta",
+idInfo: "manta",
 protocol: \osc,
 description: (
 	'pad': (

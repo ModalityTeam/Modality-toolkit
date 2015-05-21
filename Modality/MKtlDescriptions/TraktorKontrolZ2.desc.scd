@@ -1,7 +1,7 @@
 MKtl.addSpec(\step16Encoder, [0, 1, \lin].asSpec);
 
 (
-device: "Traktor Kontrol Z2_Native Instruments",
+idInfo: "Traktor Kontrol Z2_Native Instruments",
 protocol: 'hid',
 description: (
 

@@ -13,7 +13,7 @@ MKtl.allDevDescs[\gyrosc];
 */
 
 (
-device: "gyrosc",
+idInfo: "gyrosc",
 protocol: \osc,
 description: (
 	'gyrosc/*/gyro': (\oscMsgType: \, \type: \gyro, \spec: \midiCC)

@@ -1,5 +1,5 @@
 (
-device: "UC-33 USB MIDI Controller",
+idInfo: "UC-33 USB MIDI Controller",
 protocol: \midi,
 // preset 3
 description: (

@@ -1,6 +1,6 @@
 (
 protocol: \hid,
-device: "Dual Analog Pad_Jess Tech",
+idInfo: "Dual Analog Pad_Jess Tech",
 description: (
 
 	// --------- input elements ----------

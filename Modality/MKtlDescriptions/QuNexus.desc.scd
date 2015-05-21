@@ -62,7 +62,7 @@ z.global[\bend].add(\pitch, { |chan, val|
 
 
 (
-device: "QuNexus",
+idInfo: "QuNexus",
 protocol: \midi,
 description: (
 

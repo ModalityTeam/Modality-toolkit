@@ -48,7 +48,7 @@ var dict;
 MKtl.addSpec(\compassRND, [0, 15/7]);
 
 dict = (
-	device: "Run'N' Drive_Thrustmaster",
+	idInfo: "Run'N' Drive_Thrustmaster",
 	protocol: \hid,
 	description: (
 		'bt': (

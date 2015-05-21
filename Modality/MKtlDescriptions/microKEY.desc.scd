@@ -1,5 +1,5 @@
 (
-device: "microKEY",
+idInfo: "microKEY",
 protocol: 'midi',
 description: (
 

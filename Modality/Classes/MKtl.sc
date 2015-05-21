@@ -62,7 +62,7 @@ MKtl { // abstract class
 	openDescriptionFile {
 		var descfilepath;
 		var mydesc = MKtl.allDevDescs.detect { |desc|
-			desc[\device] == this.deviceDescriptionName
+			desc[\idInfo] == this.deviceDescriptionName
 		};
 
 		if (mydesc.isNil or: {
@@ -188,7 +188,7 @@ MKtl { // abstract class
 
 	*findDeviceDescFromDeviceName{ |deviceName|
 		^allDevDescs.select{ |desc,key|
-			desc.at( \device ) == deviceName;
+			desc.at( \idInfo ) == deviceName;
 		}.asArray.first;
 	}
 
@@ -204,7 +204,7 @@ MKtl { // abstract class
 		}{
 			if ( deviceDesc.isKindOf( Dictionary ) ){
 				devDesc = deviceDesc;
-				deviceDescName = devDesc.at( \device );
+				deviceDescName = devDesc.at( \idInfo );
 			}{
 				// look up deviceDescName in allDescriptions
 				devDesc = this.getDeviceDescription( deviceDesc );
@@ -266,7 +266,7 @@ MKtl { // abstract class
 		// --- if name is not given, create one ---
 		if ( name.isNil ){
 			if ( deviceDesc.isKindOf( Dictionary ) ){
-				deviceDescName = deviceDesc.at( \device );
+				deviceDescName = deviceDesc.at( \idInfo );
 			}{
 				deviceDescName = deviceDesc;
 			};
@@ -312,11 +312,11 @@ MKtl { // abstract class
 		if ( newMKtlDevice.isNil ){
 			// maybe I gave a funky name, and can find the device from the spec
 			if ( devDesc.notNil ){
-				devName = MKtlDevice.findDeviceShortNameFromLongName( devDesc.at( \device ) );
+				devName = MKtlDevice.findDeviceShortNameFromLongName( devDesc.at( \idInfo ) );
 				if ( devName.notNil ){
 					newMKtlDevice = MKtlDevice.tryOpenDevice( devName, this );
 				}{
-					newMKtlDevice = MKtlDevice.tryOpenDeviceFromDesc( name, devDesc.at(\protocol), devDesc.at(\device), this );
+					newMKtlDevice = MKtlDevice.tryOpenDeviceFromDesc( name, devDesc.at(\protocol), devDesc.at(\idInfo), this );
 					devName = name;
 				};
 			};
@@ -341,7 +341,7 @@ MKtl { // abstract class
 			};
 		}{
 			if ( deviceDescriptionNameOrDict.isKindOf( Dictionary ) ){
-				devDescName = deviceDescriptionNameOrDict.at( \device );
+				devDescName = deviceDescriptionNameOrDict.at( \idInfo );
 				devDesc = deviceDescriptionNameOrDict;
 			}{
 				#devDesc, devDescName = this.class.findDeviceDesc( deviceDescriptionNameOrDict );
@@ -385,7 +385,7 @@ MKtl { // abstract class
 		}{
 			devDesc = MKtl.getDeviceDescription( deviceDescriptionName );
 			if ( devDesc.notNil ){
-				deviceName = devDesc.at( \device );
+				deviceName = devDesc.at( \idInfo );
 				shortDeviceName = MKtlDevice.findDeviceShortNameFromLongName( deviceName );
 			};
 		};
@@ -428,7 +428,7 @@ MKtl { // abstract class
 		if( MKtl.allDevDescs.isNil ){ MKtl.loadAllDescs };
 		^Dictionary.with(*
 			MKtl.allDevDescs.getPairs.clump(2)
-			.collect({ |xs| (MKtl.makeShortName(xs[1][\device]).asSymbol -> xs[0]) }))
+			.collect({ |xs| (MKtl.makeShortName(xs[1][\idInfo]).asSymbol -> xs[0]) }))
 	}
 
 	/*
@@ -519,7 +519,7 @@ MKtl { // abstract class
 			.as(Array)
 			.select{ |desc| desc[\type] != \template }
 			.collect{ |desc| this.flattenDescription( desc ) }
-			.detect{ |desc| desc[ \device ] == devName }
+			.detect{ |desc| desc[ \idInfo ] == devName }
 		}
 	}
 

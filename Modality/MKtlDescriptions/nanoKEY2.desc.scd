@@ -1,5 +1,5 @@
 (
-device: "nanoKEY2",
+idInfo: "nanoKEY2",
 protocol: 'midi',
 description: (
 	'keyOn':

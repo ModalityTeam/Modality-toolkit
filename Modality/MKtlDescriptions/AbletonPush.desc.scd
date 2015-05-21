@@ -1,5 +1,5 @@
 (
-device: "Ableton Push",
+idInfo: "Ableton Push",
 protocol: \midi,
 description: (// display still missing because SysEx and different MIDI port...
 

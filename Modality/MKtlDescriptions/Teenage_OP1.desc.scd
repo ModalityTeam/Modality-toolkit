@@ -3,7 +3,7 @@
 // and lots of buttons (mostly with icons)
 
 (
-device: "OP-1 Midi Device",
+idInfo: "OP-1 Midi Device",
 protocol: \midi,
 description: (
 	\key: (
