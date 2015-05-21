@@ -1,4 +1,4 @@
-MKtlDevice{
+MKtlDevice {
 
 	classvar <allAvailable; // ( 'midi': List['name1',... ], 'hid': List['name1',... ], ... )
 
@@ -18,12 +18,12 @@ MKtlDevice{
 	}
 
 	*find { |protocols|
-		if ( Main.versionAtLeast( 3, 7 ) ){
+		if ( Main.versionAtLeast( 3, 7 ) ) {
 			protocols = protocols ? [\midi,\hid,\osc];
-		}{
+		} {
 			protocols = protocols ? [\midi,\osc];
 		};
-		protocols.asCollection.do{ |pcol|
+		protocols.asCollection.do { |pcol|
 			this.matchClass(pcol) !? _.find
 		};
 		allInitialized = true;

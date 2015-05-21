@@ -5,7 +5,7 @@ HIDMKtlDevice : MKtlDevice {
 
 	var <srcID, <srcDevice;
 
-	*getSourceName{ |shortName|
+	*getSourceName { |shortName|
 		var srcName;
 		var src = this.sourceDeviceDict.at( shortName );
 		if ( src.notNil ){
@@ -26,10 +26,12 @@ HIDMKtlDevice : MKtlDevice {
 		}
 	}
 
-	*prepareDeviceDicts{
+	*prepareDeviceDicts {
 		var prevName = nil, j = 0, order, deviceNames;
 		deviceNames = HID.available.collect{|dev,id|
-			MKtl.makeShortName( (dev.productName.asString ++ "_" ++ dev.vendorName.asString ).asString)
+			MKtlDesc.makeShortName(
+				(dev.productName.asString ++ "_"
+					++ dev.vendorName.asString ).asString)
 		}.asSortedArray;
 		order = deviceNames.order{ arg a, b; a[1] < b[1] };
 		deviceNames[order].do{|name, i|

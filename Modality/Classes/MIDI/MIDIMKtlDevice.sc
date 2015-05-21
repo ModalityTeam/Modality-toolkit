@@ -195,7 +195,7 @@ MIDIMKtlDevice : MKtlDevice {
 
 		deviceNames = MIDIClient.sources.collect {|src|
 			tempName = src.device;
-			MKtl.makeShortName(tempName);
+			MKtlDesc.makeShortName(tempName);
 		};
 
 		if (deviceNames.isEmpty) {
@@ -211,14 +211,15 @@ MIDIMKtlDevice : MKtlDevice {
 			});
 			prevName = name;
 
-			sourceDeviceDict.put((name ++ j).asSymbol, MIDIClient.sources[order[i]])
+			sourceDeviceDict.put((name ++ j).asSymbol,
+				MIDIClient.sources[order[i]])
 		};
 
 		// prepare destinationDeviceDict
 		j = 0; prevName = nil;
 		deviceNames = MIDIClient.destinations.collect{|src|
 			tempName = src.device;
-			MKtl.makeShortName(tempName);
+			MKtlDesc.makeShortName(tempName);
 		};
 		order = deviceNames.order;
 
@@ -230,7 +231,8 @@ MIDIMKtlDevice : MKtlDevice {
 			});
 			prevName = name;
 
-			destinationDeviceDict.put((name ++ j).asSymbol, MIDIClient.destinations[order[i]])
+			destinationDeviceDict.put((name ++ j).asSymbol,
+				MIDIClient.destinations[order[i]])
 		};
 
 		// put the available midi devices in MKtl's available devices
@@ -242,7 +244,7 @@ MIDIMKtlDevice : MKtlDevice {
 
 	/// ----(((((----- EXPLORING ---------
 
-	exploring{
+	exploring {
 		^(MIDIExplorer.observedSrcID == srcID );
 	}
 
