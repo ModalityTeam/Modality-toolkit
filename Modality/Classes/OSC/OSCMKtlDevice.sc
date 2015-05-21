@@ -133,6 +133,8 @@ OSCMKtlDevice : MKtlDevice {
 	*deinitDevices {} // doesn't do anything, but needs to be there
 
 	*postPossible{
+		"To find what OSC is coming in, please use the osc monitor:".postln;
+		"o = OSCMon.new; o.enable; o.show".postln;
 		if ( initialized ){
 			"\n// Available OSCMKtlDevices:".postln;
 			"// MKtl(autoName);  // [ host, port ]".postln;
@@ -141,10 +143,7 @@ OSCMKtlDevice : MKtlDevice {
 				.postf(key, addr.hostname.asCompileString, addr.port.asCompileString )
 			};
 			"\n-----------------------------------------------------".postln;
-		}{
-			"To find what OSC is coming in, please use the OSCMonitor:".postln;
-			"o = OSCMonitor.new; o.enable; o.show".postln;
-		}
+		};
 	}
 
 	*findSource{ |name,host,port| // only reports interfaces that are already opened
