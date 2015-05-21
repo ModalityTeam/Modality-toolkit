@@ -565,6 +565,13 @@ MKtl { // abstract class
 		};
 
 		deviceInfo[\infoMessage] !? _.postln;
+
+		if( deviceInfo[ \collectives ].notNil ) {
+			collectivesDict = ();
+			deviceInfo[ \collectives ].keysValuesDo({ |key, value|
+				collectivesDict[ key ] = MKtlElementCollective( this, key, value );
+			})
+		};
 	}
 
 	//traversal function for combinations of dictionaries and arrays
@@ -716,6 +723,10 @@ MKtl { // abstract class
 
 	elementDescriptionFor { |elname|
 		^deviceDescriptionArray[deviceDescriptionArray.indexOf(elname) + 1]
+	}
+
+	collectiveDescriptionFor { |elname|
+		^deviceInfoDict[ \collectives ] !? { |x| deviceInfoDict[ \collectives ][ elname ]; };
 	}
 
 	postDeviceDescription {
