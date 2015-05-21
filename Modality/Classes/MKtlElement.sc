@@ -1,18 +1,14 @@
 /*
-MAbstractElement
-    |        |
-   /          \
-  /            \
-MKtlElement   MDispatchOut
-
-MDispatchOut : MAbstractElement {}
-
-Why do we need this hierarchy ??
+superclass for MKtlElement and MKtlElementGroup
+leave type, ioType etc as instvars for speed reasons
+MAbstractElement.allSubclasses
 */
+
+
 MAbstractElement {
 
-	var <source; // the MKtl it belongs to
 	var <name; // its name in MKtl.elements
+	var <source; // the MKtl it belongs to - not used anywhere
 	var <type; // its type.
 	var <tags; // array of user-assignable tags
 
@@ -20,8 +16,8 @@ MAbstractElement {
 
 	var <>action;
 
-	// keep value and previous value here
-	var <value;
+	// keep current and previous value here
+	var <deviceValue;
 	var <prevValue;
 
 	// server support, currently only one server per element supported.
@@ -29,13 +25,13 @@ MAbstractElement {
 
 	// nested MKtlElement / MKtlElementGroup support
 	var <>parent;
+	// all the elementGroups this is a member of
 	var <groups;
 
-	var <elementDescription;	 //its particular device description
-	                         // of type: ( 'midiChan': Int, 'midiMsgType': symbol, 'spec': ControlSpec,
-	                         //           'ccNum': Int, 'specName': symbol, 'type': Symbol )
-	                         // i.e.   ( 'chan':0, 'midiMsgType':'cc', 'spec': ControlSpec,
-	                         //          'ccNum': 24, 'specName':'midiCC', 'type':'midiBut' )
+	// the dict from the MKtlDesc
+	// that has this element's properties
+	var <elementDescription;
+
 
 	classvar <>addGroupsAsParent = false;
 
@@ -47,49 +43,57 @@ MAbstractElement {
 		tags = Set[];
 	}
 
-	prMaybeSend {
+	trySend {
 		if( [\out, \inout].includes( this.elementDescription.ioType ) ) {
-			source.send(name, value)
-		}
+			if (source.notNil) {
+				source.send(name, deviceValue);
+				^true
+			}
+		};
+		^false
 	}
 
-	//value_ is (possibly) mapped and sends out the value
-	//rawValue_ is not mapped and does not send out value
+	// no mapping anywhere,
+	// flattened out for speed and reading clarity
 	value_ { | newval |
-		this.rawValue_( newval );
-		this.prMaybeSend
+		if (newval.isNil) { ^this };
+		prevValue = deviceValue;
+		deviceValue = newval;
+		this.trySend;
+		this.updateBus;
+		this.changed( \value, deviceValue );
 	}
-
-	valueAction_ { |newval|
-		this.value_( newval );
+	valueNoSend_ { | newval |
+		if (newval.isNil) { ^this };
+		prevValue = deviceValue;
+		deviceValue = newval;
+		this.updateBus;
+		this.changed( \value, deviceValue );
+	}
+	valueAction_ { | newval |
+		if (newval.isNil) { ^this };
+		prevValue = deviceValue;
+		deviceValue = newval;
+		this.trySend;
+		this.updateBus;
 		this.doAction;
+		this.changed( \value, deviceValue );
 	}
+	// just aliases because we have no spec
+	deviceValue_ { | newval | ^this.value_(newval) }
+	deviceValueAction_ { | newval | ^this.valueAction_(newval) }
+	deviceValueNoSend_ { | newval | ^this.valueNoSend_(newval) }
 
-	rawValue_{|newval|
-		// copies the current state to:
-		prevValue = value;
-		// updates the state with the latest value
-		value = newval;
-		this.changed( \value, value );
-		this.updateValueOnServer;
-	}
-
-	rawValueAction_{|newval|
-		this.rawValue_( newval );
-		this.doAction;
-	}
+	value { ^deviceValue }
 
 	doAction {
-	//	source.recordRawValue( name, value );
 		action.value( this );
 		parent !? _.doAction( this );
 		groups.do( _.doAction( this ) );
 	}
 
 	// UGen support
-	updateValueOnServer {
-		//this.initBus;
-		// set bus values
+	updateBus {
 		bus !? {bus.setn(this.value.asArray)};
 	}
 
@@ -97,7 +101,7 @@ MAbstractElement {
 		server = server ?? {Server.default};
 		server.serverRunning.not.if{^this};
 		bus.isNil.if({
-			bus = Bus.control(server, (value ? 1).asArray.size);
+			bus = Bus.control(server, (deviceValue ? 1).asArray.size);
 		});
 	}
 
@@ -124,21 +128,21 @@ MAbstractElement {
 		^this.parent !? { |x| x.indices ++ [ this.index ] };
 	}
 
-	printOn { | stream |
-		stream << "an " << this.class.name << "(" << this.name.cs << ", " << this.type.cs << ", " << this.index << ")" ;
-	}
+	// for printOn only, this will not remake it properly from code.
+	storeArgs { ^[name, type, this.index] }
 
-	// MKtlElementGroup support
+	printOn { | stream | this.storeOn(stream) }
+
 	prAddGroup { |group|
-		if( ( parent != group ) && { groups.isNil or: { groups.includes( group ).not } }) {
+		if( parent == group ) { ^this };
+
+		if (groups.isNil or: { groups.includes( group ).not }) {
 			groups = groups.add( group );
 		};
 	}
 
 	prRemoveGroup { |group|
-		if( groups.notNil ) {
-			groups.remove( group );
-		};
+		groups.remove( group );
 	}
 
 	asBaseClass {
@@ -161,58 +165,103 @@ MAbstractElement {
 	}
 }
 
-MKtlElement : MAbstractElement{
+MKtlElement : MAbstractElement {
 	classvar <types;
 
-	var <spec; // ControlSpec -> its spec
+	// for mapping between numbers from device
+	// and internal value between [0, 1]
+	var <deviceSpec;
 
-	*initClass {
-		types = (
-			\slider: \x,
-			\button: \x,
-			\thumbStick: [\joyAxis, \joyAxis, \button],
-			\joyStick: [\joyAxis, \joyAxis, \button]
-		)
+	// source is used for sending back to the device.
+	*new { |name, desc, source|
+		^super.newCopyArgs(name, source)
+		.elementDescription_(desc);
 	}
 
-	*new { |source, name|
-		^super.newCopyArgs( source, name).init;
-	}
-
-	init {
-		super.init;
-		elementDescription = source.elementDescriptionFor(name);
-		spec = elementDescription[\spec];
-		if (spec.isNil) {
-			warn("spec for '%' is missing!".format(spec));
-		} {
-			value = prevValue = spec.default ? 0;
+	elementDescription_ { |dict|
+		if (dict.isNil) {
+			inform("MKtlElement(%): no element description given.".format(name));
+			^this
 		};
+
+		elementDescription = dict;
+		deviceSpec = elementDescription[\spec];
+
+		if (deviceSpec.isNil) {
+			warn("deviceSpec for '%' is missing!".format(deviceSpec));
+		} {
+			deviceSpec = deviceSpec.asSpec;
+			// keep old values if there.
+			if (deviceValue.isNil) {
+				deviceValue = prevValue = this.defaultValue;
+			};
+		};
+
 		type = elementDescription[\type];
-		ioType = elementDescription[\ioType];
-		if ( ioType.isNil ){
-			ioType = \in; // default is in
-		};
+		ioType = elementDescription[\ioType] ? \in;
+	}
 
-		spec = elementDescription[\spec];
-		if (spec.isNil) {
-			warn("spec for '%' is missing!".format(spec));
-		} {
-			value = prevValue = spec.default ? 0;
+	updateDescription { |dict|
+		dict.keysValuesDo { |key, val|
+			elementDescription.put(key, val);
 		};
+		// sync back if these changed
+		deviceSpec = elementDescription[\spec];
+		type = elementDescription[\type];
+		ioType = elementDescription[\ioType] ? \in;
+	}
 
+	deviceSpec_ { |spec|
+		if (spec.notNil) {
+			deviceSpec = spec.asSpec;
+			elementDescription.put(\spec, deviceSpec);
+		}
 	}
 
 	defaultValue {
-		^(spec.default ? 0);
+		^(deviceSpec.default ? 0);
 	}
 
-	value { ^spec.unmap(value) }
+	// In MKtl, the instvar value is in deviceSpec range,
+	// so e.g. .value converts value to unipolar and .value_ converts back
 
-	value_ {|newval|
-		^super.value_(spec.map(newval))
+	// numbers as they come from device
+	value { ^deviceSpec.unmap(deviceValue) }
+
+	// the methods are flattened out for speed and reading clarity
+	// set value in unipolar, so:
+	value_ { | newval |
+		if (newval.isNil) { ^this };
+		prevValue = deviceValue;
+		deviceValue = deviceSpec.map(newval);
+		this.trySend;
+		this.updateBus;
+		this.changed( \value, newval );
 	}
+	valueNoSend_ { | newval |
+		if (newval.isNil) { ^this };
+		prevValue = deviceValue;
+		deviceValue = deviceSpec.map(newval);
+		this.updateBus;
+		this.changed( \value, newval );
+	}
+	valueAction_ { | newval |
+		if (newval.isNil) { ^this };
+		prevValue = deviceValue;
+		deviceValue = deviceSpec.map(newval);
+		this.trySend;
+		this.updateBus;
+		this.doAction;
+		this.changed( \value, newval );
+	}
+	// no spec here, so we can redirect to superclass
+	deviceValue_ { | newval | ^super.value_(newval) }
+	deviceValueAction_ { | newval | ^super.valueAction_(newval) }
+	deviceValueNoSend_ { | newval | ^super.valueNoSend_(newval) }
 
+
+
+	// where the action is:
 	addAction { |argAction|
 		action = action.addFunc(argAction);
 	}
@@ -221,21 +270,17 @@ MKtlElement : MAbstractElement{
 		action = action.removeFunc(argAction);
 	}
 
-	reset {
+	resetAction {
 		action = nil
 	}
 
-	// assuming that something setting the element's value will first set the value and then call doAction (like in Dispatch)
-	doAction { |sendValue = true|
+	// assuming that something setting the element's value will
+	// first set the value and then call doAction (like in Dispatch)
+	doAction {
 		super.doAction;
 		this.changed( \doAction, this );
 	}
 
-	rawValue { ^value }
-
-	rawValue_ {|newVal|
-		super.rawValue_(newVal)
-	}
 
 	// pattern support
 	embedInStream { |inval|
@@ -247,22 +292,3 @@ MKtlElement : MAbstractElement{
 		^Pfunc({ |inval| this.value }).asStream
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
