@@ -49,6 +49,94 @@ q.manta.mktl
 
 
 
+
+(
+specs: (
+	mantaTouch: [ 0, 227 ].asSpec, // this seems to be the spec, looking at the github source code
+	mantaSlider: [ 0, 4095 ].asSpec, // slider sends values between 0 and 4095, releasing the slider sends 65536
+	mantaLed: StringMap.new( ["off","amber","red"] ), // led can be off, amber or red
+),
+infoURL: "https://github.com/ssfrr/libmanta",
+idInfo: ( srcPort: 31417, ipAddress: "127.0.0.1", recvPort: 31416 ), // sends/receives on the same port, so we do not need to define destPort separately
+protocol: \osc,
+description: (
+	pad: (0..47).collect{ |id|
+		(
+			con: (
+				oscPath: '/manta/continuous/pad',
+				argTemplate: [ id ],
+				type: 'pad',
+				spec: 'mantaTouch',
+				ioType: \in
+			),
+			vel: (
+				oscPath: '/manta/velocity/pad',
+				argTemplate: [ id ],
+				type: 'pad',
+				spec: 'mantaTouch',
+				ioType: \in
+			),
+			led: (
+				oscPath: '/manta/led/pad',
+				argTemplate: [ nil, id ],
+				type: 'led',
+				spec: 'mantaLed',
+				ioType: \out
+			);
+		);
+	},
+	bt: (0..3).collect{ |id|
+		(
+			con: (
+				oscPath: '/manta/continuous/button',
+				argTemplate: [ id ],
+				type: 'pad',
+				spec: 'mantaTouch',
+				ioType: \in
+			),
+			vel: (
+				oscPath: '/manta/velocity/button',
+				argTemplate: [ id ],
+				type: 'pad',
+				spec: 'mantaTouch',
+				ioType: \in
+			),
+			led: (
+				oscPath: '/manta/led/button',
+				argTemplate: [ nil, id ],
+				type: 'led',
+				spec: 'mantaLed',
+				ioType: \out
+			);
+
+		)
+	},
+	sl: (0..1).collect{ |id|
+		(
+			con: (
+				oscPath: '/manta/continuous/slider',
+				argTemplate: [ id ],
+				type: 'slider',
+				spec: 'mantaSlider',
+				ioType: \in
+			),
+			led: (0..7).collect{ |jd|
+				(
+					oscPath: '/manta/led/slider',
+					argTemplate: [ nil, id, jd ],
+					type: 'led',
+					spec: 'mantaLed',
+					ioType: \out
+				);
+			}
+		)
+	};
+)
+);
+
+/*
+old version:
+
 MKtl.addSpec(\mantaPad, [0, 200]);
 MKtl.addSpec(\mantaPad, [10, 4086]);
 
@@ -88,5 +176,4 @@ description: (
 	) }
 )
 )
-
-
+*/
