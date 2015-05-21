@@ -13,8 +13,8 @@ This Tutorial first shows simple examples of OSC interfaces, by emulating them w
 list::
 ##link::#Simple input::
 ##link::#Simple output::
-##link::#Combined input::
-##link::#Combined output::
+##link::#Collective input::
+##link::#Collective output::
 ::
 
 section:: Simple input
@@ -114,7 +114,7 @@ code::
 	);
 ::
 
-The code::argTemplate:: can also contain code::nil:: if there is an element in the msgArray that needs to be ignored while filtering, see: link::#argTemplate matching:: for examples how argTemplates can be matched.
+The code::argTemplate:: can also contain code::nil:: if there is an element in the osc message that needs to be ignored while filtering, see: link::#argTemplate matching:: for examples how argTemplates can be matched.
 
 If the osc message sends some other info that we are not interested in inside the message, we can specify at which index we want to read the data (by default we take the last value in the osc message):
 
@@ -180,6 +180,280 @@ m.closeDevice;
 ::
 
 
+section:: Simple output
+
+A simple OSC output is an OSC interface that receives OSC messages with only a value for a single control on the device. For example:
+
+code::
+// turn on the led at brightness value 5
+/led 5
+// turn off the led meaning brightness value 0
+/led 0
+::
+
+With a description like:
+
+code::
+(
+'led': (
+	oscPath: '/output',
+	type': 'led',
+	ioType: \out
+);
+)
+::
+
+Just like with the simple input example, we can have indices that define additional arguments that specify which led should be on.
+
+code::
+// turn on the led at row 2 and column 3 at brightness value 5
+/led 2 3 5
+// turn off the led at row 2 and column 3 meaning brightness value 0
+/led 2 3 0
+::
+
+With a description like:
+
+code::
+(
+'led': (
+	oscPath: '/output',
+	argTemplate: [ 2, 3 ],
+	type: 'led',
+	ioType: \out
+);
+)
+::
+
+If the value needs to be inserted in between identifiers for the message, you can use code::nil:: as the place holder in the code::argTemplate::
+
+code::
+// turn on the led at row 2 and column 3 at brightness value 5
+/led 2 5 3
+// turn off the led at row 2 and column 3 meaning brightness value 0
+/led 2 0 3
+::
+
+With a description like:
+
+code::
+(
+'led': (
+	oscPath: '/output',
+	argTemplate: [ 2, nil, 3 ],
+	type: 'led',
+	ioType: \out
+);
+)
+::
+
+
+An example of opening an OSC device from a description and sending output to it:
+
+code::
+(
+MKtl.addSpec(\pwm8bit, [0, 255, \linear, 1]);
+~descOutput = (
+	idInfo: ( ipAddress: "127.0.0.1", destPort: NetAddr.langPort ),
+	protocol: \osc,
+	description: (
+		'led': (
+			oscPath: '/output',
+			argTemplate: [ 2, 3 ], // message will be: "/minibee/output" 2 3 <val>
+			'type': 'led', spec: \pwm8bit,
+			\ioType: \out
+		);
+	);
+);
+);
+
+m = MKtl( \exampleOSCoutput, ~descOutput );
+
+OSCFunc.trace( true ); // trace what is coming in
+
+// set a value:
+m.elementAt( \led ).value_( 0.6 );
+m.elementAt( \led ).value_( 1.0.rand );
+
+// cleanup:
+m.closeDevice;
+::
+
+section:: Collective input
+
+Some OSC devices will send the data for several elements within one OSC message. For example an OSC message updating all 5 buttons of a device:
+
+code::
+/buttons 1 1 0 1 0
+::
+
+In this case, we can create a code::collective:: that will listen for the code::/buttons:: message, and pass it on to the elements that are part of the collective:
+
+code::
+(
+~descCollectiveInput = (
+	idInfo: ( ipAddress: "127.0.0.1" ),
+	protocol: \osc,
+	collectives: (
+		buttons: (
+			oscPath: 'buttons',
+			elements: [ [\bt,0], [\bt,1], [\bt,2], [\bt,3], [\bt,4] ], // the order in this array determines the order how the message is parsed
+			ioType: \in
+		)
+	),
+	description: (
+		'bt': [
+			( type: 'button', ioType: \collectiveIn ),
+			( type: 'button', ioType: \collectiveIn ),
+			( type: 'button', ioType: \collectiveIn ),
+			( type: 'button', ioType: \collectiveIn ),
+			( type: 'button', ioType: \collectiveIn )
+		]
+	);
+);
+);
+
+m = MKtl( \exampleCollectiveIn, ~descCollectiveInput );
+m.trace;
+
+n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
+n.sendMsg( "/buttons", 1, 1, 0, 1, 1 );
+
+(
+Tdef( \autoaction, {
+	loop{
+		n.sendMsg( "/buttons", 2.rand, 2.rand, 2.rand, 2.rand, 2.rand );
+		1.0.wait;
+	};
+}).play;
+);
+
+m.gui;
+
+::
+
+Similar as with the simple input example, we can use an code::argTemplate:: for the output messages. Any code::nil::s in the template will be assumed to contain relevant data. If you do not want to filter on a particular field, but it is not the required data, then you can use code::valueAt:: to specify the indices within the OSC message that you want to use for the values. See the following examples for clarification:
+
+
+Matching a simple argument template:
+
+code::
+(
+~descCollectiveInput = (
+	idInfo: ( ipAddress: "127.0.0.1" ),
+	protocol: \osc,
+	collectives: (
+		data: (
+			// would fire the do something with the elements inside
+			oscPath: '/buttons',
+			argTemplate: [ 7 ],
+			elements: [ [\bt,0], [\bt,1], [\bt,2], [\bt,3], [\bt,4] ], // the order in this array determines the order how the message is parsed
+		ioType: \in
+		)
+	),
+	description: (
+		'bt': [
+			( type: 'button', ioType: \collectiveIn ),
+			( type: 'button', ioType: \collectiveIn ),
+			( type: 'button', ioType: \collectiveIn ),
+			( type: 'button', ioType: \collectiveIn ),
+			( type: 'button', ioType: \collectiveIn )
+		]
+	);
+);
+);
+
+m.rebuildFrom( ~descCollectiveInput );
+
+// means messages like this are received:
+n.sendMsg( "/buttons", 7, 0, 1, 1, 0, 1 );
+// and this is not (4 != 7)
+n.sendMsg( "/buttons", 4, 0, 1, 1, 0, 1 );
+::
+
+
+Matching an argument template with the filter at the end:
+
+code::
+(
+~descCollectiveInput = (
+	idInfo: ( ipAddress: "127.0.0.1" ),
+	protocol: \osc,
+
+	collectives: (
+		data: (
+			// would fire the do something with the elements inside
+			oscPath: '/buttons',
+			argTemplate: [ nil, nil, nil, nil, nil, 7 ],
+			elements: [ [\bt,0], [\bt,1], [\bt,2], [\bt,3], [\bt,4] ], // the order in this array determines the order how the message is parsed
+			ioType: \in
+		)
+	),
+	description: (
+		'bt': [
+			( type: 'button', ioType: \collectiveIn ),
+			( type: 'button', ioType: \collectiveIn ),
+			( type: 'button', ioType: \collectiveIn ),
+			( type: 'button', ioType: \collectiveIn ),
+			( type: 'button', ioType: \collectiveIn )
+		]
+	);
+);
+);
+
+m.rebuildFrom( ~descCollectiveInput );
+
+// means messages like this are received:
+n.sendMsg( "/buttons", 0, 1, 1, 0, 1, 7 );
+// and this is not (4 != 7 )
+n.sendMsg( "/buttons", 0, 1, 1, 0, 1, 4 );
+::
+
+
+Matching an argument template with a wildcard at the beginning, but interesting values are only later on in the message, so using code::valueAt:: explicitly:
+
+code::
+(
+~descCollectiveInput = (
+	idInfo: ( ipAddress: "127.0.0.1" ),
+	protocol: \osc,
+	collectives: (
+		data: (
+			// would fire the do something with the elements inside
+			oscPath: '/buttons',
+			argTemplate: [ nil, 7 ],
+			valueAt: [ 3, 4, 5, 6, 7 ],
+			elements: [ [\bt,0], [\bt,1], [\bt,2], [\bt,3], [\bt,4] ], // the order in this array determines the order how the message is parsed
+			ioType: \in
+		)
+	),
+	description: (
+		'bt': [
+			( type: 'button', ioType: \collectiveIn ),
+			( type: 'button', ioType: \collectiveIn ),
+			( type: 'button', ioType: \collectiveIn ),
+			( type: 'button', ioType: \collectiveIn ),
+			( type: 'button', ioType: \collectiveIn )
+		]
+	);
+);
+);
+
+m.rebuildFrom( ~descCollectiveInput );
+
+// means messages like this are received:
+n.sendMsg( "/buttons", "blah".scramble, 7, 0, 1, 1, 0, 1 );
+// and this is not (4 != 7 )
+n.sendMsg( "/buttons", "blah".scramble, 4, 0, 1, 1, 0, 1 );
+::
+
+
+code::
+// cleanup:
+m.closeDevice;
+::
+
+section:: Collective output
 
 
 section:: Explore your device
