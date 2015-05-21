@@ -143,6 +143,8 @@ MKtlElementGroup : MKtlElement {
 
 	value { ^elements.collect(_.value) }
 
+	rawValue { ^elements.collect(_.rawValue) }
+
 	keys { ^elements.collect({ |item| dict.findKeyForValue( item ) }) }
 
 	shape { ^elements.shape }
