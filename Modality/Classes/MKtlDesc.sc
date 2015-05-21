@@ -84,10 +84,15 @@ MKtlDesc {
 	}
 
 	// convenience only
-	*loadAllDescs { |folders|
-		var count = 0;
-		descFolders.do {|folder|
-			(folder +/+ "*").pathMatch.do {|descPath|
+	*loadDescs { |filenameToMatch = "*", folderIndex|
+		var count = 0, foldersToLoadFrom;
+		filenameToMatch = filenameToMatch ++ fileExt;
+
+		folderIndex = folderIndex ?? { (0 .. descFolders.size-1) };
+		foldersToLoadFrom = descFolders[folderIndex.asArray].select(_.notNil);
+
+		foldersToLoadFrom.do {|folder|
+			(folder +/+ filenameToMatch).pathMatch.do {|descPath|
 				count = count + 1;
 				this.fromFile(descPath.basename.drop(fileExt.size.neg));
 			}
@@ -135,8 +140,11 @@ MKtlDesc {
 	protocol { ^descDict[\protocol] }
 	protocol_ { |type| ^descDict[\protocol] = type }
 
-	deviceIDString { ^descDict[\device] }
-	deviceIDString_ { |type| ^descDict[\device] = type }
+	// adc proposal - seem clearest
+	// idInfoAsReportedBySystem,
+	// aslo put it in descDict[\idInfo]
+	idInfo { ^descDict[\device] }
+	idInfo_ { |type| ^descDict[\device] = type }
 
 	desc { ^descDict[\description] }
 	desc_ { |type| ^descDict[\description] = type }
@@ -156,7 +164,7 @@ MKtlDesc {
 		if (elements) { this.postElements }
 	}
 
-	// not working yet
+	// prettyPost with indent, not working yet
 	postElements {
 		// var tabs = 0;
 		// var postLine = { |elem, keyOrIndex, tabs = 0|
