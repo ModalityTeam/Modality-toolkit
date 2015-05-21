@@ -83,7 +83,7 @@ PRIVATE:: makeRespFuncs, makeNoteOff, makeNoteOn, makeBend, makeTouch, makeCC, m
 
 PRIVATE:: makeNoteOnKey, makeNoteOffKey, makeCCKey, makeBendKey, makeProgramKey,  makePolyTouchKey, makeTouchKey, noteKeyToChanNote, ccKeyToChanCtl
 
-PRIVATE::removeRespFuncs
+PRIVATE::removeRespFuncs, initCollectives
 
 METHOD:: closeDevice
 Close the device and clean up anything that it used.
@@ -138,8 +138,8 @@ METHOD:: initElements
 Initialize all elements and hook them up to the hardware elements.
 
 
-METHOD:: cleanupElements
-De-initialize all elements.
+METHOD:: cleanupElementsAndCollectives
+De-initialize all elements and collectives.
 
 
 METHOD:: send
