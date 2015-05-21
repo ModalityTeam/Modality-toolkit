@@ -156,11 +156,7 @@ MKtlDevice{
 		this.subclassResponsibility(thisMethod)
 	}
 
-	cleanupElements{
-		this.subclassResponsibility(thisMethod)
-	}
-
-	cleanupCollectives{
+	cleanupElementsAndCollectives{
 		this.subclassResponsibility(thisMethod)
 	}
 

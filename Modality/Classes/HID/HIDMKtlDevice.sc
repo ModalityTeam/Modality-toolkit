@@ -126,7 +126,7 @@ HIDMKtlDevice : MKtlDevice {
 	}
 
 	closeDevice{
-		this.cleanupElements;
+		this.cleanupElementsAndCollectives;
 		srcID = nil;
 		srcDevice.close;
 	}
@@ -162,7 +162,7 @@ HIDMKtlDevice : MKtlDevice {
 		}
 	}
 
-	cleanupElements{
+	cleanupElementsAndCollectives{
 		mktl.elementsDict.do{ |el|
 			var theseElements;
             var elid = el.elementDescription[\hidElementID];
@@ -181,8 +181,6 @@ HIDMKtlDevice : MKtlDevice {
 	}
 
 	// nothing here yet, but needed
-	cleanupCollectives{
-	}
 
 	initCollectives{
 	}

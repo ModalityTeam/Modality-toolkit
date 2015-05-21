@@ -666,7 +666,7 @@ MIDIMKtlDevice : MKtlDevice {
 	}
 
 
-	cleanupElements{
+	cleanupElementsAndCollectives{
 		responders.do{ |resp|
 			// resp.postln;
 			resp.free;
@@ -674,10 +674,6 @@ MIDIMKtlDevice : MKtlDevice {
 		elementHashDict = nil;
 		hashToElNameDict = nil;
 		elNameToMidiDescDict = nil;
-	}
-
-	// nothing here yet, but needed
-	cleanupCollectives{
 	}
 
 	makeRespFuncs { |msgTypes|

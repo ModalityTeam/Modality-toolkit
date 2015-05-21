@@ -354,8 +354,7 @@ MKtl { // abstract class
 				"WARNING: MKtl(%): protocol % of device description %, does match protocol % of device %. Keeping the device description as it was.\n".postf( name, devDesc.at( \protocol ), devDescName, mktlDevice.class.protocol, mktlDevice.deviceName );
 				^this;
 			};
-			mktlDevice.cleanupCollectives;
-			mktlDevice.cleanupElements;
+			mktlDevice.cleanupElementsAndCollectives;
 		};
 
 		this.prInitFromDeviceDescription( devDesc, devDescName );
