@@ -1,0 +1,176 @@
+CONTROLLER NAMING CONVENTIONS - for discussion
+
+Suggestion: separate controller types and controller features:
+
+*type
+pad controller
+ribbon controller
+keyboard
+faderbox/faderpack ??
+rotary controller
+gamepad
+joystick
+dj controller
+mixer controller - mixer strip ??
+pad/button matrix ??
+transport controller - recording interface??
+
+*features
+pads
+buttons
+faders
+touch sensors
+touch faders
+cross fader
+rotaries
+keys
+ribbon
+switches
+
+///////////////////LIST
+
+APC mini
+http://www.akaipro.com/product/apc-mini
+manual: http://6be54c364949b623a3c0-4409a68c214f3a9eeca8d0265e9266c0.r0.cf2.rackcdn.com/990/documents/APC%20mini%20-%20User%20Guide%20-%20v1.0.pdf
+type: faderbox, pad controller
+
+ABLETON Push
+https://www.ableton.com/en/push/
+manual: https://www.ableton.com/en/manual/using-push/
+type: pad controller
+
+ARTURIA Minilab - MIDI controller
+http://www.arturia.com/products/hybrid-synths/minilab/overview
+manual: http://downloads.arturia.com/products/minilab/manual/MiniLab_Manual_EN.pdf
+Type: keyboard, rotary, buttons
+ 
+BEHRINGER BCF2000 - motorized usb/midi controller
+http://www.behringer.com/EN/Products/BCF2000.aspx
+manual:http://www.behringer.com/assets/BCF2000_BCR2000_M_EN.pdf
+type: mixer controller
+
+BEHRINGER BCR2000 - Rotary MIDI/USB controller
+http://www.behringer.com/EN/Products/BCR2000.aspx
+manual: http://www.behringer.com/assets/BCF2000_BCR2000_M_EN.pdf
+type: rotary controller
+
+EOWAVE RIBBON – ribbon controller
+http://www.eowave.com/instruments.php?prod=78
+manual: http://www.eowave.com/downloads/pdf/EowaveRibbon_manual.pdf
+type: ribbon controller
+
+EXTREME 3d pro joystick
+http://gaming.logitech.com/en-us/product/extreme-3d-pro-joystick
+manual: http://support.logitech.com/product/extreme-3d-pro
+type: joystick
+
+ICON I-CONTROLS
+http://www.icon-global.com/Controllers_MIDI+recording+controllers_iControls+.htm
+manual:http://www.icon-global.com/download%5Cuser%20manual%5CIC%20PD3V1.00-E.zip
+type: faderbox
+
+ICON iStage 
+http://www.icon-global.com/Keyboards%2FPads_Pads_iStage.htm
+Type: pads
+
+AKAI LPD8
+http://www.akaipro.com/product/lpd8
+type: pads, knobs
+ 
+NOVATION Launch Control XL
+http://global.novationmusic.com/launch/launch-control-xl#
+type: buttons , faders, knobs
+
+NOVATION Launchpad
+no longer supported
+Type: pads
+
+AKAI MPD18
+http://www.akaipro.com/product/mpd18
+type: pads
+ 
+AKAI MPD mini mkII
+http://www.akaipro.com/product/mpk-mini-mkii
+type: keys, pads, knobs
+
+NUMARK Orbit
+Wireless DJ controller with motion control
+Type: pads, buttons, rotaries
+http://www.numark.com/product/orbit
+
+KeithMacMillen QuNexus
+http://www.keithmcmillen.com/products/qunexus/
+type: keys, pads
+
+THRUSTMASTER – Dual Analogue Ferrari
+http://www.thrustmaster.com/en_UK/products/f1-dual-analog-ferrari-f60-exclusive-edition
+type: gamepad
+
+THRUSTMASTER – Run n drive wireless
+http://www.thrustmaster.com/products/runndrive-wireless-3-in1-rumble-force
+type: gamepad
+
+STEINBERG – CMC-FD
+https://www.steinberg.net/en/products/controller/cmc_serie/modelle/cmc_fd.html
+type: touch faders, buttons
+
+STEINBERG – CMC – PD
+https://www.steinberg.net/en/products/controllers/cmc_series/models/cmc_pd.html
+type: pads
+
+STEINBERG CMC – QC
+http://www.steinberg.net/en/products/controller/cmc_serie/modelle/cmc_qc.html
+type:  buttonsm rotaries
+
+TEENAGE ENGINEERING OP1
+https://www.teenageengineering.com/products/op-1
+type: keys, buttons, rotaries
+
+THRUSTMASTER Joystick
+No info
+Type: gamepad
+ 
+TRAKTOR Control Z2
+http://www.native-instruments.com/en/products/traktor/dj-mixer/traktor-kontrol-z2/
+type: DJ mixer
+
+EVOLUTION  UC 33
+No info
+Type: faders, buttons, knobs
+
+BITSHAPE Gyrosc
+http://www.bitshapesoftware.com/instruments/gyrosc/
+type: iphone osc device
+
+ICON iControl 2
+http://www.icon-global.com/Controllers_MIDI+recording+controllers_iControls+.htm
+type: faders, knobs, buttons
+
+
+X-OSC
+http://www.x-io.co.uk/products/x-osc/#!prettyPhoto
+type: wifi osc device
+
+SNYDERPHONICS Manta
+http://www.snyderphonics.com/products.htm
+type: touch sensitive sensor matrix
+ 
+KORG Microkey
+http://www.korg.com/us/products/controllers/microkey/
+type: keyboard
+ 
+KORG Nano Key 2
+http://www.korg.com/us/products/controllers/nanokey2/
+type: keyboard
+
+KORG Nanokontrol 2
+http://www.korg.com/us/products/controllers/nanokontrol2/
+type: faders, knobs, buttons
+
+KORG Nanopad 2
+http://www.korg.com/us/products/controllers/nanopad2/
+type: pads
+
+M-AUDIO Triggerfinger
+http://m-audio.com/microsites/tfp
+type: sequencer, pads, faders, knobs
