@@ -55,83 +55,63 @@ ARGUMENT:: devInfo
 The device info as found in the description file
 
 
-
-
 METHOD:: new
-(describe method here)
 
-ARGUMENT:: name
-(describe argument here)
+Creates a new instance of OSCMKtlDevice.
 
-ARGUMENT:: devInfo
-(describe argument here)
+argument:: name
+The short name of the controller as it shows up in the list of found devices.
 
-ARGUMENT:: parentMKtl
-(describe argument here)
+argument:: devInfo
+The device code::idInfo:: to use to make the OSC connections.
 
-returns:: (describe returnvalue here)
+argument:: parentMKtl
+The instance of link::Classes/MKtl:: that this MKtlDevice will belong to.
+
 
 
 INSTANCEMETHODS::
 
-METHOD:: initCollectives
-(describe method here)
-
-returns:: (describe returnvalue here)
-
-METHOD:: closeDevice
-(describe method here)
-
-returns:: (describe returnvalue here)
-
-METHOD:: initOSCMKtl
-(describe method here)
-
-ARGUMENT:: desc
-(describe argument here)
-
-returns:: (describe returnvalue here)
-
-METHOD:: recvPort
-(describe method here)
-
-returns:: (describe returnvalue here)
-
-METHOD:: cleanupElementsAndCollectives
-(describe method here)
-
-returns:: (describe returnvalue here)
-
-METHOD:: destDevice
-(describe method here)
-
-returns:: (describe returnvalue here)
-
-METHOD:: oscFuncDictionary
-(describe method here)
-
-returns:: (describe returnvalue here)
+private:: initOSCMKtl
 
 METHOD:: initElements
-(describe method here)
+Initilize all elements and set OSCFuncs for them
 
-returns:: (describe returnvalue here)
+METHOD:: initCollectives
+Initilize all collectives and set OSCFuncs for them
+
+METHOD:: oscFuncDictionary
+A Dictionary containing all the OSCFuncs that this device is using.
+
+METHOD:: closeDevice
+Free all OSCFuncs.
+
+METHOD:: cleanupElementsAndCollectives
+De-initialize all elements and collectives.
+
 
 METHOD:: send
-(describe method here)
+Send the value of the element or collective to the OSC device; called if you set the value of an MKtlElement that is an output.
 
-ARGUMENT:: key
-(describe argument here)
+argument:: key
+The key of the element or collective.
 
-ARGUMENT:: val
-(describe argument here)
+argument:: val
+The value to which it is set. A collective should send an Array.
 
-returns:: (describe returnvalue here)
 
 METHOD:: srcDevice
-(describe method here)
+The link::Classes/NetAddr:: device that is the source for this OSCMKtlDevice.
 
-returns:: (describe returnvalue here)
+returns:: an instance of link::Classes/NetAddr::
+
+METHOD:: destDevice
+The link::Classes/NetAddr:: device that is the destination for this OSCMKtlDevice.
+
+returns:: an instance of link::Classes/NetAddr::
+
+METHOD:: recvPort
+The port to which the OSC device/interface is sending data to. If this is configurable in the OSC device or interface, then it is easier to use sclang's default port of 57120 and leave it undefined.
 
 
 EXAMPLES::

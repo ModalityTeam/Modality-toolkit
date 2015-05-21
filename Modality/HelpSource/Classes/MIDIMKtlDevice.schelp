@@ -1,5 +1,5 @@
 CLASS:: MIDIMKtlDevice
-summary:: A class for creating and accessing external midi controllers
+summary:: The Modality class for creating and accessing external midi controllers
 categories:: Libraries>Modality, External Control
 related:: Overviews/Modality, Classes/MKtl, Classes/MKtlDevice, Classes/MKtlElement
 
