@@ -256,10 +256,6 @@ MKtlElementCollective : MKtlElementGroup {
 		^super.newCopyArgs( source, name).init( elementDescription );
 	}
 
-	key{
-		^name;
-	}
-
 	init { |inElementDescription|
 		tags = Set[];
 		elementDescription = inElementDescription ?? { source.collectiveDescriptionFor(name); };

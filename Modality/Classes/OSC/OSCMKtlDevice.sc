@@ -231,8 +231,8 @@ OSCMKtlDevice : MKtlDevice {
 			var argTemplate = el.elementDescription[ \argTemplate ];
 			var valueIndex = el.elementDescription[ \valueAt ];
 			if ( [\in,\inout].includes( ioType ) or: ioType.isNil ){
-				if ( oscFuncDictionary.at( el.key ).notNil ){ oscFuncDictionary.at( el.key ).free };
-				oscFuncDictionary.put( el.key,
+				if ( oscFuncDictionary.at( el.name ).notNil ){ oscFuncDictionary.at( el.name ).free };
+				oscFuncDictionary.put( el.name,
 					OSCFunc.new( { |msg|
 						if ( valueIndex.notNil ){
 							el.rawValueAction_( msg.at( valueIndex ) );
@@ -272,8 +272,8 @@ OSCMKtlDevice : MKtlDevice {
 						templEnd = 1;
 					};
 				};
-				if ( oscFuncDictionary.at( el.key ).notNil ){ oscFuncDictionary.at( el.key ).free };
-				oscFuncDictionary.put( el.key,
+				if ( oscFuncDictionary.at( el.name ).notNil ){ oscFuncDictionary.at( el.name ).free };
+				oscFuncDictionary.put( el.name,
 					OSCFunc.new( { |msg|
 						// clever msg index parsing
 						if ( msgIndices.notNil ){
