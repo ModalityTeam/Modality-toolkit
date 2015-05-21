@@ -93,6 +93,15 @@ MKtlDevice{
 			};
 			^devKey;
 		};
+		if (devLongName.isKindOf( Array ) ){
+			this.subclasses.do{ |subClass|
+				newDevKey = subClass.findSource( *devLongName );
+				if ( newDevKey.notNil ){
+					devKey = newDevKey;
+				};
+			};
+			^devKey;
+		};
 		if (devLongName.isKindOf( Dictionary ) ){
 			this.subclasses.do{ |subClass|
 				newDevKey = subClass.findSource( devLongName );
