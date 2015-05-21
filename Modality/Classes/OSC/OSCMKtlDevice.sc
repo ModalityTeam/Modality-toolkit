@@ -62,8 +62,8 @@ OSCMKtlDevice : MKtlDevice {
 	classvar <protocol = \osc;
 	classvar <sourceDeviceDict; // contains active sources ( recvPort: , srcPort: , ipAddress: , destPort:  )
 
-	var <srcDevice;  // receiving OSC from this NetAddr
-	var <destDevice; // sending OSC to this NetAddr
+	var <source;  // receiving OSC from this NetAddr
+	var <destination; // sending OSC to this NetAddr
 	var <recvPort; // port on which we need to listen
 
 	var <oscFuncDictionary;
@@ -193,17 +193,17 @@ OSCMKtlDevice : MKtlDevice {
 	initOSCMKtl{ |desc|
 		// this will not be addr but a ( destPort: , recvPort: , srcPort: ..., ipAddress: ..., listenPort: ... )
 		if ( desc.at( \ipAddress ).notNil ){
-			srcDevice = NetAddr.new( desc.at( \ipAddress ), desc.at( \srcPort ) );
+			source = NetAddr.new( desc.at( \ipAddress ), desc.at( \srcPort ) );
 			if ( desc.at( \destPort ).notNil ){
-				destDevice = NetAddr.new( desc.at( \ipAddress ), desc.at( \destPort ) );
+				destination = NetAddr.new( desc.at( \ipAddress ), desc.at( \destPort ) );
 			}{ // assume destination port is same as srcPort
-				destDevice = NetAddr.new( desc.at( \ipAddress ), desc.at( \srcPort ) );
+				destination = NetAddr.new( desc.at( \ipAddress ), desc.at( \srcPort ) );
 			};
 		}{
 			if ( desc.at( \destPort ).notNil ){
-				destDevice = NetAddr.new( "127.0.0.1", desc.at( \destPort ) );
+				destination = NetAddr.new( "127.0.0.1", desc.at( \destPort ) );
 			}{ // assume destination port is same as srcPort
-				destDevice = NetAddr.new( "127.0.0.1", desc.at( \srcPort ) );
+				destination = NetAddr.new( "127.0.0.1", desc.at( \srcPort ) );
 			};
 		};
 		recvPort = desc.at( \recvPort );
@@ -215,8 +215,8 @@ OSCMKtlDevice : MKtlDevice {
 
 	closeDevice{
 		this.cleanupElementsAndCollectives;
-		srcDevice = nil;
-		destDevice = nil;
+		source = nil;
+		destination = nil;
 		recvPort = nil;
 	}
 
@@ -242,7 +242,7 @@ OSCMKtlDevice : MKtlDevice {
 							"% - % > % | type: %, src:%"
 							.format(this.name, el.name, el.value.asStringPrec(3), el.type, el.source).postln;
 						}
-					}, oscPath, srcDevice, recvPort, argTemplate: argTemplate );
+					}, oscPath, source, recvPort, argTemplate: argTemplate );
 				);
 			};
 		};
@@ -275,7 +275,7 @@ OSCMKtlDevice : MKtlDevice {
 							"% - % > % | type: %, src:%"
 							.format(this.name, el.name, el.value.collect{ |it| it.asStringPrec(3) }, el.type, el.source).postln; // fix tracing
 						}
-					}, oscPath, srcDevice, recvPort, argTemplate: argTemplate ); // optional add host/port
+					}, oscPath, source, recvPort, argTemplate: argTemplate ); // optional add host/port
 				);
 			};
 		};
@@ -290,7 +290,7 @@ OSCMKtlDevice : MKtlDevice {
 	// from the group: \output, val: [ 0, 0, 0, 0 ]
 	send{ |key,val|
 		var el, oscPath, outvalues,valIndex;
-		if ( destDevice.notNil ){
+		if ( destination.notNil ){
 			if ( val.isKindOf( Array ) ){
 				el = mktl.collectiveDescriptionFor( key );
 				valIndex = 0;
@@ -315,7 +315,7 @@ OSCMKtlDevice : MKtlDevice {
 					outvalues = outvalues ++ val;
 				};
 			};
-			destDevice.sendMsg( *( [ oscPath ] ++ outvalues ) );
+			destination.sendMsg( *( [ oscPath ] ++ outvalues ) );
 		}
 	}
 

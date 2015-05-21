@@ -100,12 +100,12 @@ argument:: val
 The value to which it is set. A collective should send an Array.
 
 
-METHOD:: srcDevice
+METHOD:: source
 The link::Classes/NetAddr:: device that is the source for this OSCMKtlDevice.
 
 returns:: an instance of link::Classes/NetAddr::
 
-METHOD:: destDevice
+METHOD:: destination
 The link::Classes/NetAddr:: device that is the destination for this OSCMKtlDevice.
 
 returns:: an instance of link::Classes/NetAddr::
