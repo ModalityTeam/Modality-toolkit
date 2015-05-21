@@ -15,7 +15,7 @@ MAbstractElement {
 	var <name; // its name in MKtl.elements
 	var <type; // its type.
 	var <tags; // array of user-assignable tags
-	
+
 	var <ioType; // can be \in, \out, \inout
 
 	var <>action;
@@ -30,6 +30,12 @@ MAbstractElement {
 	// nested MKtlElement / MKtlElementGroup support
 	var <>parent;
 	var <groups;
+
+	var <elementDescription;	 //its particular device description
+	                         // of type: ( 'midiChan': Int, 'midiMsgType': symbol, 'spec': ControlSpec,
+	                         //           'ccNum': Int, 'specName': symbol, 'type': Symbol )
+	                         // i.e.   ( 'chan':0, 'midiMsgType':'cc', 'spec': ControlSpec,
+	                         //          'ccNum': 24, 'specName':'midiCC', 'type':'midiBut' )
 
 	classvar <>addGroupsAsParent = false;
 
@@ -111,7 +117,7 @@ MAbstractElement {
 	index {
 		^this.parent !? _.indexOf( this );
 	}
-	
+
 	key { ^this.index }
 
 	indices {
@@ -158,11 +164,6 @@ MAbstractElement {
 MKtlElement : MAbstractElement{
 	classvar <types;
 
-	var <elementDescription;	 //its particular device description
-	                         // of type: ( 'midiChan': Int, 'midiMsgType': symbol, 'spec': ControlSpec,
-	                         //           'ccNum': Int, 'specName': symbol, 'type': Symbol )
-	                         // i.e.   ( 'chan':0, 'midiMsgType':'cc', 'spec': ControlSpec,
-	                         //          'ccNum': 24, 'specName':'midiCC', 'type':'midiBut' )
 	var <spec; // ControlSpec -> its spec
 
 	*initClass {
