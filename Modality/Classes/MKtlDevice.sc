@@ -71,7 +71,6 @@ MKtlDevice{
 	*getDeviceNameFromShortName{ |shortName|
 		var subClass;
 		var matchingProtocol = this.getMatchingProtocol( shortName );
-		// "matching protocol : ".post; matchingProtocol.postln;
 		if ( matchingProtocol.isNil ){
 			^nil;
 		};
@@ -103,6 +102,7 @@ MKtlDevice{
 			};
 			^devKey;
 		};
+		^nil;
 	}
 
 	*tryOpenDevice{ |name, parentMKtl|
@@ -117,11 +117,26 @@ MKtlDevice{
 
 		subClass = MKtlDevice.matchClass(matchingProtocol);
 		if( subClass.isNil ){
-			"WARNING: MKtl: device not found with name %, and no matching device description found\n".postf( name );
+			"WARNING: MKtl: device not found with name % and protocol %, and no matching device description found\n".postf( name, matchingProtocol );
 			^nil;
 		};
 		if( subClass.notNil ) {
 			^subClass.new( name, parentMKtl: parentMKtl );
+		};
+	}
+
+	*tryOpenDeviceFromDesc{ |name, protocol, desc, parentMKtl|
+		var subClass;
+		if ( protocol.isNil ){
+			^nil;
+		};
+		subClass = MKtlDevice.matchClass(protocol);
+		if( subClass.isNil ){
+			"WARNING: MKtl: device not found with description % and protocol %\n".postf( desc, protocol );
+			^nil;
+		};
+		if( subClass.notNil ) {
+			^subClass.new( name, desc, parentMKtl: parentMKtl );
 		};
 	}
 

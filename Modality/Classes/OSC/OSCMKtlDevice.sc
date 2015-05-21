@@ -60,19 +60,24 @@ m = MKtl( \testMinibee );
 
 OSCMKtlDevice : MKtlDevice {
 	classvar <protocol = \osc;
-	classvar <sourceDeviceDict;
-	classvar <checkIncomingOSCFunction;
+	classvar <sourceDeviceDict; // contains active sources ( recvPort: , srcPort: , ipAddress: , destPort:  )
 
-	var <srcDevice;
+	var <srcDevice;  // receiving OSC from this NetAddr
+	var <destDevice; // sending OSC to this NetAddr
+	var <recvPort; // port on which we need to listen
 
 	var <oscFuncDictionary;
 	// var <oscOutPathDictionary;
 
-	classvar <initialized = false;
-
-	classvar <>traceFind = false;
+	classvar <initialized = false; // always true
+	// classvar <>traceFind = false;
 
 	*find { |post=true|
+		this.initDevices( true );
+		if ( post ){
+			this.postPossible;
+		}
+		/*
 		traceFind = post;
 		this.initDevices( true );
 		if ( post ){
@@ -81,8 +86,10 @@ OSCMKtlDevice : MKtlDevice {
 				this.postPossible;
 			};
 		}
+		*/
 	}
 
+	/*
 	*initDevices { |force=false| // force has no real meaning here
 		sourceDeviceDict = (); // this is tricky, we could have an OSCFunc running which checks from which NetAddresses we are receiving data.
 		checkIncomingOSCFunction = {
@@ -117,7 +124,13 @@ OSCMKtlDevice : MKtlDevice {
 	*deinitDevices {
 		thisProcess.removeOSCRecvFunc( checkIncomingOSCFunction );
 	}
+	*/
 
+	*initDevices { |force=false| // force has no real meaning here
+		sourceDeviceDict = sourceDeviceDict ?? ();
+		initialized = true;
+	}
+	*deinitDevices {} // doesn't do anything, but needs to be there
 
 	*postPossible{
 		if ( initialized ){
@@ -128,10 +141,13 @@ OSCMKtlDevice : MKtlDevice {
 				.postf(key, addr.hostname.asCompileString, addr.port.asCompileString )
 			};
 			"\n-----------------------------------------------------".postln;
+		}{
+			"To find what OSC is coming in, please use the OSCMonitor:".postln;
+			"o = OSCMonitor.new; o.enable; o.show".postln;
 		}
 	}
 
-	*findSource{ |name,host,port| // does not do anything useful yet...
+	*findSource{ |name,host,port| // only reports interfaces that are already opened
 		var devKey;
 		if ( initialized ){
 			this.sourceDeviceDict.keysValuesDo{ |key,addr|
@@ -155,27 +171,46 @@ OSCMKtlDevice : MKtlDevice {
 		^devKey;
 	}
 
-	*deviceNameFromAddr{ |addr|
-		// this is not good, needs a proper fix
-		^( "host" ++ addr.hash.asDigits.sum ++ "_" ++ addr.port);
-	}
-
-	*new { |name, addr, parentMKtl|
-		// could have a host/port combination from which messages come?
-		if ( addr.isNil ){
-			addr = sourceDeviceDict.at( name );
+	*addToSourceDeviceDict{ |name, devInfo|
+		sourceDeviceDict.put( name, devInfo );
+		if ( allAvailable.at( \osc ).isNil ){
+			allAvailable.put( \osc, List.new );
 		};
-		^super.basicNew( name, this.deviceNameFromAddr( addr ), parentMKtl ).initOSCMKtl( addr );
+		allAvailable.at( \osc ).add( name );
 	}
 
-	initOSCMKtl{ |addr|
-		srcDevice = addr;
+	*new { |name, devInfo, parentMKtl|
+		// srcDesc will be a ( destPort: , recvPort: , srcPort: ..., ipAddress: ..., listenPort: ... )
+		if ( devInfo.isNil ){
+			devInfo = sourceDeviceDict.at( name );
+		}{
+			if ( name.notNil ){
+				this.addToSourceDeviceDict( name, devInfo );
+			};
+		};
+		// ^super.basicNew( name, this.deviceNameFromAddr( addr ), parentMKtl ).initOSCMKtl( addr );
+		^super.basicNew( name, name, parentMKtl ).initOSCMKtl( devInfo );
+	}
+
+	initOSCMKtl{ |desc| // this will not be addr but a ( destPort: , recvPort: , srcPort: ..., ipAddress: ..., listenPort: ... )
+
+		srcDevice = NetAddr.new( desc.at( \ipAddress ), desc.at( \srcPort ) );
+		if ( desc.at( \desPort ).notNil ){
+			destDevice = NetAddr.new( desc.at( \ipAddress ), desc.at( \destPort ) );
+		}{ // assume destination port is same as srcPort
+			destDevice = NetAddr.new( desc.at( \ipAddress ), desc.at( \srcPort ) );
+		};
+		recvPort = desc.at( \recvPort );
+
 		this.initElements;
 	}
+
 
 	closeDevice{
 		this.cleanupElements;
 		srcDevice = nil;
+		destDevice = nil;
+		recvPort = nil;
 	}
 
 	initElements{
@@ -195,7 +230,7 @@ OSCMKtlDevice : MKtlDevice {
 							"% - % > % | type: %, src:%"
 							.format(this.name, el.name, el.value.asStringPrec(3), el.type, el.source).postln;
 						}
-					}, oscPath, srcDevice, argTemplate: argTemplate ); // optional add host/port
+					}, oscPath, srcDevice, recvPort, argTemplate: argTemplate ); // optional add host/port
 				);
 			};
 			/*
@@ -215,28 +250,30 @@ OSCMKtlDevice : MKtlDevice {
 	// from the group: \output, val: [ 0, 0, 0, 0 ]
 	send{ |key,val|
 		var el, oscPath, outvalues, valIndex;
-		el = mktl.elementDescriptionFor( key );
-		oscPath = el[\oscPath];
-		if ( val.isKindOf( Array ) ){
-			outvalues = List.new;
-			el[\argTemplate].do{ |it|
-				if ( it.isNil ){
-					outvalues.add( val.at( valIndex ) ); valIndex = valIndex + 1;
+		if ( destDevice.notNil ){
+			el = mktl.elementDescriptionFor( key );
+			oscPath = el[\oscPath];
+			if ( val.isKindOf( Array ) ){
+				outvalues = List.new;
+				el[\argTemplate].do{ |it|
+					if ( it.isNil ){
+						outvalues.add( val.at( valIndex ) ); valIndex = valIndex + 1;
+					}{
+						outvalues.add( it )
+					};
+				};
+				if ( valIndex < val.size ){ outvalues = outvalues ++ (val.copyToEnd( valIndex ) ) };
+				outvalues = outvalues.asArray;
+			}{
+				outvalues = el[\argTemplate].copy; // we will modify it maybe, so make a copy
+				if ( outvalues.includes( nil ) ){
+					outvalues.put( outvalues.indexOf( nil ), val );
 				}{
-					outvalues.add( it )
+					outvalues = outvalues ++ val;
 				};
 			};
-			if ( valIndex < val.size ){ outvalues = outvalues ++ (val.copyToEnd( valIndex ) ) };
-			outvalues = outvalues.asArray;
-		}{
-			outvalues = el[\argTemplate].copy; // we will modify it maybe, so make a copy
-			if ( outvalues.includes( nil ) ){
-				outvalues.put( outvalues.indexOf( nil ), val );
-			}{
-				outvalues = outvalues ++ val;
-			};
-		};
-		srcDevice.sendMsg( *( [ oscPath ] ++ outvalues ) );
+			destDevice.sendMsg( *( [ oscPath ] ++ outvalues ) );
+		}
 	}
 
 }
