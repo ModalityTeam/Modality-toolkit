@@ -1,7 +1,7 @@
 /*
 PLANS:
 * only load on demand
-* make a directory of filenames -> devicenames as reported
+* make a directory cache of filenames -> devicenames as reported
 * update only when files newer than cache were added
 */
 
@@ -29,10 +29,16 @@ MKtlDesc {
 		if (foundFolder.notEmpty) {
 			"MKtlDesc found and added folder: %\n".postf(foundFolder);
 		} {
-			"MKtlDesc added folder: %\n".postf(foundFolder);
+			"// MKtlDesc added a nonexistent folder: %\n".postf(name);
 			"// create it with:"
-			"\n unixCmd(\"mkdir\" + quote(\"%\"));\n".postf(foundFolder[0]);
+			"\n unixCmd(\"mkdir\" + quote(\"%\".standardizePath))\n"
+				.postf(folderPath);
+
 		}
+	}
+
+	*openFolder { |index = 0|
+		unixCmd("open" + quote(descFolders[index]));
 	}
 
 	*findFile { |filename|
@@ -66,18 +72,7 @@ MKtlDesc {
 		^super.new.descDict_(dict);
 	}
 
-	descDict_ { |dict|
-		if (MKtl.isValidDescDict(dict)) {
-			descDict = dict;
-			this.init;
-		};
-	}
-
-	*writeFile { |path|
-		"! more than nice to have ! - not done yet.".postln;
-	}
-
-	// do more tests
+	// do more tests here
 	*isValidDescDict { |dict|
 		^dict.isKindOf(Dictionary)
 	}
@@ -88,6 +83,7 @@ MKtlDesc {
 		++ str.select({|c| c.isDecDigit}))
 	}
 
+	// convenience only
 	*loadAllDescs { |folders|
 		var count = 0;
 		descFolders.do {|folder|
@@ -121,11 +117,68 @@ MKtlDesc {
 		^super.newCopyArgs(desc, path).init;
 	}
 
-	storeArgs { ^[shortName] }
-	printOn { |stream| ^this.storeOn(stream) }
-
 	init {
 		shortName = MKtlDesc.makeShortName(descDict[\device]).asSymbol;
 		allDescs.put (shortName, this);
+	}
+
+	openFile { unixCmd("open" + quote(path)) }
+
+	descDict_ { |dict|
+		if (MKtl.isValidDescDict(dict)) {
+			descDict = dict;
+			this.init;
+		};
+	}
+
+	// keep all data in descDict only if possible
+	protocol { ^descDict[\protocol] }
+	protocol_ { |type| ^descDict[\protocol] = type }
+
+	deviceIDString { ^descDict[\device] }
+	deviceIDString_ { |type| ^descDict[\device] = type }
+
+	desc { ^descDict[\description] }
+	desc_ { |type| ^descDict[\description] = type }
+
+	deviceFilename {
+		^path !? { path.basename.drop(fileExt.size.neg) }
+	}
+
+	postInfo { |elements = false|
+		("---\n//" + this + $:) .postln;
+		"deviceFilename: %\n".postf(this.deviceFilename);
+		"protocol: %\n".postf(this.protocol);
+		"deviceIDString: %\n".postf(this.deviceIDString);
+		"desc keys: %\n".postf(this.desc.keys);
+
+
+		if (elements) { this.postElements }
+	}
+
+	// not working yet
+	postElements {
+		// var tabs = 0;
+		// var postLine = { |elem, keyOrIndex, tabs = 0|
+		// 	if (elem.isKindOf(Collection)) {
+		// 		elem.do { |el, keyOrI| postLine.(el, keyOrI, tabs + 1) };
+		// 	} {
+		// 		String.fill(tabs, Char.tab)
+		// 		++ "% - %\n".postf(keyOrIndex, elem);
+		// 	};
+		// };
+		// "desc elements: ".postln;
+		// this.desc.do { |el, keyOrI|
+		// 	postLine.(el, keyOrI, 0)
+		// };
+	}
+
+	writeFile { |path|
+		"! more than nice to have ! - not done yet.".postln;
+	}
+
+	storeArgs { ^[shortName] }
+	printOn { |stream|
+		stream << this.class.name << ".at(%)".format(shortName.cs);
 	}
 }

@@ -1,7 +1,9 @@
 TITLE:: MKtlDesc
 summary:: objects to store descriptions of MKtls
-categories:: Modality
-related:: Classes/MKtl, Reference/Modality
+categories:: Overviews/Modality
+related:: Classes/MKtl, Classes/MKtlElement
+
+
 
 DESCRIPTION::
 MKtlDesc can read files from its folders,
@@ -15,6 +17,8 @@ MKtlDesc.defaultFolder;
 MKtlDesc.addFolder("~/scgit/");
 MKtlDesc.descFolders;
 
+MKtlDesc.openFolder;
+
 // filename, no extension
 MKtlDesc.findFile("nano*");
 MKtlDesc.findFile("nanoKEY2");
@@ -22,57 +26,64 @@ MKtlDesc.makeShortName("nanoKEY2");
 
 x = MKtlDesc.fromFile("nanoKEY2");
 MKtlDesc.allDescs;
+MKtlDesc.at('nnky2');
+x.openFile;
 
-// not working yet :
-// MKtlDesc('nnky2');
+x.descDict.keys
+x.protocol
+x.device
+x.desc
+x.desc.keys
+x.desc.at(\mod);
+x.desc.at(\keyOff);
+
+x.postInfo(elements: true)
+x.postElementInfo
 
 MKtlDesc.findDict('nnky2');
 MKtlDesc.findDict("nanoKEY2");
 MKtlDesc.findDict((description: ()));
 
-MKtlDesc.at('nnky2');
+
 ::
 
 
 CLASSMETHODS::
 
+PRIVATE:: initClass
+
 METHOD:: defaultFolder
+the path where the folder for MKtlDesc files live.
+
+METHOD:: folderName
+the filename of the defaultFolder.
+
+METHOD:: descFolders
+all descFolders within which to look for MKtlDesc files.
 
 METHOD:: addFolder
+add a folder to descFolders
+
 
 METHOD:: fromFile
-create an MKtlDesc from a file
-
+create an MKtlDesc from a file.
 ARGUMENT:: filename
 filename without path or extension, will be looked for in
+
+METHOD:: new
+create an MKtlDesc from a well-formed description dictionary.
+argument:: desc
 
 METHOD:: at
 access an MKtlDesc by name in the global repository
 
-METHOD:: basicNew
-
-ARGUMENT:: desc
-create an MKtlDesc from a well-formed dictionary.
-
-ARGUMENT:: path
-
-PRIVATE:: initClass
 
 METHOD:: writeFile
-
-ARGUMENT:: path
+will eventually write a well-formed description file
+based on current MKtlDesc data.
 
 METHOD:: makeShortName
-
-
-
-ARGUMENT:: path
-
-
-ARGUMENT:: name
-
-
-
+convert any string to a short name
 
 METHOD:: findDict
 
@@ -90,12 +101,6 @@ ARGUMENT:: dict
 
 
 
-METHOD:: folderName
-
-
-
-
-METHOD:: descFolders
 
 
 
@@ -110,41 +115,13 @@ ARGUMENT:: filename
 
 METHOD:: loadAllDescs
 
-
-ARGUMENT:: folders
-
-
-
-
-METHOD:: new
-
-
-ARGUMENT:: key
-
-
-ARGUMENT:: info
-
-
-
-
 METHOD:: allDescs
 
-
-
-
 METHOD:: fromDict
-
-
-ARGUMENT:: dict
-
-
-
-
 
 INSTANCEMETHODS::
 
 METHOD:: descDict
-
 
 ARGUMENT:: dict
 
