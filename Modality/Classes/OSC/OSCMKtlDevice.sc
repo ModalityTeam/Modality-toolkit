@@ -258,9 +258,13 @@ OSCMKtlDevice : MKtlDevice {
 			var argTemplate = el.elementDescription[ \argTemplate ];
 			var msgIndices, templEnd;
 			if ( [\in,\inout].includes( ioType ) and: ( el.elementDescription[ \oscPath ].notNil) ){
-				templEnd = argTemplate.size + 1; // + 1 because argTemplate does not contain the oscpath as the first msg element
-				msgIndices = argTemplate.indicesOfEqual( nil );
-				if ( msgIndices.notNil) { msgIndices = msgIndices + 1; }; // + 1 because argTemplate does not contain the oscpath as the first msg element
+				if ( argTemplate.notNil ){
+					templEnd = argTemplate.size + 1; // + 1 because argTemplate does not contain the oscpath as the first msg element
+					msgIndices = argTemplate.indicesOfEqual( nil );
+					if ( msgIndices.notNil) { msgIndices = msgIndices + 1; }; // + 1 because argTemplate does not contain the oscpath as the first msg element
+				}{
+					templEnd = 1;
+				};
 				if ( oscFuncDictionary.at( el.key ).notNil ){ oscFuncDictionary.at( el.key ).free };
 				oscFuncDictionary.put( el.key,
 					OSCFunc.new( { |msg|
