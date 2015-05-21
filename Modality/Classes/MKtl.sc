@@ -359,7 +359,7 @@ MKtl { // abstract class
 
 		this.prInitFromDeviceDescription( devDesc, devDescName );
 		if ( mktlDevice.notNil ){
-			mktlDevice.initElements( name );
+			mktlDevice.initElements;
 		};
 
 		this.changed( \elements );
