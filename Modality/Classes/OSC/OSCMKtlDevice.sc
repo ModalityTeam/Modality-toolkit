@@ -146,24 +146,23 @@ OSCMKtlDevice : MKtlDevice {
 		};
 	}
 
-	*findSource{ |name,host,port| // only reports interfaces that are already opened
+	*findSource{ |devInfo| // only reports interfaces that are already opened
 		var devKey;
+		var match;
 		if ( initialized ){
-			this.sourceDeviceDict.keysValuesDo{ |key,addr|
-				if ( host.notNil ){
-					if ( port.notNil ){
-						if ( addr.port == port and: (addr.hostname == host ) ){
-							devKey = key;
-						}
-					}{ // just match host
-						if ( addr.hostname == host ){
-							devKey = key;
-						}
-					}
-				}{ // just match port
-					if ( addr.port == port ){
-						devKey = key;
-					}
+			this.sourceDeviceDict.keysValuesDo{ |key,info|
+				match = true;
+				devInfo.keysValuesDo{ |key,val|
+					if ( info.at( key ).notNil ){
+						if ( info.at( key ) != val ){
+							match = false;
+						};
+					}{
+						match = false;
+					};
+				};
+				if ( match ){
+					devKey = key;
 				}
 			};
 		}
