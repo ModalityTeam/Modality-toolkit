@@ -113,9 +113,3 @@ returns:: an instance of link::Classes/NetAddr::
 METHOD:: recvPort
 The port to which the OSC device/interface is sending data to. If this is configurable in the OSC device or interface, then it is easier to use sclang's default port of 57120 and leave it undefined.
 
-
-EXAMPLES::
-
-code::
-(some example code)
-::
