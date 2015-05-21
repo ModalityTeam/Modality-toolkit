@@ -194,13 +194,13 @@ OSCMKtlDevice : MKtlDevice {
 		// this will not be addr but a ( destPort: , recvPort: , srcPort: ..., ipAddress: ..., listenPort: ... )
 		if ( desc.at( \ipAddress ).notNil ){
 			srcDevice = NetAddr.new( desc.at( \ipAddress ), desc.at( \srcPort ) );
-			if ( desc.at( \desPort ).notNil ){
+			if ( desc.at( \destPort ).notNil ){
 				destDevice = NetAddr.new( desc.at( \ipAddress ), desc.at( \destPort ) );
 			}{ // assume destination port is same as srcPort
 				destDevice = NetAddr.new( desc.at( \ipAddress ), desc.at( \srcPort ) );
 			};
 		}{
-			if ( desc.at( \desPort ).notNil ){
+			if ( desc.at( \destPort ).notNil ){
 				destDevice = NetAddr.new( "127.0.0.1", desc.at( \destPort ) );
 			}{ // assume destination port is same as srcPort
 				destDevice = NetAddr.new( "127.0.0.1", desc.at( \srcPort ) );
@@ -252,12 +252,10 @@ OSCMKtlDevice : MKtlDevice {
 			var ioType = el.elementDescription[ \ioType ];
 			var argTemplate = el.elementDescription[ \argTemplate ];
 			var msgIndices, templEnd;
-			el.postcs;
 			if ( [\in,\inout].includes( ioType ) and: ( el.elementDescription[ \oscPath ].notNil) ){
 				templEnd = argTemplate.size + 1; // + 1 because argTemplate does not contain the oscpath as the first msg element
 				msgIndices = argTemplate.indicesOfEqual( nil );
 				if ( msgIndices.notNil) { msgIndices = msgIndices + 1; }; // + 1 because argTemplate does not contain the oscpath as the first msg element
-				el.key.postln;
 				oscFuncDictionary.put( el.key,
 					OSCFunc.new( { |msg|
 						[ msg, msgIndices, templEnd ].postln;
@@ -285,11 +283,12 @@ OSCMKtlDevice : MKtlDevice {
 	// this should work for the simple usecase (not the group yet)
 	// from the group: \output, val: [ 0, 0, 0, 0 ]
 	send{ |key,val|
-		var el, oscPath, outvalues, valIndex;
+		var el, oscPath, outvalues,valIndex;
 		if ( destDevice.notNil ){
-			el = mktl.elementDescriptionFor( key );
-			oscPath = el[\oscPath];
 			if ( val.isKindOf( Array ) ){
+				el = mktl.collectiveDescriptionFor( key );
+				valIndex = 0;
+				oscPath = el[\oscPath];
 				outvalues = List.new;
 				el[\argTemplate].do{ |it|
 					if ( it.isNil ){
@@ -301,6 +300,8 @@ OSCMKtlDevice : MKtlDevice {
 				if ( valIndex < val.size ){ outvalues = outvalues ++ (val.copyToEnd( valIndex ) ) };
 				outvalues = outvalues.asArray;
 			}{
+				el = mktl.elementDescriptionFor( key );
+				oscPath = el[\oscPath];
 				outvalues = el[\argTemplate].copy; // we will modify it maybe, so make a copy
 				if ( outvalues.includes( nil ) ){
 					outvalues.put( outvalues.indexOf( nil ), val );
