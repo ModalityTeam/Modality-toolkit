@@ -27,20 +27,53 @@ list::
 
 section:: Semantic information
 
+subsection:: Toplevel
+
 DEFINITIONLIST::
 ## protocol [required]
 || The protocol used by the device
-## device | osx | linux
-	|| device name as reported by the HID class. If the reported name is different in osx and linux then use the 'osx' and 'linux' dictionaries.
-## specs
+## idInfo | osx | linux [required]
+|| For MIDI and HID: the device name as reported by the hardware or drivers. If the reported name is different in osx and linux then use the 'osx' and 'linux' dictionaries.
+For OSC this needs to be a dictionary with information on the ipAdresses and ports used.
+
+## description [required]
+|| A dictionary describing the controls on the device. These controls are called elements within the Modality toolkit.
+
+## collectives [optional]
+|| Specific groups that are needed to send or receive data from the device. In particular these can be used for OSC devices.
+
+## status: [optional]
+|| A string describing the status of this description, e.g. code::"complete; tested; OSX, Linux"::, code::"incomplete; tested; OSX", ::code::"complete; tested; OSX;"::, code::"incomplete; untested;"::
+
+## deviceType [optional]
+|| What kind of device it is. This will make it easier to find another device that might easily replace it. For example: code::\joystick::, code::\gamepad::, code::\mouse::.
+
+## specs [optional]
 || A dictionary with serialized specs like code::(\key: [0, 144, \lin])::. These overwrite existing definition locally for this description only.
-## description
-|| A dictionary describing the controls on the device
+
+
 ## infoMessage [optional]
 || A message to be displayed when the MKtl is created. This can be used to ask the user to switch to a certain physical preset of the device.
-## <midi|hid|osc>Type
-|| One of code::[ \midiMsgType, \hidElementID, \oscType ]:: has to be present. This also tells about the type of device on which it is implemented (MIDI/HID/OSC).
-##  \spec
+## infoURL: [optional]
+|| a URL where more information about the physical device can be found, e.g. the product page at the vendor's website.
+
+::
+
+
+subsection:: Within the description of the elements:
+
+DEFINITIONLIST::
+
+## midiMsgType
+|| code::midiMsgType:: has to be present for elements belonging to a MIDI device.
+
+## hidEelmentID | <hidUsage|hidUsagePage>
+|| code::hidElementID:: or both code::hidUsage:: and code::hidUsagePage:: have to be present for elements belonging to an HID device.
+
+## oscPath
+|| code::oscPath:: has to be present for elements belonging to an OSC device, or it has to use code::ioType: \groupIn:: or code::ioType: \groupOut::
+
+##  spec
 || The element code::\spec:: has to be present and is a symbol that, if called code::.asSpec:: upon, returns the (global) code::ControlSpec:: suitable for this element.
 ## \midiChan, \midiNum
 || Needed, if code::\midiType:: is part of the config string. The identifiers code::\bend, \touch, \program:: only need code::\midiChan:: to be specified.
@@ -88,6 +121,7 @@ list::
 ## code::button:: for buttons,
 ## code::key:: for keys,
 ## code::pad:: for pads
+## code::oscMessage:: for osc-messages (of collectives)
 ::
 
 note::
@@ -132,8 +166,9 @@ The actual description files used by Modality often don't conform to this syntax
 TELETYPE::
 descFile                    = "( protocol: " protocol ", device: " string ", description:" description [", infoMessage:" string] ")"
     protocol                = "\hid" | "\midi"
-    device                  = ("device :" string) | ("osx : (device: "string ") " [", linux: (device: "string ")" ] ) | ("linux: (device: "string ") " [", osx: (device:" string ")" ] )
+    idInfo                  = ("idInfo :" string) | ("osx : (idInfo: "string ") " [", linux: (idInfo: "string ")" ] ) | ("linux: (idInfo: "string ") " [", osx: (idInfo:" string ")" ] )
     description             = hidDict | midiDict
+	collectives             = hidDict | midiDict
     midiDict                = "(" symbol ":" midiNode [", " *(symbol ":" midiNode) ] ")"
         midiArray           = "[" midiNode [", " *midiNode ] "]"
         midiNode            = midiDict | midiArray | midiElem
