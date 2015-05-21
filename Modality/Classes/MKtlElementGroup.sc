@@ -7,7 +7,7 @@ MKtlElementGroup : MAbstractElement {
 		^super.newCopyArgs( nil, name ).elements_(elements);
 	}
 
-	init {		
+	init {
 		var array;
 		dict = dict ? ();
 		elements = elements ?? { Array.new };
@@ -43,9 +43,9 @@ MKtlElementGroup : MAbstractElement {
 			});
 		};
 	}
-	
+
 	source { ^elements.first.source }
-	
+
 	sortElementsByType {
 		var order;
 		order = [ MKtlElement, MKtlElementGroup ];
@@ -129,7 +129,7 @@ MKtlElementGroup : MAbstractElement {
 		});
 		^list
 	}
-	
+
 	asArray {
 		^elements.collect({ |item|
 			if( item.isKindOf( MKtlElementGroup ) ) {
@@ -141,11 +141,11 @@ MKtlElementGroup : MAbstractElement {
 	}
 
 	value { ^elements.collect(_.value) }
-	
+
 	keys { ^elements.collect({ |item| dict.findKeyForValue( item ) }) }
-	
+
 	shape { ^elements.shape }
-	
+
 	flop { ^elements.flopTogether } /// a bit dirty but it works
 
 	attachChildren {
@@ -164,7 +164,9 @@ MKtlElementGroup : MAbstractElement {
 	}
 
 	prAddGroup { |group|
-		if( ( parent != group ) && { groups.isNil or: { groups.includes( group ).not } }) {
+		if( ( parent != group )
+			&& { groups.isNil or: {
+				groups.includes( group ).not } }) {
 			groups = groups.add( group );
 			elements.do(_.prAddGroup(this));
 		};
@@ -243,6 +245,6 @@ MKtlElementGroup : MAbstractElement {
 			^super.doesNotUnderstand( selector, *args );
 		};
 	}
-	
+
 	getElementsForGUI { ^elements.collect({ |item| [ item.key, item ] }).flatten(1); }
 }
