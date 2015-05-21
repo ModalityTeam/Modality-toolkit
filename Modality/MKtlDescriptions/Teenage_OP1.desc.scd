@@ -19,12 +19,12 @@ description: (
 		\turn: [(1..4), [\blue, \green, \white, \red]].flop.collect { |desc, i|
 			var num, label;
 			#num, label = desc;
-			(\midiMsgType: \cc, \type: \knob, \label: label, \midiChan: 0, \midiNum: num, \spec: \midiCC)
+			(\midiMsgType: \cc, \type: \knob, \labels: [label], \midiChan: 0, \midiNum: num, \spec: \midiCC)
 		},
 		\hat:  [(64..67), [\blue, \green, \white, \red]].flop.collect { |desc, i|
 			var num, label;
 			#num, label = desc;
-			(midiMsgType: \cc, type: \button, \label: label, \midiChan: 0, \midiNum: num, \spec: \midiBut, \mode: \push)
+			(midiMsgType: \cc, type: \button, \labels: [label], \midiChan: 0, \midiNum: num, \spec: \midiBut, \mode: \push)
 		}
 	),
 	\bt: (11..14).collect { |num|

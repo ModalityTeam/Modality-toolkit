@@ -785,6 +785,19 @@ MKtl { // abstract class
 		^elementsDict.asArray
 	}
 
+	elementsLabeled { |label|
+		var labels;
+
+		^elementsDict.select{|elem|
+			labels = elem.elementDescription[\labels];
+			labels.notNil.if({
+				labels.includes(\red)
+			}, {
+				false
+			})
+		};
+	}
+
 
 	// from MAbstractKtl:
 
