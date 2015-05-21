@@ -1,0 +1,141 @@
+TITLE:: OSCMKtlDevice
+summary::  The Modality class for creating and accessing OSC controllers
+categories:: Libraries>Modality, External Control
+related:: Overviews/Modality, Classes/MKtl, Classes/MKtlDevice, Classes/MKtlElement
+
+DESCRIPTION::
+OSCMKtlDevice provides an easy to use interface for OSC devices or interfaces that send data to your computer.
+
+For most devices or interfaces, this requires that someone has already made a description file for the device; if there is none, it is easy to make one following the instructions here:
+link::Tutorials/How_to_create_a_description_file::
+
+More general info can be found in link::Classes/MKtl:: and link::Classes/MKtlDevice:: .
+
+
+CLASSMETHODS::
+
+private:: initialized, sourceDeviceDict, deinitDevices
+
+METHOD:: find
+Find all currently opened OSC devices.
+
+argument:: post
+Whether or not to post about the OSC devices.
+
+METHOD:: postPossible
+Post all access code for device that could be used by name.
+
+METHOD:: protocol
+protocol name, \osc.
+
+
+METHOD:: initDevices
+Initialize the sourceDeviceDict and look for available OSC devices.
+
+argument:: force
+Whether or not to do this again if it was already done before.
+
+
+METHOD:: findSource
+Find a source that matches the source that is in info. The device info has to match all the keys in of an existing source to match.
+
+ARGUMENT:: devInfo
+The devInfo we want to match.
+
+returns:: the found source
+
+
+METHOD:: addToSourceDeviceDict
+Adds an OSC device to the source device dictionary
+
+ARGUMENT:: name
+Name or label for the osc device
+
+ARGUMENT:: devInfo
+The device info as found in the description file
+
+
+
+
+METHOD:: new
+(describe method here)
+
+ARGUMENT:: name
+(describe argument here)
+
+ARGUMENT:: devInfo
+(describe argument here)
+
+ARGUMENT:: parentMKtl
+(describe argument here)
+
+returns:: (describe returnvalue here)
+
+
+INSTANCEMETHODS::
+
+METHOD:: initCollectives
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: closeDevice
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: initOSCMKtl
+(describe method here)
+
+ARGUMENT:: desc
+(describe argument here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: recvPort
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: cleanupElementsAndCollectives
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: destDevice
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: oscFuncDictionary
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: initElements
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: send
+(describe method here)
+
+ARGUMENT:: key
+(describe argument here)
+
+ARGUMENT:: val
+(describe argument here)
+
+returns:: (describe returnvalue here)
+
+METHOD:: srcDevice
+(describe method here)
+
+returns:: (describe returnvalue here)
+
+
+EXAMPLES::
+
+code::
+(some example code)
+::
