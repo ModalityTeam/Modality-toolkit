@@ -15,6 +15,8 @@ MKtl { // abstract class
 	var <elements;
 	var <localSpecs; // specs added from description file
 
+	var <collectivesDict; // contains the collectives that are in the device description
+
 	// tree structure composed of dictionaries and arrays
 	// with a description of all the elements on the device.
 	// read from an external file.
@@ -154,16 +156,16 @@ MKtl { // abstract class
 		searchKey = shortName.asString;
 		searchKey = (searchKey[..(searchKey.size-2)]).asSymbol;
 
-		descName = this.allDescriptions.select{ |val,key| 
-			key == searchKey; 
+		descName = this.allDescriptions.select{ |val,key|
+			key == searchKey;
 		};
 
 		namesToDescs = IdentityDictionary.new;
-		
-		descName.do{ |dname,key| 
-			namesToDescs.put( dname , this.allDevDescs.at( dname ) ) 
+
+		descName.do{ |dname,key|
+			namesToDescs.put( dname , this.allDevDescs.at( dname ) )
 		};
-		
+
 		^namesToDescs;
 	}
 
@@ -287,7 +289,6 @@ MKtl { // abstract class
 
 		this.prInitFromDeviceDescription( devDesc, deviceDescName );
 		this.prTryOpenDevice( name, devDesc );
-
 		all.put(name, this);
 	}
 
@@ -304,7 +305,7 @@ MKtl { // abstract class
 		}
 	}
 
-	prTryOpenDevice{ |devName,devDesc| // is a shortname
+	prTryOpenDevice{ |devName,devDesc| // devName is a shortname
 		var newMKtlDevice;
 
 		newMKtlDevice = MKtlDevice.tryOpenDevice( devName, this );
@@ -314,6 +315,9 @@ MKtl { // abstract class
 				devName = MKtlDevice.findDeviceShortNameFromLongName( devDesc.at( \device ) );
 				if ( devName.notNil ){
 					newMKtlDevice = MKtlDevice.tryOpenDevice( devName, this );
+				}{
+					newMKtlDevice = MKtlDevice.tryOpenDeviceFromDesc( name, devDesc.at(\protocol), devDesc.at(\device), this );
+					devName = name;
 				};
 			};
 		};
@@ -392,24 +396,26 @@ MKtl { // abstract class
 		all.removeAt( name );
 	}
 
-	openDevice{ |deviceName, lookAgain=true|
-		var shortName, devDesc, protocol;
+	openDevice{ |deviceName, devDesc, lookAgain=true|
+		var shortName, foundDevDesc, protocol;
 
 		if ( this.mktlDevice.notNil ){
 			"WARNING: Already a device opened for MKtl(%). Close it first with MKtl(%).closeDevice;\n".postf(name,name);
 			^this;
 		};
 
-		#shortName, deviceName, devDesc = this.checkWhetherDeviceIsThere( deviceName );
+		#shortName, deviceName, foundDevDesc = this.checkWhetherDeviceIsThere( deviceName );
 		if ( shortName.isNil ){
-			devDesc = this.class.getDeviceDescription(deviceDescriptionName);
-			protocol = devDesc.at( \protocol );
-			MKtlDevice.initHardwareDevices( lookAgain, protocol.bubble ); // this may be an issue, only look for appropriate protocol
-			#shortName, deviceName, devDesc = this.checkWhetherDeviceIsThere( deviceName );
+			foundDevDesc = this.class.getDeviceDescription(deviceDescriptionName);
+			if ( foundDevDesc.notNil ){
+				protocol = foundDevDesc.at( \protocol );
+				MKtlDevice.initHardwareDevices( lookAgain, protocol.bubble ); // this may be an issue, only look for appropriate protocol
+				#shortName, deviceName, foundDevDesc = this.checkWhetherDeviceIsThere( deviceName );
+			};
 		};
 
 		// [deviceName, shortName ].postln;
-		this.prTryOpenDevice( shortName, devDesc );
+		this.prTryOpenDevice( shortName, foundDevDesc ? devDesc );
 	}
 
 	warnNoDeviceDescriptionFileFound { |deviceName|

@@ -156,6 +156,7 @@ OSCMKtlDevice : MKtlDevice {
 	}
 
 	*deviceNameFromAddr{ |addr|
+		// this is not good, needs a proper fix
 		^( "host" ++ addr.hash.asDigits.sum ++ "_" ++ addr.port);
 	}
 
