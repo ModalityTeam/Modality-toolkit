@@ -1,15 +1,184 @@
-title:: How to create a description file
-summary:: How to create a description file to use with the Modality toolkit.
+title:: How to create a description file for an OSC device
+summary:: How to create a description file to use with the Modality toolkit for an OSC device
 categories:: Libraries>Modality
-related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Classes/MIDIExplorer, Classes/HIDExplorer
+related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Classes/OSCMon
 
 Section:: Introduction
 
 The functionality of link::Classes/MKtl:: relies on descriptions of the used devices. For some Controllers, there are already descriptions available, chances are that your device is not among them.
-It is easy to create such a file. So first, attach your device to the computer.
 
-See also:
-link::Tutorials/How_to_create_a_description_file_for_OSC::
+This Tutorial first shows simple examples of OSC interfaces, by emulating them within SuperCollider, and then describes how to create a description file for your interface.
+
+
+list::
+##link::#Simple input::
+##link::#Simple output::
+##link::#Combined input::
+##link::#Combined output::
+::
+
+section:: Simple input
+
+A simple OSC input is an OSC interface that sends messages that send only single values with an OSC message, e.g.
+
+code::
+// osc message path = /button, value = 1, means the button is on
+/button 1
+// osc message path = /button, value = 0, means the button is off
+/button 0
+::
+
+The description of the element then is:
+
+code::
+'bt': (
+	oscPath: '/button',
+	type: 'button',
+	ioType: \in
+)
+::
+
+Or they send an index of the button along, for example if there are two buttons
+
+code::
+// osc message path = /button, index = 0, value = 1, means the button is on
+/button 0 1
+// osc message path = /button, index = 1, value = 0, means the button is off
+/button 1 0
+::
+
+The description of the elements then is:
+
+code::
+(
+'bt': [
+	(
+	oscPath: '/button',
+	argTemplate: [ 0 ],
+	type: 'button',
+	ioType: \in
+	),
+	(
+	oscPath: '/button',
+	argTemplate: [ 1 ],
+	type: 'button',
+	ioType: \in
+	)
+]
+)
+::
+
+	Or they send multiple indices of the button along, for example in a grid layout (row and column)
+
+code::
+// osc message path = /button, rowindex = 0, columnindex=1, value = 1, means the button is on
+/button 0 1 1
+// osc message path = /button, rowindex = 1, columnindex=2, value = 0, means the button is off
+/button 1 2 0
+::
+
+The description of the elements then is:
+
+code::
+	(
+		'bt': [
+			[
+				(
+					oscPath: '/button',
+					argTemplate: [ 0,0 ],
+					type: 'button',
+					ioType: \in
+				),
+				(
+					oscPath: '/button',
+					argTemplate: [ 0,1 ],
+					type: 'button',
+					ioType: \in
+				)
+			],
+			[
+				(
+					oscPath: '/button',
+					argTemplate: [ 1,0 ],
+					type: 'button',
+					ioType: \in
+				),
+				(
+					oscPath: '/button',
+					argTemplate: [ 1,1 ],
+					type: 'button',
+					ioType: \in
+				)
+			]
+		]
+	);
+::
+
+The code::argTemplate:: can also contain code::nil:: if there is an element in the msgArray that needs to be ignored while filtering, see: link::#argTemplate matching:: for examples how argTemplates can be matched.
+
+If the osc message sends some other info that we are not interested in inside the message, we can specify at which index we want to read the data (by default we take the last value in the osc message):
+
+code::
+// osc message path = /button, value = 1, arbitrary data = "hello", means the button is on
+/button 1 "hello"
+// osc message path = /button, value = 0, arbitrary data = "hello", means the button is off
+/button 0 "hello"
+::
+
+The description becomes:
+
+code::
+'bt': (
+	oscPath: '/button',
+	type: 'button',
+	valueAt: 1,
+	ioType: \in
+)
+::
+
+
+After all this explanation, a simple example of an OSC device description with one element:
+
+code::
+(
+~descInput = (
+	idInfo: ( srcPort: NetAddr.langPort, ipAddress: "127.0.0.1" ),
+	protocol: \osc,
+	description: (
+		'kn': (
+			oscPath: '/knob',
+			argTemplate: [ 1,2 ], // at row 1 and column 2
+			valueAt: 3, // valueindex of osc message
+			type: 'knob',
+			spec: \midiCC,
+			ioType: \in
+		)
+	)
+)
+);
+
+m = MKtl( \exampleOSCInput, ~descInput );
+MKtlDevice.allAvailable // now also shows the opened 'osc device'
+
+// create a gui for the osc device:
+m.gui;
+
+// post incoming data
+m.trace;
+
+n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
+
+// send messages:
+n.sendMsg( '/knob', 1, 2, 63 );
+
+n.sendMsg( '/knob', 1, 2, 35 );
+
+n.sendMsg( '/knob', 1, 2, 34 );
+
+// close the device again
+m.closeDevice;
+::
+
 
 
 
@@ -174,3 +343,42 @@ MKtl.openDescriptionFolder;
 The filename should give a meaningful hint to the device it is made for. It further needs to end in code::".desc.scd"::.
 
 To test your description file, restart SuperCollider and follow instructions in link::Tutorials/ModalityTutorial::.
+
+
+section:: argTemplate matching
+
+This section gives some examples of how the code::argTemplate:: matching works in link::Classes/OSCdef:: works. In MKtl the code::argTemplate:: follows the same principles.
+
+code::
+
+n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
+
+OSCdef( \test, { |msg| msg.postln; }, "/test", argTemplate: [ 0 ] );
+
+n.sendMsg( "/test", 0, 2 );
+n.sendMsg( "/test", 1, 1 );
+
+OSCdef( \test, { |msg| msg.postln; }, "/test", argTemplate: [ "hello" ] );
+
+n.sendMsg( "/test", "hello", 2 );
+n.sendMsg( "/test", 1, 1 );
+
+OSCdef( \test, { |msg| msg.postln; }, "/minibee/data", argTemplate: [ 7 ] );
+
+n.sendMsg( "/minibee/data", 7, 0, 0 ,0 ); // matches
+n.sendMsg( "/minibee/data", 6, 0, 0 ,0 ); // doesn't match
+
+
+OSCdef( \test, { |msg| msg.postln; }, "/grid", argTemplate: [ 2, 3 ] );
+
+n.sendMsg( "/grid", 2, 3, 0.4 ); // matches
+n.sendMsg( "/grid", 1, 2, 0.2 ); // doesn't match
+
+
+OSCdef( \test, { |msg| msg.postln; }, "/second", argTemplate: [ nil, [3,2] ] );
+
+n.sendMsg( "/second", 2, 3, 0.4 ); // matches
+n.sendMsg( "/second", 2, 2, 0.4 ); // matches
+n.sendMsg( "/second", 1, 4, 0.2 ); // doesn't match
+
+::
