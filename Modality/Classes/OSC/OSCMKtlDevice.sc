@@ -190,17 +190,26 @@ OSCMKtlDevice : MKtlDevice {
 		^super.basicNew( name, name, parentMKtl ).initOSCMKtl( devInfo );
 	}
 
-	initOSCMKtl{ |desc| // this will not be addr but a ( destPort: , recvPort: , srcPort: ..., ipAddress: ..., listenPort: ... )
-
-		srcDevice = NetAddr.new( desc.at( \ipAddress ), desc.at( \srcPort ) );
-		if ( desc.at( \desPort ).notNil ){
-			destDevice = NetAddr.new( desc.at( \ipAddress ), desc.at( \destPort ) );
-		}{ // assume destination port is same as srcPort
-			destDevice = NetAddr.new( desc.at( \ipAddress ), desc.at( \srcPort ) );
+	initOSCMKtl{ |desc|
+		// this will not be addr but a ( destPort: , recvPort: , srcPort: ..., ipAddress: ..., listenPort: ... )
+		if ( desc.at( \ipAddress ).notNil ){
+			srcDevice = NetAddr.new( desc.at( \ipAddress ), desc.at( \srcPort ) );
+			if ( desc.at( \desPort ).notNil ){
+				destDevice = NetAddr.new( desc.at( \ipAddress ), desc.at( \destPort ) );
+			}{ // assume destination port is same as srcPort
+				destDevice = NetAddr.new( desc.at( \ipAddress ), desc.at( \srcPort ) );
+			};
+		}{
+			if ( desc.at( \desPort ).notNil ){
+				destDevice = NetAddr.new( "127.0.0.1", desc.at( \destPort ) );
+			}{ // assume destination port is same as srcPort
+				destDevice = NetAddr.new( "127.0.0.1", desc.at( \srcPort ) );
+			};
 		};
 		recvPort = desc.at( \recvPort );
 
 		this.initElements;
+		this.initCollectives;
 	}
 
 
@@ -212,7 +221,7 @@ OSCMKtlDevice : MKtlDevice {
 	}
 
 	initElements{
-		if ( oscFuncDictionary.notNil ){
+		if ( oscFuncDictionary.isNil ){
 			oscFuncDictionary = IdentityDictionary.new;
 		};
 		mktl.elementsDict.do{ |el|
@@ -235,7 +244,7 @@ OSCMKtlDevice : MKtlDevice {
 	}
 
 	initCollectives{
-		if ( oscFuncDictionary.notNil ){
+		if ( oscFuncDictionary.isNil ){
 			oscFuncDictionary = IdentityDictionary.new;
 		};
 		mktl.collectivesDict.do{ |el|
@@ -243,16 +252,24 @@ OSCMKtlDevice : MKtlDevice {
 			var ioType = el.elementDescription[ \ioType ];
 			var argTemplate = el.elementDescription[ \argTemplate ];
 			var msgIndices, templEnd;
-			if ( [\in,\inout].includes( ioType ) and: ( el.elementDescription[ \type ] == \oscMessage) ){
+			el.postcs;
+			if ( [\in,\inout].includes( ioType ) and: ( el.elementDescription[ \oscPath ].notNil) ){
 				templEnd = argTemplate.size + 1; // + 1 because argTemplate does not contain the oscpath as the first msg element
-				msgIndices = argTemplate.indicesOfEqual( nil ) + 1; // + 1 because argTemplate does not contain the oscpath as the first msg element
+				msgIndices = argTemplate.indicesOfEqual( nil );
+				if ( msgIndices.notNil) { msgIndices = msgIndices + 1; }; // + 1 because argTemplate does not contain the oscpath as the first msg element
+				el.key.postln;
 				oscFuncDictionary.put( el.key,
 					OSCFunc.new( { |msg|
+						[ msg, msgIndices, templEnd ].postln;
 						// clever msg index parsing
-						el.rawValueAction_( msg.at( msgIndices) ++ msg.copyToEnd( templEnd ) );
+						if ( msgIndices.notNil ){
+							el.rawValueAction_( msg.at( msgIndices) ++ msg.copyToEnd( templEnd ) );
+						}{
+							el.rawValueAction_( msg.copyToEnd( templEnd ) );
+						};
 						if(traceRunning) {
 							"% - % > % | type: %, src:%"
-							.format(this.name, el.name, el.value.asStringPrec(3), el.type, el.source).postln; // fix tracing
+							.format(this.name, el.name, el.value.collect{ |it| it.asStringPrec(3) }, el.type, el.source).postln; // fix tracing
 						}
 					}, oscPath, srcDevice, recvPort, argTemplate: argTemplate ); // optional add host/port
 				);
