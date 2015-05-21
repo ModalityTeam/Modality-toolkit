@@ -105,11 +105,19 @@ MKtlDesc {
 		^allDescs[descName]
 	}
 
-	*findDict { |symbolStringOrDict|
-		var dict = symbolStringOrDict.class.switch(
-			Symbol, { this.at(symbolStringOrDict).descDict },
-			String, { this.findFile(symbolStringOrDict).load },
-			Event, { symbolStringOrDict }
+	*makeDescFrom { |symbolStringOrDict|
+		var dict = this.findDict(symbolStringOrDict);
+		dict.keys.postcs;
+		^super.new(dict);
+	}
+
+	*findDict { |descOrPathOrSymbol|
+		var dict = descOrPathOrSymbol.class.switch(
+			Symbol, { this.at(descOrPathOrSymbol).descDict },
+			String, { var str = this.findFile(descOrPathOrSymbol);
+				if (str.notNil) { str.load; }
+			},
+			Event, { descOrPathOrSymbol }
 		);
 		if (dict.isNil) {
 		//	this.warnNoDescFound(symbolStringOrDict);
@@ -118,12 +126,19 @@ MKtlDesc {
 		^dict
 	}
 
-	*new { |desc, path|
-		^super.newCopyArgs(desc, path).init;
+	*new { |descOrPathOrSymbol|
+		var dict = this.findDict(descOrPathOrSymbol);
+
+		if (this.isValidDescDict(dict).not) {
+			inform("MKtlDesc: dict is not a valid desc.");
+			^nil
+		};
+		^super.newCopyArgs(dict).init;
 	}
 
 	init {
 		shortName = MKtlDesc.makeShortName(descDict[\device]).asSymbol;
+		"shortName: %\n".postf(shortName);
 		allDescs.put (shortName, this);
 	}
 
@@ -146,8 +161,8 @@ MKtlDesc {
 	idInfo { ^descDict[\device] }
 	idInfo_ { |type| ^descDict[\device] = type }
 
-	desc { ^descDict[\description] }
-	desc_ { |type| ^descDict[\description] = type }
+	elementsDesc { ^descDict[\description] }
+	elementsDesc_ { |type| ^descDict[\description] = type }
 
 	deviceFilename {
 		^path !? { path.basename.drop(fileExt.size.neg) }
@@ -158,7 +173,7 @@ MKtlDesc {
 		"deviceFilename: %\n".postf(this.deviceFilename);
 		"protocol: %\n".postf(this.protocol);
 		"deviceIDString: %\n".postf(this.deviceIDString);
-		"desc keys: %\n".postf(this.desc.keys);
+		"desc keys: %\n".postf(this.elementsDesc.keys);
 
 
 		if (elements) { this.postElements }
