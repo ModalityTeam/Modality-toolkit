@@ -456,6 +456,7 @@ MKtl { // abstract class
 		if ( deviceDescriptionArray.notNil ){
 			deviceDescriptionName = devDescName;
 			this.makeElements;
+			this.makeCollectives;
 			( "Created MKtl:" + name + "using device description" + deviceDescriptionName ).postln;
 		};
 	}
@@ -566,9 +567,12 @@ MKtl { // abstract class
 
 		deviceInfo[\infoMessage] !? _.postln;
 
-		if( deviceInfo[ \collectives ].notNil ) {
+	}
+
+	makeCollectives {
+		if( deviceInfoDict[ \collectives ].notNil ) {
 			collectivesDict = ();
-			deviceInfo[ \collectives ].keysValuesDo({ |key, value|
+			deviceInfoDict[ \collectives ].keysValuesDo({ |key, value|
 				collectivesDict[ key ] = MKtlElementCollective( this, key, value );
 			})
 		};
