@@ -1,4 +1,4 @@
-MKtlElementGroup : MAbstractElement {
+MKtlElementGroup : MKtlElement {
 
 	var <elements;
 	var <dict;
@@ -9,6 +9,7 @@ MKtlElementGroup : MAbstractElement {
 
 	init {
 		var array;
+		tags = Set[];
 		dict = dict ? ();
 		elements = elements ?? { Array.new };
 		case { elements.isKindOf( Dictionary ) } {
@@ -247,4 +248,38 @@ MKtlElementGroup : MAbstractElement {
 	}
 
 	getElementsForGUI { ^elements.collect({ |item| [ item.key, item ] }).flatten(1); }
+}
+
+MKtlElementCollective : MKtlElementGroup {
+
+	*new { |source, name, elementDescription|
+		^super.newCopyArgs( source, name).init( elementDescription );
+	}
+
+	init { |inElementDescription|
+		tags = Set[];
+		elementDescription = inElementDescription ?? { source.collectiveDescriptionFor(name); };
+		if( elementDescription.notNil ) {
+			ioType = elementDescription[\ioType];
+			elements = elementDescription[\elements].collect({ |item|
+				source.elementAt( *item );
+			});
+			this.addCollectiveToChildren;
+		};
+	}
+
+	addCollectiveToChildren {
+		elements.do(_.prAddCollective(this));
+	}
+
+	removeCollectiveFromChildren {
+		elements.do(_.prRemoveCollective(this));
+	}
+
+	rawValueAction_{|newvals|
+		newvals.do({ |item, i|
+			elements[i] !? _.rawValueAction_( item );
+		});
+	}
+
 }

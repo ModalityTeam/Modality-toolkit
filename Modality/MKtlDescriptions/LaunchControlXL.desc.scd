@@ -2,7 +2,7 @@
 // factory: channel 8
 
 (
-device: "Launch Control XL",
+idInfo: "Launch Control XL",
 protocol: \midi,
 description:
 (

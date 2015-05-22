@@ -18,7 +18,7 @@ MIDIMKtl('bcr20000').elements.kn[0][0].value_(0.5)
 
 
 (
-device: "BCR2000",
+idInfo: "BCR2000",
 protocol: \midi,
 description: (
 	//buttons at bottom right

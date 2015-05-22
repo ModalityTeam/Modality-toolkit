@@ -1,5 +1,5 @@
 (
-device:"Steinberg CMC-FD",
+idInfo:"Steinberg CMC-FD",
 protocol: \midi,
 description:
 (

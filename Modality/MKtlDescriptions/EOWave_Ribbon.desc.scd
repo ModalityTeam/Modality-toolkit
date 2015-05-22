@@ -1,5 +1,5 @@
 (
-device: "The Ribbon",
+idInfo: "The Ribbon",
 protocol: \midi,
 description: (
 	// ribbon

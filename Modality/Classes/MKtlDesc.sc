@@ -41,7 +41,7 @@ MKtlDesc {
 	}
 
 	*openFolder { |index = 0|
-		unixCmd("open" + quote(descFolders[index]));
+		descFolders[index].openOS;
 	}
 
 	*findFile { |filename|
@@ -153,7 +153,7 @@ MKtlDesc {
 		this.resolveDescEntriesForPlatform;
 	}
 
-	openFile { unixCmd("open" + quote(path)) }
+	openFile { path.openDocument }
 
 	descDict_ { |dict|
 		if (MKtl.isValidDescDict(dict)) {

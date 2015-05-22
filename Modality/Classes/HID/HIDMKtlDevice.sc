@@ -3,7 +3,7 @@ HIDMKtlDevice : MKtlDevice {
 	classvar <sourceDeviceDict;
 	classvar <protocol = \hid;
 
-	var <srcID, <srcDevice;
+	var <srcID, <source;
 
 	*initClass { sourceDeviceDict = (); }
 
@@ -128,24 +128,26 @@ HIDMKtlDevice : MKtlDevice {
 
 	initHIDMKtl{ |argSource,argUid|
 		srcID = argUid;
-        srcDevice = argSource.open;
+        source = argSource.open;
  		this.initElements;
+		this.initCollectives;
+		this.sendInitialiationMessages;
 	}
 
 	closeDevice{
 		this.cleanupElementsAndCollectives;
 		srcID = nil;
-		srcDevice.close;
+		source.close;
 	}
 
     *makeDeviceName{ |hidinfo|
 		^(hidinfo.productName.asString ++ "_" ++ hidinfo.vendorName);
     }
 
-	// postRawSpecs { this.class.postRawSpecsOf(srcDevice) }
+	// postRawSpecs { this.class.postRawSpecsOf(source) }
 
 	exploring{
-		^(HIDExplorer.observedSrcDev == this.srcDevice);
+		^(HIDExplorer.observedSrcDev == this.source);
 	}
 
 	explore{ |mode=true|
@@ -154,7 +156,7 @@ HIDMKtlDevice : MKtlDevice {
 			"HIDExplorer started. Wiggle all elements of your controller then".postln;
 			"\tMKtl(%).explore(false);\n".postf( name );
 			"\tMKtl(%).createDescriptionFile;\n".postf( name );
-			HIDExplorer.start( this.srcDevice );
+			HIDExplorer.start( this.source );
 		}{
 			HIDExplorer.stop;
 			"HIDExplorer stopped.".postln;
@@ -162,10 +164,10 @@ HIDMKtlDevice : MKtlDevice {
 	}
 
 	createDescriptionFile {
-		if(srcDevice.notNil){
-			HIDExplorer.openDocFromDevice(srcDevice)
+		if(source.notNil){
+			HIDExplorer.openDocFromDevice(source)
 		} {
-			Error("MKtl#createDescriptionFile - srcDevice is nil. HID probably could not open device").throw
+			Error("MKtl#createDescriptionFile - source is nil. HID probably could not open device").throw
 		}
 	}
 
@@ -177,9 +179,9 @@ HIDMKtlDevice : MKtlDevice {
             var usage = el.elementDescription[\hidUsage];
 
 			if ( elid.notNil ){ // filter by element id
-				srcDevice.elements.at( elid ).action = nil;
+				source.elements.at( elid ).action = nil;
 			}{
-				theseElements = srcDevice.findElementWithUsage( usage, page );
+				theseElements = source.findElementWithUsage( usage, page );
 				theseElements.do{ |it|
 					it.action = nil;
 				}
@@ -207,7 +209,7 @@ HIDMKtlDevice : MKtlDevice {
 
             if ( elid.notNil ){ // filter by element id
                 // HIDFunc.element( { |v| el.rawValueAction_( v ) }, elid, \devid, devid );
-                srcDevice.elements.at( elid ).action = { |v, hidele| // could get raw value hidele.rawValue
+                source.elements.at( elid ).action = { |v, hidele| // could get raw value hidele.rawValue
 					el.rawValueAction_( v );
 					if(traceRunning) {
 						"% - % > % | type: %, src:%"
@@ -216,7 +218,7 @@ HIDMKtlDevice : MKtlDevice {
 				};
             }{  // filter by usage and usagePage
                 // HIDFunc.usage( { |v| el.rawValueAction_( v ) }, usage, page, \devid, devid );
-                theseElements = srcDevice.findElementWithUsage( usage, page );
+                theseElements = source.findElementWithUsage( usage, page );
                 theseElements.do{ |it|
                     it.action = { |v, hidele| // could get raw value hidele.rawValue
 						el.rawValueAction_( v );
@@ -236,10 +238,14 @@ HIDMKtlDevice : MKtlDevice {
 		var thisMktlElement, thisHIDElement;
 		thisMktlElement = mktl.elementDescriptionFor( key );
 		if ( thisMktlElement.notNil ){
-			thisHIDElement = srcDevice.findElementWithUsage( thisMktlElement.at( 'hidUsage' ), thisMktlElement.at( 'hidUsagePage' ) ).first;
+			thisHIDElement = source.findElementWithUsage( thisMktlElement.at( 'hidUsage' ), thisMktlElement.at( 'hidUsagePage' ) ).first;
 			if ( thisHIDElement.notNil ){
 				thisHIDElement.value = val;
 			};
 		};
+	}
+
+	sendInitialiationMessages{
+
 	}
 }

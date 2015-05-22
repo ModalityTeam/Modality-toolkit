@@ -4,7 +4,7 @@
 // made by Joost van Dalen
 
 (
-device: "MPK mini",
+idInfo: "MPK mini",
 protocol: \midi,
 infoMessage: "\n\t MPK mini: This desc file is made for the Factory Preset: Preset3-MPC,
 \t downloadable from http://www.akaipro.com/product/mpkmini#downloads \n",

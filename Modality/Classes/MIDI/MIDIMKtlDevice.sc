@@ -297,13 +297,19 @@ MIDIMKtlDevice : MKtlDevice {
 		destination.notNil.if{
 			dstID = destination.uid;
 			midiOut = MIDIOut( MIDIClient.destinations.indexOf(destination), dstID );
+
+			// set latency to zero as we assume to have controllers
+			// rather than synths connected to the device.
+			midiOut.latency = 0;
+
 			if ( thisProcess.platform.name == \linux ){
 				midiOut.connect( MIDIClient.destinations.indexOf(destination) )
 			};
 		};
 
 		this.initElements;
-
+		this.initCollectives;
+		this.sendInitialiationMessages;
 	}
 
 	makeHashKey { |descr, elName|
@@ -706,8 +712,17 @@ MIDIMKtlDevice : MKtlDevice {
 			{\cc}{ midiOut.control(ch, num, val ) }
 			{\noteOn}{ midiOut.noteOn(ch, num, val ) }
 			{\noteOff}{ midiOut.noteOff(ch, num, val ) }
-			{\note}{ /*TODO: check type for noteOn, noteOff, etc*/ }
+			{\noteOnOff} { midiOut.noteOn(ch, num, val ) }
+			{\bend}{ midiOut.bend(ch, val) }
+//			{\note}{ x.postln /*TODO: check type for noteOn, noteOff, etc*/ }
+			{warn("MIDIMKtlDevice: message type % not recognised".format(type))}
 	 	}
+	}
+
+	sendInitialiationMessages{
+		mktl.initialisationMessages.do{ |it|
+			midiOut.performList( it[0], it.copyToEnd(1) );
+		}
 	}
 
 		// utilities for fast lookup :

@@ -2,7 +2,7 @@
 //MIDIMKtl('cncn2000').elements.do{ |el| el.action_{ el.name.postln} }
 
 (
-device: "iCON iControls V2.00",
+idInfo: "iCON iControls V2.00",
 protocol: \midi,
 description:(
 

@@ -1,0 +1,115 @@
+TITLE:: OSCMKtlDevice
+summary::  The Modality class for creating and accessing OSC controllers
+categories:: Libraries>Modality, External Control
+related:: Overviews/Modality, Classes/MKtl, Classes/MKtlDevice, Classes/MKtlElement
+
+DESCRIPTION::
+OSCMKtlDevice provides an easy to use interface for OSC devices or interfaces that send data to your computer.
+
+For most devices or interfaces, this requires that someone has already made a description file for the device; if there is none, it is easy to make one following the instructions here:
+link::Tutorials/How_to_create_a_description_file::
+
+More general info can be found in link::Classes/MKtl:: and link::Classes/MKtlDevice:: .
+
+
+CLASSMETHODS::
+
+private:: initialized, sourceDeviceDict, deinitDevices
+
+METHOD:: find
+Find all currently opened OSC devices.
+
+argument:: post
+Whether or not to post about the OSC devices.
+
+METHOD:: postPossible
+Post all access code for device that could be used by name.
+
+METHOD:: protocol
+protocol name, \osc.
+
+
+METHOD:: initDevices
+Initialize the sourceDeviceDict and look for available OSC devices.
+
+argument:: force
+Whether or not to do this again if it was already done before.
+
+
+METHOD:: findSource
+Find a source that matches the source that is in info. The device info has to match all the keys in of an existing source to match.
+
+ARGUMENT:: devInfo
+The devInfo we want to match.
+
+returns:: the found source
+
+
+METHOD:: addToSourceDeviceDict
+Adds an OSC device to the source device dictionary
+
+ARGUMENT:: name
+Name or label for the osc device
+
+ARGUMENT:: devInfo
+The device info as found in the description file
+
+
+METHOD:: new
+
+Creates a new instance of OSCMKtlDevice.
+
+argument:: name
+The short name of the controller as it shows up in the list of found devices.
+
+argument:: devInfo
+The device code::idInfo:: to use to make the OSC connections.
+
+argument:: parentMKtl
+The instance of link::Classes/MKtl:: that this MKtlDevice will belong to.
+
+
+
+INSTANCEMETHODS::
+
+private:: initOSCMKtl
+
+METHOD:: initElements
+Initilize all elements and set OSCFuncs for them
+
+METHOD:: initCollectives
+Initilize all collectives and set OSCFuncs for them
+
+METHOD:: oscFuncDictionary
+A Dictionary containing all the OSCFuncs that this device is using.
+
+METHOD:: closeDevice
+Free all OSCFuncs.
+
+METHOD:: cleanupElementsAndCollectives
+De-initialize all elements and collectives.
+
+
+METHOD:: send
+Send the value of the element or collective to the OSC device; called if you set the value of an MKtlElement that is an output.
+
+argument:: key
+The key of the element or collective.
+
+argument:: val
+The value to which it is set. A collective should send an Array.
+
+
+METHOD:: source
+The link::Classes/NetAddr:: device that is the source for this OSCMKtlDevice.
+
+returns:: an instance of link::Classes/NetAddr::
+
+METHOD:: destination
+The link::Classes/NetAddr:: device that is the destination for this OSCMKtlDevice.
+
+returns:: an instance of link::Classes/NetAddr::
+
+METHOD:: recvPort
+The port to which the OSC device/interface is sending data to. If this is configurable in the OSC device or interface, then it is easier to use sclang's default port of 57120 and leave it undefined.
+
