@@ -713,6 +713,12 @@ MIDIMKtlDevice : MKtlDevice {
 	 	}
 	}
 
+	sendInitialiationMessages{
+		mktl.initialisationMessages.do{ |it|
+			midiOut.performList( it[0], it.copyToEnd(1) );
+		}
+	}
+
 		// utilities for fast lookup :
 		// as class methods so we can do it without an instance
 	*makeCCKey { |chan, cc| ^("c_%_%".format(chan, cc)).asSymbol }
@@ -738,10 +744,4 @@ MIDIMKtlDevice : MKtlDevice {
 	makeBendKey { |chan| ^("b_%".format(chan)).asSymbol }
 	makeProgramKey { |chan| ^("p_%".format(chan)).asSymbol }
 
-
-	sendInitialiationMessages{
-		var messages = this.mktl.initialisationMessages.do{ |it|
-			midiOut.performList( it[0], it.copyToEnd(1) );
-		}
-	}
 }

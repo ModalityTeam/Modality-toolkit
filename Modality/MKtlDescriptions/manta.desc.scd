@@ -51,6 +51,11 @@ q.manta.mktl
 
 
 (
+initialisationMessages: [
+	[ "/manta/ledcontrol", "padandbutton", 1 ],
+	[ "/manta/ledcontrol", "slider", 1 ],
+	[ "/manta/ledcontrol", "button", 1 ]
+],
 specs: (
 	mantaTouch: [ 0, 227 ].asSpec, // this seems to be the spec, looking at the github source code
 	mantaSlider: [ 0, 4095 ].asSpec, // slider sends values between 0 and 4095, releasing the slider sends 65536

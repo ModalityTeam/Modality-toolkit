@@ -332,6 +332,6 @@ OSCMKtlDevice : MKtlDevice {
 	sendInitialiationMessages{
 		var messages = mktl.initialisationMessages.do{ |it|
 			destination.sendMsg( *it );
-		}
+		};
 	}
 }
