@@ -55,17 +55,19 @@ MKtlDevice {
 	*getMatchingProtocol { |name|
 		var matchingProtocols = this.findMatchingProtocols( name );
 		if ( matchingProtocols.size == 0 ){
-			// not attached, just return the virtual one if it was found:
+			// no dev with matching protocol found
 			^nil;
 		};
 		if ( matchingProtocols.size > 1 ){ // more than one matching protocol:
-			"WARNING: multiple protocol devices not implemented yet, using %\n".postf( matchingProtocols.first );
+			"% multiple protocol devices not implemented yet, found %, using %\n"
+			.format(MKtlDevice, matchingProtocols, matchingProtocols.first ).warn;
 		};
 		matchingProtocols = matchingProtocols.first;
 		^matchingProtocols;
 	}
 
 	*getDeviceNameFromShortName { |shortName|
+
 		var subClass;
 		var matchingProtocol = this.getMatchingProtocol( shortName );
 		if ( matchingProtocol.isNil ){
@@ -74,7 +76,7 @@ MKtlDevice {
 		subClass = MKtlDevice.matchClass(matchingProtocol);
 		if( subClass.isNil ){
 			^nil;
-		}{
+		} {
 			^subClass.getSourceName( shortName );
 		};
 	}
@@ -119,24 +121,23 @@ MKtlDevice {
 		^subClass.new( name, parentMKtl: parentMKtl );
 	}
 
-	*tryOpenDeviceFromDesc { |name, desc, protocol, parentMKtl|
-		var subClass;
-		if ( protocol.isNil ){ ^nil; };
-
-		subClass = MKtlDevice.matchClass(protocol);
-		if( subClass.isNil ){
-			"WARNING: MKtl: device not found with description % and protocol %\n".postf( desc, protocol );
-			^nil;
-		};
-		if( subClass.notNil ) {
-			^subClass.new( name, desc, parentMKtl: parentMKtl );
-		};
-	}
+	// *tryOpenDeviceFromDesc { |name, desc, protocol, parentMKtl|
+	// 	var subClass;
+	// 	if ( protocol.isNil ){ ^nil; };
+	//
+	// 	subClass = MKtlDevice.matchClass(protocol);
+	// 	if( subClass.isNil ){
+	// 		"WARNING: MKtl: device not found with description % and protocol %\n".postf( desc, protocol );
+	// 		^nil;
+	// 	};
+	// 	if( subClass.notNil ) {
+	// 		^subClass.new( name, desc, parentMKtl: parentMKtl );
+	// 	};
+	// }
 
 	*basicNew { |name, deviceName, parentMKtl |
 		^super.new.init(name, deviceName, parentMKtl );
 	}
-
 
 	init { |initName, argDeviceName, parentMKtl|
 		name = initName;
