@@ -15,6 +15,10 @@ list::
 ##link::#Simple output::
 ##link::#Collective input::
 ##link::#Collective output::
+##link::#Explore an OSC device::
+##link::#Write a description file for the explored OSC device::
+##link::#OSC output::
+##link::#OSC device info::
 ::
 
 section:: Simple input
@@ -587,42 +591,239 @@ m.closeDevice;
 ::
 
 
-section:: Explore your device
+section:: Explore an OSC device
 
+To find out what an OSC device can do, the first thing you can do is read the documentation for the device and see what it tells about the OSC interface. Usually the documentation lists a number of messages that the device sends out, and a number of messages that it reacts upon. For OSC output to the device you have to rely on the documentation about the device to find out what you need to send to it. For the OSC input from the device, there is a tool (link::Classes/OSCMon::) to find out what messages it sends.
 
-section:: Reviewing the exploration
+code::
+// create a fake OSC device that sends some messages:
+(
+n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
+Tdef( \fakeOSCdevice,{
+	loop{
+		n.sendMsg( "/pad", 4.rand, 4.rand, 128.rand ); // a 3 by 3 grid of pads that send out 7 bit data each
+		1.0.rand.wait;
+	};
+});
 
-subsection:: Build a description file from the raw data
+Tdef( \fakeOSCdevice ).play;
+);
 
-To bring these into a form useable as a description file for Modality, we have to put it into the format specified in link::Reference/MKtl_description_files:::
+// start an OSCMon:
+
+o = OSCMon.new;
+o.enable; // enable it
+o.show; // show a gui to view the data
+o.verbose = true; // post the messages
+
+// find out from which addresses data was sent:
+o.addresses;
+
+// messages names that were sent:
+o.msgNames;
+::
+
+In this code example, we find out that there is a code::NetAddr( "127.0.0.1", 57120 ):: sending an OSC message code::[ '/pad', 0, 3, 127 ]::.
+
+For your actual OSC device you would move each control and look at what the incoming message looks like. This way, you can figure out which controls send out which OSC message with which parameters.
+
+For our (fake) example device, we find out that there is only one type of message sent out (code::'/pad'::), with the first two arguments being a row and column index, and the last value being a kind of velocity value.
+
+section:: Write a description file for the explored OSC device
+
+Based on our exploration, we can start writing the description file, we first make a simple example for one pad:
 
 code::
 (
-\identifier: (key: value, key: value, ... ),
-\identifier: (key: value, key: value, ... ),
+~descExample = (
+	idInfo: ( srcPort: NetAddr.langPort, ipAddress: "127.0.0.1" ),
+	protocol: \osc,
+	description: (
+		'pad': (
+			oscPath: '/pad',
+			argTemplate: [ 0,0 ], // at row 0 and column 0
+			type: 'pad',
+			spec: \midiCC,
+			ioType: \in
+		)
+	)
+)
+);
 
-\groupIdentifier: [
-	(key: value, key: value, ... ),
-	(key: value, key: value, ... ),
-	(key: value, key: value, ... ),
-]
+m = MKtl( \exampleOSCDesc, ~descExample );
+MKtlDevice.allAvailable // now also shows the opened 'osc device'
+
+// create a gui for the osc device:
+m.gui;
+
+// post incoming data
+m.trace;
+
+m.closeDevice;
+::
+
+So if this seems to work, we can expand the description:
+
+code::
+(
+~descExample = (
+	idInfo: ( srcPort: NetAddr.langPort, ipAddress: "127.0.0.1" ),
+	protocol: \osc,
+	description: (
+		'pad': 3.collect{ |id|
+			3.collect{ |jd|
+				(
+					oscPath: '/pad',
+					argTemplate: [ id,jd ],
+					type: 'pad',
+					spec: \midiCC,
+					ioType: \in
+				)
+			};
+		};
+		)
+	)
+);
+
+m.rebuildFrom( ~descExample );
+m.gui
+::
+
+Now all 9 pads are in the description.
+
+section:: OSC output
+
+As an example, for the libmanta we find the description of (some of) the OSC output messages for the MantaOSC application:
+
+code::
+For commands that take color strings, the value can be either "red", "amber", or "off".
+
+"/manta/led/pad"
+Takes a color string and an integer representing the pad LED to be set.
+
+"/manta/led/button"
+Takes a color string and an integer representing the pad LED to be set.
+::
+
+From this we understand that we should make two types of output elements. For the button leds we need:
+
+code::
+(
+bt: 4.collect{ |id|
+	led: (
+		oscPath: '/manta/led/button',
+		argTemplate: [ nil, id ],
+		type: 'led',
+		spec: 'mantaLed',
+		ioType: \out
+	);
+};
+);
+::
+
+For the pad leds we need:
+
+code::
+(
+pad: 48.collect{ |id|
+	led: (
+		oscPath: '/manta/led/pad',
+		argTemplate: [ nil, id ],
+		type: 'led',
+		spec: 'mantaLed',
+		ioType: \out
+	);
+};
+);
+::
+
+The code::spec:: needed is a special one, a link::Classes/StringMap:: that defines the mapping of a value to one of the three colors, we can define it in the code::specs:: part of the device description:
+
+code::
+specs: (
+	mantaLed: StringMap.new( ["off","amber","red"] ), // led can be off, amber or red
 )
 ::
 
-note::Naming conventions apply. You can find them at link::Reference/MKtl_description_files#Naming Conventions::.
+For the complete Manta description take a look at its description file:
+
+code::
+MKtlDesc.loadDescs( "manta" );
+MKtlDesc.fromFile( \manta ).openFile;
 ::
 
-Edit the code::edit and save me.desc.scd:: document to assemble your new description file. Make sure you pay attention to the following points:
+section:: OSC device info
 
-Unless it does not make sense from the controller's layout (e.g. for record buttons as opposed to a collection of similar elements such as sliders), elements of the same type should be grouped into a hierarchical description for maximum compatibility.
+The underlying protocol of OSC communication in SuperCollider and most other applications is UDP. The addressing of messages is done via IP adresses and ports.
 
-Also, make sure to fill in appropriate descriptions for code::\type:: fields.
+The elements in the OSC device info dictionary are: code::ipAddress, srcPort, recvPort, destPort::. All of these elements are optional. Each of them are described in the following subsections.
 
+For a general discussion on OSC Communication, see this guide: link::Guides/OSC_communication::.
 
-subsection:: Testing the description
+subsection:: ipAddress
 
+The code::ipAddress:: field in the OSC device info is the ipAddress of the OSC device. If the device is a physical device connected to your computer that uses a particular protocol that is decoded by another program to OSC messages (as is the case for the Manta), then the code::ipAddress:: is the code::localhost:: or code::127.0.0.1::.
 
+If the OSC device is its own device that connects to a local network (via WIFI or wired), then the device will have its own IP address, and it will be something like code::192.168.2.42::.
 
+code::
+idInfo: ( ipAddress: "127.0.0.1" ); // localhost example
+idInfo: ( ipAddress: "192.168.2.42" );
+::
+
+If the OSC device is only sending data, you may leave the code::ipAddress:: undefined. Defining it however provides for an additional filter on the data - only messages from the defined code::ipAddress:: will be used. If you have several of the same devices, you will need to define the code::ipAddress:: for each to distinguish between the devices.
+
+subsection:: srcPort
+
+The code::srcPort:: defines where the OSC messages come from. This is different than the port that the device sends the OSC messages to (see link::#recvPort::).
+
+Some programs use a fixed port for this, others use a random port each time the OSC device is started (e.g. Max/MSP does not allow you to set the port that is sent from and uses a different one each time).
+
+In case the OSC device uses a fixed port, you can use this to filter the data that comes in:
+
+code::
+idInfo: ( srcPort: 31417 )
+::
+
+subsection:: recvPort
+
+SuperCollider is usually listening on port 57120, but takes another port if that one happens to be not available. You can check the current port by:
+
+code::
+NetAddr.langPort;
+::
+
+If an OSC device wants to send OSC data to SuperCollider it needs to send to this port. However some OSC devices do not allow you to change the port to which they send, in that case you can define a port that SuperCollider needs to open to receive the data:
+
+code::
+idInfo: ( recvPort: 31416 ); // example of the port to which MantaOSC sends its data
+::
+
+If you leave the code::recvPort:: undefined then SuperCollider's default port (code::NetAddr.langPort::) is used, and you need to configure your OSC device to send to that port.
+
+subsection:: destPort
+
+If the OSC device can also receive messages, you need to know on which port it listens. You can find this in the documentation of the device. For sending a message to an OSC device you need to know both the code::ipAddress:: and the code::destPort::. If the code::destPort:: is left undefined, then the OSCMKtlDevice will use the same port as the code::srcPort::. If the code::ipAddress:: is left undefined then the code::"127.0.0.1":: is used.
+
+code::
+( idInfo: ( srcPort: 31417, ipAddress: "127.0.0.1" ) );
+m.mktlDevice.source;
+// will be NetAddr( "127.0.0.1", 31417 );
+m.mktlDevice.destination;
+// will be NetAddr( "127.0.0.1", 31417 );
+
+( idInfo: ( srcPort: 31417, ipAddress: "127.0.0.1", destPort: 31419 ) );
+m.mktlDevice.source;
+// will be NetAddr( "127.0.0.1", 31417 );
+m.mktlDevice.destination;
+// will be NetAddr( "127.0.0.1", 31419 );
+
+( idInfo: ( destPort: 31419 ) );
+m.mktlDevice.source;
+// will be nil;
+m.mktlDevice.destination;
+// will be NetAddr( "127.0.0.1", 31419 );
+::
 
 section:: argTemplate matching
 
