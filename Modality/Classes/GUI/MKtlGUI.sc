@@ -11,8 +11,13 @@ MKtlElementView {
 
 	*initClass {
 		makeViewFuncDict = (
-			'button': { |parent, bounds, label|
+			'button': { |parent, bounds, label, element|
+				var mouseDownAction;
+				if( element.elementDescription[ \mode ] == \push ) {
+					mouseDownAction = { |bt| bt.valueAction = 1 };
+				};
 				Button( parent, bounds.insetBy( MKtlGUI.margin ) )
+				.mouseDownAction_( mouseDownAction )
 				.states_([[ label ? "" ],[ label ? "", Color.black, Color.gray(0.33) ]]);
 			},
 			'slider': { |parent, bounds, label|
@@ -50,7 +55,7 @@ MKtlElementView {
 		if( element.elementDescription[ \style ] !? _.showLabel ? false ) {
 			label = element.elementDescription[ \label ] ?? { element.name };
 		};
-		view = this.getMakeViewFunc( element.type ).value( parent, bounds, label );
+		view = this.getMakeViewFunc( element.type ).value( parent, bounds, label, element );
 		getValueFunc = this.makeGetValueFunc( element, view );
 
 	}
