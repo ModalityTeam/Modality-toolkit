@@ -305,6 +305,7 @@ MIDIMKtlDevice : MKtlDevice {
 
 		this.initElements;
 
+		this.sendInitialiationMessages;
 	}
 
 	makeHashKey{ |descr,elName|
