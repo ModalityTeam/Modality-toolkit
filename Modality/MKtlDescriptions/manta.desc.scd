@@ -120,7 +120,7 @@ description: (
 				spec: 'mantaSlider',
 				ioType: \in
 			),
-			led: (0..7).collect{ |jd|
+			led: (0..7).collect{ |jd| // this need a fix still!
 				(
 					oscPath: '/manta/led/slider',
 					argTemplate: [ nil, id, jd ],
