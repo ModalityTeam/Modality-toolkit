@@ -5,6 +5,8 @@ HIDMKtlDevice : MKtlDevice {
 
 	var <srcID, <srcDevice;
 
+	*initClass { sourceDeviceDict = (); }
+
 	*getSourceName { |shortName|
 		var srcName;
 		var src = this.sourceDeviceDict.at( shortName );
@@ -15,15 +17,18 @@ HIDMKtlDevice : MKtlDevice {
 	}
 
 	*initDevices { |force=false|
-		if ( Main.versionAtLeast( 3, 7 ) ){
-			(initialized && {force.not}).if{^this};
-			HID.findAvailable;
+		if ( Main.versionAtLeast( 3, 7 ).not ){
+			"Sorry, ho HID before 3.7.".postln;
+			^this;
+		};
+		if (initialized && force.not) { ^this };
 
-			sourceDeviceDict = IdentityDictionary.new;
-			this.prepareDeviceDicts;
+		HID.findAvailable;
 
-			initialized = true;
-		}
+		sourceDeviceDict = IdentityDictionary.new;
+		this.prepareDeviceDicts;
+
+		initialized = true;
 	}
 
 	*prepareDeviceDicts {

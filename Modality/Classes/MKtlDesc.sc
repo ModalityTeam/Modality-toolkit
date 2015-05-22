@@ -227,7 +227,7 @@ MKtlDesc {
 		this.class.resolveForPlatform(elementsKeyValueArray);
 	}
 
-	postElementsDesc {
+	postElements {
 		this.elementsDesc.traverseDo({ |el, deepKeys|
 			deepKeys.size.do { $\t.post };
 			deepKeys.postcs;

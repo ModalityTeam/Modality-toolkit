@@ -1,8 +1,9 @@
 MKtlDevice {
 
-	classvar <allAvailable; // ( 'midi': List['name1',... ], 'hid': List['name1',... ], ... )
-
+	// ( 'midi': List['name1',... ], 'hid': List['name1',... ], ... )
+	classvar <allAvailable;
 	classvar <allInitialized = false;
+	classvar <allProtocols;
 
 	var <name, <deviceName; // short name + full device name
 	var <>mktl;
@@ -13,16 +14,17 @@ MKtlDevice {
 		traceRunning = mode;
 	}
 
-	*initClass{
-			allAvailable = ();
+	*initClass {
+		allAvailable = ();
+
+		if ( Main.versionAtLeast( 3, 7 ) ) {
+			allProtocols = [\midi,\hid,\osc];
+		} {
+			allProtocols = [\midi,\osc];
+		};
 	}
 
 	*find { |protocols|
-		if ( Main.versionAtLeast( 3, 7 ) ) {
-			protocols = protocols ? [\midi,\hid,\osc];
-		} {
-			protocols = protocols ? [\midi,\osc];
-		};
 		protocols.asCollection.do { |pcol|
 			this.matchClass(pcol) !? _.find
 		};
@@ -33,16 +35,11 @@ MKtlDevice {
 		^this.allSubclasses.detect({ |x| x.protocol == symbol })
 	}
 
-	*initHardwareDevices{ |force=false, protocols|
-		if ( protocols.isNil ){
-			if ( Main.versionAtLeast( 3, 7 ) ){
-				protocols = protocols ? [\midi,\hid,\osc];
-			}{
-				protocols = protocols ? [\midi,\osc];
-			};
-		};
+	*initHardwareDevices { |force = false, protocols|
+		protocols = protocols ? allProtocols;
+
 		if ( allInitialized.not or: force ){
-			this.allSubclasses.do{ |it|
+			this.allSubclasses.do { |it|
 				if ( protocols.includes( it.protocol ) ){
 					it.initDevices( force );
 				};
@@ -51,11 +48,11 @@ MKtlDevice {
 		allInitialized = true;
 	}
 
-	*findMatchingProtocols{ |name|
+	*findMatchingProtocols { |name|
 		^allAvailable.select(_.includes(name)).keys.as(Array);
 	}
 
-	*getMatchingProtocol{ |name|
+	*getMatchingProtocol { |name|
 		var matchingProtocols = this.findMatchingProtocols( name );
 		if ( matchingProtocols.size == 0 ){
 			// not attached, just return the virtual one if it was found:
@@ -68,7 +65,7 @@ MKtlDevice {
 		^matchingProtocols;
 	}
 
-	*getDeviceNameFromShortName{ |shortName|
+	*getDeviceNameFromShortName { |shortName|
 		var subClass;
 		var matchingProtocol = this.getMatchingProtocol( shortName );
 		if ( matchingProtocol.isNil ){
@@ -82,7 +79,7 @@ MKtlDevice {
 		};
 	}
 
-	*findDeviceShortNameFromLongName{ |devLongName|
+	*findDeviceShortNameFromLongName { |devLongName|
 		var devKey, newDevKey;
 		if ( devLongName.isKindOf( String ) ){
 			this.subclasses.do{ |subClass|
@@ -105,31 +102,27 @@ MKtlDevice {
 		^nil;
 	}
 
-	*tryOpenDevice { |name, parentMKtl|
-		var matchingProtocol, subClass;
-		// then see if it is attached:
+	*tryOpenDevice { |name, protocol, desc, parentMKtl|
+		var matchingProtocol = this.getMatchingProtocol( name );
+		var subClass;
 
-		matchingProtocol = this.getMatchingProtocol( name );
-
-		if ( matchingProtocol.isNil ){
-			^nil;
-		};
+		if ( matchingProtocol.isNil ){ ^nil; };
 
 		subClass = MKtlDevice.matchClass(matchingProtocol);
 		if( subClass.isNil ){
-			"WARNING: MKtl: device not found with name % and protocol %, and no matching device description found\n".postf( name, matchingProtocol );
+			"WARNING: MKtl: no device found with name % and protocol %"
+			"and no matching device description found.\n"
+			.postf( name, matchingProtocol );
 			^nil;
 		};
-		if( subClass.notNil ) {
-			^subClass.new( name, parentMKtl: parentMKtl );
-		};
+
+		^subClass.new( name, parentMKtl: parentMKtl );
 	}
 
-	*tryOpenDeviceFromDesc{ |name, protocol, desc, parentMKtl|
+	*tryOpenDeviceFromDesc { |name, desc, protocol, parentMKtl|
 		var subClass;
-		if ( protocol.isNil ){
-			^nil;
-		};
+		if ( protocol.isNil ){ ^nil; };
+
 		subClass = MKtlDevice.matchClass(protocol);
 		if( subClass.isNil ){
 			"WARNING: MKtl: device not found with description % and protocol %\n".postf( desc, protocol );
@@ -145,44 +138,44 @@ MKtlDevice {
 	}
 
 
-	init{ |initName, argDeviceName, parentMKtl|
+	init { |initName, argDeviceName, parentMKtl|
 		name = initName;
 		deviceName = argDeviceName;
 		mktl = parentMKtl;
 	}
 
-
-	*protocol{
+	// define interface for subclasses
+	*protocol {
 		this.subclassResponsibility(thisMethod)
 	}
 
-	cleanupElementsAndCollectives{
+	cleanupElementsAndCollectives {
 		this.subclassResponsibility(thisMethod)
 	}
 
-	initElements{
+	initElements {
 		this.subclassResponsibility(thisMethod)
 	}
 
-	initCollectives{
+	initCollectives {
 		this.subclassResponsibility(thisMethod)
 	}
 
-	closeDevice{
+	closeDevice {
 		this.subclassResponsibility(thisMethod)
 	}
 
 	// exploration:
 
-	exploring{
+	exploring {
 		this.subclassResponsibility(thisMethod)
 	}
 
-	explore{ |mode=true|
+	explore { |mode=true|
 		this.subclassResponsibility(thisMethod)
 	}
 
-	createDescriptionFile{
+	createDescriptionFile {
 		this.subclassResponsibility(thisMethod)
 	}
 }

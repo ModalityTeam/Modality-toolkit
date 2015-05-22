@@ -4,10 +4,12 @@ MIDIMKtlDevice : MKtlDevice {
 
 	classvar <protocol = \midi;
 	classvar <initialized = false;
-	classvar <sourceDeviceDict;         //      ('deviceName': MIDIEndPoint, ... )
-	                                    //i.e.  ( 'bcr0': MIDIEndPoint("BCR2000", "Port 1"), ... )
-	classvar <destinationDeviceDict;    //      ('deviceName': MIDIEndPoint, ... )
-	                                    //i.e.  ( 'bcr0': MIDIEndPoint("BCR2000", "Port 2"), ... )
+			//      ('deviceName': MIDIEndPoint, ... )
+			// e.g.  ( 'bcr0': MIDIEndPoint("BCR2000", "Port 1"), ... )
+	classvar <sourceDeviceDict;
+			//      ('deviceName': MIDIEndPoint, ... )
+	 		//i.e.  ( 'bcr0': MIDIEndPoint("BCR2000", "Port 2"), ... )
+	classvar <destinationDeviceDict;
 
 	// MIDI-specific address identifiers
 	var <srcID /*Int*/, <source /*MIDIEndPoint*/;
@@ -29,7 +31,7 @@ MIDIMKtlDevice : MKtlDevice {
 	var <global;
 	var <msgTypes;
 
-	closeDevice{
+	closeDevice {
 		destination.notNil.if{
 			if ( thisProcess.platform.name == \linux ){
 				midiOut.disconnect( MIDIClient.destinations.indexOf(destination) )

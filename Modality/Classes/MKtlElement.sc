@@ -43,6 +43,14 @@ MAbstractElement {
 		tags = Set[];
 	}
 
+	getSpec { |specName|
+		^if (source.notNil) {
+			source.getSpec(specName)
+		} {
+			MKtl.globalSpecs[specName];
+		};
+	}
+
 	trySend {
 		if( [\out, \inout].includes( this.elementDescription.ioType ) ) {
 			if (source.notNil) {
@@ -98,7 +106,7 @@ MAbstractElement {
 	}
 
 	initBus {|server|
-		server = server ?? {Server.default};
+		server = server ?? { Server.default };
 		server.serverRunning.not.if{^this};
 		bus.isNil.if({
 			bus = Bus.control(server, (deviceValue ? 1).asArray.size);
@@ -190,7 +198,7 @@ MKtlElement : MAbstractElement {
 		if (deviceSpec.isNil) {
 			warn("deviceSpec for '%' is missing!".format(deviceSpec));
 		} {
-			deviceSpec = deviceSpec.asSpec;
+			deviceSpec = this.getSpec(deviceSpec);
 			// keep old values if there.
 			if (deviceValue.isNil) {
 				deviceValue = prevValue = this.defaultValue;
@@ -213,13 +221,13 @@ MKtlElement : MAbstractElement {
 
 	deviceSpec_ { |spec|
 		if (spec.notNil) {
-			deviceSpec = spec.asSpec;
+			deviceSpec = this.getSpec(spec);
 			elementDescription.put(\spec, deviceSpec);
 		}
 	}
 
 	defaultValue {
-		^(deviceSpec.default ? 0);
+		^if (deviceSpec.notNil) { deviceSpec.default} { 0 };
 	}
 
 	// In MKtl, the instvar value is in deviceSpec range,
