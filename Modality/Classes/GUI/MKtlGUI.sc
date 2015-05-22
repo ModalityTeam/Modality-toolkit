@@ -118,6 +118,8 @@ MKtlGUI {
 		var createdWindow = false;
 		var numRowsColumns, cellSize;
 
+		this.layoutElements;
+
 		numRowsColumns = this.getNumRowsColumns;
 		cellSize = (maxSize / numRowsColumns.maxItem).round(1).clip(minViewSize,maxViewSize); // grid size
 		bounds = bounds ?? { Rect( 128,64, *(numRowsColumns.reverse * cellSize) + [10,30]) };
@@ -170,6 +172,60 @@ MKtlGUI {
 					.atAll([ \row, \height, \column, \width ]) - [0, 1, 0, 1]).clump(2).collect(_.sum);
 			}
 		}).flop.collect(_.maxItem) + 1;
+	}
+
+	layoutElements {
+		var columnSpacingTrend, layout, placeFunc, scanFunc;
+
+		layout = FlowLayout( Rect(0,0,32,32), 0@0, 0@0 );
+
+		placeFunc = { |element|
+			var bounds, style;
+			bounds = ().bounds_(
+				switch( element.type,
+					\slider, { Rect(0,0,1,3) },
+					{ Rect( 0,0,1,1 ) }
+				)
+			);
+			style = element.elementDescription[ \style ] ? ();
+
+			style.parent = nil;
+
+			if( style.width.notNil ) { bounds.bounds.width = style.width };
+			if( style.height.notNil ) { bounds.bounds.height = style.height };
+			if( style.column.notNil ) {
+				if( layout.left > 0 && { style.column > 0 } && { style.column != layout.left } && { (style.row ? layout.top) == layout.top }) {
+					columnSpacingTrend = style.column - layout.left;
+				};
+				layout.left = style.column;
+			} {
+				if( columnSpacingTrend.notNil ) {
+					layout.shift( columnSpacingTrend, 0 );
+				};
+			};
+			if( style.row.notNil ) { layout.top = style.row };
+			layout.place( bounds );
+			bounds = bounds.bounds;
+			element.elementDescription[ \style ] = style
+			.parent_( ( row: bounds.top, column: bounds.left, width: bounds.width, height: bounds.height ) );
+		};
+
+		scanFunc = { |element|
+			var lastElement;
+			if( element.isKindOf( MKtlElementGroup ) ) {
+				if( element.elements.any({ |x| x.isKindOf( MKtlElementGroup ) }) ) {
+					element.elements.do(scanFunc.(_));
+				} {
+					layout.nextLine;
+					columnSpacingTrend = nil;
+					element.elements.do({ |item| placeFunc.( item ); });
+				};
+			} {
+				placeFunc.( element );
+			};
+		};
+
+		scanFunc.(mktl.elements);
 	}
 
 	updateGUI {
