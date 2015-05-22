@@ -51,6 +51,8 @@ For OSC this needs to be a dictionary with information on the ipAdresses and por
 ## specs [optional]
 || A dictionary with serialized specs like code::(\key: [0, 144, \lin])::. These overwrite existing definition locally for this description only.
 
+## initialisationMessages [optional]
+|| Optional messages that need to be sent to the device when it is opened to ensure that it works correctly for all the features in the spec.
 
 ## infoMessage [optional]
 || A message to be displayed when the MKtl is created. This can be used to ask the user to switch to a certain physical preset of the device.

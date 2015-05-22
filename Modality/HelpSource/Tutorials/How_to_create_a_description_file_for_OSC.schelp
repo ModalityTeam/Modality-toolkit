@@ -1,7 +1,7 @@
 title:: How to create a description file for an OSC device
 summary:: How to create a description file to use with the Modality toolkit for an OSC device
 categories:: Libraries>Modality
-related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Classes/OSCMon
+related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Classes/OSCMon, Tutorials/How_to_create_a_description_file
 
 Section:: Introduction
 
@@ -19,6 +19,7 @@ list::
 ##link::#Write a description file for the explored OSC device::
 ##link::#OSC output::
 ##link::#OSC device info::
+##link::#OSC Initialisation messages::
 ::
 
 section:: Simple input
@@ -824,6 +825,25 @@ m.mktlDevice.source;
 m.mktlDevice.destination;
 // will be NetAddr( "127.0.0.1", 31419 );
 ::
+
+
+section:: OSC Initialisation messages
+
+Some devices need initialisation messages to be sent before they can function properly with all their modes activated. You can define these messages in the code::initalisationMessages:: field of the device description.
+For OSC these have to be an Array of messages that need to be sent, each element of the Array contains the OSC path and the parameters that need to be sent.
+
+For example for the Manta we need:
+
+code::
+(
+initialisationMessages: [
+	[ "/manta/ledcontrol", "padandbutton", 1 ],
+	[ "/manta/ledcontrol", "slider", 1 ],
+	[ "/manta/ledcontrol", "button", 1 ]
+]
+)
+::
+
 
 section:: argTemplate matching
 
