@@ -126,8 +126,6 @@ MKtlGUI {
 			Window( mktl.name, bounds, false ).front;
 		};
 
-		parent.acceptsClickThrough_(true);
-
 		views = mktl.elements.flat.collect({ |item|
 			var style, bounds;
 			style = item.elementDescription[ \style ] ?? { ( row: 0, column: 0, width: 0, height: 0 ) };
@@ -139,11 +137,6 @@ MKtlGUI {
 		.drawFunc_({ |vw|
 			views.do({ |item, i|
 				var name;
-				/*var offset = 0@0;
-				if( item.view.bounds.width < 45 ) {
-					offset = 0@([-7,7].wrapAt(i));
-				};
-				*/
 				name = item.element.name.asString;
 				if( name.asString.size > 5 ) {
 					name = name.split( $_ );
@@ -152,7 +145,6 @@ MKtlGUI {
 				};
 				Pen.use({
 					Pen.translate( *item.view.bounds.center.asArray );
-					//Pen.rotate( -0.125pi );
 					Pen.stringCenteredIn( name, Rect.aboutPoint( 0@0, 50, 15 ), nil, Color.white )
 				});
 			});
