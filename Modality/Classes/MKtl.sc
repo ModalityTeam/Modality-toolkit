@@ -2,15 +2,16 @@
 
 MKtl works as follows:
 
-* MKtl.find discover devices currently available
-* MKtlDesc - load or make an MKtlDesc for the one that should be opened
-* make elements from MKtlDesc elementsDesc
+* MKtl.find discovers hardware devices currently available
+
+* MKtlDesc is asked to load or make an MKtlDesc for the one that should be opened
+
+* make elements from MKtlDesc elementsDesc in 2 flavors
 - hierarchical : elements = MKtlElementGroup
 - flat : elementsDict
 * makeDevice
 - if hardware present make mktlDevice, and open it
-- else this is a virtual device
-
+- else this is a virtual MKtl
 
 */
 
@@ -128,7 +129,9 @@ MKtl { // abstract class
 			^res
 		};
 
-		// we found nothing, so we make a new MKtl
+		// we found no MKtl, but we have a name or a desc,
+		// so we try to make a new MKtl
+
 		MKtlDevice.initHardwareDevices( lookForNew );
 
 		desc = MKtlDesc(desc);
@@ -141,7 +144,8 @@ MKtl { // abstract class
 				^nil
 			}
 		};
-		// we have a name and hopefully a desc
+
+		// now we have a name and hopefully a desc
 
 		^super.newCopyArgs(name).init(desc);
 	}
@@ -161,55 +165,12 @@ MKtl { // abstract class
 		elementsDict = ();
 	}
 
-	// ------ make MKtlDevice and interface with it
-
-	isVirtual { ^mktlDevice.isNil }
-
-	trace { |value=true|
-		if (this.isVirtual.not){ mktlDevice.trace( value ) };
-		traceRunning = value;
-	}
-
-	openDevice { |lookAgain=true|
-
-		if ( this.mktlDevice.notNil ){
-			"WARNING: Already a device opened for %.\n"
-			"Please close it first with %.closeDevice;\n".postf(this, this);
-			^this;
-		};
-		// this may be an issue, only look for appropriate protocol
-		MKtlDevice.initHardwareDevices( lookAgain, desc.protocol.bubble );
-	// 	this.prTryOpenDevice( this.name, desc.descDict );
-	}
-
-	// temp redirect for other classes
+		// temp redirect for other classes
 	deviceDescriptionArray { ^desc.elementsDesc }
 
-	prTryOpenDevice { |devName| // devName is a shortname
-		// var newMKtlDevice;
-		//
-		// newMKtlDevice = MKtlDevice.tryOpenDevice( devName, this );
-		// if ( newMKtlDevice.isNil ){
-		// 	// maybe I gave a funky name, and can find the device from the spec
-		//
-		// 	devName = MKtlDevice.findDeviceShortNameFromLongName( desc.device );
-		// 	if ( devName.notNil ){
-		// 		newMKtlDevice = MKtlDevice.tryOpenDevice( devName, this );
-		// 	}{
-		// 		newMKtlDevice = MKtlDevice.tryOpenDeviceFromDesc(
-		// 		name, desc.protocol, desc.device, this );
-		// 		devName = name;
-		// 	};
-		// };
-		//
-		// if ( newMKtlDevice.notNil ){
-		// 	// cross reference:
-		// 	mktlDevice = newMKtlDevice;
-		// 	"Opened device % for MKtl(%)\n".postf( devName, name );
-		// }{
-		// 	"WARNING: Could not open device for MKtl(%)\n".postf( name );
-		// };
-	}
+	// new desc, so decommission everything,
+	// remake elements from new desc,
+	// close mktldevice if there and try to open a new one
 
 	rebuildFrom { |deviceDescriptionNameOrDict| // could be a string/symbol or dictionary
 		// var devDescName, devDesc;
@@ -244,43 +205,6 @@ MKtl { // abstract class
 		// };
 		//
 		// this.changed( \elements );
-	}
-
-	closeDevice {
-		if ( mktlDevice.isNil ){ ^this };
-		mktlDevice.closeDevice;
-	}
-
-	send { |key, val|
-		if ( mktlDevice.isNil ){ ^this };
-		mktlDevice.send( key, val );
-	}
-
-		// observe mktlDevice to create a description file
-	explore { |mode=true|
-		if ( mktlDevice.isNil ){
-			"MKtl(%) has no open device, nothing to explore\n".postf( name );
-			^this
-		};
-		mktlDevice.explore( mode );
-	}
-
-	exploring {
-		if ( mktlDevice.isNil ){ ^false };
-		^mktlDevice.exploring;
-	}
-
-	createDescriptionFile {
-		if ( mktlDevice.isNil ){
-			"MKtl(%) has no open device, cannot create description file\n".postf( name );
-			^this
-		};
-		mktlDevice.createDescriptionFile;
-	}
-
-	free {
-		this.closeDevice;
-		all.removeAt( name );
 	}
 
 
@@ -409,14 +333,15 @@ MKtl { // abstract class
 		^(args[..n-2].collect({ |x| x.asString++"_"}).reduce('++')++args.last).asSymbol
 	}
 
-	// ----------- interface to elements once they are made ---------
-
-	elementAt { |...args|
-		^elements.deepAt(*args)
-	}
-
-	at { |index|
-		^elements.at( index );
+	*prArgToElementKey { |argm|
+		//argm is either a symbol, a string or an array
+		^switch( argm.class)
+		{ Symbol }{ argm }
+		{ String }{ argm.asSymbol }
+		{ (argm[..(argm.size-2)].inject(
+			"",
+			{ |a,b| a++b.asString++"_"}).asSymbol ++ argm.last.asString).asSymbol
+		}
 	}
 
 	// should filter: those for my platform only
@@ -427,6 +352,53 @@ MKtl { // abstract class
 		// 	^elementsDict.keys.asArray;
 		// }
 	}
+
+	elementAt { |...args|
+		^elements.deepAt(*args)
+	}
+
+	at { |index|
+		^elements.at( index );
+	}
+
+		//////////////// interface to elements:
+	deviceValueAt { |elName|
+		if (elName.isKindOf(Collection).not) {
+			^elementsDict.at(elName).deviceValue;
+		};
+		^elName.collect { |name| this.deviceValueAt(name) }
+	}
+
+	valueAt { |elName|
+		if (elName.isKindOf(Collection).not) {
+			^elementsDict.at(elName).value;
+		};
+		^elName.collect { |name| this.valueAt(name) }
+	}
+
+	setDeviceValueAt { |elName, val|
+		if (elName.isKindOf(Collection).not) {
+			^this.at(elName).deviceValue_(val);
+		};
+		[elName, val].flop.do { |pair|
+			elementsDict[pair[0].postcs].deviceValue_(pair[1].postcs)
+		};
+	}
+
+	setValueAt { |elName, val|
+		if (elName.isKindOf(Collection).not) {
+			^this.at(elName).value_(val);
+		};
+		[elName, val].flop.do { |pair|
+			elementsDict[pair[0].postcs].value_(pair[1].postcs)
+		};
+	}
+
+	reset {
+		elementsDict.do( _.resetAction )
+	}
+
+	// get subsets of elements ---------
 
 	elementsOfType { |type|
 		^elementsDict.select { |elem|
@@ -481,57 +453,89 @@ MKtl { // abstract class
 		}
 	}
 
-	// /*
-	// recordDeviceValue { |key,value|
-	// //		recordFunc.value( key, value );
-	// }
-	// */
 
-	//////////////// interface to elements:
-	deviceValueAt { |elName|
-		if (elName.isKindOf(Collection).not) {
-			^elementsDict.at(elName).deviceValue;
+
+		// ------ make MKtlDevice and interface with it
+
+	openDevice { |lookAgain=true|
+
+		if ( this.mktlDevice.notNil ){
+			"WARNING: Already a device opened for %.\n"
+			"Please close it first with %.closeDevice;\n".postf(this, this);
+			^this;
 		};
-		^elName.collect { |name| this.deviceValueAt(name) }
+		// this may be an issue, only look for appropriate protocol
+		MKtlDevice.initHardwareDevices( lookAgain, desc.protocol.bubble );
+	// 	this.prTryOpenDevice( this.name, desc.descDict );
 	}
 
-	valueAt { |elName|
-		if (elName.isKindOf(Collection).not) {
-			^elementsDict.at(elName).value;
-		};
-		^elName.collect { |name| this.valueAt(name) }
+	isVirtual { ^mktlDevice.isNil }
+
+	trace { |value=true|
+		if (this.isVirtual.not){ mktlDevice.trace( value ) };
+		traceRunning = value;
 	}
 
-	setDeviceValueAt { |elName, val|
-		if (elName.isKindOf(Collection).not) {
-			^this.at(elName).deviceValue_(val);
-		};
-		[elName, val].flop.do { |pair|
-			elementsDict[pair[0].postcs].deviceValue_(pair[1].postcs)
-		};
+	prTryOpenDevice { |devName| // devName is a shortname
+		// var newMKtlDevice;
+		//
+		// newMKtlDevice = MKtlDevice.tryOpenDevice( devName, this );
+		// if ( newMKtlDevice.isNil ){
+		// 	// maybe I gave a funky name, and can find the device from the spec
+		//
+		// 	devName = MKtlDevice.findDeviceShortNameFromLongName( desc.device );
+		// 	if ( devName.notNil ){
+		// 		newMKtlDevice = MKtlDevice.tryOpenDevice( devName, this );
+		// 	}{
+		// 		newMKtlDevice = MKtlDevice.tryOpenDeviceFromDesc(
+		// 		name, desc.protocol, desc.device, this );
+		// 		devName = name;
+		// 	};
+		// };
+		//
+		// if ( newMKtlDevice.notNil ){
+		// 	// cross reference:
+		// 	mktlDevice = newMKtlDevice;
+		// 	"Opened device % for MKtl(%)\n".postf( devName, name );
+		// }{
+		// 	"WARNING: Could not open device for MKtl(%)\n".postf( name );
+		// };
 	}
 
-	setValueAt { |elName, val|
-		if (elName.isKindOf(Collection).not) {
-			^this.at(elName).value_(val);
-		};
-		[elName, val].flop.do { |pair|
-			elementsDict[pair[0].postcs].value_(pair[1].postcs)
-		};
+	closeDevice {
+		if ( mktlDevice.isNil ){ ^this };
+		mktlDevice.closeDevice;
 	}
 
-	reset {
-		elementsDict.do( _.resetAction )
+	send { |key, val|
+		if ( mktlDevice.isNil ){ ^this };
+		mktlDevice.send( key, val );
 	}
 
-	*prArgToElementKey { |argm|
-		//argm is either a symbol, a string or an array
-		^switch( argm.class)
-		{ Symbol }{ argm }
-		{ String }{ argm.asSymbol }
-		{ (argm[..(argm.size-2)].inject(
-			"",
-			{ |a,b| a++b.asString++"_"}).asSymbol ++ argm.last.asString).asSymbol
-		}
+		// observe mktlDevice to create a description file
+	explore { |mode=true|
+		if ( mktlDevice.isNil ){
+			"MKtl(%) has no open device, nothing to explore\n".postf( name );
+			^this
+		};
+		mktlDevice.explore( mode );
+	}
+
+	exploring {
+		if ( mktlDevice.isNil ){ ^false };
+		^mktlDevice.exploring;
+	}
+
+	createDescriptionFile {
+		if ( mktlDevice.isNil ){
+			"MKtl(%) has no open device, cannot create description file\n".postf( name );
+			^this
+		};
+		mktlDevice.createDescriptionFile;
+	}
+
+	free {
+		this.closeDevice;
+		all.removeAt( name );
 	}
 }

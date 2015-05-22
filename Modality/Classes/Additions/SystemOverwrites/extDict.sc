@@ -62,7 +62,7 @@ a.traverseDo({ |el|
 b; // [ 2, 4, 6, 8 ]
 
 b = a.traverseCollect({ |el, deepKeys| if (el.isNumber) { el + 100 } { el } });
-a.printAll;"";
+b.printAll;"";
 
 b = a.traverseCollect({ |el, deepKeys| [el, deepKeys] });
 b.printAll;
