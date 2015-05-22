@@ -738,4 +738,10 @@ MIDIMKtlDevice : MKtlDevice {
 	makeBendKey { |chan| ^("b_%".format(chan)).asSymbol }
 	makeProgramKey { |chan| ^("p_%".format(chan)).asSymbol }
 
+
+	sendInitialiationMessages{
+		var messages = this.mktl.initialisationMessages.do{ |it|
+			midiOut.performList( it[0], it.copyToEnd(1) );
+		}
+	}
 }

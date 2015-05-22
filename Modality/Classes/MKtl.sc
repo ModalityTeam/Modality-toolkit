@@ -923,4 +923,8 @@ MKtl { // abstract class
 	}
 
 
+	initialisationMessages{
+		^deviceInfoDict[\initialisationMessages];
+	}
+
 }

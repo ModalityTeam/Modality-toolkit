@@ -194,4 +194,11 @@ MKtlDevice{
 	createDescriptionFile{
 		this.subclassResponsibility(thisMethod)
 	}
+
+	// initialisation messages
+
+	sendInitialiationMessages{
+		this.subclassResponsibility(thisMethod)
+	}
+
 }

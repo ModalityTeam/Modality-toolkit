@@ -235,4 +235,8 @@ HIDMKtlDevice : MKtlDevice {
 			};
 		};
 	}
+
+	sendInitialiationMessages{
+
+	}
 }
