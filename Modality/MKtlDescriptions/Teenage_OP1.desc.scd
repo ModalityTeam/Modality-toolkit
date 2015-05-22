@@ -8,7 +8,7 @@ protocol: \midi,
 description: (
 	\key: (
 		\on: (5..124).collect{ |num|
-			(\midiMsgType: \noteOn, \type: \key, \midiChan: 0, \midiNum: num, \spec: \midiNote)
+			(\midiMsgType: \noteOn, \type: \key, \midiChan: 0, \midiNum: num, \spec: \midiNote, \ioType: \in)
 		},
 		\off: (5..124).collect{ |num|
 			(\midiMsgType: \noteOff, \type: \key, \midiChan: 0, \midiNum: num, \spec: \midiNote, \ioType: \in)
