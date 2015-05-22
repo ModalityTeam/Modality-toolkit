@@ -62,6 +62,7 @@ specs: (
 	mantaLed: StringMap.new( ["off","amber","red"] ), // led can be off, amber or red
 ),
 infoURL: "https://github.com/ssfrr/libmanta",
+infoMessage: "Please start the MantaOSC program, if it is not already started",
 idInfo: ( srcPort: 31417, ipAddress: "127.0.0.1", recvPort: 31416 ), // sends/receives on the same port, so we do not need to define destPort separately
 protocol: \osc,
 description: (
