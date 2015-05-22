@@ -11,13 +11,16 @@ MKtlDesc {
 	classvar <descFolders;
 	classvar <allDescs;
 
-	var <descDict, <path, <>shortName, <elementsArray;
+	classvar <>isElementTestFunc;
+
+	var <descDict, <path, <>shortName, <elementsKeyValueArray;
 
 	*initClass {
 		defaultFolder = this.filenameSymbol.asString.dirname.dirname
 			+/+ folderName;
 		descFolders = List[defaultFolder];
 		allDescs =();
+		isElementTestFunc = { |el| el.isKindOf(Dictionary) and: { el[\spec].notNil } };
 	}
 
 	*addFolder { |path, name = (folderName)|
@@ -107,22 +110,27 @@ MKtlDesc {
 
 	*makeDescFrom { |symbolStringOrDict|
 		var dict = this.findDict(symbolStringOrDict);
-		dict.keys.postcs;
-		^super.new(dict);
+		var newDesc = super.new(dict);
+		^newDesc;
 	}
 
 	*findDict { |descOrPathOrSymbol|
 		var dict = descOrPathOrSymbol.class.switch(
 			Symbol, { this.at(descOrPathOrSymbol).descDict },
-			String, { var str = this.findFile(descOrPathOrSymbol);
-				if (str.notNil) { str.load; }
+			String, {
+				var str = this.findFile(descOrPathOrSymbol);
+				var newdict;
+				if (str.notNil) {
+					newdict = str.load;
+					if (newdict.isKindOf(Dictionary)) {
+						newdict[\path] = str;
+					};
+				};
+				newdict;
 			},
 			Event, { descOrPathOrSymbol }
 		);
-		if (dict.isNil) {
-		//	this.warnNoDescFound(symbolStringOrDict);
-			"warnNoDescFound".warn;
-		};
+		if (dict.isNil) { "warnNoDescFound".warn; };
 		^dict
 	}
 
@@ -140,10 +148,9 @@ MKtlDesc {
 		shortName = MKtlDesc.makeShortName(descDict[\device]).asSymbol;
 		"shortName: %\n".postf(shortName);
 		allDescs.put (shortName, this);
-		elementsArray = Array.newClear(this.elementsDesc.size);
-		this.elementsDesc.keysValuesDo { |elName, elDesc|
-			elementsArray.add( [elName, elDesc]);
-		};
+		path = path ?? { descDict[\path] };
+		this.makeElementsArray;
+		this.resolveDescEntriesForPlatform;
 	}
 
 	openFile { unixCmd("open" + quote(path)) }
@@ -184,23 +191,6 @@ MKtlDesc {
 		if (elements) { this.postElements }
 	}
 
-	// prettyPost with indent, not working yet
-	postElements {
-		// var tabs = 0;
-		// var postLine = { |elem, keyOrIndex, tabs = 0|
-		// 	if (elem.isKindOf(Collection)) {
-		// 		elem.do { |el, keyOrI| postLine.(el, keyOrI, tabs + 1) };
-		// 	} {
-		// 		String.fill(tabs, Char.tab)
-		// 		++ "% - %\n".postf(keyOrIndex, elem);
-		// 	};
-		// };
-		// "desc elements: ".postln;
-		// this.desc.do { |el, keyOrI|
-		// 	postLine.(el, keyOrI, 0)
-		// };
-	}
-
 	writeFile { |path|
 		"! more than nice to have ! - not done yet.".postln;
 	}
@@ -210,61 +200,47 @@ MKtlDesc {
 		stream << this.class.name << ".at(%)".format(shortName.cs);
 	}
 
-	// [\a, \b, \c].join($_).asSymbol;
+	*resolveForPlatform { |dict|
+		var platForms = [\osx, \linux, \win];
+		var myPlatform = thisProcess.platform.name;
 
-
-	// *flattenDescription { |devDesc|
-	// 	var platformDesc = devDesc[ thisProcess.platform.name ];
-	// 	if ( platformDesc.notNil ){
-	// 		platformDesc.keysValuesDo{ |key,val|
-	// 			devDesc.put( key, val );
-	// 		}
-	// 	};
-	// 	^devDesc;
-	// }
-	//
-	// *flattenDescriptionForIO { |eleDesc, ioType|
-	// 	// some descriptions may have ioType specific entries, we flatten those into the dictionary
-	// 	var ioDesc = eleDesc[ thisProcess.platform.name ];
-	// 	if ( ioDesc.notNil ){
-	// 		ioDesc.keysValuesDo { |key,val|
-	// 			eleDesc.put( key, val );
-	// 		}
-	// 	};
-	// 	^eleDesc;
-	// }
-	//
-	// elementDescriptionFor { |elname|
-	// 	^deviceDescriptionArray[deviceDescriptionArray.indexOf(elname) + 1]
-	// }
-	//
-	// postDeviceDescription {
-	// 	deviceDescriptionArray.pairsDo {|a, b| "% : %\n".postf(a, b); }
-	// }
-
-	isElement { |dict|
-		^dict.isKindOf(Dictionary) and: {
-			dict.keys.includes( \type ) or: {
-				dict.values.any({|x| (x.size > 1) }).not
-			}
+		dict.keysValuesDo { |dictkey, entry|
+			var foundPlatformDep = false, foundval;
+			if (entry.isKindOf(Dictionary)) {
+				foundPlatformDep = entry.keys.sect(platForms).notEmpty;
+			};
+			if (foundPlatformDep) {
+				foundval = entry[myPlatform];
+				"MKtlDesc replacing: ".post;
+				dict.put(*[dictkey, foundval].postln);
+			};
 		}
+		^dict
 	}
 
-	*makeFlatDeviceDescription { |devDesc|
-		var flatDict = ();
-		var joinFunc = {|...args| args.join($_) };
-		var underScorify = { |a,b|
-			if(a != "") {
-				a++"_"++b.asString
-			} {
-				b.asString
-			}
+	// (-: just in case programming ;-)
+	resolveDescEntriesForPlatform {
+		this.class.resolveForPlatform(descDict);
+		elementsKeyValueArray.pairsDo { |key, elemDesc|
+			MKtlDesc.resolveForPlatform(elemDesc);
 		};
-		this.prTraverse.(devDesc, "", underScorify, { |state, x|
-			flatDict.put(state.asSymbol,  x)
-		} );
+		this.class.resolveForPlatform(elementsKeyValueArray);
+	}
 
-		^flatDict.asKeyValuePairs
+	postElementsDesc {
+		this.elementsDesc.traverseDo({ |el, deepKeys|
+			deepKeys.size.do { $\t.post };
+			deepKeys.postcs;
+		}, (_.isKindOf(Dictionary)));
+	}
+
+	makeElementsArray { |devDesc|
+		var arr = [];
+		this.elementsDesc.traverseDo({ |el, deepKeys|
+			var elKey = deepKeys.join($_).asSymbol;
+			arr = arr.add(elKey).add(el);
+		}, isElementTestFunc);
+		elementsKeyValueArray = arr;
 	}
 
 		//traversal function for combinations of dictionaries and arrays

@@ -38,43 +38,6 @@
 
 }
 
-/*
-// traversing nested/mixed Arrays and Dictionaries:
-
-a = [1, 2, (a: 3, b: 4), [5, 6, "seven", (c: 8, d: [9])]];
-
-// prettyPost
-a.traverseDo({ |el, deepKeys|
-	deepKeys.size.do { $\t.post };
-	[el, deepKeys].postln;
-});
-
-// get a flat list of all elements:
-b = nil; a.traverseDo({ |el| b = b.add(el) }); b;
-// -> [ 1, 2, 3, 4, 5, 6, seven, 8, 9 ]
-
-
-// flat list of selected leaves
-b = nil;
-a.traverseDo({ |el|
-	if (el.isNumber and: { el.even }) { b = b.add(el) }
-});
-b; // [ 2, 4, 6, 8 ]
-
-b = a.traverseCollect({ |el, deepKeys| if (el.isNumber) { el + 100 } { el } });
-b.printAll;"";
-
-b = a.traverseCollect({ |el, deepKeys| [el, deepKeys] });
-b.printAll;
-
-// deepAt could be safer
-a.deepAt();
-a.deepAt(5);
-a.deepAt(2, \a);
-a.deepAt(3, 1);
-
-*/
-
 + SequenceableCollection {
 
 	traverseDo { |doAtLeaf, isLeaf, deepKeys|
@@ -120,12 +83,12 @@ a.deepAt(3, 1);
 		var canTraverse = { |el| el.mutable and: { el.respondsTo(\traverseDo) } };
 		isLeaf = isLeaf ? { |el| (el.mutable and: { el.respondsTo(\traverseDo) }).not };
 		this.keysValuesDo { |key, elem|
-			deepKeys = deepKeys ++ key;
+			var myDeepKeys = deepKeys.asArray ++ key;
 			if (isLeaf.(elem)) {
-				doAtLeaf.(elem, deepKeys)
+				doAtLeaf.(elem, myDeepKeys)
 			} {
 				if (canTraverse.(elem)) {
-					elem.traverseDo(doAtLeaf, isLeaf, deepKeys);
+					elem.traverseDo(doAtLeaf, isLeaf, myDeepKeys);
 				} {
 					"traverseDo should not get here -> object is malformed:\n"
 					"at % - element % is not a leaf and not a collection.".format(key, elem);
@@ -139,12 +102,12 @@ a.deepAt(3, 1);
 		isLeaf = isLeaf ? { |el| (el.mutable and: { el.respondsTo(\traverseDo) }).not };
 		^this.collect { |elem, key|
 			var result;
-			deepKeys = deepKeys ++ key;
+			var myDeepKeys = deepKeys.asArray ++ key;
 			if (isLeaf.(elem)) {
-				result = doAtLeaf.(elem, deepKeys)
+				result = doAtLeaf.(elem, myDeepKeys)
 			} {
 				if (canTraverse.(elem)) {
-					result = elem.traverseCollect(doAtLeaf, isLeaf, deepKeys);
+					result = elem.traverseCollect(doAtLeaf, isLeaf, myDeepKeys);
 				} {
 					"traverseDo - should not get here, so object is malformed:\n"
 					"at % - element % is not a leaf and not a collection.".format(key, elem);

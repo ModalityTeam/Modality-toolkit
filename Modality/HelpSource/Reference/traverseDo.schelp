@@ -1,0 +1,47 @@
+title::traverseDo
+categories::Reference
+summary:: traversing nested combinations of arrays and dictionaries
+related:: Classes/SequenceableCollection, Classes/Dictionary, Methods/traverseCollect, Methods/deepDo, Methods/deepAt
+
+method:: traverseDo
+When working with nested combinations of arrays and dictionaries or events, traversing them in order to get to all leaf elements once is often needed, and tricky to get to work properly. deepDo assumes all subCollections to be of the same type, and thus is not flexible enough.
+
+code::
+// traversing nested combinations of arrays and dictionaries:
+// make a strange test example
+a = [1, 2, (a: 3, b: 4), [5, 6, "seven", (c: 8, d: [9])]];
+
+// post elements and depths
+a.traverseDo({ |el, deepKeys|
+	deepKeys.size.do { $\t.post };
+	[el, deepKeys].postln;
+});
+
+// use traverseDo to get a flat list of all elements:
+b = nil; a.traverseDo({ |el| b = b.add(el) }); b;
+// -> [ 1, 2, 3, 4, 5, 6, seven, 8, 9 ]
+
+
+// and a flat list of selected leaves
+b = nil;
+a.traverseDo({ |el|
+	if (el.isNumber and: { el.even }) { b = b.add(el) }
+});
+b; // -> [ 2, 4, 6, 8 ]
+
+// operate on them
+b = a.traverseCollect({ |el, deepKeys| if (el.isNumber) { el + 100 } { el } });
+b.printAll;"";
+
+b = a.traverseCollect({ |el, deepKeys| [el, deepKeys] });
+b.printAll;
+
+// deepAt could made be safer
+a.deepAt();
+a.deepAt(5);
+a.deepAt(2, \a);
+a.deepAt(3, 1);
+
+*/
+
+::
