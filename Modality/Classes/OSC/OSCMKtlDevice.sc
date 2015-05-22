@@ -243,7 +243,7 @@ OSCMKtlDevice : MKtlDevice {
 							"% - % > % | type: %, src:%"
 							.format(this.name, el.name, el.value.asStringPrec(3), el.type, el.source).postln;
 						}
-					}, oscPath, source, recvPort, argTemplate: argTemplate );
+					}, oscPath, source, recvPort, argTemplate: argTemplate ).permanent_( true );
 				);
 			};
 		};
@@ -283,9 +283,9 @@ OSCMKtlDevice : MKtlDevice {
 						};
 						if(traceRunning) {
 							"% - % > % | type: %, src:%"
-							.format(this.name, el.name, el.value.collect{ |it| it.asStringPrec(3) }, el.type, el.source).postln; // fix tracing
+							.format(this.name, el.name, el.value.collect{ |it| it.asStringPrec(3) }, el.type, el.source).postln;
 						}
-					}, oscPath, source, recvPort, argTemplate: argTemplate ); // optional add host/port
+					}, oscPath, source, recvPort, argTemplate: argTemplate ).permanent_( true );
 				);
 			};
 		};
