@@ -709,6 +709,8 @@ MIDIMKtlDevice : MKtlDevice {
 			{\cc}{ midiOut.control(ch, num, val ) }
 			{\noteOn}{ midiOut.noteOn(ch, num, val ) }
 			{\noteOff}{ midiOut.noteOff(ch, num, val ) }
+			{\noteOnOff} { midiOut.noteOn(ch, num, val ) }
+			{\bend}{ midiOut.bend(ch, val) }
 //			{\note}{ x.postln /*TODO: check type for noteOn, noteOff, etc*/ }
 			{warn("MIDIMKtlDevice: message type % not recognised".format(type))}
 	 	}
