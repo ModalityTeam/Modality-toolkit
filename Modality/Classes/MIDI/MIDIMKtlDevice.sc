@@ -304,9 +304,9 @@ MIDIMKtlDevice : MKtlDevice {
 
 	}
 
-	makeHashKey{ |descr,elName|
+	makeHashKey { |descr, elName|
 		var hashs;
-		//"makeHashKey : %\n".postf(descr);
+		"makeHashKey : %: %\n".postf(elName, descr);
 		if( descr[\midiMsgType].isNil ) {
 			"MIDIMKtlDevice:prepareElementHashDict (%): \\midiMsgType not found. Please add it."
 			.format(this, elName).error;
@@ -348,7 +348,7 @@ MIDIMKtlDevice : MKtlDevice {
 
 					);
 
-					hashs.do{ |hash|
+					hashs.do { |hash|
 						elementHashDict.put(
 							hash, mktl.elementsDict[elName];
 						)
@@ -364,7 +364,6 @@ MIDIMKtlDevice : MKtlDevice {
 				this.dump;
 			}
 		};
-
 	}
 
 	// plumbing
