@@ -11,7 +11,7 @@ MKtlDesc {
 	classvar <descFolders;
 	classvar <allDescs;
 
-	var <descDict, <path, <>shortName;
+	var <descDict, <path, <>shortName, <elementsArray;
 
 	*initClass {
 		defaultFolder = this.filenameSymbol.asString.dirname.dirname
@@ -140,6 +140,10 @@ MKtlDesc {
 		shortName = MKtlDesc.makeShortName(descDict[\device]).asSymbol;
 		"shortName: %\n".postf(shortName);
 		allDescs.put (shortName, this);
+		elementsArray = Array.newClear(this.elementsDesc.size);
+		this.elementsDesc.keysValuesDo { |elName, elDesc|
+			elementsArray.add( [elName, elDesc]);
+		};
 	}
 
 	openFile { unixCmd("open" + quote(path)) }
@@ -150,6 +154,7 @@ MKtlDesc {
 			this.init;
 		};
 	}
+
 
 	// keep all data in descDict only if possible
 	protocol { ^descDict[\protocol] }
@@ -203,5 +208,97 @@ MKtlDesc {
 	storeArgs { ^[shortName] }
 	printOn { |stream|
 		stream << this.class.name << ".at(%)".format(shortName.cs);
+	}
+
+	// [\a, \b, \c].join($_).asSymbol;
+
+
+	// *flattenDescription { |devDesc|
+	// 	var platformDesc = devDesc[ thisProcess.platform.name ];
+	// 	if ( platformDesc.notNil ){
+	// 		platformDesc.keysValuesDo{ |key,val|
+	// 			devDesc.put( key, val );
+	// 		}
+	// 	};
+	// 	^devDesc;
+	// }
+	//
+	// *flattenDescriptionForIO { |eleDesc, ioType|
+	// 	// some descriptions may have ioType specific entries, we flatten those into the dictionary
+	// 	var ioDesc = eleDesc[ thisProcess.platform.name ];
+	// 	if ( ioDesc.notNil ){
+	// 		ioDesc.keysValuesDo { |key,val|
+	// 			eleDesc.put( key, val );
+	// 		}
+	// 	};
+	// 	^eleDesc;
+	// }
+	//
+	// elementDescriptionFor { |elname|
+	// 	^deviceDescriptionArray[deviceDescriptionArray.indexOf(elname) + 1]
+	// }
+	//
+	// postDeviceDescription {
+	// 	deviceDescriptionArray.pairsDo {|a, b| "% : %\n".postf(a, b); }
+	// }
+
+	isElement { |dict|
+		^dict.isKindOf(Dictionary) and: {
+			dict.keys.includes( \type ) or: {
+				dict.values.any({|x| (x.size > 1) }).not
+			}
+		}
+	}
+
+	*makeFlatDeviceDescription { |devDesc|
+		var flatDict = ();
+		var joinFunc = {|...args| args.join($_) };
+		var underScorify = { |a,b|
+			if(a != "") {
+				a++"_"++b.asString
+			} {
+				b.asString
+			}
+		};
+		this.prTraverse.(devDesc, "", underScorify, { |state, x|
+			flatDict.put(state.asSymbol,  x)
+		} );
+
+		^flatDict.asKeyValuePairs
+	}
+
+		//traversal function for combinations of dictionaries and arrays
+	*prTraverse {
+		var isLeaf = { |dict|
+			dict.keys.includes( \type ) or:
+			dict.values.any({|x| (x.size > 1) }).not;
+		};
+
+		var f = { |x, state, stateFuncOnNodes, leafFunc|
+
+			if(x.isKindOf(Dictionary) ){
+				if( isLeaf.(x) ) {
+					leafFunc.( state , x )
+				}{
+					x.sortedKeysValuesCollect{ |val, key|
+						f.(val, stateFuncOnNodes.(state, key), stateFuncOnNodes, leafFunc )
+					}
+				}
+			} {
+				if(x.isKindOf(Array) ) {
+					if( x.first.isKindOf( Association ) ) {
+						f.(IdentityDictionary.with( *x ), state, stateFuncOnNodes, leafFunc );
+					} {
+						x.collect{ |val, i|
+							f.(val, stateFuncOnNodes.(state, i),  stateFuncOnNodes, leafFunc )
+						}
+					}
+				} {
+					Error("MKtl:prTraverse Illegal data structure in device description.\nGot object % of type %. Only allowed objects are Arrays and Dictionaries".format(x,x.class)).throw
+				}
+			}
+
+		};
+		^f
 	}
 }

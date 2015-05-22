@@ -105,7 +105,7 @@ MKtlDevice {
 		^nil;
 	}
 
-	*tryOpenDevice{ |name, parentMKtl|
+	*tryOpenDevice { |name, parentMKtl|
 		var matchingProtocol, subClass;
 		// then see if it is attached:
 
