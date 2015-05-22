@@ -304,7 +304,7 @@ MIDIMKtlDevice : MKtlDevice {
 		};
 
 		this.initElements;
-
+		this.initCollectives;
 		this.sendInitialiationMessages;
 	}
 
