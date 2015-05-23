@@ -34,9 +34,8 @@ MKtlDesc {
 		} {
 			"// MKtlDesc added a nonexistent folder: %\n".postf(name);
 			"// create it with:"
-			"\n unixCmd(\"mkdir\" + quote(\"%\".standardizePath))\n"
+			"\n File.mkdir(%.standardizePath))\n"
 				.postf(folderPath);
-
 		}
 	}
 
@@ -53,7 +52,8 @@ MKtlDesc {
 			^nil
 		};
 		if (found.size > 1) {
-			"\nMKtlDesc.loadDesc - multiple files for'%':\n".postf(filename);
+			"\n*** MKtlDesc.findFile found % files for'%': ***\n"
+			.postf(found.size, filename);
 			found.printcsAll;
 			"*** please be more specific. ***\n".postln;
 			^nil
@@ -66,6 +66,7 @@ MKtlDesc {
 		if (path.notNil) {
 			dict = path.load;
 			if (this.isValidDescDict(dict)) {
+
 				^this.new(dict, path);
 			};
 		}
@@ -108,7 +109,15 @@ MKtlDesc {
 		^allDescs[descName]
 	}
 
-	*makeDescFrom { |symbolStringOrDict|
+	*postLoaded {
+		"\n*** MKtlDesc - loaded descs: ***".postln;
+		allDescs.keys.asArray.sort.do { |key|
+			"% // %\n".postf(allDescs[key], allDescs[key].idInfo);
+		};
+		"******\n".postln;
+	}
+
+	*descFor { |symbolStringOrDict|
 		var dict = this.findDict(symbolStringOrDict);
 		var newDesc = super.new(dict);
 		^newDesc;
@@ -116,7 +125,15 @@ MKtlDesc {
 
 	*findDict { |descOrPathOrSymbol|
 		var dict = descOrPathOrSymbol.class.switch(
-			Symbol, { this.at(descOrPathOrSymbol).fullDesc },
+			Symbol, { var dict = this.at(descOrPathOrSymbol);
+				if (dict.notNil) {
+					dict.elementsDesc
+				} {
+					warn("MKtlDesc - no mktlDesc found at '%'."
+						.format( descOrPathOrSymbol));
+					^nil
+				}
+			},
 			String, {
 				var str = this.findFile(descOrPathOrSymbol);
 				var newdict;
@@ -145,7 +162,7 @@ MKtlDesc {
 	}
 
 	init {
-		shortName = MKtlDesc.makeShortName(fullDesc[\device]).asSymbol;
+		shortName = MKtlDesc.makeShortName(fullDesc[\idInfo]).asSymbol;
 		"shortName: %\n".postf(shortName);
 		allDescs.put (shortName, this);
 		path = path ?? { fullDesc[\path] };
@@ -162,7 +179,6 @@ MKtlDesc {
 		};
 	}
 
-
 	// keep all data in fullDesc only if possible
 	protocol { ^fullDesc[\protocol] }
 	protocol_ { |type| ^fullDesc[\protocol] = type }
@@ -170,11 +186,11 @@ MKtlDesc {
 	// adc proposal - seem clearest
 	// idInfoAsReportedBySystem,
 	// aslo put it in fullDesc[\idInfo]
-	idInfo { ^fullDesc[\device] }
-	idInfo_ { |type| ^fullDesc[\device] = type }
+	idInfo { ^fullDesc[\idInfo] }
+	idInfo_ { |type| ^fullDesc[\idInfo] = type }
 
-	desc { ^fullDesc[\description] }
-	desc_ { |type| ^fullDesc[\description] = type }
+	elementsDesc { ^fullDesc[\description] }
+	elementsDesc_ { |type| ^fullDesc[\description] = type }
 
 	deviceFilename {
 		^path !? { path.basename.drop(fileExt.size.neg) }
