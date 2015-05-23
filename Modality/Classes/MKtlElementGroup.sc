@@ -1,4 +1,4 @@
-MKtlElementGroup : MAbstractElement {
+MKtlElementGroup : MKtlElement {
 
 	var <elements;
 	var <dict;
@@ -9,6 +9,7 @@ MKtlElementGroup : MAbstractElement {
 
 	init {
 		var array;
+		tags = Set[];
 		dict = dict ? ();
 		elements = elements ?? { Array.new };
 		case { elements.isKindOf( Dictionary ) } {
@@ -142,6 +143,8 @@ MKtlElementGroup : MAbstractElement {
 
 	value { ^elements.collect(_.value) }
 
+	rawValue { ^elements.collect(_.rawValue) }
+
 	keys { ^elements.collect({ |item| dict.findKeyForValue( item ) }) }
 
 	shape { ^elements.shape }
@@ -164,18 +167,17 @@ MKtlElementGroup : MAbstractElement {
 	}
 
 	prAddGroup { |group|
-		if( ( parent != group )
-			&& { groups.isNil or: {
-				groups.includes( group ).not } }) {
-			groups = groups.add( group );
-			elements.do(_.prAddGroup(this));
+		if( ( parent === group )
+			or: { groups.notNil and: { groups.includes( group ) } }) {
+			^this
 		};
+		// if group not here yet, add it
+		groups = groups.add( group );
+		elements.do(_.prAddGroup(this));
 	}
 
 	prRemoveGroup { |group|
-		if( groups.notNil ) {
-			groups.remove( group );
-		};
+		groups.remove( group );
 	}
 
 	// action support
@@ -247,4 +249,38 @@ MKtlElementGroup : MAbstractElement {
 	}
 
 	getElementsForGUI { ^elements.collect({ |item| [ item.key, item ] }).flatten(1); }
+}
+
+MKtlElementCollective : MKtlElementGroup {
+
+	*new { |source, name, elementDescription|
+		^super.newCopyArgs( source, name).init( elementDescription );
+	}
+
+	init { |inElementDescription|
+		tags = Set[];
+		elementDescription = inElementDescription ?? { source.collectiveDescriptionFor(name); };
+		if( elementDescription.notNil ) {
+			ioType = elementDescription[\ioType];
+			elements = elementDescription[\elements].collect({ |item|
+				source.elementAt( *item );
+			});
+			this.addCollectiveToChildren;
+		};
+	}
+
+	addCollectiveToChildren {
+		elements.do(_.prAddCollective(this));
+	}
+
+	removeCollectiveFromChildren {
+		elements.do(_.prRemoveCollective(this));
+	}
+
+	rawValueAction_{|newvals|
+		newvals.do({ |item, i|
+			elements[i] !? _.rawValueAction_( item );
+		});
+	}
+
 }

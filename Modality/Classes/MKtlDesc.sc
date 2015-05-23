@@ -41,7 +41,7 @@ MKtlDesc {
 	}
 
 	*openFolder { |index = 0|
-		unixCmd("open" + quote(descFolders[index]));
+		descFolders[index].openOS;
 	}
 
 	*findFile { |filename|
@@ -153,7 +153,7 @@ MKtlDesc {
 		this.resolveDescEntriesForPlatform;
 	}
 
-	openFile { unixCmd("open" + quote(path)) }
+	openFile { path.openDocument }
 
 	descDict_ { |dict|
 		if (MKtl.isValidDescDict(dict)) {
@@ -173,8 +173,8 @@ MKtlDesc {
 	idInfo { ^descDict[\device] }
 	idInfo_ { |type| ^descDict[\device] = type }
 
-	elementsDesc { ^descDict[\description] }
-	elementsDesc_ { |type| ^descDict[\description] = type }
+	desc { ^descDict[\description] }
+	desc_ { |type| ^descDict[\description] = type }
 
 	deviceFilename {
 		^path !? { path.basename.drop(fileExt.size.neg) }

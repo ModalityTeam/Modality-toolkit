@@ -81,7 +81,7 @@ MKtlDevice {
 		};
 	}
 
-	*findDeviceShortNameFromLongName { |devLongName|
+		*findDeviceShortNameFromLongName{ |devLongName|
 		var devKey, newDevKey;
 		if ( devLongName.isKindOf( String ) ){
 			this.subclasses.do{ |subClass|
@@ -101,43 +101,59 @@ MKtlDevice {
 			};
 			^devKey;
 		};
+		if (devLongName.isKindOf( Dictionary ) ){
+			this.subclasses.do{ |subClass|
+				newDevKey = subClass.findSource( devLongName );
+				if ( newDevKey.notNil ){
+					devKey = newDevKey;
+				};
+			};
+			^devKey;
+		};
 		^nil;
 	}
 
-	*tryOpenDevice { |name, protocol, desc, parentMKtl|
-		var matchingProtocol = this.getMatchingProtocol( name );
-		var subClass;
+	// collapse tryOpenDevice and tryOpenDeviceFromDesc
+	// into one
+	*tryOpenDevice { |name, parentMKtl|
+		var matchingProtocol, subClass;
+		// then see if it is attached:
 
-		if ( matchingProtocol.isNil ){ ^nil; };
+		matchingProtocol = this.getMatchingProtocol( name );
 
-		subClass = MKtlDevice.matchClass(matchingProtocol);
-		if( subClass.isNil ){
-			"WARNING: MKtl: no device found with name % and protocol %"
-			"and no matching device description found.\n"
-			.postf( name, matchingProtocol );
+		if ( matchingProtocol.isNil ){
 			^nil;
 		};
 
-		^subClass.new( name, parentMKtl: parentMKtl );
+		subClass = MKtlDevice.matchClass(matchingProtocol);
+		if( subClass.isNil ){
+			"WARNING: MKtl: device not found with name % and protocol %, and no matching device description found\n".postf( name, matchingProtocol );
+			^nil;
+		};
+		if( subClass.notNil ) {
+			^subClass.new( name, parentMKtl: parentMKtl );
+		};
 	}
 
-	// *tryOpenDeviceFromDesc { |name, desc, protocol, parentMKtl|
-	// 	var subClass;
-	// 	if ( protocol.isNil ){ ^nil; };
-	//
-	// 	subClass = MKtlDevice.matchClass(protocol);
-	// 	if( subClass.isNil ){
-	// 		"WARNING: MKtl: device not found with description % and protocol %\n".postf( desc, protocol );
-	// 		^nil;
-	// 	};
-	// 	if( subClass.notNil ) {
-	// 		^subClass.new( name, desc, parentMKtl: parentMKtl );
-	// 	};
-	// }
+	*tryOpenDeviceFromDesc { |name, protocol, desc, parentMKtl|
+		var subClass;
+		if ( protocol.isNil ){
+			^nil;
+		};
+		subClass = MKtlDevice.matchClass(protocol);
+		if( subClass.isNil ){
+			"WARNING: MKtl: device not found with description % and protocol %\n".postf( desc, protocol );
+			^nil;
+		};
+		if( subClass.notNil ) {
+			^subClass.new( name, desc, parentMKtl: parentMKtl );
+		};
+	}
 
 	*basicNew { |name, deviceName, parentMKtl |
 		^super.new.init(name, deviceName, parentMKtl );
 	}
+
 
 	init { |initName, argDeviceName, parentMKtl|
 		name = initName;
@@ -145,7 +161,7 @@ MKtlDevice {
 		mktl = parentMKtl;
 	}
 
-	// define interface for subclasses
+
 	*protocol {
 		this.subclassResponsibility(thisMethod)
 	}
@@ -179,4 +195,11 @@ MKtlDevice {
 	createDescriptionFile {
 		this.subclassResponsibility(thisMethod)
 	}
+
+	// initialisation messages
+
+	sendInitialiationMessages {
+		this.subclassResponsibility(thisMethod)
+	}
+
 }
