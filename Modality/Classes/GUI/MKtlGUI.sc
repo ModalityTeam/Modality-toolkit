@@ -114,6 +114,7 @@ MKtlGUI {
 	var <>gridSize;
 	var <>traceButton, <>labelButton;
 	var <>labelView;
+	var <pageComposites, <pagesSwitch;
 	var <currentPage = 0;
 
 	*new { |parent, bounds, mktl|
@@ -123,7 +124,7 @@ MKtlGUI {
 	init { |bounds|
 		var createdWindow = false;
 		var numRowsColumns, cellSize;
-		var pages, pageComposites, pagesSwitch;
+		var pages;
 
 		pages = this.getNumPages;
 		this.layoutElements( pages );
@@ -196,6 +197,12 @@ MKtlGUI {
 		};
 
 		skipJack = SkipJack( { this.updateGUI }, 0.2, { parent.isClosed } );
+	}
+
+	currentPage_ { |number = 0|
+		if( pagesSwitch.notNil ) {
+			pagesSwitch.valueAction = number;
+		};
 	}
 
 	getNumRowsColumns {
