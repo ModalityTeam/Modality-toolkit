@@ -824,11 +824,11 @@ pad: 48.collect{ |id|
 );
 ::
 
-The code::spec:: needed is a special one, a link::Classes/StringMap:: that defines the mapping of a value to one of the three colors, we can define it in the code::specs:: part of the device description:
+The code::spec:: needed is a special one, a link::Classes/ItemsSpec: that defines the mapping of a value to one of the three colors, we can define it in the code::specs:: part of the device description:
 
 code::
 specs: (
-	mantaLed: StringMap.new( ["off","amber","red"] ), // led can be off, amber or red
+	mantaLed: ItemsSpec.new( ["off","amber","red"] ), // led can be off, amber or red
 )
 ::
 
