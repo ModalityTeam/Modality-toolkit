@@ -1,9 +1,10 @@
 /*
 
-~map = StringMap.new( ["off","amber","red"] );
+~map = ItemsSpec.new( ["off","amber","red"], 4 );
 
 ~map.map( 0 );
 ~map.map( 0.5 );
+~map.map( 0.8 );
 ~map.map( 1 );
 
 
@@ -19,13 +20,14 @@ ItemsSpec{
 	var <spec;
 	var <default;
 
-	*new{ |keys|
-		^super.new.init( keys );
+	*new{ |keys,warp|
+		^super.new.init( keys, warp );
 	}
 
-	init{ |names|
+	init{ |names, warp|
+		warp = warp ? \linear;
 		keys = names;
-		spec = [ 0, keys.size-1, \linear, 1].asSpec;
+		spec = [ 0, keys.size-1, warp, 1].asSpec;
 		default = spec.minval;
 	}
 
