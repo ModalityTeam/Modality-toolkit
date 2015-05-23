@@ -306,15 +306,17 @@ MIDIMKtlDevice : MKtlDevice {
 		destination = argDestination;
 		destination.notNil.if{
 			dstID = destination.uid;
-			midiOut = MIDIOut( MIDIClient.destinations.indexOf(destination), dstID );
+			if ( thisProcess.platform.name == \linux ){
+				midiOut = MIDIOut( 0 );
+				midiOut.connect( MIDIClient.destinations.indexOf(destination) )
+			}{
+				midiOut = MIDIOut( MIDIClient.destinations.indexOf(destination), dstID );
+			};
 
 			// set latency to zero as we assume to have controllers
 			// rather than synths connected to the device.
 			midiOut.latency = 0;
 
-			if ( thisProcess.platform.name == \linux ){
-				midiOut.connect( MIDIClient.destinations.indexOf(destination) )
-			};
 		};
 
 		this.initElements;
