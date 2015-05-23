@@ -368,7 +368,7 @@ MKtl { // abstract class
 		};
 		// this may be an issue, only look for appropriate protocol
 		MKtlDevice.initHardwareDevices( lookAgain, desc.protocol.bubble );
-	 	this.prTryOpenDevice( this.name, desc.descDict );
+	 	this.findAndOpenDevice( this.name, desc.descDict );
 	}
 
 	isVirtual { ^mktlDevice.isNil }
@@ -388,7 +388,7 @@ MKtl { // abstract class
 				newMKtlDevice = MKtlDevice.tryOpenDevice( devName, this );
 			}{
 				newMKtlDevice = MKtlDevice.tryOpenDeviceFromDesc(
-				name, desc.protocol, desc.device, this );
+				name, desc.protocol, desc.idInfo, this );
 				devName = name;
 			};
 		};
