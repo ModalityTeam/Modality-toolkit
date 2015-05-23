@@ -60,6 +60,26 @@ The instance of MKtl that will refer to this device.
 returns:: either an instance of MKtlDevice, or nil if no device was found.
 
 
+METHOD:: tryOpenDeviceFromDesc
+Tries to open a device with the given name.
+
+|name, protocol, desc, parentMKtl|
+
+ARGUMENT:: name
+The short name of the device that you want to open.
+
+ARGUMENT:: protocol
+Protocol that should be used, one of: code::\osc,\midi,\hid::.
+
+ARGUMENT:: desc
+code::idInfo:: of the device, as found in the device description file.
+
+ARGUMENT:: parentMKtl
+The instance of MKtl that will refer to this device.
+
+returns:: either an instance of MKtlDevice, or nil if no device was found.
+
+
 
 METHOD:: findMatchingProtocols
 find protocols that match the given (short) name.
@@ -182,6 +202,8 @@ Create and open a description file for this MKtlDevice, after exploring it.
 METHOD:: initElements
 Initialize all elements and hook them up to the hardware elements.
 
+METHOD:: initCollectives
+Initialize all collectives and hook them up to the hardware elements.
 
-METHOD:: cleanupElements
-De-initialize all elements.
+METHOD:: cleanupElementsAndCollectives
+De-initialize all elements and collectives.

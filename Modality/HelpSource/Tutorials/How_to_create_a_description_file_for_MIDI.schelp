@@ -1,12 +1,29 @@
-title:: How to create a description file
-summary:: How to create a description file to use with the Modality toolkit.
+title:: How to create a description file for a MIDI device
+summary:: How to create a description file to use with the Modality toolkit for a MIDI device
 categories:: Libraries>Modality
-related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Classes/MIDIExplorer, Classes/HIDExplorer
+related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Classes/MIDIExplorer, Classes/HIDExplorer, Tutorials/How_to_create_a_description_file
+
+
+
 
 Section:: Introduction
 
 The functionality of link::Classes/MKtl:: relies on descriptions of the used devices. For some Controllers, there are already descriptions available, chances are that your device is not among them.
-It is easy to create such a file. So first, attach your device to the computer.
+
+This Tutorial first shows simple examples of OSC interfaces, by emulating them within SuperCollider, and then describes how to create a description file for your interface.
+
+
+list::
+##link::#Simple input::
+##link::#Simple output::
+##link::#Explore an MIDI device::
+##link::#Write a description file for the explored MIDI device::
+##link::#MIDI output::
+##link::#MIDI device info::
+##link::#MIDI Initialisation messages::
+::
+
+
 
 section:: Explore your device
 
@@ -169,3 +186,34 @@ MKtl.openDescriptionFolder;
 The filename should give a meaningful hint to the device it is made for. It further needs to end in code::".desc.scd"::.
 
 To test your description file, restart SuperCollider and follow instructions in link::Tutorials/ModalityTutorial::.
+
+
+section:: MIDI Initialisation messages
+
+Some devices need initialisation messages to be sent before they can function properly with all their modes activated. You can define these messages in the code::initalisationMessages:: field of the device description.
+For MIDI these have to be an Array of messages that need to be sent, each element of the Array contains the type of MIDI message (as you would send it with link::Classes/MIDIOut::) and the parameters that need to be sent.
+
+For example for the nanoKONTROL2 we need a series of sysex messages - what these messages are exactly was found by monitoring what the Korg KONTROL editor sends out to the device when enabling external led control (and we found it in a code base of someone else again). If your device needs such messages, you will need to find out what messages it needs from the manual, or by monitoring what the configuration software from the vendor sends out, or a report from someone who found this out and documented it (online).
+
+code::
+(
+initialisationMessages:
+[
+	[ \sysex, Int8Array[ 0xF0, 0x7E, 0x7F, 0x06, 0x01, 0xF7 ] ],
+	[ \sysex, Int8Array[ 0xF0, 0x42, 0x40, 0x00, 0x01, 0x13, 0x00, 0x1F, 0x12, 0x00, 0xF7] ],
+	[ \sysex, Int8Array[ 0xF0, 0x7E, 0x7F, 0x06, 0x01, 0xF7 ] ],
+	//	... incomplete
+])
+)
+::
+
+If you need to send out control messages, it would look like this:
+
+code::
+(
+initialisationMessages:
+[
+	[ \control, 0, 3, 64 ], // method name, chan, control, value
+])
+)
+::

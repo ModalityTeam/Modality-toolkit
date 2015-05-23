@@ -41,93 +41,24 @@ reset element to neutral state, without any functionality.
 SUBSECTION:: setting and getting values
 
 METHOD:: value
-Set value, try to send to device. Does NOT evaluate the associated action.
-
-NOTE::
-The subclass link::Classes/MKtlElement:: applies a mapping of values according to its ControlSpec here.
-::
+Setting does not evaluate any action
 
 argument:: newval
 the new value
 
 returns:: the current value
 
-
-
-
 METHOD:: prevValue
-The previous value.
-
-NOTE::
-The subclass link::Classes/MKtlElement:: applies a mapping of values according to its ControlSpec here.
-::
-
-
+the previous value
 
 METHOD:: valueAction
-Set value, try to send to device. Evaluates the associated action.
-
-NOTE::
-The subclass link::Classes/MKtlElement:: applies a mapping of values according to its ControlSpec here.
-::
+Set value and evaluate the associated action.
 
 argument:: newval
 the new value
-
-
-METHOD:: valueNoSend
-
-Set value, does NOT send to device. Does NOT evaluate the associated action.
-
-NOTE::
-The subclass MKtlElement applies a mapping of values according to its ControlSpec here.
-::
-
-argument:: newval
-the new value
-
-
-
-METHOD:: deviceValue
-
-Set value, try to send to device. Does NOT evaluate the associated action.
-
-NOTE::
-The subclass link::Classes/MKtlElement:: does NOT apply any mapping.
-::
-
-argument:: newval
-the new value
-
-
-METHOD:: deviceValueAction
-
-Set value, try to send to device. Evaluates the associated action.
-The subclass MKtlElement does NOT apply any mapping.
-
-NOTE::
-The subclass MKtlElement applies a mapping of values according to its ControlSpec here.
-::
-
-argument:: newval
-the new value
-
-
-METHOD:: deviceValueNoSend
-
-Set value, does NOT send to device. Does NOT evaluate the associated action.
-
-NOTE::
-The subclass MKtlElement does NOT apply any mapping.
-::
-
-argument:: newval
-the new value
-
-
 
 METHOD:: doAction
-Evaluate the associated action.
+Evaluate the associated action
 
 
 SUBSECTION:: Adding and removing functionality
