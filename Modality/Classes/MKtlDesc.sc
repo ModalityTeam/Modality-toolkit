@@ -13,7 +13,7 @@ MKtlDesc {
 
 	classvar <>isElementTestFunc;
 
-	var <descDict, <path, <>shortName, <elementsKeyValueArray;
+	var <fullDesc, <path, <>shortName, <elementsKeyValueArray;
 
 	*initClass {
 		defaultFolder = this.filenameSymbol.asString.dirname.dirname
@@ -72,7 +72,7 @@ MKtlDesc {
 	}
 
 	*fromDict { |dict|
-		^super.new.descDict_(dict);
+		^super.new.fullDesc_(dict);
 	}
 
 	// do more tests here
@@ -116,7 +116,7 @@ MKtlDesc {
 
 	*findDict { |descOrPathOrSymbol|
 		var dict = descOrPathOrSymbol.class.switch(
-			Symbol, { this.at(descOrPathOrSymbol).descDict },
+			Symbol, { this.at(descOrPathOrSymbol).fullDesc },
 			String, {
 				var str = this.findFile(descOrPathOrSymbol);
 				var newdict;
@@ -145,36 +145,36 @@ MKtlDesc {
 	}
 
 	init {
-		shortName = MKtlDesc.makeShortName(descDict[\device]).asSymbol;
+		shortName = MKtlDesc.makeShortName(fullDesc[\device]).asSymbol;
 		"shortName: %\n".postf(shortName);
 		allDescs.put (shortName, this);
-		path = path ?? { descDict[\path] };
+		path = path ?? { fullDesc[\path] };
 		this.makeElementsArray;
 		this.resolveDescEntriesForPlatform;
 	}
 
 	openFile { path.openDocument }
 
-	descDict_ { |dict|
+	fullDesc_ { |dict|
 		if (MKtl.isValidDescDict(dict)) {
-			descDict = dict;
+			fullDesc = dict;
 			this.init;
 		};
 	}
 
 
-	// keep all data in descDict only if possible
-	protocol { ^descDict[\protocol] }
-	protocol_ { |type| ^descDict[\protocol] = type }
+	// keep all data in fullDesc only if possible
+	protocol { ^fullDesc[\protocol] }
+	protocol_ { |type| ^fullDesc[\protocol] = type }
 
 	// adc proposal - seem clearest
 	// idInfoAsReportedBySystem,
-	// aslo put it in descDict[\idInfo]
-	idInfo { ^descDict[\device] }
-	idInfo_ { |type| ^descDict[\device] = type }
+	// aslo put it in fullDesc[\idInfo]
+	idInfo { ^fullDesc[\device] }
+	idInfo_ { |type| ^fullDesc[\device] = type }
 
-	desc { ^descDict[\description] }
-	desc_ { |type| ^descDict[\description] = type }
+	desc { ^fullDesc[\description] }
+	desc_ { |type| ^fullDesc[\description] = type }
 
 	deviceFilename {
 		^path !? { path.basename.drop(fileExt.size.neg) }
@@ -220,7 +220,7 @@ MKtlDesc {
 
 	// (-: just in case programming ;-)
 	resolveDescEntriesForPlatform {
-		this.class.resolveForPlatform(descDict);
+		this.class.resolveForPlatform(fullDesc);
 		elementsKeyValueArray.pairsDo { |key, elemDesc|
 			MKtlDesc.resolveForPlatform(elemDesc);
 		};

@@ -169,11 +169,17 @@ MKtl { // abstract class
 			^this
 		};
 		this.makeElements;
+		this.makeCollectives;
+
 		this.openDevice;
 	}
 
 		// temp redirect for other classes
 	deviceDescriptionArray { ^desc.elementsDesc }
+
+	initialisationMessages {
+		^desc.fullDesc[\initialisationMessages];
+	}
 
 	/*
 	init procedure:
@@ -204,6 +210,19 @@ MKtl { // abstract class
 
 		MKtlElement.addGroupsAsParent = false;
 
+	}
+
+	makeCollectives {
+		if( desc.fullDesc[ \collectives ].notNil ) {
+			collectivesDict = ();
+			desc.fullDesc[ \collectives ].keysValuesDo({ |key, value|
+				collectivesDict[ key ] = MKtlElementCollective( this, key, value );
+			})
+		};
+ 	}
+
+	collectiveDescriptionFor { |elname|
+		^desc.fullDesc[ \collectives ] !? { |x| desc.fullDesc[ \collectives ][ elname ]; };
 	}
 
 	// already filtered for my platform only
@@ -330,7 +349,7 @@ MKtl { // abstract class
 		// 	};
 		// }{
 		// 	if ( deviceDescriptionNameOrDict.isKindOf( Dictionary ) ){
-		// 		devDescName = deviceDescriptionNameOrDict.at( \device );
+		// 		devDescName = deviceDescriptionNameOrDict.at( \idInfo );
 		// 		devDesc = deviceDescriptionNameOrDict;
 		// 	}{
 		// 		#devDesc, devDescName = this.class.findDeviceDesc( deviceDescriptionNameOrDict );
@@ -368,7 +387,7 @@ MKtl { // abstract class
 		};
 		// this may be an issue, only look for appropriate protocol
 		MKtlDevice.initHardwareDevices( lookAgain, desc.protocol.bubble );
-	 	this.prTryOpenDevice( this.name, desc.descDict );
+	 	this.prTryOpenDevice( this.name, desc.fullDesc );
 	}
 
 	isVirtual { ^mktlDevice.isNil }

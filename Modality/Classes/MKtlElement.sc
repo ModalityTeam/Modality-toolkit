@@ -7,6 +7,8 @@ MAbstractElement.allSubclasses
 
 MAbstractElement {
 
+	classvar <>addGroupsAsParent = false;
+
 	var <name; // its name in MKtl.elements
 	var <source; // the MKtl it belongs to - not used anywhere
 	var <type; // its type.
@@ -25,15 +27,13 @@ MAbstractElement {
 
 	// nested MKtlElement / MKtlElementGroup support
 	var <>parent;
-	// all the elementGroups this is a member of
 	var <groups;
+	var <collectives;
 
 	// the dict from the MKtlDesc
 	// that has this element's properties
 	var <elementDescription;
 
-
-	classvar <>addGroupsAsParent = false;
 
 	*new { |source, name|
 		^super.newCopyArgs( source, name).init;
@@ -47,7 +47,7 @@ MAbstractElement {
 		^if (source.notNil) {
 			source.getSpec(specName)
 		} {
-			MKtl.globalSpecs[specName];
+			MKtl.globalSpecs[specName] ?? { [0,1].asSpec };
 		};
 	}
 
@@ -61,8 +61,9 @@ MAbstractElement {
 		^false
 	}
 
-	// no mapping anywhere,
-	// flattened out for speed and reading clarity
+		// MAbstractElement does no mapping, so it has no spec.
+		// the get/set value methods are all flattened out
+		// for speed and reading clarity
 	value_ { | newval |
 		if (newval.isNil) { ^this };
 		prevValue = deviceValue;
@@ -126,6 +127,7 @@ MAbstractElement {
 		^In.kr(bus.index, bus.numChannels)
 	}
 
+	// support for navigation inside ordered element hierarchy
 	index {
 		^this.parent !? _.indexOf( this );
 	}
@@ -141,16 +143,31 @@ MAbstractElement {
 
 	printOn { | stream | this.storeOn(stream) }
 
+	// handling groups
 	prAddGroup { |group|
-		if( parent == group ) { ^this };
-
-		if (groups.isNil or: { groups.includes( group ).not }) {
-			groups = groups.add( group );
+		if( parent === group ) { ^this };
+		if (groups.notNil and: { groups.includes( group ) }) {
+			^this
 		};
+		// really do it
+		groups = groups.add( group );
 	}
 
 	prRemoveGroup { |group|
 		groups.remove( group );
+	}
+
+	// MKtlElementCollective support
+	prAddCollective { |collective|
+		if( collectives.isNil or: { collectives.includes( collective ).not }) {
+			collectives = collectives.add( collective );
+		};
+	}
+
+	prRemoveCollective { |collective|
+		if( collectives.notNil ) {
+			collectives.remove( collective );
+		};
 	}
 
 	asBaseClass {
@@ -180,6 +197,15 @@ MKtlElement : MAbstractElement {
 	// and internal value between [0, 1]
 	var <deviceSpec;
 
+	*initClass {
+		types = (
+			\slider: \x,
+			\button: \x,
+			\thumbStick: [\joyAxis, \joyAxis, \button],
+			\joyStick: [\joyAxis, \joyAxis, \button]
+		)
+	}
+
 	// source is used for sending back to the device.
 	*new { |name, desc, source|
 		^super.newCopyArgs(name, source)
@@ -197,8 +223,11 @@ MKtlElement : MAbstractElement {
 
 		if (deviceSpec.isNil) {
 			warn("deviceSpec for '%' is missing!".format(deviceSpec));
+			"using [0, 1].asSpec instead".postln;
 		} {
 			deviceSpec = this.getSpec(deviceSpec);
+			// and now we have a spec.
+
 			// keep old values if there.
 			if (deviceValue.isNil) {
 				deviceValue = prevValue = this.defaultValue;
@@ -209,6 +238,7 @@ MKtlElement : MAbstractElement {
 		ioType = elementDescription[\ioType] ? \in;
 	}
 
+	// just update params on the fly, keep description in sync
 	updateDescription { |dict|
 		dict.keysValuesDo { |key, val|
 			elementDescription.put(key, val);
