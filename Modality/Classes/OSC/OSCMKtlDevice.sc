@@ -62,16 +62,29 @@ OSCMKtlDevice : MKtlDevice {
 	classvar <protocol = \osc;
 	classvar <sourceDeviceDict; // contains active sources ( recvPort: , srcPort: , ipAddress: , destPort:  )
 	classvar inversePatternDispatcher;
+	classvar messageSizeDispatcher;
 
 	var <source;  // receiving OSC from this NetAddr
 	var <destination; // sending OSC to this NetAddr
 	var <recvPort; // port on which we need to listen
 
 	var <oscFuncDictionary;
-	// var <oscOutPathDictionary;
 
 	classvar <initialized = false; // always true
-	// classvar <>traceFind = false;
+
+	*inversePatternDispatcher{
+		if ( inversePatternDispatcher.isNil ){
+			inversePatternDispatcher = OSCMessageInversePatternDispatcher.new;
+		};
+		^inversePatternDispatcher;
+	}
+
+	*messageSizeDispatcher{
+		if ( messageSizeDispatcher.isNil ){
+			messageSizeDispatcher = OSCMessageAndArgsSizeDispatcher.new;
+		};
+		^messageSizeDispatcher;
+	}
 
 	*find { |post=true|
 		this.initDevices( true );
@@ -178,13 +191,6 @@ OSCMKtlDevice : MKtlDevice {
 		allAvailable.at( \osc ).add( name );
 	}
 
-	*inversePatternDispatcher{
-		if ( inversePatternDispatcher.isNil ){
-			inversePatternDispatcher = OSCMessageInversePatternDispatcher.new;
-		};
-		^inversePatternDispatcher;
-	}
-
 	*new { |name, devInfo, parentMKtl|
 		// srcDesc will be a ( destPort: , recvPort: , srcPort: ..., ipAddress: ..., listenPort: ... )
 		if ( devInfo.isNil ){
@@ -259,6 +265,7 @@ OSCMKtlDevice : MKtlDevice {
 						}, oscPath, source, recvPort, argTemplate, dispatcher ).permanent_( true );
 					);
 				}{
+					dispatcher = this.class.messageSizeDispatcher;
 					if ( el.type == \trigger ){
 						// trigger osc func
 						oscFuncDictionary.put( el.name,
@@ -268,7 +275,7 @@ OSCMKtlDevice : MKtlDevice {
 									"% - % > % | type: %, src:%"
 									.format(this.name, el.name, el.value.asStringPrec(3), el.type, el.source).postln;
 								}
-							}, oscPath, source, recvPort, argTemplate ).permanent_( true );
+							}, oscPath, source, recvPort, argTemplate, dispatcher ).permanent_( true );
 						);
 					}{
 						// normal osc matching
@@ -283,7 +290,7 @@ OSCMKtlDevice : MKtlDevice {
 									"% - % > % | type: %, src:%"
 									.format(this.name, el.name, el.value.asStringPrec(3), el.type, el.source).postln;
 								}
-							}, oscPath, source, recvPort, argTemplate ).permanent_( true );
+							}, oscPath, source, recvPort, argTemplate, dispatcher ).permanent_( true );
 						);
 					};
 				}
@@ -301,6 +308,8 @@ OSCMKtlDevice : MKtlDevice {
 			var argTemplate = el.elementDescription[ \argTemplate ];
 			var valueIndices = el.elementDescription[ \valueAt ];
 			var msgIndices, templEnd;
+			var dispatcher = this.class.messageSizeDispatcher;
+
 			if ( [\in,\inout].includes( ioType ) and: ( oscPath.notNil) ){
 
 				if ( valueIndices.notNil ){
@@ -329,7 +338,7 @@ OSCMKtlDevice : MKtlDevice {
 							"% - % > % | type: %, src:%"
 							.format(this.name, el.name, el.value.collect{ |it| it.asStringPrec(3) }, el.type, el.source).postln;
 						}
-					}, oscPath, source, recvPort, argTemplate ).permanent_( true );
+					}, oscPath, source, recvPort, argTemplate, dispatcher ).permanent_( true );
 				);
 			};
 		};

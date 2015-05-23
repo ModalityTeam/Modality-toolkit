@@ -1,4 +1,4 @@
-OSCMessageInversePatternDispatcher : OSCMessageDispatcher {
+OSCMessageInversePatternDispatcher : OSCMessageAndArgsSizeDispatcher {
 
 	value {|msg, time, addr, recvPort|
 		var pattern;
@@ -8,6 +8,6 @@ OSCMessageInversePatternDispatcher : OSCMessageDispatcher {
 		})
 	}
 
-	typeKey { ^('OSC matched').asSymbol }
+	typeKey { ^('OSC inverse pattern').asSymbol }
 
 }
