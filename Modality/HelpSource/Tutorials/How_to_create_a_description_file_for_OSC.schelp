@@ -185,6 +185,49 @@ m.closeDevice;
 ::
 
 
+subsection:: Pattern matching on osc paths
+
+Some devices may send a different on and off message, e.g. code::"/button/on":: for the on state, and code::"/button/off":: for the off state.
+
+So the oscPath you want to match is code::"/button/*":: - the code::*:: is the standin for the possible matches you want to look for. In an link::Classes/ItemsSpec:: you define the possible states that can be send, in the order that they may appear, in our simple example here: code::["off","on"]:: which means that code::"off":: will map to 0 and code::"on":: will map to 1. If you added a third item code::["off","maybe","on"]::, the middle item would map to 0.5.
+
+code::
+(
+~descInput = (
+	specs: ( onoffString: ItemsSpec.new( [ "off", "on" ] ); ),
+	    idInfo: ( srcPort: NetAddr.langPort, ipAddress: "127.0.0.1" ),
+	    protocol: \osc,
+	    description: (
+		        'bt': (
+			            oscPath: '/button/*',
+			            type: 'button',
+			            spec: \onoffString,
+			            ioType: \in
+		        )
+	    )
+)
+);
+
+m = MKtl( \exampleOSCInput, ~descInput );
+MKtlDevice.allAvailable // now also shows the opened 'osc device'
+
+// create a gui for the osc device:
+m.gui;
+
+// post incoming data
+m.trace;
+
+n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
+
+// send messages:
+n.sendMsg( "/button/off" );
+n.sendMsg( "/button/on" );
+
+
+// close the device again
+m.closeDevice;
+::
+
 section:: Simple output
 
 A simple OSC output is an OSC interface that receives OSC messages with only a value for a single control on the device. For example:
