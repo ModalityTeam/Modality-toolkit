@@ -160,10 +160,10 @@ MKtlGUI {
 					name = item.element.name.asString;
 					if( name.asString.size > 5 ) {
 						name = name.split( $_ );
-						name[((name.size-1) / 2).floor] = name[((name.size-1) / 2).ceil] ++ "\n";
+						name[((name.size-1) / 2).floor] = name[((name.size-1) / 2).floor] ++ "\n";
 						name = name.join( $_ );
 					};
-					Pen.stringCenteredIn( name, Rect.aboutPoint( item.view.bounds.center, 50, 15 ), nil, Color.white )
+					Pen.stringCenteredIn( name, Rect.aboutPoint( item.view.bounds.center, 60, 15 ), nil, Color.white )
 				};
 			});
 		})
