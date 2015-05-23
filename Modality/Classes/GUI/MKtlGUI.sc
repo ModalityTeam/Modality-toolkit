@@ -114,6 +114,7 @@ MKtlGUI {
 	var <>gridSize;
 	var <>traceButton, <>labelButton;
 	var <>labelView;
+	var <currentPage = 0;
 
 	*new { |parent, bounds, mktl|
 		^super.newCopyArgs( mktl, parent ).init( bounds );
@@ -122,8 +123,10 @@ MKtlGUI {
 	init { |bounds|
 		var createdWindow = false;
 		var numRowsColumns, cellSize;
+		var pages, pageComposites, pagesSwitch;
 
-		this.layoutElements;
+		pages = this.getNumPages;
+		this.layoutElements( pages );
 
 		numRowsColumns = this.getNumRowsColumns;
 		cellSize = (maxSize / numRowsColumns.maxItem).round(1).clip(minViewSize,maxViewSize); // grid size
@@ -133,10 +136,19 @@ MKtlGUI {
 			Window( mktl.name, bounds, false ).front;
 		};
 
+		if( pages.notNil ) {
+			pageComposites = pages.collect({ |i|
+				CompositeView( parent, parent.view.bounds ).background_( Color.hsv( i / pages, 0.75, 0.75, 0.1) );
+			});
+		};
+
 		views = mktl.elements.flat.collect({ |item|
-			var style, bounds;
+			var style, bounds, view = parent;
 			style = item.elementDescription[ \style ] ?? { ( row: 0, column: 0, width: 0, height: 0 ) };
-			MKtlElementView( parent, Rect( style.column * cellSize, (style.row * cellSize) + 25, style.width * cellSize, style.height * cellSize ), item );
+			if( pages.notNil && { item.elementDescription[ \page ].notNil }) {
+				view = pageComposites[ item.elementDescription[ \page ] ];
+			};
+			MKtlElementView( view, Rect( style.column * cellSize, (style.row * cellSize) + 25, style.width * cellSize, style.height * cellSize ), item );
 		});
 
 		labelView = UserView( parent, bounds.moveTo(0,0) )
@@ -144,16 +156,15 @@ MKtlGUI {
 		.drawFunc_({ |vw|
 			views.do({ |item, i|
 				var name;
-				name = item.element.name.asString;
-				if( name.asString.size > 5 ) {
-					name = name.split( $_ );
-					name[((name.size-1) / 2).floor] = name[((name.size-1) / 2).ceil] ++ "\n";
-					name = name.join( $_ );
+				if( item.element.elementDescription[ \page ].isNil or: { item.element.elementDescription[ \page ] == currentPage } ) {
+					name = item.element.name.asString;
+					if( name.asString.size > 5 ) {
+						name = name.split( $_ );
+						name[((name.size-1) / 2).floor] = name[((name.size-1) / 2).floor] ++ "\n";
+						name = name.join( $_ );
+					};
+					Pen.stringCenteredIn( name, Rect.aboutPoint( item.view.bounds.center, 60, 15 ), nil, Color.white )
 				};
-				Pen.use({
-					Pen.translate( *item.view.bounds.center.asArray );
-					Pen.stringCenteredIn( name, Rect.aboutPoint( 0@0, 50, 15 ), nil, Color.white )
-				});
 			});
 		})
 		.visible_( false );
@@ -167,6 +178,23 @@ MKtlGUI {
 			.states_([["labels"],["labels", Color.black, Color.green]])
 			.action_({ |bt| this.showLabels( bt.value.booleanValue ) });
 
+		if( pages.notNil ) {
+			Button( parent, Rect( 168, 2, 16, 16 ) )
+			.states_([ ["<"] ])
+			.action_({ pagesSwitch.valueAction = (pagesSwitch.value - 1).wrap(0, pagesSwitch.items.size-1); });
+			pagesSwitch = PopUpMenu( parent, Rect( 188, 2, 80, 16 ) )
+			.items_( pages.collect({ |item| "page: %".format( item ) }) )
+			.action_({ |pu|
+				currentPage = pu.value;
+				pageComposites.do({ |item, i| if( currentPage == i ) { item.visible = true } { item.visible = false } });
+				labelView.refresh;
+			});
+			Button( parent, Rect( 272, 2, 16, 16 ) )
+			.states_([ [">"] ])
+			.action_({ pagesSwitch.valueAction = (pagesSwitch.value + 1).wrap(0, pagesSwitch.items.size-1); });
+			pagesSwitch.valueAction_( currentPage );
+		};
+
 		skipJack = SkipJack( { this.updateGUI }, 0.2, { parent.isClosed } );
 	}
 
@@ -179,40 +207,53 @@ MKtlGUI {
 		}).flop.collect(_.maxItem) + 1;
 	}
 
-	layoutElements {
+	getNumPages {
+		^mktl.elements.flat.collect({ |item| item.elementDescription[ \page ] }).select(_.notNil).maxItem !? (_+1);
+	}
+
+	layoutElements { |pages|
+		this.layoutElementsOnPage();
+		pages.do({ |page|
+			this.layoutElementsOnPage( page );
+		});
+	}
+
+	layoutElementsOnPage { |page|
 		var columnSpacingTrend, layout, placeFunc, scanFunc;
 
 		layout = FlowLayout( Rect(0,0,32,32), 0@0, 0@0 );
 
 		placeFunc = { |element|
 			var bounds, style;
-			bounds = ().bounds_(
-				switch( element.type,
-					\slider, { Rect(0,0,1,3) },
-					{ Rect( 0,0,1,1 ) }
-				)
-			);
-			style = element.elementDescription[ \style ] ? ();
+			if( element.elementDescription[ \page ] == page ) {
+				bounds = ().bounds_(
+					switch( element.type,
+						\slider, { Rect(0,0,1,3) },
+						{ Rect( 0,0,1,1 ) }
+					)
+				);
+				style = element.elementDescription[ \style ] ? ();
 
-			style.parent = nil;
+				style.parent = nil;
 
-			if( style.width.notNil ) { bounds.bounds.width = style.width };
-			if( style.height.notNil ) { bounds.bounds.height = style.height };
-			if( style.column.notNil ) {
-				if( layout.left > 0 && { style.column > 0 } && { style.column != layout.left } && { (style.row ? layout.top) == layout.top }) {
-					columnSpacingTrend = style.column - layout.left;
+				if( style.width.notNil ) { bounds.bounds.width = style.width };
+				if( style.height.notNil ) { bounds.bounds.height = style.height };
+				if( style.column.notNil ) {
+					if( layout.left > 0 && { style.column > 0 } && { style.column != layout.left } && { (style.row ? layout.top) == layout.top }) {
+						columnSpacingTrend = style.column - layout.left;
+					};
+					layout.left = style.column;
+				} {
+					if( columnSpacingTrend.notNil ) {
+						layout.shift( columnSpacingTrend, 0 );
+					};
 				};
-				layout.left = style.column;
-			} {
-				if( columnSpacingTrend.notNil ) {
-					layout.shift( columnSpacingTrend, 0 );
-				};
+				if( style.row.notNil ) { layout.top = style.row };
+				layout.place( bounds );
+				bounds = bounds.bounds;
+				element.elementDescription[ \style ] = style
+				.parent_( ( row: bounds.top, column: bounds.left, width: bounds.width, height: bounds.height ) );
 			};
-			if( style.row.notNil ) { layout.top = style.row };
-			layout.place( bounds );
-			bounds = bounds.bounds;
-			element.elementDescription[ \style ] = style
-			.parent_( ( row: bounds.top, column: bounds.left, width: bounds.width, height: bounds.height ) );
 		};
 
 		scanFunc = { |element|

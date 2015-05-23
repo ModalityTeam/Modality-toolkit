@@ -435,12 +435,12 @@ MIDIMKtlDevice : MKtlDevice {
 				if (el.notNil) {
 					el.rawValueAction_(value, false);
 					if(traceRunning) {
-						"% - % > % | type: cc, ccValue:%, ccNum:%,  chan:%, src:%"
+						"% - % > % | type: cc, ccValue:%, ccNum:%,  midiChan:%, src:%"
 						.format(this.name, el.name, el.value.asStringPrec(3), value, num, chan, src).postln
 					};
 				} {
 					if (traceRunning) {
-					"MIDIMKtl( % ) : cc element found for chan %, ccnum % !\n"
+					"MIDIMKtl( % ) : cc element found for midiChan %, ccnum % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\cc, \\type: \\button, \\midiChan: %,"
 					"\\midiNum: %, \\spec: \\midiBut, \\mode: \\push).\n\n"
@@ -468,12 +468,12 @@ MIDIMKtlDevice : MKtlDevice {
 				if (el.notNil) {
 					el.rawValueAction_(vel);
 					if(traceRunning) {
-						"% - % > % | type: noteOn, vel:%, midiNote:%,  chan:%, src:%"
+						"% - % > % | type: noteOn, vel:%, midiNote:%,  midiChan:%, src:%"
 						.format(this.name, el.name, el.value.asStringPrec(3), vel, note, chan, src).postln
 					};
 				}{
 					if (traceRunning) {
-					"MIDIMKtl( % ) : noteOn element found for chan %, note % !\n"
+					"MIDIMKtl( % ) : noteOn element found for midiChan %, note % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\noteOn, \\type: \\pianoKey or \\button, \\midiChan: %,"
 					"\\midiNum: %, \\spec: \\midiVel).\n\n"
@@ -501,12 +501,12 @@ MIDIMKtlDevice : MKtlDevice {
 				if (el.notNil) {
 					el.rawValueAction_(vel);
 					if(traceRunning) {
-						"% - % > % | type: noteOff, vel:%, midiNote:%,  chan:%, src:%"
+						"% - % > % | type: noteOff, vel:%, midiNote:%,  midiChan:%, src:%"
 						.format(this.name, el.name, el.value.asStringPrec(3), vel, note, chan, src).postln
 					};
 				} {
 					if (traceRunning) {
-					"MIDIMKtl( % ) : noteOff element found for chan %, note % !\n"
+					"MIDIMKtl( % ) : noteOff element found for midiChan %, note % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\noteOff, \\type: \\pianoKey or \\button, \\midiChan: %,"
 					"\\midiNum: %, \\spec: \\midiVel).\n\n"
@@ -540,12 +540,12 @@ MIDIMKtlDevice : MKtlDevice {
 				if (el.notNil) {
 					el.rawValueAction_(value);
 					if(traceRunning) {
-						"% - % > % | type: touch, midiNum:%, chan:%, src:%"
+						"% - % > % | type: touch, midiNum:%, midiChan:%, src:%"
 						.format(this.name, el.name, el.value.asStringPrec(3), value, chan, src).postln
 					}
 				}{
 					if (traceRunning) {
-					"MIDIMKtl( % ) : touch element found for chan % !\n"
+					"MIDIMKtl( % ) : touch element found for midiChan % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\touch, \\type: \\chantouch', \\midiChan: %,"
 					"\\spec: \\midiTouch).\n\n"
@@ -575,12 +575,12 @@ MIDIMKtlDevice : MKtlDevice {
 				if (el.notNil) {
 					el.rawValueAction_(vel);
 					if(traceRunning) {
-						"% - % > % | type: polyTouch, vel:%, midiNote:%,  chan:%, src:%"
+						"% - % > % | type: polyTouch, vel:%, midiNote:%,  midiChan:%, src:%"
 						.format(this.name, el.name, el.value.asStringPrec(3), vel, note, chan, src).postln
 					};
 				}{
 					if (traceRunning) {
-					"MIDIMKtl( % ) : polyTouch element found for chan %, note % !\n"
+					"MIDIMKtl( % ) : polyTouch element found for midiChan %, note % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\polyTouch, \\type: \\keytouch, \\midiChan: %,"
 					"\\midiNum: %, \\spec: \\midiVel).\n\n"
@@ -614,12 +614,12 @@ MIDIMKtlDevice : MKtlDevice {
 				if (el.notNil) {
 					el.rawValueAction_(value);
 					if(traceRunning) {
-						"% - % > % | type: bend, midiNum:%, chan:%, src:%"
+						"% - % > % | type: bend, midiNum:%, midiChan:%, src:%"
 						.format(this.name, el.name, el.value.asStringPrec(3), value, chan, src).postln
 					};
 				}{
 					if (traceRunning) {
-					"MIDIMKtl( % ) : bend element found for chan % !\n"
+					"MIDIMKtl( % ) : bend element found for midiChan % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\bend, \\type: ??', \\midiChan: %,"
 					"\\spec: \\midiBend).\n\n"
@@ -631,6 +631,7 @@ MIDIMKtlDevice : MKtlDevice {
 			}, chan: listenChan, srcID: srcID).permanent_(true);
 		);
 	}
+
 
 	makeProgram {
 		var typeKey = \program;
@@ -653,12 +654,12 @@ MIDIMKtlDevice : MKtlDevice {
 				if (el.notNil) {
 					el.rawValueAction_(value);
 					if(traceRunning) {
-						"% - % > % | type: program, midiNum:%, chan:%, src:%"
+						"% - % > % | type: program, midiNum:%, midiChan:%, src:%"
 						.format(this.name, el.name, el.value.asStringPrec(3), value, chan, src).postln
 					};
 				}{
 					if (traceRunning) {
-					"MIDIMKtl( % ) : program element found for chan % !\n"
+					"MIDIMKtl( % ) : program element found for midiChan % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\program, \\type: ??', \\midiChan: %,"
 					"\\spec: \\midiProgram).\n\n"
