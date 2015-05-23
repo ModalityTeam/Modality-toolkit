@@ -415,16 +415,16 @@ MIDIMKtlDevice : MKtlDevice {
 				};
 				if ( descr[\in].isNil and: descr[\out].isNil ){
 					hash = this.makeHashKey( descr, elName );
-					if ( elementsDict[elName].ioType == \in  or:  elementsDict[elName].ioType == \inout ){
+					if ( (elementsDict[elName].ioType == \in)  or:  (elementsDict[elName].ioType == \inout) ){
 						hashToElNameDict.put(hash, elName);
 					};
-					if ( elementsDict[elName].ioType == \out  or:  elementsDict[elName].ioType == \inout ){
+					if ( (elementsDict[elName].ioType == \out)  or:  (elementsDict[elName].ioType == \inout) ){
 						elNameToMidiDescDict.put(elName,
 							[
 								descr[\midiMsgType],
 								descr[\midiChan],
 								descr[\midiNum],
-								elementsDict[elName].spec
+								elementsDict[elName].spec // ??
 							])
 					};
 
