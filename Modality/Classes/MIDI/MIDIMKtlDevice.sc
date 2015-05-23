@@ -15,7 +15,7 @@ MIDIMKtlDevice : MKtlDevice {
 
 	// an action that is called every time a midi message comes in
 	// .value(type, src, chan, num/note, value/vel)
-	var <>midiRawAction;
+	// var <>midiRawAction; // this can be done with MIDIFunc.new( { arg ...args; args.postln }, srcID: m.mktlDevice.srcID );
 
 
 	// optimisation for fast lookup,
@@ -26,7 +26,7 @@ MIDIMKtlDevice : MKtlDevice {
 	                          //i.e.  ( 'trD1': [ cc, 0, 57, a ControlSpec(0, 127, 'linear', 1, 0, "") ], ... )
 
 	var <responders;
-	var <global;
+	// var <global; // this functionality can be gotten with: MIDIFunc.new( { arg ...args; args.postln }, msgType: xxx, srcID: m.mktlDevice.srcID );
 	var <msgTypes;
 
 	closeDevice{
@@ -476,8 +476,8 @@ MIDIMKtlDevice : MKtlDevice {
 				var elName = hashToElNameDict[hash];
 				var el = elementHashDict[hash];
 
-				midiRawAction.value(\noteOn, src, chan, note, vel);
-				global[typeKey].value(chan, note, vel);
+				// midiRawAction.value(\noteOn, src, chan, note, vel);
+				// global[typeKey].value(chan, note, vel);
 
 				if (el.notNil) {
 					el.rawValueAction_(vel);
@@ -509,8 +509,8 @@ MIDIMKtlDevice : MKtlDevice {
 				var elName = hashToElNameDict[hash];
 				var el = elementHashDict[hash];
 
-				midiRawAction.value(\noteOff, src, chan, note, vel);
-				global[typeKey].value(chan, note, vel);
+				// midiRawAction.value(\noteOff, src, chan, note, vel);
+				// global[typeKey].value(chan, note, vel);
 
 				if (el.notNil) {
 					el.rawValueAction_(vel);
@@ -539,7 +539,7 @@ MIDIMKtlDevice : MKtlDevice {
 		var chan = info[\midiChan];
 		var listenChan =if (chan.isKindOf(SimpleNumber)) { chan };
 
-		"make % func\n".postf(typeKey);
+		// "make % func\n".postf(typeKey);
 
 		responders.put(typeKey,
 			MIDIFunc.touch({ |value, chan, src|
@@ -548,8 +548,8 @@ MIDIMKtlDevice : MKtlDevice {
 				var elName = hashToElNameDict[hash];
 				var el = elementHashDict[hash];
 
-				midiRawAction.value(\touch, src, chan, value);
-				global[typeKey].value(chan, value);
+				// midiRawAction.value(\touch, src, chan, value);
+				// global[typeKey].value(chan, value);
 
 				if (el.notNil) {
 					el.rawValueAction_(value);
@@ -574,7 +574,7 @@ MIDIMKtlDevice : MKtlDevice {
 
 	makePolyTouch {
 		//"makePolytouch".postln;
-		var typeKey = \polyTouch; //decide on polyTouch vs polytouch
+		var typeKey = \polyTouch; //decide on polyTouch vs polytouch : MIDIIn/MIDIOut is inconsistent
 		//"make % func\n".postf(typeKey);
 		responders.put(typeKey,
 			MIDIFunc.polytouch({ |vel, note, chan, src|
@@ -583,8 +583,8 @@ MIDIMKtlDevice : MKtlDevice {
 				var elName = hashToElNameDict[hash];
 				var el = elementHashDict[hash];
 
-				midiRawAction.value(\polyTouch, src, chan, note, vel);
-				global[typeKey].value(chan, note, vel);
+				// midiRawAction.value(\polyTouch, src, chan, note, vel);
+				// global[typeKey].value(chan, note, vel);
 
 				if (el.notNil) {
 					el.rawValueAction_(vel);
@@ -622,8 +622,8 @@ MIDIMKtlDevice : MKtlDevice {
 				var elName = hashToElNameDict[hash];
 				var el = elementHashDict[hash];
 
-				midiRawAction.value(\bend, src, chan, value);
-				global[typeKey].value(chan, value);
+				// midiRawAction.value(\bend, src, chan, value);
+				// global[typeKey].value(chan, value);
 
 				if (el.notNil) {
 					el.rawValueAction_(value);
@@ -662,8 +662,8 @@ MIDIMKtlDevice : MKtlDevice {
 				var elName = hashToElNameDict[hash];
 				var el = elementHashDict[hash];
 
-				midiRawAction.value(\program, src, chan, value);
-				global[typeKey].value(chan, value);
+				// midiRawAction.value(\program, src, chan, value);
+				// global[typeKey].value(chan, value);
 
 				if (el.notNil) {
 					el.rawValueAction_(value);
@@ -701,7 +701,7 @@ MIDIMKtlDevice : MKtlDevice {
 		msgTypes = MIDIAnalysis.checkMsgTypes( mktl.deviceDescriptionArray);
 		msgTypes = msgTypes ? allMsgTypes;
 		responders = ();
-		global = ();
+		// global = ();
 		msgTypes.do { |msgType|
 			switch(msgType,
 				\cc, { this.makeCC },
