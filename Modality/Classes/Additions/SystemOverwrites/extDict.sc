@@ -45,6 +45,8 @@
 		isLeaf = isLeaf ? { |el| (el.mutable and: { el.respondsTo(\traverseDo) }).not };
 		this.do { |elem, index|
 			var myDeepKeys = deepKeys.asArray ++ index;
+			var isAssoc = elem.isKindOf(Association);
+			if (isAssoc) { index = elem.key; elem = elem.value };
 			if (isLeaf.(elem, myDeepKeys)) {
 				doAtLeaf.(elem, myDeepKeys)
 			} {
@@ -52,7 +54,8 @@
 					elem.traverseDo(doAtLeaf, isLeaf, myDeepKeys);
 				} {
 					"traverseDo found malformed object:\n"
-					"at % element % is not a leaf and not a collection.".format(index, elem);
+					"at % element % is not a leaf and not a collection."
+					.format(index, elem);
 				};
 			}
 		};
@@ -63,6 +66,8 @@
 		^this.collect { |elem, index|
 			var myDeepKeys = deepKeys.asArray ++ index;
 			var result;
+			var isAssoc = elem.isKindOf(Association);
+			if (isAssoc) { index = elem.key; elem = elem.value };
 			if (isLeaf.(elem, myDeepKeys)) {
 				result = doAtLeaf.(elem, myDeepKeys)
 			} {
@@ -74,8 +79,11 @@
 					nil
 				};
 			};
-			result
+			if (isAssoc) { index -> result } { result }
 		};
+	}
+	unpackAssoc { |value, index|
+
 	}
 }
 + Dictionary {

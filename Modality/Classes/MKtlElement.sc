@@ -19,7 +19,7 @@ MAbstractElement {
 	var <>action;
 
 	// keep current and previous value here
-	var <deviceValue;
+	var deviceValue;
 	var <prevValue;
 
 	// server support, currently only one server per element supported.
@@ -42,6 +42,8 @@ MAbstractElement {
 	init {
 		tags = Set[];
 	}
+
+	deviceValue { ^deviceValue }
 
 	getSpec { |specName|
 		^if (source.notNil) {

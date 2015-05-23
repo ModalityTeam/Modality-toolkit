@@ -13,7 +13,7 @@ MKtlDesc {
 
 	classvar <>isElementTestFunc;
 
-	var <fullDesc, <path, <>shortName, <elementsKeyValueArray;
+	var <fullDesc, <path, <name, <elementsKeyValueArray;
 
 	*initClass {
 		defaultFolder = this.filenameSymbol.asString.dirname.dirname
