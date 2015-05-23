@@ -19,7 +19,7 @@ MAbstractElement {
 	var <>action;
 
 	// keep current and previous value here
-	var deviceValue;
+	var <deviceValue;
 	var <prevValue;
 
 	// server support, currently only one server per element supported.
@@ -42,8 +42,6 @@ MAbstractElement {
 	init {
 		tags = Set[];
 	}
-
-	deviceValue { ^deviceValue }
 
 	getSpec { |specName|
 		^if (source.notNil) {
@@ -221,23 +219,31 @@ MKtlElement : MAbstractElement {
 		};
 
 		elementDescription = dict;
-		deviceSpec = elementDescription[\spec];
+		type = elementDescription[\type];
+		ioType = elementDescription[\ioType] ? \in;
+
+		this.deviceSpec = elementDescription[\spec];
 
 		if (deviceSpec.isNil) {
 			warn("deviceSpec for '%' is missing!".format(deviceSpec));
 			"using [0, 1].asSpec instead".postln;
-		} {
+			// and now we will have a spec.
 			deviceSpec = this.getSpec(deviceSpec);
-			// and now we have a spec.
-
-			// keep old values if there.
-			if (deviceValue.isNil) {
-				deviceValue = prevValue = this.defaultValue;
-			};
+		};
+		// keep old values if there.
+		if (deviceValue.isNil) {
+			deviceValue = prevValue = this.defaultValue;
 		};
 
-		type = elementDescription[\type];
-		ioType = elementDescription[\ioType] ? \in;
+	}
+
+	deviceSpec_ {|newspec|
+		if (newspec.isNil) {
+			^this.getSpec;
+		};
+		newspec = newspec.asSpec;
+		elementDescription[\spec] = newspec;
+		deviceSpec = newspec;
 	}
 
 	// just update params on the fly, keep description in sync
@@ -246,16 +252,9 @@ MKtlElement : MAbstractElement {
 			elementDescription.put(key, val);
 		};
 		// sync back if these changed
-		deviceSpec = elementDescription[\spec];
+		this.deviceSpec_(dict[\spec]);
 		type = elementDescription[\type];
 		ioType = elementDescription[\ioType] ? \in;
-	}
-
-	deviceSpec_ { |spec|
-		if (spec.notNil) {
-			deviceSpec = this.getSpec(spec);
-			elementDescription.put(\spec, deviceSpec);
-		}
 	}
 
 	defaultValue {
@@ -274,6 +273,7 @@ MKtlElement : MAbstractElement {
 		if (newval.isNil) { ^this };
 		prevValue = deviceValue;
 		deviceValue = deviceSpec.map(newval);
+		[newval, deviceSpec, deviceValue].postln;
 		this.trySend;
 		this.updateBus;
 		this.changed( \value, newval );
