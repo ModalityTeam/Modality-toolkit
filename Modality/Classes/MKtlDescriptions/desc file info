@@ -1,0 +1,170 @@
+CONTROLLER NAMING CONVENTIONS - for discussion
+*device category
+
+pad controller
+wireless pad controller
+ribbon controller
+keyboard
+keyboard controller
+faderbox/faderpack ??
+rotary controller
+gamepad
+joystick
+dj controller
+mixer controller 
+matrix
+mixer strip ??
+pad/button matrix ??
+transport controller - recording interface??
+step sequencer controller 
+osc controller??
+iphone osc controller??
+wifi osc controller??
+
+///////////////////LIST
+
+APC mini
+http://www.akaipro.com/product/apc-mini
+manual: http://6be54c364949b623a3c0-4409a68c214f3a9eeca8d0265e9266c0.r0.cf2.rackcdn.com/990/documents/APC%20mini%20-%20User%20Guide%20-%20v1.0.pdf
+: faderbox, pad controller
+
+ABLETON Push
+https://www.ableton.com/en/push/
+manual: https://www.ableton.com/en/manual/using-push/
+category: pad controller, matrix
+
+ARTURIA Minilab - MIDI controller
+http://www.arturia.com/products/hybrid-synths/minilab/overview
+manual: http://downloads.arturia.com/products/minilab/manual/MiniLab_Manual_EN.pdf
+category: keyboard controller
+ 
+BEHRINGER BCF2000 - motorized usb/midi controller
+http://www.behringer.com/EN/Products/BCF2000.aspx
+manual:http://www.behringer.com/assets/BCF2000_BCR2000_M_EN.pdf
+category: mixer controller
+
+BEHRINGER BCR2000 - Rotary MIDI/USB controller
+http://www.behringer.com/EN/Products/BCR2000.aspx
+manual: http://www.behringer.com/assets/BCF2000_BCR2000_M_EN.pdf
+category: rotary controller
+
+EOWAVE RIBBON – ribbon controller
+http://www.eowave.com/instruments.php?prod=78
+manual: http://www.eowave.com/downloads/pdf/EowaveRibbon_manual.pdf
+category: ribbon controller
+
+EXTREME 3d pro joystick
+http://gaming.logitech.com/en-us/product/extreme-3d-pro-joystick
+manual: http://support.logitech.com/product/extreme-3d-pro
+category: joystick
+
+ICON I-CONTROLS
+http://www.icon-global.com/Controllers_MIDI+recording+controllers_iControls+.htm
+manual:http://www.icon-global.com/download%5Cuser%20manual%5CIC%20PD3V1.00-E.zip
+category: faderbox
+
+ICON iStage 
+http://www.icon-global.com/Keyboards%2FPads_Pads_iStage.htm
+category: pad controller, matrix
+
+AKAI LPD8
+http://www.akaipro.com/product/lpd8
+category: pad controller
+ 
+NOVATION Launch Control XL
+http://global.novationmusic.com/launch/launch-control-xl#
+category: mixer controller
+
+NOVATION Launchpad
+no longer supported
+category: pad controller
+
+AKAI MPD18
+http://www.akaipro.com/product/mpd18
+category: pad controller
+ 
+AKAI MPD mini mkII
+http://www.akaipro.com/product/mpk-mini-mkii
+category: keyboard controller
+
+NUMARK Orbit
+Wireless DJ controller with motion control
+http://www.numark.com/product/orbit
+category: wireless pad controller
+
+KeithMacMillen QuNexus
+http://www.keithmcmillen.com/products/qunexus/
+category: keyboard controller
+
+THRUSTMASTER – Dual Analogue Ferrari
+http://www.thrustmaster.com/en_UK/products/f1-dual-analog-ferrari-f60-exclusive-edition
+category: gamepad
+
+THRUSTMASTER – Run n drive wireless
+http://www.thrustmaster.com/products/runndrive-wireless-3-in1-rumble-force
+category: gamepad
+
+STEINBERG – CMC-FD
+https://www.steinberg.net/en/products/controller/cmc_serie/modelle/cmc_fd.html
+category: touch faders controller
+
+STEINBERG – CMC – PD
+https://www.steinberg.net/en/products/controllers/cmc_series/models/cmc_pd.html
+category: pad controller
+
+STEINBERG CMC – QC
+http://www.steinberg.net/en/products/controller/cmc_serie/modelle/cmc_qc.html
+category:  button controller
+
+TEENAGE ENGINEERING OP1
+https://www.teenageengineering.com/products/op-1
+category: keyboard controller
+
+THRUSTMASTER Joystick
+No info
+category: gamepad
+ 
+TRAKTOR Control Z2
+http://www.native-instruments.com/en/products/traktor/dj-mixer/traktor-kontrol-z2/
+category: DJ mixer controller
+
+EVOLUTION  UC 33
+No info
+category: faderbox
+
+BITSHAPE Gyrosc
+http://www.bitshapesoftware.com/instruments/gyrosc/
+category: iphone osc device
+
+ICON iControl 2
+http://www.icon-global.com/Controllers_MIDI+recording+controllers_iControls+.htm
+category: faderbox
+
+
+X-OSC
+http://www.x-io.co.uk/products/x-osc/#!prettyPhoto
+category: wifi osc device
+
+SNYDERPHONICS Manta
+http://www.snyderphonics.com/products.htm
+category: touch sensitive  matrix
+ 
+KORG Microkey
+http://www.korg.com/us/products/controllers/microkey/
+category: keyboard
+ 
+KORG Nano Key 2
+http://www.korg.com/us/products/controllers/nanokey2/
+category: keyboard
+
+KORG Nanokontrol 2
+http://www.korg.com/us/products/controllers/nanokontrol2/
+category: faderbox
+
+KORG Nanopad 2
+http://www.korg.com/us/products/controllers/nanopad2/
+category: pad controller
+
+M-AUDIO Triggerfinger
+http://m-audio.com/microsites/tfp
+category: step sequencer controller
