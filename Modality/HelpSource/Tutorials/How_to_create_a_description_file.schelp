@@ -1,0 +1,66 @@
+title:: How to create a description file
+summary:: How to create a description file to use with the Modality toolkit.
+categories:: Libraries>Modality
+related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Classes/MIDIExplorer, Classes/HIDExplorer
+
+Section:: Introduction
+
+The functionality of link::Classes/MKtl:: relies on descriptions of the used devices. For some Controllers, there are already descriptions available, chances are that your device is not among them.
+
+There are three tutorials that explain the procedure for the three different protocols. This tutorial describes elements that can be part of any description file (regardless of protocol).
+
+list::
+##link::Tutorials/How_to_create_a_description_file_for_MIDI::
+##link::Tutorials/How_to_create_a_description_file_for_HID::
+##link::Tutorials/How_to_create_a_description_file_for_OSC::
+::
+
+section:: Basic setup of the description file
+
+The basic setup of the description file is that is is a Dictionary with a number of key elements.
+
+The main element is the code::description:: which contains all the elements/controls of a device.
+
+For physical devices, you need to define the protocol and the idInfo. The code::protocol:: is one of code::\osc, \midi, \hid::. The code::idInfo:: is different per protocol, check the respective tutorial for an elaborate description.
+
+If you want to create a virtual device, the minimum info required is the protocol: code::( protocol: \virtual):: and the description.
+
+For example:
+
+code::
+(
+m = MKtl.new( \oneButton, (
+	protocol: \virtual,
+	description: ( \bt: ( type: \button, ioType: \in ) );
+), false );
+);
+m.gui;
+::
+
+See also: link::Reference/MKtl_description_files:: for the complete description of all possible keys.
+
+section:: Specs
+
+If a control of your device needs a custom Spec, then you can define this in the element code::spec:: of the device description.
+
+For example:
+
+code::
+specs: (
+	mantaTouch: [ 0, 227 ].asSpec,
+	mantaSlider: [ 0, 4095 ].asSpec,
+	mantaLed: StringMap.new( ["off","amber","red"] ), // led can be off, amber or red
+)
+::
+
+The Specs that are common specs for many MKtl's can be found with:
+code::
+MKtl.specs.keys // get the names
+MKtl.specs.at( \hidHat ); // look up a particular one
+::
+
+section:: Grouping of elements
+
+
+section:: Finding descriptions for similar devices
+
