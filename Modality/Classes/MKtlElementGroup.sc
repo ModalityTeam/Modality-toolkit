@@ -7,6 +7,10 @@ MKtlElementGroup : MKtlElement {
 		^super.newCopyArgs( nil, name ).elements_(elements);
 	}
 
+	*newFrom {|elements|
+		^this.new( elements: elements)
+	}
+
 	init {
 		var array;
 		tags = Set[];
