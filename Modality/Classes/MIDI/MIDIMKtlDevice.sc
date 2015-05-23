@@ -43,7 +43,7 @@ MIDIMKtlDevice : MKtlDevice {
 	// open all ports
 	*initDevices {|force= false|
 
-		(initialized && {force.not}).if{^this};
+		if ( initialized && {force.not} ){ ^this; };
 
 		// workaround for inconsistent behaviour between linux and osx
 		if ( MIDIClient.initialized and: (thisProcess.platform.name == \linux) ){
@@ -135,52 +135,66 @@ MIDIMKtlDevice : MKtlDevice {
 		^devKey;
 	}
 
+	*findInDictByNameAndIndex{ |dict, name, index|
+		var found = List.new;
+		var foundItem;
+		index = index ? 0;
+		[dict,name,index].postln;
+		dict.keysValuesDo{ |key,endpoint|
+			if ( endpoint.device == name ){ found.add( endpoint ) };
+		};
+		foundItem = found.sort( { |a,b| a.name < b.name } ).at( index );
+		// returns the MIDI endpoint;
+		foundItem.postln;
+		^foundItem;
+	}
+
 	// create with a uid, or access by name
-	*new { |name, srcUID, destUID, parentMKtl|
+	// *new { |name, srcUID, destUID, parentMKtl|
+	*new { |name, idInfo, parentMKtl|
 		var foundSource, foundDestination;
 		var deviceName;
 
 		this.initDevices;
 
-		// make a new source
-		foundSource = srcUID.notNil.if({
-			MIDIClient.sources.detect { |src|
-				src.uid == srcUID;
+		[ name, idInfo, parentMKtl, initialized ].postln;
+
+		if ( idInfo.notNil ){ // use idInfo to open:
+			if ( initialized.not ){ ^nil };
+			idInfo.isKindOf( String ).postln;
+			if ( idInfo.isKindOf( String ) ){
+				foundSource = this.findInDictByNameAndIndex( sourceDeviceDict, idInfo );
+				foundDestination = this.findInDictByNameAndIndex( destinationDeviceDict, idInfo );
 			};
-		}, {
-			sourceDeviceDict[name.asSymbol];
-		});
-
-		if (foundSource.isNil) {
-			warn("MIDIMKtlDevice:"
-			"	No MIDIIn source with USB port ID % exists! please check again.".format(srcUID));
-		};
-
-		// make a new destination
-		foundDestination = destUID.notNil.if({
-			MIDIClient.destinations.detect { |src|
-				src.uid == destUID;
+			idInfo.isKindOf( Dictionary ).postln;
+			if ( idInfo.isKindOf( Dictionary ) ){
+				"looking for source".postln;
+				foundSource = this.findInDictByNameAndIndex( sourceDeviceDict, idInfo[\name], idInfo[\sourcePortIndex] );
+				foundDestination = this.findInDictByNameAndIndex( destinationDeviceDict, idInfo[\name], idInfo[\destinationPortIndex] );
 			};
-		}, {
-			destinationDeviceDict[name.asSymbol];
-		});
-
-		if (foundDestination.isNil) {
-			warn("MIDIMKtlDevice:"
-			"	No MIDIOut destination with USB port ID % exists! please check again.".format(destUID));
+		}{ // use name to open
+			foundSource = sourceDeviceDict[name.asSymbol];
+			foundDestination = destinationDeviceDict[name.asSymbol];
 		};
 
 		if ( foundSource.isNil and: foundDestination.isNil ){
 			warn("MIDIMKtl:"
-			"	No MIDIIn source nor destination with USB port ID %, % exists! please check again.".format(srcUID, destUID));
+				"	No MIDIIn source nor destination with idInfo % exists! please check again.".format(idInfo));
 			^nil;
 		};
 
-		foundDestination.notNil.if{
+		if (foundDestination.isNil) {
+			warn("MIDIMKtlDevice:"
+				"	No MIDIOut destination with idInfo % exists! please check again.".format(idInfo));
+		}{
 			destinationDeviceDict.changeKeyForValue(name, foundDestination);
 			deviceName = foundDestination.device;
 		};
-		foundSource.notNil.if{
+
+		if (foundSource.isNil) {
+			warn("MIDIMKtlDevice:"
+				"	No MIDIIn source with idInfo % exists! please check again.".format(idInfo));
+		}{
 			sourceDeviceDict.changeKeyForValue(name, foundSource);
 			deviceName = foundSource.device;
 		};
