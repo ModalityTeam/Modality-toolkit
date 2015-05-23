@@ -305,7 +305,7 @@ MIDIMKtlDevice : MKtlDevice {
 
 		this.initElements;
 		this.initCollectives;
-		this.sendInitialiationMessages;
+		this.sendInitialisationMessages;
 	}
 
 	makeHashKey{ |descr,elName|
@@ -716,7 +716,7 @@ MIDIMKtlDevice : MKtlDevice {
 	 	}
 	}
 
-	sendInitialiationMessages{
+	sendInitialisationMessages{
 		mktl.initialisationMessages.do{ |it|
 			midiOut.performList( it[0], it.copyToEnd(1) );
 		}
