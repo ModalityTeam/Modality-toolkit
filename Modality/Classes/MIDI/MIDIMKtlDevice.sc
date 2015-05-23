@@ -710,13 +710,9 @@ MIDIMKtlDevice : MKtlDevice {
 			{\cc}{ midiOut.control(ch, num, val ) }
 			{\noteOn}{ midiOut.noteOn(ch, num, val ) }
 			{\noteOff}{ midiOut.noteOff(ch, num, val ) }
-<<<<<<< HEAD
 			{\noteOnOff} { midiOut.noteOn(ch, num, val ) }
 			{\bend}{ midiOut.bend(ch, val) }
 //			{\note}{ x.postln /*TODO: check type for noteOn, noteOff, etc*/ }
-=======
-			{\noteOnOff}{ midiOut.noteOn(ch, num, val ); x.postln}
->>>>>>> added Meta_MKtlElementGroup:newFrom, some page information to LaunchControlXL description
 			{warn("MIDIMKtlDevice: message type % not recognised".format(type))}
 	 	}
 	}
