@@ -60,7 +60,7 @@ Unmap an item to a number:
 ARGUMENT:: inval
 the item to find in the Array
 
-returns:: A SimpleNumber or nil if the string was not found.
+returns:: A SimpleNumber or nil if the item was not found.
 
 METHOD:: default
 The default value of the ItemsSpec is 0;
