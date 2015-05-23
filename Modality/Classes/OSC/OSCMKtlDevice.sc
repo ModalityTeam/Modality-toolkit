@@ -241,6 +241,7 @@ OSCMKtlDevice : MKtlDevice {
 			var valueIndex = el.elementDescription[ \valueAt ];
 			var dispatcher;
 			if ( [\in,\inout].includes( ioType ) or: ioType.isNil ){
+
 				if ( oscFuncDictionary.at( el.name ).notNil ){ oscFuncDictionary.at( el.name ).free };
 
 				if ( oscPath.asString.includes( $* ) ){ // pattern matching
@@ -257,20 +258,34 @@ OSCMKtlDevice : MKtlDevice {
 							}
 						}, oscPath, source, recvPort, argTemplate, dispatcher ).permanent_( true );
 					);
-				}{ // normal osc matching
-					oscFuncDictionary.put( el.name,
-						OSCFunc.new( { |msg|
-							if ( valueIndex.notNil ){
-								el.rawValueAction_( msg.at( valueIndex ) );
-							}{
-								el.rawValueAction_( msg.last );
-							};
-							if(traceRunning) {
-								"% - % > % | type: %, src:%"
-								.format(this.name, el.name, el.value.asStringPrec(3), el.type, el.source).postln;
-							}
-						}, oscPath, source, recvPort, argTemplate ).permanent_( true );
-					);
+				}{
+					if ( el.type == \trigger ){
+						// trigger osc func
+						oscFuncDictionary.put( el.name,
+							OSCFunc.new( { |msg|
+								el.rawValueAction_( 1 ); // send a default value of 1
+								if(traceRunning) {
+									"% - % > % | type: %, src:%"
+									.format(this.name, el.name, el.value.asStringPrec(3), el.type, el.source).postln;
+								}
+							}, oscPath, source, recvPort, argTemplate ).permanent_( true );
+						);
+					}{
+						// normal osc matching
+						oscFuncDictionary.put( el.name,
+							OSCFunc.new( { |msg|
+								if ( valueIndex.notNil ){
+									el.rawValueAction_( msg.at( valueIndex ) );
+								}{
+									el.rawValueAction_( msg.last );
+								};
+								if(traceRunning) {
+									"% - % > % | type: %, src:%"
+									.format(this.name, el.name, el.value.asStringPrec(3), el.type, el.source).postln;
+								}
+							}, oscPath, source, recvPort, argTemplate ).permanent_( true );
+						);
+					};
 				}
 			};
 		};

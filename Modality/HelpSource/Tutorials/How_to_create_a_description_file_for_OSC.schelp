@@ -12,6 +12,10 @@ This Tutorial first shows simple examples of OSC interfaces, by emulating them w
 
 list::
 ##link::#Simple input::
+list::
+##link::#Pattern matching on osc paths::
+##link::#Trigger messages::
+::
 ##link::#Simple output::
 ##link::#Collective input::
 ##link::#Collective output::
@@ -223,6 +227,45 @@ n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
 n.sendMsg( "/button/off" );
 n.sendMsg( "/button/on" );
 
+
+// close the device again
+m.closeDevice;
+::
+
+
+subsection:: Trigger messages
+
+In some cases, an OSC message has no relevant arguments and just functions as a trigger that a certain event happened. In this case you use the type code::\trigger:: for the element. The output value of the element will always be 1.
+
+code::
+(
+~descInput = (
+	idInfo: ( srcPort: NetAddr.langPort, ipAddress: "127.0.0.1" ),
+	protocol: \osc,
+	description: (
+		'tr': (
+			oscPath: '/trigger',
+			type: 'trigger',
+			ioType: \in
+		)
+	)
+)
+);
+
+m = MKtl( \exampleOSCInput, ~descInput );
+MKtlDevice.allAvailable // now also shows the opened 'osc device'
+
+// create a gui for the osc device:
+m.gui;
+
+// post incoming data
+m.trace;
+
+n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
+
+// send messages:
+n.sendMsg( "/trigger" );
+n.sendMsg( "/trigger" );
 
 // close the device again
 m.closeDevice;
