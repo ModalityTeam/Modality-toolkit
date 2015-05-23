@@ -725,7 +725,19 @@ MIDIMKtlDevice : MKtlDevice {
 			{\noteOn}{ midiOut.noteOn(ch, num, val ) }
 			{\noteOff}{ midiOut.noteOff(ch, num, val ) }
 			{\noteOnOff} { midiOut.noteOn(ch, num, val ) }
+			{\polyTouch}{ midiOut.polyTouch(ch, num, val) }
 			{\bend}{ midiOut.bend(ch, val) }
+			{\touch}{ midiOut.touch(ch, val) }
+			{\program}{ midiOut.program(ch, val) }
+			{\allNotesOff}{ midiOut.allNotesOff(ch) }
+			{\midiClock}{ midiOut.midiClock }
+			{\start}{ midiOut.start }
+			{\stop}{ midiOut.stop }
+			{\continue}{ midiOut.continue }
+			{\reset}{ midiOut.reset }
+			// {\songSelect}{ midiOut.songPtr( song ) } // this one has a really different format
+			// {\songPtr}{ midiOut.songPtr( songPtr ) } // this one has a really different format
+			// {\smpte}{ midiOut.smpte } // this one has a really different format
 //			{\note}{ x.postln /*TODO: check type for noteOn, noteOff, etc*/ }
 			{warn("MIDIMKtlDevice: message type % not recognised".format(type))}
 	 	}
