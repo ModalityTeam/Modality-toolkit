@@ -14,7 +14,7 @@
 
 */
 
-StringMap{
+ItemsSpec{
 	var <keys;
 	var <spec;
 	var <default;
