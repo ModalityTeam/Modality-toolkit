@@ -454,7 +454,7 @@ MIDIMKtlDevice : MKtlDevice {
 					};
 				} {
 					if (traceRunning) {
-					"MIDIMKtl( % ) : cc element found for midiChan %, ccnum % !\n"
+					"MKtl( % ) : cc element found for midiChan %, ccnum % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\cc, \\type: \\button, \\midiChan: %,"
 					"\\midiNum: %, \\spec: \\midiBut, \\mode: \\push).\n\n"
@@ -487,7 +487,7 @@ MIDIMKtlDevice : MKtlDevice {
 					};
 				}{
 					if (traceRunning) {
-					"MIDIMKtl( % ) : noteOn element found for midiChan %, note % !\n"
+					"MKtl( % ) : noteOn element found for midiChan %, note % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\noteOn, \\type: \\pianoKey or \\button, \\midiChan: %,"
 					"\\midiNum: %, \\spec: \\midiVel).\n\n"
@@ -520,7 +520,7 @@ MIDIMKtlDevice : MKtlDevice {
 					};
 				} {
 					if (traceRunning) {
-					"MIDIMKtl( % ) : noteOff element found for midiChan %, note % !\n"
+					"MKtl( % ) : noteOff element found for midiChan %, note % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\noteOff, \\type: \\pianoKey or \\button, \\midiChan: %,"
 					"\\midiNum: %, \\spec: \\midiVel).\n\n"
@@ -559,7 +559,7 @@ MIDIMKtlDevice : MKtlDevice {
 					}
 				}{
 					if (traceRunning) {
-					"MIDIMKtl( % ) : touch element found for midiChan % !\n"
+					"MKtl( % ) : touch element found for midiChan % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\touch, \\type: \\chantouch', \\midiChan: %,"
 					"\\spec: \\midiTouch).\n\n"
@@ -594,7 +594,7 @@ MIDIMKtlDevice : MKtlDevice {
 					};
 				}{
 					if (traceRunning) {
-					"MIDIMKtl( % ) : polyTouch element found for midiChan %, note % !\n"
+					"MKtl( % ) : polyTouch element found for midiChan %, note % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\polyTouch, \\type: \\keytouch, \\midiChan: %,"
 					"\\midiNum: %, \\spec: \\midiVel).\n\n"
@@ -633,7 +633,7 @@ MIDIMKtlDevice : MKtlDevice {
 					};
 				}{
 					if (traceRunning) {
-					"MIDIMKtl( % ) : bend element found for midiChan % !\n"
+					"MKtl( % ) : bend element found for midiChan % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\bend, \\type: ??', \\midiChan: %,"
 					"\\spec: \\midiBend).\n\n"
@@ -673,7 +673,7 @@ MIDIMKtlDevice : MKtlDevice {
 					};
 				}{
 					if (traceRunning) {
-					"MIDIMKtl( % ) : program element found for midiChan % !\n"
+					"MKtl( % ) : program element found for midiChan % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\program, \\type: ??', \\midiChan: %,"
 					"\\spec: \\midiProgram).\n\n"
