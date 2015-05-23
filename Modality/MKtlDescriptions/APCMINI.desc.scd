@@ -6,7 +6,7 @@ a.elementAt(\keyOn).action_({ |elem| [\ON, elem.name, elem.value].postln; });
 a.elementAt(\keyOff).action_({ |elem| [\OFF, elem.name, elem.value].postln; });
 */
 (
-idInfo: "APC MINI",
+device: "APC MINI",
 protocol: 'midi',
 description: (
 

@@ -6,7 +6,7 @@ k = MIDIMKtl('nnpd20');
 */
 
 (
-idInfo: "nanoPAD2",
+device: "nanoPAD2",
 protocol: \midi,
 description: (
 	\padOn: (36..99).collect{ |note|

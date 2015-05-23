@@ -5,7 +5,7 @@ MKtl.deviceDescriptionFolder.openOS
 MKtl.addSpec(\compassImpact, [0, 1.0]);
 
 (
-idInfo: "USB Game Controllers_Mega World",
+device: "USB Game Controllers_Mega World",
 protocol: 'hid',
 description: (
 

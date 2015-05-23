@@ -1,6 +1,6 @@
 // Sherman Filterbank 2 Descriptionfile
 (
-idInfo: "Sherman FilterBank 2",
+device: "Sherman FilterBank 2",
 protocol: \midi,
 description:
 

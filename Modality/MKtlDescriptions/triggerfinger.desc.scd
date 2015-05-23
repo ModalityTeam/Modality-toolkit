@@ -1,7 +1,7 @@
 // M-audio Trigger finger - MKtl
 
 (
-idInfo: "USB Trigger Finger",
+device: "USB Trigger Finger",
 protocol: \midi,
 description: (
 	pad: ((0..15)+35).collect{ |num|

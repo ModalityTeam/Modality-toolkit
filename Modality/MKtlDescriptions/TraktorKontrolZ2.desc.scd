@@ -1,7 +1,7 @@
 MKtl.addSpec(\step16Encoder, [0, 1, \lin].asSpec);
 
 (
-idInfo: "Traktor Kontrol Z2_Native Instruments",
+device: "Traktor Kontrol Z2_Native Instruments",
 protocol: 'hid',
 description: (
 
@@ -47,7 +47,7 @@ description: (
 	\knR: (75..79).collect{|i|('hidElementID': i, 'type': \knob, 'ioType': 'in', 'spec': \cent1 )},
 	\sl: (82..83).collect{|i| ('hidElementID': i, 'type': \slider, 'ioType': 'in', 'spec': \cent1 )},
 	\xsl: ('hidElementID': 84, 'type': \slider, 'ioType': 'in', 'spec': \cent1, 'mode': \center ),
-	\knXF: ('hidElementID': 85, 'type': \knob, 'ioType': 'in', 'spec': \cent1 ),
+\knXF: ('hidElementID': 85, 'type': \knob, 'ioType': 'in', 'spec': \cent1 ),
 
 // --------- output elements ----------
 

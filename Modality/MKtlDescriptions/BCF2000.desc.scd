@@ -15,7 +15,7 @@ sl[row][column]
 
 
 (
-idInfo: "BCF2000",
+device: "BCF2000",
 protocol: \midi,
 description: (
 	//buttons at bottom right

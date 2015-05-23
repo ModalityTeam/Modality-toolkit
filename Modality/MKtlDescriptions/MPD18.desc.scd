@@ -30,7 +30,7 @@ m.elementAt(\padOff, 1, 2).addAction({ |...args| args.post; "pad2 sc1 off YO !".
 /****** END TESTs ******/
 */
 (
-idInfo: "Akai MPD18",
+device: "Akai MPD18",
 protocol: \midi,
 description: (
 	\sl: (\midiMsgType: \cc, \type: \slider, \midiChan: 0, \midiNum:  1, \spec: \midiCC),

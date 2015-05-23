@@ -1,7 +1,7 @@
 MKtl.addSpec(\selectNumark, [0, 4]);
 
 (
-idInfo: "Numark ORBIT",
+device: "Numark ORBIT",
 protocol: 'midi',
 description:
 (

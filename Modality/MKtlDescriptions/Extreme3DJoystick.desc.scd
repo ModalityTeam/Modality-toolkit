@@ -1,5 +1,5 @@
 (
-idInfo: "Logitech Extreme 3D_Logitech",
+device: "Logitech Extreme 3D_Logitech",
 protocol: 'hid',
 description: (
 

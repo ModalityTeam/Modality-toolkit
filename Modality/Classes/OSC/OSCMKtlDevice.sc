@@ -62,8 +62,8 @@ OSCMKtlDevice : MKtlDevice {
 	classvar <protocol = \osc;
 	classvar <sourceDeviceDict; // contains active sources ( recvPort: , srcPort: , ipAddress: , destPort:  )
 
-	var <source;  // receiving OSC from this NetAddr
-	var <destination; // sending OSC to this NetAddr
+	var <srcDevice;  // receiving OSC from this NetAddr
+	var <destDevice; // sending OSC to this NetAddr
 	var <recvPort; // port on which we need to listen
 
 	var <oscFuncDictionary;
@@ -146,23 +146,24 @@ OSCMKtlDevice : MKtlDevice {
 		};
 	}
 
-	*findSource{ |devInfo| // only reports interfaces that are already opened
+	*findSource{ |name,host,port| // only reports interfaces that are already opened
 		var devKey;
-		var match;
 		if ( initialized ){
-			this.sourceDeviceDict.keysValuesDo{ |key,info|
-				match = true;
-				devInfo.keysValuesDo{ |key,val|
-					if ( info.at( key ).notNil ){
-						if ( info.at( key ) != val ){
-							match = false;
-						};
-					}{
-						match = false;
-					};
-				};
-				if ( match ){
-					devKey = key;
+			this.sourceDeviceDict.keysValuesDo{ |key,addr|
+				if ( host.notNil ){
+					if ( port.notNil ){
+						if ( addr.port == port and: (addr.hostname == host ) ){
+							devKey = key;
+						}
+					}{ // just match host
+						if ( addr.hostname == host ){
+							devKey = key;
+						}
+					}
+				}{ // just match port
+					if ( addr.port == port ){
+						devKey = key;
+					}
 				}
 			};
 		}
@@ -190,40 +191,29 @@ OSCMKtlDevice : MKtlDevice {
 		^super.basicNew( name, name, parentMKtl ).initOSCMKtl( devInfo );
 	}
 
-	initOSCMKtl{ |desc|
-		// this will not be addr but a ( destPort: , recvPort: , srcPort: ..., ipAddress: ..., listenPort: ... )
-		if ( desc.at( \ipAddress ).notNil ){
-			source = NetAddr.new( desc.at( \ipAddress ), desc.at( \srcPort ) );
-			if ( desc.at( \destPort ).notNil ){
-				destination = NetAddr.new( desc.at( \ipAddress ), desc.at( \destPort ) );
-			}{ // assume destination port is same as srcPort
-				destination = NetAddr.new( desc.at( \ipAddress ), desc.at( \srcPort ) );
-			};
-		}{
-			if ( desc.at( \destPort ).notNil ){
-				destination = NetAddr.new( "127.0.0.1", desc.at( \destPort ) );
-			}{ // assume destination port is same as srcPort
-				destination = NetAddr.new( "127.0.0.1", desc.at( \srcPort ) );
-			};
+	initOSCMKtl{ |desc| // this will not be addr but a ( destPort: , recvPort: , srcPort: ..., ipAddress: ..., listenPort: ... )
+
+		srcDevice = NetAddr.new( desc.at( \ipAddress ), desc.at( \srcPort ) );
+		if ( desc.at( \desPort ).notNil ){
+			destDevice = NetAddr.new( desc.at( \ipAddress ), desc.at( \destPort ) );
+		}{ // assume destination port is same as srcPort
+			destDevice = NetAddr.new( desc.at( \ipAddress ), desc.at( \srcPort ) );
 		};
 		recvPort = desc.at( \recvPort );
 
 		this.initElements;
-		this.initCollectives;
-		this.sendInitialiationMessages;
 	}
 
 
 	closeDevice{
 		this.cleanupElementsAndCollectives;
-		source = nil;
-		destination = nil;
+		srcDevice = nil;
+		destDevice = nil;
 		recvPort = nil;
-		// should this remove from sourceDictionary too?
 	}
 
 	initElements{
-		if ( oscFuncDictionary.isNil ){
+		if ( oscFuncDictionary.notNil ){
 			oscFuncDictionary = IdentityDictionary.new;
 		};
 		mktl.elementsDict.do{ |el|
@@ -232,61 +222,40 @@ OSCMKtlDevice : MKtlDevice {
 			var argTemplate = el.elementDescription[ \argTemplate ];
 			var valueIndex = el.elementDescription[ \valueAt ];
 			if ( [\in,\inout].includes( ioType ) or: ioType.isNil ){
-				if ( oscFuncDictionary.at( el.name ).notNil ){ oscFuncDictionary.at( el.name ).free };
-				oscFuncDictionary.put( el.name,
+				oscFuncDictionary.put( el.key,
 					OSCFunc.new( { |msg|
-						if ( valueIndex.notNil ){
-							el.rawValueAction_( msg.at( valueIndex ) );
-						}{
-							el.rawValueAction_( msg.last );
-						};
+						el.rawValueAction_( msg.at( valueIndex ) );
 						if(traceRunning) {
 							"% - % > % | type: %, src:%"
 							.format(this.name, el.name, el.value.asStringPrec(3), el.type, el.source).postln;
 						}
-					}, oscPath, source, recvPort, argTemplate: argTemplate ).permanent_( true );
+					}, oscPath, srcDevice, recvPort, argTemplate: argTemplate );
 				);
 			};
 		};
 	}
 
 	initCollectives{
-		if ( oscFuncDictionary.isNil ){
+		if ( oscFuncDictionary.notNil ){
 			oscFuncDictionary = IdentityDictionary.new;
 		};
 		mktl.collectivesDict.do{ |el|
 			var oscPath = el.elementDescription[ \oscPath ];
 			var ioType = el.elementDescription[ \ioType ];
 			var argTemplate = el.elementDescription[ \argTemplate ];
-			var valueIndices = el.elementDescription[ \valueAt ];
 			var msgIndices, templEnd;
-			if ( [\in,\inout].includes( ioType ) and: ( el.elementDescription[ \oscPath ].notNil) ){
-				if ( valueIndices.notNil ){
-					msgIndices = valueIndices;
-					templEnd = valueIndices.maxItem + 1;
-				}{
-					if ( argTemplate.notNil ){
-						templEnd = argTemplate.size + 1; // + 1 because argTemplate does not contain the oscpath as the first msg element
-						msgIndices = argTemplate.indicesOfEqual( nil );
-						if ( msgIndices.notNil) { msgIndices = msgIndices + 1; }; // + 1 because argTemplate does not contain the oscpath as the first msg element
-					}{
-						templEnd = 1;
-					};
-				};
-				if ( oscFuncDictionary.at( el.name ).notNil ){ oscFuncDictionary.at( el.name ).free };
-				oscFuncDictionary.put( el.name,
+			if ( [\in,\inout].includes( ioType ) and: ( el.elementDescription[ \type ] == \oscMessage) ){
+				templEnd = argTemplate.size + 1; // + 1 because argTemplate does not contain the oscpath as the first msg element
+				msgIndices = argTemplate.indicesOfEqual( nil ) + 1; // + 1 because argTemplate does not contain the oscpath as the first msg element
+				oscFuncDictionary.put( el.key,
 					OSCFunc.new( { |msg|
 						// clever msg index parsing
-						if ( msgIndices.notNil ){
-							el.rawValueAction_( msg.at( msgIndices) ++ msg.copyToEnd( templEnd ) );
-						}{
-							el.rawValueAction_( msg.copyToEnd( templEnd ) );
-						};
+						el.rawValueAction_( msg.at( msgIndices) ++ msg.copyToEnd( templEnd ) );
 						if(traceRunning) {
 							"% - % > % | type: %, src:%"
-							.format(this.name, el.name, el.value.collect{ |it| it.asStringPrec(3) }, el.type, el.source).postln;
+							.format(this.name, el.name, el.value.asStringPrec(3), el.type, el.source).postln; // fix tracing
 						}
-					}, oscPath, source, recvPort, argTemplate: argTemplate ).permanent_( true );
+					}, oscPath, srcDevice, recvPort, argTemplate: argTemplate ); // optional add host/port
 				);
 			};
 		};
@@ -300,12 +269,11 @@ OSCMKtlDevice : MKtlDevice {
 	// this should work for the simple usecase (not the group yet)
 	// from the group: \output, val: [ 0, 0, 0, 0 ]
 	send{ |key,val|
-		var el, oscPath, outvalues,valIndex;
-		if ( destination.notNil ){
+		var el, oscPath, outvalues, valIndex;
+		if ( destDevice.notNil ){
+			el = mktl.elementDescriptionFor( key );
+			oscPath = el[\oscPath];
 			if ( val.isKindOf( Array ) ){
-				el = mktl.collectiveDescriptionFor( key );
-				valIndex = 0;
-				oscPath = el[\oscPath];
 				outvalues = List.new;
 				el[\argTemplate].do{ |it|
 					if ( it.isNil ){
@@ -317,8 +285,6 @@ OSCMKtlDevice : MKtlDevice {
 				if ( valIndex < val.size ){ outvalues = outvalues ++ (val.copyToEnd( valIndex ) ) };
 				outvalues = outvalues.asArray;
 			}{
-				el = mktl.elementDescriptionFor( key );
-				oscPath = el[\oscPath];
 				outvalues = el[\argTemplate].copy; // we will modify it maybe, so make a copy
 				if ( outvalues.includes( nil ) ){
 					outvalues.put( outvalues.indexOf( nil ), val );
@@ -326,13 +292,8 @@ OSCMKtlDevice : MKtlDevice {
 					outvalues = outvalues ++ val;
 				};
 			};
-			destination.sendMsg( *( [ oscPath ] ++ outvalues ) );
+			destDevice.sendMsg( *( [ oscPath ] ++ outvalues ) );
 		}
 	}
 
-	sendInitialiationMessages{
-		mktl.initialisationMessages.do{ |it|
-			destination.sendMsg( *it );
-		};
-	}
 }

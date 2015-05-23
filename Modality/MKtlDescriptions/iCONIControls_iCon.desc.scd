@@ -1,5 +1,5 @@
 (
-idInfo: "iCON iControls V2.00_iCON",
+device: "iCON iControls V2.00_iCON",
 protocol: 'hid',
 description: (
 

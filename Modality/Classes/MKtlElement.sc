@@ -27,7 +27,6 @@ MAbstractElement {
 	var <>parent;
 	// all the elementGroups this is a member of
 	var <groups;
-	var <collectives;
 
 	// the dict from the MKtlDesc
 	// that has this element's properties
@@ -152,19 +151,6 @@ MAbstractElement {
 
 	prRemoveGroup { |group|
 		groups.remove( group );
-	}
-
-	// MKtlElementCollective support
-	prAddCollective { |collective|
-		if( collectives.isNil or: { collectives.includes( collective ).not }) {
-			collectives = collectives.add( collective );
-		};
-	}
-
-	prRemoveCollective { |collective|
-		if( collectives.notNil ) {
-			collectives.remove( collective );
-		};
 	}
 
 	asBaseClass {

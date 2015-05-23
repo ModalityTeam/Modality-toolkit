@@ -5,7 +5,7 @@
 
 */
 (
-idInfo:"Steinberg CMC-PD",
+device:"Steinberg CMC-PD",
 protocol: \midi,
 description:
 

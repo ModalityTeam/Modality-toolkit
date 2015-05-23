@@ -1,20 +1,12 @@
 (
-idInfo: "Ableton Push",
+device: "Ableton Push",
 protocol: \midi,
-//deviceType: ,
-status: "untested",
-infoURL: "https://www.ableton.com/en/push/",
 description: (// display still missing because SysEx and different MIDI port...
 
 //------ pads -------------
-\pad: (
-		 \on: (36..99).collect{|num|
-			('midiMsgType': \noteOn, \type: \pad, \midiChan: 0, \midiNum: num, \spec: \midiNote, \ioType: \inout)
+\pad: (36..99).collect{|num|
+	('midiMsgType': 'noteOnOff', 'type': 'pad', 'midiChan': 0, 'midiNum': num,  'spec': 'midiNote', \ioType: \inout)
 }.clump(8),
-		 \off: (36..99).collect{|num|
-			('midiMsgType': \noteOff, \type: \pad, \midiChan: 0, \midiNum: num, \spec: \midiNote, \ioType: \inout)
-}.clump(8)
-	),
 \poly: (36..99).collect{|num|
 	('midiMsgType': 'polyTouch', 'type': 'keytouch', 'midiChan': 0, 'midiNum': num,'spec': 'midiCC', \ioType: \in)
 }.clump(8),
@@ -43,10 +35,10 @@ rEnc: (midiMsgType: \cc, type: \encoder, midiChan: 0, midiNum: 15, spec: \midiBu
 //------ color button rows
 \colorBut: [
 	(20..27).collect{|num|
-		('midiMsgType': 'cc', 'type': 'button', 'midiChan': 0, 'midiNum':    num, 'spec': 'midiCC', \ioType: \inout)
+		('midiMsgType': 'cc', 'type': 'button', 'midiChan': 0, 'midiNum':    num, 'spec': 'midiCC')
 },
 	(102..109).collect{|num|
-		('midiMsgType': 'cc', 'type': 'button', 'midiChan': 0, 'midiNum':    num, 'spec': 'midiCC', \ioType: \inout)
+		('midiMsgType': 'cc', 'type': 'button', 'midiChan': 0, 'midiNum':    num, 'spec': 'midiCC')
 }
 ],
 

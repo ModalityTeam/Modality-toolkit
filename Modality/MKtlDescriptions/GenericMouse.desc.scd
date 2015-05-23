@@ -1,5 +1,5 @@
 (
-idInfo: "Generic Mouse",
+device: "Generic Mouse",
 protocol: 'hid',
 description: (
 // --------- input elements ----------

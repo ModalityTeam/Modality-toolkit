@@ -1,7 +1,7 @@
 MKtl.addSpec(\compassShanWan, [0, 7]);
 
 (
-idInfo: "USB WirelessGamepad _ShanWan",
+device: "USB WirelessGamepad _ShanWan",
 protocol: 'hid',
 description: (
 

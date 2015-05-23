@@ -1,5 +1,5 @@
 TITLE:: HIDMKtlDevice
-summary:: The Modality class for creating and accessing external hid controllers
+summary:: A class for creating and accessing external hid controllers
 categories:: Libraries>Modality, External Control
 related:: Overviews/Modality, Classes/MKtl, Classes/MKtlDevice, Classes/MKtlElement
 
@@ -15,7 +15,7 @@ More general info can be found in link::Classes/MKtl:: and link::Classes/MKtlDev
 
 CLASSMETHODS::
 
-private:: initialized, sourceDeviceDict, prepareDeviceDicts, deinitDevices
+private:: initialized, sourceDeviceDict, prepareDeviceDicts
 
 
 METHOD:: find
@@ -81,7 +81,7 @@ The instance of link::Classes/MKtl:: that this MKtlDevice will belong to.
 
 INSTANCEMETHODS::
 
-private:: initHIDMKtl, setHIDActions, removeHIDActions, initCollectives
+private:: initHIDMKtl, setHIDActions, removeHIDActions
 
 METHOD:: closeDevice
 Close the device and clean up anything that it used.
@@ -104,12 +104,12 @@ METHOD:: initElements
 Initialize all elements and hook them up to the hardware elements.
 
 
-METHOD:: cleanupElementsAndCollectives
-De-initialize all elements and collectives
+METHOD:: cleanupElements
+De-initialize all elements.
 
 
 METHOD:: send
-Send the value of the element to the HID device; called if you set the value of an MKtlElement that is an output.
+Send the value of the element to the MIDI device; called if you set the value of an MKtlElement that is an output.
 
 argument:: key
 The key of the element.
@@ -123,7 +123,7 @@ METHOD:: srcID
 The uid of the source.
 
 
-METHOD:: source
+METHOD:: srcDevice
 The link::Classes/HID:: device that is the source for this HIDMKtlDevice.
 
 returns:: an instance of link::Classes/HID::
