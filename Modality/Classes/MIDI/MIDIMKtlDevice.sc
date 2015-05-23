@@ -445,8 +445,8 @@ MIDIMKtlDevice : MKtlDevice {
 				var elName = hashToElNameDict[hash];
 				var el = elementHashDict[hash];
 
-				midiRawAction.value(\control, src, chan, num, value);
-				global[typeKey].value(chan, num, value);
+				// midiRawAction.value(\control, src, chan, num, value);
+				// global[typeKey].value(chan, num, value);
 
 				if (el.notNil) {
 					el.rawValueAction_(value, false);
