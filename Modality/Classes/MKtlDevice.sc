@@ -1,3 +1,6 @@
+// only useful with a device,
+// so sort of abstract superclass.
+
 MKtlDevice {
 
 	// ( 'midi': List['name1',... ], 'hid': List['name1',... ], ... )
@@ -5,8 +8,8 @@ MKtlDevice {
 	classvar <allAvailable;
 	classvar <allProtocols;
 
-	var <name, <deviceName; // short name + full device name
-	var <>mktl;
+	// lookup name, full device name, the mktl it was made for
+	var <name, <deviceName, <>mktl;
 
 	var <traceRunning = false;
 
@@ -119,8 +122,8 @@ MKtlDevice {
 			"MKtlDevice.open: no protocol found for %.\n".warn;
 			^nil;
 		};
-		"MKtlDevice.open: parentMKtl: %, prot: %,\n"
-		"desc: %".format(parentMKtl.cs, protocol.cs, desc).postln;
+		// "MKtlDevice.open: parentMKtl: %, prot: %,\n"
+		// "desc keys: %".format(parentMKtl.cs, protocol.cs, desc.keys.cs).postln;
 
 		subClass = MKtlDevice.matchClass(protocol);
 		if( subClass.isNil ){
@@ -146,15 +149,10 @@ MKtlDevice {
 	}
 
 	*basicNew { |name, deviceName, parentMKtl |
-		^super.new.init(name, deviceName, parentMKtl );
+		^super.newCopyArgs(name, deviceName, parentMKtl ).init;
 	}
 
-
-	init { |initName, argDeviceName, parentMKtl|
-		name = initName;
-		deviceName = argDeviceName;
-		mktl = parentMKtl;
-	}
+	init { } // overwrite in subclasses
 
 	*protocol {
 		this.subclassResponsibility(thisMethod)

@@ -43,7 +43,7 @@ MIDIMKtlDevice : MKtlDevice {
 	}
 
 	// open all ports
-	*initDevices {|force= false|
+	*initDevices { |force= false|
 
 		(initialized && {force.not}).if{^this};
 
@@ -93,7 +93,7 @@ MIDIMKtlDevice : MKtlDevice {
 		"\n-----------------------------------------------------".postln;
 	}
 
-	*getSourceName{ |shortName|
+	*getSourceName { |shortName|
 		var srcName;
 		var src = this.sourceDeviceDict.at( shortName );
 		if ( src.notNil ){
@@ -221,7 +221,7 @@ MIDIMKtlDevice : MKtlDevice {
 		j = 0; prevName = nil;
 		deviceNames = MIDIClient.destinations.collect{|src|
 			tempName = src.device;
-			MKtlDesc.makeLookupName(tempName);
+			MKtl.makeLookupName(tempName);
 		};
 		order = deviceNames.order;
 
@@ -314,7 +314,7 @@ MIDIMKtlDevice : MKtlDevice {
 	}
 
 	makeHashKey { |descr, elName|
-		var hashs;
+		var hashes;
 		"makeHashKey : %: %\n".postf(elName, descr);
 		if( descr[\midiMsgType].isNil ) {
 			"MIDIMKtlDevice:prepareElementHashDict (%): \\midiMsgType not found. Please add it."
@@ -340,7 +340,7 @@ MIDIMKtlDevice : MKtlDevice {
 			if( noMidiChan.not || ( (isTouch && noMidiNum) ) ){
 				if( allMsgTypes.includes( descr[\midiMsgType] ) ) {
 
-					hashs = descr[\midiMsgType].switch(
+					hashes = descr[\midiMsgType].switch(
 						\noteOn, {[this.makeNoteOnKey(descr[\midiChan], descr[\midiNum])]},
 						\noteOff, {[this.makeNoteOffKey(descr[\midiChan], descr[\midiNum])]},
 						\noteOnOff, {
@@ -357,7 +357,7 @@ MIDIMKtlDevice : MKtlDevice {
 
 					);
 
-					hashs.do { |hash|
+					hashes.do { |hash|
 						elementHashDict.put(
 							hash, mktl.elementsDict[elName];
 						)
@@ -379,13 +379,12 @@ MIDIMKtlDevice : MKtlDevice {
 	prepareElementHashDict {
 		var elementsDict = mktl.elementsDict;
 
-		if ( mktl.deviceDescriptionArray.notNil) {
-			mktl.deviceDescriptionArray.pairsDo { |elName, descr|
+		if ( mktl.elementsDict.notNil) {
+			mktl.elementsDict.keysValuesDo { |elName, descr|
 				var hash;
 
 				if ( descr[\out].notNil ){
 					// element has a specific description for the output of the element
-					descr = MKtl.flattenDescriptionForIO( descr, \out );
 					hash = this.makeHashKey( descr, elName );
 					elNameToMidiDescDict.put(elName,
 						[
@@ -397,7 +396,6 @@ MIDIMKtlDevice : MKtlDevice {
 				};
 				if ( descr[\in].notNil ){
 					// element has a specific description for the input of the element
-					descr = MKtl.flattenDescriptionForIO( descr, \in );
 					hash = this.makeHashKey( descr, elName );
 					hashToElNameDict.put(hash, elName);
 				};

@@ -15,16 +15,13 @@ MKtl.find(\osc);
 
 MKtlDevice.allAvailable;
 
-MKtl.globalSpecs[\hidBut];
-
-MKtl
-MKtl('rnnd0').elementsDict
-
 MKtl('rnnd0', 'RunNDrive');
-MKtl('rnnd0').mktlDevice.dump;
-
 MKtl('rnnd0').trace(true); // WORKS!
-MKtl('rnnd0').trace(false); // WORKS!
+MKtl('rnnd0').trace(false);
+
+MKtl('pmdd10', "OP-1 Midi Device");
+
+
 
 MKtl('rnnd0').rebuild; // with current desc
 MKtl('rnnd0').rebuild(~desc) // with new ~esc here>);
