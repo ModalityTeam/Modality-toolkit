@@ -273,7 +273,7 @@ MIDIMKtlDevice : MKtlDevice {
 			"\tMKtl(%).createDescriptionFile;\n".postf( name );
 			MIDIExplorer.start(this.srcID);
 		}{
-			MIDIExplorer.stop;
+			MIDIExplorer.stop(this.srcID);
 			"MIDIExplorer stopped.".postln;
 		}
 	}
