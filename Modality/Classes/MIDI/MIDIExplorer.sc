@@ -106,9 +106,9 @@ More information can be found here:
 	}
 
 	*stop { |srcID|
-		if ( srcID.notNil ){
-			observedSrcID = nil;
-		};
+		// if ( srcID.notNil ){
+		// observedSrcID = nil; // is this a good idea?
+	// };
 		resps.do(_.free);
 	}
 
