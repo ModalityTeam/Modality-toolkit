@@ -333,11 +333,11 @@ code::
 (
 ~descInput = (
 	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
-	    idInfo: "SuperCollider", // Linux: this may need to be different on OSX
-	    protocol: \midi,
-	    description: (
-		'bt': (
-			type: 'button',
+	idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ), // linux
+	protocol: \midi,
+	description: (
+		'prog': (
+			type: 'knob',
 			midiMsgType: \program, // program does not need \midiNum
 			midiChan: 0,
 			spec: \midiProgram,
@@ -361,6 +361,255 @@ m.trace;
 
 section:: Simple output
 
+In this section we will go through all the different types of MIDI messages that may be sent out and show how to write a description for that element.
+
+
+subsection:: MIDI note messages
+
+
+code::
+// midiMsgType: \noteOn
+MIDIIn.connectAll; MIDIFunc.trace;
+(
+~descOutput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	    idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ),
+	    protocol: \midi,
+	    description: (
+		'bt': (
+			type: 'button',
+			midiMsgType: \noteOn,
+			midiChan: 0,
+			midiNum: 2,
+			spec: \midiVel,
+			ioType: \out
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descOutput );
+m.rebuildFrom( ~descOutput ); // updating it
+
+m.elementAt( \bt ).value_( 0 ); // see note above on noteOn message with velocity zero; may show up in the trace as a noteOff
+m.elementAt( \bt ).value_( 1 );
+
+m.gui; // and press the button
+::
+
+
+code::
+// midiMsgType: \noteOff
+MIDIIn.connectAll; MIDIFunc.trace;
+(
+~descOutput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	    idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ),
+	    protocol: \midi,
+	    description: (
+		'bt': (
+			type: 'button',
+			midiMsgType: \noteOff,
+			midiChan: 0,
+			midiNum: 2,
+			spec: \midiVel,
+			ioType: \out
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descOutput );
+m.rebuildFrom( ~descOutput ); // updating it
+
+m.elementAt( \bt ).value_( 0 );
+m.elementAt( \bt ).value_( 1 );
+
+m.gui; // and press the button
+::
+
+subsection:: MIDI control messages
+
+code::
+// midiMsgType: \cc - slider
+MIDIIn.connectAll; MIDIFunc.trace;
+(
+~descOutput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	    idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ),
+	    protocol: \midi,
+	    description: (
+		'sl': (
+			type: 'slider',
+			midiMsgType: \cc,
+			midiChan: 0,
+			midiNum: 2,
+			spec: \midiCC,
+			ioType: \out
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descOutput );
+m.rebuildFrom( ~descOutput ); // updating it
+
+m.elementAt( \sl ).value_( 0 );
+m.elementAt( \sl ).value_( 0.4 );
+m.elementAt( \sl ).value_( 1 );
+
+m.gui; // and move the slider
+::
+
+code::
+// midiMsgType: \cc - slider
+MIDIIn.connectAll; MIDIFunc.trace;
+(
+~descOutput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	    idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ),
+	    protocol: \midi,
+	    description: (
+		'bt': (
+			type: 'button',
+			midiMsgType: \cc,
+			midiChan: 0,
+			midiNum: 2,
+			spec: \midiBut,
+			ioType: \out
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descOutput );
+m.rebuildFrom( ~descOutput ); // updating it
+
+m.elementAt( \bt ).value_( 0 );
+m.elementAt( \bt ).value_( 1 );
+
+m.gui; // and press the button
+::
+
+
+subsection:: MIDI pitch bend messages
+
+code::
+// midiMsgType: \bend
+MIDIIn.connectAll; MIDIFunc.trace;
+(
+~descOutput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	    idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ),
+	    protocol: \midi,
+	    description: (
+		'bend': (
+			type: 'slider',
+			midiMsgType: \bend, // bend has no midiNum
+			midiChan: 0,
+			spec: \midiBend,
+			ioType: \out
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descOutput );
+m.rebuildFrom( ~descOutput ); // updating it
+
+m.elementAt( \bend ).value_( 0 );
+m.elementAt( \bend ).value_( 0.4 );
+m.elementAt( \bend ).value_( 1 );
+::
+
+subsection:: MIDI after touch messages
+
+code::
+// midiMsgType: \polyTouch
+MIDIIn.connectAll; MIDIFunc.trace;
+(
+~descOutput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ),
+	protocol: \midi,
+	description: (
+		'touch': (
+			type: 'slider',
+			midiMsgType: \polyTouch,
+			midiChan: 0,
+			midiNum: 2,
+			spec: \midiTouch,
+			ioType: \out
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descOutput );
+m.rebuildFrom( ~descOutput ); // updating it
+
+m.elementAt( \touch ).value_( 0 );
+m.elementAt( \touch ).value_( 0.4 );
+m.elementAt( \touch ).value_( 1 );
+::
+
+code::
+// midiMsgType: \touch
+MIDIIn.connectAll; MIDIFunc.trace;
+(
+~descOutput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ),
+	protocol: \midi,
+	description: (
+		'touch': (
+			type: 'slider',
+			midiMsgType: \touch, // touch does not need \midiNum
+			midiChan: 0,
+			spec: \midiTouch,
+			ioType: \out
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descOutput );
+m.rebuildFrom( ~descOutput ); // updating it
+
+m.elementAt( \touch ).value_( 0 );
+m.elementAt( \touch ).value_( 0.4 );
+m.elementAt( \touch ).value_( 1 );
+::
+
+subsection:: MIDI program messages
+
+code::
+// midiMsgType: \program,
+MIDIIn.connectAll; MIDIFunc.trace;
+(
+~descOutput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ), // adapt for OSX to IAC bus
+	protocol: \midi,
+	description: (
+		'prog': (
+			type: 'slider',
+			midiMsgType: \program, // program does not need \midiNum
+			midiChan: 0,
+			spec: \midiProgram,
+			ioType: \out
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descOutput );
+m.rebuildFrom( ~descOutput ); // updating it
+
+m.elementAt( \prog ).value_( 0 );
+m.elementAt( \prog ).value_( 0.4 );
+m.elementAt( \prog ).value_( 1 );
+::
 
 
 section:: Explore your device
