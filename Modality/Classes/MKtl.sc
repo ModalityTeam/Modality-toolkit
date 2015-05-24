@@ -924,6 +924,7 @@ MKtl { // abstract class
 	}
 
 	initialisationMessages{
+		if ( deviceInfoDict.isNil ){ ^nil };
 		^deviceInfoDict[\initialisationMessages];
 	}
 
