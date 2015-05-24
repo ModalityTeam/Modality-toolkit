@@ -13,14 +13,18 @@ MKtl.find(\hid);
 MKtl.find(\midi);
 MKtl.find(\osc);
 
+MKtlElement
 MKtlDevice.allAvailable;
 
 MKtl('rnnd0', 'RunNDrive');
 MKtl('rnnd0').trace(true); // WORKS!
 MKtl('rnnd0').trace(false);
 
-MKtl('pmdd10', "OP-1 Midi Device");
+MKtl.find(\midi);
+MKtl('pmdd10', "Teenage_OP1");
+MKtl('pmdd10').trace(true);
 
+(MKtlDesc.defaultFolder +/+ "Tee*").pathMatch
 
 
 MKtl('rnnd0').rebuild; // with current desc

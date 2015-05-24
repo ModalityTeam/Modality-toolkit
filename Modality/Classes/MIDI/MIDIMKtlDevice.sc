@@ -258,31 +258,31 @@ MIDIMKtlDevice : MKtlDevice {
 			"\tMKtl(%).explore(false);\n".postf( name );
 			"\tMKtl(%).createDescriptionFile;\n".postf( name );
 			MIDIExplorer.start(this.srcID);
-		}{
+		} {
 			MIDIExplorer.stop;
 			"MIDIExplorer stopped.".postln;
 		}
 	}
 
-	createDescriptionFile{
+	createDescriptionFile {
 		MIDIExplorer.openDoc;
 	}
 
 	/// --------- EXPLORING -----)))))---------
 
-	initElements{
+	initElements {
 		elementHashDict = ();
 		hashToElNameDict = ();
 		elNameToMidiDescDict = ();
 
-		if ( mktl.deviceDescriptionArray.notNil ){
+		if ( mktl.elementsDict.notNil ){
 			this.prepareElementHashDict;
 			this.makeRespFuncs;
 		}
 	}
 
 	// nothing here yet, but needed
-	initCollectives{
+	initCollectives {
 	}
 
 	initMIDIMKtl { |argName, argSource, argDestination|
@@ -309,13 +309,13 @@ MIDIMKtlDevice : MKtlDevice {
 
 		this.initElements;
 		this.initCollectives;
-		this.sendInitialiationMessages;
+		this.sendInitialisationMessages;
 
 	}
 
 	makeHashKey { |descr, elName|
 		var hashes;
-		"makeHashKey : %: %\n".postf(elName, descr);
+		// "makeHashKey : %: %\n".postf(elName, descr);
 		if( descr[\midiMsgType].isNil ) {
 			"MIDIMKtlDevice:prepareElementHashDict (%): \\midiMsgType not found. Please add it."
 			.format(this, elName).error;
@@ -379,39 +379,44 @@ MIDIMKtlDevice : MKtlDevice {
 	prepareElementHashDict {
 		var elementsDict = mktl.elementsDict;
 
-		if ( mktl.elementsDict.notNil) {
-			mktl.elementsDict.keysValuesDo { |elName, descr|
-				var hash;
+		if ( elementsDict.notNil) {
+			elementsDict.keysValuesDo { |elName, element|
+				var hash, elemDesc = element.elementDescription;
 
-				if ( descr[\out].notNil ){
+				// set output things
+				if ( elemDesc[\out].notNil ){
 					// element has a specific description for the output of the element
-					hash = this.makeHashKey( descr, elName );
+					hash = this.makeHashKey( elemDesc, elName );
 					elNameToMidiDescDict.put(elName,
 						[
-							descr[\midiMsgType],
-							descr[\midiChan],
-							descr[\midiNum],
-							elementsDict[elName].spec
-						])
+							elemDesc[\midiMsgType],
+							elemDesc[\midiChan],
+							elemDesc[\midiNum],
+							elemDesc[elName][\spec]
+					])
 				};
-				if ( descr[\in].notNil ){
+
+				// set the inputs
+				if ( elemDesc[\in].notNil ){
 					// element has a specific description for the input of the element
-					hash = this.makeHashKey( descr, elName );
+					hash = this.makeHashKey( elemDesc, elName );
 					hashToElNameDict.put(hash, elName);
 				};
-				if ( descr[\in].isNil and: descr[\out].isNil ){
-					hash = this.makeHashKey( descr, elName );
-					if ( elementsDict[elName].ioType == \in  or:  elementsDict[elName].ioType == \inout ){
+				if ( elemDesc[\in].isNil and: elemDesc[\out].isNil ){
+					hash = this.makeHashKey( elemDesc, elName );
+					if ( elementsDict[elName].ioType == \in
+					or:  elementsDict[elName].ioType == \inout ){
 						hashToElNameDict.put(hash, elName);
 					};
-					if ( elementsDict[elName].ioType == \out  or:  elementsDict[elName].ioType == \inout ){
+					if ( elementsDict[elName].ioType == \out
+						or:  elementsDict[elName].ioType == \inout ){
 						elNameToMidiDescDict.put(elName,
 							[
-								descr[\midiMsgType],
-								descr[\midiChan],
-								descr[\midiNum],
-								elementsDict[elName].spec
-							])
+								elemDesc[\midiMsgType],
+								elemDesc[\midiChan],
+								elemDesc[\midiNum],
+								elemDesc[elName][\spec]
+						])
 					};
 
 				};

@@ -81,12 +81,15 @@ results = results ++ [
 
 	*checkMsgTypes { |devDesc|
 		var types = Set.new;
-		devDesc.collect { |el, i| if (i.odd) {
-			var type = el[\midiMsgType];
-			type ?? { Error("MIDI device description element must have midiMsgType field: %".format(el)).throw };
-			types.add(el[\midiMsgType])
-
-		} };
+		// devDesc.collect { |el, i| if (i.odd) {
+		// 	var type = el[\midiMsgType];
+		// 	type ?? {
+		// 		Error("MIDI device description element"
+		// 		"must have midiMsgType field: %".format(el)).throw;
+		// 	};
+		// 	types.add(el[\midiMsgType])
+		//
+		// } };
 		^types.asArray;
 	}
 
