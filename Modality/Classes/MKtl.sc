@@ -4,16 +4,17 @@ MKtl works as follows:
 
 * MKtl.find discovers hardware devices currently available
 
-* MKtlDesc is asked to load or make an MKtlDesc for the one that should be opened
+* MKtlDesc load or make an MKtlDesc for the one that should be opened
 
-* make elements from MKtlDesc elementsDesc in 2 flavors
+*  make MKtlElement from MKtlDesc.elementsDesc in multiple flavors:
 - elements      * hierarchical, = MKtlElementGroup
-- elementsDict  * flat for fast key access
+- elementsDict  * flat for fast lookup by element key
 - elementsArray * by pairs, needed somewhere?
 
 * makeDevice
-- if hardware present make mktlDevice, and open it
-- else this is a virtual MKtl
+- if matching hardware is present, make mktlDevice, and open it
+- else this becomes a virtual MKtl which can do everything the
+-   real device
 
 */
 
@@ -52,12 +53,12 @@ MKtl { // abstract class
 		this.prAddDefaultSpecs();
 
 		makeLookupNameFunc = { |string|
-			^(string.asString.toLower.select{|c| c.isAlpha && { c.isVowel.not }}.keep(4)
+			(string.asString.toLower.select{|c| c.isAlpha && { c.isVowel.not }}.keep(4)
 			++ string.asString.select({|c| c.isDecDigit}))
 		}
 	}
 
-	*makeLookupName {|string| makeLookupNameFunc.(string); }
+	*makeLookupName {|string| ^makeLookupNameFunc.(string); }
 
 	*find { |protocols|
 		MKtlDevice.find( protocols );

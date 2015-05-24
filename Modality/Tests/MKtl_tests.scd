@@ -1,15 +1,32 @@
 /*** MKtl  tests for refactoring ***/
 
-makeShortName
-
 MKtl.all
 MKtl.globalSpecs
 MKtl.addSpec(\test, [1, 10, -4, 3]);
 MKtl.getSpec(\test);
+// default takes first few consonants and all numbers
+MKtl.makeLookupNameFunc.value("asd234");
+MKtl.makeLookupName("asdft12whfbeir");
+
 MKtlDevice.allAvailable
 
-MKtl.find(\hid);
+MKtlDevice.allAvailable
+
+
+MKtl.find(\hid); // crashes?
 MKtl.find(\midi);
+
+MKtl('rnnd0', 'RunNDrive');
+MKtl('rnnd0').desc;
+
+MKtlDesc.fromFileName("RunNDrive");
+MKtlDesc.at('RunNDrive').openFile;
+
+HID.findAvailable;
+HID.postAvailable;
+
+MKtlDevice.find(\hid);
+HIDMKtlDevice.find;
 
 MKtl.find;
 

@@ -16,7 +16,7 @@ HIDMKtlDevice : MKtlDevice {
 
 	*initDevices { |force=false|
 		if ( Main.versionAtLeast( 3, 7 ).not ){
-			"Sorry, ho HID before 3.7.".postln;
+			"Sorry, no HID before 3.7.".postln;
 			^this;
 		};
 		if (initialized && force.not) {
