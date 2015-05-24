@@ -13,12 +13,13 @@ MKtlDesc.at(\srcp3141731416127001).idInfo;
 // ... will finish later.
 MKtlDesc.fromFileName("nanoKO*2");
 
+[\a-> 1].atKey;
 ******************************************/
 
 /******* typical use: **********/
 
 // lookup if already there, or make it from file
-MKtlDesc('nanoPAD2') // nanoPAD2
+MKtlDesc('nanoPAD2'); // nanoPAD2
 
 // make the one you need by filename
 MKtlDesc.fromFileName("nanoKEY2");

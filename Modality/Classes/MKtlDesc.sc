@@ -15,7 +15,7 @@ MKtlDesc {
 
 	classvar <>isElementTestFunc;
 
-	var <fullDesc, <path, <name, <>elementsAssocArray;
+	var <name, <fullDesc, <path, <>elementsAssocArray;
 
 	*initClass {
 		defaultFolder = this.filenameSymbol.asString.dirname.dirname
@@ -94,11 +94,16 @@ MKtlDesc {
 				.format(path));
 			^nil;
 		};
-		if (this.isValidDescDict(desc)) {
-			desc.path = path;
-			desc.filename = path.basename.drop(fileExt.size.neg);
-			^this.fromDict(desc);
-		}
+
+		if (this.isValidDescDict(desc).not) {
+			warn("MktlDesc: desc loaded from path % is not valid.\n"
+				.format(path));
+			^nil
+		};
+		// got here, should work now
+		desc.path = path;
+		desc.filename = path.basename.drop(fileExt.size.neg);
+		^this.fromDict(desc);
 	}
 
 	*fromDict { |dict|
@@ -145,49 +150,73 @@ MKtlDesc {
 	}
 
 	*new { |name|
-		^this.at(name.asSymbol) ?? {
-			this.fromFileName(name);
-		}
+		var foundObj = this.at(name ?? { name.asSymbol });
+		if (foundObj.notNil) {
+			^this;
+		};
+
+		if (name.notNil) {
+			^this.fromFileName(name);
+		};
+		// for making it from dict
+		^super.new;
 	}
 
-	fullDesc_ { |dict|
-		if (this.class.isValidDescDict(dict)) {
-			this.prMakeElemColls(dict);
-			name = name ?? {
-				dict[\filename].asSymbol ?? {
-					dict[\idInfo].asSymbol
-			}};
-			fullDesc = dict;
-			this.init;
+	fullDesc_ { |inDesc|
+		if (this.class.isValidDescDict(inDesc).not) {
+			warn("MKtlDesc: dict is not a valid desc,"
+				" so cannot make elements.");
+			^this
 		};
-	}
+		// "fullDesc: inDesc is ok, filename: %\npath: %\n"
+		// .postf(inDesc.filename, inDesc.path);
 
-	prMakeElemColls { |indict|
-		if (indict.isKindOf(Dictionary)) {
-			elementsAssocArray = indict.asAssociations;
-		};
-		if (indict.isAssociationArray) {
-			elementsAssocArray = indict;
-			this.elementsDesc = indict.asDict.as(Event);
-		};
-	}
+		fullDesc = inDesc;
+		path = path ?? { fullDesc[\path]; };
 
-	init { |filename|
-		filename = filename ?? { fullDesc[\path] };
-		name = name ?? {
-			if (filename.notNil) { filename.asSymbol; }
-		};
-		if (name.isNil) {
-			warn("MKtlDesc: no name given, so cannot be in allDescs.".format(path));
-		} {
-			allDescs.put (name, this);
-		};
+		// make elements in both forms
+		this.prMakeElemColls(fullDesc);
+		this.inferName;
 		this.makeElementsArray;
 		this.resolveDescEntriesForPlatform;
 	}
 
+	inferName { |inname, force = false|
+		var filename = fullDesc[\filename];
+
+		if (name.notNil and: force.not) {
+			^this
+		};
+
+		name = inname ?? { fullDesc[\filename] ??
+			{ if (path.notNil) { path.basename.drop(fileExt.size.neg); };
+		} };
+
+		if (name.isNil) {
+			warn("MKtlDesc: could not create valid name, so desc remains\n"
+				"unnamed, and will not show up in MKtlDesc.allDescs.");
+		} {
+			name = name.asSymbol;
+			allDescs.put(name, this);
+		};
+	}
+
+	prMakeElemColls { |inDesc|
+		if (inDesc.isKindOf(Dictionary)) {
+			elementsAssocArray = inDesc.asAssociations;
+		};
+		if (inDesc.isAssociationArray) {
+			elementsAssocArray = inDesc;
+			this.elementsDesc = inDesc.asDict.as(Event);
+		};
+	}
+
 	openFile {
-		if (path.notNil) { path.asString.openDocument };
+		if (path.notNil) {
+			path.asString.openDocument
+		} {
+			inform("" ++ this + ".openFile: path was nil.");
+		};
 	}
 
 	// keep all data in fullDesc only if possible
