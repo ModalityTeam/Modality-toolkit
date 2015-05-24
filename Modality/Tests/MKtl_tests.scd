@@ -1,5 +1,6 @@
 /*** MKtl  tests for refactoring ***/
 
+
 MKtl.all
 MKtl.globalSpecs
 MKtl.addSpec(\test, [1, 10, -4, 3]);
@@ -8,15 +9,13 @@ MKtl.getSpec(\test);
 MKtl.makeLookupNameFunc.value("asd234");
 MKtl.makeLookupName("asdft12whfbeir");
 
-MKtlDevice.allAvailable
-
-MKtlDevice.allAvailable
-
-
-MKtl.find(\hid); // crashes?
+MKtl.find;
+MKtl.find(\hid);
 MKtl.find(\midi);
+MKtl.find(\osc);
 
-MKtl('rnnd0', 'RunNDrive');
+
+MKtl('rnnd0', 'RunNDrive'); // mssing specs
 MKtl('rnnd0').desc;
 
 MKtlDesc.fromFileName("RunNDrive");

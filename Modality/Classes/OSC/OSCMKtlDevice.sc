@@ -133,7 +133,8 @@ OSCMKtlDevice : MKtlDevice {
 	*deinitDevices {} // doesn't do anything, but needs to be there
 
 	*postPossible{
-		"To find what OSC is coming in, please use the osc monitor:".postln;
+		"// OSC cannot detect devices automatically,\n"
+		"// so to see incoming OSC messages, use OSCMon: ".postln;
 		"o = OSCMon.new; o.enable; o.show".postln;
 		if ( initialized ){
 			"\n// Available OSCMKtlDevices:".postln;

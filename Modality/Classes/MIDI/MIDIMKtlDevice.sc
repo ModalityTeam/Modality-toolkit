@@ -197,7 +197,7 @@ MIDIMKtlDevice : MKtlDevice {
 
 		deviceNames = MIDIClient.sources.collect {|src|
 			tempName = src.device;
-			MKtlDesc.makeLookupName(tempName);
+			MKtl.makeLookupName(tempName);
 		};
 
 		if (deviceNames.isEmpty) {

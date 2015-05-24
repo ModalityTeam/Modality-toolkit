@@ -25,7 +25,7 @@ MKtlDevice {
 	}
 
 	*find { |protocols|
-		protocols.asCollection.do { |pcol|
+		(protocols ? allProtocols).asCollection.do { |pcol|
 			this.matchClass(pcol) !? _.find
 		};
 		allInitialized = true;
