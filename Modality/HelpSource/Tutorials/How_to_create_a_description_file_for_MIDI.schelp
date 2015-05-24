@@ -23,6 +23,344 @@ list::
 ##link::#MIDI Initialisation messages::
 ::
 
+section:: Simple input
+
+In this section we will go through all the different types of MIDI messages that may come in and show how to write a description for that element.
+
+Some startup code for our next examples:
+
+code::
+// find all MIDI devices (and do MIDI initialisation)
+MKtl.find(\midi);
+::
+
+code::
+(
+// make a MIDIOut for the tests in the examples
+Platform.case(
+	\linux, {
+		~midiOut= MIDIOut.new(0); // = SC's first midi output
+		~midiOut.connect(1); // = connect to SC's first midi input
+	},
+	\osx, {
+		~midiOut = MIDIOut.newByName( "IAC Driver", "IAC Bus 1" );
+	}
+	/*,
+	\windows, {
+		// please let us know what this should be!
+	}
+	*/
+);
+);
+::
+
+For information on MIDIOut see also:
+
+link::Classes/MIDIOut#Linux specific: Connecting and disconnecting ports::
+
+link::Classes/MIDIOut#OS X specific: Sending MIDI to other applications::
+
+
+subsection:: MIDI note messages
+
+code::
+// midiMsgType: \noteOnOff,
+(
+~descInput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ),
+	protocol: \midi,
+	description: (
+		'bt': (
+			type: 'button',
+			midiMsgType: \noteOnOff,
+			midiChan: 0,
+			midiNum: 64,
+			spec: \midiVel,
+			ioType: \in
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descInput );
+m.rebuildFrom( ~descInput ); // updating it
+
+m.trace;
+
+// make some messages:
+~midiOut.noteOn(0, 64, 127 );
+~midiOut.noteOn(0, 64, 0 ); // creates a noteOff message (see note)
+~midiOut.noteOff(0, 64, 0 );
+::
+
+code::
+// midiMsgType: \noteOn,
+(
+~descInput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ),
+	protocol: \midi,
+	    description: (
+		'key': (
+			type: 'pianoKey',
+			midiMsgType: \noteOn,
+			midiChan: 0,
+			midiNum: 64, // note number
+			spec: \midiVel,
+			ioType: \in
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descInput );
+m.rebuildFrom( ~descInput ); // updating it
+
+m.trace;
+
+// make some messages:
+~midiOut.noteOn(0, 64, 127 );
+~midiOut.noteOn(0, 64, 24 );
+~midiOut.noteOn(0, 64, 0 ); // this is a bug - see note
+::
+
+NOTE::
+Note: bug in SC where MIDI noteOn messages with velocity 0 are always parsed as noteOff messages.
+There is a pull request to SuperCollider for this, which makes this an option rather than a default:
+code::
+MIDIIn.noteOnZeroAsNoteOff = false;
+::
+See: link::https://github.com/supercollider/supercollider/issues/1483::
+and: link::https://github.com/supercollider/supercollider/pull/1488::
+::
+
+
+code::
+// midiMsgType: \noteOff,
+(
+~descInput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ),
+	    protocol: \midi,
+	    description: (
+		'key': (
+			type: 'pianoKey',
+			midiMsgType: \noteOff,
+			midiChan: 0,
+			midiNum: 64, // note number
+			spec: \midiVel,
+			ioType: \in
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descInput );
+m.rebuildFrom( ~descInput ); // updating it
+
+m.trace;
+
+// make some messages:
+~midiOut.noteOff(0, 64, 127 );
+~midiOut.noteOff(0, 64, 24 );
+~midiOut.noteOff(0, 64, 0 );
+::
+
+
+subsection:: MIDI control messages
+
+code::
+// midiMsgType: \cc - knob
+(
+~descInput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ),
+	    protocol: \midi,
+	    description: (
+		'kn': (
+			type: 'knob',
+			midiMsgType: \cc,
+			midiChan: 0,
+			midiNum: 8, // control number
+			spec: \midiCC,
+			ioType: \in
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descInput );
+m.rebuildFrom( ~descInput ); // updating it
+
+m.trace;
+
+// make some messages:
+~midiOut.control(0, 8, 127 );
+~midiOut.control(0, 8, 24 );
+~midiOut.control(0, 8, 0 );
+::
+
+code::
+// midiMsgType: \cc - button
+(
+~descInput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ),
+	protocol: \midi,
+	    description: (
+		'bt': (
+			type: 'button',
+			midiMsgType: \cc,
+			midiChan: 0,
+			midiNum: 8, // control number
+			spec: \midiBut,
+			ioType: \in
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descInput );
+m.rebuildFrom( ~descInput ); // updating it
+
+m.trace;
+
+// make some messages:
+~midiOut.control(0, 8, 127 );
+~midiOut.control(0, 8, 0 );
+::
+
+subsection:: MIDI pitch bend messages
+
+code::
+// midiMsgType: \bend,
+(
+~descInput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	    idInfo: "SuperCollider", // Linux: this may need to be different on OSX
+	    protocol: \midi,
+	    description: (
+		'bend': (
+			type: 'bender',
+			midiMsgType: \bend, // bend needs midiChan only
+			midiChan: 0,
+			spec: \midiBend,
+			ioType: \in
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descInput );
+m.rebuildFrom( ~descInput ); // updating it
+
+m.trace;
+
+// make some messages:
+~midiOut.bend(0, 128*128-1 ); // 14-bit value
+~midiOut.bend(0, 128*64 );
+~midiOut.bend(0, 0 );
+::
+
+subsection:: MIDI after touch messages
+
+code::
+// midiMsgType: \polyTouch,
+(
+~descInput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ),
+	protocol: \midi,
+	description: (
+		'touch': (
+			type: 'touch',
+			midiMsgType: \polyTouch,
+			midiChan: 0,
+			midiNum: 2,
+			spec: \midiTouch,
+			ioType: \in
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descInput );
+m.rebuildFrom( ~descInput ); // updating it
+
+m.trace;
+
+// make some messages:
+~midiOut.polyTouch(0, 2, 127 );
+~midiOut.polyTouch( 0, 2, 63 );
+~midiOut.polyTouch(0, 2, 0 );
+::
+
+code::
+// midiMsgType: \touch,
+(
+~descInput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ),
+	protocol: \midi,
+	    description: (
+		'touch': (
+			type: 'touch',
+			midiMsgType: \touch, // touch does not need \midiNum
+			midiChan: 0,
+			spec: \midiTouch,
+			ioType: \in
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descInput );
+m.rebuildFrom( ~descInput ); // updating it
+
+m.trace;
+
+// make some messages:
+~midiOut.touch(0, 127 );
+~midiOut.touch(0, 63 );
+~midiOut.touch(0, 0 );
+::
+
+subsection:: MIDI program messages
+
+code::
+// midiMsgType: \program,
+(
+~descInput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	    idInfo: "SuperCollider", // Linux: this may need to be different on OSX
+	    protocol: \midi,
+	    description: (
+		'bt': (
+			type: 'button',
+			midiMsgType: \program, // program does not need \midiNum
+			midiChan: 0,
+			spec: \midiProgram,
+			ioType: \in
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descInput );
+m.rebuildFrom( ~descInput ); // updating it
+
+m.trace;
+
+// make some messages:
+~midiOut.program(0, 127 );
+~midiOut.program(0, 63 );
+~midiOut.program(0, 0 );
+::
+
+
+section:: Simple output
+
 
 
 section:: Explore your device
