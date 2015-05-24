@@ -421,7 +421,7 @@ MIDIMKtlDevice : MKtlDevice {
 							descr[\midiMsgType],
 							descr[\midiChan],
 							descr[\midiNum],
-							elementsDict[elName].spec
+							// elementsDict[elName].spec // why not descr[\spec]? and where is it used?
 						])
 				};
 				if ( descr[\in].notNil ){
@@ -441,7 +441,7 @@ MIDIMKtlDevice : MKtlDevice {
 								descr[\midiMsgType],
 								descr[\midiChan],
 								descr[\midiNum],
-								elementsDict[elName].spec // ??
+								// elementsDict[elName].spec  // why not descr[\spec]?, and where is it used?
 							])
 					};
 
