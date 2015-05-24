@@ -1,4 +1,5 @@
 HIDMKtlDevice : MKtlDevice {
+
 	classvar <initialized = false;
 	classvar <sourceDeviceDict;
 	classvar <protocol = \hid;
@@ -166,10 +167,11 @@ HIDMKtlDevice : MKtlDevice {
 	}
 
 	createDescriptionFile {
-		if(source.notNil){
+		if(source.notNil) {
 			HIDExplorer.openDocFromDevice(source)
 		} {
-			Error("MKtl#createDescriptionFile - source is nil. HID probably could not open device").throw
+			Error("MKtl#createDescriptionFile - source is nil.\n"
+				"HID probably could not open device").throw
 		}
 	}
 
@@ -180,9 +182,9 @@ HIDMKtlDevice : MKtlDevice {
             var page = el.elementDescription[\hidUsagePage];
             var usage = el.elementDescription[\hidUsage];
 
-			if ( elid.notNil ){ // filter by element id
+			if ( elid.notNil ) { // filter by element id
 				source.elements.at( elid ).action = nil;
-			}{
+			} {
 				theseElements = source.findElementWithUsage( usage, page );
 				theseElements.do{ |it|
 					it.action = nil;
@@ -197,9 +199,7 @@ HIDMKtlDevice : MKtlDevice {
 	}
 
 	initElements {
-		var newElements = ();
-
-		mktl.elementsDict.do{ |el|
+		mktl.elementsDict.do { |el|
             var theseElements;
 
             var elid = el.elementDescription[\hidElementID];
@@ -207,23 +207,27 @@ HIDMKtlDevice : MKtlDevice {
             var usage = el.elementDescription[\hidUsage];
 
             // device specs should primarily use usage and usagePage,
-            // only in specific instances - where the device has bad firmware use elementid's which will possibly be operating system dependent
+            // only in specific instances - where the device has bad firmware
+			// use elementIDs which will possibly be operating system dependent
 
             if ( elid.notNil ){ // filter by element id
-                // HIDFunc.element( { |v| el.rawValueAction_( v ) }, elid, \devid, devid );
-                source.elements.at( elid ).action = { |v, hidele| // could get raw value hidele.rawValue
-					el.rawValueAction_( v );
+                // HIDFunc.element( { |v| el.deviceValueAction_( v ) }, elid, \devid, devid );
+				// could get raw value hidele.deviceValue
+                source.elements.at( elid ).action = { |v, hidele|
+					el.deviceValueAction_( v );
 					if(traceRunning) {
 						"% - % > % | type: %, src:%"
-						.format(this.name, el.name, el.value.asStringPrec(3), el.type, el.source).postln
+						.format(this.name, el.name, el.value.asStringPrec(3),
+							el.type, el.source).postln
 					}
 				};
             }{  // filter by usage and usagePage
-                // HIDFunc.usage( { |v| el.rawValueAction_( v ) }, usage, page, \devid, devid );
+                // HIDFunc.usage( { |v| el.deviceValueAction_( v ) },
+				// usage, page, \devid, devid );
                 theseElements = source.findElementWithUsage( usage, page );
-                theseElements.do{ |it|
-                    it.action = { |v, hidele| // could get raw value hidele.rawValue
-						el.rawValueAction_( v );
+                theseElements.do { |it|
+                    it.action = { |v, hidele| // could get raw value hidele.deviceValue
+						el.deviceValueAction_( v );
 						if(traceRunning) {
 							"% - % > % | type: %, src:%"
 							.format(this.name, el.name, el.value.asStringPrec(3), el.type, el.source).postln
@@ -231,9 +235,7 @@ HIDMKtlDevice : MKtlDevice {
 					};
                 };
             };
-            newElements.put( el.name, el );
-		};
-		mktl.replaceElements( newElements );
+    	};
 	}
 
 	send { |key,val|
@@ -247,7 +249,7 @@ HIDMKtlDevice : MKtlDevice {
 		};
 	}
 
-	sendInitialiationMessages {
+	sendInitialisationMessages {
 
 	}
 }

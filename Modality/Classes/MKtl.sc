@@ -378,7 +378,7 @@ MKtl { // abstract class
 		};
 		// this may be an issue, only look for appropriate protocol
 		MKtlDevice.initHardwareDevices( lookAgain, desc.protocol.bubble );
-	 	this.open( this.name, desc.fullDesc );
+	 	mktlDevice = MKtlDevice.open( this.name, parentMKtl: this );
 	}
 
 	isVirtual { ^mktlDevice.isNil }
@@ -386,30 +386,6 @@ MKtl { // abstract class
 	trace { |value=true|
 		if (this.isVirtual.not){ mktlDevice.trace( value ) };
 		traceRunning = value;
-	}
-
-	findAndOpenDevice { |devName| // devName is a shortname
-		var newMKtlDevice = MKtlDevice.tryOpenDevice( devName, this );
-		if ( newMKtlDevice.isNil ){
-
-			// maybe I gave a funky name, and can find the device from the spec
-			devName = MKtlDevice.findDeviceShortNameFromLongName( desc.device );
-			if ( devName.notNil ){
-				newMKtlDevice = MKtlDevice.tryOpenDevice( devName, this );
-			}{
-				newMKtlDevice = MKtlDevice.tryOpenDeviceFromDesc(
-				name, desc.protocol, desc.device, this );
-				devName = name;
-			};
-		};
-
-		if ( newMKtlDevice.notNil ){
-			// cross reference:
-			mktlDevice = newMKtlDevice;
-			"Opened device % for MKtl(%)\n".postf( devName, name );
-		}{
-			"WARNING: Could not open device for MKtl(%)\n".postf( name );
-		};
 	}
 
 	closeDevice {

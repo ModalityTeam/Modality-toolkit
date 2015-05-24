@@ -17,12 +17,20 @@ MKtlDevice.allAvailable;
 
 MKtl.globalSpecs[\hidBut];
 
+MKtl
+MKtl('rnnd0').elementsDict
 
 MKtl('rnnd0', 'RunNDrive');
+MKtl('rnnd0').mktlDevice.dump;
+
+MKtl('rnnd0').trace(true); // WORKS!
+MKtl('rnnd0').trace(false); // WORKS!
+
 MKtl('rnnd0').rebuild; // with current desc
 MKtl('rnnd0').rebuild(~desc) // with new ~esc here>);
 
 MKtl('rnnd0').trace(true);
+MKtl('rnnd0').elementsDict[\bt_2];
 // good that it is visible in Modality, not in HIDFunc etc.
 MKtl('rnnd0').traceRunning;
 
