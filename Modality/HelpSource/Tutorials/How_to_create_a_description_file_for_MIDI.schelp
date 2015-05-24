@@ -624,11 +624,11 @@ a = MKtl('pcr0');
 Now, turn on the explore mode and move every element on your controller. Make sure to go through all of them and move them in all their degrees of freedom.
 
 code::
-e = a.explore;
+a.explore;
 
 // MIDI: if you want more information on what is happening, turn on verbose mode:
-e.verbose = true;
-e.verbose = false; // turn it off again
+MIDIExplorer.verbose = true;
+MIDIExplorer.verbose = false; // turn it off again
 ::
 
 When done, create a raw description file which you will edit and review in the next step.
@@ -638,7 +638,8 @@ a.createDescriptionFile;
 // and stop the exploring:
 a.explore( false );
 ::
-note::If this does not work for you, try: code::e.compile:: and copy the code from the post window manually to a new file.::
+
+note::If this does not work for you, try: code::MIDIExplorer.compile:: and copy the code from the post window manually to a new file.::
 
 section:: Reviewing the exploration
 
