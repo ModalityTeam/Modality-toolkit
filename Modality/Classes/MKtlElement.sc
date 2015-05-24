@@ -229,7 +229,7 @@ MKtlElement : MAbstractElement {
 		};
 
 		if (deviceSpec.isNil) {
-			warn("deviceSpec for '%' is missing!".format(deviceSpec));
+			warn("deviceSpec for '%' is missing!".format(this));
 			"using [0, 1].asSpec instead".postln;
 			// and now we will have a spec.
 			deviceSpec = this.getSpec(deviceSpec);

@@ -85,8 +85,8 @@ MKtl { // abstract class
 		this.addSpec(\mouseAxis, [0.4,0.6, \lin, 0, 0.5]);
 		this.addSpec(\mouseWheel, [0.4,0.6, \lin, 0, 0.5]);
 
-		// this.addSpec(\hidBut, [0, 1, \lin, 1, 0]);
-		// this.addSpec(\hidHat, [0, 1, \lin, 1, 0]);
+		this.addSpec(\hidBut, [0, 1, \lin, 1, 0]);
+		this.addSpec(\hidHat, [0, 1, \lin, 1, 0]);
 		// // these are often wrong, check for device.
 		// this.addSpec(\compass8, [0, 8, \lin, 1, 1]);
 
@@ -178,7 +178,7 @@ MKtl { // abstract class
 		this.makeElements;
 		this.makeCollectives;
 
-		// this.openDevice;
+		this.openDevice;
 	}
 
 		// temp redirect for other classes
@@ -346,7 +346,7 @@ MKtl { // abstract class
 	// close mktldevice if there and try to open a new one
 
 
-	rebuildFrom { |deviceDescriptionNameOrDict| // could be a string/symbol or dictionary
+	rebuild { |deviceDescriptionNameOrDict| // could be a string/symbol or dictionary
 		var newDesc;
 		// replace desc if new:
 		if (deviceDescriptionNameOrDict.isNil) {
@@ -378,7 +378,7 @@ MKtl { // abstract class
 		};
 		// this may be an issue, only look for appropriate protocol
 		MKtlDevice.initHardwareDevices( lookAgain, desc.protocol.bubble );
-	 	this.prTryOpenDevice( this.name, desc.fullDesc );
+	 	this.open( this.name, desc.fullDesc );
 	}
 
 	isVirtual { ^mktlDevice.isNil }

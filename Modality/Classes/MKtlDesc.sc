@@ -152,7 +152,7 @@ MKtlDesc {
 	*new { |name|
 		var foundObj = this.at(name ?? { name.asSymbol });
 		if (foundObj.notNil) {
-			^this;
+			^foundObj;
 		};
 
 		if (name.notNil) {

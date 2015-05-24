@@ -1,6 +1,5 @@
 /*** MKtl  tests for refactoring ***/
 
-
 MKtl.all
 MKtl.globalSpecs
 MKtl.addSpec(\test, [1, 10, -4, 3]);
@@ -14,26 +13,30 @@ MKtl.find(\hid);
 MKtl.find(\midi);
 MKtl.find(\osc);
 
+MKtlDevice.allAvailable;
 
-MKtl('rnnd0', 'RunNDrive'); // mssing specs
-MKtl('rnnd0').desc;
+MKtl.globalSpecs[\hidBut];
+
+
+MKtl('rnnd0', 'RunNDrive');
+MKtl('rnnd0').rebuild; // with current desc
+MKtl('rnnd0').rebuild(~desc) // with new ~esc here>);
+
+MKtl('rnnd0').trace(true);
+// good that it is visible in Modality, not in HIDFunc etc.
+MKtl('rnnd0').traceRunning;
+
+MKtl('rnnd0').desc.openFile;
+MKtl('rnnd0').desc.elementsDesc.keys;
+MKtl('rnnd0').mktlDevice;
 
 MKtlDesc.fromFileName("RunNDrive");
 MKtlDesc.at('RunNDrive').openFile;
 
-HID.findAvailable;
-HID.postAvailable;
-
-MKtlDevice.find(\hid);
-HIDMKtlDevice.find;
-
-MKtl.find;
-
 MKtl(\abc) === MKtl(\abc);
-MKtl.all
 
-MKtl('asdf').desc;
 
+/////
 a = MKtlDesc("Teenage*");
 
 MKtl(\myOpi, "Teenage*");

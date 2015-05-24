@@ -1,8 +1,8 @@
 MKtlDevice {
 
 	// ( 'midi': List['name1',... ], 'hid': List['name1',... ], ... )
+
 	classvar <allAvailable;
-	classvar <allInitialized = false;
 	classvar <allProtocols;
 
 	var <name, <deviceName; // short name + full device name
@@ -28,7 +28,6 @@ MKtlDevice {
 		(protocols ? allProtocols).asCollection.do { |pcol|
 			this.matchClass(pcol) !? _.find
 		};
-		allInitialized = true;
 	}
 
 	*matchClass { |symbol|
@@ -38,22 +37,19 @@ MKtlDevice {
 	*initHardwareDevices { |force = false, protocols|
 		protocols = protocols ? allProtocols;
 
-		if ( allInitialized.not or: force ){
-			this.allSubclasses.do { |it|
-				if ( protocols.includes( it.protocol ) ){
-					it.initDevices( force );
-				};
+		this.allSubclasses.do { |it|
+			if ( protocols.includes( it.protocol ) ){
+				it.initDevices( force );
 			};
 		};
-		allInitialized = true;
 	}
 
-	*findMatchingProtocols { |name|
-		^allAvailable.select(_.includes(name)).keys.as(Array);
+	*findMatchingProtocols { |lookupName|
+		^allAvailable.select(_.includes(lookupName)).keys.as(Array);
 	}
 
-	*getMatchingProtocol { |name|
-		var matchingProtocols = this.findMatchingProtocols( name );
+	*getMatchingProtocol { |lookupName|
+		var matchingProtocols = this.findMatchingProtocols( lookupName );
 		if ( matchingProtocols.size == 0 ){
 			// no dev with matching protocol found
 			^nil;
@@ -66,10 +62,10 @@ MKtlDevice {
 		^matchingProtocols;
 	}
 
-	*getDeviceNameFromShortName { |shortName|
+	*idInfoForLookupName { |lookupName|
 
 		var subClass;
-		var matchingProtocol = this.getMatchingProtocol( shortName );
+		var matchingProtocol = this.getMatchingProtocol( lookupName );
 		if ( matchingProtocol.isNil ){
 			^nil;
 		};
@@ -77,33 +73,33 @@ MKtlDevice {
 		if( subClass.isNil ){
 			^nil;
 		} {
-			^subClass.getSourceName( shortName );
+			^subClass.getSourceName( lookupName );
 		};
 	}
 
-		*findDeviceShortNameFromLongName{ |devLongName|
+	*lookupNameForIDInfo { |idInfo|
 		var devKey, newDevKey;
-		if ( devLongName.isKindOf( String ) ){
+		if ( idInfo.isKindOf( String ) ){
 			this.subclasses.do{ |subClass|
-				newDevKey = subClass.findSource( devLongName );
+				newDevKey = subClass.findSource( idInfo );
 				if ( newDevKey.notNil ){
 					devKey = newDevKey;
 				};
 			};
 			^devKey;
 		};
-		if (devLongName.isKindOf( Array ) ){
+		if (idInfo.isKindOf( Array ) ){
 			this.subclasses.do{ |subClass|
-				newDevKey = subClass.findSource( *devLongName );
+				newDevKey = subClass.findSource( *idInfo );
 				if ( newDevKey.notNil ){
 					devKey = newDevKey;
 				};
 			};
 			^devKey;
 		};
-		if (devLongName.isKindOf( Dictionary ) ){
+		if (idInfo.isKindOf( Dictionary ) ){
 			this.subclasses.do{ |subClass|
-				newDevKey = subClass.findSource( devLongName );
+				newDevKey = subClass.findSource( idInfo );
 				if ( newDevKey.notNil ){
 					devKey = newDevKey;
 				};
@@ -115,39 +111,23 @@ MKtlDevice {
 
 	// collapse tryOpenDevice and tryOpenDeviceFromDesc
 	// into one
-	*tryOpenDevice { |name, parentMKtl|
-		var matchingProtocol, subClass;
-		// then see if it is attached:
-
-		matchingProtocol = this.getMatchingProtocol( name );
-
-		if ( matchingProtocol.isNil ){
-			^nil;
-		};
-
-		subClass = MKtlDevice.matchClass(matchingProtocol);
-		if( subClass.isNil ){
-			"WARNING: MKtl: device not found with name % and protocol %, and no matching device description found\n".postf( name, matchingProtocol );
-			^nil;
-		};
-		if( subClass.notNil ) {
-			^subClass.new( name, parentMKtl: parentMKtl );
-		};
-	}
-
-	*tryOpenDeviceFromDesc { |name, protocol, desc, parentMKtl|
+	*open { |name, protocol, desc, parentMKtl|
 		var subClass;
-		if ( protocol.isNil ){
+
+		protocol = protocol ?? { this.getMatchingProtocol( name ) };
+		if (protocol.isNil) {
+			"MKtlDevice.open: no protocol found for %.\n".warn;
 			^nil;
 		};
+
 		subClass = MKtlDevice.matchClass(protocol);
 		if( subClass.isNil ){
-			"WARNING: MKtl: device not found with description % and protocol %\n".postf( desc, protocol );
+			"MKtlDevice.open: no device found for name % and protocol %.\n"
+			.postf( name, protocol );
 			^nil;
 		};
-		if( subClass.notNil ) {
-			^subClass.new( name, desc, parentMKtl: parentMKtl );
-		};
+		// found one
+		^subClass.new( name, parentMKtl: parentMKtl );
 	}
 
 	*basicNew { |name, deviceName, parentMKtl |
