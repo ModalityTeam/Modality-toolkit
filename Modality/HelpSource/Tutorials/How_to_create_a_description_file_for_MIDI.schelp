@@ -16,7 +16,7 @@ This Tutorial first shows simple examples of OSC interfaces, by emulating them w
 list::
 ##link::#Simple input::
 ##link::#Simple output::
-##link::#Explore an MIDI device::
+##link::#Explore a MIDI device::
 ##link::#Write a description file for the explored MIDI device::
 ##link::#MIDI output::
 ##link::#MIDI device info::
@@ -612,7 +612,7 @@ m.elementAt( \prog ).value_( 1 );
 ::
 
 
-section:: Explore your device
+section:: Explore a MIDI device
 
 First, find your device in the list posted by the following code and assign the MKtl to a variable.
 code::
