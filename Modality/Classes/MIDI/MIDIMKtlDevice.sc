@@ -197,7 +197,7 @@ MIDIMKtlDevice : MKtlDevice {
 
 		deviceNames = MIDIClient.sources.collect {|src|
 			tempName = src.device;
-			MKtlDesc.makeShortName(tempName);
+			MKtlDesc.makeLookupName(tempName);
 		};
 
 		if (deviceNames.isEmpty) {
@@ -221,7 +221,7 @@ MIDIMKtlDevice : MKtlDevice {
 		j = 0; prevName = nil;
 		deviceNames = MIDIClient.destinations.collect{|src|
 			tempName = src.device;
-			MKtlDesc.makeShortName(tempName);
+			MKtlDesc.makeLookupName(tempName);
 		};
 		order = deviceNames.order;
 

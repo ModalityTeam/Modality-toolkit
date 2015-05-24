@@ -32,23 +32,26 @@ HIDMKtlDevice : MKtlDevice {
 		initialized = true;
 	}
 
-	*prepareDeviceDicts{
+	*prepareDeviceDicts {
 		var prevName = nil, j = 0, order, deviceNames;
-		deviceNames = HID.available.collect{|dev,id|
-			MKtl.makeShortName( (dev.productName.asString ++ "_" ++ dev.vendorName.asString ).asString)
+		deviceNames = HID.available.collect { |dev,id|
+			MKtl.makeLookupName(
+				(dev.productName.asString ++ "_" ++ dev.vendorName.asString ).asString
+			)
 		}.asSortedArray;
-		order = deviceNames.order{ arg a, b; a[1] < b[1] };
-		deviceNames[order].do{|name, i|
+		order = deviceNames.order { arg a, b; a[1] < b[1] };
+		deviceNames[order].do {|name, i|
 			(prevName == name[1]).if({
 				j = j+1;
-			},{
+			}, {
 				j = 0;
 			});
 			prevName = name[1];
 			sourceDeviceDict.put((name[1] ++ j).asSymbol, HID.available[ name[0] ])
 		};
 
-		// put the available hid devices in MKtlDevice's available devices
+		// put the available hid devices in
+		// MKtlDevice's available devices
 		allAvailable.put( \hid, List.new );
 		sourceDeviceDict.keysDo({ |key|
 			allAvailable[\hid].add( key );
@@ -65,7 +68,7 @@ HIDMKtlDevice : MKtlDevice {
 		};
 	}
 
-	*postPossible{
+	*postPossible {
 		"\n// Available HIDMKtlDevices:".postln;
 		"// MKtl(autoName);  // [ hid product, vendor(, serial number) ]".postln;
 		sourceDeviceDict.keysValuesDo{ |key,info|
@@ -81,7 +84,7 @@ HIDMKtlDevice : MKtlDevice {
 		"\n-----------------------------------------------------".postln;
 	}
 
-	*findSource{ |rawDeviceName, rawVendorName|
+	*findSource { |rawDeviceName, rawVendorName|
 		var devKey;
 		if ( initialized.not ){ ^nil };
 		this.sourceDeviceDict.keysValuesDo{ |key,hidinfo|
@@ -125,7 +128,7 @@ HIDMKtlDevice : MKtlDevice {
 		^super.basicNew( name, this.makeDeviceName( foundSource ), parentMKtl ).initHIDMKtl( foundSource, path );
 	}
 
-	initHIDMKtl{ |argSource,argUid|
+	initHIDMKtl { |argSource,argUid|
 		srcID = argUid;
         source = argSource.open;
  		this.initElements;
@@ -133,23 +136,23 @@ HIDMKtlDevice : MKtlDevice {
 		this.sendInitialiationMessages;
 	}
 
-	closeDevice{
+	closeDevice {
 		this.cleanupElementsAndCollectives;
 		srcID = nil;
 		source.close;
 	}
 
-    *makeDeviceName{ |hidinfo|
+    *makeDeviceName { |hidinfo|
 		^(hidinfo.productName.asString ++ "_" ++ hidinfo.vendorName);
     }
 
 	// postRawSpecs { this.class.postRawSpecsOf(source) }
 
-	exploring{
+	exploring {
 		^(HIDExplorer.observedSrcDev == this.source);
 	}
 
-	explore{ |mode=true|
+	explore { |mode=true|
 		if ( mode ){
 			"Using HIDExplorer. (see its Helpfile for Details)\n\n".post;
 			"HIDExplorer started. Wiggle all elements of your controller then".postln;
@@ -170,7 +173,7 @@ HIDMKtlDevice : MKtlDevice {
 		}
 	}
 
-	cleanupElementsAndCollectives{
+	cleanupElementsAndCollectives {
 		mktl.elementsDict.do{ |el|
 			var theseElements;
             var elid = el.elementDescription[\hidElementID];
@@ -190,10 +193,10 @@ HIDMKtlDevice : MKtlDevice {
 
 	// nothing here yet, but needed
 
-	initCollectives{
+	initCollectives {
 	}
 
-	initElements{
+	initElements {
 		var newElements = ();
 
 		mktl.elementsDict.do{ |el|
@@ -244,7 +247,7 @@ HIDMKtlDevice : MKtlDevice {
 		};
 	}
 
-	sendInitialiationMessages{
+	sendInitialiationMessages {
 
 	}
 }

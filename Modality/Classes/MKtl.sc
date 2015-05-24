@@ -22,6 +22,7 @@ MKtl { // abstract class
 
 	classvar <all; 			// holds all instances of MKtl
 	classvar <globalSpecs; 	// dict with all default specs used in MKtls
+	classvar <>makeLookupNameFunc;
 
 	var <name;
 	// an MKtlDesc that has all known information about the hardware device(s)
@@ -49,7 +50,14 @@ MKtl { // abstract class
 		all = ();
 		globalSpecs = ().parent_(Spec.specs);
 		this.prAddDefaultSpecs();
+
+		makeLookupNameFunc = { |string|
+			^(string.asString.toLower.select{|c| c.isAlpha && { c.isVowel.not }}.keep(4)
+			++ string.asString.select({|c| c.isDecDigit}))
+		}
 	}
+
+	*makeLookupName {|string| makeLookupNameFunc.(string); }
 
 	*find { |protocols|
 		MKtlDevice.find( protocols );
@@ -86,13 +94,10 @@ MKtl { // abstract class
 
 	}
 
-	*addSpec {|key, spec|
-		globalSpecs.put(key, spec.asSpec);
-	}
-
-	addSpec {|key, spec|
-		this.addLocalSpec(key, spec)
-	}
+	*addSpec {|key, spec| globalSpecs.put(key, spec.asSpec) }
+	addSpec {|key, spec| this.addLocalSpec(key, spec) }
+	*getSpec { |key| ^globalSpecs[key] }
+	getSpec { |key| ^specs[key] }
 
 	addLocalSpec {|key, spec|
 		var theSpec;
@@ -138,6 +143,7 @@ MKtl { // abstract class
 		MKtlDevice.initHardwareDevices( lookForNew );
 
 		desc = MKtlDesc(desc);
+		desc.postln;
 
 		if (name.isNil and: { desc.notNil }) {
 			// last chance: infer missing name from desc?
@@ -171,7 +177,7 @@ MKtl { // abstract class
 		this.makeElements;
 		this.makeCollectives;
 
-		this.openDevice;
+		// this.openDevice;
 	}
 
 		// temp redirect for other classes
@@ -340,37 +346,21 @@ MKtl { // abstract class
 
 
 	rebuildFrom { |deviceDescriptionNameOrDict| // could be a string/symbol or dictionary
-		// var devDescName, devDesc;
-		// if ( deviceDescriptionNameOrDict.isNil ){
-		// 	#devDesc, devDescName = this.class.findDeviceDesc( shortName: name );
-		// 	if ( devDesc.isNil ){
-		// 		this.warnNoDeviceDescriptionFileFound( devDescName );
-		// 		^this; // don't change anything, early return
-		// 	};
-		// }{
-		// 	if ( deviceDescriptionNameOrDict.isKindOf( Dictionary ) ){
-		// 		devDescName = deviceDescriptionNameOrDict.at( \idInfo );
-		// 		devDesc = deviceDescriptionNameOrDict;
-		// 	}{
-		// 		#devDesc, devDescName = this.class.findDeviceDesc( deviceDescriptionNameOrDict );
-		// 	};
-		// };
-		//
-		// if ( mktlDevice.notNil ){
-		// 	// check whether new device spec mathces protocol
-		// 	if ( devDesc.at( \protocol ) != mktlDevice.class.protocol ){
-		// 		"WARNING: MKtl(%): protocol % of device description %, does match protocol % of device %. Keeping the device description as it was.\n".postf( name, devDesc.at( \protocol ), devDescName, mktlDevice.class.protocol, mktlDevice.deviceName );
-		// 		^this;
-		// 	};
-		// 	mktlDevice.cleanupElementsAndCollectives;
-		// };
-		//
-		// this.prInitFromDeviceDescription( devDesc, devDescName );
-		// if ( mktlDevice.notNil ){
-		// 	mktlDevice.initElements;
-		// 	mktlDevice.initCollectives;
-		// };
-		//
+		var newDesc;
+		// replace desc if new:
+		if (deviceDescriptionNameOrDict.isNil) {
+			newDesc = desc;
+		} {
+			newDesc = MKtlDesc(deviceDescriptionNameOrDict)
+		};
+
+		// close old device
+		if (mktlDevice.notNil) {
+			mktlDevice.close;
+			mktlDevice.cleanupElementsAndCollectives;
+		};
+
+		this.init(desc);
 		// this.changed( \elements );
 	}
 

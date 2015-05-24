@@ -213,6 +213,7 @@ MKtlElement : MAbstractElement {
 	}
 
 	elementDescription_ { |dict|
+		var mySpecOrName;
 		if (dict.isNil) {
 			inform("MKtlElement(%): no element description given.".format(name));
 			^this
@@ -222,7 +223,10 @@ MKtlElement : MAbstractElement {
 		type = elementDescription[\type];
 		ioType = elementDescription[\ioType] ? \in;
 
-		this.deviceSpec = elementDescription[\spec];
+		mySpecOrName = elementDescription[\deviceSpec] ? elementDescription[\spec];
+		if (mySpecOrName.isKindOf(Symbol)) {
+			deviceSpec = (source ? MKtl).getSpec(mySpecOrName);
+		};
 
 		if (deviceSpec.isNil) {
 			warn("deviceSpec for '%' is missing!".format(deviceSpec));

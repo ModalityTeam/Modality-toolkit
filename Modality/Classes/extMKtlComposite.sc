@@ -32,10 +32,10 @@ e.g. 8 + 8 = 16 sliders etc.
 		elementsDict = ();
 
 		componentMKtls = devDesc[\components].postcs.collect { |desc, i|
-			var compName, shortname, compMKtl;
+			var compName, lookupName, compMKtl;
 
-			shortname = MKtl.makeShortName(desc.asString);
-			compName = [name.asString, shortname, i].join($_).asSymbol;
+			lookupName = MKtl.makeLookupName(desc.asString);
+			compName = [name.asString, lookupName, i].join($_).asSymbol;
 
 			if (desc.isKindOf(Symbol)) {
 				desc = MKtlDesc.allDescs[desc]
