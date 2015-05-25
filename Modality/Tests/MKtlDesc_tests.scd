@@ -98,9 +98,12 @@ MKtlDesc.defaultFolder.cs	// the one that comes with modality
 MKtlDesc.fileExt.cs			// the file extension for desc files
 MKtlDesc.allDescs;			// all currently loaded descs
 
-MKtlDesc.addFolder("~/__UDK/").cs; // add your own
-// if there is no folder there, you can make it:
-File.mkdir("~/scgit/".standardizePath);
+MKtlDesc.addFolder("~/Desktop/").cs; // add your own
+// if there is no folder there, it posts how to make it:
+File.mkdir("~/Desktop/".standardizePath);
+
+MKtlDesc.loadDescs(folderIndex: 1);
+MKtlDesc.writeCache;
 
 MKtlDesc.findFile(postFound: true); ""; // this lists all files
 
@@ -118,8 +121,6 @@ MKtlDesc.postLoaded;
 MKtlDesc.fileToIDDict;
 MKtlDesc.idInfoFor("ShermanFB2");
 MKtlDesc.filenameFor("Steinberg CMC-FD");
-
-
 
 /******************************************/
 // background methods

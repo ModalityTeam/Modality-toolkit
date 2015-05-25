@@ -13,7 +13,7 @@ MKtlDesc {
 	classvar <fileExt = ".desc.scd";
 	classvar <descFolders;
 	classvar <allDescs;
-	classvar <cachePath, <fileToIDDict;
+	classvar <cacheName = "_descFileLookup.cache.scd", <fileToIDDict;
 
 	classvar <>isElementTestFunc;
 
@@ -24,9 +24,11 @@ MKtlDesc {
 			+/+ folderName;
 		descFolders = List[defaultFolder];
 		allDescs =();
-		isElementTestFunc = { |el| el.isKindOf(Dictionary) and: { el[\spec].notNil } };
+		isElementTestFunc = { |el|
+			el.isKindOf(Dictionary) and: { el[\spec].notNil }
+		};
 
-		cachePath =defaultFolder +/+ "_descFileLookup.cache.scd";
+		fileToIDDict = ();
 
 		this.loadCache;
 	}
@@ -34,7 +36,7 @@ MKtlDesc {
 	// Files admin methods:
 
 	*addFolder { |path, name = (folderName)|
-		var folderPath = path +/+ name;
+		var folderPath = path.standardizePath +/+ name;
 		var foundFolder = pathMatch(folderPath);
 
 		if (descFolders.includesEqual(folderPath)) { ^this };
@@ -53,17 +55,17 @@ MKtlDesc {
 	}
 
 	*findFile { |filename = "*", folderIndex, postFound = false|
-		var foundPaths, foldersToLoadFrom, plural = 0;
+		var foundPaths, foldersToLoad, plural = 0;
 		folderIndex = folderIndex ?? { (0 .. descFolders.size-1) };
-		foldersToLoadFrom = descFolders[folderIndex.asArray].select(_.notNil);
+		foldersToLoad = descFolders[folderIndex.asArray].select(_.notNil);
 
-		foundPaths = descFolders.collect { |dir|
+		foundPaths = foldersToLoad.collect { |dir|
 			(dir +/+ filename ++ fileExt).pathMatch
 		}.flatten(1);
 
 		if (postFound) {
 			plural = if (foundPaths.size == 1, "s", "");
-			"\n*** MKtlDesc.findFile found % file% for'%': ***\n"
+			"\n*** MKtlDesc found % file% for'%': ***\n"
 			.postf(foundPaths.size, plural, filename);
 			foundPaths.printcsAll; "".postln;
 		}
@@ -74,11 +76,12 @@ MKtlDesc {
 	// convenience only
 	*loadDescs { |filename = "*", folderIndex|
 		var paths = this.findFile(filename, folderIndex);
-		paths.do {|path|
+		var descs = paths.collect {|path|
 			this.fromPath(path);
 		};
 		"\n// MKtlDesc loaded % description files - see:"
 		"\nMKtlDesc.allDescs;\n".postf(paths.size);
+		^descs
 	}
 
 	*postLoaded {
@@ -101,18 +104,28 @@ MKtlDesc {
 	*filenameFor { |idInfo| ^fileToIDDict.findKeyForValue(idInfo) }
 
 	*writeCache {
-		var fileToIDDictToWrite = Dictionary.new;
+		var dictForFolder = Dictionary.new, file;
 
-		MKtlDesc.loadDescs;
+		descFolders.do { |folder, i|
+			var descs = MKtlDesc.loadDescs(folderIndex: i);
+			var path = folder +/+ cacheName;
 
-		MKtlDesc.allDescs.collect { |desc|
-			var filename = desc.fullDesc.filename;
-			var idInfo = desc.fullDesc.idInfo;
-			fileToIDDictToWrite.put(filename, idInfo);
+			descs.collect { |desc|
+
+				var filename = desc.fullDesc.filename;
+				var idInfo = desc.fullDesc.idInfo;
+				dictForFolder.put(filename, idInfo);
+			};
+			file = File.open(path, "w");
+			if (file.isOpen) {
+				file.write(dictForFolder.cs);
+				file.close;
+				"MKtlDesc cache written at %.\n".postf(path);
+			} {
+				warn("MKtlDesc: could not write cache at %.\n".format(path));
+			}
 		};
 
-
-		File.open(cachePath, "w").write(fileToIDDictToWrite.cs).close;
 		/*
 		MKtlDesc.writeCache;
 		MKtlDesc.loadCache;
@@ -122,7 +135,10 @@ MKtlDesc {
 	}
 
 	*loadCache {
-		fileToIDDict = cachePath.load;
+		// clear first? maybe better not
+		descFolders.do { |folder|
+			fileToIDDict.putAll(folder +/+ cacheName.load);
+		};
 	}
 
 	*updateCache {
