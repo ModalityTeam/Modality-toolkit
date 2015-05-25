@@ -181,18 +181,6 @@ MKtlDesc {
 		}
 	}
 
-	// write tests for this later
-	*checkElementsDesc { |desc|
-		var midiMsgTypes, missing;
-		if (this.protocol == \midi) {
-			#midiMsgTypes, missing = MKtlDesc.checkMIDIMsgTypes;
-		};
-		if (missing.size > 0) {
-			warn("" + this + ": has no midiMsgType for elements: %".format(missing));
-		};
-		^(missing > 0)
-	}
-
 	getMidiMsgTypes {
 		var msgTypesUsed = Set.new;
 		var type, missing = List[];
@@ -291,6 +279,7 @@ MKtlDesc {
 		// make elements in both forms
 		this.prMakeElemColls(this.elementsDesc);
 		this.inferName;
+		this.getMidiMsgTypes;
 		//	this.resolveDescEntriesForPlatform;
 	}
 
