@@ -5,23 +5,27 @@ related:: Overviews/Modality, Classes/MKtl
 
 section:: Discovering and initializing devices
 
+NOTE::If you have a  code::NANOkontrol2:: at hand, you should now plug it in.
+Otherwise you can still follow the rest of the tutorial by using a gui representation which will be explained below.::
+
 The first step is to discover which devices are available for use:
 
 code::
-MKtl.find
+MKtl.find;
 ::
 
 This will post a description of all the devices available to Modality. Each line is an code::MKtl(...)::, followed by its name.
 
 Copy the code::MKtl(...)::-line of the device you want to use from the post window to your document and assign it to a variable.
 
-If you try to create an code::MKtl():: but the device is not connected, a "fake" GUI will automatically pop up.
-
-If you have a NANOkontrol2 at hand, you should now plug it in.
-Otherwise you can follow the rest of the tutorial using the fake representation.
+If you try to create an code::MKtl():: but the device is not connected, you can still open the MKtl and open a GUI for it by executing code::.gui::.
 
 code::
+// open the MKtl
 k = MKtl('nnkn20');
+
+// create a gui if the devive is not connected
+k.gui;
 ::
 
 You can see the output from all elements by doing
@@ -43,7 +47,7 @@ code::
 k.elements.printAll;
 ::
 
-This structure is a base dictionary (link::Classes/MKtlElementDict::), which possibly contains nested arrays, where the final node is an link::Classes/MKtlElement::. The structure of the arrays mimics the spatial organization of the controls on the device according to rows, columns and pages.
+This structure is a group (link::Classes/MKtlElementGroup::), which possibly contains nested groups, where the final node is an link::Classes/MKtlElement::. The structure of the groups mimics the spatial organization of the controls on the device according to rows, columns and pages.
 
 
 code::
@@ -81,20 +85,19 @@ k.elementAt(\bt).asArray.flop[4]
 ].flop.postln
 )
 
-//note: this does not work with the nanoKONTROL2, however, if the controller would have hardware scenes, the button on row 2 and column 5 of scene 4 would be at
-k.elements[\bt][3][1][4]
+//note: this does not work with the nanoKONTROL2, however, if the controller would have hardware scenes, the button on row 2 and column 5 of scene 4 would be at:  k.elements[\bt][3][1][4]
 ::
 
 section:: Assigning actions
 
-Actions are assigned using either the "action_" or the "addAction" and "removeAction" methods of link::Classes/MKtlElement::. These methods take a function as argument which receives one argument, the link::Classes/MKtlElement::. To extract the current value of the element, one should call ".value". The value returned by an link::Classes/MKtlElement:: is between 0 and 1.
+Actions are assigned using either the "action_" or the "addAction" and "reset" methods of link::Classes/MKtlElement::. These methods take a function as argument which receives one argument, the link::Classes/MKtlElement::. To extract the current value of the element, one should call ".value". The value returned by an link::Classes/MKtlElement:: is between 0 and 1.
 
 code::
 
-//Add an action to the third knob
+//Assign an action to the third knob
 k.elementAt(\kn, 2).action_({ |el| el.value.postln });
 
-//to remove the action
+//To remove all actions
 k.elementAt(\kn, 2).reset;
 
 //Add an action to all knobs
@@ -104,7 +107,7 @@ k.elementAt(\kn).action_({ |el|
 });
 )
 
-//to remove the action
+//to remove the actions
 k.elementAt(\kn).reset;
 ::
 
@@ -129,9 +132,6 @@ SynthDef(\blippy, {
 	Out.ar(0, Pan2.ar(sound, \pan.kr(0).lag(0.1) ) )
 }).add
 )
-
-
-
 
 (
 //start it
@@ -185,8 +185,8 @@ k.elements[\sl][0].action_({ |el| x !? _.set(\freq, el.value.linlin(0.0, 1.0, 20
 //slider 2 -> number of harmonics
 k.elements[\sl][1].action_({ |el| x !? _.set(\numHarmonics, el.value.linexp(0.0, 1.0, 1, 200) ) });
 
-//upper left button -> start and stop synth
-k.elements[\bt][0][0].action_({  |el|
+//play button -> start and stop synth
+k.elements[\play].action_({  |el|
 	if(el.value.booleanValue) {
 		x !? _.free;
 		x = Synth(\blippy, [\freq, 440, \numHarmonics, 100, \amp, 0.5, \pan, 0])
@@ -199,7 +199,9 @@ k.elements[\bt][0][0].action_({  |el|
 ::
 
 NOTE::
-If code::x == nil::, then code::x !? f:: doesn't do anything, while if code::x != nil::,  code::x !? fcode:: will execute code::f.(x)::.
+If code::x == nil::, then code::x !? f:: doesn't do anything,
+
+while if code::x != nil::,  code::x !? fcode:: will execute code::f.(x)::.
 ::
 
 To assign multiple actions to the same element, use link::Classes/MKtlElement#addAction:: and link::Classes/MKtlElement#removeAction:: :

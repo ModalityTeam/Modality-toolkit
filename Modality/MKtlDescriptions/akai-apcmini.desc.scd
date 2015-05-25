@@ -10,11 +10,12 @@ idInfo: "APC MINI",
 protocol: 'midi',
 description: (
 
-'keyOn': [(0..63),(64..71),(82..89),[98]].collect { |xs| xs.collect({ |midinote|  ('midiMsgType': 'noteOn', 'type': 'key', 'midiChan': 0, 'midiNum':  midinote, 'spec': 'midiNote') }) },
+	'keyOn': [(0..63),(64..71),(82..89),[98]].collect { |xs| xs.collect({ |midinote|  ('midiMsgType': 'noteOn', 'type': 'key', 'midiChan': 0, 'midiNum':  midinote, 'spec': 'midiNote', 'ioType': \inout) }) },
 
-'keyOff': [(0..63),(64..71),(82..89),[98]].collect { |xs| xs.collect({ |midinote|  ('midiMsgType': 'noteOff', 'type': 'key', 'midiChan': 0, 'midiNum':  midinote, 'spec': 'midiNote') }) },
+	'keyOff': [(0..63),(64..71),(82..89),[98]].collect { |xs| xs.collect({ |midinote|  ('midiMsgType': 'noteOff', 'type': 'key', 'midiChan': 0, 'midiNum':  midinote, 'spec': 'midiNote', 'ioType': \inout) }) },
 
 \sl: (48..56).collect { |midinote|  ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  midinote, 'spec': 'midiCC') }
 
 )
 )
+
