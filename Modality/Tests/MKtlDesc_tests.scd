@@ -35,28 +35,55 @@ OE([a: 1, b: 1]
 
 ******************************************/
 
-/******* typical use: **********/
+/******* typical user interface code: **********/
 
-// lookup if already there, or make it from file
+// lookup if already there by filename;
+// if not there, make it from file
 MKtlDesc('nanoPAD2'); // nanoPAD2
 
-// make the one you need by filename
+// explicitly make the one you need by filename
+// i.e. reload from file if it was loaded already
 MKtlDesc.fromFileName("nanoKEY2");
 
 // this lists all files in readable form
-MKtlDesc.findFile(postFound: true).do(_.basename).printcsAll; "";
-
+MKtlDesc.postLoadable;
 // check which ones are already loaded
 MKtlDesc.postLoaded;
-MKtlDesc('nanoKEY2')
+MKtlDesc('nanoKEY2');
 MKtlDesc('nanoKEY2').checkMIDIMsgTypes;
+MKtlDesc('nanoKONTROL2').checkMIDIMsgTypes;
 
-MKtlDesc.checkMsgTypes;
+MKtlDesc('nanoKONTROL2').elementsAssocArray.collect(_.key);
+
+MKtlDesc('nanoKONTROL2').getMidiMsgTypes;
+MKtlDesc('nanoKONTROL2').fullDesc[\msgTypesUsed];
+MKtlDesc('nanoKONTROL2').fullDesc[\elementsWithNoType];
+
+m.openFile;
+m = MKtlDesc('nanoKONTROL2');
+m.fullDesc.put(\msgTypesUsed, Set.new);
+MKtlDesc('nanoKONTROL2').elementsDesc
+.traverseDo ({ |elem, deepKeys|
+	var elemKey = deepKeys.join($_).asSymbol;
+	var msgType;
+
+	elem.put(\elemKey, elemKey);
+	MKtlDesc.fillMidiDefaults(elem);
+	msgType = elem[\midiMsgType];
+
+	if (msgType.notNil) {
+		m.fullDesc[\msgTypesUsed].add(msgType);
+	};
+	[elemKey, elem].postln;
+}, MKtlDesc.isElementTestFunc); "";
+m.fullDesc.at(\msgTypesUsed);
+
+
 	*checkMsgType
 		// this is to check which responders to build
 	*elementMsgTypes { |
 		var types = Set.new;
-		elementsDict.do { |el|
+		elementsDict.traverseDo { |el|
 			var type = el[\midiMsgType];
 			type ?? {
 				warn("" + this + ": element % has no midiMsgType.%".format(el));
@@ -114,16 +141,34 @@ MKtlDesc.openFolder(1);
 MKtlDesc.loadDescs; // loads all descs from all folders
 MKtlDesc.loadDescs("Steinberg*", 0); // match specific filename and folderIndex
 
+MKtlDesc.postLoadable(1);
 MKtlDesc.postLoaded;
 
+MKtlDesc('nanoKONTROL2') == MKtlDesc('nanoKONTROL2')
 
-// lookupDict for filename/idInfo:
-MKtlDesc.fileToIDDict;
-MKtlDesc.idInfoFor("ShermanFB2");
-MKtlDesc.filenameFor("Steinberg CMC-FD");
+MKtlDesc("nanoKO*2") == MKtlDesc("nanoKO*2"); // not true yet
+// hmm, would have to match for available names
+MKtlDesc("nanoKONTROL2") == MKtlDesc("nanoKONTROL2"); // true
+
+
+m = MKtlDesc('nanoKONTROL2');
+m.openFile;
+m.elementsDesc.printAll;"";
+m.checkMIDIMsgTypes
+n = MKtlDesc('QuNexus');
+n.checkMIDIMsgTypes
+
 
 /******************************************/
 // background methods
+
+// lookupDict for filename/idInfo:
+MKtlDesc.fileToIDDict;
+MKtlDesc.writeCache;
+MKtlDesc.loadCache;
+MKtlDesc.idInfoFor("ShermanFB2");
+MKtlDesc.filenameFor("Steinberg CMC-FD");
+
 // file filenames of desc files:
 MKtlDesc.findFile("nanoKEY2");			// single
 MKtlDesc.findFile("nano*").cs;			// matching

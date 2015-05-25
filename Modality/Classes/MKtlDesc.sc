@@ -13,7 +13,7 @@ MKtlDesc {
 	classvar <fileExt = ".desc.scd";
 	classvar <descFolders;
 	classvar <allDescs;
-	classvar <cacheName = "_descFileLookup.cache.scd", <fileToIDDict;
+	classvar <cacheName = "_allDescs.cache.scd", <fileToIDDict;
 
 	classvar <>isElementTestFunc;
 
@@ -21,14 +21,14 @@ MKtlDesc {
 
 	*initClass {
 		defaultFolder = this.filenameSymbol.asString.dirname.dirname
-			+/+ folderName;
+		+/+ folderName;
 		descFolders = List[defaultFolder];
 		allDescs =();
 		isElementTestFunc = { |el|
 			el.isKindOf(Dictionary) and: { el[\spec].notNil }
 		};
 
-		fileToIDDict = ();
+		fileToIDDict = Dictionary.new;
 
 		this.loadCache;
 	}
@@ -84,6 +84,18 @@ MKtlDesc {
 		^descs
 	}
 
+	*postLoadable {|folderIndex|
+		folderIndex = folderIndex ?? { (0..descFolders.lastIndex) };
+		descFolders[folderIndex.asArray].postln.do { |folder, i|
+			var found = this.findFile(folderIndex: i);
+			"*** % descs in folder % - % : ***\n".postf(found.size, i, folder);
+			found.do { |path|
+				"(" ++ path.basename.postcs ++ ")";
+			};
+			"****\n".postln;
+		};
+	}
+
 	*postLoaded {
 		"\n*** MKtlDesc - loaded descs: ***".postln;
 		allDescs.keys.asArray.sort.do { |key|
@@ -118,7 +130,7 @@ MKtlDesc {
 			};
 			file = File.open(path, "w");
 			if (file.isOpen) {
-				file.write(dictForFolder.cs);
+				file.write(dictForFolder.cs.replace("), (", "),\n ("));
 				file.close;
 				"MKtlDesc cache written at %.\n".postf(path);
 			} {
@@ -137,7 +149,11 @@ MKtlDesc {
 	*loadCache {
 		// clear first? maybe better not
 		descFolders.do { |folder|
-			fileToIDDict.putAll(folder +/+ cacheName.load);
+			var loadedList = (folder +/+ cacheName).load;
+			//	("// loadedList: \n" + loadedList.cs).postln;
+			loadedList.keysValuesDo { |filename, idInfo|
+				fileToIDDict.put(filename, idInfo);
+			};
 		};
 	}
 
@@ -155,10 +171,10 @@ MKtlDesc {
 	*isValidDescDict { |dict|
 		^dict.isKindOf(Dictionary)
 		or: { dict.isAssociationArray
-		and: { dict[\idInfo].notNil
-		and: { dict[\protocol].notNil
-		and: { dict[\description].notNil
-	//	and: { this.checkElementsDesc(dict) }
+			and: { dict[\idInfo].notNil
+				and: { dict[\protocol].notNil
+					and: { dict[\description].notNil
+						//	and: { this.checkElementsDesc(dict) }
 					}
 				}
 			}
@@ -177,18 +193,29 @@ MKtlDesc {
 		^(missing > 0)
 	}
 
+	getMidiMsgTypes {
+		var msgTypesUsed = Set.new;
+		var type, missing = List[];
 
-	checkMIDIMsgTypes {
-		var types = Set.new, type, missing = [];
-		this.elementsDesc.do { |el|
-			var type = el[\midiMsgType];
-			if (type.isNil) {
-				missing = missing.add(el.name);
+		this.elementsDesc.traverseDo ({ |elem, deepKeys|
+			var elemKey = deepKeys.join($_).asSymbol;
+			var msgType;
+
+			elem.put(\elemKey, elemKey);
+			MKtlDesc.fillMidiDefaults(elem);
+			msgType = elem[\midiMsgType];
+
+			if (msgType.notNil) {
+				msgTypesUsed.add(msgType);
 			} {
-				types.add(type);
+				"missing: ".post;
+				missing.add(elemKey.postln);
 			};
-		};
-		^(msgTypesUsed: types, msgTypesMissingIn: missing);
+			// [elemKey, elem].postln;
+		}, MKtlDesc.isElementTestFunc); "";
+
+		fullDesc.put(\msgTypesUsed, msgTypesUsed);
+		fullDesc.put(\elementsWithNoType, missing);
 	}
 
 
@@ -236,7 +263,7 @@ MKtlDesc {
 	}
 
 	*new { |name|
-		var foundObj = this.at(name ?? { name.asSymbol });
+		var foundObj = this.at(name.asSymbol);
 		if (foundObj.notNil) {
 			^foundObj;
 		};
@@ -262,9 +289,9 @@ MKtlDesc {
 		path = path ?? { fullDesc[\path]; };
 
 		// make elements in both forms
-		this.prMakeElemColls(fullDesc);
+		this.prMakeElemColls(this.elementsDesc);
 		this.inferName;
-	//	this.resolveDescEntriesForPlatform;
+		//	this.resolveDescEntriesForPlatform;
 	}
 
 	inferName { |inname, force = false|
@@ -344,6 +371,12 @@ MKtlDesc {
 	printOn { |stream|
 		stream << this.class.name << ".at(%)".format(name.cs);
 	}
+
+	*fillMidiDefaults { |elemDict|
+		// if type = button and no spec, and midiBut.asSpec;
+		// if slider and no spec, assume cc message and midiCC.asSpec;
+	}
+
 
 	// some keys may be platform-dependent, e.g.
 	// (meaning: (osx: 23, linux: 42, win: 4711));
