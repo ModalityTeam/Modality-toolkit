@@ -13,6 +13,7 @@ MKtl.find(\hid);
 MKtl.find(\midi);
 MKtl.find(\osc);
 
+MIDIMKtlDevice
 MKtlElement
 MKtlDevice.allAvailable;
 
@@ -22,7 +23,7 @@ MKtl('rnnd0').trace(false);
 
 MKtl.find(\midi);
 MKtl('pmdd10', "Teenage_OP1");
-MKtl('pmdd10').trace(true);
+MKtl('pmdd10').trace(true).makeRespFuncs;
 
 (MKtlDesc.defaultFolder +/+ "Tee*").pathMatch
 
@@ -48,7 +49,7 @@ MKtl(\abc) === MKtl(\abc);
 /////
 a = MKtlDesc("Teenage*");
 
-MKtl(\myOpi, "Teenage*");
+MKtl(\myLPD8, "LPD*");
 MKtl(\myOpi).rebuildFrom;
 
 MKtl(\myOpi).rebuildFrom("Teenage*");
@@ -73,6 +74,9 @@ x = MKtl(desc: "Teenage_OP1");
 x.dump;
 
 
+MKtlDesc.writeCache;
+MKtlDesc.loadCache;
+MKtlDesc.fileToIDDict
 
 MKtl('pmdd10').desc;
 MKtl('pmdd10').desc.descDict.device;

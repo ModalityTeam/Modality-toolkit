@@ -4,6 +4,7 @@ HIDMKtlDevice : MKtlDevice {
 	classvar <sourceDeviceDict;
 	classvar <protocol = \hid;
 
+	// source is the found and connected HID device
 	var <srcID, <source;
 
 	*getSourceName { |shortName|
@@ -68,15 +69,15 @@ HIDMKtlDevice : MKtlDevice {
 			this.postPossible;
 		};
 	}
-
+	// add filename
 	*postPossible {
 		"\n// Available HIDMKtlDevices:".postln;
 		"// MKtl(autoName);  // [ hid product, vendor(, serial number) ]".postln;
-		sourceDeviceDict.keysValuesDo{ |key,info|
+		sourceDeviceDict.keysValuesDo { |key,info|
 			var serial = info.serialNumber;
 			if( serial.isEmpty ) {
-				"    MKtl('%');  // [ %, % ]\n"
-				.postf(key, info.productName.asCompileString, info.vendorName.asCompileString )
+				"    MKtl( % );  // [ %, % ]\n"
+				.postf(key.cs, info.productName.cs, info.vendorName.cs )
 			} {
 				"    MKtl('%');  // [ %, %, % ]\n"
 				.postf(key, info.productName.asCompileString, info.vendorName.asCompileString, serial.asCompileString );
@@ -134,7 +135,7 @@ HIDMKtlDevice : MKtlDevice {
         source = argSource.open;
  		this.initElements;
 		this.initCollectives;
-		this.sendInitialiationMessages;
+		this.sendInitialisationMessages;
 	}
 
 	closeDevice {
@@ -176,7 +177,7 @@ HIDMKtlDevice : MKtlDevice {
 	}
 
 	cleanupElementsAndCollectives {
-		mktl.elementsDict.do{ |el|
+		mktl.elementsDict.do { |el|
 			var theseElements;
             var elid = el.elementDescription[\hidElementID];
             var page = el.elementDescription[\hidUsagePage];

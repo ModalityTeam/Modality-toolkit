@@ -211,7 +211,7 @@ OSCMKtlDevice : MKtlDevice {
 
 		this.initElements;
 		this.initCollectives;
-		this.sendInitialiationMessages;
+		this.sendInitialisationMessages;
 	}
 
 
@@ -331,7 +331,7 @@ OSCMKtlDevice : MKtlDevice {
 		}
 	}
 
-	sendInitialiationMessages{
+	sendInitialisationMessages {
 		mktl.initialisationMessages.do{ |it|
 			destination.sendMsg( *it );
 		};
