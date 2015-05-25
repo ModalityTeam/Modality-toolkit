@@ -27,6 +27,9 @@ section:: Simple input
 
 In this section we will go through all the different types of MIDI messages that may come in and show how to write a description for that element.
 
+There are a number of different types of MIDI messages: code::noteOn:: and code::noteOff:: for midi note messages - typically connected to a MIDI keyboard, pitch bend messages, after touch messages, MIDI control messages (e.g. volume control) and MIDI program change messages (e.g. to switch to a different bank of sounds).
+
+
 Some startup code for our next examples:
 
 code::
@@ -63,36 +66,20 @@ link::Classes/MIDIOut#OS X specific: Sending MIDI to other applications::
 
 subsection:: MIDI note messages
 
+MIDI note messages are typically connected to piano keys on a MIDI keyboard. But in many MIDI controllers they can also be connected to other buttons or drum pads. In principle, MIDI code::noteOn:: messages have a note number defining which key was pressed, and a velocity value defining the speed or intensity with which it was pressed (a typical mapping would be to make a sound louder when the key is pressed with a higher speed). When the note is released, a code::noteOff:: message is sent, again with a note number and a velocity (the speed of release, this could e.g. be mapped to the release time of an envelope). However, some MIDI devices also just sent a MIDI code::noteOn:: message with velocity zero when a note is released.
+
+NOTE::
+In SuperCollider MIDI noteOn messages with velocity 0 are always parsed as noteOff messages.
+There is a pull request to SuperCollider for this, which makes this an option rather than a default:
 code::
-// midiMsgType: \noteOnOff,
-(
-~descInput = (
-	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
-	idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ),
-	protocol: \midi,
-	description: (
-		'bt': (
-			type: 'button',
-			midiMsgType: \noteOnOff,
-			midiChan: 0,
-			midiNum: 64,
-			spec: \midiVel,
-			ioType: \in
-		)
-	)
-)
-);
-
-m = MKtl( \testMIDI, ~descInput );
-m.rebuildFrom( ~descInput ); // updating it
-
-m.trace;
-
-// make some messages:
-~midiOut.noteOn(0, 64, 127 );
-~midiOut.noteOn(0, 64, 0 ); // creates a noteOff message (see note)
-~midiOut.noteOff(0, 64, 0 );
+MIDIIn.noteOnZeroAsNoteOff = false;
 ::
+See: link::https://github.com/supercollider/supercollider/issues/1483::
+and: link::https://github.com/supercollider/supercollider/pull/1488::
+::
+
+
+As a first example, we show how to make an element to create an element that responds to a code::noteOn:: event. For the velocity we use the code::spec: \midiVel::, which maps the range of 0 to 127 to the range between 0 and 1.
 
 code::
 // midiMsgType: \noteOn,
@@ -122,19 +109,11 @@ m.trace;
 // make some messages:
 ~midiOut.noteOn(0, 64, 127 );
 ~midiOut.noteOn(0, 64, 24 );
-~midiOut.noteOn(0, 64, 0 ); // this is a bug - see note
+~midiOut.noteOn(0, 64, 0 ); // this may not post anything - see note about noteOn and velocity zero
 ::
 
-NOTE::
-Note: bug in SC where MIDI noteOn messages with velocity 0 are always parsed as noteOff messages.
-There is a pull request to SuperCollider for this, which makes this an option rather than a default:
-code::
-MIDIIn.noteOnZeroAsNoteOff = false;
-::
-See: link::https://github.com/supercollider/supercollider/issues/1483::
-and: link::https://github.com/supercollider/supercollider/pull/1488::
-::
 
+As a second example, we show how to make an element that responds to a code::noteOff:: message:
 
 code::
 // midiMsgType: \noteOff,
@@ -156,7 +135,7 @@ code::
 )
 );
 
-m = MKtl( \testMIDI, ~descInput );
+m = MKtl( \testMIDI, ~descInput ); // create a new device, or:
 m.rebuildFrom( ~descInput ); // updating it
 
 m.trace;
@@ -167,8 +146,47 @@ m.trace;
 ~midiOut.noteOff(0, 64, 0 );
 ::
 
+In the case the velocity information is not so important or the code::noteOn:: message with velocity zero is automatically translated to zero, then you can also use the combined code::midiMsgType: \noteOnOff::, which will listen to either kind of message.
+For example a simple button may just send a code::noteOn:: message with velocity 127 and a code::noteOff:: message with velocity 0. In that case it is useful to respond to both types of message with the same element. In the example we use the code::spec: \midiBut::.
+
+code::
+// midiMsgType: \noteOnOff,
+(
+~descInput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ),
+	protocol: \midi,
+	description: (
+		'bt': (
+			type: 'button',
+			midiMsgType: \noteOnOff,
+			midiChan: 0,
+			midiNum: 64,
+			spec: \midiBut,
+			ioType: \in
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descInput );
+m.rebuildFrom( ~descInput ); // updating it
+
+m.trace;
+
+// make some messages:
+~midiOut.noteOn(0, 64, 127 );
+~midiOut.noteOn(0, 64, 0 ); // creates a noteOff message (see note)
+~midiOut.noteOff(0, 64, 0 );
+
+~midiOut.noteOn(0, 64, 37 ); // note that with this we cannot distinguish between noteOn and noteOff
+~midiOut.noteOff(0, 64, 37 ); // note that with this we cannot distinguish between noteOn and noteOff
+::
+
 
 subsection:: MIDI control messages
+
+MIDI control messages are typically sent out by knobs, sliders or pedals on a device, but in some cases also buttons or built-in sensors.
 
 code::
 // midiMsgType: \cc - knob
@@ -326,7 +344,7 @@ m.trace;
 ~midiOut.touch(0, 0 );
 ::
 
-subsection:: MIDI program messages
+subsection:: MIDI program change messages
 
 code::
 // midiMsgType: \program,
