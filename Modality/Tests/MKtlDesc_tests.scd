@@ -2,18 +2,37 @@
 
 /***************
 
-// * test support todays new format,
-// - assocArrays for the elementsDesc in files
+TODO TODO TODO - clenup pact items
+// * test support for new format of assocArrays in desc files
 
-// this osc controller creates a weird name:
+// * this osc controller creates a weird name:
 MKtlDesc.at(\srcp3141731416127001).idInfo;
 
-// broken because of new AssocArray format, as in nanoKONTROL ...
+// * broken because of new AssocArray format, as in nanoKONTROL ...
 // tried supporting it in traverseDo, not fully tested yet.
 // ... will finish later.
 MKtlDesc.fromFileName("nanoKO*2");
 
-[\a-> 1].atKey;
+
+
+// create an ordered Event class to handle this?
+// optimize for dict style access speed,
+// do methods always use order
+// support ordered named subsets of names, as in MFunc
+// support ordered modes with on/off flags
+
+MList?
+
+OE([a: 1, b: 1]
+[\a -> 1].atKey;
+[\a, 1].atKey
+(a: 1).atKey;
+[\a -> 1].putAtKey(\b, 2);
+[\a, 1].atKey(
+(a: 1).atKey;
+
+(a: 1, b: 2).flopWith
+
 ******************************************/
 
 /******* typical use: **********/
@@ -30,6 +49,23 @@ MKtlDesc.findFile(postFound: true).do(_.basename).printcsAll; "";
 // check which ones are already loaded
 MKtlDesc.postLoaded;
 MKtlDesc('nanoKEY2')
+MKtlDesc('nanoKEY2').checkMIDIMsgTypes;
+
+MKtlDesc.checkMsgTypes;
+	*checkMsgType
+		// this is to check which responders to build
+	*elementMsgTypes { |
+		var types = Set.new;
+		elementsDict.do { |el|
+			var type = el[\midiMsgType];
+			type ?? {
+				warn("" + this + ": element % has no midiMsgType.%".format(el));
+			};
+			types.add(type);
+		};
+		^types;
+	}
+
 
 /******************************************/
 
@@ -76,6 +112,12 @@ MKtlDesc.loadDescs; // loads all descs from all folders
 MKtlDesc.loadDescs("Steinberg*", 0); // match specific filename and folderIndex
 
 MKtlDesc.postLoaded;
+
+
+// lookupDict for filename/idInfo:
+MKtlDesc.fileToIDDict;
+MKtlDesc.idInfoFor("ShermanFB2");
+MKtlDesc.filenameFor("Steinberg CMC-FD");
 
 
 

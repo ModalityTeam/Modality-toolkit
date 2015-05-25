@@ -2,9 +2,10 @@
 PLANS:
 
 * support array of associations as incoming dict!
-* best as instVar and sync convert the other to a dict
+* keep assocArray as instVar and sync/convert the other to a dict
 * make a directory cache of filenames -> devicenames as reported
 * update only when files newer than cache were added
+
 */
 
 MKtlDesc {
@@ -12,6 +13,7 @@ MKtlDesc {
 	classvar <fileExt = ".desc.scd";
 	classvar <descFolders;
 	classvar <allDescs;
+	classvar <cachePath, <fileToIDDict;
 
 	classvar <>isElementTestFunc;
 
@@ -23,7 +25,13 @@ MKtlDesc {
 		descFolders = List[defaultFolder];
 		allDescs =();
 		isElementTestFunc = { |el| el.isKindOf(Dictionary) and: { el[\spec].notNil } };
+
+		cachePath =defaultFolder +/+ "_descFileLookup.cache.scd";
+
+		this.loadCache;
 	}
+
+	// Files admin methods:
 
 	*addFolder { |path, name = (folderName)|
 		var folderPath = path +/+ name;
@@ -73,6 +81,102 @@ MKtlDesc {
 		"\nMKtlDesc.allDescs;\n".postf(paths.size);
 	}
 
+	*postLoaded {
+		"\n*** MKtlDesc - loaded descs: ***".postln;
+		allDescs.keys.asArray.sort.do { |key|
+			"% // %\n".postf(allDescs[key], allDescs[key].idInfo);
+		};
+		"******\n".postln;
+	}
+
+	*at { |descName|
+		^allDescs[descName]
+	}
+
+	// create lookup dicts for filename -> idInfo and back
+	// this will allow loading just the file needed, not all files.
+
+	*idInfoFor { |filename| ^fileToIDDict.at(filename) }
+
+	*filenameFor { |idInfo| ^fileToIDDict.findKeyForValue(idInfo) }
+
+	*writeCache {
+		var fileToIDDictToWrite = Dictionary.new;
+
+		MKtlDesc.loadDescs;
+
+		MKtlDesc.allDescs.collect { |desc|
+			var filename = desc.fullDesc.filename;
+			var idInfo = desc.fullDesc.idInfo;
+			fileToIDDictToWrite.put(filename, idInfo);
+		};
+
+
+		File.open(cachePath, "w").write(fileToIDDictToWrite.cs).close;
+		/*
+		MKtlDesc.writeCache;
+		MKtlDesc.loadCache;
+		MKtlDesc.fileToIDDict;
+		*/
+
+	}
+
+	*loadCache {
+		fileToIDDict = cachePath.load;
+	}
+
+	*updateCache {
+		// check if any files have changed,
+		// and if so, make a new cache file.
+	}
+
+	// integrity checks
+
+	// according to current definition,
+	// \idInfo, \protocol, \description are required;
+	// can add more tests here,
+	// e.g. check whether description is wellformed
+	*isValidDescDict { |dict|
+		^dict.isKindOf(Dictionary)
+		or: { dict.isAssociationArray
+		and: { dict[\idInfo].notNil
+		and: { dict[\protocol].notNil
+		and: { dict[\description].notNil
+	//	and: { this.checkElementsDesc(dict) }
+					}
+				}
+			}
+		}
+	}
+
+	// write tests for this later
+	*checkElementsDesc { |desc|
+		var midiMsgTypes, missing;
+		if (this.protocol == \midi) {
+			#midiMsgTypes, missing = MKtlDesc.checkMIDIMsgTypes;
+		};
+		if (missing.size > 0) {
+			warn("" + this + ": has no midiMsgType for elements: %".format(missing));
+		};
+		^(missing > 0)
+	}
+
+
+	checkMIDIMsgTypes {
+		var types = Set.new, type, missing = [];
+		this.elementsDesc.do { |el|
+			var type = el[\midiMsgType];
+			if (type.isNil) {
+				missing = missing.add(el.name);
+			} {
+				types.add(type);
+			};
+		};
+		^(msgTypesUsed: types, msgTypesMissingIn: missing);
+	}
+
+
+	// creation methods
 	*fromFileName { |filename, folderIndex|
 		var paths = this.findFile(filename, folderIndex, false);
 		if (paths.isEmpty) {
@@ -115,40 +219,6 @@ MKtlDesc {
 		^super.new.fullDesc_(dict);
 	}
 
-	*at { |descName|
-		^allDescs[descName]
-	}
-
-	*postLoaded {
-		"\n*** MKtlDesc - loaded descs: ***".postln;
-		allDescs.keys.asArray.sort.do { |key|
-			"% // %\n".postf(allDescs[key], allDescs[key].idInfo);
-		};
-		"******\n".postln;
-	}
-
-	// according to current definition,
-	// \idInfo, \protocol, \description are required;
-	// can add more tests here,
-	// e.g. check whether description is wellformed
-	*isValidDescDict { |dict|
-		^dict.isKindOf(Dictionary)
-		or: { dict.isAssociationArray
-		and: { dict[\idInfo].notNil
-		and: { dict[\protocol].notNil
-		and: { dict[\description].notNil
-	//	and: { this.checkElementsDesc(dict) }
-					}
-				}
-			}
-		}
-	}
-
-	// write tests for this later
-	*checkElementsDesc { |desc|
-		^true
-	}
-
 	*new { |name|
 		var foundObj = this.at(name ?? { name.asSymbol });
 		if (foundObj.notNil) {
@@ -162,6 +232,7 @@ MKtlDesc {
 		^super.new;
 	}
 
+	// initialisation/preparation
 	fullDesc_ { |inDesc|
 		if (this.class.isValidDescDict(inDesc).not) {
 			warn("MKtlDesc: dict is not a valid desc,"
@@ -177,8 +248,7 @@ MKtlDesc {
 		// make elements in both forms
 		this.prMakeElemColls(fullDesc);
 		this.inferName;
-		this.makeElementsArray;
-		this.resolveDescEntriesForPlatform;
+	//	this.resolveDescEntriesForPlatform;
 	}
 
 	inferName { |inname, force = false|
@@ -219,13 +289,10 @@ MKtlDesc {
 		};
 	}
 
-	// keep all data in fullDesc only if possible
+	// access - keep all data in fullDesc only
 	protocol { ^fullDesc[\protocol] }
 	protocol_ { |type| ^fullDesc[\protocol] = type }
 
-	// adc proposal - seem clearest
-	// idInfoAsReportedBySystem,
-	// aslo put it in fullDesc[\idInfo]
 	idInfo { ^fullDesc[\idInfo] }
 	idInfo_ { |type| ^fullDesc[\idInfo] = type }
 
@@ -236,15 +303,21 @@ MKtlDesc {
 		^path !? { path.basename.drop(fileExt.size.neg) }
 	}
 
-	postInfo { |elements = false|
+	postInfo { |postElements = false|
 		("---\n//" + this + $:) .postln;
 		"deviceFilename: %\n".postf(this.deviceFilename);
 		"protocol: %\n".postf(this.protocol);
 		"deviceIDString: %\n".postf(this.deviceIDString);
 		"desc keys: %\n".postf(this.elementsDesc.keys);
 
+		if (postElements) { this.postElements }
+	}
 
-		if (elements) { this.postElements }
+	postElements {
+		this.elementsDesc.traverseDo({ |el, deepKeys|
+			deepKeys.size.do { $\t.post };
+			deepKeys.postcs;
+		}, (_.isKindOf(Dictionary)));
 	}
 
 	writeFile { |path|
@@ -256,6 +329,10 @@ MKtlDesc {
 		stream << this.class.name << ".at(%)".format(name.cs);
 	}
 
+	// some keys may be platform-dependent, e.g.
+	// (meaning: (osx: 23, linux: 42, win: 4711));
+	// these are resolved for the platform used,
+	// e.g. for linux: (meaning: 42)
 	*resolveForPlatform { |dict|
 		var platForms = [\osx, \linux, \win];
 		var myPlatform = thisProcess.platform.name;
@@ -283,19 +360,5 @@ MKtlDesc {
 		this.class.resolveForPlatform(this.elementsDesc);
 	}
 
-	postElements {
-		this.elementsDesc.traverseDo({ |el, deepKeys|
-			deepKeys.size.do { $\t.post };
-			deepKeys.postcs;
-		}, (_.isKindOf(Dictionary)));
-	}
 
-	makeElementsArray { |devDesc|
-		var arr = [];
-		this.elementsDesc.traverseDo({ |el, deepKeys|
-			var elKey = deepKeys.join($_).asSymbol;
-			arr = arr.add(elKey -> el);
-		}, isElementTestFunc);
-		elementsAssocArray = arr;
-	}
 }
