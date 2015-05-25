@@ -169,20 +169,21 @@ MIDIMKtlDevice : MKtlDevice {
 
 		if (foundDestination.isNil) {
 			warn("MIDIMKtlDevice:"
-			"	No MIDIOut destination with USB port ID % exists! please check again.".format(destUID));
+				"	No MIDIOut destination with USB port ID % exists!"
+				"please check again.".format(destUID));
 		};
 
-		if ( foundSource.isNil and: foundDestination.isNil ){
-			warn("MIDIMKtl:"
-			"	No MIDIIn source nor destination with USB port ID %, % exists! please check again.".format(srcUID, destUID));
-			^nil;
-		};
+				// if ( foundSource.isNil and: foundDestination.isNil ){
+				// warn("MIDIMKtl:"
+				// "	No MIDIIn source nor destination with USB port ID %, % exists! please check again.".format(srcUID, destUID));
+				// ^nil;
+				// };
 
-		foundDestination.notNil.if{
+		if (foundDestination.notNil) {
 			destinationDeviceDict.changeKeyForValue(name, foundDestination);
 			deviceName = foundDestination.device;
 		};
-		foundSource.notNil.if{
+		if (foundSource.notNil) {
 			sourceDeviceDict.changeKeyForValue(name, foundSource);
 			deviceName = foundSource.device;
 		};
@@ -277,12 +278,14 @@ MIDIMKtlDevice : MKtlDevice {
 
 		if ( mktl.elementsDict.notNil ){
 			this.prepareElementHashDict;
+			msgTypes = mktl.desc.fullDesc[\msgTypesUsed];
 			this.makeRespFuncs;
 		}
 	}
 
 	// nothing here yet, but needed
 	initCollectives {
+
 	}
 
 	initMIDIMKtl { |argName, argSource, argDestination|
@@ -378,15 +381,19 @@ MIDIMKtlDevice : MKtlDevice {
 	// plumbing
 	prepareElementHashDict {
 		var elementsDict = mktl.elementsDict;
+		this.mktl.postln;
+		elementsDict.keys.postln;
+	//	if (true) { ^this };
 
 		if ( elementsDict.notNil) {
 			elementsDict.keysValuesDo { |elName, element|
-				var hash, elemDesc = element.elementDescription;
+				var elemDesc = element.elementDescription;
+				var hash = this.makeHashKey( elemDesc, elName );
 
-				// set output things
-				if ( elemDesc[\out].notNil ){
-					// element has a specific description for the output of the element
-					hash = this.makeHashKey( elemDesc, elName );
+				[elName, hash, elemDesc.elemKey, element].postln;
+				//// set output things
+				if ( elemDesc[\out].notNil ) {
+					// element has description for an output
 					elNameToMidiDescDict.put(elName,
 						[
 							elemDesc[\midiMsgType],
@@ -398,28 +405,29 @@ MIDIMKtlDevice : MKtlDevice {
 
 				// set the inputs
 				if ( elemDesc[\in].notNil ){
-					// element has a specific description for the input of the element
+					// element has specific description for the input
 					hash = this.makeHashKey( elemDesc, elName );
 					hashToElNameDict.put(hash, elName);
 				};
-				if ( elemDesc[\in].isNil and: elemDesc[\out].isNil ){
-					hash = this.makeHashKey( elemDesc, elName );
-					if ( elementsDict[elName].ioType == \in
-					or:  elementsDict[elName].ioType == \inout ){
-						hashToElNameDict.put(hash, elName);
-					};
-					if ( elementsDict[elName].ioType == \out
-						or:  elementsDict[elName].ioType == \inout ){
-						elNameToMidiDescDict.put(elName,
-							[
-								elemDesc[\midiMsgType],
-								elemDesc[\midiChan],
-								elemDesc[\midiNum],
-								elemDesc[elName][\spec]
-						])
-					};
-
-				};
+				//
+				// if ( elemDesc[\in].isNil and: elemDesc[\out].isNil ){
+				// 	hash = this.makeHashKey( elemDesc, elName );
+				// 	if ( elementsDict[elName].ioType == \in
+				// 	or:  elementsDict[elName].ioType == \inout ){
+				// 		hashToElNameDict.put(hash, elName);
+				// 	};
+				// 	if ( elementsDict[elName].ioType == \out
+				// 	or:  elementsDict[elName].ioType == \inout ){
+				// 		elNameToMidiDescDict.put(elName,
+				// 			[
+				// 				elemDesc[\midiMsgType],
+				// 				elemDesc[\midiChan],
+				// 				elemDesc[\midiNum],
+				// 				elemDesc[elName][\spec]
+				// 		])
+				// 	};
+				//
+				// };
 			}
 		}
 	}
@@ -679,7 +687,7 @@ MIDIMKtlDevice : MKtlDevice {
 	}
 
 
-	cleanupElementsAndCollectives{
+	cleanupElementsAndCollectives {
 		responders.do{ |resp|
 			// resp.postln;
 			resp.free;
@@ -689,9 +697,7 @@ MIDIMKtlDevice : MKtlDevice {
 		elNameToMidiDescDict = nil;
 	}
 
-	makeRespFuncs { |msgTypes|
-		msgTypes = MIDIAnalysis.checkMsgTypes( mktl.deviceDescriptionArray);
-		msgTypes = msgTypes ? allMsgTypes;
+	makeRespFuncs {
 		responders = ();
 		global = ();
 		msgTypes.do { |msgType|

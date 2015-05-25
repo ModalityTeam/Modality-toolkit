@@ -31,16 +31,12 @@ MKtl { // abstract class
 	var <desc;
 	var <specs;
 
-	var <elements;			// an ElementGroup with all elements in hierarchical order
+	var <elements;			// all elements in ElementGroup in hierarchical order
 	var <elementsDict; 		// all elements in a single flat dict for fast lookup
-	var <elementsArray;
+	var <elementsArray;		// all elements in a flat array for ordered iteration
 
-	var <collectivesDict; 	// contains the collectives that are in the device description
-
-	// an array of keys and values with a description of all the elements on the device.
-	// generated from the hierarchical description read from the file.
-	// used for filling the elementsDict.
-	var <flatElementDescList;
+	var <collectivesDict; 	// has the collectives (combined elements and groups)
+							// from the device description
 
 	var <mktlDevice; // interface to the connected device(s).
 
@@ -53,7 +49,8 @@ MKtl { // abstract class
 		this.prAddDefaultSpecs();
 
 		makeLookupNameFunc = { |string|
-			(string.asString.toLower.select{|c| c.isAlpha && { c.isVowel.not }}.keep(4)
+			(string.asString.toLower.select{|c| c.isAlpha
+				&& { c.isVowel.not }}.keep(4)
 			++ string.asString.select({|c| c.isDecDigit}))
 		}
 	}
@@ -122,7 +119,7 @@ MKtl { // abstract class
 		var res;
 		if (name.isNil) {
 			if (desc.isNil) {
-				"MKtl: can't make one without a name.".inform;
+				"MKtl: cannot make a new one without a name.".inform;
 				^nil;
 			};
 		};
@@ -133,8 +130,8 @@ MKtl { // abstract class
 		if ( res.notNil ){
 			if (desc.isNil) { ^res };
 			// found an MKtl by name, and there is a new desc
-			"MKtl: to change the description,"
-			"use MKtl(%).rebuildFrom(<desc>)".inform;
+			"//** To change the description of an MKtl, do:"
+			"%.rebuild(<desc>)".format(this).inform;
 			^res
 		};
 
@@ -200,7 +197,6 @@ MKtl { // abstract class
 
 	makeElements {
 
-		// addGroupsAsParent really needed?
 		MKtlElement.addGroupsAsParent = true;
 
 		elementsArray = [];
@@ -371,13 +367,19 @@ MKtl { // abstract class
 
 	openDevice { |lookAgain=true|
 
-		if ( this.mktlDevice.notNil ){
+		if ( this.mktlDevice.notNil ) {
 			"WARNING: Already a device opened for %.\n"
 			"Please close it first with %.closeDevice;\n".postf(this, this);
 			^this;
 		};
 		// this may be an issue, only look for appropriate protocol
 		MKtlDevice.initHardwareDevices( lookAgain, desc.protocol.bubble );
+
+		MKtlDevice.allAvailable[\midi].select { |deviceShortName|
+			deviceShortName.asString.contains("lpd8")
+			};
+
+
 	 	mktlDevice = MKtlDevice.open( this.name, parentMKtl: this );
 	}
 

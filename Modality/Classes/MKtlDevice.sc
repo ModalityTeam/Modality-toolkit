@@ -115,9 +115,15 @@ MKtlDevice {
 	// collapse tryOpenDevice and tryOpenDeviceFromDesc
 	// into one
 	*open { |name, parentMKtl, protocol, desc|
-		var subClass, newDevice;
+		var subClass, newDevice, devLookupName;
 
-		protocol = protocol ?? { this.getMatchingProtocol( name ) };
+		devLookupName = MKtlDevice.lookupNameForIDInfo(
+			parentMKtl.desc.idInfo).postln;
+
+		protocol = protocol ?? {
+			parentMKtl.desc.protocol ?? {
+				this.getMatchingProtocol( name )
+		} };
 		if (protocol.isNil) {
 			"MKtlDevice.open: no protocol found for %.\n".warn;
 			^nil;
@@ -133,12 +139,13 @@ MKtlDevice {
 		};
 
 		// try to find one:
-		newDevice = subClass.new( name, parentMKtl: parentMKtl );
+		newDevice = subClass.new( devLookupName, parentMKtl: parentMKtl );
 		if (newDevice.notNil) {
 			// yes yes yes
 			newDevice.initElements;
 			^newDevice
 		};
+
 		"MKtlDevice.open: parentMKtl: %, prot: %,\n"
 		"desc: %".format(parentMKtl.cs, protocol.cs, desc);
 
@@ -190,7 +197,7 @@ MKtlDevice {
 
 	// initialisation messages
 
-	sendInitialiationMessages {
+	sendInitialisationMessages {
 		this.subclassResponsibility(thisMethod)
 	}
 
