@@ -86,7 +86,7 @@ MKtlDesc {
 
 	*postLoadable {|folderIndex|
 		folderIndex = folderIndex ?? { (0..descFolders.lastIndex) };
-		descFolders[folderIndex.asArray].postln.do { |folder, i|
+		descFolders[folderIndex.asArray].do { |folder, i|
 			var found = this.findFile(folderIndex: i);
 			"*** % descs in folder % - % : ***\n".postf(found.size, i, folder);
 			found.do { |path|
@@ -196,14 +196,16 @@ MKtlDesc {
 			if (msgType.notNil) {
 				msgTypesUsed.add(msgType);
 			} {
-				"missing: ".post;
-				missing.add(elemKey.postln);
+			//	"missing: ".post;
+				missing.add(elemKey);
 			};
 			// [elemKey, elem].postln;
 		}, MKtlDesc.isElementTestFunc); "";
 
 		fullDesc.put(\msgTypesUsed, msgTypesUsed);
-		fullDesc.put(\elementsWithNoType, missing);
+		if (missing.notEmpty) {
+			fullDesc.put(\elementsWithMissingType, missing);
+		};
 	}
 
 
@@ -265,6 +267,7 @@ MKtlDesc {
 
 	// initialisation/preparation
 	fullDesc_ { |inDesc|
+		var missing;
 		if (this.class.isValidDescDict(inDesc).not) {
 			warn("MKtlDesc: dict is not a valid desc,"
 				" so cannot make elements.");
@@ -279,7 +282,14 @@ MKtlDesc {
 		// make elements in both forms
 		this.prMakeElemColls(this.elementsDesc);
 		this.inferName;
-		this.getMidiMsgTypes;
+		if (this.protocol == \midi) {
+			this.getMidiMsgTypes;
+			missing = fullDesc[\elementsWithMissingType];
+			if (missing.size > 0) {
+				("" + this + "is missing 'midiMsgType' entry for %.")
+				.format(missing).warn;
+			};
+		};
 		//	this.resolveDescEntriesForPlatform;
 	}
 

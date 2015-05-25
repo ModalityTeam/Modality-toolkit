@@ -15,8 +15,9 @@ MKtlDesc.at(\srcp3141731416127001).idInfo;
 
 // check if already there by filename;
 // if not there, make it from file.
-MKtlDesc('nanoPAD2'); 	// can be string or symbol
-MKtlDesc("nanoKEY2");	//
+MKtlDesc("nanoPAD2"); 	// name can be string or symbol
+MKtlDesc('nanoPAD2') === MKtlDesc('nanoPAD2'); // get same desc by name
+MKtlDesc("nanoKEY2") === MKtlDesc("nanoKEY2") // name can also
 MKtlDesc("nano*");		// warns if multiple files match
 
 // this lists all files in readable form
@@ -24,12 +25,13 @@ MKtlDesc.postLoadable;
 // check which ones are already loaded
 MKtlDesc.postLoaded;
 
-m.openFile;		// open its descFile
+MKtlDesc('nanoPAD2').openFile;		// open its descFile
 
 
 // explicitly make the one you need by filename
 // i.e. force a reload from file if it was loaded already
 x = MKtlDesc.fromFileName("nanoKEY2");
+
 
 /******************************************/
 
@@ -39,9 +41,10 @@ x.fullDesc 		// the desc dict as from file
 x.idInfo		// the name with which the system regoisters it
 x.name			// its name == filename
 x.protocol		// the protocol(s) it uses
-x.elementsDesc	// the description of all the elements it has
+x.elementsDesc	// the description of all the elements
+				// in a hierarchical dict/array
 
-// more things in the top level of the full description:
+// more information in the top level of the full description:
 x.fullDesc.keys;
 x.fullDesc.idInfo;			// the name by which the hardware device
 							//// registers in the system
@@ -67,9 +70,6 @@ MKtlDesc.fromPath(MKtlDesc.findFile.choose);
 MKtlDesc.fromFileName("nanoKEY2");
 MKtlDesc.fromFileName("nano*");
 
-MKtlDesc.allDescs.choose.openFile;
-
-
 
 /******************************************/
 // CLASS METHOD TESTs:
@@ -82,10 +82,16 @@ MKtlDesc.addFolder("~/Desktop/").cs; // add your own
 // if there is no folder there, it posts how to make it:
 File.mkdir("~/Desktop/".standardizePath);
 
-MKtlDesc.loadDescs(folderIndex: 1);
+MKtlDesc.loadDescs(folderIndex: 0);
+MKtlDesc.openFolder
 MKtlDesc.writeCache;
+(MKtlDesc.defaultFolder +/+ MKtlDesc.cacheName).openDocument;
 
 MKtlDesc.findFile(postFound: true); ""; // this lists all files
+MKtlDesc.findFile("*", postFound: true); ""; // all = matching "*"
+MKtlDesc.findFile("n*", postFound: true); ""; // all beginning with "n"
+MKtlDesc.findFile("*y*", postFound: true); ""; // all files with a "y"
+MKtlDesc.findFile("*osc*", postFound: true); ""; // all files with a "y"
 
 MKtlDesc.descFolders.cs;
 MKtlDesc.openFolder(0);		// open them by index
@@ -93,16 +99,6 @@ MKtlDesc.openFolder(1);
 
 MKtlDesc.loadDescs; // loads all descs from all folders
 MKtlDesc.loadDescs("Steinberg*", 0); // match specific filename and folderIndex
-
-MKtlDesc.postLoadable(1);
-MKtlDesc.postLoaded;
-
-MKtlDesc('nanoKONTROL2') == MKtlDesc('nanoKONTROL2')
-
-MKtlDesc("nanoKO*2") == MKtlDesc("nanoKO*2"); // not true yet
-// hmm, would have to match for available names
-MKtlDesc("nanoKONTROL2") == MKtlDesc("nanoKONTROL2"); // true
-
 
 /******************************************/
 // internal method tests
