@@ -111,9 +111,17 @@ MKtlDesc {
 	// create lookup dicts for filename -> idInfo and back
 	// this will allow loading just the file needed, not all files.
 
-	*idInfoFor { |filename| ^fileToIDDict.at(filename) }
+	*idInfoForFilename { |filename| ^fileToIDDict.at(filename) }
 
-	*filenameFor { |idInfo| ^fileToIDDict.findKeyForValue(idInfo) }
+	*filenameForIDInfo { |idInfo| ^fileToIDDict.findKeyForValue(idInfo) }
+
+	*filenameForLookupName { |lookupName|
+		^this.fileToIDDict.select { |filename, idInfo|
+			var lookupCand = MKtl.makeLookupName(idInfo);
+			[lookupName, lookupCand, filename, idInfo].postln;
+			lookupName.asString.contains(lookupCand)
+		}
+	}
 
 	*writeCache {
 		var dictForFolder = Dictionary.new, file;

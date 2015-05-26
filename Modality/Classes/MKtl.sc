@@ -375,11 +375,6 @@ MKtl { // abstract class
 		// this may be an issue, only look for appropriate protocol
 		MKtlDevice.initHardwareDevices( lookAgain, desc.protocol.bubble );
 
-		MKtlDevice.allAvailable[\midi].select { |deviceShortName|
-			deviceShortName.asString.contains("lpd8")
-			};
-
-
 	 	mktlDevice = MKtlDevice.open( this.name, parentMKtl: this );
 	}
 

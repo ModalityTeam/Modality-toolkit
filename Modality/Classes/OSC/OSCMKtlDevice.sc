@@ -331,7 +331,7 @@ OSCMKtlDevice : MKtlDevice {
 		}
 	}
 
-	sendInitialisationMessages {
+	sendInitialiationMessages{
 		mktl.initialisationMessages.do{ |it|
 			destination.sendMsg( *it );
 		};

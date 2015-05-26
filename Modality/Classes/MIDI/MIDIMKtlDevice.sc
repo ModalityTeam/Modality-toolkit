@@ -19,13 +19,9 @@ MIDIMKtlDevice : MKtlDevice {
 	// .value(type, src, chan, num/note, value/vel)
 	var <>midiRawAction;
 
-
-	// optimisation for fast lookup,
-	// may go away if everything lives in "elementsDict" of superclass
-	var <elementHashDict;  //of type: ('c_ChannelNumber_CCNumber': MKtlElement, ...) i.e. ('c_0_21':a MKtlElement, ... )
-	var <hashToElNameDict; //of type: ('c_ChannelNumber_CCNumber':'elementName') i.e. ( 'c_0_108': prB2, ... )
-	var <elNameToMidiDescDict;//      ('elementName': [type, channel, midiNote or ccNum, ControlSpec], ... )
-	                          //i.e.  ( 'trD1': [ cc, 0, 57, a ControlSpec(0, 127, 'linear', 1, 0, "") ], ... )
+	// optimisation for fast lookup in two dicts:
+	var <midiKeyToElemDict;    // find element by e.g. midiCCKey
+	var <elNameToMidiDescDict; // find desc for output by elName
 
 	var <responders;
 	var <global;
@@ -272,15 +268,13 @@ MIDIMKtlDevice : MKtlDevice {
 	/// --------- EXPLORING -----)))))---------
 
 	initElements {
-		elementHashDict = ();
-		hashToElNameDict = ();
-		elNameToMidiDescDict = ();
-
-		if ( mktl.elementsDict.notNil ){
-			this.prepareElementHashDict;
-			msgTypes = mktl.desc.fullDesc[\msgTypesUsed];
-			this.makeRespFuncs;
-		}
+		if ( mktl.elementsDict.isNil ){
+			warn("" + mktl + "has no elementsDict?");
+			^this;
+		};
+		this.prepareLookupDicts;
+		msgTypes = mktl.desc.fullDesc[\msgTypesUsed];
+		this.makeRespFuncs;
 	}
 
 	// nothing here yet, but needed
@@ -310,155 +304,123 @@ MIDIMKtlDevice : MKtlDevice {
 			};
 		};
 
+
+
+		"this.initElements;".postln;
 		this.initElements;
+		"this.initCollectives;".postln;
 		this.initCollectives;
 		this.sendInitialisationMessages;
+		"this.sendInitialisationMessages;".postln;
 
 	}
 
-	makeHashKey { |descr, elName|
+	makeHashKey { |elemDesc, elem|
+
+		var msgType = elemDesc[\midiMsgType];
 		var hashes;
-		// "makeHashKey : %: %\n".postf(elName, descr);
-		if( descr[\midiMsgType].isNil ) {
-			"MIDIMKtlDevice:prepareElementHashDict (%): \\midiMsgType not found. Please add it."
-			.format(this, elName).error;
-			descr.postln;
-		} {
-			var noMidiChan = descr[\midiChan].isNil;
-			var isTouch = descr[\midiMsgType] == \touch;
-			var noMidiNum = descr[\midiNum].isNil;
 
-			if( noMidiChan ) {
-				"MIDIMKtlDevice:prepareElementHashDict (%): \\midiChan not found. Please add it."
-				.format(this, elName).error;
-				descr.postln;
-			};
-
-			if( isTouch && noMidiNum ) {
-				"MIDIMKtlDevice:prepareElementHashDict (%): \\midiNum not found. Please add it."
-				.format(this, elName).error;
-				descr.postln;
-			};
-
-			if( noMidiChan.not || ( (isTouch && noMidiNum) ) ){
-				if( allMsgTypes.includes( descr[\midiMsgType] ) ) {
-
-					hashes = descr[\midiMsgType].switch(
-						\noteOn, {[this.makeNoteOnKey(descr[\midiChan], descr[\midiNum])]},
-						\noteOff, {[this.makeNoteOffKey(descr[\midiChan], descr[\midiNum])]},
-						\noteOnOff, {
-							[
-								this.makeNoteOnKey(descr[\midiChan], descr[\midiNum]),
-								this.makeNoteOffKey(descr[\midiChan], descr[\midiNum])
-							]
-						},
-						\cc, {[this.makeCCKey(descr[\midiChan], descr[\midiNum])]},
-						\touch, {[this.makeTouchKey(descr[\midiChan])] },
-						\polyTouch, {[this.makePolyTouchKey(descr[\midiChan],descr[\midiNum])] },
-						\bend, {[this.makeBendKey(descr[\midiChan])] },
-						\program, {[this.makeProgramKey(descr[\midiChan])] }
-
-					);
-
-					hashes.do { |hash|
-						elementHashDict.put(
-							hash, mktl.elementsDict[elName];
-						)
-					};
-				} {
-					"MIDIMKtlDevice:prepareElementHashDict (%): identifier '%' in midiMsgType for item '%' not known. Please correct."
-					.format(this, descr[\midiMsgType], elName).error;
-					this.dump;
-					nil;
-				}
-			} {
-				"whoever programmed this is stupid, I shouldn't be here...".postln;
-				this.dump;
-			}
+		if( allMsgTypes.includes(msgType).not ) {
+			warn("% has unsupported \\midiMsgType: %".format(elem, msgType));
+			^this
 		};
+
+		hashes = msgType.switch(
+			\noteOn, { this.makeNoteOnKey(elemDesc[\midiChan], elemDesc[\midiNum]) },
+			\noteOff, { this.makeNoteOffKey(elemDesc[\midiChan], elemDesc[\midiNum]) },
+			\noteOnOff, {
+				[
+					this.makeNoteOnKey(elemDesc[\midiChan], elemDesc[\midiNum]),
+					this.makeNoteOffKey(elemDesc[\midiChan], elemDesc[\midiNum])
+				]
+			},
+			\cc, { this.makeCCKey(elemDesc[\midiChan], elemDesc[\midiNum]) },
+			\touch, { this.makeTouchKey(elemDesc[\midiChan]) },
+			\polyTouch, { this.makePolyTouchKey(elemDesc[\midiChan],elemDesc[\midiNum]) },
+			\bend, { this.makeBendKey(elemDesc[\midiChan]) },
+			\program, { this.makeProgramKey(elemDesc[\midiChan]) }
+		);
+		^hashes
 	}
 
-	// plumbing
-	prepareElementHashDict {
+		// utilities for fast lookup - in class and instance
+		// as class methods so we can do it without an instance
+	*makeCCKey { |chan, cc| ^("c_%_%".format(chan, cc)).asSymbol }
+	*ccKeyToChanCtl { |ccKey| ^ccKey.asString.drop(2).split($_).asInteger }
+	*makeNoteOnKey { |chan, note| ^("non_%_%".format(chan, note)).asSymbol }
+	*makeNoteOffKey { |chan, note| ^("nof_%_%".format(chan, note)).asSymbol }
+	*makePolyTouchKey { |chan, note| ^("pt_%_%".format(chan, note)).asSymbol }
+    *noteKeyToChanNote { |noteKey| ^noteKey.asString.drop(2).split($_).asInteger }
+
+	*makeTouchKey { |chan| ^("t_%".format(chan)).asSymbol }
+	*makeBendKey { |chan| ^("b_%".format(chan)).asSymbol }
+	*makeProgramKey { |chan| ^("p_%".format(chan)).asSymbol }
+
+	// and as instance methods so we do not need to ask this.class
+	makeCCKey { |chan, cc| ^("c_%_%".format(chan, cc)).asSymbol }
+	ccKeyToChanCtl { |ccKey| ^ccKey.asString.drop(2).split($_).asInteger }
+	makeNoteOnKey { |chan, note| ^("non_%_%".format(chan, note)).asSymbol }
+	makeNoteOffKey { |chan, note| ^("nof_%_%".format(chan, note)).asSymbol }
+	makePolyTouchKey { |chan, note| ^("pt_%_%".format(chan, note)).asSymbol }
+	noteKeyToChanNote { |noteKey| ^noteKey.asString.drop(2).split($_).asInteger }
+
+	makeTouchKey { |chan| ^("t_%".format(chan)).asSymbol }
+	makeBendKey { |chan| ^("b_%".format(chan)).asSymbol }
+	makeProgramKey { |chan| ^("p_%".format(chan)).asSymbol }
+
+	// was 'plumbing'
+	prepareLookupDicts {
 		var elementsDict = mktl.elementsDict;
-		this.mktl.postln;
-		elementsDict.keys.postln;
-	//	if (true) { ^this };
+		midiKeyToElemDict = ();
 
-		if ( elementsDict.notNil) {
-			elementsDict.keysValuesDo { |elName, element|
-				var elemDesc = element.elementDescription;
-				var hash = this.makeHashKey( elemDesc, elName );
+		"gets to prepareLookupDicts".postln;
 
-				[elName, hash, elemDesc.elemKey, element].postln;
-				//// set output things
-				if ( elemDesc[\out].notNil ) {
-					// element has description for an output
-					elNameToMidiDescDict.put(elName,
-						[
-							elemDesc[\midiMsgType],
-							elemDesc[\midiChan],
-							elemDesc[\midiNum],
-							elemDesc[elName][\spec]
-					])
+		if (elementsDict.isNil) {
+			warn("% has no elementsDict?".format(mktl));
+			^this
+		};
+
+		elementsDict.do { |elem|
+			var elemDesc = elem.elementDescription;
+			var midiKey = this.makeHashKey( elemDesc, elem );
+
+			// set the inputs only; outputs can use elemDesc directly
+			if ( [nil, \in, \inout].includes(elemDesc[\ioType])) {
+				// element has specific description for the input
+				midiKey.do { |key|
+					midiKeyToElemDict.put(*[key, elem].postln);
 				};
-
-				// set the inputs
-				if ( elemDesc[\in].notNil ){
-					// element has specific description for the input
-					hash = this.makeHashKey( elemDesc, elName );
-					hashToElNameDict.put(hash, elName);
-				};
-				//
-				// if ( elemDesc[\in].isNil and: elemDesc[\out].isNil ){
-				// 	hash = this.makeHashKey( elemDesc, elName );
-				// 	if ( elementsDict[elName].ioType == \in
-				// 	or:  elementsDict[elName].ioType == \inout ){
-				// 		hashToElNameDict.put(hash, elName);
-				// 	};
-				// 	if ( elementsDict[elName].ioType == \out
-				// 	or:  elementsDict[elName].ioType == \inout ){
-				// 		elNameToMidiDescDict.put(elName,
-				// 			[
-				// 				elemDesc[\midiMsgType],
-				// 				elemDesc[\midiChan],
-				// 				elemDesc[\midiNum],
-				// 				elemDesc[elName][\spec]
-				// 		])
-				// 	};
-				//
-				// };
-			}
+			};
 		}
 	}
 
-	// modularize - only make the ones that are needed?
-	// make them only once, methods to activate/deactivate them
 
+	////////// make the responding MIDIFuncs \\\\\\\
+	// only make the ones that are needed once,
+	// and activate/deactivate them
 	makeCC {
 		var typeKey = \cc;
 		//"make % func\n".postf(typeKey);
 		responders.put(typeKey,
 			MIDIFunc.cc({ |value, num, chan, src|
 				var hash = this.makeCCKey(chan, num);
-				var elName = hashToElNameDict[hash];
-				var el = elementHashDict[hash];
+				var el = midiKeyToElemDict[hash];
 
 				midiRawAction.value(\control, src, chan, num, value);
 				global[typeKey].value(chan, num, value);
 
 				if (el.notNil) {
-					el.rawValueAction_(value, false);
+					el.deviceValueAction_(value, false);
 					if(traceRunning) {
 						"% - % > % | type: cc, ccValue:%, ccNum:%,  chan:%, src:%"
 						.format(this.name, el.name, el.value.asStringPrec(3), value, num, chan, src).postln
 					};
 				} {
 					if (traceRunning) {
-					"MIDIMKtl( % ) : cc element found for chan %, ccnum % !\n"
-					" - add it to the description file, e.g.: "
-					"\\<name>: (\\midiMsgType: \\cc, \\type: \\button, \\midiChan: %,"
-					"\\midiNum: %, \\spec: \\midiBut, \\mode: \\push).\n\n"
+						"MIDIMKtl( % ) : cc element found for chan %, ccnum % !\n"
+						" - add it to the description file, e.g.: "
+						"\\<name>: (\\midiMsgType: \\cc, \\type: \\button, \\midiChan: %,"
+						"\\midiNum: %, \\spec: \\midiBut, \\mode: \\push).\n\n"
 						.postf(name, chan, num, chan, num);
 					};
 				}
@@ -474,24 +436,24 @@ MIDIMKtlDevice : MKtlDevice {
 			MIDIFunc.noteOn({ |vel, note, chan, src|
 				// look for per-key functions
 				var hash = this.makeNoteOnKey(chan, note);
-				var elName = hashToElNameDict[hash];
-				var el = elementHashDict[hash];
+				var el = midiKeyToElemDict[hash];
 
 				midiRawAction.value(\noteOn, src, chan, note, vel);
 				global[typeKey].value(chan, note, vel);
 
 				if (el.notNil) {
-					el.rawValueAction_(vel);
+					el.deviceValueAction_(vel);
 					if(traceRunning) {
 						"% - % > % | type: noteOn, vel:%, midiNote:%,  chan:%, src:%"
-						.format(this.name, el.name, el.value.asStringPrec(3), vel, note, chan, src).postln
+						.format(this.name, el.name, el.value.asStringPrec(3),
+						vel, note, chan, src).postln
 					};
 				}{
 					if (traceRunning) {
-					"MIDIMKtl( % ) : noteOn element found for chan %, note % !\n"
-					" - add it to the description file, e.g.: "
-					"\\<name>: (\\midiMsgType: \\noteOn, \\type: \\pianoKey or \\button, \\midiChan: %,"
-					"\\midiNum: %, \\spec: \\midiVel).\n\n"
+						"MIDIMKtl( % ) : noteOn element found for chan %, note % !\n"
+						" - add it to the description file, e.g.: "
+						"\\<name>: (\\midiMsgType: \\noteOn, \\type: \\pianoKey or \\button,"
+						"\\midiChan: %, \\midiNum: %, \\spec: \\midiVel).\n\n"
 						.postf(name, chan, note, chan, note);
 					};
 				}
@@ -507,24 +469,23 @@ MIDIMKtlDevice : MKtlDevice {
 			MIDIFunc.noteOff({ |vel, note, chan, src|
 				// look for per-key functions
 				var hash = this.makeNoteOffKey(chan, note);
-				var elName = hashToElNameDict[hash];
-				var el = elementHashDict[hash];
+				var el = midiKeyToElemDict[hash];
 
 				midiRawAction.value(\noteOff, src, chan, note, vel);
 				global[typeKey].value(chan, note, vel);
 
 				if (el.notNil) {
-					el.rawValueAction_(vel);
+					el.deviceValueAction_(vel);
 					if(traceRunning) {
 						"% - % > % | type: noteOff, vel:%, midiNote:%,  chan:%, src:%"
 						.format(this.name, el.name, el.value.asStringPrec(3), vel, note, chan, src).postln
 					};
 				} {
 					if (traceRunning) {
-					"MIDIMKtl( % ) : noteOff element found for chan %, note % !\n"
-					" - add it to the description file, e.g.: "
-					"\\<name>: (\\midiMsgType: \\noteOff, \\type: \\pianoKey or \\button, \\midiChan: %,"
-					"\\midiNum: %, \\spec: \\midiVel).\n\n"
+						"MIDIMKtl( % ) : noteOff element found for chan %, note % !\n"
+						" - add it to the description file, e.g.: "
+						"\\<name>: (\\midiMsgType: \\noteOff, \\type: \\pianoKey or \\button, \\midiChan: %,"
+						"\\midiNum: %, \\spec: \\midiVel).\n\n"
 						.postf(name, chan, note, chan, note);
 					};
 				};
@@ -546,24 +507,23 @@ MIDIMKtlDevice : MKtlDevice {
 			MIDIFunc.touch({ |value, chan, src|
 				// look for per-key functions
 				var hash = this.makeTouchKey(chan);
-				var elName = hashToElNameDict[hash];
-				var el = elementHashDict[hash];
+				var el = midiKeyToElemDict[hash];
 
 				midiRawAction.value(\touch, src, chan, value);
 				global[typeKey].value(chan, value);
 
 				if (el.notNil) {
-					el.rawValueAction_(value);
+					el.deviceValueAction_(value);
 					if(traceRunning) {
 						"% - % > % | type: touch, midiNum:%, chan:%, src:%"
 						.format(this.name, el.name, el.value.asStringPrec(3), value, chan, src).postln
 					}
 				}{
 					if (traceRunning) {
-					"MIDIMKtl( % ) : touch element found for chan % !\n"
-					" - add it to the description file, e.g.: "
-					"\\<name>: (\\midiMsgType: \\touch, \\type: \\chantouch', \\midiChan: %,"
-					"\\spec: \\midiTouch).\n\n"
+						"MIDIMKtl( % ) : touch element found for chan % !\n"
+						" - add it to the description file, e.g.: "
+						"\\<name>: (\\midiMsgType: \\touch, \\type: \\chantouch', \\midiChan: %,"
+						"\\spec: \\midiTouch).\n\n"
 						.postf(name, chan, chan);
 					};
 				};
@@ -573,6 +533,7 @@ MIDIMKtlDevice : MKtlDevice {
 		);
 	}
 
+	// not tested yet, no polytouch keyboard
 	makePolyTouch {
 		//"makePolytouch".postln;
 		var typeKey = \polyTouch; //decide on polyTouch vs polytouch
@@ -581,24 +542,23 @@ MIDIMKtlDevice : MKtlDevice {
 			MIDIFunc.polytouch({ |vel, note, chan, src|
 				// look for per-key functions
 				var hash = this.makePolyTouchKey(chan, note);
-				var elName = hashToElNameDict[hash];
-				var el = elementHashDict[hash];
+				var el = midiKeyToElemDict[hash];
 
 				midiRawAction.value(\polyTouch, src, chan, note, vel);
 				global[typeKey].value(chan, note, vel);
 
 				if (el.notNil) {
-					el.rawValueAction_(vel);
+					el.deviceValueAction_(vel);
 					if(traceRunning) {
 						"% - % > % | type: polyTouch, vel:%, midiNote:%,  chan:%, src:%"
 						.format(this.name, el.name, el.value.asStringPrec(3), vel, note, chan, src).postln
 					};
 				}{
 					if (traceRunning) {
-					"MIDIMKtl( % ) : polyTouch element found for chan %, note % !\n"
-					" - add it to the description file, e.g.: "
-					"\\<name>: (\\midiMsgType: \\polyTouch, \\type: \\keytouch, \\midiChan: %,"
-					"\\midiNum: %, \\spec: \\midiVel).\n\n"
+						"MIDIMKtl( % ) : polyTouch element found for chan %, note % !\n"
+						" - add it to the description file, e.g.: "
+						"\\<name>: (\\midiMsgType: \\polyTouch, \\type: \\keytouch, \\midiChan: %,"
+						"\\midiNum: %, \\spec: \\midiVel).\n\n"
 						.postf(name, chan, note, chan, note);
 					};
 				}
@@ -620,25 +580,24 @@ MIDIMKtlDevice : MKtlDevice {
 			MIDIFunc.bend({ |value, chan, src|
 				// look for per-key functions
 				var hash = this.makeBendKey(chan);
-				var elName = hashToElNameDict[hash];
-				var el = elementHashDict[hash];
+				var el = midiKeyToElemDict[hash];
 
 				midiRawAction.value(\bend, src, chan, value);
 				global[typeKey].value(chan, value);
 
 				if (el.notNil) {
-					el.rawValueAction_(value);
+					el.deviceValueAction_(value);
 					if(traceRunning) {
 						"% - % > % | type: bend, midiNum:%, chan:%, src:%"
 						.format(this.name, el.name, el.value.asStringPrec(3), value, chan, src).postln
 					};
 				}{
 					if (traceRunning) {
-					"MIDIMKtl( % ) : bend element found for chan % !\n"
-					" - add it to the description file, e.g.: "
-					"\\<name>: (\\midiMsgType: \\bend, \\type: ??', \\midiChan: %,"
-					"\\spec: \\midiBend).\n\n"
-					.postf(name, chan, chan);
+						"MIDIMKtl( % ) : bend element found for chan % !\n"
+						" - add it to the description file, e.g.: "
+						"\\<name>: (\\midiMsgType: \\bend, \\type: ??', \\midiChan: %,"
+						"\\spec: \\midiBend).\n\n"
+						.postf(name, chan, chan);
 					};
 				};
 
@@ -659,25 +618,24 @@ MIDIMKtlDevice : MKtlDevice {
 			MIDIFunc.program({ |value, chan, src|
 				// look for per-key functions
 				var hash = this.makeProgramKey(chan);
-				var elName = hashToElNameDict[hash];
-				var el = elementHashDict[hash];
+				var el = midiKeyToElemDict[hash];
 
 				midiRawAction.value(\program, src, chan, value);
 				global[typeKey].value(chan, value);
 
 				if (el.notNil) {
-					el.rawValueAction_(value);
+					el.deviceValueAction_(value);
 					if(traceRunning) {
 						"% - % > % | type: program, midiNum:%, chan:%, src:%"
 						.format(this.name, el.name, el.value.asStringPrec(3), value, chan, src).postln
 					};
 				}{
 					if (traceRunning) {
-					"MIDIMKtl( % ) : program element found for chan % !\n"
-					" - add it to the description file, e.g.: "
-					"\\<name>: (\\midiMsgType: \\program, \\type: ??', \\midiChan: %,"
-					"\\spec: \\midiProgram).\n\n"
-					.postf(name, chan, chan);
+						"MIDIMKtl( % ) : program element found for chan % !\n"
+						" - add it to the description file, e.g.: "
+						"\\<name>: (\\midiMsgType: \\program, \\type: ??', \\midiChan: %,"
+						"\\spec: \\midiProgram).\n\n"
+						.postf(name, chan, chan);
 					};
 				};
 
@@ -688,13 +646,11 @@ MIDIMKtlDevice : MKtlDevice {
 
 
 	cleanupElementsAndCollectives {
-		responders.do{ |resp|
+		responders.do { |resp|
 			// resp.postln;
 			resp.free;
 		};
-		elementHashDict = nil;
-		hashToElNameDict = nil;
-		elNameToMidiDescDict = nil;
+		midiKeyToElemDict = nil;
 	}
 
 	makeRespFuncs {
@@ -714,19 +670,32 @@ MIDIMKtlDevice : MKtlDevice {
 		};
 	}
 
-	send { |key,val|
-	 	elNameToMidiDescDict !? _.at(key) !? { |x|
-			var type, ch, num, spec;
-			#type, ch, num, spec = x;
-	 		switch(type)
-			{\cc}{ midiOut.control(ch, num, val ) }
-			{\noteOn}{ midiOut.noteOn(ch, num, val ) }
-			{\noteOff}{ midiOut.noteOff(ch, num, val ) }
-			{\noteOnOff} { midiOut.noteOn(ch, num, val ) }
-			{\bend}{ midiOut.bend(ch, val) }
-//			{\note}{ x.postln /*TODO: check type for noteOn, noteOff, etc*/ }
-			{warn("MIDIMKtlDevice: message type % not recognised".format(type))}
-	 	}
+
+	send { |key, val|
+
+		var elemDesc = mktl.elementsDict[key].elementDescription;
+		var msgType = elemDesc[\midiMsgType];
+		// is this the proper output chan/num?
+		// where is it in the elemDesc?
+		var chan = elemDesc[\midiChan];
+		var num = elemDesc[\midiNum];
+
+		// could do per-element latency here?
+		// e.g. for setting lights later than when pressed
+		// fork { (elemDesc[\latency] ? 0).wait;
+
+	 	switch(msgType)
+			{ \cc } { midiOut.control(chan, num, val ) }
+			{ \noteOn } { midiOut.noteOn(chan, num, val ) }
+			{ \noteOff } { midiOut.noteOff(chan, num, val ) }
+		//	{ \noteOnOff } { midiOut.noteOn(chan, num, val ) }
+			{ \touch } { midiOut.touch(chan, val ) }
+			{ \polytouch } { midiOut.polytouch(chan, num, val ) }
+			{ \bend } { midiOut.bend(chan, val) }
+//			{ \note } { x.postln /*TODO: check type for noteOn, noteOff, etc*/ }
+			{warn("MIDIMKtlDevice: message type % not recognised".format(msgType))};
+		// };
+
 	}
 
 	sendInitialisationMessages {
@@ -734,31 +703,4 @@ MIDIMKtlDevice : MKtlDevice {
 			midiOut.performList( it[0], it.copyToEnd(1) );
 		}
 	}
-
-
-		// utilities for fast lookup :
-		// as class methods so we can do it without an instance
-	*makeCCKey { |chan, cc| ^("c_%_%".format(chan, cc)).asSymbol }
-	*ccKeyToChanCtl { |ccKey| ^ccKey.asString.drop(2).split($_).asInteger }
-	*makeNoteOnKey { |chan, note| ^("non_%_%".format(chan, note)).asSymbol }
-	*makeNoteOffKey { |chan, note| ^("nof_%_%".format(chan, note)).asSymbol }
-	*makePolyTouchKey { |chan, note| ^("pt_%_%".format(chan, note)).asSymbol }
-    *noteKeyToChanNote { |noteKey| ^noteKey.asString.drop(2).split($_).asInteger }
-
-	*makeTouchKey { |chan| ^("t_%".format(chan)).asSymbol }
-	*makeBendKey { |chan| ^("b_%".format(chan)).asSymbol }
-	*makeProgramKey { |chan| ^("p_%".format(chan)).asSymbol }
-
-	// as instance methods so we done need to ask this.class
-	makeCCKey { |chan, cc| ^("c_%_%".format(chan, cc)).asSymbol }
-	ccKeyToChanCtl { |ccKey| ^ccKey.asString.drop(2).split($_).asInteger }
-	makeNoteOnKey { |chan, note| ^("non_%_%".format(chan, note)).asSymbol }
-	makeNoteOffKey { |chan, note| ^("nof_%_%".format(chan, note)).asSymbol }
-	makePolyTouchKey { |chan, note| ^("pt_%_%".format(chan, note)).asSymbol }
-	noteKeyToChanNote { |noteKey| ^noteKey.asString.drop(2).split($_).asInteger }
-
-	makeTouchKey { |chan| ^("t_%".format(chan)).asSymbol }
-	makeBendKey { |chan| ^("b_%".format(chan)).asSymbol }
-	makeProgramKey { |chan| ^("p_%".format(chan)).asSymbol }
-
 }
