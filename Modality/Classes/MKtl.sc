@@ -353,7 +353,7 @@ MKtl { // abstract class
 
 		// close old device
 		if (mktlDevice.notNil) {
-			mktlDevice.close;
+			mktlDevice.closeDevice;
 			mktlDevice.cleanupElementsAndCollectives;
 		};
 

@@ -13,7 +13,6 @@ MKtl.find(\hid);
 MKtl.find(\midi);
 MKtl.find(\osc);
 
-MKtlElement
 MKtlDevice.allAvailable;
 
 MKtl('rnnd0', 'RunNDrive');
@@ -21,23 +20,26 @@ MKtl('rnnd0').trace(true); // WORKS!
 MKtl('rnnd0').trace(false);
 
 MKtl.find(\midi);
-MKtl('pmdd10', "Teenage_OP1");
+MKtl('pmdd10', "Teenage_OP1"); // not tested again
 MKtl('pmdd10').trace(true);
 
-(MKtlDesc.defaultFolder +/+ "Tee*").pathMatch
-
-
+	// rebuild not working yet
 MKtl('rnnd0').rebuild; // with current desc
 MKtl('rnnd0').rebuild(~desc) // with new ~esc here>);
 
+
 MKtl('rnnd0').trace(true);
+MKtl('rnnd0').elementsDict
+MKtl('rnnd0').elementsDict.size
 MKtl('rnnd0').elementsDict[\bt_2];
-// good that it is visible in Modality, not in HIDFunc etc.
+
+// good that traceRunning is visible in Modality
 MKtl('rnnd0').traceRunning;
 
 MKtl('rnnd0').desc.openFile;
 MKtl('rnnd0').desc.elementsDesc.keys;
 MKtl('rnnd0').mktlDevice;
+MKtl('rnnd0').desc.postInfo(true);
 
 MKtlDesc.fromFileName("RunNDrive");
 MKtlDesc.at('RunNDrive').openFile;

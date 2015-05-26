@@ -357,7 +357,7 @@ MKtlDesc {
 		("---\n//" + this + $:) .postln;
 		"deviceFilename: %\n".postf(this.deviceFilename);
 		"protocol: %\n".postf(this.protocol);
-		"deviceIDString: %\n".postf(this.deviceIDString);
+		"idInfo: %\n".postf(this.idInfo);
 		"desc keys: %\n".postf(this.elementsDesc.keys);
 
 		if (postElements) { this.postElements }

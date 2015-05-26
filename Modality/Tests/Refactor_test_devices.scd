@@ -6,23 +6,25 @@ MKtlDesc.openFolder;
 ///////// HID \\\\\\\\\\
 MKtl.find(\hid);
 MKtlDevice.allAvailable[\hid]
-
+HID.available
 HID.available.do { |hid| MKtlDesc.filenameFor(hid.productName) };
 
-MKtlDesc.fileToIDDict("RunNDrive");
 // Ferrari gamepad, works
 ~ferr = MKtl('rnnd0', "RunNDrive").trace(true);
+
+// Saitek impact gamepad (silver) - works
+~imp = MKtl('sbgm0', "impact_gamepad"); ~imp.trace(true);
+
+// Saitek gamepad black - does not find device - why?
+~stk = MKtl('dlnl0', "JessTechDualAnalogRumble"); ~stk.trace(true);
+~stk.desc.fullDesc;
 
 // Saitek Cyborg X joystick
 // - has no description; auto-desc from HID not yet working again.
 ~cyb = MKtl('cybr0', ).trace(true);
 
-// Saitek impact gamepad (silver)
-~imp = MKtl('sbgm0', "impact_gamepad"); ~imp.trace(true);
-
-// Saitek gamepad black
-~stk = MKtl('dlnl0', "JessTechDualAnalogRumble"); ~stk.trace(true);
-~stk.desc.fullDesc;
+d = HIDMKtlDevice.sourceDeviceDict[\cybr0];
+d.dump;
 
 
 /////// MIDI \\\\\\\\\
@@ -39,7 +41,9 @@ MKtl('nnkn0', "nanoKONTROL").trace(true);
 
 ///// next = get lookups to work in all directions!
 
-///
+
+MKtlDesc.fileToIDDict["LPD8"];
+
 MKtlDevice.idInfoForLookupName('dlnl0');
 MKtlDevice.lookupNameForIDInfo('dlnl0');
 MKtlDevice.lookupNameForIDInfo('dlnl0');
