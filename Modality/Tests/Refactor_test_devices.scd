@@ -37,6 +37,18 @@ m = MKtl(\lpd80, "LPD8").trace(true);
 // ? what about the overlapping ccs in scene 4?
 MKtl('nnkn0', "nanoKONTROL").trace(true);
 
+MKtl('nnkn20', "nanoKONTROL2").trace(true); // OK!
+
+MKtl('nnkn20', "nanoKONTROL2"); // OK!
+
+MKtl('nnkn20').mktlDevice.checkAllCtls;
+MKtl('nnkn20').trace(false).checkAllCtls;
+
+
+
+//////// OSC \\\\\ not working yet.
+
+MKtl(\manta, "manta*");
 
 
 ///// next = get lookups to work in all directions!
