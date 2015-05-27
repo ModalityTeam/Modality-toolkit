@@ -251,6 +251,10 @@ m.trace;
 
 subsection:: MIDI pitch bend messages
 
+
+MIDI pitch bend messages are sent out by MIDI keyboards - usually a control in the shape of a wheel that flips back to its center position left of the keyboard.
+On some of the mini keyboards that you can find, the pitch bend message is implemented via buttons on the device in the same location.
+
 code::
 // midiMsgType: \bend,
 (
@@ -282,6 +286,9 @@ m.trace;
 ::
 
 subsection:: MIDI after touch messages
+
+
+After touch is the pressure that is on a piano key after the initial pressing (which is translated to note velocity as explained above). The MIDI protocol implements after touch in two ways - as single aftertouch value - where you have to keep track of what the last note was and do something useful with the data - or on a per key basis. The latter is called code::\polyTouch::, short for polyphonic touch. The first one is called code::\touch:: (in some discussions on MIDI it is also called "channel pressure" and has not code::\midiNum:: indication in the argument - just one value per channel.
 
 code::
 // midiMsgType: \polyTouch,
@@ -346,6 +353,8 @@ m.trace;
 
 subsection:: MIDI program change messages
 
+MIDI program change messages are typically sent when a device is changing the patch that is played on the synthesizer. They can be implemented by buttons, or knobs.
+
 code::
 // midiMsgType: \program,
 (
@@ -381,6 +390,11 @@ section:: Simple output
 
 In this section we will go through all the different types of MIDI messages that may be sent out and show how to write a description for that element.
 
+Typical use of MIDI output on controllers would be controlling the LEDs on the device that indicate the current mode of the instrument that you are building.
+
+But you could also create an MKtl that connects to a hardware synthesizer - or another software program, and use the Modality toolkit to send the control messages to it.
+
+Which MIDI messages a controller reacts to, can be found out from the controller's manual. Alternatively, you could just sent it a bunch of different messages and see what happens. Apart from system exclusive messages, this should be safe to do - system exclusive messages can be used for uploading new firmware or changing firmware mode, so don't just experiment with that, without properly informing yourself first.
 
 subsection:: MIDI note messages
 
@@ -580,7 +594,7 @@ MIDIIn.connectAll; MIDIFunc.trace;
 	idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ),
 	protocol: \midi,
 	description: (
-		'touch': (
+		'touch': ( after touch
 			type: 'slider',
 			midiMsgType: \touch, // touch does not need \midiNum
 			midiChan: 0,
@@ -599,7 +613,8 @@ m.elementAt( \touch ).value_( 0.4 );
 m.elementAt( \touch ).value_( 1 );
 ::
 
-subsection:: MIDI program messages
+subsection:: MIDI program change messages
+
 
 code::
 // midiMsgType: \program,
@@ -628,6 +643,8 @@ m.elementAt( \prog ).value_( 0 );
 m.elementAt( \prog ).value_( 0.4 );
 m.elementAt( \prog ).value_( 1 );
 ::
+
+subsection:: MIDI system exclusive messages
 
 
 section:: Explore a MIDI device
