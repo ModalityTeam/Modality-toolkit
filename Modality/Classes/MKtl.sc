@@ -111,15 +111,17 @@ MKtl { // abstract class
 		specs.put(key, theSpec);
 	}
 
+
+	// creation:
 	// new returns existing instances that exist in .all,
 	// or returns a new empty instance.
 	// If no physcal device is present, this becomes a virtual MKtl.
 
 	*new { |name, desc, lookForNew = false|
-		var res;
+		var res, idInfo;
 		if (name.isNil) {
 			if (desc.isNil) {
-				"MKtl: cannot make a new one without a name.".inform;
+				"MKtl: cannot make a new one without a name and a description file.".inform;
 				^nil;
 			};
 		};
@@ -130,7 +132,8 @@ MKtl { // abstract class
 		if ( res.notNil ){
 			if (desc.isNil) { ^res };
 			// found an MKtl by name, and there is a new desc
-			"//** To change the description of an MKtl, do:"
+			"//** Found device, and got description:\n"
+			"// To change the description of an MKtl, use:"
 			"%.rebuild(<desc>)".format(this).inform;
 			^res
 		};
@@ -140,8 +143,15 @@ MKtl { // abstract class
 
 		MKtlDevice.initHardwareDevices( lookForNew );
 
-		desc = MKtlDesc(desc);
-		desc.postln;
+		// find desc for lookupname:
+		if (desc.isNil) {
+			idInfo = MKtlDevice.idInfoForLookupName(name);
+			desc = MKtlDesc.filenameForIDInfo(idInfo);
+			desc.postln;
+		};
+
+		desc = MKtlDesc(desc).postln;
+
 
 		if (name.isNil and: { desc.notNil }) {
 			// last chance: infer missing name from desc?

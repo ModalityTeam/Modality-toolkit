@@ -1,5 +1,9 @@
 ///// State of connecting some controllers with adc refactor branch:
 
+* not using ElementGroups yet.
+* OSCMKtlDevice not working yet.
+
+
 MKtlDesc.postLoadable;
 MKtlDesc.openFolder;
 
@@ -29,6 +33,7 @@ d.dump;
 
 /////// MIDI \\\\\\\\\
 
+
 // works, but desc only has scene 1, and PAD mode.
 MKtl.find(\midi);
 m = MKtl(\lpd80, "LPD8").trace(true);
@@ -44,6 +49,8 @@ MKtl('nnkn20', "nanoKONTROL2"); // OK!
 MKtl('nnkn20').mktlDevice.checkAllCtls;
 MKtl('nnkn20').trace(false).checkAllCtls;
 
+MKtlDesc.openFolder;
+MKtl('nnkn20').desc.openFile;
 
 
 //////// OSC \\\\\ not working yet.
@@ -62,3 +69,4 @@ MKtlDevice.lookupNameForIDInfo('dlnl0');
 
 MKtlDesc.idInfoForFilename(MKtlDevice.idInfoForLookupName('dlnl0'));
 MKtlDesc.filenameForLookupName('dlnl0');
+

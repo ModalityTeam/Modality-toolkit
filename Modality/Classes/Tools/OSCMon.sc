@@ -68,8 +68,8 @@ OSCMon {
 		addresses = List[];
 		msgNames = List[];
 		anaDict = (nicknames: Dictionary[],
-			messagesByAddr: (),
-			msgNamesByAddr: ()
+			messagesByAddr: Dictionary[],
+			msgNamesByAddr: Dictionary[]
 		);
 
 		this.addDefaultNicknames;

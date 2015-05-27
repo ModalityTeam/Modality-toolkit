@@ -66,19 +66,23 @@ MKtlDevice {
 	}
 
 	*idInfoForLookupName { |lookupName|
-
-		var subClass;
-		var matchingProtocol = this.getMatchingProtocol( lookupName );
-		if ( matchingProtocol.isNil ){
-			^nil;
+		var found = MKtlDevice.allSubclasses.collect {|sub|
+			sub.sourceDeviceDict[lookupName]
+		}.reject(_.isNil);
+		if (found.isEmpty) {
+			inform("MKtlDevice: found no device"
+				"at lookupName %.".format(lookupName));
+			^found
 		};
-		subClass = MKtlDevice.matchClass(matchingProtocol);
-		if( subClass.isNil ){
-			^nil;
-		} {
-			^subClass.getSourceName( lookupName );
-		};
+		if (found.size > 1) {
+		inform("MKtlDevice: found multiple devices"
+			"at lookupName %.".format(lookupName));
+			^found
+		}
+		// found exactly one:
+		^found.unbubble.idInfo
 	}
+
 
 	*lookupNameForIDInfo { |idInfo|
 		var devKey, newDevKey;

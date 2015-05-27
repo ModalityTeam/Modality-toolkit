@@ -1,10 +1,8 @@
 /*
 PLANS:
 
-* support array of associations as incoming dict!
-* keep assocArray as instVar and sync/convert the other to a dict
-* make a directory cache of filenames -> devicenames as reported
 * update only when files newer than cache were added
+- it is really fast anyway, so just do on every startup? -
 
 */
 
@@ -13,7 +11,11 @@ MKtlDesc {
 	classvar <fileExt = ".desc.scd";
 	classvar <descFolders;
 	classvar <allDescs;
-	classvar <cacheName = "_allDescs.cache.scd", <fileToIDDict;
+	classvar <cacheName = "_allDescs.cache.scd";
+	classvar <fileToIDDict;
+
+	classvar <webview;
+	classvar <webhome = "http://modalityteam.github.io/controllers/";
 
 	classvar <>isElementTestFunc;
 
@@ -31,6 +33,15 @@ MKtlDesc {
 		fileToIDDict = Dictionary.new;
 
 		this.loadCache;
+	}
+
+	*web { |ctlname = ""|
+		webview = webview ?? { WebView() };
+		webview.front.url_((webhome +/+ ctlname).postcs);
+		webview.onClose_({ webview = nil });
+	}
+	web {
+		this.class.web(name.asString ++ ".html");
 	}
 
 	// Files admin methods:
