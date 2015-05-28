@@ -4,6 +4,20 @@
 
 TODO TODO TODO - cleanup pact items
 
+
+m = MKtlDesc("korg-nanokontrol2");	// only single file
+
+// QUESTION: making this the first time posts a list which seems to be the collected midiMsgTypes of the buttons.
+
+m = MKtlDesc("korg-nanokontrol"); // does not do that
+
+// where does that happen?
+
+[ Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ] ]
+[ Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ] ]
+[ Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ] ]
+
+
 // * fully test support for new format of assocArrays in desc files
 
 // * this osc controller creates a weird name:
@@ -15,22 +29,26 @@ MKtlDesc.at(\srcp3141731416127001).idInfo;
 
 // check if already there by filename;
 // if not there, make it from file.
-MKtlDesc("nanoPAD2"); 	// name can be string or symbol
-MKtlDesc('nanoPAD2') === MKtlDesc('nanoPAD2'); // get same desc by name
-MKtlDesc("nanoKEY2") === MKtlDesc("nanoKEY2") // name can also
-MKtlDesc("nano*");		// warns if multiple files match
+MKtlDesc("korg-nanopad2"); 	// name can be string or symbol
+MKtlDesc('korg-nanopad2') === MKtlDesc('korg-nanopad2'); // get same desc by name
+MKtlDesc("korg-nanopad2") === MKtlDesc("korg-nanopad2") // name can also
+MKtlDesc("korg-nano*");		// warns if multiple files match
+
+m.fullDesc.postcs;"";
+
+
 
 // this lists all files in readable form
 MKtlDesc.postLoadable;
 // check which ones are already loaded
 MKtlDesc.postLoaded;
 
-MKtlDesc('nanoPAD2').openFile;		// open its descFile
+MKtlDesc('korg-nanopad2').openFile;		// open its descFile
 
 
 // explicitly make the one you need by filename
 // i.e. force a reload from file if it was loaded already
-x = MKtlDesc.fromFileName("nanoKEY2");
+x = MKtlDesc.fromFileName("korg-nanokey2");
 
 
 /******************************************/
@@ -43,6 +61,7 @@ x.name			// its name == filename
 x.protocol		// the protocol(s) it uses
 x.elementsDesc	// the description of all the elements
 				// in a hierarchical dict/array
+x.elementsAssocArray // same descs in a flat Array of associations
 
 // more information in the top level of the full description:
 x.fullDesc.keys;
@@ -67,8 +86,11 @@ x.fullDesc.path;			// and the full path it was loaded from.
 d = (idInfo: \yoho, description: [], filename: "yoho", protocol: \osc)
 MKtlDesc.fromDict(d);
 MKtlDesc.fromPath(MKtlDesc.findFile.choose);
-MKtlDesc.fromFileName("nanoKEY2");
-MKtlDesc.fromFileName("nano*");
+MKtlDesc.fromFileName("korg-nanokey2");
+
+MKtlDesc.fromFileName("*nano*");  // matches multiple, loads first
+MKtlDesc.fromFileName("*nano*", multi: true); // loads multiple
+MKtlDesc("sny*"); // single matching returns just that
 
 
 /******************************************/
@@ -79,13 +101,16 @@ MKtlDesc.fileExt.cs			// the file extension for desc files
 MKtlDesc.allDescs;			// all currently loaded descs
 
 MKtlDesc.addFolder("~/Desktop/").cs; // add your own
-// if there is no folder there, it posts how to make it:
-File.mkdir("~/Desktop/".standardizePath);
+// if there is no folder there, it posts how to make it, e.g.:
+-> File.mkdir("/Users/adc/Desktop/MKtlDescriptions");
+
 
 MKtlDesc.loadDescs(folderIndex: 0);
 MKtlDesc.openFolder
 MKtlDesc.writeCache;
 (MKtlDesc.defaultFolder +/+ MKtlDesc.cacheName).openDocument;
+
+MKtlDesc.postLoadable;
 
 MKtlDesc.findFile(postFound: true); ""; // this lists all files
 MKtlDesc.findFile("*", postFound: true); ""; // all = matching "*"
@@ -107,19 +132,19 @@ MKtlDesc.loadDescs("Steinberg*", 0); // match specific filename and folderIndex
 MKtlDesc.fileToIDDict;
 MKtlDesc.writeCache;
 MKtlDesc.loadCache;
-MKtlDesc.idInfoFor("ShermanFB2");
-MKtlDesc.filenameFor("Steinberg CMC-FD");
+MKtlDesc.idInfoForFilename("ShermanFB2");
+MKtlDesc.filenameForIDInfo("Steinberg CMC-FD");
 
 // file filenames of desc files:
-MKtlDesc.findFile("nanoKEY2");			// single
-MKtlDesc.findFile("nano*").cs;			// matching
-MKtlDesc.findFile("Stein*").cs;
+MKtlDesc.findFile("*nop*");		// single
+MKtlDesc.findFile("korg*").cs.postln;"";			// matching
+MKtlDesc.findFile("stein*").cs;"";
 MKtlDesc.findFile(postFound: true); ""; // this lists all files
 
 MKtlDesc.isValidDescDict((idInfo: \yoho, description: []));
 
 // how we get \msgTypesUsed:
-MKtlDesc('nanoKEY2').getMidiMsgTypes;
-MKtlDesc('nanoKEY2').fullDesc[\msgTypesUsed];
-MKtlDesc('nanoKEY2').fullDesc[\elementsWithNoType];
+MKtlDesc('korg-nanokey2').getMidiMsgTypes;
+MKtlDesc('korg-nanokey2').fullDesc[\msgTypesUsed];
+MKtlDesc('korg-nanokey2').fullDesc[\elementsWithNoType];
 

@@ -56,7 +56,7 @@ MKtlDesc {
 		} {
 			"// MKtlDesc added a nonexistent folder: %\n.".postf(name.cs);
 			"// you can create it with:"
-			"\n File.mkdir(\"%\".standardizePath);\n".postf(folderPath);
+			"\n File.mkdir(\"%\");\n".postf(folderPath);
 		}
 	}
 
@@ -212,7 +212,7 @@ MKtlDesc {
 			msgType = elem[\midiMsgType];
 
 			if (msgType.notNil) {
-				msgTypesUsed.add(msgType);
+				msgTypesUsed.add(msgType.unbubble);
 			} {
 			//	"missing: ".post;
 				missing.add(elemKey);
@@ -228,18 +228,24 @@ MKtlDesc {
 
 
 	// creation methods
-	*fromFileName { |filename, folderIndex|
+	*fromFileName { |filename, folderIndex, multi = false|
 		var paths = this.findFile(filename, folderIndex, false);
 		if (paths.isEmpty) {
 			warn("MktlDesc: could not find desc with filename %.\n"
 				.format(filename));
 			^nil;
 		};
-		if (paths.size > 1) {
-			warn("MktlDesc: found multiple files, loading only first: %.\n"
-				.format(paths[0].basename));
+		if (multi.not) {
+			if (paths.size > 1) {
+				warn("MktlDesc: found multiple files!\n"
+					"loading only first of %: %.\n"
+					.format(paths.size, paths[0].basename));
+				^this.fromPath(paths[0]);
+			};
 		};
-		^this.fromPath(paths[0]);
+
+		^paths.collect(this.fromPath(_)).unbubble;
+
 	}
 
 	*fromPath { |path|
@@ -280,6 +286,7 @@ MKtlDesc {
 			^this.fromFileName(name);
 		};
 		// for making it from dict
+		// post a warning here?
 		^super.new;
 	}
 
@@ -308,7 +315,8 @@ MKtlDesc {
 				.format(missing).warn;
 			};
 		};
-		//	this.resolveDescEntriesForPlatform;
+
+		this.resolveDescEntriesForPlatform;
 	}
 
 	inferName { |inname, force = false|
@@ -410,7 +418,7 @@ MKtlDesc {
 			};
 			if (foundPlatformDep) {
 				foundval = entry[myPlatform];
-				"MKtlDesc replacing: ".post;
+				"MKtlDesc:resolveForPlatform - replacing: ".post;
 				dict.put(*[dictkey, foundval].postln);
 			};
 		}
