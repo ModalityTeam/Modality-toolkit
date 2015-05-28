@@ -1,4 +1,4 @@
-/*** MKtl  tests for refactoring ***/
+/*** MKtl  tests while refactoring ***/
 
 MKtl.all
 MKtl.globalSpecs
@@ -6,12 +6,51 @@ MKtl.addSpec(\test, [1, 10, -4, 3]);
 MKtl.getSpec(\test);
 // default takes first few consonants and all numbers
 MKtl.makeLookupNameFunc.value("asd234");
-MKtl.makeLookupName("asdft12whfbeir");
 
-MKtl.find;
+
+
+// a custom lookupname func:
+
+MKtl.makeLookupNameFunc = { |str|
+	var numLetters = 7;
+	var parts, start, mid, end;
+	str = str.toLower;
+	if (str.size < numLetters) {
+		str;
+	} {
+		parts = str.split($ );
+		start = parts[0].select(_.isAlphaNum).keep(3);
+		mid = if (parts.size > 1) {
+			parts[1].select(_.isAlphaNum).keep(2);
+		} {
+			parts[0].select(_.isAlphaNum).drop(2).keep(2);
+		};
+		end = str.select(_.isAlphaNum).keep(-2);
+		[start, mid, end].join("").asSymbol;
+	}
+};
+
+n = MKtlDesc.fileToIDDict.choose.postln;
+MKtl.makeLookupName(n);
+MKtl.makeLookupName("LPD8");
+
+a = MKtlDesc.fileToIDDict.collect { |idInfo|
+	var str = idInfo.asString;
+	var shrt = MKtl.makeLookupName(str);
+	[str, shrt].postcs;
+	shrt.asSymbol;
+};
+// creates unique enough names? not quite yet. hm.
+a.size.postln == a.values.asSet.size.postln;
+a.asArray.sort;
+
+
+// find - could add desc filename if there.
 MKtl.find(\hid);
 MKtl.find(\midi);
 MKtl.find(\osc);
+
+MKtl.find;			// posts all 3
 
 MKtlDevice.allAvailable;
 

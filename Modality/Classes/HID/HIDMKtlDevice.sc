@@ -71,17 +71,25 @@ HIDMKtlDevice : MKtlDevice {
 
 	*postPossible {
 		"\n// Available HIDMKtlDevices:".postln;
-		"// MKtl(autoName);  // [ hid product, vendor(, serial number) ]".postln;
-		sourceDeviceDict.keysValuesDo{ |key,info|
+
+		"// MKtl(autoName, filename);  // [ hid product, vendor, (serial number) ]".postln;
+
+		sourceDeviceDict.keysValuesDo { |key,info|
 			var serial = info.serialNumber;
-			if( serial.isEmpty ) {
-				"    MKtl('%');  // [ %, % ]\n"
-				.postf(key, info.productName.asCompileString, info.vendorName.asCompileString )
-			} {
-				"    MKtl('%');  // [ %, %, % ]\n"
-				.postf(key, info.productName.asCompileString, info.vendorName.asCompileString, serial.asCompileString );
-			}
+			var product = info.productName;
+			var vendor = info.vendorName;
+			var postList = [product, vendor];
+			var hidLookup = postList.join($_);
+			var filename = MKtlDesc.filenameForIDInfo(hidLookup);
+
+			if (serial.notEmpty) {
+				postList = postList.add(serial);
+			};
+			filename = if (filename.isNil) { "" } { "," + quote(filename) };
+			"MKtl(%%);		// % \n"
+			.postf(key.cs, filename, postList.cs);
 		};
+
 		"\n-----------------------------------------------------".postln;
 	}
 
