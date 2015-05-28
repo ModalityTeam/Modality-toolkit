@@ -15,7 +15,7 @@ k.elements[\kn][0][2].action = { |el| Ndef(\test).setUni(\reso, el.value.postln)
 */
 
 (
-device: "Arturia MINILAB",
+idInfo: "Arturia MINILAB",
 protocol: \midi,
 infoMessage: "\n\tArturia minilab, made for absolute knob mode for now.\n",
 description: (

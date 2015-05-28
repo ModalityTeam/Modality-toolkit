@@ -4,30 +4,30 @@
 idInfo: "nanoKONTROL2",
 protocol: \midi,
 description: [
-	\rew -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 43, \spec: \midiBut, \mode: \push, \ioType: \inout),
-	\fwd -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 44, \spec: \midiBut, \mode: \push, \ioType: \inout),
-	\stop -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 42, \spec: \midiBut, \mode: \push, \ioType: \inout),
-	\play -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 41, \spec: \midiBut, \mode: \push, \ioType: \inout),
-	\rec -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 45, \spec: \midiBut, \mode: \push, \ioType: \inout),
-	\cycle -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 46, \spec: \midiBut, \mode: \push, \ioType: \inout),
-	\mset -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 60, \spec: \midiBut, \mode: \push, \ioType: \inout),
-	\mleft -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 61, \spec: \midiBut, \mode: \push, \ioType: \inout),
-	\mright -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 62, \spec: \midiBut, \mode: \push, \ioType: \inout),
-	\tleft -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 58, \spec: \midiBut, \mode: \push, \ioType: \inout),
-	\tright -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 59, \spec: \midiBut, \mode: \push, \ioType: \inout),
+	\rew -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 43, \spec: \midiBut, \mode: \push, \ioType: \inout, \style: (row: 3, showLabel: true) ),
+	\fwd -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 44, \spec: \midiBut, \mode: \push, \ioType: \inout, \style: (row: 3, showLabel: true)),
+	\stop -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 42, \spec: \midiBut, \mode: \push, \ioType: \inout, \style: (row: 3, showLabel: true)),
+	\play -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 41, \spec: \midiBut, \mode: \push, \ioType: \inout, \style: (row: 3, showLabel: true)),
+	\rec -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 45, \spec: \midiBut, \mode: \push, \ioType: \inout, \style: (row: 3, showLabel: true)),
+	\cycle -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 46, \spec: \midiBut, \mode: \push, \ioType: \inout, \style: (row: 2.125, column: 0, height: 0.75, showLabel: true)),
+	\mset -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 60, \spec: \midiBut, \mode: \push, \ioType: \inout, \label: "set", \style: (row: 2.125, column: 2, height: 0.75, showLabel: true)),
+	\mleft -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 61, \spec: \midiBut, \mode: \push, \ioType: \inout, \label: "<", \style: (row: 2.125, column: 3, height: 0.75, showLabel: true)),
+	\mright -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 62, \spec: \midiBut, \mode: \push, \ioType: \inout, \label: ">", \style: (row: 2.125, column: 4, height: 0.75, showLabel: true)),
+	\tleft -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 58, \spec: \midiBut, \mode: \push, \ioType: \inout, \label: "<", \style: (row: 1.125, column: 0, height: 0.75, showLabel: true)),
+	\tright -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 59, \spec: \midiBut, \mode: \push, \ioType: \inout, \label: ">", \style: (row: 1.125, column: 1, height: 0.75, showLabel: true)),
 
 	// scene:
-	\sl -> (0..7).collect{ |i|
-		(\midiMsgType: \cc, \type: \slider, \midiChan: 0, \midiNum: i, \spec: \midiCC)
+	\sl -> (0..7).collect{ |i, ii|
+		(\midiMsgType: \cc, \type: \slider, \midiChan: 0, \midiNum: i, \spec: \midiCC, \style: (row: 1, column: 7+(ii*2)))
 	},
 
-	\kn -> (16..23).collect{ |i|
-		(\midiMsgType: \cc, \type: \knob, \midiChan: 0, \midiNum: i, \spec: \midiCC)
+	\kn -> (16..23).collect{ |i, ii|
+		(\midiMsgType: \cc, \type: \knob, \midiChan: 0, \midiNum: i, \spec: \midiCC, \style: (row: 0, column: 7+(ii*2)))
 	},
 
-	\bt -> [(32..39),(48..55),(64..71)].collect{ |xs|
-		xs.collect{ |i|
-			(\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum:  i, \spec: \midiCC, \ioType: \inout)
+	\bt -> [(32..39),(48..55),(64..71)].collect{ |xs, ii|
+		xs.collect{ |i, iii|
+			(\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum:  i, \spec: \midiCC, \ioType: \inout, \label: ["S", "M", "R"][ii], \style: (row: 1+ii, column: 6+(iii*2), showLabel: true ))
 		}
 	}
 ],
