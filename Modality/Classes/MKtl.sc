@@ -121,7 +121,7 @@ MKtl { // abstract class
 		var res, idInfo;
 		if (name.isNil) {
 			if (desc.isNil) {
-				"MKtl: cannot make a new one without a name and a description file.".inform;
+				"MKtl: cannot make one without name and a desc file.".inform;
 				^nil;
 			};
 		};

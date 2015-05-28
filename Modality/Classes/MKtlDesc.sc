@@ -1,6 +1,5 @@
 /*
-PLANS:
-
+Questions:
 * update only when files newer than cache were added
 - it is really fast anyway, so just do on every startup? -
 
