@@ -93,6 +93,12 @@ HIDMKtlDevice : MKtlDevice {
 		"\n-----------------------------------------------------".postln;
 	}
 
+	*getIDInfoFrom { |hidInfo|
+		^if (hidInfo.notNil) {
+			[hidInfo.productName, hidInfo.vendorName].join($_);
+		}
+	}
+
 	*findSource { |rawDeviceName, rawVendorName|
 		var devKey;
 		if ( initialized.not ){ ^nil };

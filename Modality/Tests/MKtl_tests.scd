@@ -54,9 +54,45 @@ MKtl.find;			// posts all 3
 
 MKtlDevice.allAvailable;
 
-MKtl('rnnd0', 'RunNDrive');
-MKtl('rnnd0').trace(true); // WORKS!
-MKtl('rnnd0').trace(false);
+// code copied from post works as is:
+MKtl('rnnd0', "thrustmaster-run-n-drive");
+MKtl('rnnd0').trace(true);	// actions work!
+
+// renaming works
+MKtl('rnnd0').name_('my2ndFerrari');
+// turn posting off
+MKtl('my2ndFerrari').trace(false);
+
+// from shortname as posted works!
+MKtl('rnnd0');
+
+
+
+
+// test group actions:
+MKtl('my2ndFerrari').elementAt(\bt).action = { |bt, grp|
+	"group action:".postln;
+	 [bt.name, grp.name].postln;
+};
+MKtl('my2ndFerrari').elementAt(\joy, \r).action = { |el, grp|
+	"group action joy, r:".postln;
+	 [el.name, grp.name].postln;
+};
+
+MKtl('my2ndFerrari').elementAt(\joy).action = { |el, grp|
+	"group action joy:".postln;
+	 [el.name, grp.name].postln;
+};
+
+MKtl('my2ndFerrari').elements.action = { |...args|
+	"group action to top:".postln;
+	args.collect(_.name).postln;
+};
+
+
+
+
+
 
 MKtl.find(\midi);
 MKtl('pmdd10', "Teenage_OP1"); // not tested again

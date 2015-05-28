@@ -128,19 +128,18 @@ MKtl { // abstract class
 
 		res = this.all[name];
 
-		// dont change
+		// dont change from the new method, advise to use rebuild
 		if ( res.notNil ){
 			if (desc.isNil) { ^res };
 			// found an MKtl by name, and there is a new desc
-			"//** Found device, and got description:\n"
-			"// To change the description of an MKtl, use:"
+			"//** Found device, got description:\n"
+			"// To change the description of an existing MKtl, please use:"
 			"%.rebuild(<desc>)".format(this).inform;
 			^res
 		};
 
 		// we found no MKtl, but we have a name or a desc,
 		// so we try to make a new MKtl
-
 		MKtlDevice.initHardwareDevices( lookForNew );
 
 		// find desc for lookupname:
@@ -165,6 +164,14 @@ MKtl { // abstract class
 		// now we have a name and hopefully a desc
 
 		^super.newCopyArgs(name).init(desc);
+	}
+
+	name_ { |inname|
+		if (inname.notNil) {
+			all.removeAt(name);
+			name = inname.asSymbol;
+			all.put(name, this);
+		}
 	}
 
 	storeArgs { ^[name] }

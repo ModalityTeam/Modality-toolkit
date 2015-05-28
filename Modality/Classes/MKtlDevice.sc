@@ -66,21 +66,23 @@ MKtlDevice {
 	}
 
 	*idInfoForLookupName { |lookupName|
-		var found = MKtlDevice.allSubclasses.collect {|sub|
-			sub.sourceDeviceDict[lookupName]
+		var allFound = MKtlDevice.allSubclasses.collect {|sub|
+			var found = sub.sourceDeviceDict[lookupName];
+			if (found.notNil) { sub.getIDInfoFrom(found) };
 		}.reject(_.isNil);
-		if (found.isEmpty) {
+
+		if (allFound.isEmpty) {
 			inform("MKtlDevice: found no device"
 				"at lookupName %.".format(lookupName));
-			^found
+			^nil
 		};
-		if (found.size > 1) {
+		if (allFound.size > 1) {
 		inform("MKtlDevice: found multiple devices"
 			"at lookupName %.".format(lookupName));
-			^found
+			^allFound
 		}
 		// found exactly one:
-		^found.unbubble.idInfo
+		^allFound.unbubble;
 	}
 
 
