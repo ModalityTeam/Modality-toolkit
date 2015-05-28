@@ -97,20 +97,29 @@ MKtl.find(\midi);
 MKtl('nnkn0', "korg-nanokontrol"); // works, but posts way too much
 MKtl('nnkn0');  // does not work yet
 
+// elements and ElementGroups are working again:
 MKtl('nnkn0').dump;
 MKtl('nnkn0').elements;
 MKtl('nnkn0').elementsDict.size;
 MKtl('nnkn0').elementsArray.size;
 MKtl('nnkn0').specs
 MKtl('nnkn0').elements.action = { |...keys|
-	("// midi top group action:"
+	("// top group action:"
 		+ keys.collect(_.name).cs).postln;
 };
 
 MKtl('nnkn0').elementAt(\bt).action = { |...keys|
-	("// midi \bt group action:"
+	("// \bt group action:"
 		+ keys.collect(_.name).cs).postln;
 };
+
+MKtl('nnkn0').elementAt(\bt, 0).action = { |...keys|
+	("// \bt_0 group action:"
+		+ keys.collect(_.name).cs).postln;
+};
+
+MKtl('nnkn0').elementsDict[\bt_1_1_1].doAction; // button and top
+MKtl('nnkn0').elementsDict[\bt_0_0_1].doAction; // button, row and top
 
 
 MKtl('nnkn0').mktlDevice.dump;
@@ -123,7 +132,7 @@ MKtl('nnkn0').mktlDevice.msgTypes;
 // unfinished tests
 	// rebuild not working yet
 MKtl('nnkn0').rebuild; // with current desc
-MKtl('nnkn0').rebuild(~desc) // with new ~esc here>);
+MKtl('nnkn0').rebuild(~desc) // with new ~desc here>);
 
 
 // good that traceRunning is visible in Modality
