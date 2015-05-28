@@ -1,12 +1,20 @@
 //// Make MKtls by hand:
 
-x = MKtlElement(\x, (spec: [-100, 100], type: \joyX, ioType: \in));
+x = MKtlElement(\x, (deviceSpec: [-100, 100], type: \joyX, ioType: \in));
+x.deviceSpec;
+
+x = MKtlElement(\x, (deviceSpec: \freq, type: \joyX, ioType: \in));
+x.deviceSpec;
+x.deviceSpec_([200, 2000, \exp]);
+x.deviceSpec;
+
 x.deviceSpec;
 // check
 x.value;
 x.value = 0.8; x.value;
 x.deviceValue;
 
+x.value = 0.25; x.value;
 x.value
 x.deviceValue
 x.dump
@@ -71,7 +79,7 @@ z.addAction(~getXY);
 z.addAction(~post);
 ~postPolar = { |polar| "polar atan2 value: % \n".postf(polar.deviceValue); };
 // then one to do something with it
-z.removeAction(~post)
+z.removeAction(~post);
 z.addAction(~postPolar);
 
 

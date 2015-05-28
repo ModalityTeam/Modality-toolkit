@@ -218,22 +218,13 @@ MKtlElement : MAbstractElement {
 			inform("MKtlElement(%): no element description given.".format(name));
 			^this
 		};
-
+		// fill instvars
 		elementDescription = dict;
 		type = elementDescription[\type];
 		ioType = elementDescription[\ioType] ? \in;
 
-		mySpecOrName = elementDescription[\deviceSpec] ? elementDescription[\spec];
-		if (mySpecOrName.isKindOf(Symbol)) {
-			deviceSpec = (source ? MKtl).getSpec(mySpecOrName);
-		};
+		this.setSpecFromDesc(dict);
 
-		if (deviceSpec.isNil) {
-			warn("deviceSpec for '%' is missing!".format(this));
-			"using [0, 1].asSpec instead".postln;
-			// and now we will have a spec.
-			deviceSpec = this.getSpec(deviceSpec);
-		};
 		// keep old values if there.
 		if (deviceValue.isNil) {
 			deviceValue = prevValue = this.defaultValue;
@@ -241,12 +232,33 @@ MKtlElement : MAbstractElement {
 
 	}
 
+	setSpecFromDesc { |desc|
+		var mySpecOrName = desc[\deviceSpec] ? desc[\spec];
+
+		mySpecOrName.postln;
+		if (mySpecOrName.isKindOf(Symbol)) {
+			deviceSpec = (source ? MKtl).getSpec(mySpecOrName);
+		};
+
+		mySpecOrName.postln;
+
+		if (mySpecOrName.isNil) {
+			warn("deviceSpec for '%' is missing!".format(this));
+			"using [0, 1].asSpec instead".postln;
+		} {
+		mySpecOrName = mySpecOrName.asSpec;
+		};
+			// and now we will have a spec.
+		this.deviceSpec_(mySpecOrName);
+	}
+
+
 	deviceSpec_ {|newspec|
 		if (newspec.isNil) {
 			^this.getSpec;
 		};
 		newspec = newspec.asSpec;
-		elementDescription[\spec] = newspec;
+		elementDescription[\deviceSpec] = newspec;
 		deviceSpec = newspec;
 	}
 
