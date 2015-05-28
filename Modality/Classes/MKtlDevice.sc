@@ -124,7 +124,7 @@ MKtlDevice {
 		var subClass, newDevice, devLookupName;
 
 		devLookupName = MKtlDevice.lookupNameForIDInfo(
-			parentMKtl.desc.idInfo).postln;
+			parentMKtl.desc.idInfo);
 
 		protocol = protocol ?? {
 			parentMKtl.desc.protocol ?? {

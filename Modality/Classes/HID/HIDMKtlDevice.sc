@@ -200,7 +200,7 @@ HIDMKtlDevice : MKtlDevice {
 				source.elements.at( elid ).action = nil;
 			} {
 				theseElements = source.findElementWithUsage( usage, page );
-				theseElements.do{ |it|
+				theseElements.do { |it|
 					it.action = nil;
 				}
 			}
@@ -213,6 +213,7 @@ HIDMKtlDevice : MKtlDevice {
 	}
 
 	initElements {
+
 		mktl.elementsDict.do { |el|
             var theseElements;
 

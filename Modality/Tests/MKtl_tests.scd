@@ -91,52 +91,48 @@ MKtl('my2ndFerrari').elements.action = { |...args|
 
 
 
-
+//*********** MIDI MIDI MIDI ***********\\
 
 MKtl.find(\midi);
-MKtl('pmdd10', "Teenage_OP1"); // not tested again
-MKtl('pmdd10').trace(true);
+MKtl('nnkn0', "korg-nanokontrol"); // works, but posts way too much
+MKtl('nnkn0');  // does not work yet
 
+MKtl('nnkn0').dump;
+MKtl('nnkn0').elements;
+MKtl('nnkn0').elementsDict.size;
+MKtl('nnkn0').elementsArray.size;
+MKtl('nnkn0').specs
+MKtl('nnkn0').elements.action = { |...keys|
+	("// midi top group action:"
+		+ keys.collect(_.name).cs).postln;
+};
+
+MKtl('nnkn0').elementAt(\bt).action = { |...keys|
+	("// midi \bt group action:"
+		+ keys.collect(_.name).cs).postln;
+};
+
+
+MKtl('nnkn0').mktlDevice.dump;
+MKtl('nnkn0').mktlDevice.midiKeyToElemDict;
+MKtl('nnkn0').mktlDevice.responders;
+MKtl('nnkn0').mktlDevice.global;
+MKtl('nnkn0').mktlDevice.msgTypes;
+
+
+// unfinished tests
 	// rebuild not working yet
-MKtl('rnnd0').rebuild; // with current desc
-MKtl('rnnd0').rebuild(~desc) // with new ~esc here>);
+MKtl('nnkn0').rebuild; // with current desc
+MKtl('nnkn0').rebuild(~desc) // with new ~esc here>);
 
-
-MKtl('rnnd0').trace(true);
-MKtl('rnnd0').elementsDict
-MKtl('rnnd0').elementsDict.size
-MKtl('rnnd0').elementsDict[\bt_2];
 
 // good that traceRunning is visible in Modality
-MKtl('rnnd0').traceRunning;
+MKtl('nnkn0').traceRunning;
 
-MKtl('rnnd0').desc.openFile;
-MKtl('rnnd0').desc.elementsDesc.keys;
-MKtl('rnnd0').mktlDevice;
-MKtl('rnnd0').desc.postInfo(true);
-
-MKtlDesc.fromFileName("RunNDrive");
-MKtlDesc.at('RunNDrive').openFile;
-
-MKtl(\abc) === MKtl(\abc);
-
-
-/////
-a = MKtlDesc("Teenage*");
-
-MKtl(\myOpi, "Teenage*");
-MKtl(\myOpi).rebuildFrom;
-
-MKtl(\myOpi).rebuildFrom("Teenage*");
-MKtl(\myOpi).dump
-
-MKtl(\myOpi).elementsDict[\btMix];
-
-MKtl(\myOpi).desc.elementsDesc.keys;
-MKtl(\myOpi).elementsDict.size;
-
-MKtlDevice.initHardwareDevices;
-MKtlDevice.allAvailable;
+MKtl('nnkn0').desc.openFile;
+MKtl('nnkn0').desc.elementsDesc.keys;
+MKtl('nnkn0').mktlDevice;
+MKtl('nnkn0').desc.postInfo(true);
 
 MKtl(\myOpi).desc.postElements;
 MKtl(\myOpi).desc.openFile;
@@ -144,10 +140,6 @@ MKtlDesc.openFolder;
 
 e = (a: 1, b: (osx: 2, linux: 3), c: (win: \no))
 MKtlDesc.resolveForPlatform(e); e;
-
-x = MKtl(desc: "Teenage_OP1");
-x.dump;
-
 
 
 MKtl('pmdd10').desc;
@@ -157,18 +149,6 @@ MKtl('NSA1', "NoSuchAgency");
 
 MKtl(desc: "Teenage_OP1");
 
-MKtl('pmdd10').addSpec(\blonk, [123, 456]);
-MKtl('pmdd10').name;
+MKtl('nnkn0').addSpec(\blonk, [123, 456]);
+MKtl('nnkn0').name;
 
-MKtl('pmdd10');
-MKtlDevice.subclasses;
-
-a = MKtl('pmdd10').desc.descDict.device.postcs;
-MKtlDevice.findDeviceShortNameFromLongName( a );
-
-MKtl('pmdd10', "Teenage_OP1");
-MKtl('pmdd10').openDevice;
-
-MKtlDesc.at('pmdd1').elementsDesc.keysValuesDo { |key, desc|
-	[key, desc].postcs;
-};

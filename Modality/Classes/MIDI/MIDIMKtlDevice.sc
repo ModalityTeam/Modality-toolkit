@@ -17,14 +17,11 @@ MIDIMKtlDevice : MKtlDevice {
 
 	// an action that is called every time a midi message comes in
 	// .value(type, src, chan, num/note, value/vel)
-	var <>midiRawAction;
 
 	// optimisation for fast lookup in two dicts:
 	var <midiKeyToElemDict;    // find element by e.g. midiCCKey
-	var <elNameToMidiDescDict; // find desc for output by elName
 
 	var <responders;
-	var <global;
 	var <msgTypes;
 
 	closeDevice {
@@ -68,7 +65,8 @@ MIDIMKtlDevice : MKtlDevice {
 		this.initDevices( true );
 
 		if ( MIDIClient.sources.isEmpty and: MIDIClient.destinations.isEmpty ) {
-			"// MIDIMKtl did not find any sources or destinations - you may want to connect some first.".inform;
+			"// MIDIMKtl did not find any sources or destinations - "
+			"// you may want to connect some first.".inform;
 			^this
 		};
 
@@ -77,13 +75,26 @@ MIDIMKtlDevice : MKtlDevice {
 		};
 	}
 
+	*getIDInfoFrom { |lookupName|
+		var endpoint = MIDIMKtlDevice.sourceDeviceDict[lookupName];
+		^endpoint !? { endpoint.device }
+	}
+
+
 	*postPossible {
+
 		"\n-----------------------------------------------------".postln;
 		"\n// Available MIDIMKtls: ".postln;
-		"// MKtl(autoName);  // [ midi device, midi port ]".postln;
+		"// MKtl(autoName, filename);  // [ midi device, midi port ]".postln;
 		sourceDeviceDict.keysValuesDo { |key, src|
-			"    MKtl('%');  // [ %, % ] \n".postf(
-				key, src.device.asCompileString, src.name.asCompileString
+			var deviceName = src.device;
+			var midiPortName = src.name;
+			var postList = [deviceName, midiPortName];
+			var filename = MKtlDesc.filenameForIDInfo(deviceName);
+			filename = if (filename.isNil) { "" } { "," + quote(filename) };
+
+			"    MKtl(%%);  // [ %, % ] \n".postf(
+				key.cs, filename, postList
 			);
 		};
 		"\n-----------------------------------------------------".postln;
@@ -306,11 +317,11 @@ MIDIMKtlDevice : MKtlDevice {
 
 
 
-		"this.initElements;".postln;
+	//	"this.initElements;".postln;
 		this.initElements;
 		"this.initCollectives;".postln;
 		this.initCollectives;
-		"this.sendInitialisationMessages;".postln;
+	//	"this.sendInitialisationMessages;".postln;
 		// this.sendInitialisationMessages;
 		this
 	}
@@ -373,8 +384,6 @@ MIDIMKtlDevice : MKtlDevice {
 		var elementsDict = mktl.elementsDict;
 		midiKeyToElemDict = ();
 
-	//	"gets to prepareLookupDicts".postln;
-
 		if (elementsDict.isNil) {
 			warn("% has no elementsDict?".format(mktl));
 			^this
@@ -388,7 +397,7 @@ MIDIMKtlDevice : MKtlDevice {
 			if ( [nil, \in, \inout].includes(elemDesc[\ioType])) {
 				// element has specific description for the input
 				midiKey.do { |key|
-					midiKeyToElemDict.put([key, elem]);
+					midiKeyToElemDict.put(*[key, elem]);
 				};
 			};
 		}
@@ -405,9 +414,6 @@ MIDIMKtlDevice : MKtlDevice {
 			MIDIFunc.cc({ |value, num, chan, src|
 				var hash = this.makeCCKey(chan, num);
 				var el = midiKeyToElemDict[hash];
-
-				midiRawAction.value(\control, src, chan, num, value);
-				global[typeKey].value(chan, num, value);
 
 				if (el.notNil) {
 					el.deviceValueAction_(value, false);
@@ -438,9 +444,6 @@ MIDIMKtlDevice : MKtlDevice {
 				var hash = this.makeNoteOnKey(chan, note);
 				var el = midiKeyToElemDict[hash];
 
-				midiRawAction.value(\noteOn, src, chan, note, vel);
-				global[typeKey].value(chan, note, vel);
-
 				if (el.notNil) {
 					el.deviceValueAction_(vel);
 					if(traceRunning) {
@@ -470,9 +473,6 @@ MIDIMKtlDevice : MKtlDevice {
 				// look for per-key functions
 				var hash = this.makeNoteOffKey(chan, note);
 				var el = midiKeyToElemDict[hash];
-
-				midiRawAction.value(\noteOff, src, chan, note, vel);
-				global[typeKey].value(chan, note, vel);
 
 				if (el.notNil) {
 					el.deviceValueAction_(vel);
@@ -509,9 +509,6 @@ MIDIMKtlDevice : MKtlDevice {
 				var hash = this.makeTouchKey(chan);
 				var el = midiKeyToElemDict[hash];
 
-				midiRawAction.value(\touch, src, chan, value);
-				global[typeKey].value(chan, value);
-
 				if (el.notNil) {
 					el.deviceValueAction_(value);
 					if(traceRunning) {
@@ -543,9 +540,6 @@ MIDIMKtlDevice : MKtlDevice {
 				// look for per-key functions
 				var hash = this.makePolyTouchKey(chan, note);
 				var el = midiKeyToElemDict[hash];
-
-				midiRawAction.value(\polyTouch, src, chan, note, vel);
-				global[typeKey].value(chan, note, vel);
 
 				if (el.notNil) {
 					el.deviceValueAction_(vel);
@@ -582,9 +576,6 @@ MIDIMKtlDevice : MKtlDevice {
 				var hash = this.makeBendKey(chan);
 				var el = midiKeyToElemDict[hash];
 
-				midiRawAction.value(\bend, src, chan, value);
-				global[typeKey].value(chan, value);
-
 				if (el.notNil) {
 					el.deviceValueAction_(value);
 					if(traceRunning) {
@@ -620,9 +611,6 @@ MIDIMKtlDevice : MKtlDevice {
 				var hash = this.makeProgramKey(chan);
 				var el = midiKeyToElemDict[hash];
 
-				midiRawAction.value(\program, src, chan, value);
-				global[typeKey].value(chan, value);
-
 				if (el.notNil) {
 					el.deviceValueAction_(value);
 					if(traceRunning) {
@@ -655,7 +643,7 @@ MIDIMKtlDevice : MKtlDevice {
 
 	makeRespFuncs {
 		responders = ();
-		global = ();
+
 		msgTypes.do { |msgType|
 			switch(msgType,
 				\cc, { this.makeCC },
