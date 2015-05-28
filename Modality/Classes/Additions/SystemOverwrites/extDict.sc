@@ -102,7 +102,7 @@
 				if (canTraverse.(elem)) {
 					result = elem.traverseCollect(doAtLeaf, isLeaf, myDeepKeys);
 					result = doAtNode.value(result, myDeepKeys) ? result;
-					result.postcs;
+					result;
 				} {
 					"traverseDo - object is malformed:\n"
 					"element % at % is not a leaf and not a collection."
