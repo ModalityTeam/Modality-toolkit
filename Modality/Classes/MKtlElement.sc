@@ -289,7 +289,8 @@ MKtlElement : MAbstractElement {
 		if (newval.isNil) { ^this };
 		prevValue = deviceValue;
 		deviceValue = deviceSpec.map(newval);
-		[newval, deviceSpec, deviceValue].postln;
+		// [newval, deviceSpec, deviceValue].postln;
+
 		this.trySend;
 		this.updateBus;
 		this.changed( \value, newval );

@@ -77,6 +77,8 @@ z = MKtlElement(\polar, (spec: [-pi, pi], type: \xyPolar, ioType: '?'));
 };
 z.addAction(~getXY);
 z.addAction(~post);
+
+// polar values/math not ok yet, FIXME later.
 ~postPolar = { |polar| "polar atan2 value: % \n".postf(polar.deviceValue); };
 // then one to do something with it
 z.removeAction(~post);
@@ -86,9 +88,8 @@ z.addAction(~postPolar);
 // MKtlElements work in patterns
 x.value = 0.6;
 Pbind(\x, x).trace.play;
+x.value = 1.0.rand;
 
-Pbind(\x, Pfunc({ x.rawValue })).trace.play;
-x.rawValue = 220;
+Pbind(\x, Pfunc({ x.deviceValue })).trace.play;
+x.deviceValueAction = exprand(20, 200);
 
-
-MKtlDesc
