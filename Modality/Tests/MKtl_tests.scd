@@ -68,7 +68,6 @@ MKtl('rnnd0');
 
 
 
-
 // test group actions:
 MKtl('my2ndFerrari').elementAt(\bt).action = { |bt, grp|
 	"group action:".postln;

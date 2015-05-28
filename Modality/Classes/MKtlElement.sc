@@ -235,12 +235,9 @@ MKtlElement : MAbstractElement {
 	setSpecFromDesc { |desc|
 		var mySpecOrName = desc[\deviceSpec] ? desc[\spec];
 
-		mySpecOrName.postln;
 		if (mySpecOrName.isKindOf(Symbol)) {
 			deviceSpec = (source ? MKtl).getSpec(mySpecOrName);
 		};
-
-		mySpecOrName.postln;
 
 		if (mySpecOrName.isNil) {
 			warn("deviceSpec for '%' is missing!".format(this));

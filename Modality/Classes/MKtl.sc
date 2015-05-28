@@ -251,7 +251,7 @@ MKtl { // abstract class
 				changedElem = MKtlElementGroup(keyIndex, elem);
 				elemOrColl.put(keyIndex, changedElem);
 			};
-		}.postcs;
+		};
 	//	"*** wrapCollElemsInGroups: ***\n".postln;
 	}
 
