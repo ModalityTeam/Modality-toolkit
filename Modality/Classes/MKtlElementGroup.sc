@@ -4,7 +4,7 @@ MKtlElementGroup : MKtlElement {
 	var <dict;
 
 	*new { |name, elements|
-		^super.newCopyArgs( nil, name ).elements_(elements);
+		^super.newCopyArgs( name, name ).elements_(elements);
 	}
 
 	init {
@@ -140,6 +140,8 @@ MKtlElementGroup : MKtlElement {
 			};
 		});
 	}
+	// for printOn only, this will not remake it properly from code.
+	storeArgs { ^[name, type, elements.collect(_.name)] }
 
 	value { ^elements.collect(_.value) }
 

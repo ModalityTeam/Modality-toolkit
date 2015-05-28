@@ -310,9 +310,9 @@ MIDIMKtlDevice : MKtlDevice {
 		this.initElements;
 		"this.initCollectives;".postln;
 		this.initCollectives;
-		this.sendInitialisationMessages;
 		"this.sendInitialisationMessages;".postln;
-
+		// this.sendInitialisationMessages;
+		this
 	}
 
 	makeHashKey { |elemDesc, elem|
@@ -373,7 +373,7 @@ MIDIMKtlDevice : MKtlDevice {
 		var elementsDict = mktl.elementsDict;
 		midiKeyToElemDict = ();
 
-		"gets to prepareLookupDicts".postln;
+	//	"gets to prepareLookupDicts".postln;
 
 		if (elementsDict.isNil) {
 			warn("% has no elementsDict?".format(mktl));
@@ -388,7 +388,7 @@ MIDIMKtlDevice : MKtlDevice {
 			if ( [nil, \in, \inout].includes(elemDesc[\ioType])) {
 				// element has specific description for the input
 				midiKey.do { |key|
-					midiKeyToElemDict.put(*[key, elem].postln);
+					midiKeyToElemDict.put([key, elem]);
 				};
 			};
 		}

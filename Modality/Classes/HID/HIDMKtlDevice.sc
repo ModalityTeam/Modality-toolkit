@@ -134,7 +134,7 @@ HIDMKtlDevice : MKtlDevice {
         source = argSource.open;
  		this.initElements;
 		this.initCollectives;
-		this.sendInitialisationMessages;
+	//	this.sendInitialisationMessages;
 	}
 
 	closeDevice {

@@ -206,23 +206,46 @@ MKtl { // abstract class
 	*/
 
 	makeElements {
-
-		MKtlElement.addGroupsAsParent = true;
-
 		elementsArray = [];
 		elementsDict = ();
 
-		elements = desc.elementsDesc.traverseCollect({ |desc, deepKeys|
-			var deepName = deepKeys.join($_).asSymbol;
-			var element = MKtlElement(deepName, desc, this);
+		// array of dicts of arrays
+		elements = desc.elementsDesc.traverseCollect(
+			doAtLeaf: { |desc, deepKeys|
+				var deepName = deepKeys.join($_).asSymbol;
+				var element = MKtlElement(deepName, desc, this);
 
-			elementsArray = elementsArray ++ [deepName, desc];
-			elementsDict.put(deepName, element);
-			element;
-		}, MKtlDesc.isElementTestFunc);
+				elementsArray = elementsArray ++ [deepName, desc];
+				elementsDict.put(deepName, element);
+				element; },
+			isLeaf: MKtlDesc.isElementTestFunc
+		);
+
+		elements.keys.postcs;
+		MKtlElement.addGroupsAsParent = true;
+
+		this.wrapCollElemsInGroups(elements);
+		elements = MKtlElementGroup(this.name, elements);
 
 		MKtlElement.addGroupsAsParent = false;
+	}
 
+	wrapCollElemsInGroups { |elemOrColl|
+	//	"\n *** wrapCollElemsInGroups: ***".postln;
+
+		if (elemOrColl.isKindOf(MKtlElement)) {
+			^elemOrColl
+		};
+
+		elemOrColl.valuesKeysDo { |elem, keyIndex|
+			var changedElem;
+			if (elem.isKindOf(Collection)) {
+				this.wrapCollElemsInGroups(elem);
+				changedElem = MKtlElementGroup(keyIndex, elem);
+				elemOrColl.put(keyIndex, changedElem);
+			};
+		}.postcs;
+	//	"*** wrapCollElemsInGroups: ***\n".postln;
 	}
 
 	makeCollectives {
