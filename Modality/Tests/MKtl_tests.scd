@@ -97,9 +97,11 @@ MKtl.find(\midi);
 MKtl('nnkn0', "korg-nanokontrol"); // works, but posts way too much
 MKtl('nnkn0');  // does not work yet
 
+MKtl('nnkn0').trace;
 // elements and ElementGroups are working again:
-MKtl('nnkn0').dump;
-MKtl('nnkn0').elements;
+MKtl('nnkn0').mktlDevice.send('bt_1_0', 1);
+MKtl('nnkn0').elementsDict['bt_1_0_1']
+MKtl('nnkn0').elements[\fwd].elementDescription;
 MKtl('nnkn0').elementsDict.size;
 MKtl('nnkn0').elementsArray.size;
 MKtl('nnkn0').specs

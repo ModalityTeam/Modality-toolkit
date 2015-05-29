@@ -707,7 +707,7 @@ MIDIMKtlDevice : MKtlDevice {
 
 	send { |key, val|
 		var elem, elemDesc, msgType, chan, num;
-		elem = mktl.elementsDict[key].postln;
+		elem = mktl.elementsDict[key];
 		if (elem.isNil) {
 			if (traceRunning) {
 				"MIDIMKtl send: no elem found for %\n".postf(key);
