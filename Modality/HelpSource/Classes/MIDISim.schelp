@@ -7,6 +7,12 @@ DESCRIPTION::
 MIDISim is intended for testing controller setups without requiring the device to be there. It can create any kind of midi message,
 thus simplifying the development and automatic testing of complex
 controller setups.
+It uses an Event which is passed through so it can be used in Patterns as well.
+
+code::
+MIDISim.value((midiMsgType: \control, numbers: [0,0,64]));
+MIDISim.value((midiMsgType: \touch, numbers: [0, 80]));
+::
 
 CLASSMETHODS::
 
@@ -43,17 +49,20 @@ Tdef(\spoof, {
 	};
 }).play;
 
-// test a device i.e. all its elements
+// test all the elements of a device
 //
 MKtl.find(\midi);
 m = MKtl('lpd80', "akai-lpd8");
 
+(
 Tdef(\spoof, {
+	// play five events for every element
 	m.elementsDict.do { |elem|
 		var desc = elem.elementDescription;
 		var midiChan = desc[\midiChan];
 		var midiNum = desc[\midiNum];
 		var msgType = desc[\midiMsgType];
+		if (msgType == \cc) { msgType == \control };
 
 		5.do {
 			MIDISim.value((
@@ -64,5 +73,6 @@ Tdef(\spoof, {
 		};
 	};
 }).play;
-::
+)
+
 ::
