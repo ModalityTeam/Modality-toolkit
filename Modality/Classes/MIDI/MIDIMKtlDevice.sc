@@ -685,6 +685,7 @@ MIDIMKtlDevice : MKtlDevice {
 
 	makeRespFuncs {
 		responders = ();
+		global = ();
 
 		msgTypes.do { |msgType|
 			switch(msgType,
