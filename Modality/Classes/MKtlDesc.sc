@@ -14,7 +14,7 @@ MKtlDesc {
 	classvar <fileToIDDict;
 
 	classvar <webview;
-	classvar <webhome = "http://modalityteam.github.io/controllers/";
+	classvar <docURI = "http://modalityteam.github.io/controllers/";
 
 	classvar <>isElementTestFunc;
 
@@ -36,11 +36,19 @@ MKtlDesc {
 
 	*web { |ctlname = ""|
 		webview = webview ?? { WebView() };
-		webview.front.url_((webhome +/+ ctlname).postcs);
+		webview.front.url_((docURI +/+ ctlname).postcs);
 		webview.onClose_({ webview = nil });
 	}
+
+	docURI {|relative = false|
+		if (relative) {
+			^(name.asString ++ ".html");
+		} {
+			^(this.class.docURI +/+ name.asString ++ ".html");
+		}
+	}
 	web {
-		this.class.web(name.asString ++ ".html");
+		this.class.web(this.docURI(relative: true));
 	}
 
 	// Files admin methods:
