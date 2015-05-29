@@ -27,10 +27,17 @@ MKtlDevice {
 		};
 	}
 
-	*find { |protocols|
-		(protocols ? allProtocols).asCollection.do { |pcol|
-			this.matchClass(pcol) !? _.find
+	*classesFor { |protocols|
+		if (protocols.isNil) {
+			^this.allSubclasses
 		};
+		^this.allSubclasses.select { |cl|
+			protocols.asArray.includes(cl.protocol).unbubble
+		}
+	}
+
+	*find { |protocols|
+		this.classesFor(protocols).do (_.find)
 	}
 
 	*matchClass { |symbol|
@@ -38,12 +45,8 @@ MKtlDevice {
 	}
 
 	*initHardwareDevices { |force = false, protocols|
-		protocols = protocols ? allProtocols;
-
-		this.allSubclasses.do { |it|
-			if ( protocols.includes( it.protocol ) ){
-				it.initDevices( force );
-			};
+		this.classesFor(protocols).do { |cl|
+			cl.initDevices( force );
 		};
 	}
 
@@ -87,35 +90,15 @@ MKtlDevice {
 
 
 	*lookupNameForIDInfo { |idInfo|
-		var devKey, newDevKey;
-		if ( idInfo.isKindOf( String ) ){
-			this.subclasses.do{ |subClass|
-				newDevKey = subClass.findSource( idInfo );
-				if ( newDevKey.notNil ){
-					devKey = newDevKey;
-				};
-			};
-			^devKey;
+		// was: if ( idInfo.isKindOf( String, Array, Dictionary ) )
+		// case switching not needed if expanding args with *
+
+		var devKey;
+		this.subclasses.do { |subClass|
+			devKey = subClass.findSource( *idInfo );
 		};
-		if (idInfo.isKindOf( Array ) ){
-			this.subclasses.do{ |subClass|
-				newDevKey = subClass.findSource( *idInfo );
-				if ( newDevKey.notNil ){
-					devKey = newDevKey;
-				};
-			};
-			^devKey;
-		};
-		if (idInfo.isKindOf( Dictionary ) ){
-			this.subclasses.do{ |subClass|
-				newDevKey = subClass.findSource( idInfo );
-				if ( newDevKey.notNil ){
-					devKey = newDevKey;
-				};
-			};
-			^devKey;
-		};
-		^nil;
+
+		^devKey;
 	}
 
 	// collapse tryOpenDevice and tryOpenDeviceFromDesc
@@ -138,7 +121,7 @@ MKtlDevice {
 		// "desc keys: %".format(parentMKtl.cs, protocol.cs, desc.keys.cs).postln;
 
 		subClass = MKtlDevice.matchClass(protocol);
-		if( subClass.isNil ){
+		if( subClass.isNil ) {
 			"MKtlDevice.open: no device found for name % and protocol %.\n"
 			.postf( name, protocol );
 			^nil;

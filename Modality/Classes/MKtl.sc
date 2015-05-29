@@ -118,7 +118,8 @@ MKtl { // abstract class
 	// If no physcal device is present, this becomes a virtual MKtl.
 
 	*new { |name, desc, lookForNew = false|
-		var res, idInfo;
+		var res, idInfo, mktlDesc, protocol;
+
 		if (name.isNil) {
 			if (desc.isNil) {
 				"MKtl: cannot make one without name and a desc file.".inform;
@@ -131,39 +132,56 @@ MKtl { // abstract class
 		// dont change from the new method, advise to use rebuild
 		if ( res.notNil ){
 			if (desc.isNil) { ^res };
-			// found an MKtl by name, and there is a new desc
-			"//** Found device, got description:\n"
+			// found an MKtl by name, and there is a desc
+			"//MKtl: found device, an got description:\n"
 			"// To change the description of an existing MKtl, please use:"
 			"%.rebuild(<desc>)".format(this).inform;
 			^res
 		};
 
+		// we have a filename already, so lets create the desc:
+		if (desc.isKindOf(String)) {
+			mktlDesc = MKtlDesc(desc);
+			if (mktlDesc.fullDesc.notNil) {
+				protocol = mktlDesc.protocol;
+			}
+		};
 		// we found no MKtl, but we have a name or a desc,
 		// so we try to make a new MKtl
-		MKtlDevice.initHardwareDevices( lookForNew );
+		// would be good to have protocol here already
+		MKtlDevice.initHardwareDevices( lookForNew, protocol.asArray);
 
-		// find desc for lookupname:
+		// find desc for lookupname of hardware device:
 		if (desc.isNil) {
 			idInfo = MKtlDevice.idInfoForLookupName(name);
-			desc = MKtlDesc.filenameForIDInfo(idInfo);
-			desc.postln;
+			mktlDesc = MKtlDesc.filenameForIDInfo(idInfo);
+		//	desc;
 		};
 
-		desc = MKtlDesc(desc).postln;
+		// // dodgy and not working yet...
+		// if (name.isNil and: { desc.notNil }) {
+		// 	// last chance: infer missing name from desc?
+		// 	try { name = (desc.lookupName ++ 0).asSymbol };
+		// 	if (name.isNil) {
+		// 		"MKtl could not infer name from desc, so we give up.".postln;
+		// 		^nil
+		// 	}
+		// };
 
-
-		if (name.isNil and: { desc.notNil }) {
-			// last chance: infer missing name from desc?
-			try { name = (desc.shortName ++ 0).asSymbol };
-			if (name.isNil) {
-				"MKtl could not infer name from desc, so we give up.".postln;
-				^nil
-			}
+		if (this.descIsFaulty(mktlDesc)) {
+			warn("MKtl: % has no full description,"
+				"so no new MKtl can be created from it.");
+			^nil
 		};
 
 		// now we have a name and hopefully a desc
 
-		^super.newCopyArgs(name).init(desc);
+		^super.newCopyArgs(name).init(mktlDesc);
+	}
+
+	*descIsFaulty { |argDesc|
+		^argDesc.isKindOf(MKtlDesc).not or:
+		{ argDesc.fullDesc.isNil }
 	}
 
 	name_ { |inname|
@@ -185,10 +203,6 @@ MKtl { // abstract class
 		specs = ().parent_(globalSpecs);
 		elementsDict = ();
 
-		if (argDesc.isKindOf(MKtlDesc).not) {
-			inform(this.cs ++ "has no valid description yet, so cannot initialise.");
-			^this
-		};
 		this.makeElements;
 		this.makeCollectives;
 
@@ -228,7 +242,7 @@ MKtl { // abstract class
 			isLeaf: MKtlDesc.isElementTestFunc
 		);
 
-		elements.keys.postcs;
+		// elements.keys.postcs;
 		MKtlElement.addGroupsAsParent = true;
 
 		this.wrapCollElemsInGroups(elements);

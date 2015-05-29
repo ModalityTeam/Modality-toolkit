@@ -21,8 +21,17 @@ MIDIMKtlDevice : MKtlDevice {
 	// optimisation for fast lookup in two dicts:
 	var <midiKeyToElemDict;    // find element by e.g. midiCCKey
 
-	var <responders;
-	var <msgTypes;
+	// an action that is called every time a midi message comes in
+	// .value(type, src, chan, num/note, value/vel)
+	var <>midiRawAction;
+
+	// a dictionary of actions for incoming MIDI messages by type
+	var <global;
+	var <responders; // the MIDIFuncs responding to each protocol
+	var <msgTypes;	// the msgTypes for which this MKtl needs MIDIfuncs
+
+
+	// could use some reorganisation...
 
 	closeDevice {
 		destination.notNil.if{
@@ -93,7 +102,7 @@ MIDIMKtlDevice : MKtlDevice {
 			var filename = MKtlDesc.filenameForIDInfo(deviceName);
 			filename = if (filename.isNil) { "" } { "," + quote(filename) };
 
-			"    MKtl(%%);  // [ %, % ] \n".postf(
+			"    MKtl(%%);  // % \n".postf(
 				key.cs, filename, postList
 			);
 		};
@@ -361,6 +370,7 @@ MIDIMKtlDevice : MKtlDevice {
 	*makeNoteOnKey { |chan, note| ^("non_%_%".format(chan, note)).asSymbol }
 	*makeNoteOffKey { |chan, note| ^("nof_%_%".format(chan, note)).asSymbol }
 	*makePolyTouchKey { |chan, note| ^("pt_%_%".format(chan, note)).asSymbol }
+
     *noteKeyToChanNote { |noteKey| ^noteKey.asString.drop(2).split($_).asInteger }
 
 	*makeTouchKey { |chan| ^("t_%".format(chan)).asSymbol }
@@ -373,6 +383,7 @@ MIDIMKtlDevice : MKtlDevice {
 	makeNoteOnKey { |chan, note| ^("non_%_%".format(chan, note)).asSymbol }
 	makeNoteOffKey { |chan, note| ^("nof_%_%".format(chan, note)).asSymbol }
 	makePolyTouchKey { |chan, note| ^("pt_%_%".format(chan, note)).asSymbol }
+
 	noteKeyToChanNote { |noteKey| ^noteKey.asString.drop(2).split($_).asInteger }
 
 	makeTouchKey { |chan| ^("t_%".format(chan)).asSymbol }
@@ -415,6 +426,10 @@ MIDIMKtlDevice : MKtlDevice {
 				var hash = this.makeCCKey(chan, num);
 				var el = midiKeyToElemDict[hash];
 
+				// do global actions first
+				midiRawAction.value(\control, src, chan, num, value);
+				global[typeKey].value(chan, num, value);
+
 				if (el.notNil) {
 					el.deviceValueAction_(value, false);
 					if(traceRunning) {
@@ -443,6 +458,10 @@ MIDIMKtlDevice : MKtlDevice {
 				// look for per-key functions
 				var hash = this.makeNoteOnKey(chan, note);
 				var el = midiKeyToElemDict[hash];
+
+					// do global actions first
+				midiRawAction.value(\noteOn, src, chan, note, vel);
+				global[typeKey].value(chan, note, vel);
 
 				if (el.notNil) {
 					el.deviceValueAction_(vel);
@@ -474,6 +493,9 @@ MIDIMKtlDevice : MKtlDevice {
 				var hash = this.makeNoteOffKey(chan, note);
 				var el = midiKeyToElemDict[hash];
 
+					// do global actions first
+				midiRawAction.value(\noteOff, src, chan, note, vel);
+				global[typeKey].value(chan, note, vel);
 				if (el.notNil) {
 					el.deviceValueAction_(vel);
 					if(traceRunning) {
@@ -496,12 +518,15 @@ MIDIMKtlDevice : MKtlDevice {
 	}
 
 	makeTouch {
-		var typeKey = \touch;
+/*		var typeKey = \touch;
 		var info = MIDIAnalysis.checkForMultiple( mktl.deviceDescriptionArray, typeKey, \midiChan);
 		var chan = info[\midiChan];
 		var listenChan =if (chan.isKindOf(SimpleNumber)) { chan };
 
 		"make % func\n".postf(typeKey);
+					// do global actions first
+				midiRawAction.value(\touch, src, chan, value);
+				global[typeKey].value(chan, value);
 
 		responders.put(typeKey,
 			MIDIFunc.touch({ |value, chan, src|
@@ -528,11 +553,12 @@ MIDIMKtlDevice : MKtlDevice {
 
 			}, chan: listenChan, srcID: srcID).permanent_(true);
 		);
+*/
 	}
 
 	// not tested yet, no polytouch keyboard
 	makePolyTouch {
-		//"makePolytouch".postln;
+/*		//"makePolytouch".postln;
 		var typeKey = \polyTouch; //decide on polyTouch vs polytouch
 		//"make % func\n".postf(typeKey);
 		responders.put(typeKey,
@@ -540,6 +566,10 @@ MIDIMKtlDevice : MKtlDevice {
 				// look for per-key functions
 				var hash = this.makePolyTouchKey(chan, note);
 				var el = midiKeyToElemDict[hash];
+
+					// do global actions first
+				midiRawAction.value(\polyTouch, src, chan, note, vel);
+				global[typeKey].value(chan, note, vel);
 
 				if (el.notNil) {
 					el.deviceValueAction_(vel);
@@ -559,10 +589,12 @@ MIDIMKtlDevice : MKtlDevice {
 
 			}, srcID: srcID).permanent_(true);
 		);
+*/
 	}
 
 	// should work, can't test now.
 	makeBend {
+/*
 		var typeKey = \bend;
 		var info = MIDIAnalysis.checkForMultiple( mktl.deviceDescriptionArray, typeKey, \midiChan);
 		var chan = info[\midiChan];
@@ -576,7 +608,11 @@ MIDIMKtlDevice : MKtlDevice {
 				var hash = this.makeBendKey(chan);
 				var el = midiKeyToElemDict[hash];
 
-				if (el.notNil) {
+					// do global actions first
+				midiRawAction.value(\bend, src, chan, value);
+				global[typeKey].value(chan, value);
+
+		if (el.notNil) {
 					el.deviceValueAction_(value);
 					if(traceRunning) {
 						"% - % > % | type: bend, midiNum:%, chan:%, src:%"
@@ -595,9 +631,11 @@ MIDIMKtlDevice : MKtlDevice {
 
 			}, chan: listenChan, srcID: srcID).permanent_(true);
 		);
+*/
 	}
 
 	makeProgram {
+/*
 		var typeKey = \program;
 		var info = MIDIAnalysis.checkForMultiple( mktl.deviceDescriptionArray, typeKey, \midiChan);
 		var chan = info[\midiChan];
@@ -610,6 +648,10 @@ MIDIMKtlDevice : MKtlDevice {
 				// look for per-key functions
 				var hash = this.makeProgramKey(chan);
 				var el = midiKeyToElemDict[hash];
+
+					// do global actions first
+				midiRawAction.value(\program, src, chan, value);
+				global[typeKey].value(chan, value);
 
 				if (el.notNil) {
 					el.deviceValueAction_(value);
@@ -630,8 +672,8 @@ MIDIMKtlDevice : MKtlDevice {
 
 			}, chan: listenChan, srcID: srcID).permanent_(true);
 		);
+*/
 	}
-
 
 	cleanupElementsAndCollectives {
 		responders.do { |resp|
@@ -659,14 +701,36 @@ MIDIMKtlDevice : MKtlDevice {
 	}
 
 
-	send { |key, val|
+	// only called by MKtl when there is a midiout,
+	// so we should not need to check again
 
-		var elemDesc = mktl.elementsDict[key].elementDescription;
-		var msgType = elemDesc[\midiMsgType];
+	send { |key, val|
+		var elem, elemDesc, msgType, chan, num;
+		elem = mktl.elementsDict[key].postln;
+		if (elem.isNil) {
+			if (traceRunning) {
+				"MIDIMKtl send: no elem found for %\n".postf(key);
+			};
+			^this
+		};
+
+		elemDesc = elem.elementDescription;
+
+		if (traceRunning) {
+			"MIDIMKtl send: ".post;
+			if (elemDesc.isNil) {
+				"no elemDesc found for %\n".postf(key);
+			} {
+				elemDesc.postcs;
+			};
+			^this
+		};
+
+		msgType = elemDesc[\midiMsgType];
 		// is this the proper output chan/num?
 		// where is it in the elemDesc?
-		var chan = elemDesc[\midiChan];
-		var num = elemDesc[\midiNum];
+		chan = elemDesc[\midiChan];
+		num = elemDesc[\midiNum];
 
 		// could do per-element latency here?
 		// e.g. for setting lights later than when pressed
