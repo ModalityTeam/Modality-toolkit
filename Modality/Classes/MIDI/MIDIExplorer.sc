@@ -3,7 +3,7 @@
 1. abstract out consecutive note numbers and controller numbers
    in order to generate more compact code
 
-2. check name consistency - is this already creting exactly the recommended names?
+2. check name consistency - is this already creating exactly the recommended names?
 
 */
 

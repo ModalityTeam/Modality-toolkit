@@ -1,0 +1,68 @@
+TITLE:: MIDISim
+summary:: a class to simulate input from MIDI controllers
+categories:: Modality
+related:: Classes/MIDIIn, Classes/MIDIClient, Classes/MKtl, Classes/MIDIMKtlDevice Reference/Modality
+
+DESCRIPTION::
+MIDISim is intended for testing controller setups without requiring the device to be there. It can create any kind of midi message,
+thus simplifying the development and automatic testing of complex
+controller setups.
+
+CLASSMETHODS::
+
+METHOD:: value
+This method creates a MIDIIn event, based on the event given.
+
+ARGUMENT:: ev
+code::
+// control, noteOn, noteOff, polytouch expect 3 values:
+// midiChan, midiNum, midiValue
+(midiMsgType: \control, numbers: [midiChan, midiNum, midiValue]);
+
+// channel-only messages like touch, bend, program expect 2 values:
+(midiMsgType: \touch, numbers: [midiChan, midiValue]);
+::
+
+METHOD:: control, noteOn, noteOff, polytouch, touch, bend, program
+These methods are called to redirect to MIDIIn
+
+EXAMPLES::
+code::
+
+MIDISim.value((midiMsgType: \control, numbers: [0,0,64]));
+MIDISim.value((midiMsgType: \noSuchMsg, numbers: [0,0,64]));
+
+Tdef(\spoof, {
+	loop {
+		MIDISim.value((
+			\midiMsgType: \control,
+			// varying ccnums, single control value
+			\numbers: [0, { rrand(10, 24) }, 64]
+		));
+		0.5.wait;
+	};
+}).play;
+
+// test a device i.e. all its elements
+//
+MKtl.find(\midi);
+m = MKtl('lpd80', "akai-lpd8");
+
+Tdef(\spoof, {
+	m.elementsDict.do { |elem|
+		var desc = elem.elementDescription;
+		var midiChan = desc[\midiChan];
+		var midiNum = desc[\midiNum];
+		var msgType = desc[\midiMsgType];
+
+		5.do {
+			MIDISim.value((
+				\midiMsgType: msgType,
+				\numbers: [midiChan, midiNum, rrand(0, 127)]
+			).postcs);
+			0.5.wait;
+		};
+	};
+}).play;
+::
+::
