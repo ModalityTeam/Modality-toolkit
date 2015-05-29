@@ -1,10 +1,22 @@
 HIDMKtlDevice : MKtlDevice {
 
 	classvar <initialized = false;
-	classvar <sourceDeviceDict;
+	classvar <sourceDeviceDict, hiddenDeviceDict;
+	classvar <showAllDevices = false, <deviceProductNamesToHide;
 	classvar <protocol = \hid;
 
 	var <srcID, <source;
+
+	*initClass {
+		Platform.case(\osx, {
+			showAllDevices = false;
+			deviceProductNamesToHide = List[
+				"Apple Internal Keyboard / Trackpad",
+				"Apple Mikey HID Driver",
+				"Apple IR"
+			];
+		});
+	}
 
 	*getSourceName { |shortName|
 		var srcName;
@@ -33,13 +45,27 @@ HIDMKtlDevice : MKtlDevice {
 		initialized = true;
 	}
 
+	*devicesToShow {
+		^HID.available.select { |dev, id|
+			showAllDevices or: {
+				deviceProductNamesToHide.every({ |prodname|
+					[dev.productName, prodname].postcs;
+					dev.productName.contains(prodname).not;
+				});
+			}
+		};
+	}
+
 	*prepareDeviceDicts {
 		var prevName = nil, j = 0, order, deviceNames;
-		deviceNames = HID.available.collect { |dev,id|
-			MKtl.makeLookupName(
-				(dev.productName.asString ++ "_" ++ dev.vendorName.asString ).asString
-			)
+
+		deviceNames = this.devicesToShow.collect { |dev,id|
+			var lookupName = MKtl.makeLookupName(
+				(dev.productName.asString ++ "_"
+				++ dev.vendorName.asString )
+			.asString);
 		}.asSortedArray;
+
 		order = deviceNames.order { arg a, b; a[1] < b[1] };
 		deviceNames[order].do {|name, i|
 			(prevName == name[1]).if({
@@ -48,7 +74,8 @@ HIDMKtlDevice : MKtlDevice {
 				j = 0;
 			});
 			prevName = name[1];
-			sourceDeviceDict.put((name[1] ++ j).asSymbol, HID.available[ name[0] ])
+			sourceDeviceDict.put((name[1] ++ j).asSymbol,
+				HID.available[ name[0] ])
 		};
 
 		// put the available hid devices in
@@ -71,6 +98,12 @@ HIDMKtlDevice : MKtlDevice {
 
 	*postPossible {
 		"\n// Available HIDMKtlDevices:".postln;
+		if (showAllDevices.not) {
+			inform(
+				"// Some devices are not shown because crash the OS."
+				"\n// See them in: HID.available;")
+		};
+
 
 		"// MKtl(autoName, filename);  // [ hid product, vendor, (serial number) ]".postln;
 
