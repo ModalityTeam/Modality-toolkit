@@ -531,42 +531,40 @@ MIDIMKtlDevice : MKtlDevice {
 			el.elementDescription[\midiChan];
 		};
 
+		"make % func: ".postf(typeKey);
 		"touchChans: % touchElems: %\n".postf(touchChans, touchElems);
 
-		// var info = MIDIAnalysis.checkForMultiple( mktl.deviceDescriptionArray, typeKey, \midiChan);
-		// var chan = info[\midiChan];
-		// var listenChan =if (chan.isKindOf(SimpleNumber)) { chan };
-		//
-		// "make % func\n".postf(typeKey);
-		// // do global actions first
-		// midiRawAction.value(\touch, src, chan, value);
-		// global[typeKey].value(chan, value);
-		//
-		// responders.put(typeKey,
-		// 	MIDIFunc.touch({ |value, chan, src|
-		// 		// look for per-key functions
-		// 		var hash = this.makeTouchKey(chan);
-		// 		var el = midiKeyToElemDict[hash];
-		//
-		// 		if (el.notNil) {
-		// 			el.deviceValueAction_(value);
-		// 			if(traceRunning) {
-		// 				"% - % > % | type: touch, midiNum:%, chan:%, src:%"
-		// 				.format(this.name, el.name, el.value.asStringPrec(3), value, chan, src).postln
-		// 			}
-		// 		}{
-		// 			if (traceRunning) {
-		// 				"MIDIMKtl( % ) : touch element found for chan % !\n"
-		// 				" - add it to the description file, e.g.: "
-		// 				"\\<name>: (\\midiMsgType: \\touch, \\type: \\chantouch', \\midiChan: %,"
-		// 				"\\spec: \\midiTouch).\n\n"
-		// 				.postf(name, chan, chan);
-		// 			};
-		// 		};
-		//
-		//
-		// }, chan: listenChan, srcID: srcID).permanent_(true);
-	// );
+		responders.put(typeKey,
+			MIDIFunc.touch({ |value, chan, src|
+				// look for per-key functions
+				var hash = this.makeTouchKey(chan);
+				var el = midiKeyToElemDict[hash];
+
+						// do global actions first
+				midiRawAction.value(\touch, src, chan, value);
+				global[typeKey].value(chan, value);
+
+				if (el.notNil) {
+					el.deviceValueAction_(value);
+					if(traceRunning) {
+						"% - % > % | type: touch, midiNum:%, chan:%, src:%"
+						.format(this.name, el.name, el.value.asStringPrec(3),
+							value, chan, src).postln
+					}
+				}{
+					if (traceRunning) {
+						"MIDIMKtl( % ) : touch element found for chan % !\n"
+						" - add it to the description file, e.g.: "
+						"\\<name>: (\\midiMsgType: \\touch, \\type: "
+						"\\chantouch', \\midiChan: %,"
+						"\\spec: \\midiTouch).\n\n"
+						.postf(name, chan, chan);
+					};
+				};
+
+
+		}, chan: nil, srcID: srcID).permanent_(true);
+	);
 	}
 
 	// not tested yet, no polytouch keyboard
