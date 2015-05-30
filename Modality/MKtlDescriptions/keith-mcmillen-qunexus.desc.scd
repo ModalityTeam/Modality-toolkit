@@ -1,5 +1,5 @@
 /*
-TODO:
+See Examples:QuNexus
 */
 
 (
@@ -24,7 +24,7 @@ description: (
 // Preset B mode adds single channel pressure from all keys :
 
 // ------- cc ------------
-'monotouch': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  1,'spec': 'midiCC'),
+'touch': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  1,'spec': 'midiCC'),
 )
 
 // Preset C mode adds Poly Pitch Bend on up to 10 channels rotating,

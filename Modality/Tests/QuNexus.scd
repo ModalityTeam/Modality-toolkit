@@ -17,7 +17,6 @@ z.mktlDevice.prSetSrcID(x[0]); //
 // then free the responders and remake them
 z.mktlDevice.responders.do(_.free);
 z.mktlDevice.makeRespFuncs;
-
 // a debug post for all elements:
 z.elements.action = { |el| [el.name, el.value].postln };
 
@@ -42,6 +41,8 @@ z.elementAt(\keyOff).action = MFunc([
 	\note1, { |el, grp| v.release(el.elementDescription[\midiNum]) }
 ]);
 
+z.elementAt(\bend).action = nil;
+
 z.elementAt(\bend).action = { |el|
 	// bend only covers part of the 14bit range,
 	// so scale observed min/max to +- semitones:
@@ -53,18 +54,19 @@ z.elementAt(\bend).action = { |el|
 	}
 };
 
+z.elementAt(\touch).action = { |el|
+	var touchVal = el.value;
+	v.proxy.objects.do { |obj, noteKey|
+		[\touch, noteKey].post;
+		obj.set(*[\amp, touchVal.squared].postln);
+	}
+};
 
+
+MIDIFunc.trace(true);
 
 /*********  not working yet:
 /////// Preset B, use channel \touch
-z.elementAt(\touch).action = { |el|
-	var touchVal = el.deviceValue.postln;
-	[\touch, el.deviceValue, touchVal].postcs;
-	v.proxy.objects.do { |obj, noteKey|
-	//	[obj, noteKey].post;
-	//	obj.set(*[\amp, ].postln.midicps);
-	}
-};
 
 // Preset C, poly bend and pressure:
 // Rather than using multiple bend and cc elements for each channel,
