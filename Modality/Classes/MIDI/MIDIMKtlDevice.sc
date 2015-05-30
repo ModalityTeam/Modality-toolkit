@@ -288,6 +288,7 @@ MIDIMKtlDevice : MKtlDevice {
 	/// --------- EXPLORING -----)))))---------
 
 	initElements {
+		"initElements".postln;
 		if ( mktl.elementsDict.isNil ){
 			warn("" + mktl + "has no elementsDict?");
 			^this;
@@ -305,7 +306,7 @@ MIDIMKtlDevice : MKtlDevice {
 	initMIDIMKtl { |argName, argSource, argDestination|
 		// [argName, argSource, argDestination].postln;
 		name = argName;
-
+		"initMIDIMKtl".postln;
 		source = argSource;
 		source.notNil.if { srcID = source.uid };
 
@@ -326,12 +327,10 @@ MIDIMKtlDevice : MKtlDevice {
 
 
 
-	//	"this.initElements;".postln;
-		this.initElements;
 		"this.initCollectives;".postln;
 		this.initCollectives;
-	//	"this.sendInitialisationMessages;".postln;
-		// this.sendInitialisationMessages;
+		"this.sendInitialisationMessages;".postln;
+		this.sendInitialisationMessages;
 		this
 	}
 
@@ -420,15 +419,15 @@ MIDIMKtlDevice : MKtlDevice {
 	// and activate/deactivate them
 	makeCC {
 		var typeKey = \cc;
-		//"make % func\n".postf(typeKey);
+		"make % func\n".postf(typeKey);
 		responders.put(typeKey,
 			MIDIFunc.cc({ |value, num, chan, src|
 				var hash = this.makeCCKey(chan, num);
 				var el = midiKeyToElemDict[hash];
 
-				// do global actions first
-				midiRawAction.value(\control, src, chan, num, value);
-				global[typeKey].value(chan, num, value);
+				// // do global actions first
+				// midiRawAction.value(\control, src, chan, num, value);
+				// global[typeKey].value(chan, num, value);
 
 				if (el.notNil) {
 					el.deviceValueAction_(value, false);
@@ -517,43 +516,52 @@ MIDIMKtlDevice : MKtlDevice {
 		);
 	}
 
+	// the channel-based ones
 	makeTouch {
-/*		var typeKey = \touch;
-		var info = MIDIAnalysis.checkForMultiple( mktl.deviceDescriptionArray, typeKey, \midiChan);
-		var chan = info[\midiChan];
-		var listenChan =if (chan.isKindOf(SimpleNumber)) { chan };
+		var typeKey = \touch;
+		var touchElems = mktl.elementsDict.select { |el|
+			el.elementDescription[\msgType] == typeKey;
+		};
+		var touchChans = touchElems.collect { |el|
+			el.elementDescription[\midiChan];
+		};
 
-		"make % func\n".postf(typeKey);
-					// do global actions first
-				midiRawAction.value(\touch, src, chan, value);
-				global[typeKey].value(chan, value);
+		"touchChans: % touchElems: %\n".postf(touchChans, touchElems);
 
-		responders.put(typeKey,
-			MIDIFunc.touch({ |value, chan, src|
-				// look for per-key functions
-				var hash = this.makeTouchKey(chan);
-				var el = midiKeyToElemDict[hash];
-
-				if (el.notNil) {
-					el.deviceValueAction_(value);
-					if(traceRunning) {
-						"% - % > % | type: touch, midiNum:%, chan:%, src:%"
-						.format(this.name, el.name, el.value.asStringPrec(3), value, chan, src).postln
-					}
-				}{
-					if (traceRunning) {
-						"MIDIMKtl( % ) : touch element found for chan % !\n"
-						" - add it to the description file, e.g.: "
-						"\\<name>: (\\midiMsgType: \\touch, \\type: \\chantouch', \\midiChan: %,"
-						"\\spec: \\midiTouch).\n\n"
-						.postf(name, chan, chan);
-					};
-				};
-
-
-			}, chan: listenChan, srcID: srcID).permanent_(true);
-		);
-*/
+		// var info = MIDIAnalysis.checkForMultiple( mktl.deviceDescriptionArray, typeKey, \midiChan);
+		// var chan = info[\midiChan];
+		// var listenChan =if (chan.isKindOf(SimpleNumber)) { chan };
+		//
+		// "make % func\n".postf(typeKey);
+		// // do global actions first
+		// midiRawAction.value(\touch, src, chan, value);
+		// global[typeKey].value(chan, value);
+		//
+		// responders.put(typeKey,
+		// 	MIDIFunc.touch({ |value, chan, src|
+		// 		// look for per-key functions
+		// 		var hash = this.makeTouchKey(chan);
+		// 		var el = midiKeyToElemDict[hash];
+		//
+		// 		if (el.notNil) {
+		// 			el.deviceValueAction_(value);
+		// 			if(traceRunning) {
+		// 				"% - % > % | type: touch, midiNum:%, chan:%, src:%"
+		// 				.format(this.name, el.name, el.value.asStringPrec(3), value, chan, src).postln
+		// 			}
+		// 		}{
+		// 			if (traceRunning) {
+		// 				"MIDIMKtl( % ) : touch element found for chan % !\n"
+		// 				" - add it to the description file, e.g.: "
+		// 				"\\<name>: (\\midiMsgType: \\touch, \\type: \\chantouch', \\midiChan: %,"
+		// 				"\\spec: \\midiTouch).\n\n"
+		// 				.postf(name, chan, chan);
+		// 			};
+		// 		};
+		//
+		//
+		// }, chan: listenChan, srcID: srcID).permanent_(true);
+	// );
 	}
 
 	// not tested yet, no polytouch keyboard
@@ -592,15 +600,24 @@ MIDIMKtlDevice : MKtlDevice {
 */
 	}
 
+	// for the simpler chan based messages, collect chans
+	findChans { |typeKey|
+		var myElems = mktl.elementsDict.select { |el|
+			el.elementDescription[\midiMsgType] == typeKey;
+		};
+		var myChans = myElems.collect { |el|
+			el.elementDescription[\midiChan];
+		}.asArray.sort;
+		^myChans
+	}
+
 	// should work, can't test now.
 	makeBend {
-/*
-		var typeKey = \bend;
-		var info = MIDIAnalysis.checkForMultiple( mktl.deviceDescriptionArray, typeKey, \midiChan);
-		var chan = info[\midiChan];
-		var listenChan =if (chan.isKindOf(SimpleNumber)) { chan };
 
-		//"make % func\n".postf(typeKey);
+		var typeKey = \bend;
+		var myChans = this.findChans(typeKey);
+
+		"make % func for chan(s) %\n ".postf(typeKey, myChans);
 
 		responders.put(typeKey,
 			MIDIFunc.bend({ |value, chan, src|
@@ -608,30 +625,31 @@ MIDIMKtlDevice : MKtlDevice {
 				var hash = this.makeBendKey(chan);
 				var el = midiKeyToElemDict[hash];
 
-					// do global actions first
-				midiRawAction.value(\bend, src, chan, value);
-				global[typeKey].value(chan, value);
+				if (myChans.includes(chan)) {
 
-		if (el.notNil) {
-					el.deviceValueAction_(value);
-					if(traceRunning) {
-						"% - % > % | type: bend, midiNum:%, chan:%, src:%"
-						.format(this.name, el.name, el.value.asStringPrec(3), value, chan, src).postln
-					};
-				}{
-					if (traceRunning) {
-						"MIDIMKtl( % ) : bend element found for chan % !\n"
-						" - add it to the description file, e.g.: "
-						"\\<name>: (\\midiMsgType: \\bend, \\type: ??', \\midiChan: %,"
-						"\\spec: \\midiBend).\n\n"
-						.postf(name, chan, chan);
+					// do global actions first
+					midiRawAction.value(\bend, src, chan, value);
+					global[typeKey].value(chan, value);
+
+					if (el.notNil) {
+						el.deviceValueAction_(value);
+						if(traceRunning) {
+							"% - % > % | type: bend, midiNum:%, chan:%, src:%"
+							.format(this.name, el.name, el.value.asStringPrec(3), value, chan, src).postln
+						};
+					}{
+						if (traceRunning) {
+							"MIDIMKtl( % ) : bend element found for chan % !\n"
+							" - add it to the description file, e.g.: "
+							"\\<name>: (\\midiMsgType: \\bend, \\type: ??', \\midiChan: %,"
+							"\\spec: \\midiBend).\n\n"
+							.postf(name, chan, chan);
+						};
 					};
 				};
 
-
-			}, chan: listenChan, srcID: srcID).permanent_(true);
+			}, srcID: srcID).permanent_(true);
 		);
-*/
 	}
 
 	makeProgram {

@@ -25,6 +25,6 @@ description:
 
 // ------- bend ------------
 // high res fader values (10 bit )
-'fader': (0..3).collect { |chan| ('midiMsgType': 'bend', 'type': 'bender', 'midiChan': 0, 'midiNum':  0,'spec': 'midiBend') }
+'fader': (0..3).collect { |chan| ('midiMsgType': 'bend', 'type': 'bender', 'midiChan': chan, 'midiNum':  0,'spec': 'midiBend') }
 );
 )

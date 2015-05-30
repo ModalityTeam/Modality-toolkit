@@ -53,6 +53,7 @@ Tdef(\spoof, {
 //
 MKtl.find(\midi);
 m = MKtl('lpd80', "akai-lpd8");
+k =  MKtl('nnkn0', "korg-nanokontrol");
 
 (
 Tdef(\spoof, {

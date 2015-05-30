@@ -145,6 +145,14 @@ MKtlElementGroup : MKtlElement {
 
 	value { ^elements.collect(_.value) }
 
+	prettyValues {
+		^elements.collect{ |el|
+			if (el.isKindOf(this)) {
+				[el.name, el.value]
+			} { el.value }
+		}
+	}
+
 	rawValue { ^elements.collect(_.rawValue) }
 
 	keys { ^elements.collect({ |item| dict.findKeyForValue( item ) }) }
