@@ -109,11 +109,11 @@ OSCMKtlDevice : MKtlDevice {
 		initialized = true;
 	}
 
-	*addFoundToAllAvailable{ |key|
+	*addFoundToAllAvailable { |key|
 		allAvailable.at( \osc ).add( key );
 	}
 
-	*addToAllAvailable{
+	*addToAllAvailable {
 		// put the available osc devices in MKtlDevice's available devices
 		allAvailable.put( \osc, List.new );
 		sourceDeviceDict.keysDo({ |key|
@@ -132,7 +132,7 @@ OSCMKtlDevice : MKtlDevice {
 	}
 	*deinitDevices {} // doesn't do anything, but needs to be there
 
-	*postPossible{
+	*postPossible {
 		"// OSC cannot detect devices automatically,\n"
 		"// so to see incoming OSC messages, use OSCMon: ".postln;
 		"o = OSCMon.new; o.enable; o.show".postln;
@@ -147,7 +147,7 @@ OSCMKtlDevice : MKtlDevice {
 		};
 	}
 
-	*findSource{ |devInfo| // only reports interfaces that are already opened
+	*findSource { |devInfo| // only reports interfaces that are already opened
 		var devKey;
 		var match;
 		if ( initialized ){
@@ -170,7 +170,7 @@ OSCMKtlDevice : MKtlDevice {
 		^devKey;
 	}
 
-	*addToSourceDeviceDict{ |name, devInfo|
+	*addToSourceDeviceDict { |name, devInfo|
 		sourceDeviceDict.put( name, devInfo );
 		if ( allAvailable.at( \osc ).isNil ){
 			allAvailable.put( \osc, List.new );
@@ -191,7 +191,7 @@ OSCMKtlDevice : MKtlDevice {
 		^super.basicNew( name, name, parentMKtl ).initOSCMKtl( devInfo );
 	}
 
-	initOSCMKtl{ |desc|
+	initOSCMKtl { |desc|
 		// this will not be addr but a ( destPort: , recvPort: , srcPort: ..., ipAddress: ..., listenPort: ... )
 		if ( desc.at( \ipAddress ).notNil ){
 			source = NetAddr.new( desc.at( \ipAddress ), desc.at( \srcPort ) );
@@ -215,7 +215,7 @@ OSCMKtlDevice : MKtlDevice {
 	}
 
 
-	closeDevice{
+	closeDevice {
 		this.cleanupElementsAndCollectives;
 		source = nil;
 		destination = nil;

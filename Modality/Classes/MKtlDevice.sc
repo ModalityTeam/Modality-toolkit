@@ -70,7 +70,8 @@ MKtlDevice {
 
 	*idInfoForLookupName { |lookupName|
 		var allFound = MKtlDevice.allSubclasses.collect {|sub|
-			var found = sub.sourceDeviceDict[lookupName];
+			var srcDevDict = sub.sourceDeviceDict;
+			var found = srcDevDict !? { srcDevDict[lookupName] };
 			if (found.notNil) { sub.getIDInfoFrom(found) };
 		}.reject(_.isNil);
 
@@ -104,15 +105,18 @@ MKtlDevice {
 	// collapse tryOpenDevice and tryOpenDeviceFromDesc
 	// into one
 	*open { |name, parentMKtl, protocol, desc|
-		var subClass, newDevice, devLookupName;
+		var subClass, newDevice, devLookupName, parentProto;
 
-		devLookupName = MKtlDevice.lookupNameForIDInfo(
-			parentMKtl.desc.idInfo);
+		if (parentMKtl.desc.notNil) {
+			parentProto = parentMKtl.desc.protocol;
+			devLookupName = MKtlDevice.lookupNameForIDInfo(
+				parentMKtl.desc.idInfo) ? name;
+		};
 
-		protocol = protocol ?? {
-			parentMKtl.desc.protocol ?? {
+		protocol = protocol ? parentProto ?? {
 				this.getMatchingProtocol( name )
-		} };
+		};
+
 		if (protocol.isNil) {
 			"MKtlDevice.open: no protocol found for %.\n".warn;
 			^nil;

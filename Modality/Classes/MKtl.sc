@@ -169,9 +169,8 @@ MKtl { // abstract class
 		// };
 
 		if (this.descIsFaulty(mktlDesc)) {
-			warn("MKtl: % has no full description,"
-				"so no new MKtl can be created from it.");
-			^nil
+			warn("MKtl: % has no full description, so please"
+				"explore it and create a description file.");
 		};
 
 		// now we have a name and hopefully a desc
@@ -203,17 +202,24 @@ MKtl { // abstract class
 		specs = ().parent_(globalSpecs);
 		elementsDict = ();
 
+		this.openDevice;
+
+		if (desc.isNil) {
+			inform("MKtl:makeElements - no desc was given, so cannot \n"
+				"make Elements and collectives yet.");
+			^this
+		};
+
 		this.makeElements;
 		this.makeCollectives;
 
-		this.openDevice;
 	}
 
 		// temp redirect for other classes
 	deviceDescriptionArray { ^desc.elementsDesc }
 
 	initialisationMessages {
-		^desc.fullDesc[\initialisationMessages];
+		^desc !? { desc.fullDesc[\initialisationMessages] };
 	}
 
 	/*
@@ -420,14 +426,16 @@ MKtl { // abstract class
 		// ------ make MKtlDevice and interface with it
 
 	openDevice { |lookAgain=true|
-
+		var protocol;
 		if ( this.mktlDevice.notNil ) {
 			"WARNING: Already a device opened for %.\n"
 			"Please close it first with %.closeDevice;\n".postf(this, this);
 			^this;
 		};
+
 		// this may be an issue, only look for appropriate protocol
-		MKtlDevice.initHardwareDevices( lookAgain, desc.protocol.bubble );
+		protocol = desc !? { desc.protocol.bubble };
+		MKtlDevice.initHardwareDevices( lookAgain, protocol);
 
 	 	mktlDevice = MKtlDevice.open( this.name, parentMKtl: this );
 	}

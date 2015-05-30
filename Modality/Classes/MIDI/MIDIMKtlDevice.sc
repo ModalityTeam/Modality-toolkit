@@ -289,8 +289,10 @@ MIDIMKtlDevice : MKtlDevice {
 
 	initElements {
 		"initElements".postln;
-		if ( mktl.elementsDict.isNil ){
-			warn("" + mktl + "has no elementsDict?");
+		if ( mktl.elementsDict.isNil or: {
+			mktl.elementsDict.isEmpty
+		}) {
+			warn("" + mktl + "has no elements.");
 			^this;
 		};
 		this.prepareLookupDicts;
