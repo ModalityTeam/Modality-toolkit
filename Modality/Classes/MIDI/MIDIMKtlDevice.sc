@@ -44,6 +44,8 @@ MIDIMKtlDevice : MKtlDevice {
 		destination = nil;
 	}
 
+	prSetSrcID { |argID| srcID = argID; }
+
 	// open all ports
 	*initDevices { |force= false|
 
@@ -94,11 +96,11 @@ MIDIMKtlDevice : MKtlDevice {
 
 		"\n-----------------------------------------------------".postln;
 		"\n// Available MIDIMKtls: ".postln;
-		"// MKtl(autoName, filename);  // [ midi device, midi port ]".postln;
+		"// MKtl(autoName, filename);  // [ midi device, midi port, uid ]".postln;
 		sourceDeviceDict.keysValuesDo { |key, src|
 			var deviceName = src.device;
 			var midiPortName = src.name;
-			var postList = [deviceName, midiPortName];
+			var postList = [deviceName, midiPortName, src.uid];
 			var filename = MKtlDesc.filenameForIDInfo(deviceName);
 			filename = if (filename.isNil) { "" } { "," + quote(filename) };
 
@@ -292,11 +294,12 @@ MIDIMKtlDevice : MKtlDevice {
 		if ( mktl.elementsDict.isNil or: {
 			mktl.elementsDict.isEmpty
 		}) {
-			warn("" + mktl + "has no elements.");
+			warn("" + mktl + "has no elements:");
+			mktl.elementsDict.postcs;
 			^this;
 		};
-		this.prepareLookupDicts;
 		msgTypes = mktl.desc.fullDesc[\msgTypesUsed];
+		this.prepareLookupDicts;
 		this.makeRespFuncs;
 	}
 
@@ -412,14 +415,14 @@ MIDIMKtlDevice : MKtlDevice {
 					midiKeyToElemDict.put(*[key, elem]);
 				};
 			};
-		}
+		};
 	}
 
 
 	////////// make the responding MIDIFuncs \\\\\\\
 	// only make the ones that are needed once,
 	// and activate/deactivate them
-	makeCC {
+	makeCC { |port|
 		var typeKey = \cc;
 		"make % func\n".postf(typeKey);
 		responders.put(typeKey,
@@ -451,7 +454,7 @@ MIDIMKtlDevice : MKtlDevice {
 		);
 	}
 
-	makeNoteOn {
+	makeNoteOn { |port|
 		var typeKey = \noteOn;
 		//"make % func\n".postf(typeKey);
 		responders.put(typeKey,
@@ -485,7 +488,7 @@ MIDIMKtlDevice : MKtlDevice {
 		);
 	}
 
-	makeNoteOff {
+	makeNoteOff { |port|
 		var typeKey = \noteOff;
 		//"make % func\n".postf(typeKey);
 		responders.put(typeKey,
@@ -519,7 +522,7 @@ MIDIMKtlDevice : MKtlDevice {
 	}
 
 	// the channel-based ones
-	makeTouch {
+	makeTouch { |port|
 		var typeKey = \touch;
 		var touchElems = mktl.elementsDict.select { |el|
 			el.elementDescription[\msgType] == typeKey;
@@ -567,7 +570,7 @@ MIDIMKtlDevice : MKtlDevice {
 	}
 
 	// not tested yet, no polytouch keyboard
-	makePolyTouch {
+	makePolyTouch { |port|
 /*		//"makePolytouch".postln;
 		var typeKey = \polyTouch; //decide on polyTouch vs polytouch
 		//"make % func\n".postf(typeKey);
@@ -703,20 +706,20 @@ MIDIMKtlDevice : MKtlDevice {
 		midiKeyToElemDict = nil;
 	}
 
-	makeRespFuncs {
+	makeRespFuncs { |srcUid|
 		responders = ();
 		global = ();
 
 		msgTypes.do { |msgType|
 			switch(msgType,
-				\cc, { this.makeCC },
-				\noteOn, { this.makeNoteOn },
-				\noteOff, { this.makeNoteOff },
-				\noteOnOff, { this.makeNoteOn.makeNoteOff },
-				\touch, { this.makeTouch },
-				\polyTouch, { this.makePolyTouch },
-				\bend, { this.makeBend },
-				\program, { this.makeProgram }
+				\cc, { this.makeCC(srcUid) },
+				\noteOn, { this.makeNoteOn(srcUid) },
+				\noteOff, { this.makeNoteOff(srcUid) },
+				\noteOnOff, { this.makeNoteOn.makeNoteOff(srcUid) },
+				\touch, { this.makeTouch(srcUid) },
+				\polyTouch, { this.makePolyTouch(srcUid) },
+				\bend, { this.makeBend(srcUid) },
+				\program, { this.makeProgram(srcUid) }
 			);
 		};
 	}

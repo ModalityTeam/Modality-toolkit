@@ -181,7 +181,7 @@ HIDMKtlDevice : MKtlDevice {
         source = argSource.open;
  		this.initElements;
 		this.initCollectives;
-	//	this.sendInitialisationMessages;
+		this.sendInitialisationMessages;
 	}
 
 	closeDevice {
@@ -240,9 +240,9 @@ HIDMKtlDevice : MKtlDevice {
 		};
 	}
 
-	// nothing here yet, but needed
-
+	// nothing here yet, to be ported
 	initCollectives {
+
 	}
 
 	initElements {
@@ -297,6 +297,7 @@ HIDMKtlDevice : MKtlDevice {
 		};
 	}
 
+	// still to be ported
 	sendInitialisationMessages {
 
 	}

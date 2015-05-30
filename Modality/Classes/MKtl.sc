@@ -117,7 +117,7 @@ MKtl { // abstract class
 	// or returns a new empty instance.
 	// If no physcal device is present, this becomes a virtual MKtl.
 
-	*new { |name, desc, lookForNew = false|
+	*new { |name, desc, lookForNew = false |
 		var res, idInfo, mktlDesc, protocol;
 
 		if (name.isNil) {
@@ -202,8 +202,6 @@ MKtl { // abstract class
 		specs = ().parent_(globalSpecs);
 		elementsDict = ();
 
-		this.openDevice;
-
 		if (desc.isNil) {
 			inform("MKtl:makeElements - no desc was given, so cannot \n"
 				"make Elements and collectives yet.");
@@ -213,6 +211,7 @@ MKtl { // abstract class
 		this.makeElements;
 		this.makeCollectives;
 
+		this.openDevice;
 	}
 
 		// temp redirect for other classes
