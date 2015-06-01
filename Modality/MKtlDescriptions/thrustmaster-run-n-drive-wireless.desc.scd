@@ -39,8 +39,8 @@ description: (
 	// --------- output elements ----------
 	'rumble': (
 		'r': ('hidUsage': 187, 'hidUsagePage': 1, 'type': 'rumble', 'ioType': 'out', spec: \lin255, mode: \minimum ),
-		// was 'hidUsage': 49, changed to unused 47 to avoid sendback clash
-		'l': ('hidUsage': 47, 'hidUsagePage': 1, 'type': 'rumble', 'ioType': 'out', spec: \lin255, mode: \minimum )
+		// on osx, send to unused out 42 to avoid auto-sendback to rumble
+		'l': ('hidUsage': (linux: 49, osx: 42), 'hidUsagePage': 1, 'type': 'rumble', 'ioType': 'out', spec: \lin255, mode: \minimum )
 	)
 )
 )

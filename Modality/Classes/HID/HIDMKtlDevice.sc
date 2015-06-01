@@ -289,7 +289,7 @@ HIDMKtlDevice : MKtlDevice {
 
 	send { |key,val|
 		var thisMktlElement, thisHIDElement;
-		thisMktlElement = mktl.elementDescriptionFor( key );
+		thisMktlElement = mktl.elementsDict[ key ].elementDescription;
 		if ( thisMktlElement.notNil ){
 			thisHIDElement = source.findElementWithUsage( thisMktlElement.at( 'hidUsage' ), thisMktlElement.at( 'hidUsagePage' ) ).first;
 			if ( thisHIDElement.notNil ){
