@@ -1,6 +1,7 @@
 MIDIMKtlDevice : MKtlDevice {
 
 	classvar <allMsgTypes = #[ \noteOn, \noteOff, \noteOnOff, \cc, \control, \touch, \polyTouch, \bend, \program ];
+// classvar <allMsgTypes = #[ \noteOn, \noteOff, \noteOnOff, \cc, \touch, \polyTouch, \bend, \program, \midiClock, \start, \stop, \continue, \reset ]; // still missing \allNotesOff
 
 	classvar <protocol = \midi;
 	classvar <initialized = false;
@@ -287,7 +288,7 @@ MIDIMKtlDevice : MKtlDevice {
 			"\tMKtl(%).createDescriptionFile;\n".postf( name );
 			MIDIExplorer.start(this.srcID);
 		} {
-			MIDIExplorer.stop;
+			MIDIExplorer.stop(this.srcID);
 			"MIDIExplorer stopped.".postln;
 		}
 	}
@@ -324,19 +325,24 @@ MIDIMKtlDevice : MKtlDevice {
 		source = argSource;
 		source.notNil.if { srcID = source.uid };
 
+
 		// destination is optional
 		destination = argDestination;
-		destination.notNil.if{
-			dstID = destination.uid;
-			midiOut = MIDIOut( MIDIClient.destinations.indexOf(destination), dstID );
+		destination.notNil.if {
+
+			destination.notNil.if {
+ 			dstID = destination.uid;
+			if ( thisProcess.platform.name == \linux ) {
+				midiOut = MIDIOut( 0 );
+				midiOut.connect( MIDIClient.destinations.indexOf(destination) )
+			} {
+				midiOut = MIDIOut( MIDIClient.destinations.indexOf(destination), dstID );
+			};
 
 			// set latency to zero as we assume to have controllers
 			// rather than synths connected to the device.
 			midiOut.latency = 0;
 
-			if ( thisProcess.platform.name == \linux ){
-				midiOut.connect( MIDIClient.destinations.indexOf(destination) )
-			};
 		};
 
 
@@ -726,9 +732,24 @@ MIDIMKtlDevice : MKtlDevice {
 		{ \noteOn } { midiOut.noteOn(chan, num, val ) }
 		{ \noteOff } { midiOut.noteOff(chan, num, val ) }
 		{ \touch } { midiOut.touch(chan, val ) }
-		{ \polytouch } { midiOut.polytouch(chan, num, val ) }
+		{ \polyTouch } { midiOut.polyTouch(chan, num, val ) }
 		{ \bend } { midiOut.bend(chan, val) }
-		//	{ \note } { x.postln /*TODO: check type for noteOn, noteOff, etc*/ }
+
+		// tested already?
+		{\allNotesOff}{ midiOut.allNotesOff(ch) }
+		{\midiClock}{ midiOut.midiClock }
+		{\start}{ midiOut.start }
+		{\stop}{ midiOut.stop }
+		{\continue}{ midiOut.continue }
+		{\reset}{ midiOut.reset }
+
+		// working ?
+		// {\songSelect}{ midiOut.songPtr( song ) } // this one has a really different format
+		// {\songPtr}{ midiOut.songPtr( songPtr ) } // this one has a really different format
+		// {\smpte}{ midiOut.smpte } // this one has a really different format
+
+		// to do - fix in descs maybe
+ 		//	{ \note } { x.postln /*TODO: check type for noteOn, noteOff, etc*/ }
 		// { \noteOnOff } { midiOut.noteOn(chan, num, val ) }
 		{ warn("MIDIMKtlDevice: message type % not recognised".format(msgType)) };
 		// };

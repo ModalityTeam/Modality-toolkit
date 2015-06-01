@@ -76,8 +76,8 @@ MKtl { // abstract class
 		this.addSpec(\midiVel, [0, 127, \lin, 1, 0]);
 		this.addSpec(\midiBut, [0, 127, \lin, 127, 0]);
 		this.addSpec(\midiTouch, [0, 127, \lin, 1, 0]);
+		this.addSpec(\midiProgram, [0, 127, \lin, 1, 0]);
 		this.addSpec(\midiBend, [0, 16383, \lin, 1, 8192]);
-
 		// HID
 		this.addSpec(\mouseAxis, [0.4,0.6, \lin, 0, 0.5]);
 		this.addSpec(\mouseWheel, [0.4,0.6, \lin, 0, 0.5]);
@@ -218,8 +218,10 @@ MKtl { // abstract class
 	deviceDescriptionArray { ^desc.elementsDesc }
 
 	initialisationMessages {
-		^desc !? { desc.fullDesc[\initialisationMessages] };
-	}
+		if ( deviceInfoDict.isNil ){ ^nil };
+ 		^deviceInfoDict[\initialisationMessages];
+ 	}
+
 
 	/*
 	init procedure:
