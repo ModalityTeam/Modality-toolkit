@@ -241,4 +241,8 @@ HIDMKtlDevice : MKtlDevice {
 	sendInitialisationMessages{
 
 	}
+
+	getIdInfoString{
+		^("idInfo: " ++ source.info.productName.asString ++ "_" ++ source.info.vendorName.asString)
+	}
 }
