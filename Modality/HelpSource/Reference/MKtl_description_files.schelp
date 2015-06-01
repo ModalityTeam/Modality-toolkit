@@ -3,29 +3,44 @@ summary:: describes the file format for MKtl desc files
 categories:: Libraries>Modality
 related:: Overviews/Modality, Classes/MKtl, Tutorials/How_to_create_a_description_file
 
-Section:: Introduction
-
-A controller is always bound to one protocol. If there is a device that communicates on multiple protocols (e.g. EMPHASIS::ICON i-controls::), this has to be merged later in the processing chain.
-A control element is a part of a controller that does one or more of the following things
-
-list::
-## spits out a one-dimensional stream of events,
-## accepts a one-dimensional stream of events.
-::
-
-A description file gathers information for each element. It consists of a SuperCollider dictionary with a certain structure. Description files are located at
+A description file contains information of a controller, especially access information for each of its elements.
+Evaluation of the file should return a link::Classes/Dictionary:: of a well-defined structure. Description files are located at
 code::
 MKtl.openDescriptionFolder;
 ::
 
+NOTE::
+For a good overview on how a description file for your controller should look like, find a similar one that is alrady supported and look at its description file.
+::
+
 This document gives an overview on
 list::
+##link::#Filname convention::
 ##link::#Semantic information::
-##link::#Naming Conventions::
+##link::#Identifier naming convention::
 ##link::#Syntax::
 ::
 
+section:: Filname convention
+
+The filename should be of the following format:
+
+code::
+<vendor>-<device_name>.desc.scd
+::
+
+where
+
+list::
+## code::<vendor>:: is lower-case name of vendor with spaces replaced by code::-::
+## code::<device_name>:: is lower-case name of the device with spaces replaced by code::-::
+::
+
 section:: Semantic information
+
+NOTE::
+A description file is bound to one protocol. If there is a device that communicates on multiple protocols (e.g. EMPHASIS::icon iCONTROLS::), it has to be merged further down in the processing chain.
+::
 
 subsection:: Toplevel
 
@@ -63,6 +78,13 @@ For OSC this needs to be a dictionary with information on the ipAdresses and por
 
 
 subsection:: Within the description of the elements:
+
+A control element is a part of a controller that does one or more of the following things
+
+list::
+## spits out a one-dimensional stream of events,
+## accepts a one-dimensional stream of events.
+::
 
 DEFINITIONLIST::
 
@@ -105,7 +127,7 @@ code::
 )
 ::
 
-section::  Naming Conventions
+section:: Identifier naming convention
 
 Naming conventions for identifiers are:
 list::
@@ -127,7 +149,11 @@ list::
 ::
 
 note::
-The description file for the "nanoKontrol 2" is an example for good element naming. All naming examples in this help are taken from there.
+The description file for the "Korg nanoKONTROL 2"
+code::
+Korg_nanoKONTROL2.desc.scd
+::
+is a good example for element naming. All naming examples are taken from there.
 ::
 
 

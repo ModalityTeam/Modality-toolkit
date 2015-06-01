@@ -188,6 +188,22 @@ The filename should give a meaningful hint to the device it is made for. It furt
 To test your description file, restart SuperCollider and follow instructions in link::Tutorials/ModalityTutorial::.
 
 
+
+section:: MIDI device info
+
+In the simple case, your MIDI device creates either one MIDI port where it sends MIDI to, and/or one MIDI Port to which you can send MIDI. In this case you only need to define the name of the MIDI device, as it shows up when you do code::MKtl.find::.
+
+code::
+( idInfo: "Ableton Push" )
+::
+
+If your device makes multiple MIDI ports, then you may want to specify which port you want to use. You then make a Dictionary of the code::idInfo:: with the field code::name:: with the name of the device (as it shows up after code::MKtl.find::), and then define the code::sourcePortIndex:: and/or the code::destinationPortIndex::; if either one is not specified, it takes the first one.
+
+code::
+( idInfo: ( name: "Ableton Push", sourcePortIndex: 1, destinationPortIndex: 1 ) )
+::
+
+
 section:: MIDI Initialisation messages
 
 Some devices need initialisation messages to be sent before they can function properly with all their modes activated. You can define these messages in the code::initalisationMessages:: field of the device description.
