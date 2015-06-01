@@ -13,5 +13,6 @@ description: (
 	bt: #[57, 52, 53, 54, 41, 42, 44, 22, 23, 24].collect {|num, i|
 		(\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: num, \spec: \midiBut, \mode: \toggle, \ioType: \in)
 	}
+
 )
 )
