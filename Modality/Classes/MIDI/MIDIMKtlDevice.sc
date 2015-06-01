@@ -1,7 +1,6 @@
 MIDIMKtlDevice : MKtlDevice {
 
-	classvar <allMsgTypes = #[ \noteOn, \noteOff, \noteOnOff, \cc, \control, \touch, \polyTouch, \bend, \program ];
-// classvar <allMsgTypes = #[ \noteOn, \noteOff, \noteOnOff, \cc, \touch, \polyTouch, \bend, \program, \midiClock, \start, \stop, \continue, \reset ]; // still missing \allNotesOff
+	classvar <allMsgTypes, msgTypeKeys;
 
 	classvar <protocol = \midi;
 	classvar <initialized = false;
@@ -31,12 +30,30 @@ MIDIMKtlDevice : MKtlDevice {
 	var <responders; // the MIDIFuncs responding to each protocol
 	var <msgTypes;	// the msgTypes for which this MKtl needs MIDIfuncs
 
+	*initClass {
+		allMsgTypes = #[
+			\noteOn, \noteOff, \noteOnOff, \cc, \control, \polyTouch,
+			\touch, \bend, \program,
+			\midiClock, \start, \stop, \continue, \reset,
+			\allNotesOff
+		];
 
-	// could use some reorganisation...
+		msgTypeKeys = (
+			\cc: "c_%_%",
+			\control: "c_%_%",
+			\noteOn: "non_%_%",
+			\noteOff: "nof_%_%",
+			\polyTouch: "pt_%_%",
+			\bend: "b_%",
+			\touch: "t_%",
+			\program: "p_%",
+			\allNotesOff: "all_nof_%",
+		);
+	}
 
 	closeDevice {
-		destination.notNil.if{
-			if ( thisProcess.platform.name == \linux ){
+		destination.notNil.if {
+			if ( thisProcess.platform.name == \linux ) {
 				midiOut.disconnect( MIDIClient.destinations.indexOf(destination) )
 			};
 			midiOut = nil;
@@ -328,7 +345,6 @@ MIDIMKtlDevice : MKtlDevice {
 
 		// destination is optional
 		destination = argDestination;
-		destination.notNil.if {
 
 			destination.notNil.if {
  			dstID = destination.uid;
@@ -373,16 +389,13 @@ MIDIMKtlDevice : MKtlDevice {
 	// utilities for fast lookup of elements in elementsDict
 
 	*makeMsgKey { |msgType, chan, num|
-		^msgType.switch(
-			\cc, { ("c_%_%".format(chan, num)).asSymbol },
-			\control, { ("c_%_%".format(chan, num)).asSymbol },
-			\noteOn, { ("non_%_%".format(chan, num)).asSymbol },
-			\noteOff, { ("nof_%_%".format(chan, num)).asSymbol },
-			\polyTouch, { ("pt_%_%".format(chan, num)).asSymbol },
-			\bend, { ("b_%".format(chan)).asSymbol },
-			\touch, { ("t_%".format(chan)).asSymbol },
-			\program, { ("p_%".format(chan)).asSymbol }
-		);
+		var temp = msgTypeKeys[msgType];
+		if (temp.isNil) {
+			"Message type % not supported.".inform;
+			^nil
+		} {
+			^temp.format(chan, num).asSymbol;
+		}
 	}
 
 	// not used, likely gone?
@@ -517,55 +530,10 @@ MIDIMKtlDevice : MKtlDevice {
 			msgType.cs, value, numStr, chan, src).postln;
 	}
 
-
-
-	// the channel-based ones
-	makeTouch { |port|
-		var typeKey = \touch;
-		var touchElems = mktl.elementsDict.select { |el|
-			el.elementDescription[\msgType] == typeKey;
-		};
-		var touchChans = touchElems.collect { |el|
-			el.elementDescription[\midiChan];
-		};
-
-		"make % func: ".postf(typeKey);
-		"touchChans: % touchElems: %\n".postf(touchChans, touchElems);
-
-		responders.put(typeKey,
-			MIDIFunc.touch({ |value, chan, src|
-				// look for per-key functions
-				var hash = this.makeTouchKey(chan);
-				var el = midiKeyToElemDict[hash];
-
-				// do global actions first
-				midiRawAction.value(\touch, src, chan, value);
-				global[typeKey].value(chan, value);
-
-				if (el.notNil) {
-					el.deviceValueAction_(value);
-					if(traceRunning) {
-						"% - % > % | type: touch, midiNum:%, chan:%, src:%"
-						.format(this.name, el.name, el.value.asStringPrec(3),
-							value, chan, src).postln
-					}
-				}{
-					if (traceRunning) {
-						"MIDIMKtl( % ) : touch element found for chan % !\n"
-						" - add it to the description file, e.g.: "
-						"\\<name>: (\\midiMsgType: \\touch, \\type: "
-						"\\chantouch', \\midiChan: %,"
-						"\\spec: \\midiTouch).\n\n"
-						.postf(name, chan, chan);
-					};
-				};
-
-
-			}, chan: nil, srcID: srcID).permanent_(true);
-		);
-	}
-
-	// for the simpler chan based messages, collect chans
+	// for the simpler chan based messages, collect chans,
+	// if single chan, use in midifunc,
+	// else match inside MIDIfunc
+	// same would work with classes
 	findChans { |typeKey|
 		var myElems = mktl.elementsDict.select { |el|
 			el.elementDescription[\midiMsgType] == typeKey;
@@ -574,95 +542,6 @@ MIDIMKtlDevice : MKtlDevice {
 			el.elementDescription[\midiChan];
 		}.asArray.sort;
 		^myChans
-	}
-
-	// should work, can't test now.
-	makeBend {
-
-		var typeKey = \bend;
-		var myChans = this.findChans(typeKey);
-
-		"make % func for chan(s) %\n ".postf(typeKey, myChans);
-
-		responders.put(typeKey,
-			MIDIFunc.bend({ |value, chan, src|
-				// look for per-key functions
-				var hash = this.makeBendKey(chan);
-				var el = midiKeyToElemDict[hash];
-
-				if (myChans.includes(chan)) {
-
-					// do global actions first
-					midiRawAction.value(\bend, src, chan, value);
-					global[typeKey].value(chan, value);
-
-					if (el.notNil) {
-						el.deviceValueAction_(value);
-						if(traceRunning) {
-							"% - % > % | type: bend, midiNum:%, chan:%, src:%"
-							.format(this.name, el.name, el.value.asStringPrec(3), value, chan, src).postln
-						};
-					} {
-						if (traceRunning) {
-							"MIDIMKtl( % ) : bend element found for chan % !\n"
-							" - add it to the description file, e.g.: "
-							"\\<name>: (\\midiMsgType: \\bend, \\type: ??',"
-							" \\midiChan: %, \\spec: \\midiBend).\n\n"
-							.postf(name, chan, chan);
-						};
-
-						if (traceRunning) {
-							"MIDIMKtl( % ) : bend element found for midiChan % !\n"
-							" - add it to the description file, e.g.: "
-							"\\<name>: (\\midiMsgType: \\bend, \\type: ??',"
-							" \\midiChan: %, \\spec: \\midiBend).\n\n"
-							.postf(name, chan, chan);
-						};
-					};
-				};
-			}, srcID: srcID).permanent_(true)
-		);
-	}
-
-	makeProgram {
-		/*
-		var typeKey = \program;
-		var info = MIDIAnalysis.checkForMultiple( mktl.deviceDescriptionArray, typeKey, \midiChan);
-		var chan = info[\midiChan];
-		var listenChan =if (chan.isKindOf(SimpleNumber)) { chan };
-
-		//"make % func\n".postf(typeKey);
-
-		responders.put(typeKey,
-		MIDIFunc.program({ |value, chan, src|
-		// look for per-key functions
-		var hash = this.makeProgramKey(chan);
-		var el = midiKeyToElemDict[hash];
-
-		// do global actions first
-		midiRawAction.value(\program, src, chan, value);
-		global[typeKey].value(chan, value);
-
-		if (el.notNil) {
-		el.deviceValueAction_(value);
-		if(traceRunning) {
-		"% - % > % | type: program, midiNum:%, midiChan:%, src:%"
-		.format(this.name, el.name, el.value.asStringPrec(3), value, chan, src).postln
-		};
-		}{
-		if (traceRunning) {
-		"MIDIMKtl( % ) : program element found for chan % !\n"
-		" - add it to the description file, e.g.: "
-		"\\<name>: (\\midiMsgType: \\program, \\type: ??',"
-		"\\midiChan: %, \\spec: \\midiProgram).\n\n"
-		.postf(name, chan, chan);
-		};
-		};
-
-
-		}, chan: listenChan, srcID: srcID).permanent_(true);
-		);
-		*/
 	}
 
 	cleanupElementsAndCollectives {
@@ -688,7 +567,11 @@ MIDIMKtlDevice : MKtlDevice {
 
 				\bend, { this.makeChanMsgMIDIFunc(msgType, srcUid) },
 				\touch, { this.makeChanMsgMIDIFunc(msgType, srcUid) },
-				\program, { this.makeChanMsgMIDIFunc(msgType, srcUid) }
+				\program, { this.makeChanMsgMIDIFunc(msgType, srcUid) },
+
+				\allNotesOff, { this.makeChanMsgMIDIFunc(msgType, srcUid) }
+
+				// sysrt message support here
 			);
 		};
 	}
@@ -736,7 +619,7 @@ MIDIMKtlDevice : MKtlDevice {
 		{ \bend } { midiOut.bend(chan, val) }
 
 		// tested already?
-		{\allNotesOff}{ midiOut.allNotesOff(ch) }
+		{\allNotesOff}{ midiOut.allNotesOff(chan) }
 		{\midiClock}{ midiOut.midiClock }
 		{\start}{ midiOut.start }
 		{\stop}{ midiOut.stop }

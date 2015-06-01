@@ -214,13 +214,13 @@ MKtl { // abstract class
 		this.openDevice;
 	}
 
-		// temp redirect for other classes
-	deviceDescriptionArray { ^desc.elementsDesc }
+		// temp redirect for other classes, unused already
+//	deviceDescriptionArray { ^desc.elementsDesc }
 
 	initialisationMessages {
-		if ( deviceInfoDict.isNil ){ ^nil };
- 		^deviceInfoDict[\initialisationMessages];
- 	}
+		if ( desc.isNil or: { desc.fullDesc.isNil }) { ^nil };
+		^desc.fullDesc[\initialisationMessages];
+	}
 
 
 	/*
