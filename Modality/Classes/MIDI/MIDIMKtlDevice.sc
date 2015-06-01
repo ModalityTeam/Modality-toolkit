@@ -49,7 +49,7 @@ MIDIMKtlDevice : MKtlDevice {
 	// open all ports
 	*initDevices { |force= false|
 
-		(initialized && {force.not}).if{^this};
+		if ( initialized && { force.not } ){ ^this; };
 
 		// workaround for inconsistent behaviour between linux and osx
 		if ( MIDIClient.initialized and: (thisProcess.platform.name == \linux) ){
@@ -155,31 +155,29 @@ MIDIMKtlDevice : MKtlDevice {
 		^devKey;
 	}
 
+	// not sure if still needed?
+	*findInDictByNameAndIndex { |dict, name, index|
+		var found = List.new;
+		var foundItem;
+		index = index ? 0;
+		[dict,name,index].postln;
+		dict.keysValuesDo{ |key,endpoint|
+			if ( endpoint.device == name ){ found.add( endpoint ) };
+		};
+		foundItem = found.sort( { |a,b| a.name < b.name } ).at( index );
+		// returns the MIDI endpoint;
+		foundItem.postln;
+		^foundItem;
+	}
+
 	// create with a uid, or access by name
-	*new { |name, srcUID, destUID, parentMKtl|
 		var foundSource, foundDestination;
 		var deviceName;
 
 		this.initDevices;
 
-		// make a new source
-		foundSource = srcUID.notNil.if({
-			MIDIClient.sources.detect { |src|
-				src.uid == srcUID;
-			};
-		}, {
-			sourceDeviceDict[name.asSymbol];
-		});
 
-		if (foundSource.isNil) {
-			warn("MIDIMKtlDevice:"
-			"	No MIDIIn source with USB port ID % exists! please check again.".format(srcUID));
-		};
 
-		// make a new destination
-		foundDestination = destUID.notNil.if({
-			MIDIClient.destinations.detect { |src|
-				src.uid == destUID;
 			};
 		}, {
 			destinationDeviceDict[name.asSymbol];
@@ -437,7 +435,6 @@ MIDIMKtlDevice : MKtlDevice {
 				if (el.notNil) {
 					el.deviceValueAction_(value, false);
 					if(traceRunning) {
-						"% - % > % | type: cc, ccValue:%, ccNum:%,  chan:%, src:%"
 						.format(this.name, el.name, el.value.asStringPrec(3), value, num, chan, src).postln
 					};
 				} {
@@ -503,7 +500,6 @@ MIDIMKtlDevice : MKtlDevice {
 				if (el.notNil) {
 					el.deviceValueAction_(vel);
 					if(traceRunning) {
-						"% - % > % | type: noteOff, vel:%, midiNote:%,  chan:%, src:%"
 						.format(this.name, el.name, el.value.asStringPrec(3), vel, note, chan, src).postln
 					};
 				} {
@@ -585,7 +581,6 @@ MIDIMKtlDevice : MKtlDevice {
 				if (el.notNil) {
 					el.deviceValueAction_(vel);
 					if(traceRunning) {
-						"% - % > % | type: polyTouch, vel:%, midiNote:%,  chan:%, src:%"
 						.format(this.name, el.name, el.value.asStringPrec(3), vel, note, chan, src).postln
 					};
 				}{
@@ -677,7 +672,6 @@ MIDIMKtlDevice : MKtlDevice {
 				if (el.notNil) {
 					el.deviceValueAction_(value);
 					if(traceRunning) {
-						"% - % > % | type: program, midiNum:%, chan:%, src:%"
 						.format(this.name, el.name, el.value.asStringPrec(3), value, chan, src).postln
 					};
 				}{
@@ -721,7 +715,6 @@ MIDIMKtlDevice : MKtlDevice {
 			);
 		};
 	}
-
 
 	// only called by MKtl when there is a midiout,
 	// so we should not need to check again
