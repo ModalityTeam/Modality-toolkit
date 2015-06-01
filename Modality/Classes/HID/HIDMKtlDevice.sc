@@ -2,7 +2,7 @@ HIDMKtlDevice : MKtlDevice {
 
 	classvar <initialized = false;
 	classvar <sourceDeviceDict, hiddenDeviceDict;
-	classvar <showAllDevices = false, <deviceProductNamesToHide;
+	classvar <>showAllDevices = false, <deviceProductNamesToHide;
 	classvar <protocol = \hid;
 
 	var <srcID, <source;
@@ -47,11 +47,12 @@ HIDMKtlDevice : MKtlDevice {
 
 	*devicesToShow {
 		^HID.available.select { |dev, id|
+			(dev.productName + ": ").post;
 			showAllDevices or: {
 				deviceProductNamesToHide.every({ |prodname|
-					[dev.productName, prodname].postcs;
-					dev.productName.contains(prodname).not;
-				});
+					[dev.productName, prodname];
+					(dev.productName != prodname);
+				}).postln;
 			}
 		};
 	}
@@ -59,12 +60,12 @@ HIDMKtlDevice : MKtlDevice {
 	*prepareDeviceDicts {
 		var prevName = nil, j = 0, order, deviceNames;
 
-		deviceNames = this.devicesToShow.collect { |dev,id|
-			var lookupName = MKtl.makeLookupName(
+		deviceNames = this.devicesToShow.postln.collect { |dev,id|
+			MKtl.makeLookupName(
 				(dev.productName.asString ++ "_"
 				++ dev.vendorName.asString )
 			.asString);
-		}.asSortedArray;
+		}.asSortedArray.postcs;
 
 		order = deviceNames.order { arg a, b; a[1] < b[1] };
 		deviceNames[order].do {|name, i|
