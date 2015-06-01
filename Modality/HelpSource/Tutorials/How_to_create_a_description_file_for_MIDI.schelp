@@ -10,22 +10,644 @@ Section:: Introduction
 
 The functionality of link::Classes/MKtl:: relies on descriptions of the used devices. For some Controllers, there are already descriptions available, chances are that your device is not among them.
 
-This Tutorial first shows simple examples of OSC interfaces, by emulating them within SuperCollider, and then describes how to create a description file for your interface.
+This Tutorial first shows simple examples of MIDI interfaces, by emulating them within SuperCollider, and then describes how to create a description file for your interface.
 
 
 list::
 ##link::#Simple input::
 ##link::#Simple output::
-##link::#Explore an MIDI device::
+##link::#Explore a MIDI device::
 ##link::#Write a description file for the explored MIDI device::
 ##link::#MIDI output::
 ##link::#MIDI device info::
 ##link::#MIDI Initialisation messages::
 ::
 
+section:: Simple input
+
+In this section we will go through all the different types of MIDI messages that may come in and show how to write a description for that element.
+
+There are a number of different types of MIDI messages: code::noteOn:: and code::noteOff:: for midi note messages - typically connected to a MIDI keyboard, pitch bend messages, after touch messages, MIDI control messages (e.g. volume control) and MIDI program change messages (e.g. to switch to a different bank of sounds).
 
 
-section:: Explore your device
+Some startup code for our next examples:
+
+code::
+// find all MIDI devices (and do MIDI initialisation)
+MKtl.find(\midi);
+::
+
+code::
+(
+// make a MIDIOut for the tests in the examples
+Platform.case(
+	\linux, {
+		~midiOut= MIDIOut.new(0); // = SC's first midi output
+		~midiOut.connect(1); // = connect to SC's first midi input
+	},
+	\osx, {
+		~midiOut = MIDIOut.newByName( "IAC Driver", "IAC Bus 1" );
+	}
+	/*,
+	\windows, {
+		// please let us know what this should be!
+	}
+	*/
+);
+);
+::
+
+For information on MIDIOut see also:
+
+link::Classes/MIDIOut#Linux specific: Connecting and disconnecting ports::
+
+link::Classes/MIDIOut#OS X specific: Sending MIDI to other applications::
+
+
+subsection:: MIDI note messages
+
+MIDI note messages are typically connected to piano keys on a MIDI keyboard. But in many MIDI controllers they can also be connected to other buttons or drum pads. In principle, MIDI code::noteOn:: messages have a note number defining which key was pressed, and a velocity value defining the speed or intensity with which it was pressed (a typical mapping would be to make a sound louder when the key is pressed with a higher speed). When the note is released, a code::noteOff:: message is sent, again with a note number and a velocity (the speed of release, this could e.g. be mapped to the release time of an envelope). However, some MIDI devices also just sent a MIDI code::noteOn:: message with velocity zero when a note is released.
+
+NOTE::
+In SuperCollider MIDI noteOn messages with velocity 0 are always parsed as noteOff messages.
+There is a pull request to SuperCollider for this, which makes this an option rather than a default:
+code::
+MIDIIn.noteOnZeroAsNoteOff = false;
+::
+See: link::https://github.com/supercollider/supercollider/issues/1483::
+and: link::https://github.com/supercollider/supercollider/pull/1488::
+::
+
+
+As a first example, we show how to make an element to create an element that responds to a code::noteOn:: event. For the velocity we use the code::spec: \midiVel::, which maps the range of 0 to 127 to the range between 0 and 1.
+
+code::
+// midiMsgType: \noteOn,
+(
+~descInput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ),
+	protocol: \midi,
+	    description: (
+		'key': (
+			type: 'pianoKey',
+			midiMsgType: \noteOn,
+			midiChan: 0,
+			midiNum: 64, // note number
+			spec: \midiVel,
+			ioType: \in
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descInput );
+m.rebuildFrom( ~descInput ); // updating it
+
+m.trace;
+
+// make some messages:
+~midiOut.noteOn(0, 64, 127 );
+~midiOut.noteOn(0, 64, 24 );
+~midiOut.noteOn(0, 64, 0 ); // this may not post anything - see note about noteOn and velocity zero
+::
+
+
+As a second example, we show how to make an element that responds to a code::noteOff:: message:
+
+code::
+// midiMsgType: \noteOff,
+(
+~descInput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ),
+	    protocol: \midi,
+	    description: (
+		'key': (
+			type: 'pianoKey',
+			midiMsgType: \noteOff,
+			midiChan: 0,
+			midiNum: 64, // note number
+			spec: \midiVel,
+			ioType: \in
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descInput ); // create a new device, or:
+m.rebuildFrom( ~descInput ); // updating it
+
+m.trace;
+
+// make some messages:
+~midiOut.noteOff(0, 64, 127 );
+~midiOut.noteOff(0, 64, 24 );
+~midiOut.noteOff(0, 64, 0 );
+::
+
+In the case the velocity information is not so important or the code::noteOn:: message with velocity zero is automatically translated to zero, then you can also use the combined code::midiMsgType: \noteOnOff::, which will listen to either kind of message.
+For example a simple button may just send a code::noteOn:: message with velocity 127 and a code::noteOff:: message with velocity 0. In that case it is useful to respond to both types of message with the same element. In the example we use the code::spec: \midiBut::.
+
+code::
+// midiMsgType: \noteOnOff,
+(
+~descInput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ),
+	protocol: \midi,
+	description: (
+		'bt': (
+			type: 'button',
+			midiMsgType: \noteOnOff,
+			midiChan: 0,
+			midiNum: 64,
+			spec: \midiBut,
+			ioType: \in
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descInput );
+m.rebuildFrom( ~descInput ); // updating it
+
+m.trace;
+
+// make some messages:
+~midiOut.noteOn(0, 64, 127 );
+~midiOut.noteOn(0, 64, 0 ); // creates a noteOff message (see note)
+~midiOut.noteOff(0, 64, 0 );
+
+~midiOut.noteOn(0, 64, 37 ); // note that with this we cannot distinguish between noteOn and noteOff
+~midiOut.noteOff(0, 64, 37 ); // note that with this we cannot distinguish between noteOn and noteOff
+::
+
+
+subsection:: MIDI control messages
+
+MIDI control messages are typically sent out by knobs, sliders or pedals on a device, but in some cases also buttons or built-in sensors.
+
+code::
+// midiMsgType: \cc - knob
+(
+~descInput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ),
+	    protocol: \midi,
+	    description: (
+		'kn': (
+			type: 'knob',
+			midiMsgType: \cc,
+			midiChan: 0,
+			midiNum: 8, // control number
+			spec: \midiCC,
+			ioType: \in
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descInput );
+m.rebuildFrom( ~descInput ); // updating it
+
+m.trace;
+
+// make some messages:
+~midiOut.control(0, 8, 127 );
+~midiOut.control(0, 8, 24 );
+~midiOut.control(0, 8, 0 );
+::
+
+code::
+// midiMsgType: \cc - button
+(
+~descInput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ),
+	protocol: \midi,
+	    description: (
+		'bt': (
+			type: 'button',
+			midiMsgType: \cc,
+			midiChan: 0,
+			midiNum: 8, // control number
+			spec: \midiBut,
+			ioType: \in
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descInput );
+m.rebuildFrom( ~descInput ); // updating it
+
+m.trace;
+
+// make some messages:
+~midiOut.control(0, 8, 127 );
+~midiOut.control(0, 8, 0 );
+::
+
+subsection:: MIDI pitch bend messages
+
+
+MIDI pitch bend messages are sent out by MIDI keyboards - usually a control in the shape of a wheel that flips back to its center position left of the keyboard.
+On some of the mini keyboards that you can find, the pitch bend message is implemented via buttons on the device in the same location.
+
+code::
+// midiMsgType: \bend,
+(
+~descInput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	    idInfo: "SuperCollider", // Linux: this may need to be different on OSX
+	    protocol: \midi,
+	    description: (
+		'bend': (
+			type: 'bender',
+			midiMsgType: \bend, // bend needs midiChan only
+			midiChan: 0,
+			spec: \midiBend,
+			ioType: \in
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descInput );
+m.rebuildFrom( ~descInput ); // updating it
+
+m.trace;
+
+// make some messages:
+~midiOut.bend(0, 128*128-1 ); // 14-bit value
+~midiOut.bend(0, 128*64 );
+~midiOut.bend(0, 0 );
+::
+
+subsection:: MIDI after touch messages
+
+
+After touch is the pressure that is on a piano key after the initial pressing (which is translated to note velocity as explained above). The MIDI protocol implements after touch in two ways - as single aftertouch value - where you have to keep track of what the last note was and do something useful with the data - or on a per key basis. The latter is called code::\polyTouch::, short for polyphonic touch. The first one is called code::\touch:: (in some discussions on MIDI it is also called "channel pressure" and has not code::\midiNum:: indication in the argument - just one value per channel.
+
+code::
+// midiMsgType: \polyTouch,
+(
+~descInput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ),
+	protocol: \midi,
+	description: (
+		'touch': (
+			type: 'touch',
+			midiMsgType: \polyTouch,
+			midiChan: 0,
+			midiNum: 2,
+			spec: \midiTouch,
+			ioType: \in
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descInput );
+m.rebuildFrom( ~descInput ); // updating it
+
+m.trace;
+
+// make some messages:
+~midiOut.polyTouch(0, 2, 127 );
+~midiOut.polyTouch( 0, 2, 63 );
+~midiOut.polyTouch(0, 2, 0 );
+::
+
+code::
+// midiMsgType: \touch,
+(
+~descInput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ),
+	protocol: \midi,
+	    description: (
+		'touch': (
+			type: 'touch',
+			midiMsgType: \touch, // touch does not need \midiNum
+			midiChan: 0,
+			spec: \midiTouch,
+			ioType: \in
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descInput );
+m.rebuildFrom( ~descInput ); // updating it
+
+m.trace;
+
+// make some messages:
+~midiOut.touch(0, 127 );
+~midiOut.touch(0, 63 );
+~midiOut.touch(0, 0 );
+::
+
+subsection:: MIDI program change messages
+
+MIDI program change messages are typically sent when a device is changing the patch that is played on the synthesizer. They can be implemented by buttons, or knobs.
+
+code::
+// midiMsgType: \program,
+(
+~descInput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ), // linux
+	protocol: \midi,
+	description: (
+		'prog': (
+			type: 'knob',
+			midiMsgType: \program, // program does not need \midiNum
+			midiChan: 0,
+			spec: \midiProgram,
+			ioType: \in
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descInput );
+m.rebuildFrom( ~descInput ); // updating it
+
+m.trace;
+
+// make some messages:
+~midiOut.program(0, 127 );
+~midiOut.program(0, 63 );
+~midiOut.program(0, 0 );
+::
+
+
+section:: Simple output
+
+In this section we will go through all the different types of MIDI messages that may be sent out and show how to write a description for that element.
+
+Typical use of MIDI output on controllers would be controlling the LEDs on the device that indicate the current mode of the instrument that you are building.
+
+But you could also create an MKtl that connects to a hardware synthesizer - or another software program, and use the Modality toolkit to send the control messages to it.
+
+Which MIDI messages a controller reacts to, can be found out from the controller's manual. Alternatively, you could just sent it a bunch of different messages and see what happens. Apart from system exclusive messages, this should be safe to do - system exclusive messages can be used for uploading new firmware or changing firmware mode, so don't just experiment with that, without properly informing yourself first.
+
+subsection:: MIDI note messages
+
+
+code::
+// midiMsgType: \noteOn
+MIDIIn.connectAll; MIDIFunc.trace;
+(
+~descOutput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	    idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ),
+	    protocol: \midi,
+	    description: (
+		'bt': (
+			type: 'button',
+			midiMsgType: \noteOn,
+			midiChan: 0,
+			midiNum: 2,
+			spec: \midiVel,
+			ioType: \out
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descOutput );
+m.rebuildFrom( ~descOutput ); // updating it
+
+m.elementAt( \bt ).value_( 0 ); // see note above on noteOn message with velocity zero; may show up in the trace as a noteOff
+m.elementAt( \bt ).value_( 1 );
+
+m.gui; // and press the button
+::
+
+
+code::
+// midiMsgType: \noteOff
+MIDIIn.connectAll; MIDIFunc.trace;
+(
+~descOutput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	    idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ),
+	    protocol: \midi,
+	    description: (
+		'bt': (
+			type: 'button',
+			midiMsgType: \noteOff,
+			midiChan: 0,
+			midiNum: 2,
+			spec: \midiVel,
+			ioType: \out
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descOutput );
+m.rebuildFrom( ~descOutput ); // updating it
+
+m.elementAt( \bt ).value_( 0 );
+m.elementAt( \bt ).value_( 1 );
+
+m.gui; // and press the button
+::
+
+subsection:: MIDI control messages
+
+code::
+// midiMsgType: \cc - slider
+MIDIIn.connectAll; MIDIFunc.trace;
+(
+~descOutput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	    idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ),
+	    protocol: \midi,
+	    description: (
+		'sl': (
+			type: 'slider',
+			midiMsgType: \cc,
+			midiChan: 0,
+			midiNum: 2,
+			spec: \midiCC,
+			ioType: \out
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descOutput );
+m.rebuildFrom( ~descOutput ); // updating it
+
+m.elementAt( \sl ).value_( 0 );
+m.elementAt( \sl ).value_( 0.4 );
+m.elementAt( \sl ).value_( 1 );
+
+m.gui; // and move the slider
+::
+
+code::
+// midiMsgType: \cc - slider
+MIDIIn.connectAll; MIDIFunc.trace;
+(
+~descOutput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	    idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ),
+	    protocol: \midi,
+	    description: (
+		'bt': (
+			type: 'button',
+			midiMsgType: \cc,
+			midiChan: 0,
+			midiNum: 2,
+			spec: \midiBut,
+			ioType: \out
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descOutput );
+m.rebuildFrom( ~descOutput ); // updating it
+
+m.elementAt( \bt ).value_( 0 );
+m.elementAt( \bt ).value_( 1 );
+
+m.gui; // and press the button
+::
+
+
+subsection:: MIDI pitch bend messages
+
+code::
+// midiMsgType: \bend
+MIDIIn.connectAll; MIDIFunc.trace;
+(
+~descOutput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	    idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ),
+	    protocol: \midi,
+	    description: (
+		'bend': (
+			type: 'slider',
+			midiMsgType: \bend, // bend has no midiNum
+			midiChan: 0,
+			spec: \midiBend,
+			ioType: \out
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descOutput );
+m.rebuildFrom( ~descOutput ); // updating it
+
+m.elementAt( \bend ).value_( 0 );
+m.elementAt( \bend ).value_( 0.4 );
+m.elementAt( \bend ).value_( 1 );
+::
+
+subsection:: MIDI after touch messages
+
+code::
+// midiMsgType: \polyTouch
+MIDIIn.connectAll; MIDIFunc.trace;
+(
+~descOutput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ),
+	protocol: \midi,
+	description: (
+		'touch': (
+			type: 'slider',
+			midiMsgType: \polyTouch,
+			midiChan: 0,
+			midiNum: 2,
+			spec: \midiTouch,
+			ioType: \out
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descOutput );
+m.rebuildFrom( ~descOutput ); // updating it
+
+m.elementAt( \touch ).value_( 0 );
+m.elementAt( \touch ).value_( 0.4 );
+m.elementAt( \touch ).value_( 1 );
+::
+
+code::
+// midiMsgType: \touch
+MIDIIn.connectAll; MIDIFunc.trace;
+(
+~descOutput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ),
+	protocol: \midi,
+	description: (
+		'touch': ( after touch
+			type: 'slider',
+			midiMsgType: \touch, // touch does not need \midiNum
+			midiChan: 0,
+			spec: \midiTouch,
+			ioType: \out
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descOutput );
+m.rebuildFrom( ~descOutput ); // updating it
+
+m.elementAt( \touch ).value_( 0 );
+m.elementAt( \touch ).value_( 0.4 );
+m.elementAt( \touch ).value_( 1 );
+::
+
+subsection:: MIDI program change messages
+
+
+code::
+// midiMsgType: \program,
+MIDIIn.connectAll; MIDIFunc.trace;
+(
+~descOutput = (
+	// idInfo: ( linux: "SuperCollider", osx: "IAC-bus" ), // Linux: this may need to be different on OSX
+	idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ), // adapt for OSX to IAC bus
+	protocol: \midi,
+	description: (
+		'prog': (
+			type: 'slider',
+			midiMsgType: \program, // program does not need \midiNum
+			midiChan: 0,
+			spec: \midiProgram,
+			ioType: \out
+		)
+	)
+)
+);
+
+m = MKtl( \testMIDI, ~descOutput );
+m.rebuildFrom( ~descOutput ); // updating it
+
+m.elementAt( \prog ).value_( 0 );
+m.elementAt( \prog ).value_( 0.4 );
+m.elementAt( \prog ).value_( 1 );
+::
+
+subsection:: MIDI system exclusive messages
+
+
+section:: Explore a MIDI device
 
 First, find your device in the list posted by the following code and assign the MKtl to a variable.
 code::
@@ -37,11 +659,11 @@ a = MKtl('pcr0');
 Now, turn on the explore mode and move every element on your controller. Make sure to go through all of them and move them in all their degrees of freedom.
 
 code::
-e = a.explore;
+a.explore;
 
 // MIDI: if you want more information on what is happening, turn on verbose mode:
-e.verbose = true;
-e.verbose = false; // turn it off again
+MIDIExplorer.verbose = true;
+MIDIExplorer.verbose = false; // turn it off again
 ::
 
 When done, create a raw description file which you will edit and review in the next step.
@@ -51,7 +673,8 @@ a.createDescriptionFile;
 // and stop the exploring:
 a.explore( false );
 ::
-note::If this does not work for you, try: code::e.compile:: and copy the code from the post window manually to a new file.::
+
+note::If this does not work for you, try: code::MIDIExplorer.compile:: and copy the code from the post window manually to a new file.::
 
 section:: Reviewing the exploration
 
