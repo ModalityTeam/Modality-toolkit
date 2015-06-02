@@ -10,6 +10,15 @@
 (
 idInfo: "nanoKONTROL",
 protocol: \midi,
+deviceInfo: (
+	vendorURI: "http://www.korg.com/us/products/controllers/nanokontrol/",
+	// manualURI: "",
+	// description: "",
+	// features: [],
+	// notes: "",
+	type: [\faders, \knobs, \buttons],
+	hasScribble: true
+),
 description: [
 
 	// the same in all scenes:

@@ -1,9 +1,23 @@
 (
 idInfo: "Ableton Push",
 protocol: \midi,
-//deviceType: ,
+deviceInfo: (
+	vendorURI: "https://www.ableton.com/en/push/",
+	manualURI: "https://www.ableton.com/en/manual/using-push/",
+	description: "Official Ableton Live controller.",
+	features: [
+		"64 velocity and pressure-sensitive pads",
+		"RGB backlighting",
+		"11 touch-sensitive encoders",
+		"4-line LCD alphanumeric display",
+		"17 cm touch strip for pitch bend/scrolling",
+		"24 LEDs for navigation",
+	],
+	notes: "Currently only ```User-mode``` supported.",
+	type: [\pad, \button, \encoder, \display, \bend],
+	hasScribble: true
+),
 status: "untested",
-infoURL: "https://www.ableton.com/en/push/",
 description: (// display still missing because SysEx and different MIDI port...
 
 //------ pads -------------

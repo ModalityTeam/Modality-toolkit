@@ -32,6 +32,15 @@ m.elementAt(\padOff, 1, 2).addAction({ |...args| args.post; "pad2 sc1 off YO !".
 (
 idInfo: "Akai MPD18",
 protocol: \midi,
+deviceInfo: (
+	vendorURI: "http://www.akaipro.com/product/mpd18",
+	// manualURI: "",
+	// description: "",
+	features: ["16 velocity and pressure-sensitive MPC pads"],
+	// notes: "",
+	type: [\pad, \slider],
+	// hasScribble: false
+),
 description: (
 	\sl: (\midiMsgType: \cc, \type: \slider, \midiChan: 0, \midiNum:  1, \spec: \midiCC),
 

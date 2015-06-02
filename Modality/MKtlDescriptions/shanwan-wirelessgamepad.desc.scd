@@ -3,9 +3,16 @@ MKtl.addSpec(\compassShanWan, [0, 7]);
 (
 idInfo: "USB WirelessGamepad _ShanWan",
 protocol: 'hid',
+deviceInfo: (
+	// vendorURI: "",
+	// manualURI: "",
+	// description: "",
+	// features: [],
+	// notes: "",
+	type: [\gamepad],
+	// hasScribble: false
+),
 description: (
-
-
 // --------- input elements ----------
 \triangle: ('hidUsage': 1, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', spec: \hidBut, mode: \push ),
 \circle: ('hidUsage': 2, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', spec: \hidBut, mode: \push ),

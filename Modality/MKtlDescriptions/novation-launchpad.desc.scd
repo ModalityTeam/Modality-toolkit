@@ -5,6 +5,19 @@
 (
 idInfo: "Launchpad",
 protocol: \midi,
+deviceInfo: (
+	vendorURI: "http://us.novationmusic.com/midi-controllers-digital-dj/launchpad",
+	manualURI: "http://us.novationmusic.com/support/product-downloads?product=Launchpad",
+	// description: "",
+	features: [
+		"64 multi-colour backlit buttons",
+		"8 arrow buttons",
+		"8 other buttons",
+	],
+	// notes: "",
+	type: [\button],
+	hasScribble: true
+),
 description: (
 	\up:      (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 104, \spec: \midiBut, \mode: \push),
 	\down:    (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 105, \spec: \midiBut, \mode: \push),

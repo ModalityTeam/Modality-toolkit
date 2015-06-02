@@ -4,6 +4,15 @@
 ((
 	device: "nanoKEY",
 	protocol: 'midi',
+	deviceInfo: (
+		// vendorURI: "",
+		// manualURI: "",
+		// description: "",
+		// features: [],
+		// notes: "",
+		type: [\keyboard],
+		// hasScribble: false
+	),
 	description: (
 
 		// ------ noteOnOff -------------

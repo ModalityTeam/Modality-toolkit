@@ -1,6 +1,14 @@
 (
 device: "XOsc",
 protocol: \osc,
+deviceInfo: (
+	// vendorURI: "",
+	// manualURI: "",
+	// description: "",
+	// features: [],
+	// notes: "",
+	type: [\accelerometer],
+),
 description: (
 	// input elements:
 

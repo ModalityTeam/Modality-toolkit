@@ -1,6 +1,14 @@
 (
 idInfo: "nanoKEY2",
 protocol: 'midi',
+deviceInfo: (
+	vendorURI: "http://www.korg.com/us/products/controllers/nanokey2/",
+	// manualURI: "",
+	// description: "",
+	// features: [],
+	// notes: "",
+	type: [\keyboard, \button],
+),
 description: (
 	'keyOn':
 	(0..120).collect{ arg i;

@@ -1,6 +1,15 @@
 (
 idInfo: "iCON iControls V2.00_iCON",
 protocol: 'hid',
+deviceInfo: (
+	// vendorURI: "",
+	// manualURI: "",
+	// description: "",
+	// features: [],
+	// notes: "",
+	type: [\mixer],
+	// hasScribble: false
+),
 description: (
 
 

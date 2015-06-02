@@ -3,6 +3,14 @@
 (
 idInfo: "nanoKONTROL2",
 protocol: \midi,
+deviceInfo: (
+	vendorURI: "http://www.korg.com/us/products/controllers/nanokontrol2/",
+	// manualURI: "",
+	// description: "",
+	// features: [],
+	// notes: "",
+	type: [\fader, \knob, \button],
+),
 description: [
 	\rew -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 43, \spec: \midiBut, \mode: \push, \ioType: \inout, \style: (row: 3, showLabel: true) ),
 	\fwd -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 44, \spec: \midiBut, \mode: \push, \ioType: \inout, \style: (row: 3, showLabel: true)),

@@ -2,9 +2,15 @@
 (
 idInfo: "Sherman FilterBank 2",
 protocol: \midi,
-description:
-
-(
+deviceInfo: (
+	// vendorURI: "",
+	// manualURI: "",
+	// description: "",
+	// features: [],
+	// notes: "",
+	type: [\filter],
+),
+description: (
 // MIDI coming in from the Sherman Filterbank
 'tr': [
 	('midiMsgType': 'noteOnOff', 'type': 'button', 'midiChan': 15, 'midiNum':  78, 'spec': 'midiNote'),

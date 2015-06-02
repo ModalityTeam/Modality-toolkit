@@ -15,6 +15,15 @@ MKtl.allDevDescs[\gyrosc];
 (
 idInfo: "gyrosc",
 protocol: \osc,
+deviceInfo: (
+	vendorURI: "http://www.bitshapesoftware.com/instruments/gyrosc/",
+	// manualURI: "",
+	// description: "",
+	// features: [],
+	// notes: "",
+	// type: [],
+	// hasScribble: false
+),
 description: (
 	'gyrosc/*/gyro': (\oscMsgType: \, \type: \gyro, \spec: \midiCC)
 )

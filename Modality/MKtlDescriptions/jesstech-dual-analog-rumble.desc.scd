@@ -1,6 +1,14 @@
 (
 protocol: \hid,
 idInfo: "Dual Analog Rumble Pad_Jess Tech",
+deviceInfo: (
+	// vendorURI:
+	// manual:
+	// description:
+	// features:
+	// notes:
+	type: [\gamepad]
+),
 description: (
 
 	// --------- input elements ----------

@@ -5,7 +5,22 @@
 (
 idInfo: "iCON iStage V1.00",
 protocol: \midi,
-
+deviceInfo: (
+	vendorURI: "http://www.icon-global.com/Keyboards%2FPads_Pads_iStage.htm",
+	// manualURI: "",
+	// description: "",
+	features: [
+		"3 sets of “4x4” matrix control buttons with dual color LED backlight",
+		"3 sets of “4x4” velocity-sensitive drum pads",
+		"17 buttons with red LED",
+		"2-segment LED display",
+		"1 encoder for jog wheel for fast scrolling and other controls",
+		"1 assignable fader",
+	],
+	// notes: "",
+	type: [\button],
+	// hasScribble: false
+),
 description: (
 	\cf: (\midiMsgType: \cc, \type: \xfade,   \midiChan: 0, \midiNum: 7, \spec: \midiCC),
 	\bt: (0..19).collect{|num| (0..11).collect{|chan|

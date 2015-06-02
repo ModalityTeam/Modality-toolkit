@@ -5,6 +5,20 @@
 (
 idInfo: "OP-1 Midi Device",
 protocol: \midi,
+deviceInfo: (
+	vendorURI: "http://www.steinberg.net/en/products/controllers/cmc_series/models/cmc_qc.html",
+	// manualURI: "",
+	description: "Full-featured synth which can also be used as a general-purpose controller.",
+	features: [
+		"2-octave keyboard witch transpose buttons",
+		"4 encoders with hat-switch",
+		"transport section",
+		"20 buttons (1-4, 1-8 and special-purpose)",
+	],
+	notes: "Put the OP-1 into control-mode (<shift>-<COM>, then 2)",
+	type: [\keyboard, \knob, \button],
+	hasScribble: true
+),
 description: (
 	\key: (
 		\on: (5..124).collect{ |num|

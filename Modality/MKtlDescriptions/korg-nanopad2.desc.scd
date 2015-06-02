@@ -8,6 +8,14 @@ k = MIDIMKtl('nnpd20');
 (
 idInfo: "nanoPAD2",
 protocol: \midi,
+deviceInfo: (
+	vendorURI: "http://www.korg.com/us/products/controllers/nanopad2/",
+	// manualURI: "",
+	// description: "",
+	// features: [],
+	// notes: "",
+	type: [\pad, \touchpad, \button],
+),
 description: (
 	\padOn: (36..99).collect{ |note|
 		(\midiMsgType: \noteOn, \type: \pad, \midiChan: 0, \midiNum:  note, \spec: \midiVel)

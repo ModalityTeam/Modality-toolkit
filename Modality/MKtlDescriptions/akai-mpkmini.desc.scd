@@ -6,8 +6,19 @@
 (
 idInfo: "MPK mini",
 protocol: \midi,
-infoMessage: "\n\t MPK mini: This desc file is made for the Factory Preset: Preset3-MPC,
-\t downloadable from http://www.akaipro.com/product/mpkmini#downloads \n",
+deviceInfo: (
+	vendorURI: "http://www.akaipro.com/product/mpkmini",
+	// manualURI: "",
+	// description: "",
+	features: [
+		"25 key velocity-sensitive keyboard",
+		"8 backlit MPC-style pads",
+		"8 Q-link knobs",
+	],
+	notes: "Desc file is made for the Factory Preset ```Preset3-MPC```, downloadable from http://www.akaipro.com/product/mpkmini#downloads",
+	type: [\keyboard, \pads, \slider],
+	// hasScribble: false
+),
 description: (
 	\kn: (13..20).collect{ |midiNum|
 		(\midiMsgType: \cc, \type: \knob, \midiChan: 0, \midiNum: midiNum, \spec: \midiCC)

@@ -7,6 +7,15 @@ MKtl.addSpec(\compassImpact, [0, 1.0]);
 (
 idInfo: "USB Game Controllers_Mega World",
 protocol: 'hid',
+deviceInfo: (
+	// vendorURI: "",
+	// manualURI: "",
+	// description: "",
+	// features: [],
+	// notes: "",
+	type: [\gamepad],
+	// hasScribble: false
+),
 description: (
 
 

@@ -3,6 +3,21 @@ MKtl.addSpec(\selectNumark, [0, 4]);
 (
 idInfo: "Numark ORBIT",
 protocol: 'midi',
+deviceInfo: (
+	vendorURI: "http://www.numark.com/product/orbit",
+	// manualURI: "",
+	// description: "",
+	features: [
+		"wireless",
+		"16 backlit pads",
+		"4 banks",
+		"4 knobs per bank",
+		"2-axis accelerometer",
+		"control wheel",
+	],
+	// notes: "",
+	type: [\buttons, \rotary]
+),
 description:
 (
 
