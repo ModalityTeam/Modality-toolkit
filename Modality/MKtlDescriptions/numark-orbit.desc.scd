@@ -16,7 +16,7 @@ deviceInfo: (
 		"control wheel",
 	],
 	// notes: "",
-	type: [\buttons, \rotary]
+	type: [\button, \encoder]
 ),
 description:
 (
