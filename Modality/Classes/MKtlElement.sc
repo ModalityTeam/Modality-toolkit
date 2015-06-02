@@ -30,9 +30,8 @@ MAbstractElement {
 	var <groups;
 	var <collectives;
 
-	// the dict from the MKtlDesc
-	// that has this element's properties
-	var <elementDescription;
+	// the dict from the MKtlDesc that has this element's properties
+	var <elemDesc;
 
 
 	*new { |source, name|
@@ -52,7 +51,7 @@ MAbstractElement {
 	}
 
 	trySend {
-		if( [\out, \inout].includes( this.elementDescription.ioType ) ) {
+		if( [\out, \inout].includes( this.elemDesc.ioType ) ) {
 			if (source.notNil) {
 				source.send(name, deviceValue);
 				^true
@@ -209,19 +208,19 @@ MKtlElement : MAbstractElement {
 	// source is used for sending back to the device.
 	*new { |name, desc, source|
 		^super.newCopyArgs(name, source)
-		.elementDescription_(desc);
+		.elemDesc_(desc);
 	}
 
-	elementDescription_ { |dict|
+	elemDesc_ { |dict|
 		var mySpecOrName;
 		if (dict.isNil) {
 			inform("MKtlElement(%): no element description given.".format(name));
 			^this
 		};
 		// fill instvars
-		elementDescription = dict;
-		type = elementDescription[\type];
-		ioType = elementDescription[\ioType] ? \in;
+		elemDesc = dict;
+		type = elemDesc[\type];
+		ioType = elemDesc[\ioType] ? \in;
 
 		this.setSpecFromDesc(dict);
 
@@ -255,19 +254,19 @@ MKtlElement : MAbstractElement {
 			^this.getSpec;
 		};
 		newspec = newspec.asSpec;
-		elementDescription[\deviceSpec] = newspec;
+		elemDesc[\deviceSpec] = newspec;
 		deviceSpec = newspec;
 	}
 
 	// just update params on the fly, keep description in sync
 	updateDescription { |dict|
 		dict.keysValuesDo { |key, val|
-			elementDescription.put(key, val);
+			elemDesc.put(key, val);
 		};
 		// sync back if these changed
 		this.deviceSpec_(dict[\spec]);
-		type = elementDescription[\type];
-		ioType = elementDescription[\ioType] ? \in;
+		type = elemDesc[\type];
+		ioType = elemDesc[\ioType] ? \in;
 	}
 
 	defaultValue {

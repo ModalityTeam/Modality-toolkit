@@ -267,16 +267,16 @@ MKtlElementGroup : MKtlElement {
 
 MKtlElementCollective : MKtlElementGroup {
 
-	*new { |source, name, elementDescription|
-		^super.newCopyArgs( source, name).init( elementDescription );
+	*new { |source, name, elemDesc|
+		^super.newCopyArgs( source, name).init( elemDesc );
 	}
 
-	init { |inElementDescription|
+	init { |inElemDesc|
 		tags = Set[];
-		elementDescription = inElementDescription ?? { source.collectiveDescriptionFor(name); };
-		if( elementDescription.notNil ) {
-			ioType = elementDescription[\ioType];
-			elements = elementDescription[\elements].collect({ |item|
+		elemDesc = inElemDesc ?? { source.collectiveDescriptionFor(name); };
+		if( elemDesc.notNil ) {
+			ioType = elemDesc[\ioType];
+			elements = elemDesc[\elements].collect({ |item|
 				source.elementAt( *item );
 			});
 			this.addCollectiveToChildren;

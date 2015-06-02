@@ -345,25 +345,25 @@ MKtl { // abstract class
 
 	elementsOfType { |type|
 		^elementsDict.select { |elem|
-			elem.elementDescription[\type] == type
+			elem.elemDesc[\type] == type
 		}
 	}
 
 	elementsNotOfType { |type|
 		^elementsDict.select { |elem|
-			elem.elementDescription[\type] != type
+			elem.elemDesc[\type] != type
 		}
 	}
 
 	inputElements {
 		^elementsDict.select { |elem|
-			[ \in, \inout ].includes( elem.elementDescription[\ioType] ?? \in);
+			[ \in, \inout ].includes( elem.elemDesc[\ioType] ?? \in);
 		}
 	}
 
 	outputElements {
 		^elementsDict.select { |elem|
-			[ \out, \inout ].includes( elem.elementDescription[\ioType] ?? \in);
+			[ \out, \inout ].includes( elem.elemDesc[\ioType] ?? \in);
 		}
 	}
 
@@ -374,8 +374,8 @@ MKtl { // abstract class
 	elementsLabeled { |label|
 		var labels;
 
-		^elementsDict.select{|elem|
-			labels = elem.elementDescription[\labels];
+		^elementsDict.select {|elem|
+			labels = elem.elemDesc[\labels];
 			labels.notNil.if({
 				labels.includes(label)
 				}, {

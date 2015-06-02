@@ -244,10 +244,10 @@ OSCMKtlDevice : MKtlDevice {
 			oscFuncDictionary = IdentityDictionary.new;
 		};
 		mktl.elementsDict.do{ |el|
-			var oscPath = el.elementDescription[ \oscPath ];
-			var ioType = el.elementDescription[ \ioType ];
-			var argTemplate = el.elementDescription[ \argTemplate ];
-			var valueIndex = el.elementDescription[ \valueAt ];
+			var oscPath = el.elemDesc[ \oscPath ];
+			var ioType = el.elemDesc[ \ioType ];
+			var argTemplate = el.elemDesc[ \argTemplate ];
+			var valueIndex = el.elemDesc[ \valueAt ];
 			var dispatcher;
 			if ( [\in,\inout].includes( ioType ) or: ioType.isNil ){
 
@@ -306,10 +306,10 @@ OSCMKtlDevice : MKtlDevice {
 			oscFuncDictionary = IdentityDictionary.new;
 		};
 		mktl.collectivesDict.do{ |el|
-			var oscPath = el.elementDescription[ \oscPath ];
-			var ioType = el.elementDescription[ \ioType ];
-			var argTemplate = el.elementDescription[ \argTemplate ];
-			var valueIndices = el.elementDescription[ \valueAt ];
+			var oscPath = el.elemDesc[ \oscPath ];
+			var ioType = el.elemDesc[ \ioType ];
+			var argTemplate = el.elemDesc[ \argTemplate ];
+			var valueIndices = el.elemDesc[ \valueAt ];
 			var msgIndices, templEnd;
 			var dispatcher = this.class.messageSizeDispatcher;
 
@@ -347,14 +347,14 @@ OSCMKtlDevice : MKtlDevice {
 		};
 	}
 
-	cleanupElementsAndCollectives{
+	cleanupElementsAndCollectives {
 		oscFuncDictionary.do{ |it| it.free };
 		oscFuncDictionary = nil;
 	}
 
 	// this should work for the simple usecase (not the group yet)
 	// from the group: \output, val: [ 0, 0, 0, 0 ]
-	send{ |key,val|
+	send { |key,val|
 		var el, oscPath, outvalues,valIndex;
 		if ( destination.notNil ){
 			if ( val.isKindOf( Array ) ){
@@ -362,7 +362,7 @@ OSCMKtlDevice : MKtlDevice {
 				valIndex = 0;
 				oscPath = el[\oscPath];
 				outvalues = List.new;
-				el[\argTemplate].do{ |it|
+				el[\argTemplate].do { |it|
 					if ( it.isNil ){
 						outvalues.add( val.at( valIndex ) ); valIndex = valIndex + 1;
 					}{
@@ -373,7 +373,7 @@ OSCMKtlDevice : MKtlDevice {
 				outvalues = outvalues.asArray;
 			}{
 				// FIXME!
-				// el = mktl.elementDescriptionFor( key );
+				// el = mktl.elemDescFor( key );
 				el = mktl.desc.elementsDesc.at( key );
 				oscPath = el[\oscPath];
 				outvalues = el[\argTemplate].copy; // we will modify it maybe, so make a copy
@@ -387,9 +387,9 @@ OSCMKtlDevice : MKtlDevice {
 		}
 	}
 
-	sendInitialiationMessages{
-		mktl.initialisationMessages.do{ |it|
-			destination.sendMsg( *it );
-		};
-	}
+	// sendInitialiationMessages {
+	// 	mktl.initialisationMessages.do { |it|
+	// 		destination.sendMsg( *it );
+	// 	};
+	// }
 }

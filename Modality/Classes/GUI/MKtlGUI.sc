@@ -13,7 +13,7 @@ MKtlElementView {
 		makeViewFuncDict = (
 			'button': { |parent, bounds, label, element|
 				var mouseDownAction;
-				if( element.elementDescription[ \mode ] == \push ) {
+				if( element.elemDesc[ \mode ] == \push ) {
 					mouseDownAction = { |bt| bt.valueAction = 1 };
 				};
 				Button( parent, bounds.insetBy( MKtlGUI.margin ) )
@@ -52,8 +52,8 @@ MKtlElementView {
 	makeView { |inParent, bounds|
 		var label;
 		parent = inParent ? parent;
-		if( element.elementDescription[ \style ] !? _.showLabel ? false ) {
-			label = element.elementDescription[ \label ] ?? { element.name };
+		if( element.elemDesc[ \style ] !? _.showLabel ? false ) {
+			label = element.elemDesc[ \label ] ?? { element.name };
 		};
 		view = this.getMakeViewFunc( element.type ).value( parent, bounds, label, element );
 		getValueFunc = this.makeGetValueFunc( element, view );
@@ -145,9 +145,9 @@ MKtlGUI {
 
 		views = mktl.elements.flat.collect({ |item|
 			var style, bounds, view = parent;
-			style = item.elementDescription[ \style ] ?? { ( row: 0, column: 0, width: 0, height: 0 ) };
-			if( pages.notNil && { item.elementDescription[ \page ].notNil }) {
-				view = pageComposites[ item.elementDescription[ \page ] ];
+			style = item.elemDesc[ \style ] ?? { ( row: 0, column: 0, width: 0, height: 0 ) };
+			if( pages.notNil && { item.elemDesc[ \page ].notNil }) {
+				view = pageComposites[ item.elemDesc[ \page ] ];
 			};
 			MKtlElementView( view, Rect( style.column * cellSize, (style.row * cellSize) + 25, style.width * cellSize, style.height * cellSize ), item );
 		});
@@ -157,7 +157,7 @@ MKtlGUI {
 		.drawFunc_({ |vw|
 			views.do({ |item, i|
 				var name;
-				if( item.element.elementDescription[ \page ].isNil or: { item.element.elementDescription[ \page ] == currentPage } ) {
+				if( item.element.elemDesc[ \page ].isNil or: { item.element.elemDesc[ \page ] == currentPage } ) {
 					name = item.element.name.asString;
 					if( name.asString.size > 5 ) {
 						name = name.split( $_ );
@@ -207,7 +207,7 @@ MKtlGUI {
 
 	getNumRowsColumns {
 		^mktl.elements.flat.collect({ |item|
-			item.elementDescription !? { |x|
+			item.elemDesc !? { |x|
 				((x[ \style ] ?? { ( row: 0, column: 0, width: 0, height: 0 ) })
 					.atAll([ \row, \height, \column, \width ]) - [0, 1, 0, 1]).clump(2).collect(_.sum);
 			}
@@ -215,7 +215,7 @@ MKtlGUI {
 	}
 
 	getNumPages {
-		^mktl.elements.flat.collect({ |item| item.elementDescription[ \page ] }).select(_.notNil).maxItem !? (_+1);
+		^mktl.elements.flat.collect({ |item| item.elemDesc[ \page ] }).select(_.notNil).maxItem !? (_+1);
 	}
 
 	layoutElements { |pages|
@@ -232,14 +232,14 @@ MKtlGUI {
 
 		placeFunc = { |element|
 			var bounds, style;
-			if( element.elementDescription[ \page ] == page ) {
+			if( element.elemDesc[ \page ] == page ) {
 				bounds = ().bounds_(
 					switch( element.type,
 						\slider, { Rect(0,0,1,3) },
 						{ Rect( 0,0,1,1 ) }
 					)
 				);
-				style = element.elementDescription[ \style ] ? ();
+				style = element.elemDesc[ \style ] ? ();
 
 				style.parent = nil;
 
@@ -258,7 +258,7 @@ MKtlGUI {
 				if( style.row.notNil ) { layout.top = style.row };
 				layout.place( bounds );
 				bounds = bounds.bounds;
-				element.elementDescription[ \style ] = style
+				element.elemDesc[ \style ] = style
 				.parent_( ( row: bounds.top, column: bounds.left, width: bounds.width, height: bounds.height ) );
 			};
 		};

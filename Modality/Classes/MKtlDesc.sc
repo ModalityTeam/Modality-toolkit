@@ -441,6 +441,4 @@ MKtlDesc {
 		};
 		this.class.resolveForPlatform(this.elementsDesc);
 	}
-
-
 }

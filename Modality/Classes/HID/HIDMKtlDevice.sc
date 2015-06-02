@@ -232,9 +232,9 @@ HIDMKtlDevice : MKtlDevice {
 	cleanupElementsAndCollectives {
 		mktl.elementsDict.do{ |el|
 			var theseElements;
-            var elid = el.elementDescription[\hidElementID];
-            var page = el.elementDescription[\hidUsagePage];
-            var usage = el.elementDescription[\hidUsage];
+            var elid = el.elemDesc[\hidElementID];
+            var page = el.elemDesc[\hidUsagePage];
+            var usage = el.elemDesc[\hidUsage];
 
 			if ( elid.notNil ) { // filter by element id
 				source.elements.at( elid ).action = nil;
@@ -257,9 +257,9 @@ HIDMKtlDevice : MKtlDevice {
 		mktl.elementsDict.do { |el|
             var theseElements;
 
-            var elid = el.elementDescription[\hidElementID];
-            var page = el.elementDescription[\hidUsagePage];
-            var usage = el.elementDescription[\hidUsage];
+            var elid = el.elemDesc[\hidElementID];
+            var page = el.elemDesc[\hidUsagePage];
+            var usage = el.elemDesc[\hidUsage];
 
             // device specs should primarily use usage and usagePage,
             // only in specific instances - where the device has bad firmware
@@ -295,7 +295,7 @@ HIDMKtlDevice : MKtlDevice {
 
 	send { |key,val|
 		var thisMktlElement, thisHIDElement;
-		thisMktlElement = mktl.elementsDict[ key ].elementDescription;
+		thisMktlElement = mktl.elementsDict[ key ].elemDesc;
 		if ( thisMktlElement.notNil ){
 			thisHIDElement = source.findElementWithUsage( thisMktlElement.at( 'hidUsage' ), thisMktlElement.at( 'hidUsagePage' ) ).first;
 			if ( thisHIDElement.notNil ){

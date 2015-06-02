@@ -415,7 +415,7 @@ MIDIMKtlDevice : MKtlDevice {
 		};
 
 		elementsDict.do { |elem|
-			var elemDesc = elem.elementDescription;
+			var elemDesc = elem.elemDesc;
 			var midiKeys = this.makeHashKey( elemDesc, elem );
 
 			// set the inputs only; outputs can use elemDesc directly
@@ -538,10 +538,10 @@ MIDIMKtlDevice : MKtlDevice {
 	// same would work with classes
 	findChans { |typeKey|
 		var myElems = mktl.elementsDict.select { |el|
-			el.elementDescription[\midiMsgType] == typeKey;
+			el.elemDesc[\midiMsgType] == typeKey;
 		};
 		var myChans = myElems.collect { |el|
-			el.elementDescription[\midiChan];
+			el.elemDesc[\midiChan];
 		}.asArray.sort;
 		^myChans
 	}
@@ -591,7 +591,7 @@ MIDIMKtlDevice : MKtlDevice {
 			^this
 		};
 
-		elemDesc = elem.elementDescription;
+		elemDesc = elem.elemDesc;
 
 		if (traceRunning) {
 			"MIDIMKtl will send: ".post; elem.postcs;
