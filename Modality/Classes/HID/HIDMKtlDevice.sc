@@ -182,7 +182,9 @@ HIDMKtlDevice : MKtlDevice {
         source = argSource.open;
  		this.initElements;
 		this.initCollectives;
-		this.sendInitialisationMessages;
+
+		// only do this explicitly
+		// this.sendInitialisationMessages;
 	}
 
 	closeDevice {

@@ -364,7 +364,9 @@ MIDIMKtlDevice : MKtlDevice {
 
 		// initElements already done in ...
 		this.initCollectives;
-		this.sendInitialisationMessages;
+
+		// only do this explicitly
+		// this.sendInitialisationMessages;
 	}
 
 	makeHashKey { |elemDesc, elem|

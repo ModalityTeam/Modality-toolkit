@@ -34,6 +34,7 @@ description: [
 
 // don't touch the following code: these are sysex messages found from the Korg NanoKontrol2 editor.
 // found at: https://github.com/overtone/overtone/blob/master/src/overtone/device/midi/nanoKONTROL2.clj
+// see https://github.com/ModalityTeam/Modality-toolkit/issues/112
 
 initialisationMessages:
 [

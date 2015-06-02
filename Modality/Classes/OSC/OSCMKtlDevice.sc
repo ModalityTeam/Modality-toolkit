@@ -225,7 +225,9 @@ OSCMKtlDevice : MKtlDevice {
 
 		this.initElements;
 		this.initCollectives;
-		this.sendInitialisationMessages;
+
+		// only do this explicitly
+		// this.sendInitialisationMessages;
 	}
 
 
