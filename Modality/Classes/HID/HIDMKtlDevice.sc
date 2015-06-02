@@ -174,7 +174,10 @@ HIDMKtlDevice : MKtlDevice {
 			^nil;
 		};
 
-		^super.basicNew( name, this.makeDeviceName( foundSource ), parentMKtl ).initHIDMKtl( foundSource, path );
+		^super.basicNew( name,
+			this.makeDeviceName( foundSource ),
+			parentMKtl )
+		.initHIDMKtl( foundSource, path );
 	}
 
 	initHIDMKtl { |argSource,argUid|
@@ -206,7 +209,8 @@ HIDMKtlDevice : MKtlDevice {
 	explore { |mode=true|
 		if ( mode ){
 			"Using HIDExplorer. (see its Helpfile for Details)\n\n".post;
-			"HIDExplorer started. Wiggle all elements of your controller then".postln;
+			"HIDExplorer started. Wiggle all elements of your controller,"
+			" then do:".postln;
 			"\tMKtl(%).explore(false);\n".postf( name );
 			"\tMKtl(%).createDescriptionFile;\n".postf( name );
 			HIDExplorer.start( this.source );

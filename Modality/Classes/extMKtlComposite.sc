@@ -17,7 +17,7 @@ e.g. 8 + 8 = 16 sliders etc.
 		var componentMKtls, allCompElements;
 		name = argName;
 
-		if (MKtlDesc.allDescs.isNil) { this.class.loadAllDescs };
+		if (MKtlDesc.allDescs.isNil) { this.class.loadDescs };
 
 		if (devDesc.isKindOf(String)) {
 			devDesc = this.class.loadCompDesc(devDesc);
@@ -59,10 +59,16 @@ e.g. 8 + 8 = 16 sliders etc.
 
 		elements.fillDict(elementsDict);
 	}
+}
 
-	*loadCompDesc { |filename|
-		// should complain if not now
-		^(MKtl.defaultDeviceDescriptionFolder +/+ filename ++ ".comp.scd").load.unbubble;
++ MKtlDesc {
+
+	// model on loadDescs
+	*loadComps { |filename = "*", folderIndex|
+		// // should complain if not now
+		// ^(MKtlDesc.descFolders.collect { |p|
+		// 	(p +/+ filename ++ compExt).load.unbubble;
+		// 	};
 	}
 }
 

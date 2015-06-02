@@ -372,7 +372,9 @@ OSCMKtlDevice : MKtlDevice {
 				if ( valIndex < val.size ){ outvalues = outvalues ++ (val.copyToEnd( valIndex ) ) };
 				outvalues = outvalues.asArray;
 			}{
-				el = mktl.elementDescriptionFor( key );
+				// FIXME!
+				// el = mktl.elementDescriptionFor( key );
+				el = mktl.desc.elementsDesc.at( key );
 				oscPath = el[\oscPath];
 				outvalues = el[\argTemplate].copy; // we will modify it maybe, so make a copy
 				if ( outvalues.includes( nil ) ){

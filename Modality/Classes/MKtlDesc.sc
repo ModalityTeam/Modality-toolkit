@@ -7,7 +7,7 @@ Questions:
 
 MKtlDesc {
 	classvar <defaultFolder, <folderName = "MKtlDescriptions";
-	classvar <fileExt = ".desc.scd";
+	classvar <descExt = ".desc.scd", <compExt = ".comp.scd";
 	classvar <descFolders;
 	classvar <allDescs;
 	classvar <cacheName = "_allDescs.cache.scd";
@@ -78,7 +78,7 @@ MKtlDesc {
 		foldersToLoad = descFolders[folderIndex.asArray].select(_.notNil);
 
 		foundPaths = foldersToLoad.collect { |dir|
-			(dir +/+ filename ++ fileExt).pathMatch
+			(dir +/+ filename ++ descExt).pathMatch
 		}.flatten(1);
 
 		if (postFound) {
@@ -271,7 +271,7 @@ MKtlDesc {
 		};
 		// got here, should work now
 		desc.path = path;
-		desc.filename = path.basename.drop(fileExt.size.neg);
+		desc.filename = path.basename.drop(descExt.size.neg);
 		^this.fromDict(desc);
 	}
 
@@ -335,7 +335,7 @@ MKtlDesc {
 		};
 
 		name = inname ?? { fullDesc[\filename] ??
-			{ if (path.notNil) { path.basename.drop(fileExt.size.neg); };
+			{ if (path.notNil) { path.basename.drop(descExt.size.neg); };
 		} };
 
 		if (name.isNil) {
@@ -376,7 +376,7 @@ MKtlDesc {
 	elementsDesc_ { |type| ^fullDesc[\description] = type }
 
 	deviceFilename {
-		^path !? { path.basename.drop(fileExt.size.neg) }
+		^path !? { path.basename.drop(descExt.size.neg) }
 	}
 
 	postInfo { |postElements = false|

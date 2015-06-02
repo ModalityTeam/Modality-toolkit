@@ -9,7 +9,7 @@ MKtl works as follows:
 *  make MKtlElement from MKtlDesc.elementsDesc in multiple flavors:
 - elements      * hierarchical, = MKtlElementGroup
 - elementsDict  * flat for fast lookup by element key
-- elementsArray * by pairs, needed somewhere?
+// - elementsArray * by pairs, needed somewhere?
 
 * makeDevice
 - if matching hardware is present, make mktlDevice, and open it
@@ -33,7 +33,7 @@ MKtl { // abstract class
 
 	var <elements;			// all elements in ElementGroup in hierarchical order
 	var <elementsDict; 		// all elements in a single flat dict for fast lookup
-	var <elementsArray;		// all elements in a flat array for ordered iteration
+//	var <elementsArray;		// all elements in a flat array for ordered iteration
 
 	var <collectivesDict; 	// has the collectives (combined elements and groups)
 							// from the device description
@@ -214,9 +214,6 @@ MKtl { // abstract class
 		this.openDevice;
 	}
 
-		// temp redirect for other classes, unused already
-//	deviceDescriptionArray { ^desc.elementsDesc }
-
 	initialisationMessages {
 		if ( desc.isNil or: { desc.fullDesc.isNil }) { ^nil };
 		^desc.fullDesc[\initialisationMessages];
@@ -234,7 +231,7 @@ MKtl { // abstract class
 	*/
 
 	makeElements {
-		elementsArray = [];
+//		elementsArray = [];
 		elementsDict = ();
 
 		// array of dicts of arrays
@@ -243,7 +240,7 @@ MKtl { // abstract class
 				var deepName = deepKeys.join($_).asSymbol;
 				var element = MKtlElement(deepName, desc, this);
 
-				elementsArray = elementsArray ++ [deepName, desc];
+//				elementsArray = elementsArray ++ [deepName, desc];
 				elementsDict.put(deepName, element);
 				element; },
 			isLeaf: MKtlDesc.isElementTestFunc
@@ -286,7 +283,8 @@ MKtl { // abstract class
  	}
 
 	collectiveDescriptionFor { |elname|
-		^desc.fullDesc[ \collectives ] !? { |x| desc.fullDesc[ \collectives ][ elname ]; };
+		^desc.fullDesc[ \collectives ] !?
+		{ |x| desc.fullDesc[ \collectives ][ elname ]; };
 	}
 
 	// already filtered for my platform only

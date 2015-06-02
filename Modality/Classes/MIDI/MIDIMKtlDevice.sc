@@ -380,7 +380,7 @@ MIDIMKtlDevice : MKtlDevice {
 		};
 
 		// this could be an array in desc already!
-		if (msgType == \noteOnOff) { msgType =[\noteOn, \noteOff] };
+		if (msgType == \noteOnOff) { msgType = [\noteOn, \noteOff] };
 		hashKeys = msgType.asArray.collect { |type|
 			MIDIMKtlDevice.makeMsgKey(type, elemDesc[\midiChan], elemDesc[\midiNum]);
 		};
@@ -400,9 +400,9 @@ MIDIMKtlDevice : MKtlDevice {
 		}
 	}
 
-	// not used, likely gone?
-	*ccKeyToChanCtl { |ccKey| ^ccKey.asString.drop(2).split($_).asInteger }
-	*noteKeyToChanNote { |noteKey| ^noteKey.asString.drop(2).split($_).asInteger }
+	// // not used, likely gone?
+	// *ccKeyToChanCtl { |ccKey| ^ccKey.asString.drop(2).split($_).asInteger }
+	// *noteKeyToChanNote { |noteKey| ^noteKey.asString.drop(2).split($_).asInteger }
 
 	// was 'plumbing'
 	prepareLookupDicts {
@@ -522,7 +522,7 @@ MIDIMKtlDevice : MKtlDevice {
 				\control, "ccNum: %, ",
 				\noteOn, "vel: %, ",
 				\noteOff, "vel: %, ",
-				\polyTouch, "touchNum: %, ")
+				\polyTouch, "touchVal: %, ")
 			.format(num)
 		} { "" };
 
@@ -573,7 +573,7 @@ MIDIMKtlDevice : MKtlDevice {
 
 				\allNotesOff, { this.makeChanMsgMIDIFunc(msgType, srcUid) }
 
-				// sysrt message support here
+				// sysrt and sysex message support here
 			);
 		};
 	}
