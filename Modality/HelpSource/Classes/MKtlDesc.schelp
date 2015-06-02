@@ -1,13 +1,12 @@
 TITLE:: MKtlDesc
-summary:: objects to store descriptions of MKtls
+summary:: handling descriptions of interface devices in Modality
 categories:: Overviews/Modality
-related:: Classes/MKtl, Classes/MKtlElement
+related:: Classes/MKtl, Classes/MKtlElement, Classes/MKtlElementGroup
 
 
 
 DESCRIPTION::
-MKtlDesc can read files from its folders,
-and convert them into MKtlDesc objects.
+MKtlDesc can read description files for hardware interface devices from its folder or other folders. It converts them into MKtlDesc objects, which contain general information about the device, and detailed information about all of its interface elements (such as sliders, buttons, joysticks, etc etc). MKtlDescs are used to create MKtls and its elements.
 
 code::
 MKtlDesc.folderName;
@@ -17,34 +16,35 @@ MKtlDesc.descFolders;
 MKtlDesc.openFolder(0);
 MKtlDesc.openFolder(1);
 
+// load all description files
 MKtlDesc.loadDescs;
-MKtlDesc.loadDescs("nano*");
+// or matching ones in specific places
+MKtlDesc.loadDescs("*nano*");
 MKtlDesc.loadDescs("nano*", folderIndex: 0);
 
+MKtlDesc.allDescs;
 MKtlDesc.allDescs.choose.dump;
+MKtlDesc.at('korg-nanokey2');
+MKtlDesc('korg-nanokey2').web;
+MKtlDesc.web;
 
 // filename, no extension
-MKtlDesc.findFile("nano*");
-MKtlDesc.findFile("nanoKEY2");
-MKtlDesc.makeShortName("nanoKEY2");
+MKtlDesc.findFile("*nano*");
 
-x = MKtlDesc.fromFile("nanoKEY2");
-MKtlDesc.allDescs;
-MKtlDesc.at('nnky2');
+x = MKtlDesc.fromFileName("korg-nanopad2");
 x.openFile;
-
-x.descDict.keys;
+x.fullDesc.keys;
 x.protocol
-x.device
-x.desc
-x.desc.keys
-x.desc.at(\mod);
-x.desc.at(\keyOff);
+x.idInfo
+x.fullDesc
+x.fullDesc.keys
+x.elementsDesc.key;[\padOn];
+x.elementsDesc.at(\padOff);
 
-x.postInfo(elements: false)
-x.postElementInfo
+x.postInfo
+x.postInfo(postElements: true)
 
-MKtlDesc.findDict('nnky2');
+MKtlDesc.findFile("korg-nanopad2");
 MKtlDesc.findDict("nanoKEY2");
 MKtlDesc.findDict((description: ()));
 
@@ -56,7 +56,7 @@ CLASSMETHODS::
 PRIVATE:: initClass
 
 METHOD:: defaultFolder
-the path where the folder for MKtlDesc files live.
+the path where the folder for MKtlDesc files lives.
 
 METHOD:: folderName
 the filename of the defaultFolder.
@@ -71,18 +71,17 @@ METHOD:: openFolder
 open folder(s) in descFolders by index.
 
 METHOD:: new
-create an MKtlDesc from a well-formed description dictionary.
-argument:: desc
+create an MKtlDesc with a name, from a well-formed description file.
 
 METHOD:: at
 access an MKtlDesc by name in the global repository
 
-METHOD:: fromFile
+METHOD:: fromFileName
 create an MKtlDesc from a file.
 ARGUMENT:: filename
 filename without path or extension, will be looked for in descfolders.
 
-METHOD:: fromDict
+METHOD:: findDict
 create an MKtlDesc from a well-formed description dict.
 
 METHOD:: loadDescs
@@ -95,9 +94,6 @@ all currently loaded descs
 METHOD:: isValidDescDict
 check whether dict is a valid description dict.
 
-METHOD:: makeShortName
-convert any string to a short name
-
 METHOD:: findDict
 find or create a dict from a symbol (lookup),
 a string (load file) or a dict (remains itself).
@@ -106,7 +102,7 @@ METHOD:: findFile
 
 INSTANCEMETHODS::
 
-METHOD:: descDict
+METHOD:: fullDesc
 get MKtlDesc's properties, or set them from a dict
 
 METHOD:: path
