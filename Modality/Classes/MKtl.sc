@@ -441,7 +441,10 @@ MKtl { // abstract class
 	 	mktlDevice = MKtlDevice.open( this.name, parentMKtl: this );
 	}
 
-	isVirtual { ^mktlDevice.isNil }
+	hasDevice {
+		^(mktlDevice.notNil
+			and: { mktlDevice.source.notNil })
+	}
 
 	trace { |value=true|
 		if (this.isVirtual.not){ mktlDevice.trace( value ) };
@@ -451,6 +454,11 @@ MKtl { // abstract class
 	closeDevice {
 		if ( mktlDevice.isNil ){ ^this };
 		mktlDevice.closeDevice;
+	}
+
+	specialMessageNames { ^desc.specialMessageNames }
+	sendSpecialMessage { |name|
+		^mktlDevice.sendSpecialMessage(name);
 	}
 
 	send { |key, val|

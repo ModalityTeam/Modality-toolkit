@@ -558,30 +558,32 @@ MIDIMKtlDevice : MKtlDevice {
 		midiKeyToElemDict = nil;
 	}
 
+	// input
 	makeRespFuncs { |srcUid|
 		responders = ();
 		global = ();
 
 		msgTypes.do { |msgType|
 			switch(msgType,
-				\cc, { this.makeChanNumMsgMIDIFunc(msgType, srcUid) },
-				\control, { this.makeChanNumMsgMIDIFunc(msgType, srcUid) },
-				\noteOn, { this.makeChanNumMsgMIDIFunc(msgType, srcUid) },
-				\noteOff, { this.makeChanNumMsgMIDIFunc(msgType, srcUid) },
-				\noteOnOff, { this.makeChanNumMsgMIDIFunc(msgType, srcUid) },
-				\polyTouch, { this.makeChanNumMsgMIDIFunc(msgType, srcUid) },
+				\cc,          { this.makeChanNumMsgMIDIFunc(msgType, srcUid) },
+				\control,     { this.makeChanNumMsgMIDIFunc(msgType, srcUid) },
+				\noteOn,      { this.makeChanNumMsgMIDIFunc(msgType, srcUid) },
+				\noteOff,     { this.makeChanNumMsgMIDIFunc(msgType, srcUid) },
+				\noteOnOff,   { this.makeChanNumMsgMIDIFunc(msgType, srcUid) },
+				\polyTouch,   { this.makeChanNumMsgMIDIFunc(msgType, srcUid) },
 
-				\bend, { this.makeChanMsgMIDIFunc(msgType, srcUid) },
-				\touch, { this.makeChanMsgMIDIFunc(msgType, srcUid) },
-				\program, { this.makeChanMsgMIDIFunc(msgType, srcUid) },
+				\bend,        { this.makeChanMsgMIDIFunc   (msgType, srcUid) },
+				\touch,       { this.makeChanMsgMIDIFunc   (msgType, srcUid) },
+				\program,     { this.makeChanMsgMIDIFunc   (msgType, srcUid) },
 
-				\allNotesOff, { this.makeChanMsgMIDIFunc(msgType, srcUid) }
+				\allNotesOff, { this.makeChanMsgMIDIFunc   (msgType, srcUid) }
 
 				// sysrt and sysex message support here
 			);
 		};
 	}
 
+	// output
 	send { |key, val|
 		var elem, elemDesc, msgType, chan, num;
 
@@ -616,39 +618,52 @@ MIDIMKtlDevice : MKtlDevice {
 		//  send msg here
 		// }
 
-		switch(msgType)
-		{ \cc } { midiOut.control(chan, num, val ) }
-		{ \control } { midiOut.control(chan, num, val ) }
-		{ \noteOn } { midiOut.noteOn(chan, num, val ) }
-		{ \noteOff } { midiOut.noteOff(chan, num, val ) }
-		{ \touch } { midiOut.touch(chan, val ) }
-		{ \polyTouch } { midiOut.polyTouch(chan, num, val ) }
-		{ \bend } { midiOut.bend(chan, val) }
+		switch(msgType,
+			\cc,  { midiOut.control(chan, num, val ) },
+			\control,  { midiOut.control(chan, num, val ) },
+			\noteOn, { midiOut.noteOn(chan, num, val ) },
+			\noteOff, { midiOut.noteOff(chan, num, val ) },
+			\touch, { midiOut.touch(chan, val ) },
+			\polyTouch, { midiOut.polyTouch(chan, num, val ) },
+			\bend, { midiOut.bend(chan, val) },
 
-		// tested already?
-		{\allNotesOff}{ midiOut.allNotesOff(chan) }
-		{\midiClock}{ midiOut.midiClock }
-		{\start}{ midiOut.start }
-		{\stop}{ midiOut.stop }
-		{\continue}{ midiOut.continue }
-		{\reset}{ midiOut.reset }
+			// tested already?
+			\allNotesOff, { midiOut.allNotesOff(chan) },
+			\midiClock, { midiOut.midiClock },
+			\start, { midiOut.start },
+			\stop, { midiOut.stop },
+			\continue, { midiOut.continue },
+			\reset, { midiOut.reset },
 
-		// working ?
-		// {\songSelect}{ midiOut.songPtr( song ) } // this one has a really different format
-		// {\songPtr}{ midiOut.songPtr( songPtr ) } // this one has a really different format
-		// {\smpte}{ midiOut.smpte } // this one has a really different format
+			// working ?
+			// these have a really different format
+			// \songSelect, { midiOut.songPtr( song ) },
+			// \songPtr, { midiOut.songPtr( songPtr ) },
+			// \smpte, { midiOut.smpte }
 
-		// to do - fix in descs maybe
- 		//	{ \note } { x.postln /*TODO: check type for noteOn, noteOff, etc*/ }
-		// { \noteOnOff } { midiOut.noteOn(chan, num, val ) }
-		{ warn("MIDIMKtlDevice: message type % not recognised".format(msgType)) };
-		// };
+			{
+				warn("MIDIMKtlDevice: message type % not recognised"
+				.format(msgType))
+			}
+		)
 
 	}
 
-	sendInitialisationMessages {
-		mktl.initialisationMessages.do { |it|
-			midiOut.performList( it[0], it.copyToEnd(1) );
+	// desc file might have a \specialMessages section
+	sendSpecialMessage { |name|
+		var msg = mktl.desc.specialMessage(name);
+
+		if (msg.notNil and: { midiOut.notNil } ) {
+			msg.do { |m| midiOut.performList( m[0], m[1..] ); }
+		} {
+			"%: could not send specialMessage %.\n".postf(this, name);
 		}
 	}
+
+
+	// sendInitialisationMessages {
+	// 	mktl.initialisationMessages.do { |it|
+	// 		midiOut.performList( it[0], it.copyToEnd(1) );
+	// 	}
+	// }
 }
