@@ -1,6 +1,16 @@
 (
 idInfo: "UC-33 USB MIDI Controller",
 protocol: \midi,
+deviceInfo: (
+	// vendorURI: "",
+	// manualURI: "",
+	// description: "",
+	// features: (),
+	// notes: ""
+	type: [\slider, \knob, \button],
+	hasScribble: false
+),
+
 // preset 3
 description: (
 	sl: #[105, 106, 107, 108, 110, 111, 112, 116, 26].collect {|num, i|

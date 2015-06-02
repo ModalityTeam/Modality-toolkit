@@ -3,6 +3,14 @@
 (
 idInfo: "nanoKONTROL2",
 protocol: \midi,
+deviceInfo: (
+	vendorURI: "http://www.korg.com/us/products/controllers/nanokontrol2/",
+	// manualURI: "",
+	// description: "",
+	// features: [],
+	// notes: "",
+	type: [\fader, \knob, \button],
+),
 description: [
 	\rew -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 43, \spec: \midiBut, \mode: \push, \ioType: \inout, \style: (row: 3, showLabel: true) ),
 	\fwd -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 44, \spec: \midiBut, \mode: \push, \ioType: \inout, \style: (row: 3, showLabel: true)),
@@ -36,7 +44,8 @@ description: [
 // found at: https://github.com/overtone/overtone/blob/master/src/overtone/device/midi/nanoKONTROL2.clj
 // see https://github.com/ModalityTeam/Modality-toolkit/issues/112
 
-initialisationMessages:
+specialMessages: (
+	makeButtonLEDsWriteable:
 [
 	[ \sysex, Int8Array[ 0xF0, 0x7E, 0x7F, 0x06, 0x01, 0xF7 ] ],
 	[ \sysex, Int8Array[ 0xF0, 0x42, 0x40, 0x00, 0x01, 0x13, 0x00, 0x1F, 0x12, 0x00, 0xF7] ],
@@ -72,5 +81,6 @@ initialisationMessages:
 	[ \sysex, Int8Array[ 0xF0, 0x7E, 0x7F, 0x06, 0x01, 0xF7 ] ],
 	[ \sysex, Int8Array[ 0xF0, 0x42, 0x40, 0x00, 0x01, 0x13, 0x00, 0x1F, 0x11, 0x00, 0xF7 ] ]
 ];
+)
 
 )

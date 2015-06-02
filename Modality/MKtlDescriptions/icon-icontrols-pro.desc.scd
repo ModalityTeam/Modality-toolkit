@@ -3,6 +3,15 @@
 (
 idInfo: "iCON iControls_Pro V1.02",
 protocol: \midi,
+deviceInfo: (
+	// vendorURI: "",
+	// manualURI: "",
+	// description: "",
+	// features: [],
+	// notes: "",
+	type: [\fader, \button],
+	// hasScribble: false
+),
 description: [
 
 	\bt -> [

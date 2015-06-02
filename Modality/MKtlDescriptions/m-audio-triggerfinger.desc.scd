@@ -3,6 +3,15 @@
 (
 idInfo: "USB Trigger Finger",
 protocol: \midi,
+deviceInfo: (
+	// vendorURI: "",
+	// manualURI: "",
+	// description: "",
+	features: [\pad, \slider, \knob],
+	// notes: "",
+	type: [\pad, \button, \slider],
+	// hasScribble: false
+),
 description: (
 	pad: ((0..15)+35).collect{ |num|
 		( type: \pad, spec: \midiVel, \midiMsgType: \note, \midiChan: 0, \midiNum: num)

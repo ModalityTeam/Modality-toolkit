@@ -1,10 +1,16 @@
 (
-var dict = (device: "Traktor Kontrol Z2 Input",
-protocol: 'midi');
-
-dict.put('description', (
-
-
+idInfo: "Traktor Kontrol Z2 Input",
+protocol: 'midi',
+deviceInfo: (
+	vendorURI: "http://www.native-instruments.com/en/products/traktor/dj-mixer/traktor-kontrol-z2/",
+	// manualURI: "",
+	// description: "",
+	// features: [],
+	// notes: "",
+	type: [\mixer],
+	// hasScribble: false
+),
+description: (
 // ------ cc NORMAL ------
 	\btFlux: [11, 52].collect{|i|('midiMsgType': 'cc', 'type': 'pad', 'midiChan': 3, 'midiNum':  i,\spec: \midiBut, \mode: \push, \ioType: \inout)},
 	\btOn: [2, 42].collect{|i|('midiMsgType': 'cc', 'type': 'pad', 'midiChan': 3, 'midiNum':  i,\spec: \midiBut, \mode: \push, \ioType: \inout)},
@@ -47,6 +53,5 @@ dict.put('description', (
 	\knRRS: [92, 93, 95].collect{|i|('midiMsgType': 'cc', 'type': 'knob', 'midiChan': 3, 'midiNum':  i,'spec': 'midiCC')},
 	\knRS: (65..69).collect{|i|('midiMsgType': 'cc', 'type': 'knob', 'midiChan': 3, 'midiNum':  i,'spec': 'midiCC')},
 	\knLS: (84..88).collect{|i|('midiMsgType': 'cc', 'type': 'knob', 'midiChan': 3, 'midiNum':  i,'spec': 'midiCC')},
- );
  );
 )

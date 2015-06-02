@@ -1,6 +1,15 @@
 (
 idInfo: "Logitech Extreme 3D_Logitech",
 protocol: 'hid',
+deviceInfo: (
+	vendorURI: "http://gaming.logitech.com/en-us/product/extreme-3d-pro-joystick",
+	manualURI: "http://support.logitech.com/product/extreme-3d-pro",
+	description: "",
+	// features: [],
+	// notes: "",
+	type: [\joystick],
+	hasScribble: true
+),
 description: (
 
 	// --------- input elements ----------

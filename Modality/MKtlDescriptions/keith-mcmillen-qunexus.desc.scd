@@ -16,6 +16,20 @@ see Tests/QuNexus.scd
 (
 idInfo: "QuNexus",
 protocol: \midi,
+deviceInfo: (
+	vendorURI: "http://www.keithmcmillen.com/products/qunexus/",
+	manualURI: "http://www.keithmcmillen.com/downloads#qunexus",
+	// description: "",
+	features: [
+		"25 LED backlit keys with pressure and tilt sensitivity",
+		"Pitch bend pad",
+		"Octave up/down buttons",
+		"5 function buttons",
+	],
+	// notes: "",
+	type: [\button, \keyboard],
+	// hasScribble: false
+),
 description: (
 
 	// Preset A mode has these:

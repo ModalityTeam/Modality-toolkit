@@ -3,6 +3,17 @@
 (
 idInfo: "LPD8",
 protocol: \midi,
+deviceInfo: (
+	vendorURI: "http://www.akaipro.com/product/lpd8",
+	// manualURI: "",
+	// description: "",
+	features: [
+		"8 pads",
+		"4 knobs"
+	],
+	// notes: "",
+	type: [\pad, \knob],
+),
 description: (
 	\kn: Event.newFrom( (1..8).collect{ |midiNum, i|
 		[ i+1, (\midiMsgType: \cc, \type: \knob, \midiChan: 0, \midiNum: midiNum, \spec: \midiCC, \ioType: \inout ) ]

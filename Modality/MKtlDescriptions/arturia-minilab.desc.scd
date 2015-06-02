@@ -17,7 +17,19 @@ k.elements[\kn][0][2].action = { |el| Ndef(\test).setUni(\reso, el.value.postln)
 (
 idInfo: "Arturia MINILAB",
 protocol: \midi,
-infoMessage: "\n\tArturia minilab, made for absolute knob mode for now.\n",
+deviceInfo: (
+	vendorURI: "http://www.arturia.com/products/hybrid-synths/minilab/overview",
+	manualURI: "http://downloads.arturia.com/products/minilab/manual/MiniLab_Manual_EN.pdf",
+	// description: "",
+	features: [
+		"8x8 clip matrix with tri-color lighting",
+		"9 assignable faders",
+		"buttons and directional arrows",
+	],
+	notes: "Desc file only for absolute knob mode.",
+	type: [\keyboard, \encoder, \button],
+	// hasScribble: false
+),
 description: (
 // ------ noteOn -------------
 	keyOn: (36..72).collect { |i|

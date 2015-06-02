@@ -1,6 +1,14 @@
 (
 idInfo:"Steinberg CMC-FD",
 protocol: \midi,
+deviceInfo: (
+	// vendorURI: "http://www.steinberg.net/en/products/controllers/cmc_series/models/cmc_qc.html",
+	// manualURI: "",
+	// description: "",
+	// features: [],
+	// notes: "",
+	type: [\encoder, \button],
+),
 description:
 (
 

@@ -61,10 +61,22 @@ specs: (
 	mantaSlider: [ 0, 4095 ].asSpec, // slider sends values between 0 and 4095, releasing the slider sends 65536
 	mantaLed: ItemsSpec.new( ["off","amber","red"] ), // led can be off, amber or red
 ),
-infoURL: "https://github.com/ssfrr/libmanta",
-infoMessage: "Please start the MantaOSC program, if it is not already started",
 idInfo: ( srcPort: 31417, ipAddress: "127.0.0.1", recvPort: 31416 ), // sends/receives on the same port, so we do not need to define destPort separately
 protocol: \osc,
+deviceInfo: (
+	vendorURI: "http://www.snyderphonics.com/products.htm",
+	manualURI: "http://www.snyderphonics.com/documentation.htm",
+	// description: "",
+	features: [
+		"48 touch sensors in a 6 X 8 hexagonal array - each sensor can independently send both continuous control data and note-on/off events with velocity sensitivity simultaneously",
+		"2 assignable touch sliders",
+		"4 assignable touch-sensing function buttons with LED feedback",
+		"68 user-controllable LEDs",
+	],
+	notes: "This device relies on mantaOSC which is part of [libmantassfr’s libmanta implementation](https://github.com/ssfrr/libmanta).",
+	type: [\pad, \slider],
+	hasScribble: true
+),
 description: (
 	pad: (0..47).collect{ |id|
 		(

@@ -4,6 +4,21 @@
 (
 idInfo: "Launch Control XL",
 protocol: \midi,
+deviceInfo: (
+	// vendorURI: "http://global.novationmusic.com/launch/launch-control-xl",
+	// manualURI: "http://global.novationmusic.com/support/product-downloads?product=Launch+Control+XL",
+	description: "A faderbox emulating the interface of a mixing desk",
+	features: [
+		"24 rotary pots, each with 300 degree motion and 2-colour LED",
+		"8 Faders (60mm)",
+		"16 multi-colour backlit buttons",
+		"8 backlit buttons",
+		"8 “user”-pages + 8 “factory”-pages",
+	],
+	// notes: "",
+	type: [\mixer],
+	// hasScribble: false
+),
 description:
 [
 

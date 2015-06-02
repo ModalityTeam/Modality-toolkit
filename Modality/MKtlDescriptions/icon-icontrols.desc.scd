@@ -4,6 +4,15 @@
 (
 idInfo: "iCON iControls V2.00",
 protocol: \midi,
+deviceInfo: (
+	vendorURI: "http://www.icon-global.com/Controllers_MIDI+recording+controllers_iControls+.htm",
+	manualURI: "http://www.icon-global.com/download%5Cuser%20manual%5CIC%20PD3V1.00-E.zip",
+	// description: "",
+	// features: [],
+	// notes: "",
+	type: [\fader],
+	// hasScribble: false
+),
 description:(
 
 	\bt: [

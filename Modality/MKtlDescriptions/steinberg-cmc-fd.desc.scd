@@ -4,8 +4,15 @@ todo
 (
 idInfo:"Steinberg CMC-FD",
 protocol: \midi,
-description:
-(
+deviceInfo: (
+	vendorURI: "http://www.steinberg.net/en/products/controllers/cmc_series/models/cmc_fd.html",
+	// manualURI: "",
+	// description: "",
+	// features: [],
+	// notes: "",
+	type: [\fader, \button],
+),
+description: (
 
 // ------ noteOnOff -------------
 

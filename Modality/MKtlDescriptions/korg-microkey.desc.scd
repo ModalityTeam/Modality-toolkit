@@ -1,6 +1,17 @@
 (
 idInfo: "microKEY",
 protocol: 'midi',
+deviceInfo: (
+	vendorURI: "http://www.korg.com/us/products/controllers/microkey/",
+	// manualURI: "",
+	// description: "",
+	features: [
+		"Velocity-sensitive mini-keyboard",
+		"three models: 25-key / 37-key / 61-key"
+	],
+	// notes: "",
+	type: [\keyboard],
+),
 description: (
 
 // ------ noteOn -------------

@@ -54,6 +54,9 @@ For OSC this needs to be a dictionary with information on the ipAdresses and por
 ## description [required]
 || A dictionary describing the controls on the device. These controls are called elements within the Modality toolkit.
 
+## deviceInfo [optional]
+|| A dictionary giving additional information on the device.
+
 ## collectives [optional]
 || Specific groups that are needed to send or receive data from the device. In particular these can be used for OSC devices.
 
@@ -66,18 +69,10 @@ For OSC this needs to be a dictionary with information on the ipAdresses and por
 ## specs [optional]
 || A dictionary with serialized specs like code::(\key: [0, 144, \lin])::. These overwrite existing definition locally for this description only.
 
-## initialisationMessages [optional]
-|| Optional messages that need to be sent to the device when it is opened to ensure that it works correctly for all the features in the spec.
-
-## infoMessage [optional]
-|| A message to be displayed when the MKtl is created. This can be used to ask the user to switch to a certain physical preset of the device.
-## infoURL: [optional]
-|| a URL where more information about the physical device can be found, e.g. the product page at the vendor's website.
-
 ::
 
 
-subsection:: Within the description of the elements:
+subsection:: In the description of an element
 
 A control element is a part of a controller that does one or more of the following things
 
@@ -126,6 +121,45 @@ code::
 	\mover:   [1, 4096, \exp]
 )
 ::
+
+subsection:: deviceInfo
+
+The deviceInfo is of the following form. All entries are optional.
+
+code::
+(
+...
+deviceInfo: (
+    vendorURI: "http://vendor/product",
+    manualURI: "http://manual.pdf",
+    description: "Short sentence on what a great controller this is.",
+    features: [
+        "23 colorblinding pads",
+        "42 invisible sliders",
+    ],
+    notes: "Make sure the device is in total-recall mode!",
+    type: [\pad, \slider],
+    hasScribble: false // see e.g. ableton push for a device that has one
+),
+description: ...
+)
+::
+
+Examples for code::type:: are
+
+list::
+## code::pad::
+## code::knob::
+## code::encoder::
+## code::mixer::
+## code::fader::
+## code::gamepad::
+## code::joystick::
+## code::pointer::
+## code::keyboard::
+::
+
+Note that they are always written in singular.
 
 section:: Identifier naming convention
 

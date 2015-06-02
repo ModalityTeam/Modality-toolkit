@@ -375,6 +375,17 @@ MKtlDesc {
 	elementsDesc { ^fullDesc[\description] }
 	elementsDesc_ { |type| ^fullDesc[\description] = type }
 
+	specialMessage {|name|
+		if ( fullDesc[\specialMessages].notNil) {
+			^fullDesc[\specialMessages][name]
+		}
+	}
+	specialMessageNames {
+		if ( fullDesc[\specialMessages].notNil) {
+			^fullDesc[\specialMessages].keys
+		}
+	}
+
 	deviceFilename {
 		^path !? { path.basename.drop(descExt.size.neg) }
 	}

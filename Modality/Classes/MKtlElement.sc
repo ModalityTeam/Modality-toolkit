@@ -50,12 +50,14 @@ MAbstractElement {
 		};
 	}
 
+	hasOut { ^[\out, \inout].includes( this.elementDescription[\ioType] ) }
+
 	trySend {
-		if( [\out, \inout].includes( this.elemDesc.ioType ) ) {
-			if (source.notNil) {
-				source.send(name, deviceValue);
-				^true
-			}
+		if (this.hasOut
+			and: { source.notNil
+				and: { source.hasDevice }}) {
+			source.send(name, deviceValue);
+			^true
 		};
 		^false
 	}

@@ -1,6 +1,18 @@
 (
 idInfo: "The Ribbon",
 protocol: \midi,
+deviceInfo: (
+	vendorURI: "http://www.eowave.com/instruments.php?prod=78",
+	manualURI: "http://www.eowave.com/downloads/pdf/EowaveRibbon_manual.pdf",
+	// description: "",
+	features: [
+		"pressure and postition sensitive ribbon",
+		"capacitive sensing touch field",
+	],
+	// notes: "",
+	type: [\ribbon, \pad],
+	// hasScribble: false
+),
 description: (
 	// ribbon
 	// [ noteOn, val, 127, num, 78, chan, 0, src, -1477523613 ]

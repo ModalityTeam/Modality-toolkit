@@ -17,6 +17,15 @@ sl[row][column]
 (
 idInfo: "BCF2000",
 protocol: \midi,
+deviceInfo: (
+	vendorURI: "http://www.behringer.com/EN/Products/BCR2000.aspx",
+	manualURI: "http://www.behringer.com/assets/BCF2000_BCR2000_M_EN.pdf",
+	// description: "",
+	// features: [],
+	// notes: "",
+	type: [\fader, \rotary],
+	hasScribble: true
+),
 description: (
 	//buttons at bottom right
 	\pr_u_l: (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 89, \spec: \midiBut, \mode: \toggle, \ioType: \inout),

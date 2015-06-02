@@ -7,6 +7,14 @@
 (
 idInfo:"Steinberg CMC-PD",
 protocol: \midi,
+deviceInfo: (
+	vendorURI: "http://www.steinberg.net/en/products/controllers/cmc_series/models/cmc_pd.html",
+	// manualURI: "",
+	// description: "",
+	// features: "",
+	// notes: "",
+	type: [\pad, \button]
+),
 description:
 
 (

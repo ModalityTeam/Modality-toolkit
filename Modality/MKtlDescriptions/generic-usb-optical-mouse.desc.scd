@@ -1,6 +1,18 @@
 (
 idInfo: "USB Optical Mouse_",
 protocol: 'hid',
+deviceInfo: (
+	// vendorURI: "",
+	// manualURI: "",
+	// description: "Interface to a generic optical mouse",
+	features: [
+		"3 buttons",
+		"scroll wheel"
+	],
+	// notes: "",
+	// type: [\pointer],
+	// hasScribble: false
+),
 description: (
 // --------- input elements ----------
 	bt: (
