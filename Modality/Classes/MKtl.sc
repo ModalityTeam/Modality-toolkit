@@ -324,7 +324,7 @@ MKtl { // abstract class
 			^this.at(elName).deviceValue_(val);
 		};
 		[elName, val].flop.do { |pair|
-			elementsDict[pair[0].postcs].deviceValue_(pair[1].postcs)
+			elementsDict[pair[0]].deviceValue_(pair[1])
 		};
 	}
 
@@ -333,7 +333,7 @@ MKtl { // abstract class
 			^this.at(elName).value_(val);
 		};
 		[elName, val].flop.do { |pair|
-			elementsDict[pair[0].postcs].value_(pair[1].postcs)
+			elementsDict[pair[0]].value_(pair[1])
 		};
 	}
 
@@ -427,8 +427,10 @@ MKtl { // abstract class
 	openDevice { |lookAgain=true|
 		var protocol;
 		if ( this.mktlDevice.notNil ) {
-			"WARNING: Already a device opened for %.\n"
-			"Please close it first with %.closeDevice;\n".postf(this, this);
+			"Already a device opened for %.\n"
+			"Please close it first with %.closeDevice;\n"
+			.format(this, this).warn;
+
 			^this;
 		};
 
@@ -459,7 +461,9 @@ MKtl { // abstract class
 		// observe mktlDevice to create a description file
 	explore { |mode=true|
 		if ( mktlDevice.isNil ){
-			"MKtl(%) has no open device, nothing to explore\n".postf( name );
+			"MKtl(%) has no open device, nothing to explore\n"
+			.format( name ).inform;
+
 			^this
 		};
 		mktlDevice.explore( mode );
@@ -472,7 +476,9 @@ MKtl { // abstract class
 
 	createDescriptionFile {
 		if ( mktlDevice.isNil ){
-			"MKtl(%) has no open device, cannot create description file\n".postf( name );
+			"MKtl(%) has no open device, cannot create description file\n"
+			.format( name ).inform;
+
 			^this
 		};
 		mktlDevice.createDescriptionFile;

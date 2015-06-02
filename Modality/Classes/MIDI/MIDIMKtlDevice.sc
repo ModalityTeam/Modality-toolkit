@@ -178,13 +178,13 @@ MIDIMKtlDevice : MKtlDevice {
 		var found = List.new;
 		var foundItem;
 		index = index ? 0;
-		[dict,name,index].postln;
+		// [dict,name,index].postln;
 		dict.keysValuesDo{ |key,endpoint|
 			if ( endpoint.device == name ){ found.add( endpoint ) };
 		};
 		foundItem = found.sort( { |a,b| a.name < b.name } ).at( index );
 		// returns the MIDI endpoint;
-		foundItem.postln;
+		// foundItem.postln;
 		^foundItem;
 	}
 
@@ -195,11 +195,11 @@ MIDIMKtlDevice : MKtlDevice {
 		var foundSource, foundDestination;
 		var deviceName, destUID;
 
-		idInfo.postln;
+		// idInfo.postln;
 
 		this.initDevices;
 
-		[ name, idInfo, parentMKtl, initialized ].postln;
+		"MIDIMKtlDevice:\n\t% % % %".format( name, idInfo, parentMKtl, initialized ).inform;
 
 		if ( idInfo.notNil ){ // use idInfo to open:
 			if ( initialized.not ){ ^nil };
@@ -213,9 +213,10 @@ MIDIMKtlDevice : MKtlDevice {
 		};
 
 		if (foundDestination.isNil) {
-			warn("MIDIMKtlDevice:"
+			warn("MIDIMKtlDevice:\n"
 				"	No MIDIOut destination with USB port ID % exists!"
-				"please check again.".format(destUID));
+				.format(destUID)
+			);
 		};
 
 		// if ( foundSource.isNil and: foundDestination.isNil ){
@@ -298,15 +299,17 @@ MIDIMKtlDevice : MKtlDevice {
 
 	explore { |mode=true|
 		if ( mode ){
-			"Using MIDIExplorer. (see its Helpfile for Details)".postln;
-			"".postln;
-			"MIDIExplorer started. Wiggle all elements of your controller then".postln;
-			"\tMKtl(%).explore(false);\n".postf( name );
-			"\tMKtl(%).createDescriptionFile;\n".postf( name );
+			"Using MIDIExplorer. (see its Helpfile for Details)\n"
+			"\n"
+			"MIDIExplorer started. Wiggle all elements of your controller then\n"
+			"\tMKtl(%).explore(false);\n"
+			"\tMKtl(%).createDescriptionFile;\n"
+			.format(name, name).inform;
+
 			MIDIExplorer.start(this.srcID);
 		} {
 			MIDIExplorer.stop(this.srcID);
-			"MIDIExplorer stopped.".postln;
+			"MIDIExplorer stopped.".inform;
 		}
 	}
 
@@ -317,12 +320,13 @@ MIDIMKtlDevice : MKtlDevice {
 	/// --------- EXPLORING -----)))))---------
 
 	initElements {
-		"initElements".postln;
+		// "initElements".postln;
 		if ( mktl.elementsDict.isNil or: {
 			mktl.elementsDict.isEmpty
 		}) {
-			warn("" + mktl + "has no elements:");
-			mktl.elementsDict.postcs;
+			warn(mktl + "has no elements:\n" +
+				mktl.elementsDict.asCompileString;
+			);
 			^this;
 		};
 		msgTypes = mktl.desc.fullDesc[\msgTypesUsed];
@@ -338,7 +342,7 @@ MIDIMKtlDevice : MKtlDevice {
 	initMIDIMKtl { |argName, argSource, argDestination|
 		// [argName, argSource, argDestination].postln;
 		name = argName;
-		"initMIDIMKtl".postln;
+		// "initMIDIMKtl".postln;
 		source = argSource;
 		source.notNil.if { srcID = source.uid };
 
@@ -437,7 +441,7 @@ MIDIMKtlDevice : MKtlDevice {
 	makeChanMsgMIDIFunc { |typeKey|
 
 		if (typeKey == \cc) { typeKey = \control };
-		"makeChanMsgMIDIFunc for % \n".postf(typeKey);
+		// "makeChanMsgMIDIFunc for % \n".postf(typeKey);
 
 		responders.put(typeKey,
 			MIDIFunc({ |value, chan, src|
@@ -472,15 +476,15 @@ MIDIMKtlDevice : MKtlDevice {
 	makeChanNumMsgMIDIFunc { |typeKey|
 
 		if (typeKey == \cc) { typeKey = \control };
-		"makeChanNumMsgMIDIFunc for % \n".postf(typeKey);
+		// "makeChanNumMsgMIDIFunc for % \n".postf(typeKey);
 
 		responders.put(typeKey,
 			MIDIFunc({ |value, num, chan, src|
 				var hash = MIDIMKtlDevice.makeMsgKey(typeKey, chan, num);
 				var el = midiKeyToElemDict[hash];
 
-				[midi: [value, num, chan, src]].postcs;
-				[hash: hash, el: el].postcs;
+				// [midi: [value, num, chan, src]].postcs;
+				// [hash: hash, el: el].postcs;
 
 				 // do global actions first
 				midiRawAction.value(typeKey, src, chan, num, value);
@@ -526,10 +530,10 @@ MIDIMKtlDevice : MKtlDevice {
 			.format(num)
 		} { "" };
 
-		"// % - % > % |\n"
-		"  // type: %, val: %, %midiChan: %, src: %"
+		"%: %: %\n"
+		"  type: %, %midiChan: %, src: %, val: %"
 		.format(mktl, elemName.cs, elemVal.asStringPrec(3),
-			msgType.cs, value, numStr, chan, src).postln;
+			msgType.cs, numStr, chan, src, value).postln;
 	}
 
 	// for the simpler chan based messages, collect chans,
@@ -578,15 +582,16 @@ MIDIMKtlDevice : MKtlDevice {
 		};
 	}
 
-	// only called by MKtl when there is a midiout,
-	// so we should not need to check again
-
 	send { |key, val|
 		var elem, elemDesc, msgType, chan, num;
+
+		// only called by MKtl when it has a midiout,
+		// so we do not check for a midiout here
+
 		elem = mktl.elementsDict[key];
 		if (elem.isNil) {
 			if (traceRunning) {
-				"MIDIMKtl send: no elem found for %\n".postf(key);
+				warn("MIDIMKtl send: no elem found for %\n".format(key));
 			};
 			^this
 		};
@@ -594,7 +599,7 @@ MIDIMKtlDevice : MKtlDevice {
 		elemDesc = elem.elementDescription;
 
 		if (traceRunning) {
-			"MIDIMKtl will send: ".post; elem.postcs;
+			inform("MIDIMKtl will send: " + elem.asCompileString);
 			^this
 		};
 
