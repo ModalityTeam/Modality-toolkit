@@ -207,34 +207,6 @@ MKtlDesc {
 		}
 	}
 
-	getMidiMsgTypes {
-		var msgTypesUsed = Set.new;
-		var type, missing = List[];
-
-		this.elementsDesc.traverseDo ({ |elem, deepKeys|
-			var elemKey = deepKeys.join($_).asSymbol;
-			var msgType;
-
-			elem.put(\elemKey, elemKey);
-			MKtlDesc.fillMidiDefaults(elem);
-			msgType = elem[\midiMsgType];
-
-			if (msgType.notNil) {
-				msgTypesUsed.add(msgType.unbubble);
-			} {
-			//	"missing: ".post;
-				missing.add(elemKey);
-			};
-			// [elemKey, elem].postln;
-		}, MKtlDesc.isElementTestFunc); "";
-
-		fullDesc.put(\msgTypesUsed, msgTypesUsed);
-		if (missing.notEmpty) {
-			fullDesc.put(\elementsWithMissingType, missing);
-		};
-	}
-
-
 	// creation methods
 	*fromFileName { |filename, folderIndex, multi = false|
 		var paths = this.findFile(filename, folderIndex, false);
@@ -414,6 +386,33 @@ MKtlDesc {
 	storeArgs { ^[name] }
 	printOn { |stream|
 		stream << this.class.name << ".at(%)".format(name.cs);
+	}
+
+	getMidiMsgTypes {
+		var msgTypesUsed = Set.new;
+		var type, missing = List[];
+
+		this.elementsDesc.traverseDo ({ |elem, deepKeys|
+			var elemKey = deepKeys.join($_).asSymbol;
+			var msgType;
+
+			elem.put(\elemKey, elemKey);
+			MKtlDesc.fillMidiDefaults(elem);
+			msgType = elem[\midiMsgType];
+
+			if (msgType.notNil) {
+				msgTypesUsed.add(msgType.unbubble);
+			} {
+			//	"missing: ".post;
+				missing.add(elemKey);
+			};
+			// [elemKey, elem].postln;
+		}, MKtlDesc.isElementTestFunc); "";
+
+		fullDesc.put(\msgTypesUsed, msgTypesUsed);
+		if (missing.notEmpty) {
+			fullDesc.put(\elementsWithMissingType, missing);
+		};
 	}
 
 	*fillMidiDefaults { |elemDict|
