@@ -4,97 +4,92 @@ categories:: Libraries>Modality
 related:: Overviews/Modality, Classes/MAbstractElement, Classes/MKtl
 
 DESCRIPTION::
-An element of an link::Classes/MKtl::.
+A named element within an link::Classes/MKtl::, which can typically represent a slider, a button, a joystick axis etc etc. It has a description with a deviceSpec (e.g. \midiNum for a midi faderbox slider), and a type (e.g. \slider). It also has a deviceValue (in the deviceSpec range), and a value (in range 0.0 - 1.0).
+It is mostly created automatically when an link::Classes/MKtl:: is made.
 
 
 CLASSMETHODS::
 
 METHOD:: types
-Available types.
+Available types of elements:
 
 private:: initClass
 
 METHOD:: new
-Creates a new instance.
-
-argument:: source
-The link::Classes/MKtl:: it belongs to.
-
-argument:: name
-A name.
+Creates a new instance, with a name, a description and optionally a source.
+code::
+x = MKtlElement(\x, (spec: [-100, 100], type: \joyX, ioType: \in));
+x.value = 0.42;
+x.value
+x.deviceValue
+::
+The source arg is usually an MKtl
 
 INSTANCEMETHODS::
 
-METHOD:: spec
-The element's spec
+METHOD:: deviceSpec
+The spec that maps between the device's numerical value and the the unipolar range in the MKtlElement.
 
-private:: init
+private:: init, setSpecFromDesc
 
 METHOD:: defaultValue
 The element's default value
 
 
-METHOD:: rawValue
-Get the element's value (raw)
-
-argument:: newVal
-Set the element's value (raw)
-
+METHOD:: deviceValue
+Get and set the element's deviceValue in units and range of the deviceSpec
 
 METHOD:: value
-Get and set the element's current value (normed)
+Get and set the element's current value in normalised range
 
 argument:: newval
 a Float between 0.0 and 1.0
 
+METHOD:: valueNoSend, deviceValueNoSend
+Set the element's deviceValue or value without sending back to the hardware device
+
+METHOD:: valueAction, deviceValueAction
+Set the element's deviceValue or value and perform its action.
+
 discussion::
 
-This will not cause the action to be performed.
+deviceValue_ and value_ will not cause the action to be performed.
+deviceValueNoSend_ and valueNoSend_ will also not trigger the action.
 
-If the element is of type inout or out then the value will also be sent back to the control. Value should be in 0.0-1.0 range, it will be automatically mapped to the correct range for this device (e.g. 0-127).
+If the element is has an output to send back to the device, value_ and deviceValue_ will send the deviceValue to the device, while deviceValueNoSend_ and valueNoSend_ allow just setting the value without sending it (which is sometimes necessary).
 
 Example:
 Control a knob on the Behringer BCF2000
 
 code::
-MKtl('bcf20000').elements.at(\kn_1_1).value_(0.5)
+// This will send the value to the device, causing the motorised fader to go to that position:
+MKtl('bcf1', "behringer-bcf2000");
+MKtl('bcf1').elementsDict[\kn_1_1].value_(0.5);
+MKtl('bcf1').elementAt(\kn, 1, 1).deviceValue_(64);
+
+// This just sets the value in the MKtlElement:
+MKtl('bcf1').elementAt(\kn, 1, 1).valueNoSend_(0.5);
+MKtl('bcf1').elementAt(\kn, 1, 1).deviceValueNoSend_(64);
 ::
-
-
-METHOD:: rawValue
-
-Set the value to the element.
-
-argument:: newval
-Number in the range expected by the device
-
-returns:: MKtlElement
-
-discussion::
-
-This will not cause the action to be performed and will not send the value back to the device.
 
 METHOD:: addAction
 
-argument:: action
-
-Add the action to a FunctionList, creating the FunctionList if doesn't exist yet.
+Add an action to the element's action. Adding multiple actions will create a FunctionList.
 
 METHOD:: removeAction
 
-argument:: action
-
-Remove an action from the list of current actions. Has no effect if 'action' is a function or nil, only removes the action if 'action' is a FunctionList.
+Remove an action from the list of current actions. The action to be removed has to be the exact same function object.
 
 METHOD:: doAction
 
-Perform any actions related to this element.
+Perform the actions related to this element. This includes the action instance variable,
+and the actions of its parents, up to the containing MKtl.
 
 argument:: sendValue
 Whether or not to send the value out to the device if this is an output element.
 
 
-METHOD:: reset
+METHOD:: resetAction
 
 Set action to nil.
 
@@ -106,12 +101,12 @@ pattern support - embed MKtlElement in a stream.
 
 code::
 // examples for direct pattern usage:
-n = MKtl(\nk1, 'nanoKONTROL');
-x = n.elementsDict[\play];
+MKtlDesc.postLoadable
+n = MKtl(\nk1, "korg-nanokontrol");
+x = n.elementsDict[\play]; // the play button
 
 // test asStream method - simple endless lookup
 p = Pbind(\test, x).trace.play;
-
 // switch value while playing, pattern gets current value
 x.value = 1;
 x.value = 0;
@@ -125,7 +120,7 @@ p = Pbind(
 	\dur, 0.5
 ).trace.play;
 )
-// switch value while playing
+// change value while playing
 x.value = 1;
 x.value = 0;
 
@@ -133,11 +128,12 @@ p.stop;
 ::
 
 
-METHOD:: elementDescription
-An Event/dictionary with the description for the element.
+METHOD:: elemDesc
+An Event or dictionary with a description of the element.
+Typically contains a deviceSpec, a type, and
 
 METHOD:: gui
-Create a gui for this elements.
+Create a gui for this element.
 
 
 EXAMPLES::
@@ -145,30 +141,35 @@ EXAMPLES::
 Sending data back to MIDI device, one should use link::Classes/MAbstractElement#value_:: :
 
 code::
-MKtl('bcf20000').elementAt(\kn,1,1).value_(0.5)
+MKtlDesc.postLoadable; // pick one of the supported devices
+m = MKtl('bcf', "behringer-bcf2000");
+m.gui;
+k = m.elementAt(\kn,1,0);
+k.value_(0.5);
+k.value;
 ::
 
 Classic knobs rotating demo for B:
 
 code::
 (
-x = 0;
-fork{
-	loop{
+var x = 0;
+fork {
+	loop {
 		0.1.wait;
 		x = x + 0.1;
-		8.do{ |i|
-			MKtl('bcf20000').elementAt(\kn,1,i).value_(
-				(x + (i/7)).mod(1.0)
-			)
+		8.do { |i|
+			var el = m.elementAt(\kn, 1, i);
+			var val =  (x + (i/7)).mod(1.0);
+			el.value_( val )
 		}
 	}
 }
 )
 
 // Lots of tests to show how MKtl work.
-// one can make them by hand
 
+// Make one by hand:
 x = MKtlElement(\x, (spec: [-100, 100], type: \joyX, ioType: \in));
 
 x.value = 0.42;
@@ -178,29 +179,36 @@ x.deviceValue
 x.name
 x.type
 x.ioType
-x.elementDescription;
-x.elementDescription_((spec: [100, -100], type: \joyY, ioType: \inout));
-x.elementDescription;
+x.elemDesc;
+// change the elemDesc
+x.elemDesc_((spec: [100, -100], type: \joyY, ioType: \inout));
+x.elemDesc;
+
+// update some entries in the elemDesc
 x.updateDescription((spec: [5, 105], type: \joyXYZ));
+x.elemDesc;
 x.type
 x.ioType;
-x.deviceSpec
-// this spec is communicating with device,
-// so maybe should be deviceSpec?
+
 x.deviceSpec_([5, 105] * 2);
 
 x.value_(0.55).value;
 x.deviceValue
 
 
-/// and here is an example for creating a derived MKtlElement:
+/// Here is an example for creating a derived MKtlElement:
 // this one converts values from x and y controls
 // to a polar / angle value
 
-// issue #72 - Adding custom filter elements to an existing MKtlElement
+// this covers github/modality issue #72
+// - Adding custom filter elements to an existing MKtlElement
 
-x.action_(MFunc());
+// make elements for x and y dimensions
+
+x = MKtlElement(\x, (spec: [-100, 100], type: \joyX, ioType: \in));
+x.action_(MFunc());  // use an MFunc for convenience and flexibility
 x.action.add(\post, { |el| [el.name, el.value].postln });
+x.action.remove(\post);
 
 x.value_(0.5);
 x.valueAction_(0.6);
@@ -209,29 +217,42 @@ y = MKtlElement(\y, (spec: [-100, 100], type: \joyY, ioType: \in));
 y.action_(MFunc());
 y.action.add(\post, { |el| [el.name, el.value].postln });
 
+// make a Slider2D to set x and y
 Slider2D(nil, Rect(0,0,200,200)).action_({ |sl2d|
 	x.valueAction_(sl2d.x); y.valueAction_(sl2d.y);
 }).front;
 
-z = MKtlElement(\polar, (spec: [-pi, pi], type: \xyPolar, ioType: '?'));
+// make a derived element, which converts x and y to polar angle
+z = MKtlElement(\polar, (spec: [-pi, pi], type: \xyPolar, ioType: 'filter'));
 
+// x and y trigger z.action
 [x, y].do {|el| el.action.add(\toPolar, { z.doAction }) };
 [x, y].do { |el| el.action.disable(\post) };
 
+// now define z.action:
 z.action = MFunc();
-// first add a function to calc value
-z.action.add(\getval, { |polar|
-	polar.deviceValue_(atan2(x.deviceValue, y.deviceValue));
+// first add a function to get and and y, and calc its value
+z.action.add(\calcAngle, { |polar|
+	var xy = [x.deviceValue, y.deviceValue];
+	var angle = atan2(x.deviceValue, y.deviceValue);
+	// [xy, angle].round(0.001).postln;
+	polar.deviceValue_(angle);
 });
 
-// then one to do something with it
+// then one to do something with it, e.g. post it
 z.action.add(\postAtan2, { |polar|
 	"polar atan2 value: % \n".postf(polar.deviceValue);
 });
 
-// test pattern support:
-x.value = 0.6;
-Pbind(\x, x).trace.play;
-x.value = 0.42;
+// test pattern support with polar
+// - move 2dslider while pattern plays
+// this is normalized value -
+a = Pbind(\polar, z).trace.play;
+a.stop;
+
+// get the angle value from z
+a = Pbind(\angle, Pfunc({ z.deviceValue })).trace.play;
+a.stop;
+
 
 ::

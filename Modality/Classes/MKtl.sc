@@ -169,8 +169,8 @@ MKtl { // abstract class
 		// };
 
 		if (this.descIsFaulty(mktlDesc)) {
-			warn("MKtl: % has no full description, so please"
-				"explore it and create a description file.");
+			warn("MKtl: % has no working description, so please"
+				" explore it and create a description file.");
 		};
 
 		// now we have a name and hopefully a desc

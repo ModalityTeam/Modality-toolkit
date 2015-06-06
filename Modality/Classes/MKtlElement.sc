@@ -50,7 +50,7 @@ MAbstractElement {
 		};
 	}
 
-	hasOut { ^[\out, \inout].includes( this.elementDescription[\ioType] ) }
+	hasOut { ^[\out, \inout].includes( elemDesc[\ioType] ) }
 
 	trySend {
 		if (this.hasOut
