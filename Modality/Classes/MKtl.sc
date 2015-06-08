@@ -442,12 +442,20 @@ MKtl { // abstract class
 	}
 
 	hasDevice {
-		^(mktlDevice.notNil
-			and: { mktlDevice.source.notNil })
+		// FIXME please check implementation.
+		// cannot be correct:
+		// 1. source is only defined for MIDIMKtlDevice
+		// 2. and there it is nil always.
+
+		// ^(mktlDevice.notNil
+		// and: { mktlDevice.source.notNil })
+
+		^mktlDevice.notNil
 	}
 
 	trace { |value=true|
-		if (this.isVirtual.not){ mktlDevice.trace( value ) };
+		this.hasDevice.postln;
+		if ( this.hasDevice ){ mktlDevice.trace( value ) };
 		traceRunning = value;
 	}
 

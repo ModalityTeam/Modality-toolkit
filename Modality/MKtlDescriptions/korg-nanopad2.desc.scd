@@ -17,12 +17,15 @@ deviceInfo: (
 	type: [\pad, \touchpad, \button],
 ),
 description: (
-	\padOn: (36..99).collect{ |note|
-		(\midiMsgType: \noteOn, \type: \pad, \midiChan: 0, \midiNum:  note, \spec: \midiVel)
-	},
-	\padOff: (36..99).collect{ |note|
-		(\midiMsgType: \noteOff, \type: \pad, \midiChan: 0, \midiNum:  note, \spec: \midiVel)
-	},
+	\pad: (
+		\on: (36..99).collect{ |num|
+			(\midiMsgType: \noteOn , \type: \key, \midiChan: 0, \midiNum: num, \spec: \midiNote, \ioType: \in)
+		},
+		\off: (36..99).collect{ |num|
+			(\midiMsgType: \noteOff, \type: \key, \midiChan: 0, \midiNum: num, \spec: \midiNote, \ioType: \in)
+		}
+	),
+
 	'touchX': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  1,'spec': 'midiCC'),
 	'touchY': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  2,'spec': 'midiCC'),
 	'touchInUse': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  16,'spec': 'midiCC'),
