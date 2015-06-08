@@ -133,7 +133,7 @@ MKtl { // abstract class
 		if ( res.notNil ){
 			if (desc.isNil) { ^res };
 			// found an MKtl by name, and there is a desc
-			"//MKtl: found device, an got description:\n"
+			"//MKtl: found device, and got description:\n"
 			"// To change the description of an existing MKtl, please use:"
 			"%.rebuild(<desc>)".format(this).inform;
 			^res

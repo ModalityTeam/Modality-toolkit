@@ -114,7 +114,7 @@ MIDIMKtlDevice : MKtlDevice {
 
 		"\n-----------------------------------------------------".postln;
 		"\n// Available MIDIMKtls: ".postln;
-		"// MKtl(autoName, filename);  // [ midi device, midi port, uid ]".postln;
+		"// MKtl(autoName, filename);  // [ midi device, midi port, uid ]\n".postln;
 		sourceDeviceDict.keysValuesDo { |key, src|
 			var deviceName = src.device;
 			var midiPortName = src.name;
@@ -122,7 +122,7 @@ MIDIMKtlDevice : MKtlDevice {
 			var filename = MKtlDesc.filenameForIDInfo(deviceName);
 			filename = if (filename.isNil) { "" } { "," + quote(filename) };
 
-			"    MKtl(%%);  // % \n".postf(
+			"MKtl(%%);  // % \n".postf(
 				key.cs, filename, postList
 			);
 		};
@@ -209,7 +209,8 @@ MIDIMKtlDevice : MKtlDevice {
 				foundDestination = this.findInDictByNameAndIndex( destinationDeviceDict, idInfo );
 			};
 		} {
-			destinationDeviceDict[name.asSymbol];
+			foundSource = sourceDeviceDict[name.asSymbol];
+			foundDestination = destinationDeviceDict[name.asSymbol];
 		};
 
 		if (foundDestination.isNil) {
@@ -468,7 +469,7 @@ MIDIMKtlDevice : MKtlDevice {
 					};
 				}
 
-			}, msgType: typeKey, srcID: nil).permanent_(true);
+			}, msgType: typeKey, srcID: srcID).permanent_(true);
 		);
 	}
 
@@ -503,7 +504,7 @@ MIDIMKtlDevice : MKtlDevice {
 					};
 				}
 
-			}, msgType: typeKey, srcID: nil).permanent_(true);
+			}, msgType: typeKey, srcID: srcID).permanent_(true);
 		);
 	}
 
