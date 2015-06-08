@@ -139,12 +139,12 @@ MKtlDevice {
 			^newDevice
 		};
 
-		"MKtlDevice.open: parentMKtl: %, prot: %,\n"
-		"desc: %".format(parentMKtl.cs, protocol.cs, desc);
+		// "MKtlDevice.open: parentMKtl: %, prot: %,\n"
+		// "desc: %".format(parentMKtl.cs, protocol.cs, desc);
 
-		"// MKtlDevice.open - if we ever get here,"
-		"// implement lookup of name in desc..."
-		"this.findNameFromDesc(desc);".postln;
+		// "// MKtlDevice.open - if we ever get here,"
+		// "// implement lookup of name in desc..."
+		// "this.findNameFromDesc(desc);".postln;
 		^nil
 	}
 

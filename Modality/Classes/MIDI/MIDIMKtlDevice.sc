@@ -199,7 +199,7 @@ MIDIMKtlDevice : MKtlDevice {
 
 		this.initDevices;
 
-		"MIDIMKtlDevice:\n\t% % % %".format( name, idInfo, parentMKtl, initialized ).inform;
+		// "MIDIMKtlDevice:\n\t% % % %".format( name, idInfo, parentMKtl, initialized ).inform;
 
 		if ( idInfo.notNil ){ // use idInfo to open:
 			if ( initialized.not ){ ^nil };
@@ -211,6 +211,11 @@ MIDIMKtlDevice : MKtlDevice {
 		} {
 			foundSource = sourceDeviceDict[name.asSymbol];
 			foundDestination = destinationDeviceDict[name.asSymbol];
+		};
+
+		if (foundSource.isNil and: {foundDestination.isNil}) {
+			"MIDIMKtlDevice: no hardware device found. Assuming virtual.".inform;
+			^nil;
 		};
 
 		if (foundDestination.isNil) {
