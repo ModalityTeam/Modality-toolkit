@@ -454,15 +454,13 @@ MIDIMKtlDevice : MKtlDevice {
 				var hash = MIDIMKtlDevice.makeMsgKey(typeKey, chan);
 				var el = midiKeyToElemDict[hash];
 
-				// [midi: [value, chan, src]].postcs;
-				// [hash: hash, el: el].postcs;
-
 				 // do global actions first
 				midiRawAction.value(typeKey, src, chan, value);
 				global[typeKey].value(chan, value);
 
 				if (el.notNil) {
-					el.deviceValueAction_(value, false);
+					// FIXME: why is deviceValueAction_ called with a second argument?
+					el.deviceValueAction_(value, false); 
 					if(traceRunning) {
 						MIDIMKtlDevice.postMsgTrace(mktl, el, el.value,
 						typeKey, value, nil, chan, src);
@@ -489,20 +487,18 @@ MIDIMKtlDevice : MKtlDevice {
 				var hash = MIDIMKtlDevice.makeMsgKey(typeKey, chan, num);
 				var el = midiKeyToElemDict[hash];
 
-				// [midi: [value, num, chan, src]].postcs;
-				// [hash: hash, el: el].postcs;
-
 				 // do global actions first
 				midiRawAction.value(typeKey, src, chan, num, value);
 				global[typeKey].value(chan, num, value);
 
 				if (el.notNil) {
+					// FIXME: why is deviceValueAction_ called with a second argument?
 					el.deviceValueAction_(value, false);
 					if(traceRunning) {
 						MIDIMKtlDevice.postMsgTrace(mktl, el, el.value,
 						typeKey, value, num, chan, src);
 					};
-				} {
+				} { // element is nil
 					if (traceRunning) {
 						MIDIMKtlDevice.postMsgNotFound(mktl, typeKey,
 						value, num, chan, src);
@@ -516,12 +512,11 @@ MIDIMKtlDevice : MKtlDevice {
 	*postMsgNotFound { |mktl, msgType, value, num, chan, src|
 		var numStr = if (num.notNil) { "midiNum: %, ".format(num) } { "" };
 
-		"//// % : unknown % element found at  %midiChan %!\n"
-		.postf(mktl, msgType.cs, numStr, chan);
-		"// - Please add it to the description file, e.g. for a button:".postln;
-		"<bt_something>: (midiMsgType: %, type: <'button'>,"
+		"% : unknown % element found at % midiChan %.\n"
+		"\tPlease add it to the description file. E.g. for a button:"
+		"<bt>: (midiMsgType: %, type: <'button'>,"
 		" midiChan: %, %spec: <'midiBut'>, mode: <'push'>)\n\n"
-						.postf(msgType.cs, chan, numStr);
+		.format(mktl, msgType.cs, numStr, chan, msgType.cs, chan, numStr).inform;
 	}
 
 	*postMsgTrace { |mktl, elemName, elemVal, msgType, value, num, chan, src|
