@@ -82,7 +82,7 @@ MKtlDevice {
 		};
 		if (allFound.size > 1) {
 		inform("MKtlDevice: found multiple devices"
-			"at lookupName %.".format(lookupName));
+			" at lookupName %.".format(lookupName));
 			^allFound
 		}
 		// found exactly one:

@@ -214,8 +214,15 @@ m.outputElements
 METHOD:: elementsOfType, elementsNotOfType
 return all elements that are of the type given, or not
 code::
-k.elementsOfType(\slider)
-k.elementsNotOfType(\slider)
+MKtl(\mynano2).elementsOfType(\slider);
+k.elementsNotOfType(\slider);
+::
+
+METHOD:: elementsLabeled
+return all elements which have been given a label
+code::
+o = MKtl(\opi1, "teenage*");
+o.elementsLabeled(\white);
 ::
 
 
