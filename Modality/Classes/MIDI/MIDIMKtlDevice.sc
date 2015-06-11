@@ -459,8 +459,7 @@ MIDIMKtlDevice : MKtlDevice {
 				global[typeKey].value(chan, value);
 
 				if (el.notNil) {
-					// FIXME: why is deviceValueAction_ called with a second argument?
-					el.deviceValueAction_(value, false); 
+					el.deviceValueAction_(value);
 					if(traceRunning) {
 						MIDIMKtlDevice.postMsgTrace(mktl, el, el.value,
 						typeKey, value, nil, chan, src);
@@ -492,8 +491,7 @@ MIDIMKtlDevice : MKtlDevice {
 				global[typeKey].value(chan, num, value);
 
 				if (el.notNil) {
-					// FIXME: why is deviceValueAction_ called with a second argument?
-					el.deviceValueAction_(value, false);
+					el.deviceValueAction_(value);
 					if(traceRunning) {
 						MIDIMKtlDevice.postMsgTrace(mktl, el, el.value,
 						typeKey, value, num, chan, src);
