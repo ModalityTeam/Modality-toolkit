@@ -12,8 +12,16 @@ MKtlLookup {
 	}
 
 	*addAllHID {
-		HIDMKtlDevice.devicesToShow.keysValuesDo { |index, info|
-			MKtlLookup.addHID(info, index);
+		HIDMKtlDevice.devicesToShow.sortedKeysValuesDo { |index, info|
+			MKtlLookup.addHID(info, index); };
+	}
+
+	*allFor { |protocol|
+		protocol = (protocol ? MKtlDevice.allProtocols);
+		^all.select { |dict|
+			(dict.protocol == protocol) or: {
+				protocol.asArray.includes(dict.protocol);
+			}
 		};
 	}
 
@@ -32,9 +40,14 @@ MKtlLookup {
 			idInfo: idInfo,
 			deviceInfo: hidinfo,
 			filename: filename,
-			desc: MKtlDesc.at(filename.asSymbol),
-			lookup: { HID.available[index] }
+			lookupName: lookupName
 		);
+
+		if (filename.notNil) {
+			MKtlDesc.loadDescs(filename);
+			dict.put(\desc, MKtlDesc.at(filename.asSymbol));
+		};
+
 		all.put(lookupName, dict);
 		^dict
 	}
@@ -63,7 +76,8 @@ MKtlLookup {
 			deviceInfo: endPoint,
 			filename: filename,
 			desc: MKtlDesc.at(filename.asSymbol),
-			lookup: { MKtlLookup.midiAt(endPointType, index); }
+			lookupName: lookupName
+		//	lookup: { MKtlLookup.midiAt(endPointType, index); }
 		);
 		all.put(lookupName, dict);
 		^dict
@@ -86,7 +100,8 @@ MKtlLookup {
 		//	deviceInfo: nil,
 			filename: filename,
 			desc: MKtlDesc.at(filename.asSymbol),
-			lookup: { MKtlLookup.all[lookupName]; }
+			lookupName: lookupName
+		//	lookup: { MKtlLookup.all[lookupName]; }
 		);
 
 		all.put(lookupName, dict);
@@ -95,6 +110,10 @@ MKtlLookup {
 
 	*addSerial {
 
+	}
+
+	*findByIDInfo { |idInfo|
+		^all.select { |item| item.idInfo == idInfo };
 	}
 }
 

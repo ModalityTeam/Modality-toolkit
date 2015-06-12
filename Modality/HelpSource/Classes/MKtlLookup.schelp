@@ -9,12 +9,14 @@ The names are intentionally long to be both unique and descriptive of the source
 MKtl(\mydev, 'hid_0_);
 
 code::
-// E.g. MKtl.find should eventually do:
-MIDIClient.init;
-HID.findAvailable;
-MKtlLookup.addAllHID;
-MKtlLookup.addAllMIDI;
+// MKtl.find does these
+	// MIDIClient.init;
+	// HID.findAvailable;
+	// MKtlLookup.addAllHID;
+	// MKtlLookup.addAllMIDI;
 
+MKtl.find
+MIDIClient.sources
 MKtlLookup.names.printcsAll;
 
 // add some osc devices by hand:
@@ -23,6 +25,8 @@ MKtlLookup.addOSC(s.addr, "server_%".format(s.name).asSymbol).put(\server, s);
 MKtlLookup.addOSC(NetAddr("192.168.94.23", 1234), \gyrosc);
 
 MKtlLookup.names.printcsAll;
+
+MKtlLookup.allFor(\hid);
 
 ::
 
@@ -61,7 +65,3 @@ INSTANCEMETHODS::
 
 none, MKtlLookup is a Singleton.
 
-EXAMPLES::
-
-code::
-::
