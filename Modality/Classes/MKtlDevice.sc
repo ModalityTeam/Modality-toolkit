@@ -96,52 +96,91 @@ MKtlDevice {
 
 		var devKey;
 		this.subclasses.do { |subClass|
-			devKey = subClass.findSource( *idInfo );
+			devKey = subClass.findSource( idInfo );
 		};
 
 		^devKey;
 	}
 
-	// collapse tryOpenDevice and tryOpenDeviceFromDesc
-	// into one
-	*open { |name, parentMKtl, protocol, desc|
-		var subClass, newDevice, devLookupName, parentProto;
+	// collapse tryOpenDevice and tryOpenDeviceFromDesc into one
+	// still brittle.
 
-		if (parentMKtl.desc.notNil) {
-			parentProto = parentMKtl.desc.protocol;
-			devLookupName = MKtlDevice.lookupNameForIDInfo(
-				parentMKtl.desc.idInfo) ? name;
+	*open { |name, parentMKtl|
+		var lookupName, lookupInfo, deviceInfo, protocol, idInfo;
+		var desc, subClass, newDevice;
+		var infoCandidates;
+
+		if (parentMKtl.isNil) {
+			"MKtldevice.open: parentMktl.isNil - should not happen!".postln;
+			^this
 		};
 
-		protocol = protocol ? parentProto ?? {
-				this.getMatchingProtocol( name )
+		lookupName = parentMKtl.lookupName;
+		lookupInfo = parentMKtl.lookupInfo ?? { MKtlLookup.all[lookupName] };
+		lookupName = lookupName ?? { if (lookupInfo.notNil) { lookupInfo.lookupName } };
+
+		// if we know device already, get it from here:
+		if (lookupInfo.notNil) {
+			[lookupName, lookupInfo].postln;
+			deviceInfo = lookupInfo.deviceInfo;
+			protocol = lookupInfo.protocol;
+			subClass = MKtlDevice.matchClass(protocol);
+			if( subClass.isNil ) {
+				"MKtlDevice.open: no device found for name % and protocol %.\n"
+				.postf( name, protocol );
+				^nil;
+			};
+
+			newDevice = subClass.new( lookupName, parentMKtl: parentMKtl );
+
+			if (newDevice.notNil) {
+				// yes yes yes
+				newDevice.initElements;
+				^newDevice
+			};
 		};
 
-		if (protocol.isNil) {
-			"MKtlDevice.open: no protocol found for %.\n".warn;
-			^nil;
-		};
+		// // ok, no luck with lookup info, try desc next
+		//
+		// desc = parentMKtl.desc;
+		// if (desc.isNil) {
+		// 	"MKtldevice.open: parentMktl.desc.isNil - should not happen!".postln;
+		// 	^this
+		// };
+		//
+		// protocol = parentMKtl.desc.protocol;
+		// idInfo = parentMKtl.desc.idInfo;
+		// infoCandidates = MKtlLookup.findByIDInfo(idInfo);
+		//
+		//
+		//
+		// if (protocol.isNil) {
+		// 	"MKtlDevice.open: no protocol found for %.\n".warn;
+		// 	^nil;
+		// };
+		//
+		//
 		// "MKtlDevice.open: parentMKtl: %, prot: %,\n"
-		// "desc keys: %".format(parentMKtl.cs, protocol.cs, desc.keys.cs).postln;
-
-		subClass = MKtlDevice.matchClass(protocol);
-		if( subClass.isNil ) {
-			"MKtlDevice.open: no device found for name % and protocol %.\n"
-			.postf( name, protocol );
-			^nil;
-		};
-
-		// try to find one:
-		newDevice = subClass.new( devLookupName, parentMKtl: parentMKtl );
-		if (newDevice.notNil) {
-			// yes yes yes
-			newDevice.initElements;
-			^newDevice
-		};
-
+		// "desc keys: %".format(parentMKtl.cs, protocol.cs, parentMKtl.desc.fullDesc.keys.cs).postln;
+		//
+		// subClass = MKtlDevice.matchClass(protocol);
+		// if( subClass.isNil ) {
+		// 	"MKtlDevice.open: no device found for name % and protocol %.\n"
+		// 	.postf( name, protocol );
+		// 	^nil;
+		// };
+		//
+		// // try to find one:
+		// newDevice = subClass.new( devLookupName, parentMKtl: parentMKtl );
+		// if (newDevice.notNil) {
+		// 	// yes yes yes
+		// 	newDevice.initElements;
+		// 	^newDevice
+		// };
+		//
 		// "MKtlDevice.open: parentMKtl: %, prot: %,\n"
 		// "desc: %".format(parentMKtl.cs, protocol.cs, desc);
-
+		//
 		// "// MKtlDevice.open - if we ever get here,"
 		// "// implement lookup of name in desc..."
 		// "this.findNameFromDesc(desc);".postln;

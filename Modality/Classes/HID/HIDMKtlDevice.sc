@@ -38,9 +38,8 @@ HIDMKtlDevice : MKtlDevice {
 		};
 
 		HID.findAvailable;
-
-		sourceDeviceDict = ();
-		this.prepareDeviceDicts;
+		if (HID.running.not) { HID.initializeHID };
+		MKtlLookup.addAllHID;
 
 		initialized = true;
 	}
@@ -52,61 +51,41 @@ HIDMKtlDevice : MKtlDevice {
 				deviceProductNamesToHide.every({ |prodname|
 					[dev.productName, prodname];
 					(dev.productName != prodname);
-				}).postln;
+				});
 			}
-		};
-	}
-
-	*prepareDeviceDicts {
-		var nameList = List.new;
-		this.devicesToShow.asSortedArray.do { |pair|
-			var id = pair[0], dev = pair[1];
-			var lookupName = MKtl.makeLookupName(
-				\hid, id,
-				dev.productName.asString);
-			nameList.add(lookupName);
-		};
-
-		if (nameList.notEmpty) {
-			allAvailable.put( \hid, nameList );
 		};
 	}
 
 	// open all ports and display them in readable fashion,
 	// copy/paste-able directly
-	*find { |post=true|
+	*find { |post = true|
 		this.initDevices( true );
-
-		if ( post ){
-			this.postPossible;
-		};
+		if ( post ) { this.postPossible; };
 	}
 
 	*postPossible {
+		var postables = MKtlLookup.allFor(\hid);
 		"\n// Available HIDMKtlDevices:".postln;
-		if (showAllDevices.not) {
+		if (showAllDevices.not and: { HID.available.size != postables.size }) {
 			inform(
-				"// Some devices are not shown because crash the OS."
-				"\n// See them in: HID.available;")
+				"// Some devices are not shown because they may crash the OS."
+				"\n// See them in: HID.available.")
 		};
 
-
 		"// MKtl(autoName, filename);  // [ hid product, vendor, (serial number) ]".postln;
-
-		sourceDeviceDict.keysValuesDo { |key,info|
-			var serial = info.serialNumber;
+		postables.sortedKeysValuesDo { |key, infodict|
+			var info = infodict.deviceInfo;
 			var product = info.productName;
 			var vendor = info.vendorName;
+			var serial = info.serialNumber;
 			var postList = [product, vendor];
-			var hidLookup = postList.join($_);
-			var filename = MKtlDesc.filenameForIDInfo(hidLookup);
+			var filename = MKtlDesc.filenameForIDInfo(infodict.idInfo);
 
 			if (serial.notEmpty) {
 				postList = postList.add(serial);
 			};
-			filename = if (filename.isNil) { "" } { "," + quote(filename) };
-			"MKtl(%%);		// % \n"
-			.postf(key.cs, filename, postList.cs);
+			// filename = if (filename.isNil) { "" } { "," + quote(filename) };
+			"MKtl('_myDevNameHere_', %);		// %\n".postf(key.cs, postList.cs);
 		};
 
 		"\n-----------------------------------------------------".postln;
@@ -118,19 +97,23 @@ HIDMKtlDevice : MKtlDevice {
 		}
 	}
 
+	// FIXME : this returns only the last source that matches
 	*findSource { |rawDeviceName, rawVendorName|
 		var devKey;
 		if ( initialized.not ){ ^nil };
-		this.sourceDeviceDict.keysValuesDo{ |key,hidinfo|
+
+		this.sourceDeviceDict.keysValuesDo { |key,hidinfo|
 			if ( rawVendorName.notNil ){
-				if ( hidinfo.productName == rawDeviceName and: ( hidinfo.vendorName == rawVendorName ) ){
+				if ( hidinfo.productName == rawDeviceName
+					and: ( hidinfo.vendorName == rawVendorName ) ){
 					devKey = key;
 				}
 			}{
 				if ( hidinfo.productName == rawDeviceName ){
 					devKey = key;
 				};
-				if ( (hidinfo.productName ++ "_" ++ hidinfo.vendorName) == rawDeviceName ){
+				if ( (hidinfo.productName ++ "_" ++ hidinfo.vendorName)
+					== rawDeviceName ){
 					devKey = key;
 				};
 			};
@@ -143,13 +126,15 @@ HIDMKtlDevice : MKtlDevice {
 		var foundSource;
 
 		if (path.isNil) {
-			foundSource = this.sourceDeviceDict[ name ];
-		}{
-            //FIXME: uid is this a path?
-			foundSource = HID.findBy( path: path ).asArray.first;
+			foundSource = MKtlLookup.all.at(name);
+			if (foundSource.notNil) {
+				foundSource = foundSource.deviceInfo;
+			}
+		} {
+			// // FIXME: is this a usb path?
+			// // and what about multiple matches (e.g. Apple Keyboard)?
+			// foundSource = HID.findBy( path: path ).asArray.first;
 		};
-
-		// foundSource.postln;
 
 		// make a new one
 		if (foundSource.isNil) {
@@ -158,18 +143,18 @@ HIDMKtlDevice : MKtlDevice {
 			// ^MKtl.prMakeVirtual(name);
 			^nil;
 		};
-
+HID
 		^super.basicNew( name,
 			this.makeDeviceName( foundSource ),
 			parentMKtl )
-		.initHIDMKtl( foundSource, path );
+		.initHIDMKtl( foundSource );
 	}
 
-	initHIDMKtl { |argSource,argUid|
-		srcID = argUid;
+	initHIDMKtl { |argSource, argUid|
         source = argSource.open;
- 		this.initElements;
-		this.initCollectives;
+		srcID = source.id;
+		// this.initElements;
+		// this.initCollectives;
 
 		// only do this explicitly
 		// this.sendInitialisationMessages;

@@ -34,11 +34,12 @@ MKtl { // abstract class
 	var <elementsDict; 		// all elements in a single flat dict for fast access
 
 	var <collectivesDict; 	// has the collectives (combined elements and groups)
-							// from the device description
+	// from the device description
 
 	var <mktlDevice; // interface to the connected device(s).
 
 	var <traceRunning = false;
+	var <lookupName, <lookupInfo;
 
 	*initClass {
 		Class.initClassTree(Spec);
@@ -64,7 +65,7 @@ MKtl { // abstract class
 
 	/////////// everything related to specs
 	*prAddDefaultSpecs {
-				// general
+		// general
 		this.addSpec(\cent255, [0, 255, \lin, 1, 128]);
 		this.addSpec(\cent255inv, [255, 0, \lin, 1, 128]);
 		this.addSpec(\lin255,  [0, 255, \lin, 1, 0]);
@@ -113,7 +114,7 @@ MKtl { // abstract class
 		specs.put(key, theSpec);
 	}
 
-// interface to MKtlDesc:
+	// interface to MKtlDesc:
 
 	*descFolders { ^MKtlDesc.descFolders }
 	*openDescFolder { |index = 0| MKtlDesc.openFolder(index) }
@@ -129,48 +130,109 @@ MKtl { // abstract class
 	// or returns a new empty instance.
 	// If no physcal device is present, this becomes a virtual MKtl.
 
-	*new { |name, desc, lookForNew = false |
-		var res, idInfo, mktlDesc, protocol;
+	*new { |name, lookupNameOrDesc, lookForNew = false |
+		var res, lookupName, lookupInfo, descName, newMKtlDesc, protocol;
 
 		if (name.isNil) {
-			if (desc.isNil) {
-				"MKtl: cannot make one without name and a desc file.".inform;
-				^nil;
-			};
+			"MKtl: cannot make or find one without a name.".inform;
+			^nil;
 		};
 
 		res = this.all[name];
 
-		// dont change from the new method, advise to use rebuild
-		if ( res.notNil ){
-			if (desc.isNil) { ^res };
-			// found an MKtl by name, and there is a desc
-			"//MKtl: found device, and got description:\n"
-			"// To change the description of an existing MKtl, please use:"
-			"%.rebuild(<desc>)".format(this).inform;
+		if (res.isNil and: { lookupNameOrDesc.isNil }) {
+			"MKtl: cannot make one without a lookupName or desc filename.".inform;
+			^nil;
+		};
+
+		// we found an MKtl, and we do not rebuild from *new,
+		// so this is usually just access
+		if (res.notNil) {
+			res.checkIdentical(lookupNameOrDesc);
 			^res
 		};
 
-		// we have a filename already, so lets create the desc:
-		if (desc.isKindOf(String)) {
-			mktlDesc = MKtlDesc(desc);
-			if (mktlDesc.fullDesc.notNil) {
-				protocol = mktlDesc.protocol;
+		// prepare for several options:
+		// symbol -> lookupName,
+		// string -> filename,
+		// desc -> desc,
+		// dict -> make desc from dict
+
+		lookupNameOrDesc.class.switch(
+			Symbol, {
+				lookupName = lookupNameOrDesc;
+				lookupInfo = MKtlLookup.all[lookupName];
+				if (lookupInfo.notNil) {
+					protocol = lookupInfo.protocol;
+					newMKtlDesc = lookupInfo.desc ?? {
+						MKtlDesc(lookupInfo.filename);
+					};
+				};
+			},
+			// filename
+			String, {
+				descName = lookupNameOrDesc;
+				newMKtlDesc = MKtlDesc(descName);
+				protocol = newMKtlDesc.protocol;
+				MKtlDevice.initHardwareDevices(false, protocol);
+			},
+			MKtlDesc, { newMKtlDesc = lookupNameOrDesc },
+			{
+				//  or dictionary we can make a desc from
+				if (lookupNameOrDesc.isKindOf(Dictionary)) {
+					newMKtlDesc = MKtlDesc.fromDict(lookupNameOrDesc);
+					protocol = newMKtlDesc.protocol;
+				};
 			}
+		);
+
+		"lookupName: %, descName: %, lookupInfo: %\n".postf(lookupName, descName, lookupInfo);
+		"proto: %, newDesc: %\n".postf(protocol, newMKtlDesc);
+
+
+
+
+		// else try to make a desc from lookup info:
+
+		if (MKtl.descIsFaulty(newMKtlDesc)) {
+			inform("MKtl.new: could not find a valid desc,"
+				" so we try to find it from hardware...");
 		};
-		// we found no MKtl, but we have a name or a desc,
-		// so we try to make a new MKtl
-		// would be good to have protocol here already
-		MKtlDevice.initHardwareDevices( lookForNew, protocol.asArray);
 
-		if (this.descIsFaulty(mktlDesc)) {
-			warn("MKtl: % has no working description, so please"
-				" explore it and create a description file.");
+		// now we have a name and a good enough desc
+		^super.newCopyArgs(name).init(newMKtlDesc, lookupName, lookupInfo);
+	}
+
+	checkIdentical { |lookupNameOrDesc|
+		var newLookupInfo;
+		if (lookupNameOrDesc.isNil) { ^true };
+		if (lookupNameOrDesc.isKindOf(String)
+			and: { this.desc.notNil
+				and: { this.desc.fullDesc.filename == lookupNameOrDesc } }) {
+			^true
+		} {
+			inform("// %: If you want to change my desc,"
+				"use %.rebuild(<desc>);".format(this, this));
+			^false
 		};
 
-		// now we have a name and hopefully a desc
 
-		^super.newCopyArgs(name).init(mktlDesc);
+		if (lookupNameOrDesc.isKindOf(Symbol)) {
+			newLookupInfo = MKtlLookup.all.at(lookupNameOrDesc);
+			if (newLookupInfo.isNil) {
+				// no lookupInfo found, so ignored.
+				^false
+			};
+
+			if (this.desc.notNil and: { this.desc.idInfo == lookupInfo.idInfo }) {
+				// yes, identical, so ignored
+				^true
+			} {
+				inform("// %: If you want to change my desc,"
+				" use %.rebuild( _newdesc_ );".format(this, this));
+				^false
+			};
+		};
 	}
 
 	// interface to desc:
@@ -191,8 +253,10 @@ MKtl { // abstract class
 	storeArgs { ^[name] }
 	printOn { |stream| this.storeOn(stream) }
 
-	init { |argDesc|
+	init { |argDesc, argLookupName, argLookupInfo|
 		desc = argDesc;
+		lookupName = argLookupName;
+		lookupInfo = argLookupInfo;
 
 		all.put(name, this);
 		specs = ().parent_(globalSpecs);
@@ -434,7 +498,7 @@ MKtl { // abstract class
 		protocol = desc !? { desc.protocol.bubble };
 		MKtlDevice.initHardwareDevices( lookAgain, protocol);
 
-	 	mktlDevice = MKtlDevice.open( this.name, parentMKtl: this );
+		mktlDevice = MKtlDevice.open( this.name, this, protocol, desc );
 	}
 
 	hasDevice {
