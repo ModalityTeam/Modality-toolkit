@@ -58,33 +58,18 @@ HIDMKtlDevice : MKtlDevice {
 	}
 
 	*prepareDeviceDicts {
-		var prevName = nil, j = 0, order, deviceNames;
-
-		deviceNames = this.devicesToShow.postln.collect { |dev,id|
-			MKtl.makeLookupName(
-				(dev.productName.asString ++ "_"
-				++ dev.vendorName.asString )
-			.asString);
-		}.asSortedArray.postcs;
-
-		order = deviceNames.order { arg a, b; a[1] < b[1] };
-		deviceNames[order].do {|name, i|
-			(prevName == name[1]).if({
-				j = j+1;
-			}, {
-				j = 0;
-			});
-			prevName = name[1];
-			sourceDeviceDict.put((name[1] ++ j).asSymbol,
-				HID.available[ name[0] ])
+		var nameList = List.new;
+		this.devicesToShow.asSortedArray.do { |pair|
+			var id = pair[0], dev = pair[1];
+			var lookupName = MKtl.makeLookupName(
+				\hid, id,
+				dev.productName.asString);
+			nameList.add(lookupName);
 		};
 
-		// put the available hid devices in
-		// MKtlDevice's available devices
-		allAvailable.put( \hid, List.new );
-		sourceDeviceDict.keysDo({ |key|
-			allAvailable[\hid].add( key );
-		});
+		if (nameList.notEmpty) {
+			allAvailable.put( \hid, nameList );
+		};
 	}
 
 	// open all ports and display them in readable fashion,

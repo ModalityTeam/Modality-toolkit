@@ -18,7 +18,7 @@ MIDIMKtlDevice : MKtlDevice {
 	// an action that is called every time a midi message comes in
 	// .value(type, src, chan, num/note, value/vel)
 
-	// optimisation for fast lookup in two dicts:
+	// optimisation for fast lookup in one flat dict:
 	var <midiKeyToElemDict;    // find element by e.g. midiCCKey
 
 	// an action that is called every time a midi message comes in
@@ -245,56 +245,24 @@ MIDIMKtlDevice : MKtlDevice {
 	}
 
 	*prepareDeviceDicts {
-		var prevName = nil, j = 0, order, deviceNames;
-		var tempName;
-
-		deviceNames = MIDIClient.sources.collect {|src|
-			tempName = src.device;
-			MKtl.makeLookupName(tempName);
+		var nameList = List.new;
+		MIDIClient.sources.do {|src, i|
+			var lookupName = MKtl.makeLookupName("midiSrc", i, src.device);
+			sourceDeviceDict.put(lookupName, src);
+			nameList.add(lookupName);
 		};
 
-		if (deviceNames.isEmpty) {
-			^this
+		MIDIClient.destinations.do {|dest, i|
+			var lookupName = MKtl.makeLookupName("midiDest", i, dest.device);
+			sourceDeviceDict.put(lookupName, dest);
+			nameList.add(lookupName);
 		};
 
-		order = deviceNames.order;
-		deviceNames[order].do {|name, i|
-			(prevName == name).if({
-				j = j+1;
-			},{
-				j = 0;
-			});
-			prevName = name;
-
-			sourceDeviceDict.put((name ++ j).asSymbol,
-				MIDIClient.sources[order[i]])
-		};
-
-		// prepare destinationDeviceDict
-		j = 0; prevName = nil;
-		deviceNames = MIDIClient.destinations.collect{|src|
-			tempName = src.device;
-			MKtl.makeLookupName(tempName);
-		};
-		order = deviceNames.order;
-
-		deviceNames[order].do{|name, i|
-			(prevName == name).if({
-				j = j+1;
-			},{
-				j = 0;
-			});
-			prevName = name;
-
-			destinationDeviceDict.put((name ++ j).asSymbol,
-				MIDIClient.destinations[order[i]])
-		};
 
 		// put the available midi devices in MKtl's available devices
-		allAvailable.put( \midi, List.new );
-		sourceDeviceDict.keysDo({ |key|
-			allAvailable[\midi].add( key );
-		});
+		if (nameList.notEmpty) {
+			allAvailable[\midi] = nameList;
+		}
 	}
 
 	/// ----(((((----- EXPLORING ---------

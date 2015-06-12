@@ -133,14 +133,6 @@ MKtlDesc {
 
 	*filenameForIDInfo { |idInfo| ^fileToIDDict.findKeyForValue(idInfo) }
 
-	*filenameForLookupName { |lookupName|
-		^this.fileToIDDict.select { |filename, idInfo|
-			var lookupCand = MKtl.makeLookupName(idInfo);
-			[lookupName, lookupCand, filename, idInfo].postln;
-			lookupName.asString.contains(lookupCand)
-		}
-	}
-
 	*writeCache {
 		var dictForFolder = Dictionary.new, file;
 

@@ -8,7 +8,7 @@ MKtl works as follows:
 
 *  make MKtlElement from MKtlDesc.elementsDesc in multiple flavors:
 - elements      * hierarchical, = MKtlElementGroup
-- elementsDict  * flat for fast lookup by element key
+- elementsDict  * flat for fast access by element key
 // - elementsArray * by pairs, needed somewhere?
 
 * makeDevice
@@ -23,7 +23,6 @@ MKtl { // abstract class
 
 	classvar <all; 			// holds all instances of MKtl
 	classvar <globalSpecs; 	// dict with all default specs used in MKtls
-	classvar <>makeLookupNameFunc;
 
 	var <name;
 	// an MKtlDesc that has all known information about the hardware device(s)
@@ -32,8 +31,7 @@ MKtl { // abstract class
 	var <specs;
 
 	var <elements;			// all elements in ElementGroup in hierarchical order
-	var <elementsDict; 		// all elements in a single flat dict for fast lookup
-//	var <elementsArray;		// all elements in a flat array for ordered iteration
+	var <elementsDict; 		// all elements in a single flat dict for fast access
 
 	var <collectivesDict; 	// has the collectives (combined elements and groups)
 							// from the device description
@@ -155,17 +153,6 @@ MKtl { // abstract class
 		if (desc.isNil) {
 			idInfo = MKtlDevice.idInfoForLookupName(name);
 			mktlDesc = MKtlDesc.filenameForIDInfo(idInfo);
-		//	desc;
-		};
-
-		// // dodgy and not working yet...
-		// if (name.isNil and: { desc.notNil }) {
-		// 	// last chance: infer missing name from desc?
-		// 	try { name = (desc.lookupName ++ 0).asSymbol };
-		// 	if (name.isNil) {
-		// 		"MKtl could not infer name from desc, so we give up.".postln;
-		// 		^nil
-		// 	}
 		// };
 
 		if (this.descIsFaulty(mktlDesc)) {
