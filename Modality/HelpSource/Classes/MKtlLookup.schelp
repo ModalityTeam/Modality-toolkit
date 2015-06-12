@@ -1,0 +1,67 @@
+TITLE:: MKtlLookup
+summary:: unify lookup for MKtl devices
+categories:: Libraries/Modality
+related:: Classes/MKtl,  Classes/MKtlDesc, Classes/MKtlDevice
+
+DESCRIPTION::
+MKtlLookup provides a single dictionary with unique lookup names for all hardware/network devices found or declared, so they can be used with MKtls.
+The names are intentionally long to be both unique and descriptive of the source. short nicknames can and should be given in
+MKtl(\mydev, 'hid_0_);
+
+code::
+// E.g. MKtl.find should eventually do:
+MIDIClient.init;
+HID.findAvailable;
+MKtlLookup.addAllHID;
+MKtlLookup.addAllMIDI;
+
+MKtlLookup.names.printcsAll;
+
+// add some osc devices by hand:
+MKtlLookup.addOSC(NetAddr.localAddr, \sclang);
+MKtlLookup.addOSC(s.addr, "server_%".format(s.name).asSymbol).put(\server, s);
+MKtlLookup.addOSC(NetAddr("192.168.94.23", 1234), \gyrosc);
+
+MKtlLookup.names.printcsAll;
+
+::
+
+CLASSMETHODS::
+
+METHOD:: all
+the lookup dictionary
+
+private:: initClass
+
+METHOD:: addHID
+add a HIDInfo by as found by index in HID.available
+
+METHOD:: addAllHID
+add all HIDINfos currently found in HID.available
+
+METHOD:: addSerial
+
+METHOD:: addMIDI
+add a MIDIEndpoint as found by index in MIDIClient.sources or .destinations.
+type (\src or \dest) tells MKtlLookup whether it is in sources or .destinations.
+
+METHOD:: addAllMIDI
+add all MIDIEndpoints currently found in MIDIClient sources or destinations
+
+METHOD:: midiAt
+find a MIDIEndpoint by type and index
+
+METHOD:: midiAt
+
+METHOD:: addOSC
+add an OSC source or dest. as these are not globally represented, make them by hand,
+with sendAddr, replyAddr, and (given) name.
+
+INSTANCEMETHODS::
+
+none, MKtlLookup is a Singleton.
+
+EXAMPLES::
+
+code::
+::

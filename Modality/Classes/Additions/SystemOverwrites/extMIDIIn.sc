@@ -10,13 +10,13 @@ MIDIIn.connectAll;
 
 + MIDIClient {
 
-	*externalSources{
+	*externalSources {
 		^MIDIClient.sources.select({ |src,i|
 			src.device != "SuperCollider"
 		})
 	}
 
-	*externalDestinations{
+	*externalDestinations {
 		^MIDIClient.destinations.select({ |src,i|
 			src.device != "SuperCollider"
 		})
@@ -27,7 +27,7 @@ MIDIIn.connectAll;
 + MIDIIn{
 
 	*connectAll {
-		if(MIDIClient.initialized.not,{ MIDIClient.init });
+		if(MIDIClient.initialized.not, { MIDIClient.init });
 		MIDIClient.externalSources.do({ |src,i|
 			MIDIIn.connect(i,src);
 		});

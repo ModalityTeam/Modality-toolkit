@@ -199,8 +199,8 @@ MKtl { // abstract class
 		elementsDict = ();
 
 		if (desc.isNil) {
-			inform("MKtl:makeElements - no desc was given, so cannot \n"
-				"make Elements and collectives yet.");
+			inform("MKtl:init - no desc was given, so cannot \n"
+				"make Elements and collectives or open device yet.");
 			^this
 		};
 

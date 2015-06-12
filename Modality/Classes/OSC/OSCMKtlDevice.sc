@@ -72,7 +72,7 @@ OSCMKtlDevice : MKtlDevice {
 
 	classvar <initialized = false; // always true
 
-	*inversePatternDispatcher{
+	*inversePatternDispatcher {
 		if ( inversePatternDispatcher.isNil ){
 			inversePatternDispatcher = OSCMessageInversePatternDispatcher.new;
 		};
