@@ -15,36 +15,36 @@ device: "minibee",
 protocol: \osc,
 // port: 57600, // if messages are sent from a specific port
 description: (
-	'acc': (
-			x: (
-				oscPath: '/minibee/data',
-				//filterAt: [ 0 ], match: [ 1 ],
-                argTemplate: [ 1 ],
-                valueAt: 2,
-			'type': 'accelerationAxis', spec: \minibeeData
-		),
-		y: (
-			oscPath: '/minibee/data',
-			// filterAt: [ 0 ], match: [ 1 ],
-            argTemplate: [ 1 ],
-            valueAt: 3,
-			'type': 'accelerationAxis', spec: \minibeeData
-		),
-		z: (
-			oscPath: '/minibee/data',
-			// filterAt: [ 0 ], match: [ 1 ],
-            argTemplate: [ 1 ],
-            valueAt: 4,
-			'type': 'accelerationAxis', spec: \minibeeData
-		)
-	),
-	'rssi': (
-		oscPath: '/minibee/data',
-		// filterAt: [ 0 ], match: [ 1 ],
-        argTemplate: [ 1 ],
-        valueAt: 5,
-		'type': 'rssi', spec: \minibeeData
-	)
+'acc': (
+x: (
+oscPath: '/minibee/data',
+//filterAt: [ 0 ], match: [ 1 ],
+argTemplate: [ 1 ],
+valueAt: 2,
+'type': 'accelerationAxis', spec: \minibeeData
+),
+y: (
+oscPath: '/minibee/data',
+// filterAt: [ 0 ], match: [ 1 ],
+argTemplate: [ 1 ],
+valueAt: 3,
+'type': 'accelerationAxis', spec: \minibeeData
+),
+z: (
+oscPath: '/minibee/data',
+// filterAt: [ 0 ], match: [ 1 ],
+argTemplate: [ 1 ],
+valueAt: 4,
+'type': 'accelerationAxis', spec: \minibeeData
+)
+),
+'rssi': (
+oscPath: '/minibee/data',
+// filterAt: [ 0 ], match: [ 1 ],
+argTemplate: [ 1 ],
+valueAt: 5,
+'type': 'rssi', spec: \minibeeData
+)
 )
 )
 );
@@ -95,69 +95,71 @@ OSCMKtlDevice : MKtlDevice {
 		traceFind = post;
 		this.initDevices( true );
 		if ( post ){
-			fork{
-				1.0.wait;
-				this.postPossible;
-			};
+		fork{
+		1.0.wait;
+		this.postPossible;
+		};
 		}
 		*/
 	}
 
 	/*
 	*initDevices { |force=false| // force has no real meaning here
-		sourceDeviceDict = (); // this is tricky, we could have an OSCFunc running which checks from which NetAddresses we are receiving data.
-		checkIncomingOSCFunction = {
-			|msg,time,source|
-			var sourcename = this.deviceNameFromAddr( source ).asSymbol;
-			if ( sourceDeviceDict.at( sourcename ).isNil ){
-				sourceDeviceDict.put( sourcename, source );
-				// add to all available
-				this.addFoundToAllAvailable( sourcename );
-				if ( this.traceFind ){
-					"OSCMKtlDevice found a new osc source: % \n".postf( source );
-				};
-			};
-		};
-		this.addToAllAvailable;
-		thisProcess.addOSCRecvFunc( checkIncomingOSCFunction );
-		initialized = true;
+	sourceDeviceDict = (); // this is tricky, we could have an OSCFunc running which checks from which NetAddresses we are receiving data.
+	checkIncomingOSCFunction = {
+	|msg,time,source|
+	var sourcename = this.deviceNameFromAddr( source ).asSymbol;
+	if ( sourceDeviceDict.at( sourcename ).isNil ){
+	sourceDeviceDict.put( sourcename, source );
+	// add to all available
+	this.addFoundToAllAvailable( sourcename );
+	if ( this.traceFind ){
+	"OSCMKtlDevice found a new osc source: % \n".postf( source );
+	};
+	};
+	};
+	this.addToAllAvailable;
+	thisProcess.addOSCRecvFunc( checkIncomingOSCFunction );
+	initialized = true;
 	}
 
 	*addFoundToAllAvailable { |key|
-		allAvailable.at( \osc ).add( key );
+	allAvailable.at( \osc ).add( key );
 	}
 
 	*addToAllAvailable {
-		// put the available osc devices in MKtlDevice's available devices
-		allAvailable.put( \osc, List.new );
-		sourceDeviceDict.keysDo({ |key|
-			allAvailable[\osc].add( key );
-		});
+	// put the available osc devices in MKtlDevice's available devices
+	allAvailable.put( \osc, List.new );
+	sourceDeviceDict.keysDo({ |key|
+	allAvailable[\osc].add( key );
+	});
 	}
 
 	*deinitDevices {
-		thisProcess.removeOSCRecvFunc( checkIncomingOSCFunction );
+	thisProcess.removeOSCRecvFunc( checkIncomingOSCFunction );
 	}
 	*/
 
 	*initDevices { |force=false| // force has no real meaning here
-		sourceDeviceDict = sourceDeviceDict ?? ();
+		var postables = MKtlLookup.allFor(\osc);
 		initialized = true;
+		if (postables.size == 0) {
+			"// OSC No known sending addresses so far.\n"
+			"// To detect OSC devices by hand, use OSCMon: ".postln;
+			"o = OSCMon.new.enable.show;".postln;
+			^this
+		};
 	}
-	*deinitDevices {} // doesn't do anything, but needs to be there
+
+	*deinitDevices { } // doesn't do anything, but needs to be there
 
 	*postPossible {
-		"// OSC cannot detect devices automatically,\n"
-		"// so to see incoming OSC messages, use OSCMon: ".postln;
-		"o = OSCMon.new; o.enable; o.show".postln;
-		if ( initialized ){
-			"\n// Available OSCMKtlDevices:".postln;
-			"// MKtl(autoName);  // [ host, port ]".postln;
-			sourceDeviceDict.keysValuesDo{ |key,addr|
-				"    MKtl('%');  // [ %, % ]\n"
-				.postf(key, addr.hostname.asCompileString, addr.port.asCompileString )
-			};
-			"\n-----------------------------------------------------".postln;
+		var postables = MKtlLookup.allFor(\osc);
+		"\n// Available OSCMKtlDevices:".postln;
+		"// MKtl(name);  // [ host, port ]".postln;
+		postables.sortedKeysValuesDo { |key, addr|
+			"    MKtl('%'); // [ %, % ]\n"
+			.postf(key, addr.hostname.cs, addr.port.cs )
 		};
 	}
 

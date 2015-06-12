@@ -49,7 +49,14 @@ MKtl { // abstract class
 	}
 
 	*find { |protocols|
-		MKtlDevice.find( protocols );
+		MKtlDevice.find( protocols, false);
+		MKtl.postPossible(protocols);
+	}
+
+	*postPossible { |protocols|
+		"\n-----------------------------------------------------".postln;
+		MKtlDevice.subFor(protocols).do(_.postPossible);
+		"\n-----------------------------------------------------".postln;
 	}
 
 	// prefix is typically protocol
@@ -502,7 +509,7 @@ MKtl { // abstract class
 		};
 
 		// this may be an issue, only look for appropriate protocol
-		protocol = desc !? { desc.protocol.bubble };
+		protocol = desc !? { desc.protocol };
 		MKtlDevice.initHardwareDevices( lookAgain, protocol);
 
 		mktlDevice = MKtlDevice.open( this.name, this, protocol, desc );

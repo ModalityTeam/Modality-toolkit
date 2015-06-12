@@ -92,13 +92,15 @@ MKtlDesc {
 	}
 
 	// convenience only
-	*loadDescs { |filename = "*", folderIndex|
+	*loadDescs { |filename = "*", folderIndex, post = false|
 		var paths = this.findFile(filename, folderIndex);
 		var descs = paths.collect {|path|
 			this.fromPath(path);
 		};
-		"\n// MKtlDesc loaded % description files - see:"
-		"\nMKtlDesc.allDescs;\n".postf(paths.size);
+		if (post) {
+			"\n// MKtlDesc loaded % description files - see:"
+			"\nMKtlDesc.allDescs;\n".postf(paths.size);
+		};
 		^descs
 	}
 

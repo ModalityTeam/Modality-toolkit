@@ -37,7 +37,10 @@ MKtlDevice {
 	}
 
 	*find { |protocols, post = true|
-		this.subFor(protocols).do (_.find(post));
+		this.subFor(protocols).do (_.find(false));
+		if (post) {
+			this.subFor(protocols).do(_.postPossible);
+		};
 	}
 
 	*initHardwareDevices { |force = false, protocols|
@@ -52,7 +55,7 @@ MKtlDevice {
 		var infoCandidates;
 
 		if (parentMKtl.isNil) {
-			"MKtldevice.open: parentMktl.isNil - should not happen!".postln;
+			"MKtlDevice.open: parentMktl.isNil - should not happen!".postln;
 			^this
 		};
 
@@ -60,16 +63,13 @@ MKtlDevice {
 		lookupInfo = parentMKtl.lookupInfo ?? { MKtlLookup.all[lookupName] };
 		lookupName = lookupName ?? { if (lookupInfo.notNil) { lookupInfo.lookupName } };
 
-		// if we know device already, get it from here:
+		// if we know the device lookupName already,
+		// and it is a single name only, we can get it from here:
 		if (lookupInfo.notNil) {
 		//	[lookupName, lookupInfo].postln;
 			subClass = MKtlDevice.subFor(lookupInfo.protocol);
-			newDevice = subClass.new( lookupName, parentMKtl: parentMKtl );
-			if (newDevice.notNil) {
-				^newDevice.initElements;
-			};
+			^subClass.new( lookupName, parentMKtl: parentMKtl );
 		};
-
 
 		// no luck with lookup info, so try desc next
 
@@ -90,6 +90,8 @@ MKtlDevice {
 			^this
 		};
 
+		// FIXME: how to get multiple merged devices distinguished properly?
+		// currently two nanoKontrols would get merged.
 		if (infoCandidates.size > 1) {
 			inform("%: multiple infoCandidates found, please disambiguate by lookupName:"
 				.format(this.name));
@@ -98,18 +100,14 @@ MKtlDevice {
 			};
 			^this
 		};
+
 		// exactly one candidate, so we take it:
 		lookupInfo = infoCandidates[0];
 		parentMKtl.updateLookupInfo(lookupInfo);
 
 		subClass = MKtlDevice.subFor(desc.protocol);
-		newDevice = subClass.new( lookupInfo.lookupName, parentMKtl: parentMKtl );
-		if (newDevice.notNil) {
-			^newDevice.initElements;
-		};
+		^subClass.new( lookupInfo.lookupName, parentMKtl: parentMKtl );
 
-		"MKtlDevice.open - should not get here...".postln;
-		^nil
 	}
 
 	*basicNew { |name, deviceName, parentMKtl |

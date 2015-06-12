@@ -18,13 +18,12 @@ HIDMKtlDevice : MKtlDevice {
 	}
 
 	*initDevices { |force=false|
+
+		if ( initialized && { force.not } ){ ^this; };
+
 		if ( Main.versionAtLeast( 3, 7 ).not ){
 			"Sorry, no HID before 3.7.".postln;
 			^this;
-		};
-		if (initialized && force.not) {
-			"HIDMKtlDevice already initialised".inform;
-			^this
 		};
 
 		HID.findAvailable;
@@ -36,7 +35,7 @@ HIDMKtlDevice : MKtlDevice {
 
 	*devicesToShow {
 		^HID.available.select { |dev, id|
-			(dev.productName + ": ").post;
+		//	(dev.productName + ": ").post;
 			showAllDevices or: {
 				deviceProductNamesToHide.every({ |prodname|
 					[dev.productName, prodname];
@@ -49,20 +48,23 @@ HIDMKtlDevice : MKtlDevice {
 	// open all ports and display them in readable fashion,
 	// copy/paste-able directly
 	*find { |post = true|
-		this.initDevices( true );
+		this.initDevices ( true );
 		if ( post ) { this.postPossible; };
 	}
 
 	*postPossible {
 		var postables = MKtlLookup.allFor(\hid);
-		"\n// Available HIDMKtlDevices:".postln;
-		if (showAllDevices.not and: { HID.available.size != postables.size }) {
-			inform(
-				"// Some devices are not shown because they may crash the OS."
-				"\n// See them in: HID.available.")
+		var postHidden = showAllDevices.not and: { HID.available.size != postables.size };
+		var hiddenStr = "// Some HIDs not shown that can crash the OS. See: HID.available;";
+		if (postables.size == 0) {
+			"No HID devices available.".postln;
+			if (postHidden) { hiddenStr.postln; };
+			^this
 		};
 
-		"// MKtl(autoName, filename);  // [ hid product, vendor, (serial number) ]".postln;
+		if (postHidden) { hiddenStr.postln; };
+		"\n// Available HIDMKtlDevices:".postln;
+		"// MKtl(name, filename);  // [ product, vendor, (serial#) ]".postln;
 		postables.sortedKeysValuesDo { |key, infodict|
 			var info = infodict.deviceInfo;
 			var product = info.productName;
@@ -75,10 +77,8 @@ HIDMKtlDevice : MKtlDevice {
 				postList = postList.add(serial);
 			};
 			// filename = if (filename.isNil) { "" } { "," + quote(filename) };
-			"MKtl('_myDevNameHere_', %);		// %\n".postf(key.cs, postList.cs);
+			"MKtl('renameMe', %);		// %\n".postf(key.cs, postList.cs);
 		};
-
-		"\n-----------------------------------------------------".postln;
 	}
 
 	*getIDInfoFrom { |hidInfo|
@@ -117,10 +117,12 @@ HIDMKtlDevice : MKtlDevice {
 	}
 
 	initHIDMKtl { |argSource, argUid|
+		// HID is only ever one source, hopefully
         source = argSource.open;
 		srcID = source.id;
-		// this.initElements;
-		// this.initCollectives;
+
+		this.initElements;
+		this.initCollectives;
 
 		// only do this explicitly
 		// this.sendInitialisationMessages;

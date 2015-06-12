@@ -53,21 +53,41 @@ MKtlLookup {
 	}
 
 	*addAllMIDI {
+		// join the ones that belong together first,
+		// and give them proper in/out srcIDs:
 		MIDIClient.sources.do { |endpoint, index|
-			MKtlLookup.addMIDI(endpoint, index, \src);
+			MKtlLookup.addOrMergeMIDI(endpoint, index, \src);
 		};
 		MIDIClient.destinations.do { |endpoint, index|
-			MKtlLookup.addMIDI(endpoint, index, \dest);
+			MKtlLookup.addOrMergeMIDI(endpoint, index, \dest);
+		};
+	}
+
+	*addOrMergeMIDI { |endpoint, index, endPointType|
+		// only take first one for now, we assume
+		// no multplie devices that need merging:
+
+		var infoToMergeTo = MKtlLookup.allFor(\midi).detect { |info|
+			info.deviceInfo.device == endpoint.device
+		};
+		if (infoToMergeTo.isNil) {
+			^MKtlLookup.addMIDI(endpoint, index, \src);
+		};
+
+		infoToMergeTo.uid = infoToMergeTo.uid.asArray.add(endpoint.uid).unbubble;
+		if (endPointType == \src) {
+			infoToMergeTo.srcID = infoToMergeTo.srcID.asArray.add(endpoint.uid).unbubble;
+		};
+		if (endPointType == \dest) {
+			infoToMergeTo.destID = infoToMergeTo.destID.asArray.add(endpoint.uid).unbubble;
 		};
 	}
 
 	*addMIDI { |endPoint, index, endPointType = \src|
 		var protocol = \midi;
-		var typeStr = endPointType.asString;
-		var prefix = protocol ++ typeStr.put(0, typeStr[0].toUpper);
 		var idInfo = endPoint.device;
-		var lookupName = MKtl.makeLookupName(prefix, index, endPoint.device);
 		var filename = MKtlDesc.filenameForIDInfo(idInfo);
+		var lookupName = MKtl.makeLookupName(protocol, index, endPoint.device);
 
 		var dict = (
 			protocol: protocol,
@@ -79,6 +99,7 @@ MKtlLookup {
 			lookupName: lookupName
 		//	lookup: { MKtlLookup.midiAt(endPointType, index); }
 		);
+
 		all.put(lookupName, dict);
 		^dict
 	}
