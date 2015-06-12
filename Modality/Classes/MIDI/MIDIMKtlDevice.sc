@@ -4,12 +4,6 @@ MIDIMKtlDevice : MKtlDevice {
 
 	classvar <protocol = \midi;
 	classvar <initialized = false;
-	//      ('deviceName': MIDIEndPoint, ... )
-	// e.g.  ( 'bcr0': MIDIEndPoint("BCR2000", "Port 1"), ... )
-	classvar <sourceDeviceDict;
-	//      ('deviceName': MIDIEndPoint, ... )
-	//i.e.  ( 'bcr0': MIDIEndPoint("BCR2000", "Port 2"), ... )
-	classvar <destinationDeviceDict;
 
 	// MIDI-specific address identifiers
 	var <srcID /*Int*/, <source /*MIDIEndPoint*/;
@@ -74,28 +68,23 @@ MIDIMKtlDevice : MKtlDevice {
 			MIDIClient.disposeClient;
 			MIDIClient.init;
 		};
+		// broken MIDI init on osx
 		if ( thisProcess.platform.name == \osx and: Main.versionAtMost( 3,6 ) ){
-			"next time you recompile the language, reboot the interpreter instead to get MIDI working again.".warn;
+			"next time you recompile the language, reboot the interpreter"
+			"\n instead to get MIDI working again.".warn;
 		};
 
 		MIDIIn.connectAll;
-		sourceDeviceDict = ();
-		destinationDeviceDict = ();
-
-		this.prepareDeviceDicts;
-
+		MKtlLookup.addAllMIDI;
 		initialized = true;
 	}
 
-	// display all ports in readable fashion,
-	// copy/paste-able directly
-	// this could also live in /--where?--/
-	*find { |post=true|
+	*find { |post = true|
 		this.initDevices( true );
 
 		if ( MIDIClient.sources.isEmpty and: MIDIClient.destinations.isEmpty ) {
 			"// MIDIMKtl did not find any sources or destinations - "
-			"// you may want to connect some first.".inform;
+			"\n// you may want to connect some first.".inform;
 			^this
 		};
 
@@ -104,165 +93,80 @@ MIDIMKtlDevice : MKtlDevice {
 		};
 	}
 
-	*getIDInfoFrom { |lookupName|
-		var endpoint = MIDIMKtlDevice.sourceDeviceDict[lookupName];
-		^endpoint !? { endpoint.device }
-	}
-
-
+	// display all ports in readable fashion, copy/paste-able directly
 	*postPossible {
+		var postables = MKtlLookup.allFor(\midi);
+		if (postables.size == 0) {
+			"No MIDI devices available.".inform;
+			^this;
+		};
 
-		"\n-----------------------------------------------------".postln;
 		"\n// Available MIDIMKtls: ".postln;
-		"// MKtl(autoName, filename);  // [ midi device, midi port, uid ]\n".postln;
-		sourceDeviceDict.keysValuesDo { |key, src|
-			var deviceName = src.device;
-			var midiPortName = src.name;
-			var postList = [deviceName, midiPortName, src.uid];
+		"// MKtl(name, filename);  // [ midi device, port, uid ]\n".postln;
+		postables.keysValuesDo { |key, infodict|
+			var endPoint = infodict.deviceInfo;
+			var deviceName = endPoint.device;
+			var midiPortName = endPoint.name;
+			var postList = [deviceName, midiPortName, endPoint.uid];
 			var filename = MKtlDesc.filenameForIDInfo(deviceName);
+
 			filename = if (filename.isNil) { "" } { "," + quote(filename) };
-
-			"MKtl(%%);  // % \n".postf(
-				key.cs, filename, postList
-			);
+			filename = if (filename.isNil) { "" } { "," + quote(filename) };
+			"MKtl('nameMe', %);		// %\n".postf(key.cs, postList.cs);
 		};
-		"\n-----------------------------------------------------".postln;
-	}
-
-	*getSourceName { |shortName|
-		var srcName;
-		var src = this.sourceDeviceDict.at( shortName );
-		if ( src.notNil ){
-			srcName = src.device;
-		}{
-			src = this.destinationDeviceDict.at( shortName );
-			if ( src.notNil ){
-				srcName = src.device;
-			};
-		};
-		^srcName;
-	}
-
-	*findSource { |rawDeviceName, rawPortName| // or destination
-		var devKey;
-		if ( initialized.not ){ ^nil };
-		this.sourceDeviceDict.keysValuesDo{ |key,endpoint|
-			if ( endpoint.device == rawDeviceName ){
-				if ( rawPortName.isNil ){
-					devKey = key;
-				}{
-					if ( endpoint.name == rawPortName ){
-						devKey = key;
-					}
-				}
-			};
-		};
-		if ( devKey.isNil ){
-			this.destinationDeviceDict.keysValuesDo{ |key,endpoint|
-				if ( endpoint.device == rawDeviceName ){
-					if ( rawPortName.isNil ){
-						devKey = key;
-					}{
-						if ( endpoint.name == rawPortName ){
-							devKey = key;
-						}
-					}
-				};
-			};
-		};
-		^devKey;
-	}
-
-	// not sure if still needed?
-	*findInDictByNameAndIndex { |dict, name, index|
-		var found = List.new;
-		var foundItem;
-		index = index ? 0;
-		// [dict,name,index].postln;
-		dict.keysValuesDo{ |key,endpoint|
-			if ( endpoint.device == name ){ found.add( endpoint ) };
-		};
-		foundItem = found.sort( { |a,b| a.name < b.name } ).at( index );
-		// returns the MIDI endpoint;
-		// foundItem.postln;
-		^foundItem;
 	}
 
 	// create with a uid, or access by name
 	// FIXME: not sure about how t get destUID to work again in the refactor
 	// *new { |name, srcUID, destUID, parentMKtl|
 	*new { |name, idInfo, parentMKtl|
-		var foundSource, foundDestination;
-		var deviceName, destUID;
-
-		// idInfo.postln;
-
+		// var foundSource, foundDestination;
 		this.initDevices;
-
-		// "MIDIMKtlDevice:\n\t% % % %".format( name, idInfo, parentMKtl, initialized ).inform;
-
-		if ( idInfo.notNil ){ // use idInfo to open:
-			if ( initialized.not ){ ^nil };
-			idInfo.isKindOf( String ).postln;
-			if ( idInfo.isKindOf( String ) ) {
-				foundSource = this.findInDictByNameAndIndex( sourceDeviceDict, idInfo );
-				foundDestination = this.findInDictByNameAndIndex( destinationDeviceDict, idInfo );
-			};
-		} {
-			foundSource = sourceDeviceDict[name.asSymbol];
-			foundDestination = destinationDeviceDict[name.asSymbol];
-		};
-
-		if (foundSource.isNil and: {foundDestination.isNil}) {
-			"MIDIMKtlDevice: no hardware device found. Assuming virtual.".inform;
-			^nil;
-		};
-
-		if (foundDestination.isNil) {
-			warn("MIDIMKtlDevice:\n"
-				"	No MIDIOut destination with USB port ID % exists!"
-				.format(destUID)
-			);
-		};
-
-		// if ( foundSource.isNil and: foundDestination.isNil ){
-		// warn("MIDIMKtl:"
-		// "	No MIDIIn source nor destination with USB port ID %, % exists! please check again.".format(srcUID, destUID));
-		// ^nil;
+		//
+		// // "MIDIMKtlDevice:\n\t% % % %".format( name, idInfo, parentMKtl, initialized ).inform;
+		//
+		// if ( idInfo.notNil ){ // use idInfo to open:
+		// 	if ( initialized.not ){ ^nil };
+		// 	idInfo.isKindOf( String ).postln;
+		// 	if ( idInfo.isKindOf( String ) ) {
+		// 		foundSource = this.findInDictByNameAndIndex( sourceDeviceDict, idInfo );
+		// 		foundDestination = this.findInDictByNameAndIndex( destinationDeviceDict, idInfo );
+		// 	};
+		// } {
+		// 	foundSource = sourceDeviceDict[name.asSymbol];
+		// 	foundDestination = destinationDeviceDict[name.asSymbol];
 		// };
-
-		if (foundDestination.notNil) {
-			destinationDeviceDict.changeKeyForValue(name, foundDestination);
-			deviceName = foundDestination.device;
-		};
-		if (foundSource.notNil) {
-			sourceDeviceDict.changeKeyForValue(name, foundSource);
-			deviceName = foundSource.device;
-		};
-
-		^super.basicNew(name, deviceName, parentMKtl )
-		.initMIDIMKtl(name, foundSource, foundDestination );
-	}
-
-	*prepareDeviceDicts {
-		var nameList = List.new;
-		MIDIClient.sources.do {|src, i|
-			var lookupName = MKtl.makeLookupName("midiSrc", i, src.device);
-			sourceDeviceDict.put(lookupName, src);
-			nameList.add(lookupName);
-		};
-
-		MIDIClient.destinations.do {|dest, i|
-			var lookupName = MKtl.makeLookupName("midiDest", i, dest.device);
-			sourceDeviceDict.put(lookupName, dest);
-			nameList.add(lookupName);
-		};
-
-
-		// put the available midi devices in MKtl's available devices
-		if (nameList.notEmpty) {
-			allAvailable[\midi] = nameList;
-		}
+		//
+		// if (foundSource.isNil and: {foundDestination.isNil}) {
+		// 	"MIDIMKtlDevice: no hardware device found. Assuming virtual.".inform;
+		// 	^nil;
+		// };
+		//
+		// if (foundDestination.isNil) {
+		// 	warn("MIDIMKtlDevice:\n"
+		// 		"	No MIDIOut destination with USB port ID % exists!"
+		// 		.format(destUID)
+		// 	);
+		// };
+		//
+		// // if ( foundSource.isNil and: foundDestination.isNil ){
+		// // warn("MIDIMKtl:"
+		// // "	No MIDIIn source nor destination with USB port ID %, % exists! please check again.".format(srcUID, destUID));
+		// // ^nil;
+		// // };
+		//
+		// if (foundDestination.notNil) {
+		// 	destinationDeviceDict.changeKeyForValue(name, foundDestination);
+		// 	deviceName = foundDestination.device;
+		// };
+		// if (foundSource.notNil) {
+		// 	sourceDeviceDict.changeKeyForValue(name, foundSource);
+		// 	deviceName = foundSource.device;
+		// };
+		//
+		// ^super.basicNew(name, deviceName, parentMKtl )
+		// .initMIDIMKtl(name, foundSource, foundDestination );
+		^nil
 	}
 
 	/// ----(((((----- EXPLORING ---------
