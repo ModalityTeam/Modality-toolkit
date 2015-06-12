@@ -45,18 +45,21 @@ MKtl { // abstract class
 		all = ();
 		globalSpecs = ().parent_(Spec.specs);
 		this.prAddDefaultSpecs();
-
-		makeLookupNameFunc = { |string|
-			(string.asString.toLower.select{|c| c.isAlpha
-				&& { c.isVowel.not }}.keep(4)
-			++ string.asString.select({|c| c.isDecDigit}))
-		}
 	}
-
-	*makeLookupName {|string| ^makeLookupNameFunc.(string); }
 
 	*find { |protocols|
 		MKtlDevice.find( protocols );
+	}
+
+	// prefix is typically protocol
+	*makeLookupName {|prefix, id, prodName|
+		prodName = prodName.asString.collect { |c|
+			if (c.isAlphaNum, c.toLower, $_);
+		};
+		while { prodName.contains("__") } {
+			prodName = prodName.replace("__", "_");
+		};
+		^"%_%_%".format(prefix, id, prodName).asSymbol
 	}
 
 	/////////// everything related to specs
@@ -90,6 +93,7 @@ MKtl { // abstract class
 
 	}
 
+	// interface for specs
 	*addSpec {|key, spec| globalSpecs.put(key, spec.asSpec) }
 	addSpec {|key, spec| this.addLocalSpec(key, spec) }
 	*getSpec { |key| ^globalSpecs[key] }
@@ -109,6 +113,16 @@ MKtl { // abstract class
 		specs.put(key, theSpec);
 	}
 
+// interface to MKtlDesc:
+
+	*descFolders { ^MKtlDesc.descFolders }
+	*openDescFolder { |index = 0| MKtlDesc.openFolder(index) }
+	*postLoadableDescs { MKtlDesc.postLoadable }
+	*postLoadedDescs { MKtlDesc.postLoaded }
+
+	*loadDescsMatching { |filename, folderIndex |
+		^MKtlDesc.loadDescs(filename, folderIndex);
+	}
 
 	// creation:
 	// new returns existing instances that exist in .all,
@@ -149,12 +163,6 @@ MKtl { // abstract class
 		// would be good to have protocol here already
 		MKtlDevice.initHardwareDevices( lookForNew, protocol.asArray);
 
-		// find desc for lookupname of hardware device:
-		if (desc.isNil) {
-			idInfo = MKtlDevice.idInfoForLookupName(name);
-			mktlDesc = MKtlDesc.filenameForIDInfo(idInfo);
-		// };
-
 		if (this.descIsFaulty(mktlDesc)) {
 			warn("MKtl: % has no working description, so please"
 				" explore it and create a description file.");
@@ -164,6 +172,8 @@ MKtl { // abstract class
 
 		^super.newCopyArgs(name).init(mktlDesc);
 	}
+
+	// interface to desc:
 
 	*descIsFaulty { |argDesc|
 		^argDesc.isKindOf(MKtlDesc).not or:
@@ -184,7 +194,6 @@ MKtl { // abstract class
 	init { |argDesc|
 		desc = argDesc;
 
-		// FIXME : how to count up for multiple devices of same type?
 		all.put(name, this);
 		specs = ().parent_(globalSpecs);
 		elementsDict = ();
@@ -354,9 +363,9 @@ MKtl { // abstract class
 		}
 	}
 
-	allElements {
-		^elementsDict.asArray
-	}
+	// allElements { // unneeded
+	// 	^elementsDict.asArray
+	// }
 
 	elementsLabeled { |label|
 		var labels;
