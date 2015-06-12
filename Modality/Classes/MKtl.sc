@@ -160,6 +160,7 @@ MKtl { // abstract class
 
 		lookupNameOrDesc.class.switch(
 			Symbol, {
+				MKtlDevice.initHardwareDevices;
 				lookupName = lookupNameOrDesc;
 				lookupInfo = MKtlLookup.all[lookupName];
 				if (lookupInfo.notNil) {
@@ -272,6 +273,11 @@ MKtl { // abstract class
 		this.makeCollectives;
 
 		this.openDevice;
+	}
+
+	updateLookupInfo { |newInfo|
+		lookupInfo = newInfo;
+		lookupName = lookupInfo.lookupName;
 	}
 
 	initialisationMessages {
@@ -474,6 +480,7 @@ MKtl { // abstract class
 		if (mktlDevice.notNil) {
 			mktlDevice.closeDevice;
 			mktlDevice.cleanupElementsAndCollectives;
+			mktlDevice = nil;
 		};
 
 		this.init(desc);

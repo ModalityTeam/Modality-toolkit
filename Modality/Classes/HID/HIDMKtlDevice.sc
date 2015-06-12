@@ -1,7 +1,6 @@
 HIDMKtlDevice : MKtlDevice {
 
 	classvar <initialized = false;
-	classvar <sourceDeviceDict, hiddenDeviceDict;
 	classvar <>showAllDevices = false, <deviceProductNamesToHide;
 	classvar <protocol = \hid;
 
@@ -16,15 +15,6 @@ HIDMKtlDevice : MKtlDevice {
 				"Apple IR"
 			];
 		});
-	}
-
-	*getSourceName { |shortName|
-		var srcName;
-		var src = this.sourceDeviceDict.at( shortName );
-		if ( src.notNil ){
-			srcName = this.makeDeviceName( src );
-		};
-		^srcName;
 	}
 
 	*initDevices { |force=false|
@@ -97,30 +87,6 @@ HIDMKtlDevice : MKtlDevice {
 		}
 	}
 
-	// FIXME : this returns only the last source that matches
-	*findSource { |rawDeviceName, rawVendorName|
-		var devKey;
-		if ( initialized.not ){ ^nil };
-
-		this.sourceDeviceDict.keysValuesDo { |key,hidinfo|
-			if ( rawVendorName.notNil ){
-				if ( hidinfo.productName == rawDeviceName
-					and: ( hidinfo.vendorName == rawVendorName ) ){
-					devKey = key;
-				}
-			}{
-				if ( hidinfo.productName == rawDeviceName ){
-					devKey = key;
-				};
-				if ( (hidinfo.productName ++ "_" ++ hidinfo.vendorName)
-					== rawDeviceName ){
-					devKey = key;
-				};
-			};
-		};
-		^devKey;
-	}
-
     // create with a uid, or access by name
 	*new { |name, path, parentMKtl|
 		var foundSource;
@@ -143,7 +109,7 @@ HIDMKtlDevice : MKtlDevice {
 			// ^MKtl.prMakeVirtual(name);
 			^nil;
 		};
-HID
+
 		^super.basicNew( name,
 			this.makeDeviceName( foundSource ),
 			parentMKtl )
@@ -163,7 +129,7 @@ HID
 	closeDevice {
 		this.cleanupElementsAndCollectives;
 		srcID = nil;
-		source.close;
+		if (source.isOpen) { source.close };
 	}
 
     *makeDeviceName { |hidinfo|
