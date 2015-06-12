@@ -22,6 +22,8 @@ MAbstractElement {
 	var <deviceValue;
 	var <prevValue;
 
+	var <lastUpdateTime;
+
 	// server support, currently only one server per element supported.
 	var <bus;
 
@@ -50,6 +52,8 @@ MAbstractElement {
 		};
 	}
 
+	updateTime { lastUpdateTime = Process.elapsedTime }
+
 	hasOut { ^[\out, \inout].includes( elemDesc[\ioType] ) }
 
 	trySend {
@@ -69,8 +73,10 @@ MAbstractElement {
 		if (newval.isNil) { ^this };
 		prevValue = deviceValue;
 		deviceValue = newval;
+
 		this.trySend;
 		this.updateBus;
+		lastUpdateTime = Process.elapsedTime;
 		this.changed( \value, deviceValue );
 	}
 	valueNoSend_ { | newval |
@@ -78,6 +84,7 @@ MAbstractElement {
 		prevValue = deviceValue;
 		deviceValue = newval;
 		this.updateBus;
+		lastUpdateTime = Process.elapsedTime;
 		this.changed( \value, deviceValue );
 	}
 	valueAction_ { | newval |
@@ -86,15 +93,19 @@ MAbstractElement {
 		deviceValue = newval;
 		this.trySend;
 		this.updateBus;
+		lastUpdateTime = Process.elapsedTime;
 		this.doAction;
 		this.changed( \value, deviceValue );
 	}
+
 	// just aliases because we have no spec
 	deviceValue_ { | newval | ^this.value_(newval) }
 	deviceValueAction_ { | newval | ^this.valueAction_(newval) }
 	deviceValueNoSend_ { | newval | ^this.valueNoSend_(newval) }
 
 	value { ^deviceValue }
+
+	timeSinceLast { ^Process.elapsedTime - lastUpdateTime }
 
 	doAction {
 		action.value( this );
@@ -291,6 +302,7 @@ MKtlElement : MAbstractElement {
 
 		this.trySend;
 		this.updateBus;
+		lastUpdateTime = Process.elapsedTime;
 		this.changed( \value, newval );
 	}
 	valueNoSend_ { | newval |
@@ -298,6 +310,7 @@ MKtlElement : MAbstractElement {
 		prevValue = deviceValue;
 		deviceValue = deviceSpec.map(newval);
 		this.updateBus;
+		lastUpdateTime = Process.elapsedTime;
 		this.changed( \value, newval );
 	}
 	valueAction_ { | newval |
@@ -306,6 +319,7 @@ MKtlElement : MAbstractElement {
 		deviceValue = deviceSpec.map(newval);
 		this.trySend;
 		this.updateBus;
+		lastUpdateTime = Process.elapsedTime;
 		this.doAction;
 		this.changed( \value, newval );
 	}
