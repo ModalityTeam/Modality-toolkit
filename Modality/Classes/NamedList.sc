@@ -27,12 +27,10 @@ NamedList : List {
 	}
 
 	*fromDict { |dict, names, sortFunc|
-		if (names.isNil) {
-			names = dict.keys.asArray.sort(sortFunc);
+		if (names.isNil or: { sortFunc.notNil }) {
+			names = SortedList(dict.size, sortFunc);
+			dict.keysDo(names.add(_));
 		} {
-			if (sortFunc.notNil) {
-				names = names.asArray.sort(sortFunc);
-			};
 		};
 
 		^this.newUsing(

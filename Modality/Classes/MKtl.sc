@@ -188,6 +188,7 @@ MKtl { // abstract class
 			{
 				//  or is it a dictionary we can make a desc from
 				if (MKtlDesc.isValidDescDict(lookupNameOrDesc)) {
+					lookupNameOrDesc.put(\filename, name);
 					newMKtlDesc = MKtlDesc.fromDict(lookupNameOrDesc);
 					protocol = newMKtlDesc.protocol;
 				};
@@ -456,13 +457,13 @@ MKtl { // abstract class
 
 	prMatchedElements { |elementKey|
 		if ( Main.versionAtLeast( 3.5 ) ){
-			^elementsDict.asArray.select { |elem|
+			^elementsDict.select { |elem|
 				elem.name.matchOSCAddressPattern(elementKey)
-			}
+			}.asArray
 		}{
-			^elementsDict.asArray.select{ |elem|
+			^elementsDict.select { |elem|
 				elementKey.asString.matchRegexp( elem.name.asString )
-			};
+			}.asArray;
 		}
 	}
 
@@ -481,6 +482,7 @@ MKtl { // abstract class
 				newDesc = MKtlDesc(descNameOrDict);
 			};
 			if (descNameOrDict.isKindOf(Dictionary)) {
+				descNameOrDict.put(\filename, name);
 				newDesc = MKtlDesc.fromDict(descNameOrDict);
 			};
 		};
@@ -493,7 +495,7 @@ MKtl { // abstract class
 		};
 
 		this.init(desc);
-		// this.changed( \elements );
+		this.changed( \elements );
 	}
 
 
@@ -518,14 +520,6 @@ MKtl { // abstract class
 	}
 
 	hasDevice {
-		// FIXME please check implementation.
-		// cannot be correct:
-		// 1. source is only defined for MIDIMKtlDevice
-		// 2. and there it is nil always.
-
-		// ^(mktlDevice.notNil
-		// and: { mktlDevice.source.notNil })
-
 		^mktlDevice.notNil
 	}
 

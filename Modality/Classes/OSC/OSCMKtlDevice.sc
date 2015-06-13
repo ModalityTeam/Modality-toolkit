@@ -60,7 +60,6 @@ m = MKtl( \testMinibee );
 
 OSCMKtlDevice : MKtlDevice {
 	classvar <protocol = \osc;
-	classvar <sourceDeviceDict; // contains active sources ( recvPort: , srcPort: , ipAddress: , destPort:  )
 	classvar inversePatternDispatcher;
 	classvar messageSizeDispatcher;
 
@@ -79,7 +78,7 @@ OSCMKtlDevice : MKtlDevice {
 		^inversePatternDispatcher;
 	}
 
-	*messageSizeDispatcher{
+	*messageSizeDispatcher {
 		if ( messageSizeDispatcher.isNil ){
 			messageSizeDispatcher = OSCMessageAndArgsSizeDispatcher.new;
 		};
@@ -144,7 +143,7 @@ OSCMKtlDevice : MKtlDevice {
 		var postables = MKtlLookup.allFor(\osc);
 		initialized = true;
 		if (postables.size == 0) {
-			"// OSC No known sending addresses so far.\n"
+			"// OSCMKtlDevice: No known sending addresses so far.\n"
 			"// To detect OSC devices by hand, use OSCMon: ".postln;
 			"o = OSCMon.new.enable.show;".postln;
 			^this
@@ -163,53 +162,30 @@ OSCMKtlDevice : MKtlDevice {
 		};
 	}
 
-	*findSource { |devInfo| // only reports interfaces that are already opened
-		var devKey;
-		var match;
-		if ( initialized ){
-			this.sourceDeviceDict.keysValuesDo{ |key,info|
-				match = true;
-				devInfo.keysValuesDo{ |key,val|
-					if ( info.at( key ).notNil ){
-						if ( info.at( key ) != val ){
-							match = false;
-						};
-					}{
-						match = false;
-					};
-				};
-				if ( match ){
-					devKey = key;
-				}
-			};
-		}
-		^devKey;
-	}
-
-	*addToSourceDeviceDict { |name, devInfo|
-		sourceDeviceDict.put( name, devInfo );
-		if ( allAvailable.at( \osc ).isNil ){
-			allAvailable.put( \osc, List.new );
-		};
-		allAvailable.at( \osc ).add( name );
-	}
-
 	*new { |name, devInfo, parentMKtl|
-		// srcDesc will be a ( destPort: , recvPort: , srcPort: ..., ipAddress: ..., listenPort: ... )
-		if ( devInfo.isNil ){
-			devInfo = sourceDeviceDict.at( name );
-		}{
-			if ( name.notNil ){
-				this.addToSourceDeviceDict( name, devInfo );
-			};
+		var res = MKtl.all[name];
+		var desc;
+
+		// found one, ignore extra args if there
+		if (res.notNil) { ^res };
+
+		devInfo = devInfo ?? { parentMKtl.desc; };
+		if (devInfo.isNil) {
+			inform("OSCMKtlDevice.new: cannot make new one without info or parent.");
+			^nil
 		};
-		// ^super.basicNew( name, this.deviceNameFromAddr( addr ), parentMKtl ).initOSCMKtl( addr );
+
+		// srcDesc will be ( destPort: _, recvPort: _, srcPort: _,
+		//	ipAddress: _, listenPort: _ )
+		// if ( name.notNil ) {
+		// 	MKtlLookup.addOSC(name, NetAddr());
+		// };
+
 		^super.basicNew( name, name, parentMKtl ).initOSCMKtl( devInfo );
 	}
 
 	initOSCMKtl { |desc|
-		// this will not be addr but a ( destPort: , recvPort: , srcPort: ..., ipAddress: ..., listenPort: ... )
-		if ( desc.at( \ipAddress ).notNil ){
+		if ( desc.at( \ipAddress ).notNil ) {
 			source = NetAddr.new( desc.at( \ipAddress ), desc.at( \srcPort ) );
 			if ( desc.at( \destPort ).notNil ){
 				destination = NetAddr.new( desc.at( \ipAddress ), desc.at( \destPort ) );
@@ -237,11 +213,11 @@ OSCMKtlDevice : MKtlDevice {
 		// should this remove from sourceDictionary too?
 	}
 
-	initElements{
+	initElements {
 		if ( oscFuncDictionary.isNil ){
 			oscFuncDictionary = IdentityDictionary.new;
 		};
-		mktl.elementsDict.do{ |el|
+		mktl.elementsDict.do { |el|
 			var oscPath = el.elemDesc[ \oscPath ];
 			var ioType = el.elemDesc[ \ioType ];
 			var argTemplate = el.elemDesc[ \argTemplate ];
@@ -299,11 +275,11 @@ OSCMKtlDevice : MKtlDevice {
 		};
 	}
 
-	initCollectives{
+	initCollectives {
 		if ( oscFuncDictionary.isNil ){
 			oscFuncDictionary = IdentityDictionary.new;
 		};
-		mktl.collectivesDict.do{ |el|
+		mktl.collectivesDict.do { |el|
 			var oscPath = el.elemDesc[ \oscPath ];
 			var ioType = el.elemDesc[ \ioType ];
 			var argTemplate = el.elemDesc[ \argTemplate ];
@@ -346,7 +322,7 @@ OSCMKtlDevice : MKtlDevice {
 	}
 
 	cleanupElementsAndCollectives {
-		oscFuncDictionary.do{ |it| it.free };
+		oscFuncDictionary.do { |it| it.free };
 		oscFuncDictionary = nil;
 	}
 
@@ -354,22 +330,22 @@ OSCMKtlDevice : MKtlDevice {
 	// from the group: \output, val: [ 0, 0, 0, 0 ]
 	send { |key,val|
 		var el, oscPath, outvalues,valIndex;
-		if ( destination.notNil ){
+		if ( destination.notNil ) {
 			if ( val.isKindOf( Array ) ){
 				el = mktl.collectiveDescriptionFor( key );
 				valIndex = 0;
 				oscPath = el[\oscPath];
 				outvalues = List.new;
 				el[\argTemplate].do { |it|
-					if ( it.isNil ){
+					if ( it.isNil ) {
 						outvalues.add( val.at( valIndex ) ); valIndex = valIndex + 1;
 					}{
 						outvalues.add( it )
 					};
 				};
-				if ( valIndex < val.size ){ outvalues = outvalues ++ (val.copyToEnd( valIndex ) ) };
+				if ( valIndex < val.size ) { outvalues = outvalues ++ (val.copyToEnd( valIndex ) ) };
 				outvalues = outvalues.asArray;
-			}{
+			} {
 				// FIXME!
 				// el = mktl.elemDescFor( key );
 				el = mktl.desc.elementsDesc.at( key );
@@ -384,10 +360,4 @@ OSCMKtlDevice : MKtlDevice {
 			destination.sendMsg( *( [ oscPath ] ++ outvalues ) );
 		}
 	}
-
-	// sendInitialiationMessages {
-	// 	mktl.initialisationMessages.do { |it|
-	// 		destination.sendMsg( *it );
-	// 	};
-	// }
 }

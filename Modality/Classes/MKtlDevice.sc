@@ -83,15 +83,19 @@ MKtlDevice {
 		idInfo = desc.idInfo;
 		infoCandidates = MKtlLookup.findByIDInfo(idInfo).asArray;
 
+
 		// "number of infoCandidates: %\n".postf(infoCandidates.size);
 		if (infoCandidates.size == 0) {
-			inform("%: could not open mktlDevice, no infoCandidates found."
+			if (protocol != \osc) {
+				inform("%: could not open mktlDevice, no infoCandidates found."
 				.format(this));
-			^nil
+				^nil
+			};
 		};
 
 		// FIXME: how to get multiple merged devices distinguished properly?
-		// currently two nanoKontrols would get merged.
+		// currently two nanoKontrols would get merged, which would be wrong.
+		// - unless one merges controllers as well
 		if (infoCandidates.size > 1) {
 			inform("%: multiple infoCandidates found, please disambiguate by lookupName:"
 				.format(this.name));
@@ -103,10 +107,17 @@ MKtlDevice {
 
 		// exactly one candidate, so we take it:
 		lookupInfo = infoCandidates[0];
-		parentMKtl.updateLookupInfo(lookupInfo);
+
+		if (lookupInfo.notNil) {
+			lookupName = lookupInfo.lookupName;
+			parentMKtl.updateLookupInfo(lookupInfo);
+		} {
+			lookupName = name;
+		};
+
 
 		subClass = MKtlDevice.subFor(desc.protocol);
-		^subClass.new( lookupInfo.lookupName, parentMKtl: parentMKtl );
+		^subClass.new(lookupName,  parentMKtl: parentMKtl );
 
 	}
 

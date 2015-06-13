@@ -118,7 +118,7 @@ MKtlDesc {
 
 	*postLoaded {
 		"\n*** MKtlDesc - loaded descs: ***".postln;
-		allDescs.keys.asArray.sort.do { |key|
+		allDescs.keys(SortedList).do { |key|
 			"% // %\n".postf(allDescs[key], allDescs[key].idInfo);
 		};
 		"******\n".postln;
@@ -292,15 +292,19 @@ MKtlDesc {
 	}
 
 	inferName { |inname, force = false|
-		var filename = fullDesc[\filename];
 
 		if (name.notNil and: force.not) {
 			^this
 		};
 
-		name = inname ?? { fullDesc[\filename] ??
-			{ if (path.notNil) { path.basename.drop(descExt.size.neg); };
-		} };
+		name = inname ?? {
+			fullDesc[\descName] ?
+			fullDesc[\name] ?
+			fullDesc[\filename];
+		};
+		if (name.isNil and: { path.notNil }) {
+			name = path.basename.drop(descExt.size.neg);
+		};
 
 		if (name.isNil) {
 			warn("MKtlDesc: could not create valid name, so desc remains\n"
