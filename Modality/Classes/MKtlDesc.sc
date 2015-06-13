@@ -371,8 +371,12 @@ MKtlDesc {
 	postElements {
 		this.elementsDesc.traverseDo({ |el, deepKeys|
 			deepKeys.size.do { $\t.post };
-			deepKeys.postcs;
-		}, (_.isKindOf(Dictionary)));
+			el.name.post; deepKeys.postcs;
+		}, (_.isKindOf(Dictionary)),
+		{ |node, deepKeys|
+			deepKeys.size.do { $\t.post };
+			node.postln
+		});
 	}
 
 	writeFile { |path|

@@ -44,8 +44,8 @@ Accesses an existing instance of MKtl with the given name, or creates a new inst
 argument:: name
 The name of the controller as you want to refer to it.
 
-argument:: desc
-The device description that you want to use. This is the file name of the description file (without .desc.scd), an MKtlDesc object, or a dictionary from which a valid device description can be created.
+argument:: lookupNameOrDesc
+The device description that you want to use. This can be the lookupName of a device that was found MKtl.find, the file name of a description file (without extension), an MKtlDesc object, or a dictionary from which a valid device description can be created.
 
 argument:: lookForNew
 Boolean flag whether or not to look for newly attached devices or newly added device descriptions. Default is false. It will always look for devices and device descriptions the first time you open an MKtl.
@@ -104,7 +104,19 @@ MKtl.postLoadedDescs;
 MKtl.descFolders;
 MKtl.openDescFolder(0);
 MKtl.loadDescsMatching("*run-n-drive*");
+::
 
+METHOD:: postPossible
+post all possible devices for the protocol(s) given.
+
+
+Method:: makeLookupName
+make a lookupName for a device based on (typically) its protocol, id number and productName.
+code::
+MKtl.makeLookupName(\hid, 0, "Run'N'Drive - Wireless");
+MKtl.makeLookupName(\midiSrc, 0, "nanoKEY");
+// osc - is ip addr and port good here?
+MKtl.makeLookupName(\osc, "127.0.0.1pt57110", "sclang");
 ::
 
 INSTANCEMETHODS::
@@ -115,7 +127,7 @@ This also changes the name under which the MKtl is stored in Mktl.all.
 code::
 MKtl(\test, "korg-nanokontrol2");
 MKtl(\test).name_(\mynano2);
-MKtl.all; // \test is gone
+MKtl.all; // \test is gone now, use \mynano2 instead
 ::
 
 METHOD:: gui
@@ -125,7 +137,7 @@ MKtl(\mynano2).gui;
 ::
 
 
-METHOD:: specs, addSpec, getSpec
+METHOD:: specs, addLocalSpec, addSpec, getSpec
 a local dict for special specs to use with this MKtl's elements or groups.
 code::
 MKtl(\mynano2).specs;
@@ -137,7 +149,7 @@ METHOD:: desc
 the MKtlDesc object that holds the device information from the description file.
 It is used to build the elements and groups of this MKtl.
 code::
-a = MKtl(\test).desc;
+a = MKtl(\mynano2).desc;
 a.fullDesc;		// a dict built from the description file
 a.fullDesc.keys;	// the keys of the items in it
 a.protocol;			// e.g. the protocol used
@@ -157,6 +169,10 @@ code::
 // while the run'n'drive is not yet attached,
 // this creates a virtual device
 m = MKtl( 'funky', "*run-n-drive" );
+m.clear;
+m.trace(true);
+HIDFunc.trace(true);
+MKtl.all.removeAt(\funky);
 
 // now I found my run'n'drive and plugged it in:
 m.openDevice; // finds it automatically
@@ -190,14 +206,22 @@ warning:: This will remove any actions you have attached, so only use this metho
 
 SUBSECTION:: Elements of the MKtl
 
-METHOD:: elementNames, printElementNames
-A hierarchical list of the elementNames used, which can be pretty printed.
 
 METHOD:: elements
 all control elements (MKtlElement) on the device you may want to listen or talk to. this returns an link::Classes/MKtlElementGroup:: containing a hierarchical tree of link::Classes/MKtlElement::s, organised via link::Classes/MKtlElementGroup::.
 code::
 MKtl(\funky).elements;
 ::
+
+METHOD:: elementNames
+An alphabetical list of all elementNames in the MKtl.
+m = MKtl(\manta, "*manta*");
+m.elementNames;
+
+METHOD:: postElements
+A pretty printed hierarchical list of the names of the elements
+m = MKtl(\manta, "*manta*");
+m.postElements;
 
 METHOD:: elementsDict
 all elements in one flat event so they can be accessed very fast.
@@ -283,4 +307,19 @@ Returns a Boolean whether or not a device is currently being explored.
 METHOD:: createDescriptionFile
 When a device doesn't have a description file yet, this method can be used to create a description file.
 
-PRIVATE:: storeArgs, printOn, init, makeElements
+Subsection:: Collectives and Composite MKtl
+
+... create collectives in new mktl - to be written.
+METHOD:: collectivesDict, collectiveDescriptionFor
+
+will be used for creating composite MKtls, not fully tested yet.
+METHOD:: composite, initComp
+
+methods for finding info on available devices in MKtlLookup.
+METHOD:: lookupInfo, lookupName, updateLookupInfo
+
+various tests
+METHOD:: checkAllCtls, checkIdentical, hasDevice
+
+private:: wrapCollElemsInGroups, specialMessageNames, sendSpecialMessage, prMatchedElements
+PRIVATE:: storeArgs, printOn, init, makeElements, makeCollectives
