@@ -1,3 +1,5 @@
+// TODO: check that we never add identical infos a second time
+
 MKtlLookup {
 	classvar <all, midiLists;
 
@@ -26,7 +28,7 @@ MKtlLookup {
 	}
 
 	*names {
-		^all.keys.asArray.sort;
+		^all.keys(SortedList).array;
 	}
 
 	*addHID { | hidinfo, index |
@@ -89,6 +91,7 @@ MKtlLookup {
 	}
 
 	*addMIDI { |endPoint, index, endPointType = \src|
+
 		var protocol = \midi;
 		var idInfo = endPoint.device;
 		var filename = MKtlDesc.filenameForIDInfo(idInfo);
@@ -111,7 +114,10 @@ MKtlLookup {
 		^dict
 	}
 
+	// check if already there before adding
+	// should be serialisable to write to file
 	*addOSC { |sendAddr, name, replyAddr|
+
 		var protocol = \osc;
 		var index = MKtlLookup.all.count(_.protocol == \osc);
 		var idInfo = [sendAddr.addr, sendAddr.port].join($_);
@@ -122,9 +128,9 @@ MKtlLookup {
 		var dict = (
 			name: name,
 			protocol: protocol,
-			sendAddr: sendAddr,
-			replyAddr: replyAddr,
-			idInfo: idInfo,
+			\ipAddress: sendAddr.ip,
+			\srcPort: sendAddr.port,
+			\destPort: (replyAddr ? sendAddr).port,
 		//	deviceInfo: nil,
 			filename: filename,
 			desc: MKtlDesc.at(filename.asSymbol),
