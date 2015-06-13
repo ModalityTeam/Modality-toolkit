@@ -64,22 +64,27 @@ MKtlLookup {
 	}
 
 	*addOrMergeMIDI { |endpoint, index, endPointType|
-		// only take first one for now, we assume
-		// no multplie devices that need merging:
-
 		var infoToMergeTo = MKtlLookup.allFor(\midi).detect { |info|
-			info.deviceInfo.device == endpoint.device
+			info.idInfo == endpoint.device
 		};
 		if (infoToMergeTo.isNil) {
 			^MKtlLookup.addMIDI(endpoint, index, \src);
 		};
 
-		infoToMergeTo.uid = infoToMergeTo.uid.asArray.add(endpoint.uid).unbubble;
+		this.merge (infoToMergeTo, \deviceInfo, endpoint);
 		if (endPointType == \src) {
-			infoToMergeTo.srcID = infoToMergeTo.srcID.asArray.add(endpoint.uid).unbubble;
+			this.merge (infoToMergeTo, \srcDevice, endpoint);
 		};
 		if (endPointType == \dest) {
-			infoToMergeTo.destID = infoToMergeTo.destID.asArray.add(endpoint.uid).unbubble;
+			this.merge (infoToMergeTo, \destDevice, endpoint);
+		};
+	}
+
+	*merge { |dict, key, newItem|
+		var arr = dict[key].asArray;
+		if (arr.includesEqual(newItem).not) {
+			arr = arr.add(newItem);
+			dict[key] = arr;
 		};
 	}
 
@@ -92,15 +97,17 @@ MKtlLookup {
 		var dict = (
 			protocol: protocol,
 			idInfo: idInfo,
-			uid: endPoint.uid,
-			deviceInfo: endPoint,
 			filename: filename,
 			desc: MKtlDesc.at(filename.asSymbol),
 			lookupName: lookupName
 		//	lookup: { MKtlLookup.midiAt(endPointType, index); }
 		);
+		dict.put(\deviceInfo, endPoint);
+		if (endPointType == \src) { dict.put(\srcDevice, endPoint) };
+		if (endPointType == \dest) { dict.put(\destDevice, endPoint) };
 
 		all.put(lookupName, dict);
+
 		^dict
 	}
 

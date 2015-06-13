@@ -102,17 +102,15 @@ MIDIMKtlDevice : MKtlDevice {
 		};
 
 		"\n// Available MIDIMKtls: ".postln;
-		"// MKtl(name, filename);  // [ midi device, port, uid ]\n".postln;
+		"// MKtl(name, filename);  // *[ midi device, portname, uid]\n".postln;
 		postables.keysValuesDo { |key, infodict|
 			var endPoint = infodict.deviceInfo;
-			var deviceName = endPoint.device;
-			var midiPortName = endPoint.name;
-			var postList = [deviceName, midiPortName, endPoint.uid];
-			var filename = MKtlDesc.filenameForIDInfo(deviceName);
+			var postList = endPoint.collect({ |ep| [ep.device.cs, ep.name.cs, ep.uid] });
+			var filename = MKtlDesc.filenameForIDInfo(infodict.idInfo);
 
 			filename = if (filename.isNil) { "" } { "," + quote(filename) };
 			filename = if (filename.isNil) { "" } { "," + quote(filename) };
-			"MKtl('nameMe', %);		// %\n".postf(key.cs, postList.cs);
+			"MKtl('nameMe', %);		// %\n".postf(key.cs, postList.unbubble);
 		};
 	}
 
@@ -120,53 +118,36 @@ MIDIMKtlDevice : MKtlDevice {
 	// FIXME: not sure about how t get destUID to work again in the refactor
 	// *new { |name, srcUID, destUID, parentMKtl|
 	*new { |name, idInfo, parentMKtl|
-		// var foundSource, foundDestination;
-		this.initDevices;
-		//
-		// // "MIDIMKtlDevice:\n\t% % % %".format( name, idInfo, parentMKtl, initialized ).inform;
-		//
-		// if ( idInfo.notNil ){ // use idInfo to open:
-		// 	if ( initialized.not ){ ^nil };
-		// 	idInfo.isKindOf( String ).postln;
-		// 	if ( idInfo.isKindOf( String ) ) {
-		// 		foundSource = this.findInDictByNameAndIndex( sourceDeviceDict, idInfo );
-		// 		foundDestination = this.findInDictByNameAndIndex( destinationDeviceDict, idInfo );
-		// 	};
-		// } {
-		// 	foundSource = sourceDeviceDict[name.asSymbol];
-		// 	foundDestination = destinationDeviceDict[name.asSymbol];
-		// };
-		//
-		// if (foundSource.isNil and: {foundDestination.isNil}) {
-		// 	"MIDIMKtlDevice: no hardware device found. Assuming virtual.".inform;
-		// 	^nil;
-		// };
-		//
-		// if (foundDestination.isNil) {
-		// 	warn("MIDIMKtlDevice:\n"
-		// 		"	No MIDIOut destination with USB port ID % exists!"
-		// 		.format(destUID)
-		// 	);
-		// };
-		//
-		// // if ( foundSource.isNil and: foundDestination.isNil ){
-		// // warn("MIDIMKtl:"
-		// // "	No MIDIIn source nor destination with USB port ID %, % exists! please check again.".format(srcUID, destUID));
-		// // ^nil;
-		// // };
-		//
-		// if (foundDestination.notNil) {
-		// 	destinationDeviceDict.changeKeyForValue(name, foundDestination);
-		// 	deviceName = foundDestination.device;
-		// };
-		// if (foundSource.notNil) {
-		// 	sourceDeviceDict.changeKeyForValue(name, foundSource);
-		// 	deviceName = foundSource.device;
-		// };
-		//
-		// ^super.basicNew(name, deviceName, parentMKtl )
-		// .initMIDIMKtl(name, foundSource, foundDestination );
-		^nil
+
+		var lookupInfo = parentMKtl.lookupInfo;
+		var foundInfo, foundSources, foundDestinations;
+		var newDev;
+
+		idInfo = idInfo ?? {
+			parentMKtl.lookupInfo.idInfo ?? {
+				parentMKtl.desc.idInfo
+		} };
+
+		if (idInfo.isNil) {
+			inform("MIDIMKtlDevice.new: cannot create new without idInfo");
+			^this;
+		};
+
+		foundInfo = MKtlLookup.findByIDInfo(idInfo);
+		if (foundInfo.size > 1) {
+			"multiple MIDIMktls of same name not supported yet - taking first.".postln;
+		};
+
+		foundInfo = foundInfo.asArray.first;
+
+		foundSources = foundInfo[\srcDevice].postln;
+		foundDestinations = foundInfo[\destDevice].postln;
+
+		newDev = super.basicNew(name, lookupInfo.idInfo, parentMKtl );
+		newDev.initMIDIMKtl(name, foundSources, foundDestinations );
+		newDev.initElements;
+		newDev.makeRespFuncs(newDev.srcID);
+		^newDev
 	}
 
 	/// ----(((((----- EXPLORING ---------
@@ -198,7 +179,7 @@ MIDIMKtlDevice : MKtlDevice {
 	/// --------- EXPLORING -----)))))---------
 
 	initElements {
-		// "initElements".postln;
+	//	"initElements".postln;
 		if ( mktl.elementsDict.isNil or: {
 			mktl.elementsDict.isEmpty
 		}) {
@@ -209,7 +190,6 @@ MIDIMKtlDevice : MKtlDevice {
 		};
 		msgTypes = mktl.desc.fullDesc[\msgTypesUsed];
 		this.prepareLookupDicts;
-		this.makeRespFuncs;
 	}
 
 	// nothing here yet, but needed
@@ -222,15 +202,20 @@ MIDIMKtlDevice : MKtlDevice {
 		name = argName;
 		// "initMIDIMKtl".postln;
 		source = argSource;
-		source.notNil.if { srcID = source.uid };
 
+	// FIXME later: full support of multi-uids everywhere
+		source.notNil.if { srcID = source.asArray.collect(_.uid).unbubble };
 
-		// destination is optional
+	// // destination is optional
 		destination = argDestination;
+		destination.notNil.if { dstID = destination.asArray.collect(_.uid).unbubble };
 
-			destination.notNil.if {
- 			dstID = destination.uid;
-			if ( thisProcess.platform.name == \linux ) {
+		// was simpler:
+		// source.notNil.if { srcID = source.uid };
+		// destination.notNil.if { dstID = destination.uid; };
+
+		destination.notNil.if {
+ 			if ( thisProcess.platform.name == \linux ) {
 				midiOut = MIDIOut( 0 );
 				midiOut.connect( MIDIClient.destinations.indexOf(destination) )
 			} {
@@ -240,15 +225,9 @@ MIDIMKtlDevice : MKtlDevice {
 			// set latency to zero as we assume to have controllers
 			// rather than synths connected to the device.
 			midiOut.latency = 0;
-
 		};
 
-
-		// initElements already done in ...
 		this.initCollectives;
-
-		// only do this explicitly
-		// this.sendInitialisationMessages;
 	}
 
 	makeHashKey { |elemDesc, elem|

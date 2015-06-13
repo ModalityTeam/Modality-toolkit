@@ -225,11 +225,7 @@ OSCMKtlDevice : MKtlDevice {
 		};
 		recvPort = desc.at( \recvPort );
 
-		this.initElements;
 		this.initCollectives;
-
-		// only do this explicitly
-		// this.sendInitialisationMessages;
 	}
 
 

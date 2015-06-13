@@ -194,11 +194,8 @@ MKtl { // abstract class
 			}
 		);
 
-		"lookupName: %, descName: %, lookupInfo: %\n".postf(lookupName, descName, lookupInfo);
-		"proto: %, newDesc: %\n".postf(protocol, newMKtlDesc);
-
-
-
+		// "lookupName: %, descName: %, lookupInfo: %\n".postf(lookupName, descName, lookupInfo);
+		// "proto: %, newDesc: %\n".postf(protocol, newMKtlDesc);
 
 		// else try to make a desc from lookup info:
 
