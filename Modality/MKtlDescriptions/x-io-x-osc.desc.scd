@@ -1,12 +1,19 @@
 (
-device: "XOsc",
+idInfo: "XOsc",
 protocol: \osc,
 deviceInfo: (
-	// vendorURI: "",
-	// manualURI: "",
-	// description: "",
-	// features: [],
-	// notes: "",
+	vendorURI: "http://www.x-io.co.uk/products/x-osc/",
+	manualURI: "http://www.x-io.co.uk/downloads/x-OSC-User-Manual-v0.4.pdf",
+	description: "x-OSC is a wireless I/O board that provides just about any software with access to 32 high-performance analogue/digital channels and on-board sensors (gyroscope, accelerometer, magnetometer) via OSC messages over WiFi. There is no user programmable firmware and no software or drivers to install making x-OSC immediately compatible with any WiFi-enabled platform. All internal settings can be adjusted using any web browser.",
+	features: [
+		"16× analogue/digital inputs",
+		"16× digital/PWM outputs (up to 50 mA per channel)",
+		"13-bit ADC with 400 Hz update rate per channel",
+		"Up to 16-bit PWM resolution for 5 Hz to 250 kHz",
+		"Control up to 400 RGB LEDs (NeoPixel)",
+		"4× serial communication channels"
+	],
+	notes: "",
 	type: [\accelerometer],
 ),
 description: (

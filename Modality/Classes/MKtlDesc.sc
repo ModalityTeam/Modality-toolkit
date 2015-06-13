@@ -95,10 +95,11 @@ MKtlDesc {
 	*loadDescs { |filename = "*", folderIndex, post = false|
 		var paths = this.findFile(filename, folderIndex);
 		var descs = paths.collect {|path|
-			this.fromPath(path);
-		};
+			try { this.fromPath(path); };
+		}.select(_.notNil);
+
 		if (post) {
-			"\n// MKtlDesc loaded % description files - see:"
+			"\n// MKtlDesc loaded % valid description files - see:"
 			"\nMKtlDesc.allDescs;\n".postf(paths.size);
 		};
 		^descs
@@ -416,6 +417,16 @@ MKtlDesc {
 	*resolveForPlatform { |dict|
 		var platForms = [\osx, \linux, \win];
 		var myPlatform = thisProcess.platform.name;
+
+		if (dict.isKindOf(Association)) {
+			var entry = dict.value, key = dict.key;
+			var foundval;
+			if (entry.isKindOf(Dictionary) and:
+				{ entry.keys.sect(platForms).notEmpty }) {
+				foundval = entry[myPlatform];
+				"MKtlDesc:resolveForPlatform - replacing: ".post;
+				^key -> foundval;
+		} };
 
 		dict.keysValuesDo { |dictkey, entry|
 			var foundPlatformDep = false, foundval;

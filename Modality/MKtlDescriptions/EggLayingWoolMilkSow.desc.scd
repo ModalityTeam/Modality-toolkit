@@ -20,7 +20,8 @@ MIDIMKtlDevice.allMsgTypes.postcs;
 // [ midiNum: [12, 24, [\range, 36, 96], 108 ] // nestable, will be flattened
 // can be converted as needed when reading file.
 
-[
+(
+	idInfo: "\EggLayingWoolMilkSow",
 	name: \EggLayingWoolMilkSow,
 	protocol: \midi,
 	description: [
@@ -43,4 +44,4 @@ MIDIMKtlDevice.allMsgTypes.postcs;
 		// add more here when integrated: \\
 		// ...
 	]
-];
+);

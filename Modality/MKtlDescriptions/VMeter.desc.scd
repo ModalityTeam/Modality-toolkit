@@ -7,7 +7,7 @@ k.verbose_(true);
 */
 
 (
-device: "VMeter 1.30 A",
+idInfo: "VMeter 1.30 A",
 protocol: \midi,
 deviceInfo: (
 	vendorURI: "http://www.vmeter.net/",

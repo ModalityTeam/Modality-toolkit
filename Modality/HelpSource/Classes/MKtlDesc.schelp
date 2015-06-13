@@ -46,7 +46,6 @@ x.postInfo(postElements: true); // and the elements too
 
 ::
 
-
 CLASSMETHODS::
 
 PRIVATE:: initClass
@@ -100,20 +99,25 @@ in which folder of descFolders to search the file
 ARGUMENT:: multi
 flag whether to load multiple matching files
 
-METHOD:: fromDict
 
+METHOD:: fromDict
+create an MKtlDesc from a well-formed description dict.
 
 METHOD:: findFile
-find the filepath for a given desc name an MKtlDesc from a well-formed description dict.
+find the filepath for a given desc name.
 
 METHOD:: fromPath
 create an MKtlDesc from a full file path.
 
-METHOD:: web, webview, docURI
+METHOD:: web
 get info for an MKtlDesc on the web
-code:: MKtlDesc("*manta").web; ::
+code::
+MKtlDesc.web;
+MKtlDesc("*manta").web;
+MKtlDesc.webview;
+::
 
-Subsection:: internal methods
+SUBSECTION:: internal methods
 
 Method:: compExt, descExt
 legal extensions for filenames
@@ -144,7 +148,6 @@ post info on the device, if postElements = true, also info on the elements
 
 METHOD:: postElements
 post info on the elements
-
 
 METHOD:: deviceFilename
 get the filename of the desc file

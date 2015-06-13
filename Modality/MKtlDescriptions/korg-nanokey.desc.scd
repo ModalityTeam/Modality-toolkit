@@ -2,7 +2,7 @@
 // should be compressed by default.
 
 ((
-	device: "nanoKEY",
+	idInfo: "nanoKEY",
 	protocol: 'midi',
 	deviceInfo: (
 		// vendorURI: "",
@@ -24,7 +24,7 @@
 
 		// ------ cc -------------
 		cc: [1, (14..31), (80..87)].flat.collect { |midinum|
-			('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum': midinum,'spec': 'midiCC') },
+		('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum': midinum,'spec': 'midiCC') },
 
 		// ------- bend ------------
 		'bend': ('midiMsgType': 'bend', 'type': 'buttons', 'midiChan': 0, 'midiNum':  0,'spec': 'midiBend')
