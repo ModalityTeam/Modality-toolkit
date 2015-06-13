@@ -9,42 +9,35 @@ q.manta.binaryName = "MantaOSC";
 q.manta.run = { |d| (d.path +/+ d.binaryName).runInTerminal; };
 
 q.manta.run;
-
-q.manta.mktl = MKtl(\manta, "manta");
+	// hack - add manta specs to global specs first
+	// should happen automagically
+MKtlDesc("*manta*").fullDesc.specs.keysValuesDo { |key, spec|
+	MKtl.addSpec(*[key, spec.asSpec].postln);
+};
+q.manta.mktl = MKtl(\manta, "*manta*");
 
 q.manta.mktl;
 q.manta.mktl.mktlDevice;
+q.manta.mktl.postElements;
 
-q.manta.oscFuncs = (
-	\padVel: OSCFunc({ |msg| msg.postln; }, '/manta/velocity/pad'),
-	\padCon: OSCFunc({ |msg| msg.postln; }, '/manta/continuous/pad'),
-	\btVel: OSCFunc({ |msg| msg.postln; }, '/manta/velocity/button'),
-	\btCon: OSCFunc({ |msg| msg.postln; }, '/manta/continuous/button'),
-	\slCon: OSCFunc({ |msg| msg.postln; }, '/manta/continuous/slider')
-);
+s.boot;
+Ndef(\test, { |freq = 300| Saw.ar(freq) }).play;
 
-q.manta.oscFuncs.padVel.prFunc = { |msg|
-	q.manta.mktl.elementAt(\pad, \vel, msg[1]).valueAction_(msg[2] / 200);
-};
-q.manta.oscFuncs.padCon.prFunc = { |msg|
-	q.manta.mktl.elementAt(\pad, \con, msg[1]).valueAction_(msg[2] / 200);
+q.manta.mktl.desc.idInfo;
+q.manta.mktl.mktlDevice.oscFuncDictionary[\sl_0_con].dump;
+q.manta.mktl.trace(true);
+
+q.manta.mktl.elementAt(\pad, 0, \con).action = { |el|
+	[el.name, el.value].postln;
+	Ndef(\test).set(\freq, el.value.linexp(0, 1, 20, 2000));
 };
 
-Ndef(\test, { |freq = 300| SinOsc.ar(freq) }).play;
+///////// old, not working again yet:
+// // try adding a custom group:
+// var grp = MKtlElementGroup( 'padBot8', q.manta.mktl.elementAt( \pad, \vel, (0..7)) );
+// q.manta.mktl.addCustomGroup('padBot8', grp);
 
-q.manta.mktl.elementAt(\pad, \con, 0).action = { |el|
-[el.name, el.value].postln;
-Ndef(\test).setUni(\freq, el.value);
-};
-
-// try adding a custom group:
-var grp = MKtlElementGroup( 'padBot8', q.manta.mktl.elementAt( \pad, \vel, (0..7)) );
-
-
-q.manta.mktl.addCustomGroup('padBot8', grp);
-
-q.manta.mktl
-
+s.quit;
 */
 
 
@@ -61,7 +54,7 @@ specs: (
 	mantaSlider: [ 0, 4095 ].asSpec, // slider sends values between 0 and 4095, releasing the slider sends 65536
 	mantaLed: ItemsSpec.new( ["off","amber","red"] ), // led can be off, amber or red
 ),
-idInfo: ( srcPort: 31417, ipAddress: "127.0.0.1", recvPort: 31416 ), // sends/receives on the same port, so we do not need to define destPort separately
+idInfo: ( srcPort: 31417, ipAddress: "127.0.0.1", recvPort: 57120 ),
 protocol: \osc,
 deviceInfo: (
 	vendorURI: "http://www.snyderphonics.com/products.htm",
