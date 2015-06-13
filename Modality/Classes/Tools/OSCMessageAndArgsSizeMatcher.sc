@@ -6,7 +6,7 @@ OSCMessageAndArgsSizeDispatcher : OSCMessageDispatcher {
 		srcID = funcProxy.srcID;
 		recvPort = funcProxy.recvPort;
 		argTemplate = funcProxy.argTemplate;
-		"wrapping function".postln;
+		// "wrapping function".postln;
 		if(argTemplate.notNil, { func = OSCArgsAndSizeMatcher(argTemplate, func)});
 		^case(
 			{ srcID.notNil && recvPort.notNil }, { OSCFuncBothMessageMatcher(srcID, recvPort, func) },

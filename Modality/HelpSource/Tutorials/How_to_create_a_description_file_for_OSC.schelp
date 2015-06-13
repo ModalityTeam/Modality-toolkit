@@ -725,6 +725,7 @@ code::
 ~descExample = (
 	idInfo: ( srcPort: NetAddr.langPort, ipAddress: "127.0.0.1" ),
 	protocol: \osc,
+	// name: \descEx,
 	description: (
 		'pad': (
 			oscPath: '/pad',
@@ -738,6 +739,10 @@ code::
 );
 
 m = MKtl( \exampleOSCDesc, ~descExample );
+m.mktlDevice;
+MKtl.all;
+
+// likely obsolete?
 MKtlDevice.allAvailable // now also shows the opened 'osc device'
 
 // create a gui for the osc device:
@@ -772,8 +777,32 @@ code::
 	)
 );
 
-m.rebuildFrom( ~descExample );
+m.rebuild( ~descExample );
 m.gui
+m.elementsDict
+
+// test with a global action
+m.elements.action = { |el| ("  recv:" + [m, el.name, el.value.round(0.001)]).postln; };
+m.elementAt(\pad, 0, 2).deviceValueAction_(128.rand.postln);
+
+// and test that m receives properly via OSC:
+(
+n = NetAddr.localAddr;
+Tdef(\exosc, {
+	inf.do {
+		"send: ".post;
+		n.sendMsg(*['/pad', 3.rand, 3.rand, 128.rand].postcs);
+		0.25.wait;
+	}
+}).play;
+)
+Tdef(\exosc).stop;
+Tdef(\exosc).play;
+
+
+m.elements.dump;
+
+
 ::
 
 Now all 9 pads are in the description.

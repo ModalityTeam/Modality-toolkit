@@ -1,5 +1,4 @@
 // TODO:
-// * short names
 // * exploring
 // * send
 
@@ -69,7 +68,7 @@ OSCMKtlDevice : MKtlDevice {
 
 	var <oscFuncDictionary;
 
-	classvar <initialized = false; // always true
+	classvar < initialized = false; // always true
 
 	*inversePatternDispatcher {
 		if ( inversePatternDispatcher.isNil ){
@@ -163,11 +162,6 @@ OSCMKtlDevice : MKtlDevice {
 	}
 
 	*new { |name, devInfo, parentMKtl|
-		var res = MKtl.all[name];
-		var desc;
-
-		// found one, ignore extra args if there
-		if (res.notNil) { ^res };
 
 		devInfo = devInfo ?? { parentMKtl.desc; };
 		if (devInfo.isNil) {
@@ -175,31 +169,30 @@ OSCMKtlDevice : MKtlDevice {
 			^nil
 		};
 
-		// srcDesc will be ( destPort: _, recvPort: _, srcPort: _,
-		//	ipAddress: _, listenPort: _ )
-		// if ( name.notNil ) {
-		// 	MKtlLookup.addOSC(name, NetAddr());
-		// };
-
-		^super.basicNew( name, name, parentMKtl ).initOSCMKtl( devInfo );
+		^super.basicNew( name, name, parentMKtl );
 	}
 
-	initOSCMKtl { |desc|
-		if ( desc.at( \ipAddress ).notNil ) {
-			source = NetAddr.new( desc.at( \ipAddress ), desc.at( \srcPort ) );
-			if ( desc.at( \destPort ).notNil ){
-				destination = NetAddr.new( desc.at( \ipAddress ), desc.at( \destPort ) );
+	init { |desc|
+		desc = desc ?? { mktl.desc };
+		this.initOSCMKtl( desc.idInfo ).initElements;
+	}
+
+	initOSCMKtl { |idInfo|
+		if ( idInfo.at( \ipAddress ).notNil ) {
+			source = NetAddr.new( idInfo.at( \ipAddress ), idInfo.at( \srcPort ) );
+			if ( idInfo.at( \destPort ).notNil ){
+				destination = NetAddr.new( idInfo.at( \ipAddress ), idInfo.at( \destPort ) );
 			}{ // assume destination port is same as srcPort
-				destination = NetAddr.new( desc.at( \ipAddress ), desc.at( \srcPort ) );
+				destination = NetAddr.new( idInfo.at( \ipAddress ), idInfo.at( \srcPort ) );
 			};
 		}{
-			if ( desc.at( \destPort ).notNil ){
-				destination = NetAddr.new( "127.0.0.1", desc.at( \destPort ) );
+			if ( idInfo.at( \destPort ).notNil ){
+				destination = NetAddr.new( "127.0.0.1", idInfo.at( \destPort ) );
 			}{ // assume destination port is same as srcPort
-				destination = NetAddr.new( "127.0.0.1", desc.at( \srcPort ) );
+				destination = NetAddr.new( "127.0.0.1", idInfo.at( \srcPort ) );
 			};
 		};
-		recvPort = desc.at( \recvPort );
+		recvPort = idInfo.at( \recvPort );
 
 		this.initCollectives;
 	}
@@ -214,6 +207,7 @@ OSCMKtlDevice : MKtlDevice {
 	}
 
 	initElements {
+
 		if ( oscFuncDictionary.isNil ){
 			oscFuncDictionary = IdentityDictionary.new;
 		};
@@ -225,7 +219,9 @@ OSCMKtlDevice : MKtlDevice {
 			var dispatcher;
 			if ( [\in,\inout].includes( ioType ) or: ioType.isNil ){
 
-				if ( oscFuncDictionary.at( el.name ).notNil ){ oscFuncDictionary.at( el.name ).free };
+				if ( oscFuncDictionary.at( el.name ).notNil ){
+					oscFuncDictionary.at( el.name ).free
+				};
 
 				if ( oscPath.asString.includes( $* ) ){ // pattern matching
 					dispatcher = this.class.inversePatternDispatcher;
@@ -233,13 +229,15 @@ OSCMKtlDevice : MKtlDevice {
 					oscFuncDictionary.put( el.name,
 						OSCFunc.new( { |msg|
 							if ( valueIndex.notNil ){
-								el.rawValueAction_( msg[0].asString.split($/).at( valueIndex ) );
+								el.deviceValueAction_( msg[0].asString.split($/).at( valueIndex ) );
 							};
 							if(traceRunning) {
 								"% - % > % | type: %, src:%"
-								.format(this.name, el.name, el.value.asStringPrec(3), el.type, el.source).postln;
+								.format(this.name, el.name, el.value.asStringPrec(3),
+									el.type, el.source).postln;
 							}
-						}, oscPath, source, recvPort, argTemplate, dispatcher ).permanent_( true );
+						}, oscPath, source, recvPort, argTemplate, dispatcher )
+						.permanent_( true );
 					);
 				}{
 					dispatcher = this.class.messageSizeDispatcher;
@@ -247,27 +245,31 @@ OSCMKtlDevice : MKtlDevice {
 						// trigger osc func
 						oscFuncDictionary.put( el.name,
 							OSCFunc.new( { |msg|
-								el.rawValueAction_( 1 ); // send a default value of 1
+								el.deviceValueAction_( 1 ); // send a default value of 1
 								if(traceRunning) {
 									"% - % > % | type: %, src:%"
-									.format(this.name, el.name, el.value.asStringPrec(3), el.type, el.source).postln;
+									.format(this.name, el.name, el.value.asStringPrec(3),
+										el.type, el.source).postln;
 								}
-							}, oscPath, source, recvPort, argTemplate, dispatcher ).permanent_( true );
+							}, oscPath, source, recvPort, argTemplate, dispatcher )
+							.permanent_( true );
 						);
 					}{
 						// normal osc matching
 						oscFuncDictionary.put( el.name,
 							OSCFunc.new( { |msg|
 								if ( valueIndex.notNil ){
-									el.rawValueAction_( msg.at( valueIndex ) );
+									el.deviceValueAction_( msg.at( valueIndex ) );
 								}{
-									el.rawValueAction_( msg.last );
+									el.deviceValueAction_( msg.last );
 								};
 								if(traceRunning) {
 									"% - % > % | type: %, src:%"
-									.format(this.name, el.name, el.value.asStringPrec(3), el.type, el.source).postln;
+									.format(this.name, el.name, el.value.asStringPrec(3),
+										el.type, el.source).postln;
 								}
-							}, oscPath, source, recvPort, argTemplate, dispatcher ).permanent_( true );
+							}, oscPath, source, recvPort, argTemplate, dispatcher )
+							.permanent_( true );
 						);
 					};
 				}
@@ -294,28 +296,38 @@ OSCMKtlDevice : MKtlDevice {
 					templEnd = valueIndices.maxItem + 1;
 				}{
 					if ( argTemplate.notNil ){
-						templEnd = argTemplate.size + 1; // + 1 because argTemplate does not contain the oscpath as the first msg element
+						// + 1 because argTemplate does not contain the oscpath as the first msg element
+						templEnd = argTemplate.size + 1;
 						msgIndices = argTemplate.indicesOfEqual( nil );
-						if ( msgIndices.notNil) { msgIndices = msgIndices + 1; }; // + 1 because argTemplate does not contain the oscpath as the first msg element
+						// + 1 because argTemplate does not contain the oscpath as the first msg element
+						if ( msgIndices.notNil) { msgIndices = msgIndices + 1; };
+
 					}{
 						templEnd = 1;
 					};
 				};
-				if ( oscFuncDictionary.at( el.name ).notNil ){ oscFuncDictionary.at( el.name ).free };
+				if ( oscFuncDictionary.at( el.name ).notNil ){
+					oscFuncDictionary.at( el.name ).free };
 
 				oscFuncDictionary.put( el.name,
 					OSCFunc.new( { |msg|
 						// clever msg index parsing
 						if ( msgIndices.notNil ){
-							el.rawValueAction_( msg.at( msgIndices) ++ msg.copyToEnd( templEnd ) );
+							el.deviceValueAction_(
+								msg.at( msgIndices) ++ msg.copyToEnd( templEnd )
+							);
 						}{
-							el.rawValueAction_( msg.copyToEnd( templEnd ) );
+							el.deviceValueAction_( msg.copyToEnd( templEnd ) );
 						};
 						if(traceRunning) {
 							"% - % > % | type: %, src:%"
-							.format(this.name, el.name, el.value.collect{ |it| it.asStringPrec(3) }, el.type, el.source).postln;
+							.format(this.name, el.name,
+								el.value.collect { |it|
+									it.asStringPrec(3) },
+								el.type, el.source).postln;
 						}
-					}, oscPath, source, recvPort, argTemplate, dispatcher ).permanent_( true );
+					}, oscPath, source, recvPort, argTemplate, dispatcher )
+					.permanent_( true );
 				);
 			};
 		};
@@ -328,7 +340,7 @@ OSCMKtlDevice : MKtlDevice {
 
 	// this should work for the simple usecase (not the group yet)
 	// from the group: \output, val: [ 0, 0, 0, 0 ]
-	send { |key,val|
+	send { |key, val|
 		var el, oscPath, outvalues,valIndex;
 		if ( destination.notNil ) {
 			if ( val.isKindOf( Array ) ){

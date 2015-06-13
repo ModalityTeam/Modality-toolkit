@@ -301,6 +301,7 @@ MKtl { // abstract class
 	*/
 
 	makeElements {
+
 		elementsDict = ();
 
 		// array of dicts of arrays
@@ -474,7 +475,8 @@ MKtl { // abstract class
 
 	rebuild { |descNameOrDict| // could be a string/symbol or dictionary
 		var newDesc;
-		// replace desc if new:
+		// always replace desc,
+		// if none given, rebuild from existing:
 		if (descNameOrDict.isNil) {
 			newDesc = desc;
 		} {
@@ -493,7 +495,7 @@ MKtl { // abstract class
 			mktlDevice.cleanupElementsAndCollectives;
 			mktlDevice = nil;
 		};
-
+		desc = newDesc;
 		this.init(desc);
 		this.changed( \elements );
 	}
@@ -516,7 +518,7 @@ MKtl { // abstract class
 		protocol = desc !? { desc.protocol };
 		MKtlDevice.initHardwareDevices( lookAgain, protocol);
 
-		mktlDevice = MKtlDevice.open( this.name, this, protocol, desc );
+		mktlDevice = MKtlDevice.open( this.name, this );
 	}
 
 	hasDevice {
