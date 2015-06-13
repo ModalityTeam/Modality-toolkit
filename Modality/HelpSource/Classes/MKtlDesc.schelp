@@ -6,23 +6,24 @@ related:: Classes/MKtl, Classes/MKtlElement, Classes/MKtlElementGroup
 
 
 DESCRIPTION::
-MKtlDesc can read description files for hardware interface devices from its folder or other folders. It converts them into MKtlDesc objects, which contain general information about the device, and detailed information about all of its interface elements (such as sliders, buttons, joysticks, etc etc). MKtlDescs are used to create MKtls and its elements. 
-Usually, MKtlDescs are created automatically when making MKtls, 
+
+MKtlDesc can read description files for hardware interface devices from its folder or other folders. It converts them into MKtlDesc objects, which contain general information about the device, and detailed information about all of its interface elements (such as sliders, buttons, joysticks, etc etc). MKtlDescs are used to create MKtls and its elements.
+Usually, MKtlDescs are created automatically when making MKtls,
 
 Some examples:
 code::
 // see which devices are supported by Modality
-MKtlDesc.web;  
+MKtlDesc.web;
 // (if yours is not there yet, donate one and we add its desc ;-)
 
 MKtlDesc.defaultFolder;			// where modality puts descriptions
 MKtlDesc.addFolder("~/Desktop/"); // users can add folders
 MKtlDesc.descFolders;			// which show up here
 MKtlDesc.openFolder(0);			// and can be opened by index
-MKtlDesc.openFolder(1);			
+MKtlDesc.openFolder(1);
 
 MKtlDesc.loadDescs;				// load all description files
-MKtlDesc.loadDescs("*nano*");	// or matching ones 
+MKtlDesc.loadDescs("*nano*");	// or matching ones
 MKtlDesc.loadDescs("nano*", folderIndex: 0); // in specific places
 
 MKtlDesc.allDescs;				// all currently loaded descs
@@ -66,8 +67,17 @@ METHOD:: openFolder
 open folder(s) in descFolders by index.
 
 METHOD:: loadDescs
-load all descriptions in descFolders.
-only used for testing.
+load matching descriptions in descFolders.
+
+METHOD:: loadComps
+load matching composite descriptions in descFolders.
+not fully in use yet.
+
+METHOD:: postLoadable
+post the filenames of descs that can be loaded
+
+METHOD:: postLoaded
+post currently loaded descs
 
 METHOD:: allDescs
 all currently loaded descs
@@ -91,7 +101,31 @@ ARGUMENT:: multi
 flag whether to load multiple matching files
 
 METHOD:: fromDict
-create an MKtlDesc from a well-formed description dict.
+
+
+METHOD:: findFile
+find the filepath for a given desc name an MKtlDesc from a well-formed description dict.
+
+METHOD:: fromPath
+create an MKtlDesc from a full file path.
+
+METHOD:: web, webview, docURI
+get info for an MKtlDesc on the web
+code:: MKtlDesc("*manta").web; ::
+
+Subsection:: internal methods
+
+Method:: compExt, descExt
+legal extensions for filenames
+
+Method:: fileToIDDict, idInfoForFilename, filenameForIDInfo
+find filenames and device idInfos for each other
+
+Method:: writeCache, cacheName, loadCache, updateCache
+support methods for cache of filenames and idInfos
+
+private:: fillMidiDefaults, resolveForPlatform, isElementTestFunc
+
 
 INSTANCEMETHODS::
 
@@ -112,7 +146,7 @@ METHOD:: postElements
 post info on the elements
 
 
-METHOD:: deviceFilename 
+METHOD:: deviceFilename
 get the filename of the desc file
 
 METHOD:: idInfo
@@ -125,6 +159,8 @@ METHOD:: openFile
 open the desc file from which the MKtlDesc was generated
 
 PRIVATE:: init, storeArgs, printOn, writeCache, loadCache
+
+private:: docURI, elementsDesc, elementsDesc = type, getMidiMsgTypes, inferName, name, resolveDescEntriesForPlatform, specialMessage, specialMessageNames, web
 
 EXAMPLES::
 

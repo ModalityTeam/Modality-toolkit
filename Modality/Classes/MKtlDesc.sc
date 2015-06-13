@@ -18,7 +18,7 @@ MKtlDesc {
 
 	classvar <>isElementTestFunc;
 
-	var <name, <fullDesc, <path, <>elementsAssocArray;
+	var <name, <fullDesc, <path;
 
 	*initClass {
 		defaultFolder = this.filenameSymbol.asString.dirname.dirname
@@ -276,8 +276,6 @@ MKtlDesc {
 		fullDesc = inDesc;
 		path = path ?? { fullDesc[\path]; };
 
-		// make elements in both forms
-		this.prMakeElemColls(this.elementsDesc);
 		this.inferName;
 		if (this.protocol == \midi) {
 			this.getMidiMsgTypes;
@@ -312,16 +310,6 @@ MKtlDesc {
 		} {
 			name = name.asSymbol;
 			allDescs.put(name, this);
-		};
-	}
-
-	prMakeElemColls { |inDesc|
-		if (inDesc.isKindOf(Dictionary)) {
-			elementsAssocArray = inDesc.asAssociations;
-		};
-		if (inDesc.isKindOf(Array) and: { inDesc.isAssociationArray }) {
-			elementsAssocArray = inDesc;
-			this.elementsDesc = inDesc.asDict.as(Event);
 		};
 	}
 
