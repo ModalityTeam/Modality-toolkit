@@ -190,12 +190,10 @@ MKtlDesc {
 	// e.g. check whether description is wellformed
 	*isValidDescDict { |dict|
 		^dict.isKindOf(Dictionary)
-		or: { dict.isAssociationArray
-			and: { dict[\idInfo].notNil
-				and: { dict[\protocol].notNil
-					and: { dict[\description].notNil
-						//	and: { this.checkElementsDesc(dict) }
-					}
+		and: { dict[\idInfo].notNil
+			and: { dict[\protocol].notNil
+				and: { dict[\description].notNil
+					//	and: { this.checkElementsDesc(dict) }
 				}
 			}
 		}
@@ -317,7 +315,7 @@ MKtlDesc {
 		if (inDesc.isKindOf(Dictionary)) {
 			elementsAssocArray = inDesc.asAssociations;
 		};
-		if (inDesc.isAssociationArray) {
+		if (inDesc.isKindOf(Array) and: { inDesc.isAssociationArray }) {
 			elementsAssocArray = inDesc;
 			this.elementsDesc = inDesc.asDict.as(Event);
 		};
@@ -439,6 +437,7 @@ MKtlDesc {
 
 	// (-: just in case programming ;-)
 	resolveDescEntriesForPlatform {
+		if (fullDesc.isNil) { ^this };
 		this.class.resolveForPlatform(fullDesc);
 		this.elementsDesc.keysValuesDo { |key, elemDesc|
 			MKtlDesc.resolveForPlatform(elemDesc);

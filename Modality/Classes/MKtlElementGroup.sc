@@ -54,6 +54,10 @@ MKtlElementGroup : MKtlElement {
 	sortElementsByType {
 		var order;
 		order = [ MKtlElement, MKtlElementGroup ];
+		if (elements.isNil) {
+			^this
+		};
+
 		elements = elements.sort({ |a,b|
 				(order.indexOf( a.class ) ? -1) <= (order.indexOf( b.class ) ? -1);
 			}).separate({ |a,b|

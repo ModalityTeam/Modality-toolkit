@@ -186,8 +186,8 @@ MKtl { // abstract class
 			},
 			MKtlDesc, { newMKtlDesc = lookupNameOrDesc },
 			{
-				//  or dictionary we can make a desc from
-				if (lookupNameOrDesc.isKindOf(Dictionary)) {
+				//  or is it a dictionary we can make a desc from
+				if (MKtlDesc.isValidDescDict(lookupNameOrDesc)) {
 					newMKtlDesc = MKtlDesc.fromDict(lookupNameOrDesc);
 					protocol = newMKtlDesc.protocol;
 				};
@@ -275,7 +275,6 @@ MKtl { // abstract class
 
 		this.makeElements;
 		this.makeCollectives;
-
 		this.openDevice;
 	}
 
@@ -297,11 +296,10 @@ MKtl { // abstract class
 
 	- flattenDescription on each element
 	- substitute each spec in the element for the real ControlSpec corresponding to it
-	-
+	- elements
 	*/
 
 	makeElements {
-//		elementsArray = [];
 		elementsDict = ();
 
 		// array of dicts of arrays
@@ -309,10 +307,8 @@ MKtl { // abstract class
 			doAtLeaf: { |desc, deepKeys|
 				var deepName = deepKeys.join($_).asSymbol;
 				var element = MKtlElement(deepName, desc, this);
-
-//				elementsArray = elementsArray ++ [deepName, desc];
 				elementsDict.put(deepName, element);
-				element; },
+			element; },
 			isLeaf: MKtlDesc.isElementTestFunc
 		);
 
@@ -327,6 +323,8 @@ MKtl { // abstract class
 
 	wrapCollElemsInGroups { |elemOrColl|
 	//	"\n *** wrapCollElemsInGroups: ***".postln;
+
+		if (elemOrColl.isNil) { ^elemOrColl };
 
 		if (elemOrColl.isKindOf(MKtlElement)) {
 			^elemOrColl

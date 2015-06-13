@@ -56,7 +56,7 @@ MKtlDevice {
 
 		if (parentMKtl.isNil) {
 			"MKtlDevice.open: parentMktl.isNil - should not happen!".postln;
-			^this
+			^nil
 		};
 
 		lookupName = parentMKtl.lookupName;
@@ -76,7 +76,7 @@ MKtlDevice {
 		desc = parentMKtl.desc;
 		if (desc.isNil) {
 			"MKtldevice.open: parentMktl.desc.isNil - should not happen!".postln;
-			^this
+			^nil
 		};
 
 		protocol = desc.protocol;
@@ -87,7 +87,7 @@ MKtlDevice {
 		if (infoCandidates.size == 0) {
 			inform("%: could not open mktlDevice, no infoCandidates found."
 				.format(this));
-			^this
+			^nil
 		};
 
 		// FIXME: how to get multiple merged devices distinguished properly?
@@ -98,7 +98,7 @@ MKtlDevice {
 			infoCandidates.do { |cand|
 				"\n MKtl(%, %)".format(this.name, cand.lookupName);
 			};
-			^this
+			^nil
 		};
 
 		// exactly one candidate, so we take it:
