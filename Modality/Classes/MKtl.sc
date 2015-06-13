@@ -315,7 +315,9 @@ MKtl { // abstract class
 		// elements.keys.postcs;
 		MKtlElement.addGroupsAsParent = true;
 
-		this.wrapCollElemsInGroups(elements);
+		if (elements.notEmpty) {
+			this.wrapCollElemsInGroups(elements);
+		};
 		elements = MKtlElementGroup(this.name, elements);
 
 		MKtlElement.addGroupsAsParent = false;
@@ -469,13 +471,18 @@ MKtl { // abstract class
 	// close mktldevice if there and try to open a new one
 
 
-	rebuild { |deviceDescriptionNameOrDict| // could be a string/symbol or dictionary
+	rebuild { |descNameOrDict| // could be a string/symbol or dictionary
 		var newDesc;
 		// replace desc if new:
-		if (deviceDescriptionNameOrDict.isNil) {
+		if (descNameOrDict.isNil) {
 			newDesc = desc;
 		} {
-			newDesc = MKtlDesc(deviceDescriptionNameOrDict)
+			if (descNameOrDict.isKindOf(String)) {
+				newDesc = MKtlDesc(descNameOrDict);
+			};
+			if (descNameOrDict.isKindOf(Dictionary)) {
+				newDesc = MKtlDesc.fromDict(descNameOrDict);
+			};
 		};
 
 		// close old device
