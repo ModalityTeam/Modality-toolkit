@@ -1,19 +1,11 @@
-// gyrosc iphone/ipad app, skeching how OSC devices should work.
-// should create an
+// gyrosc iphone/ipad app
 /*
-OSCMktl.find; // can't detect any active ones ...
-OSCMktl('gyrosc', "gyrosc");
-newFromDesc
-OSCExplorer
-OSCMktl.new;
-
-MKtl.loadAllDescs;
-MKtl.allDevDescs[\gyrosc];
-
+ip addr should be passed in later.
 */
 
 (
-idInfo: "gyrosc",
+name: "gyrosc",
+idInfo: ( srcPort: 31417, ipAddress: "1.2.3.4", recvPort: 57120 ),
 protocol: \osc,
 deviceInfo: (
 	vendorURI: "http://www.bitshapesoftware.com/instruments/gyrosc/",
@@ -24,6 +16,8 @@ deviceInfo: (
 	// type: [],
 	// hasScribble: false
 ),
+	// actually about 7 more messages possible.
+	// replace wildcard later with nameTag as set in iphone used.
 description: (
 	'gyrosc/*/gyro': (\oscMsgType: \, \type: \gyro, \spec: \midiCC)
 )

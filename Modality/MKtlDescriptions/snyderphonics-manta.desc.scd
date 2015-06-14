@@ -9,11 +9,6 @@ q.manta.binaryName = "MantaOSC";
 q.manta.run = { |d| (d.path +/+ d.binaryName).runInTerminal; };
 
 q.manta.run;
-	// hack - add manta specs to global specs first
-	// should happen automagically
-MKtlDesc("*manta*").fullDesc.specs.keysValuesDo { |key, spec|
-	MKtl.addSpec(*[key, spec.asSpec].postln);
-};
 q.manta.mktl = MKtl(\manta, "*manta*");
 
 q.manta.mktl;
@@ -23,25 +18,24 @@ q.manta.mktl.postElements;
 s.boot;
 Ndef(\test, { |freq = 300| Saw.ar(freq) }).play;
 
-q.manta.mktl.desc.idInfo;
-q.manta.mktl.mktlDevice.oscFuncDictionary[\sl_0_con].dump;
-q.manta.mktl.trace(true);
-
+// single pad action
 q.manta.mktl.elementAt(\pad, 0, \con).action = { |el|
-	[el.name, el.value].postln;
+	[el.name, el.value, el.deviceValue].postln;
 	Ndef(\test).set(\freq, el.value.linexp(0, 1, 20, 2000));
 };
 
+// all pads, all pad controls
+q.manta.mktl.elementAt(\pad).action = { |el| [el.name, el.value.round(0.001)].postln };
 ///////// old, not working again yet:
-// // try adding a custom group:
-// var grp = MKtlElementGroup( 'padBot8', q.manta.mktl.elementAt( \pad, \vel, (0..7)) );
-// q.manta.mktl.addCustomGroup('padBot8', grp);
+
+// make a custom group ... how to add it as a collective?
+q.manta.padBot8 = MKtlElementGroup( 'padBot8',
+	q.manta.mktl.elementAt( \pad, (0..7)).collect(_.at(\vel))
+);
+q.manta.padBot8.elements[0].dump
 
 s.quit;
 */
-
-
-
 
 (
 initialisationMessages: [
