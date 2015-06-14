@@ -260,12 +260,23 @@ MKtl { // abstract class
 	printOn { |stream| this.storeOn(stream) }
 
 	init { |argDesc, argLookupName, argLookupInfo|
+		var specsFromDesc;
+
 		desc = argDesc;
 		lookupName = argLookupName;
 		lookupInfo = argLookupInfo;
 
 		all.put(name, this);
-		specs = ().parent_(globalSpecs);
+
+		specsFromDesc = desc.fullDesc[\specs];
+		specs = ();
+		if (specsFromDesc.notNil) {
+			specsFromDesc.parent_(globalSpecs);
+			specs.parent_(specsFromDesc);
+		} {
+			specs.parent_(globalSpecs);
+		};
+
 		elementsDict = ();
 
 		if (desc.isNil) {
