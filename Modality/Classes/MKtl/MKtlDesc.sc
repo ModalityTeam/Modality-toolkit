@@ -21,7 +21,7 @@ MKtlDesc {
 	var <name, <fullDesc, <path;
 
 	*initClass {
-		defaultFolder = this.filenameSymbol.asString.dirname.dirname
+		defaultFolder = MKtlDesc.filenameSymbol.asString.dirname.dirname.dirname
 		+/+ folderName;
 		descFolders = List[defaultFolder];
 		allDescs =();
@@ -172,6 +172,10 @@ MKtlDesc {
 		descFolders.do { |folder|
 			var loadedList = (folder +/+ cacheName).load;
 			//	("// loadedList: \n" + loadedList.cs).postln;
+			if (loadedList.isNil) {
+				"% : no cache file found.\n".postf(thisMethod);
+				^this
+			};
 			loadedList.keysValuesDo { |filename, idInfo|
 				fileToIDDict.put(filename, idInfo);
 			};
