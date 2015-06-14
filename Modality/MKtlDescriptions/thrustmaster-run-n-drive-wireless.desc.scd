@@ -10,6 +10,7 @@ deviceInfo: (
 	type: [\gamepad],
 	// hasScribble: false
 ),
+specs: (\compassRND: [0, 8, \lin, 1, 1].asSpec),
 description: (
 	// --------- input elements ----------
 	'bt': (
@@ -27,7 +28,7 @@ description: (
 		12: ('hidUsage': 12, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', spec: \hidBut, mode: \push )
 	),
 
-	'hat': ('hidUsage': 57, 'hidUsagePage': 1, 'type': 'hatSwitch', 'ioType': 'in', spec: \cent1, mode: \center),
+	'compass': ('hidUsage': 57, 'hidUsagePage': 1, 'type': 'hatSwitch', 'ioType': 'in', spec: \compassRND, mode: \center),
 
 	'joy': (
 		'l': (

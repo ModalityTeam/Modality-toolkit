@@ -55,6 +55,7 @@ deviceInfo: (
 	// type: [],
 	// hasScribble: false
 ),
+specs: (\compassRND: [0, 8, \lin, 1, 1].asSpec),
 description: (
 	'bt': (
 		// --------- input elements ----------
