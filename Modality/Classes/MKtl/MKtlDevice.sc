@@ -5,6 +5,8 @@ MKtlDevice {
 
 	// ( 'midi': List['name1',... ], 'hid': List['name1',... ], ... )
 
+	classvar <>verbose = true;
+
 	classvar <allAvailable;
 	classvar <allProtocols;
 	classvar <subClassDict;
@@ -75,7 +77,9 @@ MKtlDevice {
 
 		desc = parentMKtl.desc;
 		if (desc.isNil) {
-			"MKtldevice.open: parentMktl.desc.isNil - should not happen!".postln;
+			if (verbose) {
+				"MKtldevice.open: parentMktl.desc.isNil - should not happen!".postln;
+			};
 			^nil
 		};
 
@@ -87,8 +91,10 @@ MKtlDevice {
 		// "number of infoCandidates: %\n".postf(infoCandidates.size);
 		if (infoCandidates.size == 0) {
 			if (protocol != \osc) {
-				inform("%: could not open mktlDevice, no infoCandidates found."
-				.format(this));
+				if (verbose) {
+					inform("%: could not open mktlDevice, no infoCandidates found."
+						.format(this));
+				};
 				^nil
 			};
 		};

@@ -84,7 +84,7 @@ OSCMKtlDevice : MKtlDevice {
 		^messageSizeDispatcher;
 	}
 
-	*find { |post=true|
+	*find { |post=(verbose)|
 		this.initDevices( true );
 		if ( post ){
 			this.postPossible;
@@ -141,7 +141,7 @@ OSCMKtlDevice : MKtlDevice {
 	*initDevices { |force=false| // force has no real meaning here
 		var postables = MKtlLookup.allFor(\osc);
 		initialized = true;
-		if (postables.size == 0) {
+		if (verbose and: { postables.size == 0 }) {
 			"// OSCMKtlDevice: No known sending addresses so far.\n"
 			"// To detect OSC devices by hand, use OSCMon: ".postln;
 			"o = OSCMon.new.enable.show;".postln;
