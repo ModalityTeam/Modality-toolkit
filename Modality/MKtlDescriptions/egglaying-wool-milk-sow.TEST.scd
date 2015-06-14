@@ -24,7 +24,7 @@ MIDIMKtlDevice.allMsgTypes.postcs;
 	idInfo: "\EggLayingWoolMilkSow",
 	name: \EggLayingWoolMilkSow,
 	protocol: \midi,
-	description: [
+	description: (
 
 		// with midinum - 127 per channel
 		non: [midiMsgType: \noteOn, midiChan: [\range, 0, 9], midiNum: [\range, 36, 96]],
@@ -43,5 +43,5 @@ MIDIMKtlDevice.allMsgTypes.postcs;
 		program: [midiMsgType: \bend, midiChan: 0]
 		// add more here when integrated: \\
 		// ...
-	]
+	)
 );
