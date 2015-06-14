@@ -15,16 +15,16 @@ MIDIMKtlDevice.allMsgTypes.postcs;
 // use KeyValueArray format to keep order,
 // and use event-like expansion notation:
 // [midiChan: 1] // single value for all elements
-// [midiChan: [0, 3] // list of values
+// [midiChan: [0, 3]] // list of values
 // [ midiNum: [\range, 36, 96] ]; // continuous range of values
-// [ midiNum: [12, 24, [\range, 36, 96], 108 ] // nestable, will be flattened
-// can be converted as needed when reading file.
+// [ midiNum: [12, 24, [\range, 36, 96], 108 ] ] // nestable, will be flattened
+// this notation can be converted as needed when reading file.
 
 (
 	idInfo: "\EggLayingWoolMilkSow",
 	name: \EggLayingWoolMilkSow,
 	protocol: \midi,
-	description: (
+	description: [
 
 		// with midinum - 127 per channel
 		non: [midiMsgType: \noteOn, midiChan: [\range, 0, 9], midiNum: [\range, 36, 96]],
@@ -43,5 +43,5 @@ MIDIMKtlDevice.allMsgTypes.postcs;
 		program: [midiMsgType: \bend, midiChan: 0]
 		// add more here when integrated: \\
 		// ...
-	)
+	]
 );

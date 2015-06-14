@@ -197,6 +197,15 @@ OSCMKtlDevice : MKtlDevice {
 		this.initCollectives;
 	}
 
+	updateSrcAddr { |hostname, port|
+		if (hostname.notNil) { source.hostname = hostname };
+		if (port.notNil) { source.port = port };
+	}
+
+	updateDestAddr { |hostname, port|
+		if (hostname.notNil) { destination.hostname = hostname };
+		if (port.notNil) { destination.port = port };
+	}
 
 	closeDevice {
 		this.cleanupElementsAndCollectives;

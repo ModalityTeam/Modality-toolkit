@@ -9,28 +9,43 @@ q.manta.binaryName = "MantaOSC";
 q.manta.run = { |d| (d.path +/+ d.binaryName).runInTerminal; };
 
 q.manta.run;
-q.manta.mktl = MKtl(\manta, "*manta*");
+q.manta.desc = MKtlDesc("*manta*");
 
-q.manta.mktl;
-q.manta.mktl.mktlDevice;
-q.manta.mktl.postElements;
+MKtl(\manta, q.manta.desc);
+MKtl(\manta).trace(true);
 
+// changing
+MKtl(\manta).mktlDevice.source;
+MKtl(\manta).mktlDevice.updateSrcAddr("1.2.3.4", 56789);
+MKtl(\manta).mktlDevice.source;
+// -> disconnected now!
+
+// reconnect:
+MKtl(\manta).mktlDevice.updateSrcAddr("127.0.0.1", 31417);
+MKtl(\manta).mktlDevice.source;
+
+// same with dest
+MKtl(\manta).mktlDevice.updateDestAddr(port: 1234, hostname: "5.6.7.8");
+MKtl(\manta).mktlDevice.destination;
+
+/// test with dumb sound
 s.boot;
-Ndef(\test, { |freq = 300| Saw.ar(freq) }).play;
+Ndef(\test, { |freq = 300| Saw.ar(freq) }).play(vol: 0.1);
 
-// single pad action
-q.manta.mktl.elementAt(\pad, 0, \con).action = { |el|
+// single pad action - bottom left
+MKtl(\manta).trace(false);
+MKtl(\manta).elementAt(\pad, 0, \con).action = { |el|
 	[el.name, el.value, el.deviceValue].postln;
 	Ndef(\test).set(\freq, el.value.linexp(0, 1, 20, 2000));
 };
 
 // all pads, all pad controls
-q.manta.mktl.elementAt(\pad).action = { |el| [el.name, el.value.round(0.001)].postln };
-///////// old, not working again yet:
+MKtl(\manta).elementAt(\pad).action = { |el| [el.name, el.value.round(0.001)].postln };
 
+///////// old, not yet working again :
 // make a custom group ... how to add it as a collective?
 q.manta.padBot8 = MKtlElementGroup( 'padBot8',
-	q.manta.mktl.elementAt( \pad, (0..7)).collect(_.at(\vel))
+	MKtl(\manta).elementAt( \pad, (0..7)).collect(_.at(\vel))
 );
 q.manta.padBot8.elements[0].dump
 
