@@ -1,51 +1,55 @@
 /*
 
-~map = ItemsSpec.new( ["off","amber","red"], 4 );
+~itspec = ItemsSpec.new( ["off","amber","red"], 0 );
 
-~map.map( 0 );
-~map.map( 0.5 );
-~map.map( 0.8 );
-~map.map( 1 );
+~itspec.map( 0 );
+~itspec.map( 0.5 );
+~itspec.map( 0.8 );
+~itspec.map( 1 );
 
+// check that ranges are equal size
+~itspec.map( (0, 0.05..1) );
 
-~map.unmap( "off" );
-~map.unmap( "amber" );
-~map.unmap( "red" );
+// change warp to bend ranges
+~itspec.spec.warp = 4;
+~itspec.unmap( "off" );
+~itspec.unmap( "amber" );
+~itspec.unmap( "red" );
 
 
 */
 
-ItemsSpec{
-	var <keys;
+ItemsSpec {
+	var <items;
 	var <spec;
 	var <default;
 
-	*new{ |keys,warp|
-		^super.new.init( keys, warp );
+	*new { |items, warp = \linear, default|
+		^super.newCopyArgs( keys, warp, default );
 	}
 
-	init{ |names, warp|
-		warp = warp ? \linear;
-		keys = names;
-		spec = [ 0, keys.size-1, warp, 1].asSpec;
-		default = spec.minval;
+	init {
+		spec = [ 0, keys.size, warp, 1].asSpec;
+		// default is in mapped range, not unmapped
+		// if none given, take first key
+		if (names.includes(default).not) { default = keys[0] };
 	}
 
-	// from number to string
-	map{ |inval|
-		^keys.at( spec.map( inval ).asInteger );
+	// from number to item - equal parts of the range
+	map { |inval|
+		^items.clipAt( spec.map( inval ).asInteger );
 	}
 
 	// from string to number
-	unmap{ |inval|
-		var index = keys.indexOfEqual( inval );
+	unmap { |inval|
+		var index = items.indexOfEqual( inval );
 		if ( index.notNil ){
 			^spec.unmap( index );
 		};
 		^nil;
 	}
 
-	asSpec{
+	asSpec {
 		^this;
 	}
 
