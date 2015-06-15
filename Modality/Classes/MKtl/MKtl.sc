@@ -271,6 +271,9 @@ MKtl { // abstract class
 		specsFromDesc = desc.fullDesc[\specs];
 		specs = ();
 		if (specsFromDesc.notNil) {
+			specsFromDesc.keysValuesDo { |key, val|
+				specsFromDesc.put(key, val.asSpec);
+			};
 			specsFromDesc.parent_(globalSpecs);
 			specs.parent_(specsFromDesc);
 		} {
@@ -345,12 +348,16 @@ MKtl { // abstract class
 			^elemOrColl
 		};
 
-		elemOrColl.valuesKeysDo { |elem, keyIndex|
+		elemOrColl.valuesKeysDo { |elem, keyIndex, i|
 			var changedElem;
 			if (elem.isKindOf(Collection)) {
 				this.wrapCollElemsInGroups(elem);
 				changedElem = MKtlElementGroup(keyIndex, elem);
-				elemOrColl.put(keyIndex, changedElem);
+				if (elemOrColl.isAssociationArray) {
+					elemOrColl.put(i, keyIndex -> changedElem);
+				} {
+					elemOrColl.put(keyIndex, changedElem);
+				};
 			};
 		};
 	//	"*** wrapCollElemsInGroups: ***\n".postln;

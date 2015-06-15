@@ -43,8 +43,8 @@
 	// unified method for Array/index, Array of assocs and dicts
 	valuesKeysDo { |func|
 		if (this.isAssociationArray) {
-			this.do { |assoc|
-				func.value(assoc.value, assoc.key);
+			this.do { |assoc, i|
+				func.value(assoc.value, assoc.key, i);
 			};
 		};
 		this.do(func)
@@ -122,7 +122,7 @@
 
 	// unified method for Array/index, Array of assocs and dicts
 	valuesKeysDo { |func|
-		this.keysValuesDo { |key, val| func.(val, key) }
+		this.keysValuesDo { |key, val, i| func.(val, key, i) }
 	}
 
 	valuesKeysCollect { |func|

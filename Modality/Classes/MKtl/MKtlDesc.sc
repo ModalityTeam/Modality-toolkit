@@ -18,7 +18,7 @@ MKtlDesc {
 
 	classvar <>isElementTestFunc;
 
-	var <name, <fullDesc, <path;
+	var <name, <fullDesc, <path, <>elementsAssocArray;
 
 	*initClass {
 		defaultFolder = MKtlDesc.filenameSymbol.asString.dirname.dirname.dirname
@@ -194,15 +194,35 @@ MKtlDesc {
 	// can add more tests here,
 	// e.g. check whether description is wellformed
 	*isValidDescDict { |dict|
-		^dict.isKindOf(Dictionary)
+		var ok = dict.isKindOf(Dictionary)
 		and: { dict[\idInfo].notNil
 			and: { dict[\protocol].notNil
 				and: { dict[\description].notNil
 					//	and: { this.checkElementsDesc(dict) }
 				}
 			}
-		}
+		};
+		if (ok) { ^true };
+		"% - dict not valid: %\n\n".postf(thisMethod, dict);
 	}
+
+	*isValidElemDesc { |dict, protocol|
+		// var ok = dict.isKindOf(Dictionary)
+		// and: { dict[\type].notNil
+		// 	and: { dict[\protocol].notNil
+		// 		and: { dict[\description].notNil
+		// 			//	and: { this.checkElementsDesc(dict) }
+		// 		}
+		// 	}
+		// };
+		// if (ok) { ^true };
+		// "% - dict not valid: %\n\n".postf(thisMethod, dict);
+	}
+
+	*isValidMidiDesc { |dict| }
+	*isValidHIDDesc { |dict| }
+	*isValidOSCDesc { |dict| }
+
 
 	// creation methods
 	*fromFileName { |filename, folderIndex, multi = false|
@@ -281,6 +301,8 @@ MKtlDesc {
 		fullDesc = inDesc;
 		path = path ?? { fullDesc[\path]; };
 
+		// make elements in both forms
+		this.prMakeElemColls(this.elementsDesc);
 		this.inferName;
 		if (this.protocol == \midi) {
 			this.getMidiMsgTypes;
@@ -315,6 +337,16 @@ MKtlDesc {
 		} {
 			name = name.asSymbol;
 			allDescs.put(name, this);
+		};
+	}
+
+	prMakeElemColls { |inDesc|
+		if (inDesc.isKindOf(Dictionary)) {
+			elementsAssocArray = inDesc.asAssociations;
+		};
+		if (inDesc.isKindOf(Array) and: { inDesc.isAssociationArray }) {
+			elementsAssocArray = inDesc;
+			this.elementsDesc = inDesc.asDict.as(Event);
 		};
 	}
 
