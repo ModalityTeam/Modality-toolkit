@@ -1,17 +1,20 @@
 /*
 
-~itspec = ItemsSpec.new( ["off","amber","red"], 0 );
+~itspec = ItemsSpec.new( ["off","amber","red"] );
 
-~itspec.map( 0 );
-~itspec.map( 0.5 );
-~itspec.map( 0.8 );
-~itspec.map( 1 );
-
-// check that ranges are equal size
+// check that ranges are equal size: 21 values, 7 each
 ~itspec.map( (0, 0.05..1) );
+x = [ 0-0.5, 3-0.5, 0, 1].asSpec;
+x.map((0, 0.05..1));
+
+// anything in [0, 0.3333] -> "off", [0.3334, 0.6666] -> amber, [0.6667, 1] -> red
+
+// unmapping returns the center of the ranges, not the borders:
+x.unmap([0, 1, 2]); // [ 0.1667, 0.5, 0.8333 ]
 
 // change warp to bend ranges
-~itspec.spec.warp = 4;
+~itspec.warp = 4;
+~itspec.map( (0, 0.05..1) ); // off has wider part of the range now
 ~itspec.unmap( "off" );
 ~itspec.unmap( "amber" );
 ~itspec.unmap( "red" );
@@ -20,22 +23,20 @@
 */
 
 ItemsSpec {
-	var <items;
-	var <spec;
-	var <default;
+	var <items, <warp, <default, spec;
 
-	*new { |items, warp = \linear, default|
-		^super.newCopyArgs( keys, warp, default );
+	*new { |items, warp = 0, default|
+		^super.newCopyArgs( items, warp, default ).init;
 	}
 
 	init {
-		spec = [ 0, keys.size, warp, 1].asSpec;
-		// default is in mapped range, not unmapped
-		// if none given, take first key
-		if (names.includes(default).not) { default = keys[0] };
+		spec = [ -0.5, items.size - 0.5, warp, 1].asSpec;
+		// default is in mapped range, not unmapped 0
+		// if no default given, take first key
+		if (items.includes(default).not) { default = items[0] };
 	}
 
-	// from number to item - equal parts of the range
+	// from number to item - create equal parts of the range
 	map { |inval|
 		^items.clipAt( spec.map( inval ).asInteger );
 	}
@@ -52,5 +53,7 @@ ItemsSpec {
 	asSpec {
 		^this;
 	}
+
+	warp_ { |argWarp| spec.warp_(argWarp) }
 
 }
