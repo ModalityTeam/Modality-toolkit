@@ -7,7 +7,7 @@ DESCRIPTION::
 OSCMKtlDevice provides an easy to use interface for OSC devices or interfaces that send data to your computer.
 
 For most devices or interfaces, this requires that someone has already made a description file for the device; if there is none, it is easy to make one following the instructions here:
-link::Tutorials/How_to_create_a_description_file::
+link::Tutorials/How_to_create_a_description_file:: and here: link::Tutorials/How_to_create_a_description_file_for_OSC::
 
 More general info can be found in link::Classes/MKtl:: and link::Classes/MKtlDevice:: .
 
@@ -34,25 +34,6 @@ Initialize the sourceDeviceDict and look for available OSC devices.
 
 argument:: force
 Whether or not to do this again if it was already done before.
-
-
-METHOD:: findSource
-Find a source that matches the source that is in info. The device info has to match all the keys in of an existing source to match.
-
-ARGUMENT:: devInfo
-The devInfo we want to match.
-
-returns:: the found source
-
-
-METHOD:: addToSourceDeviceDict
-Adds an OSC device to the source device dictionary
-
-ARGUMENT:: name
-Name or label for the osc device
-
-ARGUMENT:: devInfo
-The device info as found in the description file
 
 
 METHOD:: new

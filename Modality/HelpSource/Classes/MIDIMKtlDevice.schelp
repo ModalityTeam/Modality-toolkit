@@ -38,33 +38,14 @@ Look for available MIDI devices.
 argument:: force
 Whether or not to do this again if it was already done before.
 
-METHOD:: getSourceName
-Get the full device name from the short source name.
-
-argument:: shortName
-A Symbol as it shows up in the short names found by MKtl.find.
-
-METHOD:: findSource
-Find a source or destination with a given device name and port.
-
-argument:: rawDeviceName
-The device name to search for.
-
-argument:: rawPortName
-The device port to search for.
-
-
 METHOD:: new
 Creates a new instance of MIDIMKtlDevice.
 
 argument:: name
 The short name of the controller as it shows up in the list of found devices.
 
-argument:: srcUID
-The source uid of the device if present.
-
-argument:: destUID
-The destination uid of the device if present.
+argument:: idInfo
+The lookup idInfo as in MKtlLookup if device is present.
 
 argument:: parentMKtl
 The instance of link::Classes/MKtl:: that this MKtlDevice will belong to.
