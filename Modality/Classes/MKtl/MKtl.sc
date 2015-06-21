@@ -141,14 +141,15 @@ MKtl { // abstract class
 		var res, lookupName, lookupInfo, descName, newMKtlDesc, protocol;
 
 		if (name.isNil) {
-			"MKtl: cannot make or find one without a name.".inform;
+			"%: please specify name.".format(this).inform;
 			^nil;
 		};
 
 		res = this.all[name];
 
 		if (res.isNil and: { lookupNameOrDesc.isNil }) {
-			"MKtl: cannot make one without a lookupName or desc filename.".inform;
+			"%(%): not instantiated yet.\n"
+			"Please specify lookupName or desc filename.".format(this, name).inform;
 			^nil;
 		};
 
@@ -201,8 +202,8 @@ MKtl { // abstract class
 		// else try to make a desc from lookup info:
 
 		if (MKtl.descIsFaulty(newMKtlDesc)) {
-			inform("MKtl.new: could not find a valid desc,"
-				" so we try to find it from hardware...");
+			inform("%(%): could not find a valid desc,\n"
+				"trying to derive from hardware...".format(this, name));
 		};
 
 		// now we have a name and a good enough desc
@@ -217,7 +218,7 @@ MKtl { // abstract class
 				and: { this.desc.fullDesc.filename == lookupNameOrDesc } }) {
 			^true
 		} {
-			inform("// %: If you want to change my desc,"
+			inform("%: To change my desc,"
 				"use %.rebuild(<desc>);".format(this, this));
 			^false
 		};
@@ -234,7 +235,7 @@ MKtl { // abstract class
 				// yes, identical, so ignored
 				^true
 			} {
-				inform("// %: If you want to change my desc,"
+				inform("// %: If you want to change the desc,"
 				" use %.rebuild( _newdesc_ );".format(this, this));
 				^false
 			};
@@ -283,8 +284,10 @@ MKtl { // abstract class
 		elementsDict = ();
 
 		if (desc.isNil) {
-			inform("MKtl:init - no desc was given, so cannot \n"
-				"make Elements and collectives or open device yet.");
+			inform(
+				"%:init - no desc given, cannot\n"
+				"open device or make elements and collectives.".format(this)
+			);
 			^this
 		};
 
@@ -536,7 +539,7 @@ MKtl { // abstract class
 	openDevice { |lookAgain=true|
 		var protocol;
 		if ( this.mktlDevice.notNil ) {
-			"Already a device opened for %.\n"
+			"%: Device already opened.\n"
 			"Please close it first with %.closeDevice;\n"
 			.format(this, this).warn;
 
@@ -581,8 +584,8 @@ MKtl { // abstract class
 		// observe mktlDevice to create a description file
 	explore { |mode=true|
 		if ( mktlDevice.isNil ){
-			"MKtl(%) has no open device, nothing to explore\n"
-			.format( name ).inform;
+			"% is virtual, nothing to explore\n"
+			.format( this ).inform;
 
 			^this
 		};
@@ -596,8 +599,8 @@ MKtl { // abstract class
 
 	createDescriptionFile {
 		if ( mktlDevice.isNil ){
-			"MKtl(%) has no open device, cannot create description file\n"
-			.format( name ).inform;
+			"% is virtual, cannot create description file\n"
+			.format( this ).inform;
 
 			^this
 		};

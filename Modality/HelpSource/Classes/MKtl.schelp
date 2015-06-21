@@ -41,6 +41,14 @@ MKtl.find;
 METHOD:: new
 Accesses an existing instance of MKtl with the given name, or creates a new instance with that name. As with e.g. JITLib proxies like Ndef, Tdef, Pdef, or OSCdef, MIDIdef etc.
 
+code::
+// name and name of description file
+k = MKtl('mynano2', "korg-nanokontrol2");
+
+// description file name can also contain wildcards:
+l = MKtl('op1', "*op-1");
+::
+
 argument:: name
 The name of the controller as you want to refer to it.
 
@@ -50,12 +58,6 @@ The device description that you want to use. This can be the lookupName of a dev
 argument:: lookForNew
 Boolean flag whether or not to look for newly attached devices or newly added device descriptions. Default is false. It will always look for devices and device descriptions the first time you open an MKtl.
 
-code::
-// name and name of description file
-k = MKtl('mynano2', "korg-nanokontrol2");
-
-// a longer example passing in a dictionary is below
-::
 
 SUBSECTION:: Using specs in MKtl
 
@@ -130,8 +132,11 @@ MKtl(\test).name_(\mynano2);
 MKtl.all; // \test is gone now, use \mynano2 instead
 ::
 
+argument:: inname
+a Symbol.
+
 METHOD:: gui
-Create a gui representation of the device
+Open a gui representation for the MKtl
 code::
 MKtl(\mynano2).gui;
 ::
@@ -313,7 +318,7 @@ Subsection:: Collectives and Composite MKtl
 METHOD:: collectivesDict, collectiveDescriptionFor
 
 will be used for creating composite MKtls, not fully tested yet.
-METHOD:: composite, initComp
+METHOD:: initComp
 
 methods for finding info on available devices in MKtlLookup.
 METHOD:: lookupInfo, lookupName, updateLookupInfo
