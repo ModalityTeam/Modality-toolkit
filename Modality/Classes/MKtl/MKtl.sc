@@ -548,6 +548,9 @@ MKtl { // abstract class
 		MKtlDevice.initHardwareDevices( lookAgain, protocol);
 
 		mktlDevice = MKtlDevice.open( this.name, this );
+		if(this.hasDevice.not) {
+			inform("%.openDevice: remaining virtual.".format(this));
+		}
 	}
 
 	hasDevice {

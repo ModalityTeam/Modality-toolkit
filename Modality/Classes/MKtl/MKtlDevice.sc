@@ -54,7 +54,7 @@ MKtlDevice {
 	*open { |name, parentMKtl|
 		var lookupName, lookupInfo, protocol, idInfo;
 		var desc, subClass, newDevice;
-		var infoCandidates;
+		var deviceCandidates;
 
 		if (parentMKtl.isNil) {
 			"MKtlDevice.open: parentMktl.isNil - should not happen!".postln;
@@ -85,14 +85,14 @@ MKtlDevice {
 
 		protocol = desc.protocol;
 		idInfo = desc.idInfo;
-		infoCandidates = MKtlLookup.findByIDInfo(idInfo).asArray;
+		deviceCandidates = MKtlLookup.findByIDInfo(idInfo).asArray;
 
 
-		// "number of infoCandidates: %\n".postf(infoCandidates.size);
-		if (infoCandidates.size == 0) {
+		// "number of device candidates: %\n".postf(deviceCandidates.size);
+		if (deviceCandidates.size == 0) {
 			if (protocol != \osc) {
 				if (verbose) {
-					inform("%: could not open mktlDevice, no infoCandidates found."
+					inform("%: could not open mktlDevice, no device candidates found."
 						.format(this));
 				};
 				^nil
@@ -102,17 +102,17 @@ MKtlDevice {
 		// FIXME: how to get multiple merged devices distinguished properly?
 		// currently two nanoKontrols would get merged, which would be wrong.
 		// - unless one merges controllers as well
-		if (infoCandidates.size > 1) {
-			inform("%: multiple infoCandidates found, please disambiguate by lookupName:"
+		if (deviceCandidates.size > 1) {
+			inform("%: multiple device candidates found, please disambiguate by lookupName:"
 				.format(this.name));
-			infoCandidates.do { |cand|
+			deviceCandidates.do { |cand|
 				"\n MKtl(%, %)".format(this.name, cand.lookupName);
 			};
 			^nil
 		};
 
 		// exactly one candidate, so we take it:
-		lookupInfo = infoCandidates[0];
+		lookupInfo = deviceCandidates[0];
 
 		if (lookupInfo.notNil) {
 			lookupName = lookupInfo.lookupName;
