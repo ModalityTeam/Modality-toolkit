@@ -272,19 +272,23 @@ MKtlElementGroup : MKtlElement {
 MKtlElementCollective : MKtlElementGroup {
 
 	*new { |source, name, elemDesc|
-		^super.newCopyArgs( source, name).init( elemDesc );
+		^super.newCopyArgs(name, source).init( elemDesc );
 	}
 
 	init { |inElemDesc|
 		tags = Set[];
-		elemDesc = inElemDesc ?? { source.collectiveDescriptionFor(name); };
+		elemDesc = inElemDesc ?? {
+			source.collectiveDescriptionFor(name);
+		};
 		if( elemDesc.notNil ) {
 			ioType = elemDesc[\ioType];
-			elements = elemDesc[\elements].collect({ |item|
+			elements = elemDesc[\elements].valuesKeysCollect({ |item|
 				source.elementAt( *item );
 			});
 			this.addCollectiveToChildren;
 		};
+		thisMethod.postln;
+		this.dump;
 	}
 
 	addCollectiveToChildren {

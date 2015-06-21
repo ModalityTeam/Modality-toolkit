@@ -120,6 +120,18 @@ NamedList : List {
 			}
 	}
 
+	do { |func|
+		names.do { |key, i| func.value(dict[key], key, i) };
+	}
+
+	collect { |func|
+		var newvals = names.collect { |key, i|
+			func.value(dict[key], key, i)
+		};
+		^this.class.newUsing(newvals, names);
+	}
+
+
 	put { |keyOrNum, val|
 		case
 			{ keyOrNum.isKindOf(SimpleNumber) } { ^array[keyOrNum.asInteger] = val }

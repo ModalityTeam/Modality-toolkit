@@ -370,14 +370,15 @@ MKtl { // abstract class
 		if( desc.fullDesc[ \collectives ].notNil ) {
 			collectivesDict = ();
 			desc.fullDesc[ \collectives ].keysValuesDo({ |key, value|
-				collectivesDict[ key ] = MKtlElementCollective( this, key, value );
+				collectivesDict[ key ] =
+				MKtlElementCollective( this, key, value );
 			})
 		};
  	}
 
 	collectiveDescriptionFor { |elname|
 		^desc.fullDesc[ \collectives ] !?
-		{ |x| desc.fullDesc[ \collectives ][ elname ]; };
+		{ desc.fullDesc[ \collectives ][ elname ]; };
 	}
 
 	// already filtered for my platform only
