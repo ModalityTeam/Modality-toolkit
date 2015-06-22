@@ -39,23 +39,6 @@ Look for available HID devices.
 argument:: force
 Whether or not to do this again if it was already done before.
 
-METHOD:: getSourceName
-Ge the full device name from the short source name.
-
-argument:: shortName
-A Symbol as it shows up in the short names found by MKtl.find.
-
-METHOD:: findSource
-Find a source or destination with a given device product name and vendor name.
-
-argument:: rawDeviceName
-The device product name to search for.
-
-argument:: rawVendorName
-The device vendor name to search for.
-
-
-
 METHOD:: makeDeviceName
 Convenience method to create a device name from the information from link::Classes/HIDInfo:: to put in the device description.
 

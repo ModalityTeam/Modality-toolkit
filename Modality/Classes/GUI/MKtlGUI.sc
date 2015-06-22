@@ -13,7 +13,7 @@ MKtlElementView {
 		makeViewFuncDict = (
 			'button': { |parent, bounds, label, element|
 				var mouseDownAction;
-				if( element.elementDescription[ \mode ] == \push ) {
+				if( element.elemDesc[ \mode ] == \push ) {
 					mouseDownAction = { |bt| bt.valueAction = 1 };
 				};
 				Button( parent, bounds.insetBy( MKtlGUI.margin ) )
@@ -52,8 +52,8 @@ MKtlElementView {
 	makeView { |inParent, bounds|
 		var label;
 		parent = inParent ? parent;
-		if( element.elementDescription[ \style ] !? _.showLabel ? false ) {
-			label = element.elementDescription[ \label ] ?? { element.name };
+		if( element.elemDesc[ \style ] !? _.showLabel ? false ) {
+			label = element.elemDesc[ \label ] ?? { element.name };
 		};
 		view = this.getMakeViewFunc( element.type ).value( parent, bounds, label, element );
 		getValueFunc = this.makeGetValueFunc( element, view );
@@ -114,6 +114,8 @@ MKtlGUI {
 	var <>gridSize;
 	var <>traceButton, <>labelButton;
 	var <>labelView;
+	var <pageComposites, <pagesSwitch;
+	var <currentPage = 0;
 
 	*new { |parent, bounds, mktl|
 		^super.newCopyArgs( mktl, parent ).init( bounds );
@@ -122,8 +124,10 @@ MKtlGUI {
 	init { |bounds|
 		var createdWindow = false;
 		var numRowsColumns, cellSize;
+		var pages;
 
-		this.layoutElements;
+		pages = this.getNumPages;
+		this.layoutElements( pages );
 
 		numRowsColumns = this.getNumRowsColumns;
 		cellSize = (maxSize / numRowsColumns.maxItem).round(1).clip(minViewSize,maxViewSize); // grid size
@@ -133,10 +137,19 @@ MKtlGUI {
 			Window( mktl.name, bounds, false ).front;
 		};
 
+		if( pages.notNil ) {
+			pageComposites = pages.collect({ |i|
+				CompositeView( parent, parent.view.bounds ).background_( Color.hsv( i / pages, 0.75, 0.75, 0.1) );
+			});
+		};
+
 		views = mktl.elements.flat.collect({ |item|
-			var style, bounds;
-			style = item.elementDescription[ \style ] ?? { ( row: 0, column: 0, width: 0, height: 0 ) };
-			MKtlElementView( parent, Rect( style.column * cellSize, (style.row * cellSize) + 25, style.width * cellSize, style.height * cellSize ), item );
+			var style, bounds, view = parent;
+			style = item.elemDesc[ \style ] ?? { ( row: 0, column: 0, width: 0, height: 0 ) };
+			if( pages.notNil && { item.elemDesc[ \page ].notNil }) {
+				view = pageComposites[ item.elemDesc[ \page ] ];
+			};
+			MKtlElementView( view, Rect( style.column * cellSize, (style.row * cellSize) + 25, style.width * cellSize, style.height * cellSize ), item );
 		});
 
 		labelView = UserView( parent, bounds.moveTo(0,0) )
@@ -144,16 +157,15 @@ MKtlGUI {
 		.drawFunc_({ |vw|
 			views.do({ |item, i|
 				var name;
-				name = item.element.name.asString;
-				if( name.asString.size > 5 ) {
-					name = name.split( $_ );
-					name[((name.size-1) / 2).floor] = name[((name.size-1) / 2).ceil] ++ "\n";
-					name = name.join( $_ );
+				if( item.element.elemDesc[ \page ].isNil or: { item.element.elemDesc[ \page ] == currentPage } ) {
+					name = item.element.name.asString;
+					if( name.asString.size > 5 ) {
+						name = name.split( $_ );
+						name[((name.size-1) / 2).floor] = name[((name.size-1) / 2).floor] ++ "\n";
+						name = name.join( $_ );
+					};
+					Pen.stringCenteredIn( name, Rect.aboutPoint( item.view.bounds.center, 60, 15 ), nil, Color.white )
 				};
-				Pen.use({
-					Pen.translate( *item.view.bounds.center.asArray );
-					Pen.stringCenteredIn( name, Rect.aboutPoint( 0@0, 50, 15 ), nil, Color.white )
-				});
 			});
 		})
 		.visible_( false );
@@ -167,52 +179,88 @@ MKtlGUI {
 			.states_([["labels"],["labels", Color.black, Color.green]])
 			.action_({ |bt| this.showLabels( bt.value.booleanValue ) });
 
+		if( pages.notNil ) {
+			Button( parent, Rect( 168, 2, 16, 16 ) )
+			.states_([ ["<"] ])
+			.action_({ pagesSwitch.valueAction = (pagesSwitch.value - 1).wrap(0, pagesSwitch.items.size-1); });
+			pagesSwitch = PopUpMenu( parent, Rect( 188, 2, 80, 16 ) )
+			.items_( pages.collect({ |item| "page: %".format( item ) }) )
+			.action_({ |pu|
+				currentPage = pu.value;
+				pageComposites.do({ |item, i| if( currentPage == i ) { item.visible = true } { item.visible = false } });
+				labelView.refresh;
+			});
+			Button( parent, Rect( 272, 2, 16, 16 ) )
+			.states_([ [">"] ])
+			.action_({ pagesSwitch.valueAction = (pagesSwitch.value + 1).wrap(0, pagesSwitch.items.size-1); });
+			pagesSwitch.valueAction_( currentPage );
+		};
+
 		skipJack = SkipJack( { this.updateGUI }, 0.2, { parent.isClosed } );
+	}
+
+	currentPage_ { |number = 0|
+		if( pagesSwitch.notNil ) {
+			pagesSwitch.valueAction = number;
+		};
 	}
 
 	getNumRowsColumns {
 		^mktl.elements.flat.collect({ |item|
-			item.elementDescription !? { |x|
+			item.elemDesc !? { |x|
 				((x[ \style ] ?? { ( row: 0, column: 0, width: 0, height: 0 ) })
 					.atAll([ \row, \height, \column, \width ]) - [0, 1, 0, 1]).clump(2).collect(_.sum);
 			}
 		}).flop.collect(_.maxItem) + 1;
 	}
 
-	layoutElements {
+	getNumPages {
+		^mktl.elements.flat.collect({ |item| item.elemDesc[ \page ] }).select(_.notNil).maxItem !? (_+1);
+	}
+
+	layoutElements { |pages|
+		this.layoutElementsOnPage();
+		pages.do({ |page|
+			this.layoutElementsOnPage( page );
+		});
+	}
+
+	layoutElementsOnPage { |page|
 		var columnSpacingTrend, layout, placeFunc, scanFunc;
 
 		layout = FlowLayout( Rect(0,0,32,32), 0@0, 0@0 );
 
 		placeFunc = { |element|
 			var bounds, style;
-			bounds = ().bounds_(
-				switch( element.type,
-					\slider, { Rect(0,0,1,3) },
-					{ Rect( 0,0,1,1 ) }
-				)
-			);
-			style = element.elementDescription[ \style ] ? ();
+			if( element.elemDesc[ \page ] == page ) {
+				bounds = ().bounds_(
+					switch( element.type,
+						\slider, { Rect(0,0,1,3) },
+						{ Rect( 0,0,1,1 ) }
+					)
+				);
+				style = element.elemDesc[ \style ] ? ();
 
-			style.parent = nil;
+				style.parent = nil;
 
-			if( style.width.notNil ) { bounds.bounds.width = style.width };
-			if( style.height.notNil ) { bounds.bounds.height = style.height };
-			if( style.column.notNil ) {
-				if( layout.left > 0 && { style.column > 0 } && { style.column != layout.left } && { (style.row ? layout.top) == layout.top }) {
-					columnSpacingTrend = style.column - layout.left;
+				if( style.width.notNil ) { bounds.bounds.width = style.width };
+				if( style.height.notNil ) { bounds.bounds.height = style.height };
+				if( style.column.notNil ) {
+					if( layout.left > 0 && { style.column > 0 } && { style.column != layout.left } && { (style.row ? layout.top) == layout.top }) {
+						columnSpacingTrend = style.column - layout.left;
+					};
+					layout.left = style.column;
+				} {
+					if( columnSpacingTrend.notNil ) {
+						layout.shift( columnSpacingTrend, 0 );
+					};
 				};
-				layout.left = style.column;
-			} {
-				if( columnSpacingTrend.notNil ) {
-					layout.shift( columnSpacingTrend, 0 );
-				};
+				if( style.row.notNil ) { layout.top = style.row };
+				layout.place( bounds );
+				bounds = bounds.bounds;
+				element.elemDesc[ \style ] = style
+				.parent_( ( row: bounds.top, column: bounds.left, width: bounds.width, height: bounds.height ) );
 			};
-			if( style.row.notNil ) { layout.top = style.row };
-			layout.place( bounds );
-			bounds = bounds.bounds;
-			element.elementDescription[ \style ] = style
-			.parent_( ( row: bounds.top, column: bounds.left, width: bounds.width, height: bounds.height ) );
 		};
 
 		scanFunc = { |element|

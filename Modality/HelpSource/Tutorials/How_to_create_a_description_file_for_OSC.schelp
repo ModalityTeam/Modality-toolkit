@@ -12,6 +12,10 @@ This Tutorial first shows simple examples of OSC interfaces, by emulating them w
 
 list::
 ##link::#Simple input::
+list::
+##link::#Pattern matching on osc paths::
+##link::#Trigger messages::
+::
 ##link::#Simple output::
 ##link::#Collective input::
 ##link::#Collective output::
@@ -184,6 +188,88 @@ n.sendMsg( '/knob', 1, 2, 34 );
 m.closeDevice;
 ::
 
+
+subsection:: Pattern matching on osc paths
+
+Some devices may send a different on and off message, e.g. code::"/button/on":: for the on state, and code::"/button/off":: for the off state.
+
+So the oscPath you want to match is code::"/button/*":: - the code::*:: is the standin for the possible matches you want to look for. In an link::Classes/ItemsSpec:: you define the possible states that can be send, in the order that they may appear, in our simple example here: code::["off","on"]:: which means that code::"off":: will map to 0 and code::"on":: will map to 1. If you added a third item code::["off","maybe","on"]::, the middle item would map to 0.5.
+
+code::
+(
+~descInput = (
+	specs: ( onoffString: ItemsSpec.new( [ "off", "on" ] ); ),
+	    idInfo: ( srcPort: NetAddr.langPort, ipAddress: "127.0.0.1" ),
+	    protocol: \osc,
+	    description: (
+		        'bt': (
+			            oscPath: '/button/*',
+			            type: 'button',
+			            spec: \onoffString,
+			            ioType: \in
+		        )
+	    )
+)
+);
+
+m = MKtl( \exampleOSCInput, ~descInput );
+MKtlDevice.allAvailable // now also shows the opened 'osc device'
+
+// create a gui for the osc device:
+m.gui;
+
+// post incoming data
+m.trace;
+
+n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
+
+// send messages:
+n.sendMsg( "/button/off" );
+n.sendMsg( "/button/on" );
+
+
+// close the device again
+m.closeDevice;
+::
+
+
+subsection:: Trigger messages
+
+In some cases, an OSC message has no relevant arguments and just functions as a trigger that a certain event happened. In this case you use the type code::\trigger:: for the element. The output value of the element will always be 1.
+
+code::
+(
+~descInput = (
+	idInfo: ( srcPort: NetAddr.langPort, ipAddress: "127.0.0.1" ),
+	protocol: \osc,
+	description: (
+		'tr': (
+			oscPath: '/trigger',
+			type: 'trigger',
+			ioType: \in
+		)
+	)
+)
+);
+
+m = MKtl( \exampleOSCInput, ~descInput );
+MKtlDevice.allAvailable // now also shows the opened 'osc device'
+
+// create a gui for the osc device:
+m.gui;
+
+// post incoming data
+m.trace;
+
+n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
+
+// send messages:
+n.sendMsg( "/trigger" );
+n.sendMsg( "/trigger" );
+
+// close the device again
+m.closeDevice;
+::
 
 section:: Simple output
 
@@ -639,6 +725,7 @@ code::
 ~descExample = (
 	idInfo: ( srcPort: NetAddr.langPort, ipAddress: "127.0.0.1" ),
 	protocol: \osc,
+	// name: \descEx,
 	description: (
 		'pad': (
 			oscPath: '/pad',
@@ -652,6 +739,10 @@ code::
 );
 
 m = MKtl( \exampleOSCDesc, ~descExample );
+m.mktlDevice;
+MKtl.all;
+
+// likely obsolete?
 MKtlDevice.allAvailable // now also shows the opened 'osc device'
 
 // create a gui for the osc device:
@@ -686,8 +777,32 @@ code::
 	)
 );
 
-m.rebuildFrom( ~descExample );
+m.rebuild( ~descExample );
 m.gui
+m.elementsDict
+
+// test with a global action
+m.elements.action = { |el| ("  recv:" + [m, el.name, el.value.round(0.001)]).postln; };
+m.elementAt(\pad, 0, 2).deviceValueAction_(128.rand.postln);
+
+// and test that m receives properly via OSC:
+(
+n = NetAddr.localAddr;
+Tdef(\exosc, {
+	inf.do {
+		"send: ".post;
+		n.sendMsg(*['/pad', 3.rand, 3.rand, 128.rand].postcs);
+		0.25.wait;
+	}
+}).play;
+)
+Tdef(\exosc).stop;
+Tdef(\exosc).play;
+
+
+m.elements.dump;
+
+
 ::
 
 Now all 9 pads are in the description.
@@ -738,11 +853,11 @@ pad: 48.collect{ |id|
 );
 ::
 
-The code::spec:: needed is a special one, a link::Classes/StringMap:: that defines the mapping of a value to one of the three colors, we can define it in the code::specs:: part of the device description:
+The code::spec:: needed is a special one, a link::Classes/ItemsSpec:: that defines the mapping of a value to one of the three colors, we can define it in the code::specs:: part of the device description:
 
 code::
 specs: (
-	mantaLed: StringMap.new( ["off","amber","red"] ), // led can be off, amber or red
+	mantaLed: ItemsSpec.new( ["off","amber","red"] ), // led can be off, amber or red
 )
 ::
 

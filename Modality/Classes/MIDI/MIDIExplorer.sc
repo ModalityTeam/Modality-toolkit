@@ -3,7 +3,7 @@
 1. abstract out consecutive note numbers and controller numbers
    in order to generate more compact code
 
-2. check name consistency - is this already creting exactly the recommended names?
+2. check name consistency - is this already creating exactly the recommended names?
 
 */
 
@@ -105,13 +105,16 @@ More information can be found here:
 		resps.do(_.add);
 	}
 
-	*stop {
-		resps.do(_.clear);
-	}
+	*stop { |srcID|
+		if ( srcID.notNil ){
+			observedSrcID = nil;
+		};
+		resps.do(_.free);
+ 	}
 
 	*postSrcInfo {
 		MIDIClient.sources.do { |src, i|
-			"i: % - device: % - name: % - uid: % \n".postf(
+			"i: % - idInfo: % - name: % - uid: % \n".postf(
 				i, src.device, src.name, src.uid
 			);
 		};
@@ -131,7 +134,7 @@ More information can be found here:
 
 	*devName {
 		var string, device;
-		device = MIDIClient.sources.detect{|src| src.uid === observedSrcID};
+		device = MIDIClient.sources.detect { |src| src.uid === observedSrcID };
 		if (device.notNil) { ^device.device };
 		string = "(No source with uid % present.\n Pick one from the posted list:)";
 		string.postf(observedSrcID);
@@ -143,7 +146,7 @@ More information can be found here:
 	*compile {
 		var string =
 
-		"\n(\nvar dict = (device: %, \nprotocol: 'midi');\n\n"
+		"\n(\nvar dict = (idInfo: %, \nprotocol: 'midi');\n\n"
 		"dict.put('description', %\n);";
 
 		^string.format(this.devName.asCompileString, this.compileDesc);
@@ -153,11 +156,11 @@ More information can be found here:
 
 		var num, chan;
 
-		// (device: "Ableton Push", protocol: \midi, description:";
+		// (idInfo: "Ableton Push", protocol: \midi, description:";
 
 		var str = "(\n";
 
-		// str = str + "device: \"" ++ name ++ "\",\n";
+		// str = str + "idInfo: \"" ++ name ++ "\",\n";
 		// str = str + "protocol: 'midi', \n";
 		// str = str + "decription: (\n";
 		if (observeDict[\noteOn].notEmpty) {

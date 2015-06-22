@@ -31,6 +31,7 @@ HIDExplorer {
 			srcDev.debug_( false );
 		}{
 			HID.debug_( false );
+			// observedSrcDev = nil; // is this a good idea?
 		}
 	}
 
@@ -71,7 +72,7 @@ HIDExplorer {
         var elements = dev.elements;
         var uniques, duplicates;
 
-		str = str ++ "device: \"" ++ dev.info.productName.asString ++ "_" ++ dev.info.vendorName.asString ++ "\",\n";
+		str = str ++ "idInfo: \"" ++ dev.info.productName.asString ++ "_" ++ dev.info.vendorName.asString ++ "\",\n";
 		str = str ++ "protocol: 'hid',\n";
 		str = str ++ "description: (\n";
 

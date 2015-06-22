@@ -49,7 +49,7 @@ code::
 specs: (
 	mantaTouch: [ 0, 227 ].asSpec,
 	mantaSlider: [ 0, 4095 ].asSpec,
-	mantaLed: StringMap.new( ["off","amber","red"] ), // led can be off, amber or red
+	mantaLed: ItemsSpec.new( ["off","amber","red"] ), // led can be off, amber or red
 )
 ::
 
