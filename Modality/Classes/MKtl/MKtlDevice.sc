@@ -7,7 +7,7 @@ MKtlDevice {
 
 	classvar <>verbose = true;
 
-	classvar <allAvailable;
+	// classvar <allAvailable;
 	classvar <allProtocols;
 	classvar <subClassDict;
 
@@ -21,7 +21,7 @@ MKtlDevice {
 	}
 
 	*initClass {
-		allAvailable = ();
+		// allAvailable = ();
 
 		if ( Main.versionAtLeast( 3, 7 ) ) {
 			allProtocols = [\midi,\hid,\osc];
