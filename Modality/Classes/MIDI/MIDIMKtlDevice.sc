@@ -378,7 +378,7 @@ MIDIMKtlDevice : MKtlDevice {
 				\control, "ccNum: %, ",
 				\noteOn, "vel: %, ",
 				\noteOff, "vel: %, ",
-				\polyTouch, "touchVal: %, "
+				\polyTouch, "touchVal: %, ",
 				\polytouch, "touchVal: %, "
 			)
 			.format(num)
