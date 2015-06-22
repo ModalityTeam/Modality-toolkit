@@ -128,9 +128,9 @@ MKtlLookup {
 		var dict = (
 			name: name,
 			protocol: protocol,
-			\ipAddress: sendAddr.ip,
-			\srcPort: sendAddr.port,
-			\destPort: (replyAddr ? sendAddr).port,
+			ipAddress: sendAddr.ip,
+			srcPort: sendAddr.port,
+			destPort: (replyAddr ? sendAddr).port,
 		//	deviceInfo: nil,
 			filename: filename,
 			desc: MKtlDesc.at(filename.asSymbol),
