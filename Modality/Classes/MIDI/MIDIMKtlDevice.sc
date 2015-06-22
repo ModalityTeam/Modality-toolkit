@@ -419,7 +419,10 @@ MIDIMKtlDevice : MKtlDevice {
 				\control,     { this.makeChanNumMsgMIDIFunc(msgType, srcUid) },
 				\noteOn,      { this.makeChanNumMsgMIDIFunc(msgType, srcUid) },
 				\noteOff,     { this.makeChanNumMsgMIDIFunc(msgType, srcUid) },
-				\noteOnOff,   { this.makeChanNumMsgMIDIFunc(msgType, srcUid) },
+				\noteOnOff,   {
+					this.makeChanNumMsgMIDIFunc(\noteOn, srcUid);
+					this.makeChanNumMsgMIDIFunc(\noteOff, srcUid);
+				},
 				\polyTouch,   { this.makeChanNumMsgMIDIFunc(msgType, srcUid) },
 
 				\bend,        { this.makeChanMsgMIDIFunc   (msgType, srcUid) },
