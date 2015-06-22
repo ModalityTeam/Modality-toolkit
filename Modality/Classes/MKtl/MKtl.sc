@@ -207,7 +207,7 @@ MKtl { // abstract class
 		};
 
 		// now we have a name and a good enough desc
-		^super.newCopyArgs(name).init(newMKtlDesc, lookupName, lookupInfo);
+		^super.newCopyArgs(name).init(newMKtlDesc, lookupName, lookupInfo, lookForNew );
 	}
 
 	checkIdentical { |lookupNameOrDesc|
@@ -260,7 +260,7 @@ MKtl { // abstract class
 	storeArgs { ^[name] }
 	printOn { |stream| this.storeOn(stream) }
 
-	init { |argDesc, argLookupName, argLookupInfo|
+	init { |argDesc, argLookupName, argLookupInfo, lookForNew = false|
 		var specsFromDesc;
 
 		desc = argDesc;
@@ -293,7 +293,7 @@ MKtl { // abstract class
 
 		this.makeElements;
 		this.makeCollectives;
-		this.openDevice;
+		this.openDevice( lookForNew );
 	}
 
 	updateLookupInfo { |newInfo|
