@@ -102,7 +102,7 @@ code::
 );
 
 m = MKtl( \testMIDI, ~descInput );
-m.rebuildFrom( ~descInput ); // updating it
+m.rebuild( ~descInput ); // updating it
 
 m.trace;
 
@@ -136,7 +136,7 @@ code::
 );
 
 m = MKtl( \testMIDI, ~descInput ); // create a new device, or:
-m.rebuildFrom( ~descInput ); // updating it
+m.rebuild( ~descInput ); // updating it
 
 m.trace;
 
@@ -170,7 +170,7 @@ code::
 );
 
 m = MKtl( \testMIDI, ~descInput );
-m.rebuildFrom( ~descInput ); // updating it
+m.rebuild( ~descInput ); // updating it
 
 m.trace;
 
@@ -209,7 +209,7 @@ code::
 );
 
 m = MKtl( \testMIDI, ~descInput );
-m.rebuildFrom( ~descInput ); // updating it
+m.rebuild( ~descInput ); // updating it
 
 m.trace;
 
@@ -240,7 +240,7 @@ code::
 );
 
 m = MKtl( \testMIDI, ~descInput );
-m.rebuildFrom( ~descInput ); // updating it
+m.rebuild( ~descInput ); // updating it
 
 m.trace;
 
@@ -275,7 +275,7 @@ code::
 );
 
 m = MKtl( \testMIDI, ~descInput );
-m.rebuildFrom( ~descInput ); // updating it
+m.rebuild( ~descInput ); // updating it
 
 m.trace;
 
@@ -311,7 +311,7 @@ code::
 );
 
 m = MKtl( \testMIDI, ~descInput );
-m.rebuildFrom( ~descInput ); // updating it
+m.rebuild( ~descInput ); // updating it
 
 m.trace;
 
@@ -341,7 +341,7 @@ code::
 );
 
 m = MKtl( \testMIDI, ~descInput );
-m.rebuildFrom( ~descInput ); // updating it
+m.rebuild( ~descInput ); // updating it
 
 m.trace;
 
@@ -375,7 +375,7 @@ code::
 );
 
 m = MKtl( \testMIDI, ~descInput );
-m.rebuildFrom( ~descInput ); // updating it
+m.rebuild( ~descInput ); // updating it
 
 m.trace;
 
@@ -421,7 +421,7 @@ MIDIIn.connectAll; MIDIFunc.trace;
 );
 
 m = MKtl( \testMIDI, ~descOutput );
-m.rebuildFrom( ~descOutput ); // updating it
+m.rebuild( ~descOutput ); // updating it
 
 m.elementAt( \bt ).value_( 0 ); // see note above on noteOn message with velocity zero; may show up in the trace as a noteOff
 m.elementAt( \bt ).value_( 1 );
@@ -452,7 +452,7 @@ MIDIIn.connectAll; MIDIFunc.trace;
 );
 
 m = MKtl( \testMIDI, ~descOutput );
-m.rebuildFrom( ~descOutput ); // updating it
+m.rebuild( ~descOutput ); // updating it
 
 m.elementAt( \bt ).value_( 0 );
 m.elementAt( \bt ).value_( 1 );
@@ -484,7 +484,7 @@ MIDIIn.connectAll; MIDIFunc.trace;
 );
 
 m = MKtl( \testMIDI, ~descOutput );
-m.rebuildFrom( ~descOutput ); // updating it
+m.rebuild( ~descOutput ); // updating it
 
 m.elementAt( \sl ).value_( 0 );
 m.elementAt( \sl ).value_( 0.4 );
@@ -515,7 +515,7 @@ MIDIIn.connectAll; MIDIFunc.trace;
 );
 
 m = MKtl( \testMIDI, ~descOutput );
-m.rebuildFrom( ~descOutput ); // updating it
+m.rebuild( ~descOutput ); // updating it
 
 m.elementAt( \bt ).value_( 0 );
 m.elementAt( \bt ).value_( 1 );
@@ -547,7 +547,7 @@ MIDIIn.connectAll; MIDIFunc.trace;
 );
 
 m = MKtl( \testMIDI, ~descOutput );
-m.rebuildFrom( ~descOutput ); // updating it
+m.rebuild( ~descOutput ); // updating it
 
 m.elementAt( \bend ).value_( 0 );
 m.elementAt( \bend ).value_( 0.4 );
@@ -578,7 +578,7 @@ MIDIIn.connectAll; MIDIFunc.trace;
 );
 
 m = MKtl( \testMIDI, ~descOutput );
-m.rebuildFrom( ~descOutput ); // updating it
+m.rebuild( ~descOutput ); // updating it
 
 m.elementAt( \touch ).value_( 0 );
 m.elementAt( \touch ).value_( 0.4 );
@@ -594,7 +594,7 @@ MIDIIn.connectAll; MIDIFunc.trace;
 	idInfo: ( name: "SuperCollider", sourcePortIndex: 0 ),
 	protocol: \midi,
 	description: (
-		'touch': ( after touch
+		'touch': (
 			type: 'slider',
 			midiMsgType: \touch, // touch does not need \midiNum
 			midiChan: 0,
@@ -606,7 +606,7 @@ MIDIIn.connectAll; MIDIFunc.trace;
 );
 
 m = MKtl( \testMIDI, ~descOutput );
-m.rebuildFrom( ~descOutput ); // updating it
+m.rebuild( ~descOutput ); // updating it
 
 m.elementAt( \touch ).value_( 0 );
 m.elementAt( \touch ).value_( 0.4 );
@@ -637,7 +637,7 @@ MIDIIn.connectAll; MIDIFunc.trace;
 );
 
 m = MKtl( \testMIDI, ~descOutput );
-m.rebuildFrom( ~descOutput ); // updating it
+m.rebuild( ~descOutput ); // updating it
 
 m.elementAt( \prog ).value_( 0 );
 m.elementAt( \prog ).value_( 0.4 );
