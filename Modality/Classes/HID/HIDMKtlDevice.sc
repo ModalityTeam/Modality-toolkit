@@ -27,7 +27,7 @@ HIDMKtlDevice : MKtlDevice {
 		};
 
 		HID.findAvailable;
-		if (HID.running.not) { HID.initializeHID };
+		// if (HID.running.not) { HID.initializeHID }; // happens in HID.findAvailable
 		MKtlLookup.addAllHID;
 
 		initialized = true;

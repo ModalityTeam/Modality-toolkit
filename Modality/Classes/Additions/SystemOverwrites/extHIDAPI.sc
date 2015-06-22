@@ -1,7 +1,10 @@
 + HID {
 	*findAvailable {
-		var rawDevList = HID.prbuildDeviceList;
-		if (rawDevList.isNil) {
+		var rawDevList;
+		if ( running.not ) { this.initializeHID }; // start eventloop if not yet running (needs to happen here, otherwise it is not called when not using modality; we are overriding an essential class method here!)
+		rawDevList = HID.prbuildDeviceList;
+		// if (rawDevList.isNil) {
+		if (rawDevList == 0) {
 			"HID: no devices found.".postln;
 			^this
 		};
