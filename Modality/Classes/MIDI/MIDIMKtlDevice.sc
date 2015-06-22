@@ -26,7 +26,7 @@ MIDIMKtlDevice : MKtlDevice {
 
 	*initClass {
 		allMsgTypes = #[
-			\noteOn, \noteOff, \noteOnOff, \cc, \control, \polyTouch,
+			\noteOn, \noteOff, \noteOnOff, \cc, \control, \polyTouch, \polytouch,
 			\touch, \bend, \program,
 			\midiClock, \start, \stop, \continue, \reset,
 			\allNotesOff
@@ -38,6 +38,7 @@ MIDIMKtlDevice : MKtlDevice {
 			\noteOn: "non_%_%",
 			\noteOff: "nof_%_%",
 			\polyTouch: "pt_%_%",
+			\polytouch: "pt_%_%",
 			\bend: "b_%",
 			\touch: "t_%",
 			\program: "p_%",
@@ -330,6 +331,7 @@ MIDIMKtlDevice : MKtlDevice {
 	makeChanNumMsgMIDIFunc { |typeKey|
 
 		if (typeKey == \cc) { typeKey = \control };
+		if (typeKey == \polyTouch) { typeKey = \polytouch };
 		// "makeChanNumMsgMIDIFunc for % \n".postf(typeKey);
 
 		responders.put(typeKey,
@@ -376,7 +378,9 @@ MIDIMKtlDevice : MKtlDevice {
 				\control, "ccNum: %, ",
 				\noteOn, "vel: %, ",
 				\noteOff, "vel: %, ",
-				\polyTouch, "touchVal: %, ")
+				\polyTouch, "touchVal: %, "
+				\polytouch, "touchVal: %, "
+			)
 			.format(num)
 		} { "" };
 
@@ -424,6 +428,7 @@ MIDIMKtlDevice : MKtlDevice {
 					this.makeChanNumMsgMIDIFunc(\noteOff, srcUid);
 				},
 				\polyTouch,   { this.makeChanNumMsgMIDIFunc(msgType, srcUid) },
+				\polytouch,   { this.makeChanNumMsgMIDIFunc(msgType, srcUid) },
 
 				\bend,        { this.makeChanMsgMIDIFunc   (msgType, srcUid) },
 				\touch,       { this.makeChanMsgMIDIFunc   (msgType, srcUid) },
@@ -478,6 +483,7 @@ MIDIMKtlDevice : MKtlDevice {
 			\noteOff, { midiOut.noteOff(chan, num, val ) },
 			\touch, { midiOut.touch(chan, val ) },
 			\polyTouch, { midiOut.polyTouch(chan, num, val ) },
+			\polytouch, { midiOut.polyTouch(chan, num, val ) },
 			\bend, { midiOut.bend(chan, val) },
 
 			// tested already?
