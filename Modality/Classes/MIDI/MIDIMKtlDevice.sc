@@ -484,6 +484,7 @@ MIDIMKtlDevice : MKtlDevice {
 			\touch, { midiOut.touch(chan, val ) },
 			\polyTouch, { midiOut.polyTouch(chan, num, val ) },
 			\polytouch, { midiOut.polyTouch(chan, num, val ) },
+			\program, { midiOut.program(chan, val ) },
 			\bend, { midiOut.bend(chan, val) },
 
 			// tested already?
