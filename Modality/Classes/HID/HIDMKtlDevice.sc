@@ -14,7 +14,7 @@ HIDMKtlDevice : MKtlDevice {
 				"Apple Mikey HID Driver",
 				"Apple IR"
 			];
-		});
+		}, { deviceProductNamesToHide = List[]; } );
 	}
 
 	*initDevices { |force=false|
