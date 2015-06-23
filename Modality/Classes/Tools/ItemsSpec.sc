@@ -1,11 +1,10 @@
 /*
 
 ~itspec = ItemsSpec.new( ["off","amber","red"] );
-
 // check that ranges are equal size: 21 values, 7 each
 ~itspec.map( (0, 0.05..1) );
-x = [ 0-0.5, 3-0.5, 0, 1].asSpec;
-x.map((0, 0.05..1));
+// check unmapping
+["off","amber","red"].collect { |it| ~itspec.unmap(it) };
 
 // anything in [0, 0.3333] -> "off", [0.3334, 0.6666] -> amber, [0.6667, 1] -> red
 
@@ -45,7 +44,7 @@ ItemsSpec {
 	unmap { |inval|
 		var index = items.indexOfEqual( inval );
 		if ( index.notNil ){
-			^spec.unmap( index );
+			^spec.unmap( index ).round(1/(items.size - 1));
 		};
 		^nil;
 	}
