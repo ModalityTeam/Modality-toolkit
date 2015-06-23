@@ -32,8 +32,8 @@ code::
 where
 
 list::
-## code::<vendor>:: is name of vendor with spaces replaced by code::-::
-## code::<device_name>:: is name of the device with spaces replaced by code::-::
+## code::<vendor>:: is lower-case name of vendor with spaces replaced by code::-::
+## code::<device_name>:: is lower-case name of the device with spaces replaced by code::-::
 ::
 
 section:: Semantic information

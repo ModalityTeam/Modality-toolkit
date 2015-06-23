@@ -5,7 +5,7 @@ related:: Tutorials/How_to_create_a_description_file_for_OSC
 
 DESCRIPTION::
 
-ItemsSpec maps a string from an array of possible strings onto a value range between 0 and 1.
+ItemsSpec maps an item from an array of possible items onto a value range between 0 and 1.
 
 Simple example:
 
@@ -36,7 +36,7 @@ METHOD:: new
 Create a new ItemsSpec.
 
 ARGUMENT:: keys
-An Array of strings to map onto.
+An Array of items to map onto.
 
 ARGUMENT:: warp
 Optionally you can provide a warp if you do not want a linear mapping. The default is code::\linear::
