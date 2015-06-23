@@ -7,6 +7,17 @@ MKtlLookup {
 		all = ();
 	}
 
+	*postInfo {
+		"%.all: \n".postf(this);
+		all.sortedKeysValuesDo { |devkey, devdict|
+			"\t%\n".postf(devkey);
+			devdict.sortedKeysValuesDo { |k, v|
+				"\t\t%: %\n".postf(k, v)
+			};
+			"".postln;
+		};
+	}
+
 	*midiAt { |endPointType, index|
 		var list = (src: MIDIClient.sources,
 			dest: MIDIClient.destinations)[endPointType];
