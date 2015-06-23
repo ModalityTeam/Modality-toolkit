@@ -54,7 +54,7 @@ MKtl.find(\hid);
 MKtl('sbpt0');  // [ "USB Optical Mouse", "" ]
 */
 // open it:
-m = MKtl( \sbpt0 );
+m = MKtl( \sbpt0, 'hid_0_usb_optical_mouse' );
 ::
 
 For HID devices, you can automatically generate a description file, as the device reports what it's inputs and outputs are.
@@ -105,7 +105,7 @@ description: (
 );
 
 // assign the desc to the mouse:
-m.rebuildFrom( ~mouseDesc );
+m.rebuild( ~mouseDesc );
 
 // and check the incoming data:
 m.trace;
@@ -147,7 +147,7 @@ description: (
 );
 
 // assign the desc to the mouse:
-m.rebuildFrom( ~mouseDesc );
+m.rebuild( ~mouseDesc );
 
 // and check the incoming data:
 m.trace;
@@ -176,7 +176,7 @@ description: (
 );
 
 // assign the desc to the mouse:
-m.rebuildFrom( ~mouseDesc );
+m.rebuild( ~mouseDesc );
 
 // and check the incoming data:
 m.trace;
@@ -218,7 +218,7 @@ description: (
 )
 
 // assign the desc to the mouse:
-m.rebuildFrom( ~mouseDesc );
+m.rebuild( ~mouseDesc );
 
 // and check the incoming data:
 m.trace;
@@ -255,7 +255,7 @@ description: (
 )
 
 // assign the desc to the mouse:
-m.rebuildFrom( ~mouseDesc );
+m.rebuild( ~mouseDesc );
 
 // and check the incoming data:
 m.trace;
@@ -285,7 +285,7 @@ m.mktlDevice.source.info.vendorName.postcs
 For our mouse the vendorName is left blank, apparently the vendor did not bother to list it in its device. Here is a little shortcut to create the string:
 
 code::
-m.mktlDevice.getIdInfoString;
+m.lookupInfo.idInfo;
 ::
 
 section:: HID Initialisation messages
