@@ -1,7 +1,7 @@
 title:: How to create a description file for an OSC device
 summary:: How to create a description file to use with the Modality toolkit for an OSC device
 categories:: Libraries>Modality
-related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Classes/OSCMon, Tutorials/How_to_create_a_description_file
+related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Classes/OSCMonitor, Tutorials/How_to_create_a_description_file
 
 Section:: Introduction
 
@@ -193,7 +193,7 @@ subsection:: Pattern matching on osc paths
 
 Some devices may send a different on and off message, e.g. code::"/button/on":: for the on state, and code::"/button/off":: for the off state.
 
-So the oscPath you want to match is code::"/button/*":: - the code::*:: is the standin for the possible matches you want to look for. In an link::Classes/ItemsSpec:: you define the possible states that can be send, in the order that they may appear, in our simple example here: code::["off","on"]:: which means that code::"off":: will map to 0 and code::"on":: will map to 1. If you added a third item code::["off","maybe","on"]::, the middle item would map to 0.5.
+So the oscPath you want to match is code::"/button/*":: - the code::*:: is the standin for the possible matches you want to look for. In an link::Classes/ItemsSpec:: you define the possible states that can be sent, in the order that they may appear, in our simple example here: code::["off","on"]:: which means that code::"off":: will map to 0 and code::"on":: will map to 1. If you added a third item code::["off","maybe","on"]::, the middle item would map to 0.5.
 
 code::
 (
@@ -316,7 +316,7 @@ code::
 )
 ::
 
-If the value needs to be inserted in between identifiers for the message, you can use code::nil:: as the place holder in the code::argTemplate::
+If the value needs to be inserted in between identifiers for the message, you can use code::nil:: as a placeholder in the code::argTemplate::
 
 code::
 // turn on the led at row 2 and column 3 at brightness value 5
@@ -412,7 +412,7 @@ n.sendMsg( "/buttons", 1, 1, 0, 1, 1 );
 
 (
 Tdef( \autoaction, {
-	loop{
+	loop {
 		n.sendMsg( "/buttons", 2.rand, 2.rand, 2.rand, 2.rand, 2.rand );
 		1.0.wait;
 	};
@@ -680,7 +680,7 @@ m.closeDevice;
 
 section:: Explore an OSC device
 
-To find out what an OSC device can do, the first thing you can do is read the documentation for the device and see what it tells about the OSC interface. Usually the documentation lists a number of messages that the device sends out, and a number of messages that it reacts upon. For OSC output to the device you have to rely on the documentation about the device to find out what you need to send to it. For the OSC input from the device, there is a tool (link::Classes/OSCMon::) to find out what messages it sends.
+To find out what an OSC device can do, the first thing you can do is read the documentation for the device and see what it tells about the OSC interface. Usually the documentation lists a number of messages that the device sends out, and a number of messages that it reacts upon. For OSC output to the device you have to rely on the documentation about the device to find out what you need to send to it. For the OSC input from the device, there is a tool (link::Classes/OSCMonitor::) to find out what messages it sends.
 
 code::
 // create a fake OSC device that sends some messages:
@@ -696,9 +696,9 @@ Tdef( \fakeOSCdevice,{
 Tdef( \fakeOSCdevice ).play;
 );
 
-// start an OSCMon:
+// start an OSCMonitor:
 
-o = OSCMon.new;
+o = OSCMonitor.new;
 o.enable; // enable it
 o.show; // show a gui to view the data
 o.verbose = true; // post the messages
