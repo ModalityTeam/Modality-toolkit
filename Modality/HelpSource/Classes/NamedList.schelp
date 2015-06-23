@@ -8,10 +8,12 @@ DESCRIPTION::
 Like a List, a NamedList has an array of items which can be accessed by index. Like a dictionary, its items can also be accessed by names. Items can be added and removed and replaced by name. It also supports pseudo-object style like a dict.
 
 Note::
-NamedList is designed for semantic clarity and for fast lookup:
-code::put, at:: methods are reasonably fast, direct lookup with code::namedlist.dict[key]:: or code::namedlist.array[index]:: is nearly as fast as with Array and Event.
 
-code::add, remove, removeAt:: methods are slower than with arrays or dicts, due to the overhead of keeping array, names and dict in sync. This design assumes that lookup will happen some orders of magnitude more often than add/remove.
+NamedList is designed primarily for semantic clarity, to make storage as text more clearly readable for humans, and to ensure the intended order of iteration.
+
+NamedList also does quite efficient lookup: code::put, at:: methods are reasonably fast, and direct lookup with code::namedlist.dict[key]:: or code::namedlist.array[index]:: is almost as fast as with Array and Event.
+
+code::add, remove, removeAt:: methods are slower than with arrays or dicts, due to the overhead of keeping array, names and dict in sync. This design assumes that lookup will happen several orders of magnitude more often than add/remove.
 ::
 
 code::
@@ -33,15 +35,35 @@ n.at([\a, 2]); 	// can also mix indices and keys
 n[\a] = 123;
 n.put(\d, 7); 	// new names get added to the end
 
-// access by name as pseudo-method (when n.know == true)
+// access by name as pseudo-method (if n.know == true)
 n.a;
 n.eee;
-n.eee = 555; 	// adding also works by pseudo-method
+n.eee = 555; 	// putting also works by pseudo-method
 
 // internals, can be used for faster lookup
 n.dict;
 n.array.postcs;
 n.names.postcs;
+
+// replaces item if name already there, else does addLast
+n.basicAdd (\a, 123)
+n.basicAdd (\xyz, 123)
+
+// these all put items in specific places in the order.
+n.addFirst(\x, 123);
+n.addLast (\zzz, 987);
+
+// add or move a named item relative to given name.
+// if the name to add is already in use,
+// it is moved to the position indicated.
+// if the name where to add is missing,
+// addBefore does addFirst, addAfter does addLast.
+n.addBefore (\y, 234, \a);
+n.addAfter (\y, 23, \a); // this moves \y!
+
+n.do { |val, key, i| [val * 100, key, i].postcs };
+n.collect { |val, key, i| val * 100 };
+
 ::
 
 CLASSMETHODS::

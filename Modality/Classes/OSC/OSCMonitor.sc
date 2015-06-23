@@ -4,9 +4,9 @@
 auto-refresh every 0.5 sec?
 */
 
-OSCMon {
+OSCMonitor {
 	classvar <colors;
-	var <>bufsize, <>timeWindow, <func, <>action, <addresses, <msgNames;
+	var <>bufsize, <>timeWindow, <listenFunc, <>action, <addresses, <msgNames;
 	var <list, <w, <u;
 	var <>verbose = false, <>watchStatus = false;
 	var <>trackAddrs = true, <>trackMsgs = true;
@@ -44,8 +44,8 @@ OSCMon {
 		};
 	}
 
-	enable { thisProcess.addOSCRecvFunc(func); enabled = true }
-	disable { thisProcess.removeOSCRecvFunc(func); enabled = false }
+	enable { thisProcess.addOSCRecvFunc(listenFunc); enabled = true }
+	disable { thisProcess.removeOSCRecvFunc(listenFunc); enabled = false }
 
 	addNickname { |name, addr|
 		anaDict[\nicknames].put(addr, name);
@@ -74,7 +74,7 @@ OSCMon {
 
 		this.addDefaultNicknames;
 
-		func = { |msg, t, sender|
+		listenFunc = { |msg, t, sender|
 			var arr, nick;
 			if (trackAddrs) { this.addAddr(sender) };
 			if (trackMsgs) { this.addMsgName(msg[0]) };
@@ -131,8 +131,8 @@ OSCMon {
 	}
 
 	postInfo {
-		"----\nOSCMon: % messages in last % seconds.\n".postf(
-			list.size, thisThread.seconds - list.last[0]);
+		"----\n%: % messages in last % seconds.\n".postf(
+			this, list.size, thisThread.seconds - list.last[0]);
 		"addresses: %\n".postf(list.collectAs(_[1], Set));
 		"msgNames: %\n----\n".postf(list.collectAs({ |msg| msg[2][0] }, Set));
 	}
@@ -239,7 +239,7 @@ OSCMon {
 			u.animate_(true).frameRate_(10);
 
 			u.keyDownAction = { |u, char|
-				"OSCMon keyDown: %\n".postf(char);
+				"OSCMonitor keyDown: %\n".postf(char);
 				if (char.isDecDigit) {
 					this.postMessagesFrom(char.asString.interpret);
 				};

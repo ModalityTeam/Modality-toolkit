@@ -1,0 +1,197 @@
+TITLE:: OSCMonitor
+summary:: A Monitor for OSC traffic
+categories:: Modality, OSC
+related:: Classes/OSCFunc, Classes/OSCdef
+
+DESCRIPTION::
+OSCMonitor monitors captures incoming OSC messages, keeping recent ones around for analyis and display. It can show the  message sizes, relative arrival times for multiple sources.
+
+code::
+
+
+o = OSCMonitor.new; 	// make one
+o.enable;			// turn it on
+o.show;				// show them on gui, no po
+o.watchStatus = true; s.boot;
+
+o.verbose = true;	// post messages
+// show status messages from server too
+o.watchStatus = false;
+o.list.size;
+o.anaDict.nicknames.as(Event);
+o.addresses;
+(
+n = NetAddr.localAddr;
+Tdef(\test, {
+	loop {
+		(exprand(0.03, 0.3) * 3).wait;
+		n.sendMsg([\test, \yo, \mama].choose,
+			*{ 10.rand }.dup(rrand(3, 10)));
+	};
+});
+Tdef(\test).play;
+)
+
+o.anaDict[\nicknames];
+o.anaDict[\messagesByAddr];
+o.anaDict[\msgNamesByAddr];
+
+
+o.timeWindow = 25;
+
+o.verbose = false; 	// no posting
+o.postInfo;			// and post current state
+
+o.disable;
+o.enable;
+o.list;
+
+
+
+o.anaDict[\nicknames];
+o.anaDict[\messagesByAddr];
+o.anaDict[\msgNamesByAddr];
+
+o.addNickname(\manta, NetAddr("127.0.0.1", 8000));
+
+o.anaDict[\messagesByAddr][\homeclient];
+
+// make a local net address to send/receive messages to monitor;
+(
+n = NetAddr.localAddr;
+Tdef(\test, {
+	loop {
+		(exprand(0.03, 0.3) * 3).wait;
+		n.sendMsg([\test, \yo, \mama].choose,
+			*{ 10.rand }.dup(rrand(3, 10)));
+	};
+});
+Tdef(\test).play;
+)
+	// addresses and msgNames are kept
+o.addresses;
+o.msgNames;
+o.list.keep(10).postln;
+	// TBD: statistics on who sent how much
+	// which messages are most frequent
+
+	// add nicknames for known addresses
+	// post all messages by source
+	// post all messages by name and/or source
+
+o.free;
+
+::
+
+
+CLASSMETHODS::
+
+METHOD:: colors
+some colors to use in the visualisation
+
+private:: prepColors
+
+METHOD:: new
+make a new OSCMonitor
+argument:: bufsize
+ with a buffersize of how many messages to keep,
+argument:: timeWindow
+a length of time within which to keep messages
+argument:: action
+and an action to do when a new message comes in
+
+INSTANCEMETHODS::
+
+METHOD:: bufsize
+METHOD:: timeWindow
+METHOD:: func
+
+METHOD:: w
+METHOD:: u
+
+METHOD:: anaDict
+
+METHOD:: refreshAddrsAndNames
+
+METHOD:: removeAddr
+argument:: addr
+
+METHOD:: disable
+
+METHOD:: clearMsgNames
+
+METHOD:: refresh
+
+METHOD:: removeNickname
+argument:: name
+argument:: addr
+
+METHOD:: addresses
+
+METHOD:: removeMsgName
+argument:: name
+
+METHOD:: addMsgName
+argument:: name
+
+METHOD:: nameOrAddr
+argument:: addr
+
+
+METHOD:: msgNames
+
+METHOD:: trackMsgs
+
+METHOD:: enable
+
+METHOD:: trackAddrs
+
+METHOD:: clearAddrs
+
+METHOD:: addDefaultNicknames
+
+METHOD:: addNickname
+argument:: name
+argument:: addr
+
+METHOD:: analyse
+argument:: arr
+
+METHOD:: postInfo
+
+
+METHOD:: free
+
+METHOD:: postMessagesFrom
+argument:: index
+
+METHOD:: list
+
+METHOD:: addToList
+argument:: arr
+
+
+METHOD:: enabled
+
+METHOD:: init
+argument:: argAction
+
+METHOD:: show
+argument:: name
+argument:: bounds
+
+METHOD:: addAddr
+argument:: addr
+
+METHOD:: verbose
+
+METHOD:: action
+
+METHOD:: watchStatus
+
+
+EXAMPLES::
+
+code::
+_some_example_code_
+::

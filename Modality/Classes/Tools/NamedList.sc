@@ -13,9 +13,9 @@ NamedList : List {
 	}
 
 	// conversions
-	*fromPairs { |keyValArray|
+	*fromPairs { |pairs|
 		var names, values;
-		#values, names = keyValArray.clump(2).flop;
+		#values, names = pairs.clump(2).flop;
 		^this.newUsing(names, values);
 	}
 
@@ -61,11 +61,14 @@ NamedList : List {
 	}
 
 	at { |keyOrNum|
-		case
-			{ keyOrNum.isKindOf(SimpleNumber) } { ^array[keyOrNum.asInteger] }
-			{ keyOrNum.isKindOf(Symbol) } { ^dict[keyOrNum] }
-			{ keyOrNum.isKindOf(Collection) } { ^keyOrNum.collect (this.at(_)) }
-			{ warn(
+		case {
+			keyOrNum.isKindOf(SimpleNumber) } {
+			^array[keyOrNum.asInteger] } {
+			keyOrNum.isKindOf(Symbol) } {
+			^dict[keyOrNum] } {
+			keyOrNum.isKindOf(Collection) } {
+			^keyOrNum.collect (this.at(_)) } {
+			warn(
 				"NamedList: keys can only be symbols,"
 				"numbers or collections of symbols or numbers.");
 				^nil
@@ -73,7 +76,7 @@ NamedList : List {
 	}
 
 	// replaces if name is there
-	add { |key, val|
+	basicAdd { |key, val|
 		var index = names.indexOf(key);
 		if (index.notNil) {
 			array.put(index, val);
@@ -84,7 +87,12 @@ NamedList : List {
 		names = names.add(key);
 		dict.put(key, val);
 	}
+	// synonym
+	replace { |name, item|
+		this.basicAdd(name, item);
+	}
 
+	// remove by identity
 	remove { |item|
 		var index = array.indexOf(item);
 		if (index.notNil) {
@@ -120,6 +128,65 @@ NamedList : List {
 			}
 	}
 
+	// qualified add - select method
+	add { |name, item, active = true, addAction = \replace, otherName|
+		this.perform(addAction, name, item, otherName);
+	}
+
+	addLast { |name, item, active = true| // no where
+		if (item.isNil) { ^this };
+		this.removeAt(name);
+		this.basicAdd(name, item);
+	}
+
+	addFirst { |name, item, active = true| // no where
+		if (item.isNil) { ^this };
+		this.removeAt(name);
+		dict.put(name, item);
+		array = array.addFirst(item);
+		names = names.addFirst(name);
+	}
+
+	addBefore { |name, item, otherName|
+		var newIndex;
+		if (item.isNil) { ^this };
+		this.removeAt(name);
+		dict.put(name, item);
+		newIndex = names.indexOf(otherName);
+		if (newIndex.notNil) {
+			names = names.insert(newIndex, name);
+			array = array.insert(newIndex, item);
+			^this
+		};
+		// no index, so put at beginning?
+		warn("% - otherName '%' not found.! adding to head."
+			.format(thisMethod, name));
+		this.addFirst(name, item);
+	}
+
+	addAfter { |name, item, otherName|
+		var newIndex;
+		if (item.isNil) { ^this };
+		this.removeAt(name);
+		dict.put(name, item);
+		newIndex = names.indexOf(otherName);
+		if (newIndex.notNil) {
+			newIndex = newIndex + 1;
+			if (newIndex == names.size) {
+				^this.basicAdd(name, item);
+			} {
+				names = names.insert(newIndex, name);
+				array = array.insert(newIndex, item);
+				^this
+			};
+		};
+
+		// no index, so put at beginning?
+		warn("% - otherName '%' not found.! adding to end."
+			.format(thisMethod, name));
+		this.basicAdd(name, item);
+	}
+
 	do { |func|
 		names.do { |key, i| func.value(dict[key], key, i) };
 	}
@@ -128,7 +195,7 @@ NamedList : List {
 		var newvals = names.collect { |key, i|
 			func.value(dict[key], key, i)
 		};
-		^this.class.newUsing(newvals, names);
+		^this.class.newUsing(newvals, names.copy);
 	}
 
 
@@ -166,5 +233,6 @@ NamedList : List {
 		<<<* this.simplifyStoreArgs(this.storeArgs) << "])";
 	}
 
+	// inefficient, but reads well
 	storeArgs { ^[names, array].flop.flat }
 }
