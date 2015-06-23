@@ -143,8 +143,8 @@ OSCMKtlDevice : MKtlDevice {
 		initialized = true;
 		if (verbose and: { postables.size == 0 }) {
 			"// OSCMKtlDevice: No known sending addresses so far.\n"
-			"// To detect OSC devices by hand, use OSCMonitor: ".postln;
-			"o = OSCMonitor.new.enable.show;".postln;
+			"// To detect OSC devices by hand, use OSCMon: ".postln;
+			"o = OSCMon.new.enable.show;".postln;
 			^this
 		};
 	}
