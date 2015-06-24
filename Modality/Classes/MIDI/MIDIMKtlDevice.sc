@@ -60,7 +60,7 @@ MIDIMKtlDevice : MKtlDevice {
 	prSetSrcID { |argID| srcID = argID; }
 
 	// open all ports
-	*initDevices { |force= false|
+	*initDevices { |force = false|
 
 		if ( initialized && { force.not } ){ ^this; };
 

@@ -80,8 +80,9 @@ MKtlLookup {
 		var infoToMergeTo = MKtlLookup.allFor(\midi).detect { |info|
 			info.idInfo == endpoint.device
 		};
+		"%: %\n".postf([endpoint, index, endPointType]);
 		if (infoToMergeTo.isNil) {
-			^MKtlLookup.addMIDI(endpoint, index, \src);
+			^MKtlLookup.addMIDI(endpoint, index, endPointType);
 		};
 
 		this.merge (infoToMergeTo, \deviceInfo, endpoint);
@@ -92,17 +93,18 @@ MKtlLookup {
 			this.merge (infoToMergeTo, \destDevice, endpoint);
 		};
 	}
-	// for devices with multiple ports:
-	// merge all ports into one array for src and one for desc
-	// need to unpack it correctly later
+
+	// for devices with multiple ports, for now:
+	// merge all ports into one array for src and one for desc.
+	// will need to unpack it correctly later:
 	// either support multiple ports in MIDIfunc,
-	// merge one MKtl for each port into one mother MKtl
+	// or merge one MKtl for each port into one mother MKtl
+
 	*merge { |dict, key, newItem|
 		var arr = dict[key].asArray;
 		if (arr.includesEqual(newItem).not) {
-			"%: adding item %, uid: % \n"
-			.postf(thisMethod, newItem, newItem.uid);
-			arr = arr.add(newItem);
+			// no array for single ports
+			arr = arr.add(newItem).unbubble;
 			dict[key] = arr;
 		};
 	}
