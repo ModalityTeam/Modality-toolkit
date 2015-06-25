@@ -106,7 +106,7 @@ MIDIMKtlDevice : MKtlDevice {
 		"// MKtl(name, filename);  // *[ midi device, portname, uid]\n".postln;
 		postables.keysValuesDo { |key, infodict|
 			var endPoint = infodict.deviceInfo;
-			var postList = endPoint.collect({ |ep| [ep.device.cs, ep.name.cs, ep.uid] });
+			var postList = endPoint.bubble.flatten.collect({ |ep| [ep.device.cs, ep.name.cs, ep.uid] });
 			var filename = MKtlDesc.filenameForIDInfo(infodict.idInfo);
 
 			filename = if (filename.isNil) { "" } { "," + quote(filename) };
