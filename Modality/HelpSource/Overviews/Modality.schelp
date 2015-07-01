@@ -41,6 +41,62 @@ Each code::MKtl:: has elements such as sliders or knobs. It is possible to assig
 
 Below two examples of what you can do with this toolkit. For further explanation, refer to link::Tutorials/ModalityTutorial::.
 
+subsection:: Example Run'n'Drive Gamepad
+
+code::
+// plug in your Run'n'Drive gamepad and evaluate this line:
+k = MKtl('rnnd0');
+
+// If there is no such controller connected, you can open a fake gui-based controller by executing k.gui;
+
+// make sure there are no current assigned actions
+k.reset;
+
+// open a gui representation of the device
+k.gui;
+
+// boot the server
+s.boot;
+
+(
+// play a sound
+x = {
+	SinOsc.ar( \freq.kr(700, lag: 0.3) * SinOsc.ar( \fmfreq.kr( 100, lag: 0.3 ), 0, \fmmul.kr(0.2), 1 ), mul: 0.1 );
+}.play;
+
+// add specs for the controls
+Spec.add(\freq, [100, 3000, \exp]);
+Spec.add(\fmfreq, [10, 200, \exp]);
+Spec.add(\fmmul, [0, 0.5]);
+);
+
+k.elementAt( \joy, \l );
+k.elementAt( \throt, \l );
+
+// set actions to the left joystick, and left throttle control
+k.elementAt(\joy, \l, \y).action = {arg el;
+	x.set(\freq, \freq.asSpec.map(el.value))
+};
+k.elementAt(\joy, \l, \x).action = {arg el;
+	x.set(\fmfreq, \fmfreq.asSpec.map(el.value))
+};
+k.elementAt(\throt, \l).action = {arg el;
+	x.set(\fmmul, \fmmul.asSpec.map(el.value))
+};
+
+// after testing, free sound
+x.free;
+
+// remove all assigned actions
+k.reset;
+
+// set output element
+k.elementAt( \rumble, \l ).value_( 0.5 );
+k.elementAt( \rumble, \l ).value_( 0 );
+
+k.reset;
+::
+
 subsection:: Example NanoKontrol2
 
 code::
@@ -150,7 +206,7 @@ k.reset;
 ::
 
 
-subsection::Bonus: Knob rotation demo
+subsection::Bonus: Knob rotation demo with the BCR2000
 code::
 (
 d = 0;
