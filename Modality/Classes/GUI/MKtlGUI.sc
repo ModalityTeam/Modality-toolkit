@@ -207,7 +207,8 @@ MKtlGUI {
 
 	getNumRowsColumns {
 		^mktl.elements.flat.collect({ |item|
-			item.elementDescription !? { |x|
+			var x = item.elementDescription;
+			x !? {
 				((x[ \style ] ?? { ( row: 0, column: 0, width: 0, height: 0 ) })
 					.atAll([ \row, \height, \column, \width ]) - [0, 1, 0, 1]).clump(2).collect(_.sum);
 			}

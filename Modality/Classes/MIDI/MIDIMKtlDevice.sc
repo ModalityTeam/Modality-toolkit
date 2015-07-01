@@ -1,3 +1,4 @@
+
 MIDIMKtlDevice : MKtlDevice {
 
 	classvar <allMsgTypes = #[ \noteOn, \noteOff, \noteOnOff, \cc, \touch, \polyTouch, \bend, \program ];
@@ -323,16 +324,16 @@ MIDIMKtlDevice : MKtlDevice {
 	}
 
 	makeHashKey{ |descr,elName|
-		var hashs;
+		var hashs, noMidiChan, noMidiNum, isTouch;
 		//"makeHashKey : %\n".postf(descr);
 		if( descr[\midiMsgType].isNil ) {
 			"MIDIMKtlDevice:prepareElementHashDict (%): \\midiMsgType not found. Please add it."
 			.format(this, elName).error;
 			descr.postln;
 		} {
-			var noMidiChan = descr[\midiChan].isNil;
-			var isTouch = descr[\midiMsgType] == \touch;
-			var noMidiNum = descr[\midiNum].isNil;
+			noMidiChan = descr[\midiChan].isNil;
+			noMidiNum = descr[\midiNum].isNil;
+			isTouch = descr[\midiMsgType] == \touch;
 
 			if( noMidiChan ) {
 				"MIDIMKtlDevice:prepareElementHashDict (%): \\midiChan not found. Please add it."
@@ -454,7 +455,7 @@ MIDIMKtlDevice : MKtlDevice {
 					};
 				} {
 					if (traceRunning) {
-					"MKtl( % ) : cc element found for midiChan %, ccnum % !\n"
+					"MIDIMKtl( % ) : cc element found for midiChan %, ccnum % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\cc, \\type: \\button, \\midiChan: %,"
 					"\\midiNum: %, \\spec: \\midiBut, \\mode: \\push).\n\n"
@@ -487,7 +488,7 @@ MIDIMKtlDevice : MKtlDevice {
 					};
 				}{
 					if (traceRunning) {
-					"MKtl( % ) : noteOn element found for midiChan %, note % !\n"
+					"MIDIMKtl( % ) : noteOn element found for midiChan %, note % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\noteOn, \\type: \\pianoKey or \\button, \\midiChan: %,"
 					"\\midiNum: %, \\spec: \\midiVel).\n\n"
@@ -520,7 +521,7 @@ MIDIMKtlDevice : MKtlDevice {
 					};
 				} {
 					if (traceRunning) {
-					"MKtl( % ) : noteOff element found for midiChan %, note % !\n"
+					"MIDIMKtl( % ) : noteOff element found for midiChan %, note % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\noteOff, \\type: \\pianoKey or \\button, \\midiChan: %,"
 					"\\midiNum: %, \\spec: \\midiVel).\n\n"
@@ -559,7 +560,7 @@ MIDIMKtlDevice : MKtlDevice {
 					}
 				}{
 					if (traceRunning) {
-					"MKtl( % ) : touch element found for midiChan % !\n"
+					"MIDIMKtl( % ) : touch element found for midiChan % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\touch, \\type: \\chantouch', \\midiChan: %,"
 					"\\spec: \\midiTouch).\n\n"
@@ -594,7 +595,7 @@ MIDIMKtlDevice : MKtlDevice {
 					};
 				}{
 					if (traceRunning) {
-					"MKtl( % ) : polyTouch element found for midiChan %, note % !\n"
+					"MIDIMKtl( % ) : polyTouch element found for midiChan %, note % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\polyTouch, \\type: \\keytouch, \\midiChan: %,"
 					"\\midiNum: %, \\spec: \\midiVel).\n\n"
@@ -633,7 +634,7 @@ MIDIMKtlDevice : MKtlDevice {
 					};
 				}{
 					if (traceRunning) {
-					"MKtl( % ) : bend element found for midiChan % !\n"
+					"MIDIMKtl( % ) : bend element found for midiChan % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\bend, \\type: ??', \\midiChan: %,"
 					"\\spec: \\midiBend).\n\n"
@@ -673,7 +674,7 @@ MIDIMKtlDevice : MKtlDevice {
 					};
 				}{
 					if (traceRunning) {
-					"MKtl( % ) : program element found for midiChan % !\n"
+					"MIDIMKtl( % ) : program element found for midiChan % !\n"
 					" - add it to the description file, e.g.: "
 					"\\<name>: (\\midiMsgType: \\program, \\type: ??', \\midiChan: %,"
 					"\\spec: \\midiProgram).\n\n"
@@ -717,30 +718,21 @@ MIDIMKtlDevice : MKtlDevice {
 	}
 
 	send { |key,val|
-	 	elNameToMidiDescDict !? _.at(key) !? { |x|
-			var type, ch, num, spec;
-			#type, ch, num, spec = x;
-	 		switch(type)
-			{\cc}{ midiOut.control(ch, num, val ) }
-			{\noteOn}{ midiOut.noteOn(ch, num, val ) }
-			{\noteOff}{ midiOut.noteOff(ch, num, val ) }
-			{\noteOnOff} { midiOut.noteOn(ch, num, val ) }
-			{\polyTouch}{ midiOut.polyTouch(ch, num, val) }
-			{\bend}{ midiOut.bend(ch, val) }
-			{\touch}{ midiOut.touch(ch, val) }
-			{\program}{ midiOut.program(ch, val) }
-			{\allNotesOff}{ midiOut.allNotesOff(ch) }
-			{\midiClock}{ midiOut.midiClock }
-			{\start}{ midiOut.start }
-			{\stop}{ midiOut.stop }
-			{\continue}{ midiOut.continue }
-			{\reset}{ midiOut.reset }
-			// {\songSelect}{ midiOut.songPtr( song ) } // this one has a really different format
-			// {\songPtr}{ midiOut.songPtr( songPtr ) } // this one has a really different format
-			// {\smpte}{ midiOut.smpte } // this one has a really different format
-//			{\note}{ x.postln /*TODO: check type for noteOn, noteOff, etc*/ }
-			{warn("MIDIMKtlDevice: message type % not recognised".format(type))}
-	 	}
+		var x, type, ch, num, spec;
+		elNameToMidiDescDict !? {
+			x = elNameToMidiDescDict.at(key);
+			x !? {
+				#type, ch, num, spec = x;
+				switch(type)
+				{\cc}{ midiOut.control(ch, num, val ) }
+				{\noteOn}{ midiOut.noteOn(ch, num, val ) }
+				{\noteOff}{ midiOut.noteOff(ch, num, val ) }
+				{\noteOnOff} { midiOut.noteOn(ch, num, val ) }
+				{\bend}{ midiOut.bend(ch, val) }
+				//			{\note}{ x.postln /*TODO: check type for noteOn, noteOff, etc*/ }
+				{warn("MIDIMKtlDevice: message type % not recognised".format(type))}
+			}
+		}
 	}
 
 	sendInitialisationMessages{
