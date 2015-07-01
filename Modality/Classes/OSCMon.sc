@@ -192,13 +192,14 @@ OSCMon {
 			u.drawFunc = {
 				var ubounds = u.bounds;
 				var point, size;
+				var firstDur, lastDur, totalDur, scaler;
 				var rescale = min(ubounds.width / 200,ubounds.height / 64);
 
 				if (list.notEmpty) {
-					var firstDur = thisThread.seconds;
-					var lastDur = list.last[0];
-					var totalDur = firstDur - lastDur;
-					var scaler = 180 / totalDur.max(1);
+					firstDur = thisThread.seconds;
+					lastDur = list.last[0];
+					totalDur = firstDur - lastDur;
+					scaler = 180 / totalDur.max(1);
 
 					Pen.scale(rescale, rescale);
 
