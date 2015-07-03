@@ -119,7 +119,8 @@ MAbstractElement {
 	key { ^this.index }
 
 	indices {
-		^this.parent !? { |x| x.indices ++ [ this.index ] };
+		var p = this.parent;
+		^p !? { p.indices ++ [ this.index ] };
 	}
 
 	printOn { | stream |

@@ -730,7 +730,7 @@ MKtl { // abstract class
 	}
 
 	collectiveDescriptionFor { |elname|
-		^deviceInfoDict[ \collectives ] !? { |x| deviceInfoDict[ \collectives ][ elname ]; };
+		^deviceInfoDict[ \collectives ] !? { deviceInfoDict[ \collectives ][ elname ] }
 	}
 
 	postDeviceDescription {

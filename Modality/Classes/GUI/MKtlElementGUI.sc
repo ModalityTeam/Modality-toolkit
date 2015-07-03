@@ -240,7 +240,6 @@ MKtlElementGroupGUI : MKtlElementGUI {
 	makeSubViews {
 		var division, size, func;
 		if( element.keys.any(_.isKindOf( Symbol )) ) {
-			var func;
 			func = makeSubViewsFuncDict[ element.type ] ?? { makeSubViewsFuncDict[ \mixed ] };
 			func.value( this );
 		} {
