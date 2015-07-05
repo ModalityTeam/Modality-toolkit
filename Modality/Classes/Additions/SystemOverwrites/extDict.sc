@@ -21,21 +21,26 @@
 		this[oldName] = otherVal;
 		this[newKey] = val;
 	}
-}
 
-+ Dictionary {
-	// atKeys { |keys|
-	// 	if (keys.isKindOf(Collection)) {
-	// 		^keys.collect (this.at(_))
-	// 	};
-	// 	^this.at(keys);
-	// }
-	// now also works for any object as keys in dicts
-	// Dictionary[ $a -> 1, $b -> 2, "ab" -> 12 ].atKeys([$a, $b, "abc"]);
 	atKeys { |keys|
 		^this.at(keys) ?? { keys.collect (this.at(_)) }
 	}
 
+	deepPost { |depth = 0, sort = true|
+		var postfunc = { |key, val|
+			"%: ".padLeft(depth + 3, "\t").format(key.cs).postln;
+			if (val.isKindOf(Dictionary).not) {
+				"% \n".padLeft(depth + 4, "\t").format(val.cs).postln;
+			} {
+				val.deepPost(depth + 1, sort)
+			};
+		};
+		if (sort) {
+			this.sortedKeysValuesDo(postfunc);
+		} {
+			this.keysValuesDo(postfunc);
+		}
+	}
 }
 
 + SequenceableCollection {

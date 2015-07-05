@@ -3,18 +3,19 @@ NamedList : List {
 
 	// very clear
 	*new { |pairs|
-		^this.fromPairs(pairs);
+		^this.fromPairs(pairs );
 	}
 
 	// very efficient
 	*newUsing { |array, names|
-		^super.newUsing(array).init(names);
+		^super.newUsing(array ?? {[]}).init(names);
 
 	}
 
 	// conversions
 	*fromPairs { |pairs|
 		var names, values;
+		pairs = pairs ?? {[]};
 		#values, names = pairs.clump(2).flop;
 		^this.newUsing(names, values);
 	}
@@ -228,9 +229,11 @@ NamedList : List {
 		};
 	}
 
-	printOn { |stream|
+	printOn { |stream| this.storeOn(stream) }
+
+	storeOn { |stream|
 		stream << this.class.name << "(["
-		<<<* this.simplifyStoreArgs(this.storeArgs) << "])";
+		<<<* this.storeArgs << "])";
 	}
 
 	// inefficient, but reads well

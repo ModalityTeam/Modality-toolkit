@@ -111,7 +111,8 @@ MKtlDesc {
 			var found = this.findFile(folderIndex: i);
 			"*** % descs in folder % - % : ***\n".postf(found.size, i, folder);
 			found.do { |path|
-				"(" ++ path.basename.postcs ++ ")";
+				var loadStr = path.basename.drop(this.descExt.size.neg);
+				("(" ++ loadStr.cs ++ ")").postln;
 			};
 			"****\n".postln;
 		};
