@@ -562,7 +562,7 @@ MKtl { // abstract class
 	}
 
 	trace { |value=true|
-		this.hasDevice.postln;
+		this.hasDevice;
 		if ( this.hasDevice ){ mktlDevice.trace( value ) };
 		traceRunning = value;
 	}
