@@ -1,0 +1,76 @@
+TITLE:: MIDIMonitor
+summary:: monitor MIDI input
+categories:: Utilities
+related:: Classes/MIDIIn, Classes/MIDIClient, Classes/MKtl
+
+DESCRIPTION::
+MIDIMonitor records all midi input and sorts it into a msgTree. This can be used to determine which messages a given controller is actually sending, so one can automatically make descriptions of its elements.
+
+First code examples:
+
+code::
+MIDIMonitor.start;
+// now hit all keys from soft to hard,
+// move all sliders and knobs from min to max,
+// .....
+/// then:
+MIDIMonitor.postTree;
+MIDIMonitor.msgTree.keys; // the srcIDs
+MIDIMonitor.srcAt(0);	// get a specific input
+MIDIMonitor.msgTypes(0);		// get all msgTypes from a specific input
+MIDIMonitor.msgTypes(1);		// get all msgTypes from a specific input
+
+	// all midi entries from source at index:
+	// type, chan, [num], valueRange
+MIDIMonitor.treeAt(1);
+	// all noteOn entries - chan, [num, ] valueRange
+MIDIMonitor.treeAt(1, \noteOn);
+MIDIMonitor.treeAt(1, \noteOn).keys(SortedList); // the chans
+// all noteOn entries on one chan, valueRange [min, max]
+MIDIMonitor.treeAt(1, \noteOn, 0);
+	// all keys used
+MIDIMonitor.treeAt(1, \noteOn, 0).keys(SortedList);
+	// valueRange for \noteOn, chan, noteNum
+MIDIMonitor.treeAt(1, \noteOn, 0, 57);
+
+::
+
+CLASSMETHODS::
+
+METHOD:: postTree
+
+METHOD:: chanNumMsgTypes
+
+METHOD:: sysIndices
+
+METHOD:: talk
+
+METHOD:: allMsgTypes
+
+METHOD:: stop
+
+METHOD:: chanMsgTypes
+
+METHOD:: verbose
+
+METHOD:: shutUp
+
+METHOD:: monitorFuncs
+
+METHOD:: start
+
+METHOD:: msgTree
+
+METHOD:: monitoring
+
+METHOD:: init
+
+
+INSTANCEMETHODS::
+
+
+EXAMPLES::
+
+code::
+_some_example_code_
+::

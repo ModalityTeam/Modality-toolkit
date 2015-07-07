@@ -39,6 +39,91 @@ MIDIMonitor {
 		"// -----------//\n".postln;
 	}
 
+	*checkIns {
+		if (MIDIClient.sources.isNil) { MIDIIn.connectAll };
+	}
+
+	*sources {
+		var sources;
+		sources = MIDIClient.sources;
+		if (sources.isNil) {
+			inform("%: no sources found, maybe not initialized.".format(this));
+			^nil
+		};
+		^sources
+	}
+
+	*srcAt { |index = 0|
+		var src, sources;
+		this.checkIns;
+		sources = this.sources;
+		if (sources.isNil) { ^nil };
+		src = sources[index];
+		if (src.isNil) {
+			inform("%: no src at index %.".format(this, index));
+			^nil
+		};
+		^src;
+	}
+
+	*treeAt { |...keys|
+		var res = msgTree, srcID;
+		keys.postln;
+		if (keys.notNil) {
+			srcID = this.sources[keys[0]].uid;
+			keys.put(0, srcID);
+		};
+		keys.do { |key|
+			res = res[key];
+			if (res.isNil) {
+				inform("%: no items at key % in keys %."
+					.format(thisMethod, key, keys));
+				^nil
+			};
+		};
+		^res
+	}
+
+	*indexForSrcID { |srcID|
+		this.checkIns;
+		MIDIIn.sources.do { |src, index|
+			if (src.uid == srcID) {
+				^index
+			}
+		};
+		^nil
+	}
+	*msgTypes { |index = 0|
+		var src, srcID, typeDict;
+		src = this.srcAt(index);
+		if (src.isNil) { ^nil };
+		srcID =src.uid;
+		typeDict = msgTree[srcID];
+		if (typeDict.isNil) {
+			inform("%: no typeDict at index % (src %)."
+					.format(this, index, src));
+			^nil
+		};
+		^typeDict.keys(Array);
+	}
+
+
+	midiNumsAt {|index = 0, type = \control|
+		var src, srcID, typeDict;
+		src = this.atSrc(index);
+		if (src.isNil) {
+			inform("%: no src at index %.".format(this, index));
+			^nil
+		};
+		srcID =src.uid;
+		typeDict = msgTree[srcID];
+		if (typeDict.isNil) {
+			inform("%: no typeDict at index % (src %)."
+					.format(this, index, src));
+			^nil
+		};
+		^typeDict.keys(Array);
+	}
 
 	*init {
 		msgTree = ();
@@ -126,6 +211,8 @@ MIDIMonitor {
 
 	*start {
 		if (monitoring) { ^this };
+
+		this.checkIns;
 		if (monitorFuncs.isNil) { this.init };
 		(chanMsgTypes ++ chanNumMsgTypes).do { |type|
 			MIDIIn.addFuncTo(*[type.postln, monitorFuncs[type]]);
@@ -133,6 +220,7 @@ MIDIMonitor {
 		monitoring = true;
 		CmdPeriod.add(this);
 	}
+
 	*stop {
 		if (monitoring.not) { ^this };
 		(chanMsgTypes ++ chanNumMsgTypes).do { |type|
