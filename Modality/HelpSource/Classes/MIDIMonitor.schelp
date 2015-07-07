@@ -13,6 +13,9 @@ MIDIMonitor.start;
 // now hit all keys from soft to hard,
 // move all sliders and knobs from min to max,
 // .....
+MIDIMonitor.shutUp; // turn off posting (verbose)
+MIDIMonitor.talk; // or maybe back on
+
 /// then:
 MIDIMonitor.postTree;
 MIDIMonitor.msgTree.keys; // the srcIDs
@@ -37,40 +40,34 @@ MIDIMonitor.treeAt(1, \noteOn, 0, 57);
 
 CLASSMETHODS::
 
-METHOD:: postTree
 
-METHOD:: chanNumMsgTypes
-
-METHOD:: sysIndices
-
-METHOD:: talk
-
-METHOD:: allMsgTypes
-
-METHOD:: stop
-
-METHOD:: chanMsgTypes
-
-METHOD:: verbose
-
-METHOD:: shutUp
-
-METHOD:: monitorFuncs
+METHOD:: chanNumMsgTypes, chanMsgTypes, allMsgTypes
+The midi message types MIDIMonitor can look for
 
 METHOD:: start
-
-METHOD:: msgTree
-
+Start monitoring
+METHOD:: stop
+Stop monitoring
 METHOD:: monitoring
+ask flag whether monitoring is on
 
-METHOD:: init
+METHOD:: verbose, talk, shutUp
+turn verbose on and off
 
+METHOD:: msgTree, postTree
+monitoring results are collected here and can be pretty-posted
 
-INSTANCEMETHODS::
+METHOD:: treeAt
+deep lookup method
 
+METHOD:: sources
+METHOD:: srcAt
+METHOD:: msgTypes
+METHOD:: midiNumsAt
+lookup methods
 
-EXAMPLES::
+METHOD:: indexForSrcID
+get the index in MIDIIn.sources for a given source uid
 
-code::
-_some_example_code_
-::
+private:: monitorFuncs, init, checkIns, sysIndices
+

@@ -1,24 +1,15 @@
 /*
-Rewrite of MIDIMonitor as model for all monitors.
 
 // Example:
-MKtl.find(\midi);
 MIDIMonitor.start;
-
 // now wiggle all elements, then see hierarchy of messages:
 MIDIMonitor.postTree;
-
-MIDIMonitor.shutUp; // no verbose
-MIDIMonitor.talk; // verbose
-
 
 To Do:
 
 1. abstract out consecutive note numbers and controller numbers
    in order to generate more compact code
-
 2. generate concise and correct desc files
-
 3. add msg collection for sysex etc
 
 */
@@ -108,7 +99,7 @@ MIDIMonitor {
 	}
 
 
-	midiNumsAt {|index = 0, type = \control|
+	*midiNumsAt {|index = 0, type = \control|
 		var src, srcID, typeDict;
 		src = this.atSrc(index);
 		if (src.isNil) {
