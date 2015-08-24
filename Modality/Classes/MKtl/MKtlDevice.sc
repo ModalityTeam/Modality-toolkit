@@ -24,7 +24,10 @@ MKtlDevice {
 		// allAvailable = ();
 
 		if ( Main.versionAtLeast( 3, 7 ) ) {
-			allProtocols = [\midi,\hid,\osc];
+			// this order seems to work better on osx
+			// order \midi, \hid ... crashes interpreter when server is on
+			// see https://github.com/supercollider/supercollider/issues/1640
+			allProtocols = [\hid,\midi,\osc];
 		} {
 			allProtocols = [\midi,\osc];
 		};
