@@ -561,6 +561,24 @@ MKtl { // abstract class
 		^mktlDevice.notNil
 	}
 
+	listenTo { |srcIDindex|
+		if (this.hasDevice.not) {
+			"no mktlDevice.".postln
+			^this
+		};
+		// only for MIDI so far
+		mktlDevice.makeRespFuncs(mktlDevice.srcID[srcIDindex]);
+	}
+
+	sendTo { |destIDindex|
+		if (this.hasDevice.not) {
+			"no mktlDevice.".postln
+			^this
+		};
+		// only for MIDI so far
+		mktlDevice.midiOut.uid = mktlDevice.destination[destIDindex].uid;
+	}
+
 	trace { |value=true|
 		this.hasDevice;
 		if ( this.hasDevice ){ mktlDevice.trace( value ) };

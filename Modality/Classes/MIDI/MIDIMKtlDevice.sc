@@ -296,7 +296,7 @@ MIDIMKtlDevice : MKtlDevice {
 	// and activate/deactivate them
 
 	// channel bend, touch, program, ...
-	makeChanMsgMIDIFunc { |typeKey|
+	makeChanMsgMIDIFunc { |typeKey, srcUid|
 
 		if (typeKey == \cc) { typeKey = \control };
 		// "makeChanMsgMIDIFunc for % \n".postf(typeKey);
@@ -323,12 +323,12 @@ MIDIMKtlDevice : MKtlDevice {
 					};
 				}
 
-			}, msgType: typeKey, srcID: srcID).permanent_(true);
+			}, msgType: typeKey, srcID: srcUid).permanent_(true);
 		);
 	}
 
 	// chan & note or cc; noteOn, noteOff, cc, polyTouch
-	makeChanNumMsgMIDIFunc { |typeKey|
+	makeChanNumMsgMIDIFunc { |typeKey, srcUid|
 
 		if (typeKey == \cc) { typeKey = \control };
 		if (typeKey == \polyTouch) { typeKey = \polytouch };
@@ -356,7 +356,7 @@ MIDIMKtlDevice : MKtlDevice {
 					};
 				}
 
-			}, msgType: typeKey, srcID: srcID).permanent_(true);
+			}, msgType: typeKey, srcID: srcUid).permanent_(true);
 		);
 	}
 
@@ -414,8 +414,19 @@ MIDIMKtlDevice : MKtlDevice {
 
 	// input
 	makeRespFuncs { |srcUid|
+		if (srcUid.isKindOf(SimpleNumber).not) {
+			"%: multiple uids found: %. \nplease provide the index to listen to:"
+			.format(this.mktl, srcUid).postln;
+			"%.listenTo( _index_ );".format(this.mktl).postln;
+			"no responder funcs made yet!".postln;
+			^this
+		};
+
+		"%: listening to srcUid % now.".format(this.mktl, srcUid).postln;
+		responders.do(_.remove);
 		responders = ();
-		global = ();
+
+		global = global ?? { () };
 
 		msgTypes.do { |msgType|
 			switch(msgType,

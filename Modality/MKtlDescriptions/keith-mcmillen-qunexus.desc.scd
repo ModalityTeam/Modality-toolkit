@@ -1,4 +1,28 @@
 /*
+
+QuNexus has 3 input ports:
+Port 1, index 0 is the keys and control on the QuNexus itself
+
+Port 2 is used for the MIDI Expander input
+
+Port 3 is for CV1-2 input signals 0 to +5V
+* input 1 is cc#112, chan 1,
+* input 2 is cc 113, chan 1
+
+Output ports use the same numbering scheme:
+Port 1 is for sending values to the MIDI keys on the QuNexus ?
+Port 2 sends CV out on 0 to +5V
+* Gate is noteOn/off -> 5V
+* CV1 is pitch, i.e. pitch of the noteOn sent
+* CV2 is mod on CC#1
+* CV3 is pitchbend (on chan 0?)
+
+(
+idInfo: "QuNexus", // every port registers with this name
+protocol: \midi,
+ports
+
+
 TODO:
 
 QuNexus has four modes:
