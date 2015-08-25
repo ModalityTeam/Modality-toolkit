@@ -1,9 +1,11 @@
 /*
 
 // Example:
+MIDIIn.connectAll;
 MIDIMonitor.start;
 // now wiggle all elements, then see hierarchy of messages:
 MIDIMonitor.postTree;
+MIDIMonitor.msgTree.keys;
 
 To Do:
 

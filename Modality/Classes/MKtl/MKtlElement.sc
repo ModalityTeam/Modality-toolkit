@@ -54,7 +54,7 @@ MAbstractElement {
 
 	updateTime { lastUpdateTime = Process.elapsedTime }
 
-	hasOut { ^[\out, \inout].includes( elemDesc[\ioType] ) }
+	hasOut { ^elemDesc.notNil and: { [\out, \inout].includes( elemDesc[\ioType] ) } }
 
 	trySend {
 		if (this.hasOut
