@@ -147,7 +147,7 @@ MAbstractElement {
 	key { ^this.index }
 
 	indices {
-		^this.parent !? { |x| x.indices ++ [ this.index ] };
+		^this.parent !? { parent.indices ++ [ this.index ] };
 	}
 
 	// for printOn only, this will not remake it properly from code.

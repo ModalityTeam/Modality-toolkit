@@ -455,9 +455,10 @@ MKtlDesc {
 		var platForms = [\osx, \linux, \win];
 		var myPlatform = thisProcess.platform.name;
 
+		var entry, key, foundval;
+
 		if (dict.isKindOf(Association)) {
-			var entry = dict.value, key = dict.key;
-			var foundval;
+			entry = dict.value; key = dict.key;
 			if (entry.isKindOf(Dictionary) and:
 				{ entry.keys.sect(platForms).notEmpty }) {
 				foundval = entry[myPlatform];

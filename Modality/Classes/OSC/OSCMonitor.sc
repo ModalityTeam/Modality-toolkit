@@ -183,18 +183,20 @@ OSCMonitor {
 			u.drawFunc = {
 				var ubounds = u.bounds;
 				var point, size;
-				var rescale = // min(ubounds.width / 200, ubounds.height / 64);
-				[ubounds.width / 300, ubounds.height / 64];
+				var rescale = [ubounds.width / 300, ubounds.height / 64];
+
+				var firstDur, lastDur, totalDur, scaler;
+				var numTracks, trackHeight, trackYCenters;
 
 				if (list.notEmpty) {
-					var firstDur = thisThread.seconds;
-					var lastDur = list.last[0];
-					var totalDur = firstDur - lastDur;
-					var scaler = 180 / totalDur.max(1);
+					firstDur = thisThread.seconds;
+					lastDur = list.last[0];
+					totalDur = firstDur - lastDur;
+					scaler = 180 / totalDur.max(1);
 
-					var numTracks = addresses.size;
-					var trackHeight =(64/numTracks);
-					var trackYCenters = addresses.collect { |addr, i|
+					numTracks = addresses.size;
+					trackHeight =(64/numTracks);
+					trackYCenters = addresses.collect { |addr, i|
 						i + 0.5 * trackHeight;
 					};
 
