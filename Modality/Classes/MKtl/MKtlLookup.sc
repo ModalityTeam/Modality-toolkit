@@ -80,7 +80,7 @@ MKtlLookup {
 		var infoToMergeTo = MKtlLookup.allFor(\midi).detect { |info|
 			info.idInfo == endpoint.device
 		};
-		"%: %\n".postf([endpoint, index, endPointType]);
+		// "%: %\n".postf([endpoint, index, endPointType]);
 		if (infoToMergeTo.isNil) {
 			^MKtlLookup.addMIDI(endpoint, index, endPointType);
 		};
@@ -139,7 +139,7 @@ MKtlLookup {
 
 		var protocol = \osc;
 		var index = MKtlLookup.all.count { |dict|
-			(dict.protocol.postcs == \osc) };
+			(dict.protocol == \osc) };
 		var idInfo = [sendAddr.addr, sendAddr.port].join($_);
 		var nameAndInfo = if (name.notNil) { [name.asString, idInfo].join($_); };
 		var lookupName = MKtl.makeLookupName(protocol, index, nameAndInfo ? idInfo);

@@ -323,7 +323,7 @@ OSCMKtlDevice : MKtlDevice {
 						// clever msg index parsing
 						if ( msgIndices.notNil ){
 							el.deviceValueAction_(
-								msg.at( msgIndices) ++ msg.copyToEnd( templEnd )
+								msg.at( msgIndices).asArray ++ msg.copyToEnd( templEnd )
 							);
 						}{
 							el.deviceValueAction_( msg.copyToEnd( templEnd ) );
