@@ -1,7 +1,17 @@
 /*
 
-QuNexus has 3 input ports:
+General QuNexus info:
+
+QuNexus has 3 input ports, which require three separate desc files.
+As the QuNexus also has four preset modes for port 1, there are
+seven separate desc files - please choose the one for your usage.
+You can load all of them into separate MKtls, andput the different
+functionalities there.
+
+These are the port specifics:
+
 Port 1, index 0 is the keys and control on the QuNexus itself
+	the elements on this port have four preset modes, see below
 
 Port 2 is used for the MIDI Expander input
 
@@ -20,26 +30,18 @@ Port 3 sends CV out on 0 to +5V
 * CV2 is mod on CC#1
 * CV3 is pitchbend (on chan 0?)
 
-(
-idInfo: "QuNexus", // every port registers with this name
-protocol: \midi,
-ports
 
+QuNexus has four hardware modes, which concern port 1:
 
-TODO:
-
-QuNexus has four modes:
 	Preset A uses just noteOn/Off and channel bend
 	Preset B adds channel pressure
 	Preset C allocates notes to 10 rotating midi chans,
 		and sends poly bend and pressure mod (cc1) on those chans
 	Preset D is for drums (uses chan 10) and clips
-
-see Tests/QuNexus.scd
 */
 
 
-
+///////// GENERIC INFORMATION COPIED TO ALL QUNEXUS DESC FILES: ///////
 (
 idInfo: "QuNexus",
 protocol: \midi,
@@ -61,52 +63,14 @@ deviceInfo: (
 ),
 
 
-// We assert this can only happen for MIDI devices:
-portNames: ["Port 1", "Port 2", "Port 3"],
-groupsByPort: (
-	0: [\keyOn, \keyOff, 'bend', 'monotouch'],
-	1: [],
-	2: [\cvIn, \cvOut]
-),
+
+///////// SPECIFIC INFORMATION for this port and config: ///////
+	// port 3, CV in/outs get converted to/from MIDI
+
+portName: "Port 3",
+
 
 description: (
-
-	// Preset A mode has these:
-// ------ noteOn -------------
-
-	keyOn: (24..108).collect { |midinote|
-	('midiMsgType': 'noteOn', 'type': 'key', 'midiChan': 0, 'midiNum':  midinote, 'spec': 'midiNote') },
-	// ---------noteOff ----------
-	keyOff: (24..108).collect { |midinote|
-		('midiMsgType': 'noteOff', 'type': 'key', 'midiChan': 0, 'midiNum':  midinote, 'spec': 'midiNote')
-	},
-
-// ------- bend ------------
-	'bend': ('midiMsgType': 'bend', 'type': 'bender', 'midiChan': 0, 'midiNum':  0,'spec': 'midiBend'),
-
-// Preset B mode adds single channel pressure from all keys :
-
-// ------- cc ------------
-'monotouch': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  1,'spec': 'midiCC'),
-
-	// Preset C mode is the most interesting:
-	// it adds Poly Pitch Bend on up to 10 channels rotating,
-	// plus pressure on cc1, which also rotates.
-	// how to make a special MKtl for it?
-	// same as Roli example ...
-
-// Preset D mode for drums and clips
-	// not interested in that one,
-	// please add when someone needs that mode
-
-
-
-	/************ PORT POLYPHONY **************/
-
-	// port 2 is one MIDI hardware in and out plug each,
-	// so use a desc from that hardware MIDI thingy?
-
-	// port 3, CV in/outs get converted to/from MIDI
 
 	// ins are any 2 CVs from 0 to 5V
 	cvIn: [112, 113].collect { |ccnum|
