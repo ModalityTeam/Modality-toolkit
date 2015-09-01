@@ -220,8 +220,19 @@ MIDIMKtlDevice : MKtlDevice {
 	}
 
 	setDstID { |argDstID|
+		var port;
+
+		port = MIDIClient.destinations.detectIndex{|dst|
+			dst.uid == argDstID;
+		};
+
+		if (port.isNil) {
+			"%: unknown device destination (%).".format(this.mktl, argDstID).postln;
+			^this
+		};
+
 		dstID = argDstID;
-		midiOut.uid = dstID;
+		midiOut = MIDIOut(port);
 		"% sends to uid % now.".postf(mktl, dstID);
 	}
 
