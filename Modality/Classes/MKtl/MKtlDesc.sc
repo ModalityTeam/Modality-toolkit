@@ -435,7 +435,16 @@ MKtlDesc {
 			// [elemKey, elem].postln;
 		}, MKtlDesc.isElementTestFunc); "";
 
+
+		// treat noteOnOff as noteOn / noteOff
+		if (msgTypesUsed.includes(\noteOnOff)) {
+			msgTypesUsed.add(\noteOn);
+			msgTypesUsed.add(\noteOff);
+			msgTypesUsed.remove(\noteOnOff);
+		};
+
 		fullDesc.put(\msgTypesUsed, msgTypesUsed);
+
 		if (missing.notEmpty) {
 			fullDesc.put(\elementsWithMissingType, missing);
 		};

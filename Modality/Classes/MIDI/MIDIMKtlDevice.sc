@@ -465,8 +465,9 @@ MIDIMKtlDevice : MKtlDevice {
 				\noteOn,      { this.makeChanNumMsgMIDIFunc(msgType, srcID) },
 				\noteOff,     { this.makeChanNumMsgMIDIFunc(msgType, srcID) },
 				\noteOnOff,   {
-					this.makeChanNumMsgMIDIFunc(\noteOn, srcID);
-					this.makeChanNumMsgMIDIFunc(\noteOff, srcID);
+					"%: tying to build a responder for \noteOnOffm which should be prevented in MKtlDesc:getMidiMsgTypes.\n".postf(this)
+					//this.makeChanNumMsgMIDIFunc(\noteOn, srcID);
+					//this.makeChanNumMsgMIDIFunc(\noteOff, srcID);
 				},
 				\polyTouch,   { this.makeChanNumMsgMIDIFunc(msgType, srcID) },
 				\polytouch,   { this.makeChanNumMsgMIDIFunc(msgType, srcID) },
