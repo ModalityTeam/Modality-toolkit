@@ -46,7 +46,7 @@ code::
 )
 ::
 
-Here a complete working example:
+Here is a complete working example:
 
 code::
 (
@@ -71,8 +71,9 @@ m.elementAt(\bt).action = { |el| ["yo", el.value].postln };
 // test that the action works
 m.elementAt(\bt).doAction;
 m.elementAt(\bt).valueAction_(1);
+m.elementAt(\bt).valueAction_(0);
 
-// and test by sending from local network address
+// and now simulate sending this value from an OSC device on the local network:
 n = NetAddr("127.0.0.1", NetAddr.langPort);
 n.sendMsg("/bt", 0);
 n.sendMsg("/bt", 1);
@@ -203,8 +204,8 @@ code::
 	description: (
 		'kn': (
 			oscPath: '/knob',
-			argTemplate: [ 1,2 ], // at row 1 and column 2
-			valueAt: 3, // valueindex of osc message
+			// argTemplate: [ 1,2 ], // at row 1 and column 2
+			// valueAt: 3, // valueindex of osc message
 			type: 'knob',
 			spec: \midiCC,
 			ioType: \in
@@ -293,7 +294,8 @@ code::
 		'tr': (
 			oscPath: '/trigger',
 			type: 'trigger',
-			ioType: \in
+			ioType: \in,
+			spec: \unipolar  // spec is needed, but value is ignored
 		)
 	)
 )
@@ -303,13 +305,12 @@ m = MKtl( \exampleOSCInput, ~descInput );
 MKtlLookup.postInfo  // now also shows the opened 'osc device'
 
 // create a gui for the osc device:
-m.gui; // gui breaks here, why?
+m.gui;
 m.elementAt(\tr).action = { "TRIG!".postln };
-m.elementAt(\tr).doAction; // broken! why? just add a dummy value?
+m.elementAt(\tr).doAction;
 
 // post incoming data
 m.trace;
-
 
 n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
 
@@ -395,6 +396,8 @@ code::
 (
 MKtl.addSpec(\pwm8bit, [0, 255, \linear, 1]);
 ~descOutput = (
+	// only for testing: send output values to SC itself
+	// (instead of a real osc device)
 	idInfo: ( ipAddress: "127.0.0.1", destPort: NetAddr.langPort ),
 	protocol: \osc,
 	description: (
@@ -410,11 +413,17 @@ MKtl.addSpec(\pwm8bit, [0, 255, \linear, 1]);
 
 m = MKtl( \exampleOSCoutput, ~descOutput );
 
-OSCFunc.trace( true ); // trace what is coming in
+// an output element in an OSC MKtl sends its value out by network
+// when the value of the element in the MKtl is changed.
+// to simulate the receiving osc device, we listen in SC itself
 
+// listen to all incoming osc, so we see the value setting message:
+OSCFunc.trace( true );
 // set a value:
 m.elementAt( \led ).value_( 0.6 );
 m.elementAt( \led ).value_( 1.0.rand );
+// send in orig value range:
+m.elementAt( \led ).deviceValue_( 256.rand.postln );
 
 // cleanup:
 m.free;
@@ -443,24 +452,25 @@ code::
 		)
 	),
 	description: (
-		'bt': [
-			( type: 'button', ioType: \collectiveIn ),
-			( type: 'button', ioType: \collectiveIn ),
-			( type: 'button', ioType: \collectiveIn ),
-			( type: 'button', ioType: \collectiveIn ),
-			( type: 'button', ioType: \collectiveIn )
-		]
+		'bt': 5.collect {
+			( type: 'button', ioType: \collectiveIn, \spec: \but )
+		}
 	);
 );
-);
+)
 
 m = MKtl( \exampleCollectiveIn, ~descCollectiveInput );
 m.trace;
-m.gui;  // BROKEN
+MKtlGUI(mktl: m);
+m.gui;
 
-		// BROKEN
+// test setting it directly
+m.collectivesDict.buttons.deviceValueAction_([ 1, 1, 0, 1, 1 ].scramble);
+
+// and now from network:
 n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
 n.sendMsg( "/buttons", 1, 1, 0, 1, 1 );
+
 
 (
 Tdef( \autoaction, {
@@ -471,9 +481,15 @@ Tdef( \autoaction, {
 }).play;
 );
 
-m.gui;
+m.free;
 
 ::
+
+////////////////////// ^^^^^^ TESTED
+////////////////////// vvvvvv UNTESTED
+
+
+
 
 Similar as with the simple input example, we can use an code::argTemplate:: for the output messages. Any code::nil::s in the template will be assumed to contain relevant data. If you do not want to filter on a particular field, but it is not the required data, then you can use code::valueAt:: to specify the indices within the OSC message that you want to use for the values. See the following examples for clarification:
 

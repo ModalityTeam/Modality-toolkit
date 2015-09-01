@@ -295,18 +295,16 @@ OSCMKtlDevice : MKtlDevice {
 
 				oscFuncDictionary.put( el.name,
 					OSCFunc.new( { |msg|
-						// clever msg index parsing
+						// "clever" msg index parsing
+						var valueMsg;
 						if ( msgIndices.notNil ){
-							el.deviceValueAction_(
-								msg.at( msgIndices).asArray ++ msg.copyToEnd( templEnd )
-							);
+							valueMsg = msg.at( msgIndices).asArray
+								++ msg.copyToEnd( templEnd );
 						}{
-							"msgIndices: %".postf(msgIndices);
-							[msg, templEnd].postcs;
-							 msg.copyToEnd( templEnd ).postcs;
-							el.dump;
-						//	el.deviceValueAction_( msg.copyToEnd( templEnd ) );
+							 valueMsg = msg.copyToEnd( templEnd );
 						};
+						el.deviceValueAction_( valueMsg );
+
 						if(traceRunning) {
 							"% - % > % | type: %, src:%"
 							.format(this.name, el.name,

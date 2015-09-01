@@ -3,8 +3,8 @@ MKtlElementGroup : MKtlElement {
 	var <elements;
 	var <dict;
 
-	*new { |name, elements|
-		^super.newCopyArgs( name, name ).elements_(elements);
+	*new { |name, source, elements|
+		^super.newCopyArgs( name, source ).elements_(elements);
 	}
 
 	*newFrom {|elements|
@@ -38,6 +38,8 @@ MKtlElementGroup : MKtlElement {
 				dict.remove( item );
 			};
 		});
+		// "elements.size: % - %\n".postf(elements.size, elements);
+
 		if( elements.size > 0 ) {
 			type = elements.first.type;
 			elements.do({ |item|
@@ -287,8 +289,6 @@ MKtlElementCollective : MKtlElementGroup {
 			});
 			this.addCollectiveToChildren;
 		};
-		thisMethod.postln;
-		this.dump;
 	}
 
 	addCollectiveToChildren {

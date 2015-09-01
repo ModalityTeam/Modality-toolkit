@@ -36,8 +36,8 @@ MAbstractElement {
 	var <elemDesc;
 
 
-	*new { |source, name|
-		^super.newCopyArgs( source, name).init;
+	*new { |name, source|
+		^super.newCopyArgs( name, source ).init;
 	}
 
 	init {

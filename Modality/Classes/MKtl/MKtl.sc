@@ -79,6 +79,7 @@ MKtl { // abstract class
 		this.addSpec(\lin255,  [0, 255, \lin, 1, 0]);
 		this.addSpec(\cent1,  [0, 1, \lin, 0, 0.5]);
 		this.addSpec(\lin1inv,  [1, 0, \lin, 0, 1]);
+		this.addSpec(\but,  [1, 0, \lin, 0, 1]);
 
 		// MIDI
 		this.addSpec(\midiNote, [0, 127, \lin, 1, 0]);
@@ -372,14 +373,14 @@ MKtl { // abstract class
 		if (elements.notEmpty) {
 			this.wrapCollElemsInGroups(elements);
 		};
-		elements = MKtlElementGroup(this.name, elements);
+		elements = MKtlElementGroup(this.name, this, elements);
 
 		MKtlElement.addGroupsAsParent = false;
 	}
 
 	wrapCollElemsInGroups { |elemOrColl|
-		"\n *** wrapCollElemsInGroups: ***".postln;
-		"elemOrColl is: %\n".postf(elemOrColl);
+		// "\n *** wrapCollElemsInGroups: ***".postln;
+		// "elemOrColl is: %\n".postf(elemOrColl);
 
 		if (elemOrColl.isNil) { ^elemOrColl };
 
@@ -391,7 +392,7 @@ MKtl { // abstract class
 			var changedElem;
 			if (elem.isKindOf(Collection)) {
 				this.wrapCollElemsInGroups(elem);
-				changedElem = MKtlElementGroup(keyIndex, elem);
+				changedElem = MKtlElementGroup(keyIndex, this, elem);
 				if (elemOrColl.isAssociationArray) {
 					elemOrColl.put(i, keyIndex -> changedElem);
 				} {
@@ -665,6 +666,7 @@ MKtl { // abstract class
 	}
 
 	free {
+		elements = elementsDict = nil;
 		this.closeDevice;
 		all.removeAt( name );
 
