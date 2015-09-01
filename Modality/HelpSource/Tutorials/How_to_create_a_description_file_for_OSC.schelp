@@ -5,9 +5,9 @@ related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Cl
 
 Section:: Introduction
 
-The functionality of link::Classes/MKtl:: relies on descriptions of the used devices. For some Controllers, there are already descriptions available, chances are that your device is not among them.
+The functionality of link::Classes/MKtl:: relies on descriptions of the devices to be used. For some controllers, there are already descriptions available, but chances are that your device is not yet among them.
 
-This Tutorial first shows simple examples of OSC interfaces, by emulating them within SuperCollider, and then describes how to create a description file for your interface.
+This tutorial first shows simple examples of OSC interfaces, by emulating them within SuperCollider, and then describes how to create a description file for your interface.
 
 
 list::
@@ -28,8 +28,7 @@ list::
 
 section:: Simple input
 
-A simple OSC input is an OSC interface that sends messages that send only single values with an OSC message, e.g.
-
+The simplest possible OSC input would be a device sends messages with only a single value, such as this:
 code::
 // osc message path = /button, value = 1, means the button is on
 /button 1
@@ -37,7 +36,7 @@ code::
 /button 0
 ::
 
-The description of the element then is:
+The description of this element then is:
 
 code::
 'bt': (
@@ -47,12 +46,45 @@ code::
 )
 ::
 
-Or they send an index of the button along, for example if there are two buttons
+Here a complete working example:
 
 code::
-// osc message path = /button, index = 0, value = 1, means the button is on
+(
+~desc1In = (
+    idInfo: ( srcPort: NetAddr.langPort, ipAddress: "127.0.0.1" ),
+    protocol: \osc,
+    description: (
+        'bt': (
+            oscPath: '/bt',
+            type: 'button',
+            spec: \unipolar,
+            ioType: \in
+        )
+    )
+)
+);
+
+m = MKtl( \example1in, ~desc1In );
+// give the single button an action
+m.elementAt(\bt).action = { |el| ["yo", el.value].postln };
+
+// test that the action works
+m.elementAt(\bt).doAction;
+m.elementAt(\bt).valueAction_(1);
+
+// and test by sending from local network address
+n = NetAddr("127.0.0.1", NetAddr.langPort);
+n.sendMsg("/bt", 0);
+n.sendMsg("/bt", 1);
+::
+
+
+For a row of buttons, such devices often send an index of the button, e.g. for two buttons:
+
+code::
+// osc message path = /button, index = 0, value = 1, means button at 0 is on
 /button 0 1
-// osc message path = /button, index = 1, value = 0, means the button is off
+// osc message path = /button, index = 1, value = 0, means button at 1 is off
 /button 1 0
 ::
 
@@ -77,7 +109,7 @@ code::
 )
 ::
 
-	Or they send multiple indices of the button along, for example in a grid layout (row and column)
+For a grid layout of elements, they usually send row and column indices of the element along, so a grid of buttons would be:
 
 code::
 // osc message path = /button, rowindex = 0, columnindex=1, value = 1, means the button is on
@@ -121,6 +153,21 @@ code::
 			]
 		]
 	);
+
+// or more concise with .collect:
+(
+'bt': 2.collect { |row|
+	2.collect { |column|
+		(
+			oscPath: '/button',
+			argTemplate: [ row, column ],
+			type: 'button',
+			ioType: \in
+		)
+	}
+}
+);
+
 ::
 
 The code::argTemplate:: can also contain code::nil:: if there is an element in the osc message that needs to be ignored while filtering, see: link::#argTemplate matching:: for examples how argTemplates can be matched.
@@ -128,9 +175,9 @@ The code::argTemplate:: can also contain code::nil:: if there is an element in t
 If the osc message sends some other info that we are not interested in inside the message, we can specify at which index we want to read the data (by default we take the last value in the osc message):
 
 code::
-// osc message path = /button, value = 1, arbitrary data = "hello", means the button is on
+// osc message path = /button, value = 1, other data = "hello", means the button is on
 /button 1 "hello"
-// osc message path = /button, value = 0, arbitrary data = "hello", means the button is off
+// osc message path = /button, value = 0, other data = "hello", means the button is off
 /button 0 "hello"
 ::
 
@@ -146,7 +193,7 @@ code::
 ::
 
 
-After all this explanation, a simple example of an OSC device description with one element:
+After all this explanation, here is a full example of an OSC device description with one element using argTemplate, and valueAt specification. (Usually, there would be other knobs at at other row/column indices, left out here for shortness.)
 
 code::
 (
@@ -164,10 +211,10 @@ code::
 		)
 	)
 )
-);
+)
 
 m = MKtl( \exampleOSCInput, ~descInput );
-MKtlDevice.allAvailable // now also shows the opened 'osc device'
+MKtlLookup.postInfo // now also shows the opened 'osc device'
 
 // create a gui for the osc device:
 m.gui;
@@ -178,14 +225,14 @@ m.trace;
 n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
 
 // send messages:
-n.sendMsg( '/knob', 1, 2, 63 );
+n.sendMsg( '/knob', 1, 2, 63, "extra", "data" );
 
 n.sendMsg( '/knob', 1, 2, 35 );
 
 n.sendMsg( '/knob', 1, 2, 34 );
 
 // close the device again
-m.closeDevice;
+m.free;
 ::
 
 
@@ -213,7 +260,7 @@ code::
 );
 
 m = MKtl( \exampleOSCInput, ~descInput );
-MKtlDevice.allAvailable // now also shows the opened 'osc device'
+MKtlLookup.postInfo // now also shows the opened 'osc device'
 
 // create a gui for the osc device:
 m.gui;
@@ -229,7 +276,7 @@ n.sendMsg( "/button/on" );
 
 
 // close the device again
-m.closeDevice;
+m.free;
 ::
 
 
@@ -253,13 +300,16 @@ code::
 );
 
 m = MKtl( \exampleOSCInput, ~descInput );
-MKtlDevice.allAvailable // now also shows the opened 'osc device'
+MKtlLookup.postInfo  // now also shows the opened 'osc device'
 
 // create a gui for the osc device:
-m.gui;
+m.gui; // gui breaks here, why?
+m.elementAt(\tr).action = { "TRIG!".postln };
+m.elementAt(\tr).doAction; // broken! why? just add a dummy value?
 
 // post incoming data
 m.trace;
+
 
 n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
 
@@ -268,7 +318,7 @@ n.sendMsg( "/trigger" );
 n.sendMsg( "/trigger" );
 
 // close the device again
-m.closeDevice;
+m.free;
 ::
 
 section:: Simple output
@@ -367,7 +417,7 @@ m.elementAt( \led ).value_( 0.6 );
 m.elementAt( \led ).value_( 1.0.rand );
 
 // cleanup:
-m.closeDevice;
+m.free;
 ::
 
 section:: Collective input
@@ -406,7 +456,9 @@ code::
 
 m = MKtl( \exampleCollectiveIn, ~descCollectiveInput );
 m.trace;
+m.gui;  // BROKEN
 
+		// BROKEN
 n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
 n.sendMsg( "/buttons", 1, 1, 0, 1, 1 );
 
@@ -454,7 +506,7 @@ code::
 );
 );
 
-m.rebuildFrom( ~descCollectiveInput );
+m.rebuild( ~descCollectiveInput );
 
 // means messages like this are received:
 n.sendMsg( "/buttons", 7, 0, 1, 1, 0, 1 );
@@ -492,7 +544,7 @@ code::
 );
 );
 
-m.rebuildFrom( ~descCollectiveInput );
+m.rebuild( ~descCollectiveInput );
 
 // means messages like this are received:
 n.sendMsg( "/buttons", 0, 1, 1, 0, 1, 7 );
@@ -530,7 +582,7 @@ code::
 );
 );
 
-m.rebuildFrom( ~descCollectiveInput );
+m.rebuild( ~descCollectiveInput );
 
 // means messages like this are received:
 n.sendMsg( "/buttons", "blah".scramble, 7, 0, 1, 1, 0, 1 );
@@ -542,7 +594,7 @@ n.sendMsg( "/buttons", "blah".scramble, 4, 0, 1, 1, 0, 1 );
 Cleaning up:
 
 code::
-m.closeDevice;
+m.free;
 ::
 
 section:: Collective output
@@ -664,7 +716,7 @@ MKtl.addSpec(\pwm8bit, [0, 255, \linear, 1]);
 );
 );
 
-m.rebuildFrom( ~descCollectiveOut );
+m.rebuild( ~descCollectiveOut );
 
 Tdef( \autoaction ).play;
 
@@ -742,8 +794,7 @@ m = MKtl( \exampleOSCDesc, ~descExample );
 m.mktlDevice;
 MKtl.all;
 
-// likely obsolete?
-MKtlDevice.allAvailable // now also shows the opened 'osc device'
+MKtlLookup.postInfo  // now also shows the opened 'osc device'
 
 // create a gui for the osc device:
 m.gui;

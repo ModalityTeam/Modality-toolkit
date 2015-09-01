@@ -84,7 +84,7 @@ OSCMKtlDevice : MKtlDevice {
 		^messageSizeDispatcher;
 	}
 
-	*find { |post=(verbose)|
+	*find { |post = (verbose)|
 		this.initDevices( true );
 		if ( post ){
 			this.postPossible;
@@ -100,43 +100,6 @@ OSCMKtlDevice : MKtlDevice {
 		}
 		*/
 	}
-
-	/*
-	*initDevices { |force=false| // force has no real meaning here
-	sourceDeviceDict = (); // this is tricky, we could have an OSCFunc running which checks from which NetAddresses we are receiving data.
-	checkIncomingOSCFunction = {
-	|msg,time,source|
-	var sourcename = this.deviceNameFromAddr( source ).asSymbol;
-	if ( sourceDeviceDict.at( sourcename ).isNil ){
-	sourceDeviceDict.put( sourcename, source );
-	// add to all available
-	this.addFoundToAllAvailable( sourcename );
-	if ( this.traceFind ){
-	"OSCMKtlDevice found a new osc source: % \n".postf( source );
-	};
-	};
-	};
-	this.addToAllAvailable;
-	thisProcess.addOSCRecvFunc( checkIncomingOSCFunction );
-	initialized = true;
-	}
-
-	*addFoundToAllAvailable { |key|
-	allAvailable.at( \osc ).add( key );
-	}
-
-	*addToAllAvailable {
-	// put the available osc devices in MKtlDevice's available devices
-	allAvailable.put( \osc, List.new );
-	sourceDeviceDict.keysDo({ |key|
-	allAvailable[\osc].add( key );
-	});
-	}
-
-	*deinitDevices {
-	thisProcess.removeOSCRecvFunc( checkIncomingOSCFunction );
-	}
-	*/
 
 	*initDevices { |force=false| // force has no real meaning here
 		var postables = MKtlLookup.allFor(\osc);
@@ -195,16 +158,28 @@ OSCMKtlDevice : MKtlDevice {
 		recvPort = idInfo.at( \recvPort );
 
 		this.initCollectives;
+
+		// must do by hand for OSC
+		this.addToLookup;
+	}
+
+	addToLookup {
+		// remove me first to avoid duplicates?
+		// MKtlLookup.all.remove(this);
+		var dict = MKtlLookup.addOSC(source, name, destination);
+		dict.put(\mktl, this.mktl); // so we can remove this dict
 	}
 
 	updateSrcAddr { |hostname, port|
 		if (hostname.notNil) { source.hostname = hostname };
 		if (port.notNil) { source.port = port };
+		this.addToLookup;
 	}
 
 	updateDestAddr { |hostname, port|
 		if (hostname.notNil) { destination.hostname = hostname };
 		if (port.notNil) { destination.port = port };
+		this.addToLookup;
 	}
 
 	closeDevice {
@@ -212,7 +187,7 @@ OSCMKtlDevice : MKtlDevice {
 		source = nil;
 		destination = nil;
 		recvPort = nil;
-		// should this remove from sourceDictionary too?
+	//	MKtlLookup.allFor(\osc).remove(this);
 	}
 
 	initElements {
@@ -326,7 +301,11 @@ OSCMKtlDevice : MKtlDevice {
 								msg.at( msgIndices).asArray ++ msg.copyToEnd( templEnd )
 							);
 						}{
-							el.deviceValueAction_( msg.copyToEnd( templEnd ) );
+							"msgIndices: %".postf(msgIndices);
+							[msg, templEnd].postcs;
+							 msg.copyToEnd( templEnd ).postcs;
+							el.dump;
+						//	el.deviceValueAction_( msg.copyToEnd( templEnd ) );
 						};
 						if(traceRunning) {
 							"% - % > % | type: %, src:%"

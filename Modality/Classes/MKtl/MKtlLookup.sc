@@ -138,11 +138,13 @@ MKtlLookup {
 	*addOSC { |sendAddr, name, replyAddr|
 
 		var protocol = \osc;
-		var index = MKtlLookup.all.count { |dict|
-			(dict.protocol == \osc) };
 		var idInfo = [sendAddr.addr, sendAddr.port].join($_);
-		var nameAndInfo = if (name.notNil) { [name.asString, idInfo].join($_); };
-		var lookupName = MKtl.makeLookupName(protocol, index, nameAndInfo ? idInfo);
+			// maybe needed, but makes it hard to avoid duplicates
+		// var index = MKtlLookup.all.count { |dict|
+		// (dict.protocol == \osc) };
+		// var nameAndInfo = if (name.notNil) { [name.asString, idInfo].join($_); };
+		// var lookupName = MKtl.makeLookupName(protocol, index, nameAndInfo ? idInfo);
+		var lookupName = MKtl.makeLookupName(protocol, name, idInfo);
 		var filename = MKtlDesc.filenameForIDInfo(idInfo);
 
 		var dict = (
@@ -161,6 +163,11 @@ MKtlLookup {
 		all.put(lookupName, dict);
 		^dict
 	}
+
+	/*
+	how to remove a deviceInfo for a given device?
+	likely useful for OSC devices
+	*/
 
 	*addSerial {
 

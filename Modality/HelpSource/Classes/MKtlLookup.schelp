@@ -5,18 +5,26 @@ related:: Classes/MKtl,  Classes/MKtlDesc, Classes/MKtlDevice
 
 DESCRIPTION::
 MKtlLookup provides a single dictionary with unique lookup names for all hardware/network devices found or declared, so they can be used with MKtls.
-The names are intentionally long to be both unique and descriptive of the source. short nicknames can and should be given in
-MKtl(\mydev, 'hid_0_);
-
+The names are intentionally long to be both unique and descriptive of the source. short nicknames can and should be given in the MKtl creation:
 code::
-// MKtl.find does these
-	// MIDIClient.init;
+MKtl(\nk2, 'midi_0_nanokontrol2');
+MKtl('nk2').listenTo( 0 ).sendTo(0);
+MKtl('nk2').trace;
+
+
+MKtl(\nk2b, 'midi_0_nanokontrol2');
+MKtl('nk2b').listenTo( 1 ).sendTo(1);
+MKtl('nk2b').trace;
+MKtl('nk2b').elementAt(\play).value_(1);
+
+
+MKtl.find // does these find operations:
 	// HID.findAvailable;
+	// MIDIClient.init;
 	// MKtlLookup.addAllHID;
 	// MKtlLookup.addAllMIDI;
 
-MKtl.find
-MIDIClient.sources
+// depending on the kind of device,
 MKtlLookup.names.printcsAll;
 
 // add some osc devices by hand:
@@ -26,9 +34,31 @@ MKtlLookup.addOSC(NetAddr("192.168.94.23", 1234), \gyrosc);
 
 MKtlLookup.names.printcsAll;
 
-MKtlLookup.allFor(\hid);
+// list all midi devices:
+MKtlLookup.allFor(\midi);
 
+// for each device found, MKtlLookup has a dict with all the useful info
+// that is known about the device at this point.
+
+// E.g. the dict for a midi device will contain :
+MKtlLookup.allFor(\midi).choose.postcs;
+
+( 'idInfo': nanoKONTROL2,   // name of the device as it registers to the OS
+'protocol': midi,           // the protocol it uses
+			// the endpoints that belong to it, src and dest:
+'srcDevice': MIDIEndPoint("nanoKONTROL2", "SLIDER/KNOB", 1140916328),
+'destDevice': MIDIEndPoint("nanoKONTROL2", "CTRL", -1609859973),
+			// the unique name under which the info is stored
+'lookupName': midi_0_nanokontrol2,
+			// name of the matching description file if there is one:
+'filename': korg-nanokontrol2,
+			// all the endpoints that belong to it:
+'deviceInfo': [ MIDIEndPoint("nanoKONTROL2", "SLIDER/KNOB", 1140916328), MIDIEndPoint("nanoKONTROL2", "CTRL", -1609859973) ] )
 ::
+
+NOTE:: Currently, all endpoints found for the same device name are registered
+as one info dict. For most single-in, single-out devices this works perfectly.
+When multiple devices of the same kind are present (e.g. 2 midifader boxes)
 
 CLASSMETHODS::
 
@@ -50,7 +80,7 @@ add a MIDIEndpoint as found by index in MIDIClient.sources or .destinations.
 type (\src or \dest) tells MKtlLookup whether it is in sources or .destinations.
 
 METHOD:: addAllMIDI
-add all MIDIEndpoints currently found in MIDIClient sources or destinations
+add all MIDIEndpoints currently found in MIDIClient sources or destinations. Happens automatically in MIDIMktlDevice.find.
 
 METHOD:: midiAt
 find a MIDIEndpoint by type and index
