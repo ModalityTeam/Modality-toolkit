@@ -203,7 +203,6 @@ MIDIMKtlDevice : MKtlDevice {
 			^this;
 		};
 		if (deviceIndex.notNil) {
-			"JUHU".postln;
 			srcID = srcID[deviceIndex];
 		};
 
@@ -233,7 +232,7 @@ MIDIMKtlDevice : MKtlDevice {
 
 		dstID = argDstID;
 		midiOut = MIDIOut(port);
-		"% sends to uid % now.".postf(mktl, dstID);
+		// "% sends to uid % now.".postf(mktl, dstID);
 	}
 
 	initMIDIMKtl { |argName, argSource, argDestination|
@@ -336,7 +335,6 @@ MIDIMKtlDevice : MKtlDevice {
 	// channel bend, touch, program, ...
 	makeChanMsgMIDIFunc { |typeKey, srcUid|
 
-		if (typeKey == \cc) { typeKey = \control };
 		// "makeChanMsgMIDIFunc for % \n".postf(typeKey);
 
 		responders.put(typeKey,
