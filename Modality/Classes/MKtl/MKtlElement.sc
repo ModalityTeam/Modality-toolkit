@@ -91,7 +91,6 @@ MAbstractElement {
 		if (newval.isNil) { ^this };
 		prevValue = deviceValue;
 		deviceValue = newval;
-		this.trySend;
 		this.updateBus;
 		lastUpdateTime = Process.elapsedTime;
 		this.doAction;
@@ -317,7 +316,6 @@ MKtlElement : MAbstractElement {
 		if (newval.isNil) { ^this };
 		prevValue = deviceValue;
 		deviceValue = deviceSpec.map(newval);
-		this.trySend;
 		this.updateBus;
 		lastUpdateTime = Process.elapsedTime;
 		this.doAction;
