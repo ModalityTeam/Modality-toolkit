@@ -36,6 +36,7 @@ MKtl { // abstract class
 	var <collectivesDict; 	// has the collectives (combined elements and groups)
 	// from the device description
 
+	var <midiPortNameIndex;  // only needed when multiple midi ports
 	var <mktlDevice; // interface to the connected device(s).
 
 	var <traceRunning = false;
@@ -281,8 +282,6 @@ MKtl { // abstract class
 			specs.parent_(globalSpecs);
 		};
 
-		elementsDict = ();
-
 		if (desc.isNil) {
 			inform(
 				"%:init - no desc given, cannot\n"
@@ -291,6 +290,28 @@ MKtl { // abstract class
 			^this
 		};
 
+		if (desc.fullDesc[\groupsByPort].notNil) {
+			"%: desc says this device has multiple ports:\n".postf(this);
+			desc.fullDesc[\portNames].postcs;
+			desc.fullDesc[\groupsByPort].postcs;
+
+			"Please specify which portIndex to use: \n"
+			"%.initForPortIndex( _index_ );\n".postf(this);
+			^this
+		};
+
+		this.finishInit(lookForNew); // and finalise init
+	}
+
+	// can we do this multiple times?
+	// better not!
+	initForPortIndex { |index = 0, lookForNew = false|
+		midiPortNameIndex = index;
+		// later - maybe move filter here if we can...
+		this.finishInit(lookForNew);
+	}
+
+	finishInit { |lookForNew|
 		this.makeElements;
 		this.makeCollectives;
 		this.openDevice( lookForNew );
@@ -319,10 +340,24 @@ MKtl { // abstract class
 
 	makeElements {
 
+		// if groupsByPort exist, only build the elemsToBuild:
+		var elemsToBuild;
+		if (desc.fullDesc[\groupsByPort].notNil) {
+			elemsToBuild = ();
+			desc.fullDesc[\groupsByPort][midiPortNameIndex].do { |elemGroupName|
+				elemsToBuild.put(elemGroupName,
+					desc.elementsDesc[elemGroupName]
+				);
+			}
+		} {
+			// if not, take all elements:
+			elemsToBuild = desc.elementsDesc;
+		};
+
 		elementsDict = ();
 
 		// array of dicts of arrays
-		elements = desc.elementsDesc.traverseCollect(
+		elements = elemsToBuild.traverseCollect(
 			doAtLeaf: { |desc, deepKeys|
 				var deepName = deepKeys.join($_).asSymbol;
 				var element = MKtlElement(deepName, desc, this);
@@ -343,7 +378,8 @@ MKtl { // abstract class
 	}
 
 	wrapCollElemsInGroups { |elemOrColl|
-	//	"\n *** wrapCollElemsInGroups: ***".postln;
+		"\n *** wrapCollElemsInGroups: ***".postln;
+		"elemOrColl is: %\n".postf(elemOrColl);
 
 		if (elemOrColl.isNil) { ^elemOrColl };
 
@@ -351,7 +387,7 @@ MKtl { // abstract class
 			^elemOrColl
 		};
 
-		elemOrColl.valuesKeysDo { |elem, keyIndex, i|
+		^elemOrColl.valuesKeysDo { |elem, keyIndex, i|
 			var changedElem;
 			if (elem.isKindOf(Collection)) {
 				this.wrapCollElemsInGroups(elem);
@@ -561,22 +597,23 @@ MKtl { // abstract class
 		^mktlDevice.notNil
 	}
 
+		// only for MIDI ...
 	listenTo { |srcIDindex|
 		if (this.hasDevice.not) {
 			"no mktlDevice.".postln
 			^this
 		};
 		// only for MIDI so far
-		mktlDevice.makeRespFuncs(mktlDevice.srcID[srcIDindex]);
+		mktlDevice.initElements(srcIDindex);
 	}
 
+		// only for MIDI ...
 	sendTo { |destIDindex|
 		if (this.hasDevice.not) {
 			"no mktlDevice.".postln
 			^this
 		};
-		// only for MIDI so far
-		mktlDevice.midiOut.uid = mktlDevice.destination[destIDindex].uid;
+		mktlDevice.setDstID(mktlDevice.destination[destIDindex].uid);
 	}
 
 	trace { |value=true|
@@ -588,6 +625,7 @@ MKtl { // abstract class
 	closeDevice {
 		if ( mktlDevice.isNil ){ ^this };
 		mktlDevice.closeDevice;
+		mktlDevice = nil;
 	}
 
 	specialMessageNames { ^desc.specialMessageNames }
@@ -629,5 +667,6 @@ MKtl { // abstract class
 	free {
 		this.closeDevice;
 		all.removeAt( name );
+
 	}
 }

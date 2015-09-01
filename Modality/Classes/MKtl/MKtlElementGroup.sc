@@ -299,9 +299,9 @@ MKtlElementCollective : MKtlElementGroup {
 		elements.do(_.prRemoveCollective(this));
 	}
 
-	rawValueAction_{|newvals|
+	deviceValueAction_ {|newvals|
 		newvals.do({ |item, i|
-			elements[i] !? _.rawValueAction_( item );
+			elements[i] !? _.deviceValueAction_( item );
 		});
 	}
 

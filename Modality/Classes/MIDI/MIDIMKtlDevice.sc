@@ -115,9 +115,6 @@ MIDIMKtlDevice : MKtlDevice {
 		};
 	}
 
-	// create with a uid, or access by name
-	// FIXME: not sure about how t get destUID to work again in the refactor
-	// *new { |name, srcUID, destUID, parentMKtl|
 	*new { |name, idInfo, parentMKtl|
 
 		var lookupInfo = parentMKtl.lookupInfo;
@@ -136,7 +133,7 @@ MIDIMKtlDevice : MKtlDevice {
 
 		foundInfo = MKtlLookup.findByIDInfo(idInfo);
 		if (foundInfo.size > 1) {
-			"multiple MIDIMktls of same name not supported yet - taking first.".postln;
+			"multiple MIDIMKtls of same name not supported yet - taking first.".postln;
 		};
 
 		foundInfo = foundInfo.asArray.first;
@@ -144,10 +141,25 @@ MIDIMKtlDevice : MKtlDevice {
 		foundSources = foundInfo[\srcDevice].postln;
 		foundDestinations = foundInfo[\destDevice].postln;
 
+		// for a single device only for now:
+		if (parentMKtl.midiPortNameIndex.notNil) {
+			foundSources = foundSources[parentMKtl.midiPortNameIndex];
+			foundDestinations = foundDestinations
+				[parentMKtl.midiPortNameIndex];
+		};
+
 		newDev = super.basicNew(name, lookupInfo.idInfo, parentMKtl );
 		newDev.initMIDIMKtl(name, foundSources, foundDestinations );
+
+		if (newDev.srcID.isKindOf(SimpleNumber).not) {
+			"%: multiple uids found: %. \nplease provide the index to listen to:"
+			.format(parentMKtl, newDev.srcID).postln;
+			"%.listenTo( _index_ );".format(parentMKtl).postln;
+			"/*** no elements and responder funcs made yet! ***/".postln;
+			^newDev
+		};
+
 		newDev.initElements;
-		newDev.makeRespFuncs(newDev.srcID);
 		^newDev
 	}
 
@@ -179,8 +191,9 @@ MIDIMKtlDevice : MKtlDevice {
 
 	/// --------- EXPLORING -----)))))---------
 
-	initElements {
+	initElements { |deviceIndex|
 	//	"initElements".postln;
+
 		if ( mktl.elementsDict.isNil or: {
 			mktl.elementsDict.isEmpty
 		}) {
@@ -189,13 +202,27 @@ MIDIMKtlDevice : MKtlDevice {
 			);
 			^this;
 		};
+		if (deviceIndex.notNil) {
+			"JUHU".postln;
+			srcID = srcID[deviceIndex];
+		};
+
+		// could be different for multiple ports,
+		// so ideally get msgTypes per port only - later...
 		msgTypes = mktl.desc.fullDesc[\msgTypesUsed];
 		this.prepareLookupDicts;
+		this.makeRespFuncs;
 	}
 
 	// nothing here yet, but needed
 	initCollectives {
 
+	}
+
+	setDstID { |argDstID|
+		dstID = argDstID;
+		midiOut.uid = dstID;
+		"% sends to uid % now.".postf(mktl, dstID);
 	}
 
 	initMIDIMKtl { |argName, argSource, argDestination|
@@ -413,16 +440,8 @@ MIDIMKtlDevice : MKtlDevice {
 	}
 
 	// input
-	makeRespFuncs { |srcUid|
-		if (srcUid.isKindOf(SimpleNumber).not) {
-			"%: multiple uids found: %. \nplease provide the index to listen to:"
-			.format(this.mktl, srcUid).postln;
-			"%.listenTo( _index_ );".format(this.mktl).postln;
-			"no responder funcs made yet!".postln;
-			^this
-		};
+	makeRespFuncs {
 
-		"%: listening to srcUid % now.".format(this.mktl, srcUid).postln;
 		responders.do(_.remove);
 		responders = ();
 
@@ -430,24 +449,24 @@ MIDIMKtlDevice : MKtlDevice {
 
 		msgTypes.do { |msgType|
 			switch(msgType,
-				\cc,          { this.makeChanNumMsgMIDIFunc(msgType, srcUid) },
-				\control,     { this.makeChanNumMsgMIDIFunc(msgType, srcUid) },
-				\noteOn,      { this.makeChanNumMsgMIDIFunc(msgType, srcUid) },
-				\noteOff,     { this.makeChanNumMsgMIDIFunc(msgType, srcUid) },
+				\cc,          { this.makeChanNumMsgMIDIFunc(msgType, srcID) },
+				\control,     { this.makeChanNumMsgMIDIFunc(msgType, srcID) },
+				\noteOn,      { this.makeChanNumMsgMIDIFunc(msgType, srcID) },
+				\noteOff,     { this.makeChanNumMsgMIDIFunc(msgType, srcID) },
 				\noteOnOff,   {
-					this.makeChanNumMsgMIDIFunc(\noteOn, srcUid);
-					this.makeChanNumMsgMIDIFunc(\noteOff, srcUid);
+					this.makeChanNumMsgMIDIFunc(\noteOn, srcID);
+					this.makeChanNumMsgMIDIFunc(\noteOff, srcID);
 				},
-				\polyTouch,   { this.makeChanNumMsgMIDIFunc(msgType, srcUid) },
-				\polytouch,   { this.makeChanNumMsgMIDIFunc(msgType, srcUid) },
+				\polyTouch,   { this.makeChanNumMsgMIDIFunc(msgType, srcID) },
+				\polytouch,   { this.makeChanNumMsgMIDIFunc(msgType, srcID) },
 
-				\bend,        { this.makeChanMsgMIDIFunc   (msgType, srcUid) },
-				\touch,       { this.makeChanMsgMIDIFunc   (msgType, srcUid) },
-				\program,     { this.makeChanMsgMIDIFunc   (msgType, srcUid) },
+				\bend,        { this.makeChanMsgMIDIFunc   (msgType, srcID) },
+				\touch,       { this.makeChanMsgMIDIFunc   (msgType, srcID) },
+				\program,     { this.makeChanMsgMIDIFunc   (msgType, srcID) },
 
-				\allNotesOff, { this.makeChanMsgMIDIFunc   (msgType, srcUid) }
+				\allNotesOff, { this.makeChanMsgMIDIFunc   (msgType, srcID) }
 
-				// sysrt and sysex message support here
+				// add sysrt and sysex message support here
 			);
 		};
 	}
@@ -471,7 +490,6 @@ MIDIMKtlDevice : MKtlDevice {
 
 		if (traceRunning) {
 			inform("MIDIMKtl will send: " + elem.asCompileString);
-			^this
 		};
 
 		msgType = elemDesc[\midiMsgType];
