@@ -1,98 +1,90 @@
 HIDMKtlDevice : MKtlDevice {
+
 	classvar <initialized = false;
-	classvar <sourceDeviceDict;
+	classvar <>showAllDevices = false, <deviceProductNamesToHide;
 	classvar <protocol = \hid;
 
-	var <srcID, <srcDevice;
+	var <srcID, <source;
 
-	*getSourceName{ |shortName|
-		var srcName;
-		var src = this.sourceDeviceDict.at( shortName );
-		if ( src.notNil ){
-			srcName = this.makeDeviceName( src );
-		};
-		^srcName;
+	*initClass {
+		Platform.case(\osx, {
+			showAllDevices = false;
+			deviceProductNamesToHide = List[
+				"Apple Internal Keyboard / Trackpad",
+				"Apple Mikey HID Driver",
+				"Apple IR"
+			];
+		}, { deviceProductNamesToHide = List[]; } );
 	}
 
 	*initDevices { |force=false|
-		if ( Main.versionAtLeast( 3, 7 ) ){
-			(initialized && {force.not}).if{^this};
-			HID.findAvailable;
 
-			sourceDeviceDict = IdentityDictionary.new;
-			this.prepareDeviceDicts;
+		if ( initialized && { force.not } ){ ^this; };
 
-			initialized = true;
-		}
-	}
-
-	*prepareDeviceDicts{
-		var prevName = nil, j = 0, order, deviceNames;
-		deviceNames = HID.available.collect{|dev,id|
-			MKtl.makeShortName( (dev.productName.asString ++ "_" ++ dev.vendorName.asString ).asString)
-		}.asSortedArray;
-		order = deviceNames.order{ arg a, b; a[1] < b[1] };
-		deviceNames[order].do{|name, i|
-			(prevName == name[1]).if({
-				j = j+1;
-			},{
-				j = 0;
-			});
-			prevName = name[1];
-			sourceDeviceDict.put((name[1] ++ j).asSymbol, HID.available[ name[0] ])
+		if ( Main.versionAtLeast( 3, 7 ).not ){
+			"Sorry, no HID before 3.7.".postln;
+			^this;
 		};
 
-		// put the available hid devices in MKtlDevice's available devices
-		allAvailable.put( \hid, List.new );
-		sourceDeviceDict.keysDo({ |key|
-			allAvailable[\hid].add( key );
-		});
+		HID.findAvailable;
+		// if (HID.running.not) { HID.initializeHID }; // happens in HID.findAvailable
+		MKtlLookup.addAllHID;
+
+		initialized = true;
+	}
+
+	*devicesToShow {
+		^HID.available.select { |dev, id|
+		//	(dev.productName + ": ").post;
+			showAllDevices or: {
+				deviceProductNamesToHide.every({ |prodname|
+					[dev.productName, prodname];
+					(dev.productName != prodname);
+				});
+			}
+		};
 	}
 
 	// open all ports and display them in readable fashion,
 	// copy/paste-able directly
-	*find { |post=true|
-		this.initDevices( true );
-
-		if ( post ){
-			this.postPossible;
-		};
+	*find { |post = true|
+		this.initDevices ( true );
+		if ( post ) { this.postPossible; };
 	}
 
-	*postPossible{
+	*postPossible {
+		var postables = MKtlLookup.allFor(\hid);
+		var postHidden = showAllDevices.not and: { HID.available.size != postables.size };
+		var hiddenStr = "// Some HIDs not shown that can crash the OS. See: HID.available;";
+		if (postables.size == 0) {
+			"No HID devices available.".postln;
+			if (postHidden) { hiddenStr.postln; };
+			^this
+		};
+
+		if (postHidden) { hiddenStr.postln; };
 		"\n// Available HIDMKtlDevices:".postln;
-		"// MKtl(autoName);  // [ hid product, vendor(, serial number) ]".postln;
-		sourceDeviceDict.keysValuesDo{ |key,info|
+		"// MKtl(name, filename);  // [ product, vendor, (serial#) ]".postln;
+		postables.sortedKeysValuesDo { |key, infodict|
+			var info = infodict.deviceInfo;
+			var product = info.productName;
+			var vendor = info.vendorName;
 			var serial = info.serialNumber;
-			if( serial.isEmpty ) {
-				"    MKtl('%');  // [ %, % ]\n"
-				.postf(key, info.productName.asCompileString, info.vendorName.asCompileString )
-			} {
-				"    MKtl('%');  // [ %, %, % ]\n"
-				.postf(key, info.productName.asCompileString, info.vendorName.asCompileString, serial.asCompileString );
-			}
+			var postList = [product, vendor];
+			var filename = MKtlDesc.filenameForIDInfo(infodict.idInfo);
+
+			if (serial.notEmpty) {
+				postList = postList.add(serial);
+			};
+			// filename = if (filename.isNil) { "" } { "," + quote(filename) };
+			"MKtl('renameMe', %);		// %\n".postf(key.cs, postList.cs);
 		};
-		"\n-----------------------------------------------------".postln;
 	}
 
-	*findSource{ |rawDeviceName, rawVendorName|
-		var devKey;
-		if ( initialized.not ){ ^nil };
-		this.sourceDeviceDict.keysValuesDo{ |key,hidinfo|
-			if ( rawVendorName.notNil ){
-				if ( hidinfo.productName == rawDeviceName and: ( hidinfo.vendorName == rawVendorName ) ){
-					devKey = key;
-				}
-			}{
-				if ( hidinfo.productName == rawDeviceName ){
-					devKey = key;
-				};
-				if ( (hidinfo.productName ++ "_" ++ hidinfo.vendorName) == rawDeviceName ){
-					devKey = key;
-				};
-			};
-		};
-		^devKey;
+	*getIDInfoFrom { |hidInfo|
+		^if (hidInfo.notNil) {
+			[hidInfo.productName, hidInfo.vendorName].join($_);
+		}
 	}
 
     // create with a uid, or access by name
@@ -100,13 +92,15 @@ HIDMKtlDevice : MKtlDevice {
 		var foundSource;
 
 		if (path.isNil) {
-			foundSource = this.sourceDeviceDict[ name ];
-		}{
-            //FIXME: uid is this a path?
-			foundSource = HID.findBy( path: path ).asArray.first;
+			foundSource = MKtlLookup.all.at(name);
+			if (foundSource.notNil) {
+				foundSource = foundSource.deviceInfo;
+			}
+		} {
+			// // FIXME: is this a usb path?
+			// // and what about multiple matches (e.g. Apple Keyboard)?
+			// foundSource = HID.findBy( path: path ).asArray.first;
 		};
-
-		// foundSource.postln;
 
 		// make a new one
 		if (foundSource.isNil) {
@@ -116,38 +110,48 @@ HIDMKtlDevice : MKtlDevice {
 			^nil;
 		};
 
-		^super.basicNew( name, this.makeDeviceName( foundSource ), parentMKtl ).initHIDMKtl( foundSource, path );
+		^super.basicNew( name,
+			this.makeDeviceName( foundSource ),
+			parentMKtl )
+		.initHIDMKtl( foundSource );
 	}
 
-	initHIDMKtl{ |argSource,argUid|
-		srcID = argUid;
-        srcDevice = argSource.open;
- 		this.initElements;
+	initHIDMKtl { |argSource, argUid|
+		// HID is only ever one source, hopefully
+        source = argSource.open;
+		srcID = source.id;
+
+		this.initElements;
+		this.initCollectives;
+
+		// only do this explicitly
+		// this.sendInitialisationMessages;
 	}
 
-	closeDevice{
+	closeDevice {
 		this.cleanupElementsAndCollectives;
 		srcID = nil;
-		srcDevice.close;
+		if (source.isOpen) { source.close };
 	}
 
-    *makeDeviceName{ |hidinfo|
+    *makeDeviceName { |hidinfo|
 		^(hidinfo.productName.asString ++ "_" ++ hidinfo.vendorName);
     }
 
-	// postRawSpecs { this.class.postRawSpecsOf(srcDevice) }
+	// postRawSpecs { this.class.postRawSpecsOf(source) }
 
-	exploring{
-		^(HIDExplorer.observedSrcDev == this.srcDevice);
+	exploring {
+		^(HIDExplorer.observedSrcDev == this.source);
 	}
 
-	explore{ |mode=true|
+	explore { |mode=true|
 		if ( mode ){
 			"Using HIDExplorer. (see its Helpfile for Details)\n\n".post;
-			"HIDExplorer started. Wiggle all elements of your controller then".postln;
+			"HIDExplorer started. Wiggle all elements of your controller,"
+			" then do:".postln;
 			"\tMKtl(%).explore(false);\n".postf( name );
 			"\tMKtl(%).createDescriptionFile;\n".postf( name );
-			HIDExplorer.start( this.srcDevice );
+			HIDExplorer.start( this.source );
 		}{
 			HIDExplorer.stop;
 			"HIDExplorer stopped.".postln;
@@ -155,64 +159,68 @@ HIDMKtlDevice : MKtlDevice {
 	}
 
 	createDescriptionFile {
-		if(srcDevice.notNil){
-			HIDExplorer.openDocFromDevice(srcDevice)
+		if(source.notNil) {
+			HIDExplorer.openDocFromDevice(source)
 		} {
-			Error("MKtl#createDescriptionFile - srcDevice is nil. HID probably could not open device").throw
+			Error("MKtl#createDescriptionFile - source is nil.\n"
+				"HID probably could not open device").throw
 		}
 	}
 
-	cleanupElementsAndCollectives{
+	cleanupElementsAndCollectives {
 		mktl.elementsDict.do{ |el|
 			var theseElements;
-            var elid = el.elementDescription[\hidElementID];
-            var page = el.elementDescription[\hidUsagePage];
-            var usage = el.elementDescription[\hidUsage];
+            var elid = el.elemDesc[\hidElementID];
+            var page = el.elemDesc[\hidUsagePage];
+            var usage = el.elemDesc[\hidUsage];
 
-			if ( elid.notNil ){ // filter by element id
-				srcDevice.elements.at( elid ).action = nil;
-			}{
-				theseElements = srcDevice.findElementWithUsage( usage, page );
-				theseElements.do{ |it|
+			if ( elid.notNil ) { // filter by element id
+				source.elements.at( elid ).action = nil;
+			} {
+				theseElements = source.findElementWithUsage( usage, page );
+				theseElements.do { |it|
 					it.action = nil;
 				}
 			}
 		};
 	}
 
-	// nothing here yet, but needed
+	// nothing here yet, to be ported
+	initCollectives {
 
-	initCollectives{
 	}
 
-	initElements{
-		var newElements = ();
+	initElements {
 
-		mktl.elementsDict.do{ |el|
+		mktl.elementsDict.do { |el|
             var theseElements;
 
-            var elid = el.elementDescription[\hidElementID];
-            var page = el.elementDescription[\hidUsagePage];
-            var usage = el.elementDescription[\hidUsage];
+            var elid = el.elemDesc[\hidElementID];
+            var page = el.elemDesc[\hidUsagePage];
+            var usage = el.elemDesc[\hidUsage];
 
             // device specs should primarily use usage and usagePage,
-            // only in specific instances - where the device has bad firmware use elementid's which will possibly be operating system dependent
+            // only in specific instances - where the device has bad firmware
+			// use elementIDs which will possibly be operating system dependent
 
             if ( elid.notNil ){ // filter by element id
-                // HIDFunc.element( { |v| el.rawValueAction_( v ) }, elid, \devid, devid );
-                srcDevice.elements.at( elid ).action = { |v, hidele| // could get raw value hidele.rawValue
-					el.rawValueAction_( v );
+                // HIDFunc.element( { |v| el.deviceValueAction_( v ) }, elid, \devid, devid );
+				// could get raw value hidele.deviceValue
+                source.elements.at( elid ).action = { |v, hidele|
+					el.deviceValueAction_( v );
 					if(traceRunning) {
 						"% - % > % | type: %, src:%"
-						.format(this.name, el.name, el.value.asStringPrec(3), el.type, el.source).postln
+						.format(this.name, el.name, el.value.asStringPrec(3),
+							el.type, el.source).postln
 					}
 				};
             }{  // filter by usage and usagePage
-                // HIDFunc.usage( { |v| el.rawValueAction_( v ) }, usage, page, \devid, devid );
-                theseElements = srcDevice.findElementWithUsage( usage, page );
-                theseElements.do{ |it|
-                    it.action = { |v, hidele| // could get raw value hidele.rawValue
-						el.rawValueAction_( v );
+                // HIDFunc.usage( { |v| el.deviceValueAction_( v ) },
+				// usage, page, \devid, devid );
+                theseElements = source.findElementWithUsage( usage, page );
+                theseElements.do { |it|
+                    it.action = { |v, hidele| // could get raw value hidele.deviceValue
+						el.deviceValueAction_( v );
 						if(traceRunning) {
 							"% - % > % | type: %, src:%"
 							.format(this.name, el.name, el.value.asStringPrec(3), el.type, el.source).postln
@@ -220,19 +228,22 @@ HIDMKtlDevice : MKtlDevice {
 					};
                 };
             };
-            newElements.put( el.name, el );
-		};
-		mktl.replaceElements( newElements );
+    	};
 	}
 
 	send { |key,val|
 		var thisMktlElement, thisHIDElement;
-		thisMktlElement = mktl.elementDescriptionFor( key );
+		thisMktlElement = mktl.elementsDict[ key ].elemDesc;
 		if ( thisMktlElement.notNil ){
-			thisHIDElement = srcDevice.findElementWithUsage( thisMktlElement.at( 'hidUsage' ), thisMktlElement.at( 'hidUsagePage' ) ).first;
+			thisHIDElement = source.findElementWithUsage( thisMktlElement.at( 'hidUsage' ), thisMktlElement.at( 'hidUsagePage' ) ).first;
 			if ( thisHIDElement.notNil ){
 				thisHIDElement.value = val;
 			};
 		};
+	}
+
+	// still to be ported
+	sendInitialisationMessages {
+
 	}
 }

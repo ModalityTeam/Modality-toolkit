@@ -3,9 +3,77 @@ summary:: describes the file format for MKtl desc files
 categories:: Libraries>Modality
 related:: Overviews/Modality, Classes/MKtl, Tutorials/How_to_create_a_description_file
 
-Section:: Introduction
+A description file contains information of a controller, especially access information for each of its elements.
+Evaluation of the file should return a link::Classes/Dictionary:: of a well-defined structure. Description files are located at
+code::
+MKtl.openDescriptionFolder;
+::
 
-A controller is always bound to one protocol. If there is a device that communicates on multiple protocols (e.g. EMPHASIS::ICON i-controls::), this has to be merged later in the processing chain.
+NOTE::
+For a good overview on how a description file for your controller should look like, find a similar one that is alrady supported and look at its description file.
+::
+
+This document gives an overview on
+list::
+##link::#Filname convention::
+##link::#Semantic information::
+##link::#Identifier naming convention::
+##link::#Syntax::
+::
+
+section:: Filname convention
+
+The filename should be of the following format:
+
+code::
+<vendor>-<device_name>.desc.scd
+::
+
+where
+
+list::
+## code::<vendor>:: is lower-case name of vendor with spaces replaced by code::-::
+## code::<device_name>:: is lower-case name of the device with spaces replaced by code::-::
+::
+
+section:: Semantic information
+
+NOTE::
+A description file is bound to one protocol. If there is a device that communicates on multiple protocols (e.g. EMPHASIS::icon iCONTROLS::), it has to be merged further down in the processing chain.
+::
+
+subsection:: Toplevel
+
+DEFINITIONLIST::
+## protocol [required]
+|| The protocol used by the device
+## idInfo | osx | linux [required]
+|| For MIDI and HID: the device name as reported by the hardware or drivers. If the reported name is different in osx and linux then use the 'osx' and 'linux' dictionaries.
+For OSC this needs to be a dictionary with information on the ipAdresses and ports used.
+
+## description [required]
+|| A dictionary describing the controls on the device. These controls are called elements within the Modality toolkit.
+
+## deviceInfo [optional]
+|| A dictionary giving additional information on the device.
+
+## collectives [optional]
+|| Specific groups that are needed to send or receive data from the device. In particular these can be used for OSC devices.
+
+## status: [optional]
+|| A string describing the status of this description, e.g. code::"complete; tested; OSX, Linux"::, code::"incomplete; tested; OSX", ::code::"complete; tested; OSX;"::, code::"incomplete; untested;"::
+
+## deviceType [optional]
+|| What kind of device it is. This will make it easier to find another device that might easily replace it. For example: code::\joystick::, code::\gamepad::, code::\mouse::.
+
+## specs [optional]
+|| A dictionary with serialized specs like code::(\key: [0, 144, \lin])::. These overwrite existing definition locally for this description only.
+
+::
+
+
+subsection:: In the description of an element
+
 A control element is a part of a controller that does one or more of the following things
 
 list::
@@ -13,34 +81,18 @@ list::
 ## accepts a one-dimensional stream of events.
 ::
 
-A description file gathers information for each element. It consists of a SuperCollider dictionary with a certain structure. Description files are located at
-code::
-MKtl.openDescriptionFolder;
-::
-
-This document gives an overview on
-list::
-##link::#Semantic information::
-##link::#Naming Conventions::
-##link::#Syntax::
-::
-
-section:: Semantic information
-
 DEFINITIONLIST::
-## protocol [required]
-|| The protocol used by the device
-## device | osx | linux
-	|| device name as reported by the HID class. If the reported name is different in osx and linux then use the 'osx' and 'linux' dictionaries.
-## specs
-|| A dictionary with serialized specs like code::(\key: [0, 144, \lin])::. These overwrite existing definition locally for this description only.
-## description
-|| A dictionary describing the controls on the device
-## infoMessage [optional]
-|| A message to be displayed when the MKtl is created. This can be used to ask the user to switch to a certain physical preset of the device.
-## <midi|hid|osc>Type
-|| One of code::[ \midiMsgType, \hidElementID, \oscType ]:: has to be present. This also tells about the type of device on which it is implemented (MIDI/HID/OSC).
-##  \spec
+
+## midiMsgType
+|| code::midiMsgType:: has to be present for elements belonging to a MIDI device.
+
+## hidEelmentID | <hidUsage|hidUsagePage>
+|| code::hidElementID:: or both code::hidUsage:: and code::hidUsagePage:: have to be present for elements belonging to an HID device.
+
+## oscPath
+|| code::oscPath:: has to be present for elements belonging to an OSC device, or it has to use code::ioType: \groupIn:: or code::ioType: \groupOut::
+
+##  spec
 || The element code::\spec:: has to be present and is a symbol that, if called code::.asSpec:: upon, returns the (global) code::ControlSpec:: suitable for this element.
 ## \midiChan, \midiNum
 || Needed, if code::\midiType:: is part of the config string. The identifiers code::\bend, \touch, \program:: only need code::\midiChan:: to be specified.
@@ -70,7 +122,46 @@ code::
 )
 ::
 
-section::  Naming Conventions
+subsection:: deviceInfo
+
+The deviceInfo is of the following form. All entries are optional.
+
+code::
+(
+...
+deviceInfo: (
+    vendorURI: "http://vendor/product",
+    manualURI: "http://manual.pdf",
+    description: "Short sentence on what a great controller this is.",
+    features: [
+        "23 colorblinding pads",
+        "42 invisible sliders",
+    ],
+    notes: "Make sure the device is in total-recall mode!",
+    type: [\pad, \slider],
+    hasScribble: false // see e.g. ableton push for a device that has one
+),
+description: ...
+)
+::
+
+Examples for code::type:: are
+
+list::
+## code::pad::
+## code::knob::
+## code::encoder::
+## code::mixer::
+## code::fader::
+## code::gamepad::
+## code::joystick::
+## code::pointer::
+## code::keyboard::
+::
+
+Note that they are always written in singular.
+
+section:: Identifier naming convention
 
 Naming conventions for identifiers are:
 list::
@@ -88,10 +179,15 @@ list::
 ## code::button:: for buttons,
 ## code::key:: for keys,
 ## code::pad:: for pads
+## code::oscMessage:: for osc-messages (of collectives)
 ::
 
 note::
-The description file for the "nanoKontrol 2" is an example for good element naming. All naming examples in this help are taken from there.
+The description file for the "Korg nanoKONTROL 2"
+code::
+Korg_nanoKONTROL2.desc.scd
+::
+is a good example for element naming. All naming examples are taken from there.
 ::
 
 
@@ -132,8 +228,9 @@ The actual description files used by Modality often don't conform to this syntax
 TELETYPE::
 descFile                    = "( protocol: " protocol ", device: " string ", description:" description [", infoMessage:" string] ")"
     protocol                = "\hid" | "\midi"
-    device                  = ("device :" string) | ("osx : (device: "string ") " [", linux: (device: "string ")" ] ) | ("linux: (device: "string ") " [", osx: (device:" string ")" ] )
+    idInfo                  = ("idInfo :" string) | ("osx : (idInfo: "string ") " [", linux: (idInfo: "string ")" ] ) | ("linux: (idInfo: "string ") " [", osx: (idInfo:" string ")" ] )
     description             = hidDict | midiDict
+	collectives             = hidDict | midiDict
     midiDict                = "(" symbol ":" midiNode [", " *(symbol ":" midiNode) ] ")"
         midiArray           = "[" midiNode [", " *midiNode ] "]"
         midiNode            = midiDict | midiArray | midiElem

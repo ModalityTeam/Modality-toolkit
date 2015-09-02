@@ -1,0 +1,77 @@
+TITLE:: ItemsSpec
+summary:: Simple Class to map an Array of items to a value range between 0 and 1.
+categories:: Control, Spec, Libraries/Modality
+related:: Tutorials/How_to_create_a_description_file_for_OSC
+
+DESCRIPTION::
+
+ItemsSpec maps a item from an array of possible items onto a value range between 0 and 1.
+
+Simple example:
+
+code::
+~map = ItemsSpec.new( ["off","amber","red"] );
+
+~map.map( 0 );
+~map.map( 0.5 );
+~map.map( 1 );
+
+
+~map.unmap( "off" );
+~map.unmap( "amber" );
+~map.unmap( "red" );
+
+~map.unmap( "orange" );
+
+~map.default;
+~map.keys;
+
+~map.spec;
+::
+
+CLASSMETHODS::
+
+
+METHOD:: new
+Create a new ItemsSpec.
+
+ARGUMENT:: keys
+An Array of items to map onto.
+
+
+INSTANCEMETHODS::
+
+private:: init
+
+
+METHOD:: map
+Map a SimpleNumber onto the keys.
+
+ARGUMENT:: inval
+A SimpleNumber
+
+returns:: a String
+
+METHOD:: unmap
+Unmap a String to a number:
+
+ARGUMENT:: inval
+a String
+
+returns:: A SimpleNumber or nil if the item was not found.
+
+METHOD:: default
+The default value of the ItemsSpec is 0;
+
+
+METHOD:: keys
+The Array of keys.
+
+METHOD:: spec
+The ControlSpec for the ItemsSpec.
+
+
+METHOD:: asSpec
+Convenience method.
+
+returns:: the ItemsSpec

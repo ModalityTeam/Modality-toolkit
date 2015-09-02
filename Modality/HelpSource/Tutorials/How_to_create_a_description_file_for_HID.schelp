@@ -1,0 +1,295 @@
+title:: How to create a description file for an HID device
+summary:: How to create a description file to use with the Modality toolkit for a HID device
+categories:: Libraries>Modality
+related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Classes/MIDIExplorer, Classes/HIDExplorer, Tutorials/How_to_create_a_description_file
+
+
+
+
+Section:: Introduction
+
+The functionality of link::Classes/MKtl:: relies on descriptions of the used devices. For some Controllers, there are already descriptions available, chances are that your device is not among them.
+
+This Tutorial first shows simple examples of HID interfaces, by emulating them within SuperCollider, and then describes how to create a description file for your interface.
+
+
+list::
+##link::#Simple element::
+##link::#Write a description file and explore an HID device::
+##link::#HID device info::
+##link::#HID Initialisation messages::
+::
+
+section:: Simple element
+
+An element for an HID device looks in general like this:
+
+code::
+'b1': ('hidUsage': 1, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', 'spec': \hidBut )
+::
+
+code::hidUsage:: and code::hidUsagePage:: are the keys that identify the control from the device - these keys are crossplatform compatible. The code::ioType:: can be code::\in:: or code::\out::. Examples of input elements are mouse axes, joystick axes, and buttons. Examples of output elements are LEDs on the device, or forcefeedback or rumble (e.g. on gamepads).
+
+Here is an example of an output element:
+
+code::
+\rumble_l: ('hidUsage': 187, 'hidUsagePage': 1, 'type': 'rumble', 'ioType': 'out', spec: \lin255 )
+::
+
+Some HID devices that do not use common elements, or have ill-defined HID descriptors built into the hardware, will have a code::hidUsage:: and code::hidUsagePage:: that is not unique. In that case the automatic generation of a description file will return an element that looks like this:
+
+code::
+'b1': ('hidElementID': 1, 'type': 'button', 'ioType': 'in', 'spec': \hidBut )
+::
+
+Instead of code::hidUsage:: and code::hidUsagePage:: we have an identifier code::hidElementID::. This identifier may not be cross platform compatible, as different operating systems may list the order of elements differently.
+
+section:: Write a description file and explore an HID device
+
+code::
+// look for available devices:
+MKtl.find(\hid);
+// posts:
+/*
+MKtl('sbpt0');  // [ "USB Optical Mouse", "" ]
+*/
+// open it:
+m = MKtl( \sbpt0, 'hid_0_usb_optical_mouse' );
+::
+
+For HID devices, you can automatically generate a description file, as the device reports what it's inputs and outputs are.
+
+code::
+m.createDescriptionFile;
+::
+
+For our optical mouse this creates a file with this content:
+
+code::
+(
+idInfo: "USB Optical Mouse_",
+protocol: 'hid',
+description: (
+
+
+// --------- input elements ----------
+'<element name b1>': ('hidUsage': 1, 'hidUsagePage': 9, 'type': '<type Button>', 'ioType': 'in', 'spec': <spec b1> ),
+'<element name b2>': ('hidUsage': 2, 'hidUsagePage': 9, 'type': '<type Button>', 'ioType': 'in', 'spec': <spec b2> ),
+'<element name b3>': ('hidUsage': 3, 'hidUsagePage': 9, 'type': '<type Button>', 'ioType': 'in', 'spec': <spec b3> ),
+'<element name b0>': ('hidUsage': 0, 'hidUsagePage': 9, 'type': '<type Button>', 'ioType': 'in', 'spec': <spec b0> ),
+'<element name undefined>': ('hidUsage': 48, 'hidUsagePage': 1, 'type': '<type GenericDesktop>', 'ioType': 'in', 'spec': <spec undefined> ),
+'<element name undefined>': ('hidUsage': 49, 'hidUsagePage': 1, 'type': '<type GenericDesktop>', 'ioType': 'in', 'spec': <spec undefined> ),
+'<element name undefined>': ('hidUsage': 56, 'hidUsagePage': 1, 'type': '<type GenericDesktop>', 'ioType': 'in', 'spec': <spec undefined> ),
+)
+)
+::
+
+The elements are indicated by code::hidUsage:: and code::hidUsagePage::. In case these parts are not standard code::hidUsage::'s and code::hidUsagePage::'s. For more information on what these are see also: link::Guides/Working_with_HID::, link::Classes/HIDUsage::.
+
+At the top, we see that 4 buttons are detected, so we can give these names, and see what comes out:
+
+code::
+(
+~mouseDesc =
+(
+idInfo: "USB Optical Mouse_",
+protocol: 'hid',
+description: (
+	// --------- input elements ----------
+	'b1': ('hidUsage': 1, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', 'spec': \hidBut ),
+	'b2': ('hidUsage': 2, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', 'spec': \hidBut ),
+	'b3': ('hidUsage': 3, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', 'spec': \hidBut ),
+	'b0': ('hidUsage': 0, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', 'spec': \hidBut ),
+)
+);
+);
+
+// assign the desc to the mouse:
+m.rebuild( ~mouseDesc );
+
+// and check the incoming data:
+m.trace;
+
+// and click on the buttons that we have on the mouse:
+// left outputs:
+/*
+sbpt0 - b1 > 1 | type: button, src:MKtl('sbpt0')
+sbpt0 - b1 > 0 | type: button, src:MKtl('sbpt0')
+*/
+// right button outputs:
+/*
+sbpt0 - b2 > 1 | type: button, src:MKtl('sbpt0')
+sbpt0 - b2 > 0 | type: button, src:MKtl('sbpt0')
+*/
+
+// middle - or clicking on the scroll wheel outputs:
+/*
+sbpt0 - b3 > 1 | type: button, src:MKtl('sbpt0')
+sbpt0 - b3 > 0 | type: button, src:MKtl('sbpt0')
+*/
+::
+
+Nothing that we click seems to trigger b0, so it seems this is just a dummy element in the HID device. So we can adapt our description to:
+
+code::
+(
+~mouseDesc =
+(
+idInfo: "USB Optical Mouse_",
+protocol: 'hid',
+description: (
+	// --------- input elements ----------
+	'bt_left': ('hidUsage': 1, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', 'spec': \hidBut ),
+	'bt_right': ('hidUsage': 2, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', 'spec': \hidBut ),
+	'bt_middle': ('hidUsage': 3, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', 'spec': \hidBut ),
+)
+);
+);
+
+// assign the desc to the mouse:
+m.rebuild( ~mouseDesc );
+
+// and check the incoming data:
+m.trace;
+
+// and make a gui:
+m.gui;
+::
+
+Next we refine the description by grouping the buttons in the description:
+
+code::
+(
+~mouseDesc =
+(
+idInfo: "USB Optical Mouse_",
+protocol: 'hid',
+description: (
+	// --------- input elements ----------
+	'bt': (
+		'left': ('hidUsage': 1, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', 'spec': \hidBut ),
+		'right': ('hidUsage': 2, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', 'spec': \hidBut ),
+		'middle': ('hidUsage': 3, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', 'spec': \hidBut )
+	);
+)
+);
+);
+
+// assign the desc to the mouse:
+m.rebuild( ~mouseDesc );
+
+// and check the incoming data:
+m.trace;
+
+// and make a gui:
+m.gui;
+
+m.trace( false );
+
+// seems the same as we had before, but now we can do:
+m.elementAt( \bt ); // the group of buttons
+m.elementAt( \bt ).action = { args ...args; args.postln; }; // the group of buttons
+
+// and:
+m.elementAt( \bt, \right );
+// that is, we can assign actions to the group of buttons.
+::
+
+Then, looking back at the initially created file, we had three more elements that need a further definition, we will guess that they are the X and Y-axis of the mouse, and the mouse wheel.
+
+code::
+(
+~mouseDesc =
+(
+idInfo: "USB Optical Mouse_",
+protocol: 'hid',
+description: (
+	// --------- input elements ----------
+	'bt': (
+		'left': ('hidUsage': 1, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', 'spec': \hidBut ),
+		'right': ('hidUsage': 2, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', 'spec': \hidBut ),
+		'middle': ('hidUsage': 3, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', 'spec': \hidBut )
+	),
+	'x': ('hidUsage': 48, 'hidUsagePage': 1, 'type': 'mouseAxis', 'ioType': 'in', 'spec': \mouseAxis ),
+	'y': ('hidUsage': 49, 'hidUsagePage': 1, 'type': 'mouseAxis', 'ioType': 'in', 'spec': \mouseAxis ),
+	'wheel': ('hidUsage': 56, 'hidUsagePage': 1, 'type': 'wheel', 'ioType': 'in', 'spec': \mouseWheel ),
+)
+);
+)
+
+// assign the desc to the mouse:
+m.rebuild( ~mouseDesc );
+
+// and check the incoming data:
+m.trace;
+
+// and make a gui:
+m.gui;
+
+::
+
+With our mouse the resolution does not seem to be very good. So we make our custom specs.
+
+code::
+(
+~mouseDesc =
+(
+idInfo: "USB Optical Mouse_",
+protocol: 'hid',
+specs: (
+	mouseAxisPlus: [ 0.495, 0.505, \linear, 0, 0.5 ],
+	mouseWheelPlus: [ 0.495, 0.505, \linear, 0, 0.5 ],
+),
+description: (
+	// --------- input elements ----------
+	'bt': (
+		'left': ('hidUsage': 1, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', 'spec': \hidBut ),
+		'right': ('hidUsage': 2, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', 'spec': \hidBut ),
+		'middle': ('hidUsage': 3, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', 'spec': \hidBut )
+	),
+	'x': ('hidUsage': 48, 'hidUsagePage': 1, 'type': 'mouseAxis', 'ioType': 'in', 'spec': \mouseAxisPlus ),
+	'y': ('hidUsage': 49, 'hidUsagePage': 1, 'type': 'mouseAxis', 'ioType': 'in', 'spec': \mouseAxisPlus ),
+	'wheel': ('hidUsage': 56, 'hidUsagePage': 1, 'type': 'wheel', 'ioType': 'in', 'spec': \mouseWheelPlus ),
+)
+);
+)
+
+// assign the desc to the mouse:
+m.rebuild( ~mouseDesc );
+
+// and check the incoming data:
+m.trace;
+
+// and make a gui:
+m.gui;
+
+// cleanup:
+m.trace( false );
+m.closeDevice;
+::
+
+section:: HID device info
+
+The device info for an HID device that needs to be in the description file, is created from the device's productName and vendorName.
+
+code::
+m = MKtl( \sbpt0 );
+// inspect productName:
+m.mktlDevice.source.info.productName.postcs
+// posts: "USB Optical Mouse"
+// inspect vendorName:
+m.mktlDevice.source.info.vendorName.postcs
+// posts: ""
+::
+
+For our mouse the vendorName is left blank, apparently the vendor did not bother to list it in its device. Here is a little shortcut to create the string:
+
+code::
+m.lookupInfo.idInfo;
+::
+
+section:: HID Initialisation messages
+
+Some devices need initialisation messages to be sent before they can function properly with all their modes activated. You can define these messages in the code::initalisationMessages:: field of the device description.
+
+For HID we do not have a usecase yet where this is needed, so we do not know yet how to format these messages. Write us if you have a usecase!

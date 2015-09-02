@@ -1,0 +1,1091 @@
+title:: How to create a description file for an OSC device
+summary:: How to create a description file to use with the Modality toolkit for an OSC device
+categories:: Libraries>Modality
+related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Classes/OSCMonitor, Tutorials/How_to_create_a_description_file
+
+Section:: Introduction
+
+The functionality of link::Classes/MKtl:: relies on descriptions of the devices to be used. For some controllers, there are already descriptions available, but chances are that your device is not yet among them.
+
+This tutorial first shows simple examples of OSC interfaces, by emulating them within SuperCollider, and then describes how to create a description file for your interface.
+
+
+list::
+##link::#Simple input::
+list::
+##link::#Pattern matching on osc paths::
+##link::#Trigger messages::
+::
+##link::#Simple output::
+##link::#Collective input::
+##link::#Collective output::
+##link::#Explore an OSC device::
+##link::#Write a description file for the explored OSC device::
+##link::#OSC output::
+##link::#OSC device info::
+##link::#OSC Initialisation messages::
+::
+
+section:: Simple input
+
+The simplest possible OSC input would be a device sends messages with only a single value, such as this:
+code::
+// osc message path = /button, value = 1, means the button is on
+/button 1
+// osc message path = /button, value = 0, means the button is off
+/button 0
+::
+
+The description of this element then is:
+
+code::
+'bt': (
+	oscPath: '/button',
+	type: 'button',
+	ioType: \in,
+	spec: \but
+)
+::
+
+An entry for code::\spec:: in the description is required to recognize this dict as an element description!
+
+Here is a complete working example:
+
+code::
+(
+~desc1In = (
+    idInfo: ( srcPort: NetAddr.langPort, ipAddress: "127.0.0.1" ),
+    protocol: \osc,
+    description: (
+        'bt': (
+            oscPath: '/bt',
+            type: 'button',
+            spec: \but,
+            ioType: \in
+        )
+    )
+);
+)
+
+m = MKtl( \example1in, ~desc1In );
+// give the single button an action
+m.elementAt(\bt).action = { |el| ["yo", el.value].postln };
+
+// test that the action works
+m.elementAt(\bt).doAction;
+m.elementAt(\bt).valueAction_(1);
+m.elementAt(\bt).valueAction_(0);
+
+// create a gui for the osc device:
+MKtlGUI(mktl: m);
+// post incoming data
+m.trace;
+
+// and now simulate sending values from an OSC device by network:
+n = NetAddr("127.0.0.1", NetAddr.langPort); // fake device address
+n.sendMsg("/bt", 0);
+n.sendMsg("/bt", 1);
+::
+
+
+
+For a row of buttons, such devices often send an index of the button, e.g. for two buttons:
+
+code::
+// osc message path = /button, index = 0, value = 1, means button at 0 is on
+/button 0 1
+// osc message path = /button, index = 1, value = 0, means button at 1 is off
+/button 1 0
+::
+
+The description of the elements then contains an argTemplate :
+
+code::
+(
+'bt': [
+	(
+	oscPath: '/button',
+	argTemplate: [ 0 ],
+	type: 'button',
+	ioType: \in
+	),
+	(
+	oscPath: '/button',
+	argTemplate: [ 1 ],
+	type: 'button',
+	ioType: \in
+	)
+]
+)
+::
+
+Here is how the argTemplate works:
+The incoming message is [\bt, 0, 1];
+the name of the message is dropped, so the message content is [0, 1];
+this message body is compared with the argTemplate [0] :
+code::
+[0]
+[0, 1]
+::
+-> all elements contained in the argTemplate are the same as in the message body, so the message matches, and the element knows it should do its action.
+
+
+For a grid layout of e.g. button elements, devices usually send row and column indices of the element along, so a grid of buttons would be:
+
+code::
+// osc message path = /button, rowindex = 0, columnindex=1, value = 1, means the button is on
+/button 0 1 1
+// osc message path = /button, rowindex = 1, columnindex=2, value = 0, means the button is off
+/button 1 2 0
+::
+
+Here the incoming message has 4 items: the name (which is dropped), the next two indices which are matched with the argTemplate, and the last element is the new value.
+
+The description of the elements then is:
+
+code::
+	(
+		'bt': [
+			[
+				(
+					oscPath: '/button',
+					argTemplate: [ 0,0 ],
+					type: 'button',
+					ioType: \in
+				),
+				(
+					oscPath: '/button',
+					argTemplate: [ 0,1 ],
+					type: 'button',
+					ioType: \in
+				)
+			],
+			[
+				(
+					oscPath: '/button',
+					argTemplate: [ 1,0 ],
+					type: 'button',
+					ioType: \in
+				),
+				(
+					oscPath: '/button',
+					argTemplate: [ 1,1 ],
+					type: 'button',
+					ioType: \in
+				)
+			]
+		]
+	);
+
+// or write more concise code with .collect:
+(
+'bt': 2.collect { |row|
+	2.collect { |column|
+		(
+			oscPath: '/button',
+			argTemplate: [ row, column ],
+			type: 'button',
+			ioType: \in
+		)
+	}
+}
+);
+
+::
+
+The code::argTemplate:: can also contain code::nil:: if there is an element in the osc message that needs to be ignored while filtering, see: link::#argTemplate matching:: for more examples how argTemplates can be matched.
+
+If the osc message sends some other info that we are not interested in inside the message, we can specify at which index we want to read the data (by default we take the last value in the osc message):
+
+code::
+// osc message path = /button, value = 1, other data = "hello", means the button is on
+/button 1 "hello"
+// osc message path = /button, value = 0, other data = "hello", means the button is off
+/button 0 "hello"
+::
+
+The description becomes:
+
+code::
+'bt': (
+	oscPath: '/button',
+	type: 'button',
+	valueAt: 1,
+	ioType: \in
+)
+::
+
+
+After all this explanation, here is a full example of an OSC device description with one element using argTemplate, and valueAt specification. (Usually, there would be other knobs at at other row/column indices, they are left out here for shortness.)
+
+code::
+(
+~descInput = (
+	idInfo: ( srcPort: NetAddr.langPort, ipAddress: "127.0.0.1" ),
+	protocol: \osc,
+	description: (
+		'kn': (
+			oscPath: '/knob',
+			argTemplate: [ 1,2 ], // the knob at row 1 and column 2
+			valueAt: 3, // the index in the osc message where the value is
+			type: 'knob',
+			spec: \midiCC,
+			ioType: \in
+		)
+	)
+)
+)
+
+m = MKtl( \exampleOSCInput, ~descInput );
+MKtlLookup.postInfo // now also shows the opened 'osc device'
+
+// create a gui for the osc device:
+MKtlGUI(mktl: m);
+// post incoming data
+m.trace;
+
+n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
+
+// send messages:
+n.sendMsg( '/knob', 1, 2, 63, "extra", "data" );
+n.sendMsg( '/knob', 1, 2, 35, "are" );
+n.sendMsg( '/knob', 1, 2, 34, "ignored" );
+
+// free the device again
+m.free;
+::
+
+
+subsection:: Pattern matching on osc paths
+
+Some devices may send a different on and off message, e.g. code::"/button/on":: for the on state, and code::"/button/off":: for the off state.
+
+So the oscPath you want to match is code::"/button/*":: - the code::*:: is the standin for the possible matches you want to look for. In an link::Classes/ItemsSpec:: you define the possible states that can be sent, in the order that they may appear, in our simple example here: code::["off","on"]:: which means that code::"off":: will map to 0 and code::"on":: will map to 1. If you added a third item code::["off","maybe","on"]::, the middle item would map to 0.5.
+
+code::
+(
+~descInput = (
+	specs: ( onoffString: ItemsSpec.new( [ "off", "on" ] ); ),
+	    idInfo: ( srcPort: NetAddr.langPort, ipAddress: "127.0.0.1" ),
+	    protocol: \osc,
+	    description: (
+		        'bt': (
+			            oscPath: '/button/*',
+			            type: 'button',
+			            spec: \onoffString,
+			            ioType: \in
+		        )
+	    )
+)
+);
+
+m = MKtl( \exampleOSCInput, ~descInput );
+MKtlLookup.postInfo // now also shows the opened 'osc device'
+
+// create a gui for the osc device:
+MKtlGUI(mktl: m);
+// post incoming data
+m.trace;
+
+n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
+
+// send messages:
+n.sendMsg( "/button/off" );
+n.sendMsg( "/button/on" );
+
+
+// free the device again
+m.free;
+::
+
+
+subsection:: Trigger messages
+
+In some cases, an OSC message has no relevant arguments and just functions as a trigger that a certain event happened. In this case you use the type code::\trigger:: for the element. The output value of the element will always be 1.
+
+code::
+(
+~descInput = (
+	idInfo: ( srcPort: NetAddr.langPort, ipAddress: "127.0.0.1" ),
+	protocol: \osc,
+	description: (
+		'tr': (
+			oscPath: '/trigger',
+			type: 'trigger',
+			ioType: \in,
+			spec: \unipolar  // spec is needed, but value is ignored
+		)
+	)
+)
+);
+
+m = MKtl( \exampleOSCInput, ~descInput );
+MKtlLookup.postInfo  // now also shows the opened 'osc device'
+
+// create a gui for the osc device:
+MKtlGUI(mktl: m);
+// post incoming data
+m.trace;
+
+m.elementAt(\tr).action = { "TRIG!".postln };
+m.elementAt(\tr).doAction;
+
+n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
+
+// send messages:
+n.sendMsg( "/trigger" );
+n.sendMsg( "/trigger" );
+
+// free the device again
+m.free;
+::
+
+section:: Simple output
+
+A simple OSC output is an OSC interface that receives OSC messages with only a value for a single control on the device. For example:
+
+code::
+// turn on the led at brightness value 5
+/led 5
+// turn off the led meaning brightness value 0
+/led 0
+::
+
+With a description like:
+
+code::
+(
+'led': (
+	oscPath: '/output',
+	type': 'led',
+	ioType: \out
+);
+)
+::
+
+Just like with the simple input example, we can have indices that define additional arguments that specify which led should be on.
+
+code::
+// turn on the led at row 2 and column 3 at brightness value 5
+/led 2 3 5
+// turn off the led at row 2 and column 3 meaning brightness value 0
+/led 2 3 0
+::
+
+With a description like:
+
+code::
+(
+'led': (
+	oscPath: '/output',
+	argTemplate: [ 2, 3 ],
+	type: 'led',
+	ioType: \out
+);
+)
+::
+
+If the value needs to be inserted in between identifiers for the message, you can use code::nil:: as a placeholder in the code::argTemplate::
+
+code::
+// turn on the led at row 2 and column 3 at brightness value 5
+/led 2 5 3
+// turn off the led at row 2 and column 3 meaning brightness value 0
+/led 2 0 3
+::
+
+With a description like:
+
+code::
+(
+'led': (
+	oscPath: '/output',
+	argTemplate: [ 2, nil, 3 ],
+	type: 'led',
+	ioType: \out
+);
+)
+::
+
+
+An example of opening an OSC device from a description and sending output to it:
+
+code::
+(
+MKtl.addSpec(\pwm8bit, [0, 255, \linear, 1]);
+~descOutput = (
+	// only for testing: send output values to SC itself
+	// (instead of a real osc device)
+	idInfo: ( ipAddress: "127.0.0.1", destPort: NetAddr.langPort ),
+	protocol: \osc,
+	description: (
+		'led': (
+			oscPath: '/output',
+			argTemplate: [ 2, 3 ], // message will be: "/output" 2 3 <val>
+			'type': 'led', spec: \pwm8bit,
+			\ioType: \out
+		);
+	);
+);
+);
+
+m = MKtl( \exampleOSCoutput, ~descOutput );
+
+// an output element in an OSC MKtl sends its value out by network
+// when the value of the element in the MKtl is changed.
+// to simulate the receiving osc device, we listen in SC itself
+
+// listen to all incoming osc, so we see the value setting message:
+OSCFunc.trace( true );
+// set a value:
+m.elementAt( \led ).value_( 0.6 );
+m.elementAt( \led ).value_( 1.0.rand );
+// set and send in original value range of the device:
+m.elementAt( \led ).deviceValue_( 256.rand.postln );
+
+// cleanup:
+m.free;
+::
+
+section:: Collective input
+
+Some OSC devices will send the data for several elements within one OSC message. For example an OSC message updating all 5 buttons of a device:
+
+code::
+/buttons 1 1 0 1 0
+::
+
+In this case, we can create a code::collective:: that will listen for the code::/buttons:: message, and pass it on to the elements that are part of the collective:
+
+code::
+(
+~descCollectiveInput = (
+	idInfo: ( ipAddress: "127.0.0.1" ),
+	protocol: \osc,
+	collectives: (
+		buttons: (
+			oscPath: 'buttons',
+			elements: [ [\bt,0], [\bt,1], [\bt,2], [\bt,3], [\bt,4] ], // the order in this array determines the order how the message is parsed
+			ioType: \in
+		)
+	),
+	description: (
+		'bt': 5.collect {
+			( type: 'button', ioType: \collectiveIn, \spec: \but )
+		}
+	);
+);
+)
+m = MKtl( \exampleCollectiveIn, ~descCollectiveInput );
+MKtlGUI(mktl: m);
+m.trace;
+
+// test setting it directly
+m.collectivesDict.buttons.deviceValueAction_([ 1, 1, 0, 0, 1 ].scramble);
+
+// and now from network:
+n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
+n.sendMsg( "/buttons", *[ 1, 1, 0, 0, 1 ].scramble );
+
+// send new random states
+(
+Tdef( \autoaction, {
+	loop {
+		n.sendMsg( "/buttons", 2.rand, 2.rand, 2.rand, 2.rand, 2.rand );
+		1.0.wait;
+	};
+}).play;
+);
+
+m.free;
+
+::
+
+
+As in the simple input examples, we can use an code::argTemplate:: for collectives messages. Any wildcards (code::nil::) in the template will be assumed to contain relevant data. If you want a field to be ignored in the template, and it does not contain relevant data, you can use code::valueAt:: to specify which indices in the OSC message contain the values that are your desired input data. See the following examples for clarification:
+
+
+Matching a simple argument template with the message ID is at the beginning of the message body:
+
+code::
+(
+~descCollectiveInput = (
+	idInfo: ( ipAddress: "127.0.0.1" ),
+	protocol: \osc,
+	collectives: (
+		buttons: (
+			// would fire then do something with the elements inside
+			oscPath: '/buttons',
+			argTemplate: [ 7 ], // any message beginning with [7] is accepted
+			// the order in this array determines the order how the message is parsed:
+			elements: [ [\bt,0], [\bt,1], [\bt,2], [\bt,3], [\bt,4] ],
+			ioType: \in
+		)
+	),
+	// and the five button elements
+	description: (
+		'bt': 5.collect {
+			( type: 'button', ioType: \collectiveIn, \spec: \but )
+		}
+	);
+);
+)
+
+m = MKtl( \exampleCollectiveIn, ~descCollectiveInput );
+MKtlGUI(mktl: m);
+m.trace;
+
+n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
+// means messages like this are received, because message body starts with 7:
+n.sendMsg( "/buttons", 7, 0, 1, 1, 0, 1 );
+
+// while this message is ignored: (4 != 7)
+n.sendMsg( "/buttons", 4, 0, 1, 1, 0, 1 );
+::
+
+
+Matching an argument template with the ID to filter by at the end:
+
+code::
+(
+~descCollectiveInput = (
+	idInfo: ( ipAddress: "127.0.0.1" ),
+	protocol: \osc,
+
+	collectives: (
+		data: (
+			// would fire the do something with the elements inside
+			oscPath: '/buttons',
+			argTemplate: [ nil, nil, nil, nil, nil, 7 ],
+			elements: [ [\bt,0], [\bt,1], [\bt,2], [\bt,3], [\bt,4] ], // the order in this array determines the order how the message is parsed
+			ioType: \in
+		)
+	),
+	description: (
+		'bt': 5.collect {
+			( type: 'button', ioType: \collectiveIn, \spec: \but )
+		}
+	)
+);
+)
+
+m.rebuild( ~descCollectiveInput );
+m.trace;
+
+// now messages _ending_ with 7 are accepted:
+n.sendMsg( "/buttons", 2.rand, 2.rand, 2.rand, 2.rand, 2.rand, 7 );
+
+// and messages with other final items are ignored:
+n.sendMsg( "/buttons", 0, 1, 1, 0, 1, 4 );
+
+::
+
+
+
+Here is an example for matching an argument template with a code::nil:: wildcard at the beginning, but interesting values are only later on in the message, so we use code::valueAt:: explicitly:
+
+code::
+(
+~descCollectiveInput = (
+	idInfo: ( ipAddress: "127.0.0.1" ),
+	protocol: \osc,
+	collectives: (
+		data: (
+			// would fire the do something with the elements inside
+			oscPath: '/buttons',
+			argTemplate: [ nil, 7 ],
+			valueAt: [ 3, 4, 5, 6, 7 ],
+			elements: [ [\bt,0], [\bt,1], [\bt,2], [\bt,3], [\bt,4] ], // the order in this array determines the order how the message is parsed
+			ioType: \in
+		)
+	),
+	description: (
+		'bt': 5.collect {
+			( type: 'button', ioType: \collectiveIn, \spec: \but )
+		}
+	);
+);
+)
+
+m.rebuild( ~descCollectiveInput );
+
+
+// messages matching [nil, 7] are received:
+n.sendMsg( "/buttons", "blah".scramble, 7, 0, 1, 1, 0, 1 );
+
+// others are ignored
+n.sendMsg( "/buttons", "blah".scramble, 4, 0, 1, 1, 0, 1 );
+
+
+m.free;
+::
+
+
+section:: Collective output
+
+Some OSC devices will listen for data of several elements within one OSC message. For example an OSC message updating all 3 leds of a device:
+
+code::
+/leds 1 1 0
+::
+
+In this case, we can create a code::collective:: that will send the code::/leds:: message, whenever the value of one of the elements of the collective changes:
+
+code::
+(
+MKtl.addSpec(\pwm8bit, [0, 255, \linear, 1]);
+
+~descCollectiveOut = (
+	idInfo: ( ipAddress: "127.0.0.1", destPort: NetAddr.langPort ),
+	protocol: \osc,
+	'collectives': (
+		leds: (
+			oscPath: '/leds',
+			// elements that make up the group in the order in which
+			// they should appear in the output message:
+			elements: [ [\led,0], [\led, 1], [\led, 2] ],
+			argTemplate: [ 7 ], // default arguments to send
+			ioType: \out
+		)
+	),
+	description: (
+		'led': [
+			(
+				// we need a default value to send out the first time any element changes
+				default: 0,
+				type: 'led', spec: \pwm8bit,
+				ioType: \collectiveOut // use a group method to create the output
+			),
+			(
+				default: 0,
+				type: 'led', spec: \pwm8bit,
+				ioType: \collectiveOut
+			),
+			(
+				default: 0,
+				type: 'led', spec: \pwm8bit,
+				ioType: \collectiveOut
+			)
+		]
+	);
+);
+)
+
+m = MKtl( \exampleCollectiveOut, ~descCollectiveOut );
+
+// test to see what OSC messages are coming in:
+OSCFunc.trace( true );
+
+// do the collective send from the group:
+m.send(\leds, 1,2,3,4,5); // sending works
+
+m.collectivesDict[\leds].value_([0, 0.5, 1]); // setting the coll value broken
+
+// trigger coll. send by setting value of single element
+m.elementAt( \led, 1 ).value_( 0.5 );   // does not trigger sending.
+m.elementAt( \led, 2 ).value_( 0.8 );
+m.elementAt( \led, 0 ).value_( 0.1 );
+
+m.elementAt( \led, 1 ).collectives[0].dump
+
+(
+Tdef( \autoaction, {
+	loop {
+		m.elementAt( \led, 0 ).value_( 1.0.rand );
+		1.0.wait;
+
+		m.elementAt( \led, 1 ).value_( 1.0.rand );
+		1.0.wait;
+
+		m.elementAt( \led, 2 ).value_( 1.0.rand );
+		1.0.wait;
+	};
+}).play;
+);
+
+m.gui;
+
+Tdef( \autoaction ).stop;
+
+::
+
+If the value needs to be inserted in between identifiers for the message, you can use code::nil:: as the place holder in the code::argTemplate::
+
+code::
+
+(
+MKtl.addSpec(\pwm8bit, [0, 255, \linear, 1]);
+
+~descCollectiveOut = (
+	idInfo: ( ipAddress: "127.0.0.1", destPort: NetAddr.langPort ),
+	protocol: \osc,
+	'collectives': (
+		leds: (
+			oscPath: '/leds',
+			elements: [ [\led,0], [\led, 1], [\led, 2] ], // elements that make up the group in order that they should appear in the output message
+			argTemplate: [ nil, 7, nil, 9, 10 ], // default arguments to send elements take up position 0, 2 and 5 and so on.
+			ioType: \out
+		)
+	),
+	description: (
+		'led': [
+			(
+				default: 0, // we need a default value to send out the first time any element changes
+				type: 'led', spec: \pwm8bit,
+				ioType: \collectiveOut // use a group method to create the output
+			),
+			(
+				default: 0, // we need a default value to send out the first time any element changes
+				type: 'led', spec: \pwm8bit,
+				ioType: \collectiveOut // use a group method to create the output
+			),
+			(
+				default: 0, // we need a default value to send out the first time any element changes
+				type: 'led', spec: \pwm8bit,
+				ioType: \collectiveOut // use a group method to create the output
+			)
+		]
+	);
+);
+);
+
+m.rebuild( ~descCollectiveOut );
+
+Tdef( \autoaction ).play;
+
+m.free;
+::
+
+
+section:: Explore an OSC device
+
+To find out what an OSC device can do, the first thing you can do is read the documentation for the device and see what it tells about the OSC interface. Usually the documentation lists a number of messages that the device sends out, and a number of messages that it reacts upon. For OSC output to the device you have to rely on the documentation about the device to find out what you need to send to it. For the OSC input from the device, there is a tool (link::Classes/OSCMonitor::) to find out what messages it sends.
+
+code::
+// create a fake OSC device that sends some messages:
+(
+n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
+Tdef( \fakeOSCdevice, {
+		// a 3 by 3 grid of pads that send out 7 bit data each
+	loop {
+		n.sendMsg( "/pad", 3.rand, 3.rand, 128.rand );
+		1.0.rand.wait;
+	};
+});
+
+Tdef( \fakeOSCdevice ).play;
+);
+
+// start an OSCMonitor:
+
+o = OSCMonitor.new;
+o.enable; // enable it
+o.show; // show a gui to view the data
+o.verbose = true; // post the messages
+
+// find out from which addresses data was sent:
+o.addresses;
+
+// messages names that were sent:
+o.msgNames;
+o.verbose = false;
+
+// In OSCMonitor, tracked sources can have nicknames
+// - some are already here by default:
+o.anaDict.nicknames;
+// you can ask which message names come from which addresses:
+o.anaDict.msgNamesByAddr;
+// and you can ask for sample messages from each address
+o.anaDict.messagesByAddr;
+o.anaDict.messagesByAddr.at(n).printAll;"";
+
+::
+
+In this code example, we find out that there is a code::NetAddr( "127.0.0.1", 57120 ):: sending an OSC message like this: code::[ '/pad', 0, 2, 67 ]::.
+
+For your actual OSC device you would move each control and look at what the incoming message looks like. This way, you can figure out which controls send out which OSC message with which parameters.
+
+For our (fake) example device, we find out that there is only one type of message sent out (code::'/pad'::), with the first two arguments being a row and column index, and the last value being a kind of velocity value.
+
+section:: Write a description file for the explored OSC device
+
+Based on our exploration, we can start writing the description file, we first make a simple example for one pad:
+
+code::
+(
+~descExample = (
+	idInfo: ( srcPort: NetAddr.langPort, ipAddress: "127.0.0.1" ),
+	protocol: \osc,
+	// name: \descEx,
+	description: (
+		'pad': (
+			oscPath: '/pad',
+			argTemplate: [ 0,0 ], // at row 0 and column 0
+			type: 'pad',
+			spec: \midiCC,
+			ioType: \in
+		)
+	)
+)
+);
+
+m = MKtl( \exampleOSCDesc, ~descExample );
+m.mktlDevice;
+MKtl.all;
+
+MKtlLookup.postInfo  // now also shows the opened 'osc device'
+
+// create a gui for the new osc device:
+MKtlGUI(mktl: m);
+
+// post incoming data
+m.trace;
+
+m.free;
+::
+
+So if this seems to work, we can expand the description to have a grid of 4 x 4 pads:
+
+code::
+(
+~descExample = (
+	idInfo: ( srcPort: NetAddr.langPort, ipAddress: "127.0.0.1" ),
+	protocol: \osc,
+	description: (
+		'pad': 3.collect{ |id|
+			3.collect{ |jd|
+				(
+					oscPath: '/pad',
+					argTemplate: [ id,jd ],
+					type: 'pad',
+					spec: \midiCC,
+					ioType: \in
+				)
+			};
+		};
+		)
+	)
+);
+
+m.rebuild( ~descExample );
+m.gui
+m.elementsDict
+
+// test with a global action
+m.elements.action = { |el| ("  recv:" + [m, el.name, el.value.round(0.001)]).postln; };
+m.elementAt(\pad, 0, 2).deviceValueAction_(128.rand.postln);
+
+// and test that m receives properly via OSC:
+(
+n = NetAddr.localAddr;
+Tdef(\exosc, {
+	inf.do {
+		"send: ".post;
+		n.sendMsg(*['/pad', 3.rand, 3.rand, 128.rand].postcs);
+		0.25.wait;
+	}
+}).play;
+)
+Tdef(\exosc).stop;
+Tdef(\exosc).play;
+
+::
+
+Now all 9 pads are in the description.
+
+section:: OSC output
+
+As an example, for the libmanta we find the description of (some of) the OSC output messages for the MantaOSC application:
+
+code::
+For commands that take color strings, the value can be either "red", "amber", or "off".
+
+"/manta/led/pad"
+Takes a color string and an integer representing the pad LED to be set.
+
+"/manta/led/button"
+Takes a color string and an integer representing the pad LED to be set.
+::
+
+From this we understand that we should make two types of output elements. For the button leds we need:
+
+code::
+(
+bt: 4.collect { |id|
+	led: (
+		oscPath: '/manta/led/button',
+		argTemplate: [ nil, id ],
+		type: 'led',
+		spec: 'mantaLed',
+		ioType: \out
+	);
+};
+);
+::
+
+For the pad leds we need:
+
+code::
+(
+pad: 48.collect { |id|
+	led: (
+		oscPath: '/manta/led/pad',
+		argTemplate: [ nil, id ],
+		type: 'led',
+		spec: 'mantaLed',
+		ioType: \out
+	);
+};
+);
+::
+
+The code::spec:: needed is a special one, a link::Classes/ItemsSpec:: that defines the mapping of a value to one of the three colors, we can define it in the code::specs:: part of the device description:
+
+code::
+specs: (
+	// led can be off, amber or red
+	mantaLed: ItemsSpec( ["off","amber","red"] ),
+)
+::
+
+For the complete Manta description take a look at its description file:
+
+code::
+MKtlDesc.loadDescs( "snyder*" );
+MKtlDesc.at('snyderphonics-manta').openFile;
+::
+
+section:: OSC device info
+
+The underlying protocol of OSC communication in SuperCollider and most other applications is UDP. The addressing of messages is done via IP adresses and ports.
+
+The MKtlDesc for an OSC device has an info dictionary which can contain: code::ipAddress, srcPort, recvPort, destPort::. All of these elements are optional. Each of them are described in the following subsections.
+
+For a general discussion on OSC Communication, see this guide: link::Guides/OSC_communication::.
+
+subsection:: ipAddress
+
+The code::ipAddress:: field in the OSC device info is the ipAddress of the OSC device, so an incoming message will have this sending address. If the device is a physical device connected to your computer that uses a particular protocol that is decoded by another program to OSC messages (as is the case for the Manta), then the code::ipAddress:: is the code::\localhost:: or code::"127.0.0.1"::.
+
+If the OSC device is its own device that connects to a local network (via WIFI or wired), then the device will have its own IP address, and it will be something like code::"192.168.2.42"::.
+
+code::
+idInfo: ( ipAddress: "127.0.0.1" ); // localhost example
+idInfo: ( ipAddress: "192.168.2.42" );
+::
+
+If the OSC device is only sending data, you may leave the code::ipAddress:: undefined. Defining it however provides for an additional filter on the data - only messages from the defined code::ipAddress:: will be used. If you have several of the same devices, you will need to define the code::ipAddress:: for each to distinguish between the devices.
+
+subsection:: srcPort
+
+The code::srcPort:: defines where the OSC messages come from. This is different from the port that the device sends the OSC messages to (see link::#recvPort::).
+
+Some programs use a fixed port for this, others use a random port each time the OSC device is started (e.g. Max/MSP does not allow you to set the port that is sent from and uses a different one each time).
+
+In case the OSC device uses a fixed port, you can use this to filter the data that comes in:
+
+code::
+// the Manta lib sends from 31417
+idInfo: ( srcPort: 31417 )
+::
+
+subsection:: recvPort
+
+SuperCollider is usually listening on port 57120, but takes another port if that one happens to be not available. You can check the current port by asking:
+
+code::
+NetAddr.langPort;
+::
+
+If an OSC device wants to send OSC data to SuperCollider it needs to know the port to send to. As some OSC devices do not allow you to change the port to which they send, you can define a new port that SuperCollider opens to receive the data from this source:
+
+code::
+// example of the port to which MantaOSC sends its data
+idInfo: ( recvPort: 31416 );
+::
+
+If you leave the code::recvPort:: undefined then SuperCollider's default port (code::NetAddr.langPort::) is used, and you need to configure your OSC device to send to that port.
+
+subsection:: destPort
+
+If the OSC device can also receive messages, you need to know on which port it listens. You can find this in the documentation of the device. For sending a message to an OSC device you need to know both the code::ipAddress:: and the code::destPort::. If the code::destPort:: is left undefined, then the OSCMKtlDevice will use the same port as the code::srcPort::. If the code::ipAddress:: is left undefined then the code::"127.0.0.1":: is used.
+
+code::
+( idInfo: ( srcPort: 31417, ipAddress: "127.0.0.1" ) );
+m.mktlDevice.source;
+// will be NetAddr( "127.0.0.1", 31417 );
+m.mktlDevice.destination;
+// will be NetAddr( "127.0.0.1", 31417 );
+
+( idInfo: ( srcPort: 31417, ipAddress: "127.0.0.1", destPort: 31419 ) );
+m.mktlDevice.source;
+// will be NetAddr( "127.0.0.1", 31417 );
+m.mktlDevice.destination;
+// will be NetAddr( "127.0.0.1", 31419 );
+
+( idInfo: ( destPort: 31419 ) );
+m.mktlDevice.source;
+// will be nil;
+m.mktlDevice.destination;
+// will be NetAddr( "127.0.0.1", 31419 );
+::
+
+
+section:: OSC special messages
+
+Some devices respond to special messages; e.g. one can send a message to the Manta to tell it to enable outside control of its LEDs. You can define these messages in the code::specialMessages:: field of the device description.
+For OSC these have to be an Array of messages that need to be sent, each element of the Array contains the OSC path and the parameters that need to be sent.
+
+For example for the Manta we need:
+
+code::
+(
+// ... other desc data
+// ...
+specialMessages: (
+	enableLEDControl: [
+		[ "/manta/ledcontrol", "padandbutton", 1 ],
+		[ "/manta/ledcontrol", "slider", 1 ],
+		[ "/manta/ledcontrol", "button", 1 ]
+])
+)
+::
+
+
+section:: argTemplate matching
+
+This section gives some examples of how the code::argTemplate:: matching works in link::Classes/OSCdef:: works. In MKtl the code::argTemplate:: follows the same principles.
+
+code::
+
+n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
+
+OSCdef( \test, { |msg| msg.postln; }, "/test", argTemplate: [ 0 ] );
+
+n.sendMsg( "/test", 0, 2 ); // match
+n.sendMsg( "/test", 1, 1 ); // no match
+
+OSCdef( \test, { |msg| msg.postln; }, "/test", argTemplate: [ "hello" ] );
+
+n.sendMsg( "/test", "hello", 2 ); // match
+n.sendMsg( "/test", 1, 1 );       // no match
+
+OSCdef( \test, { |msg| msg.postln; }, "/minibee/data", argTemplate: [ 7 ] );
+
+n.sendMsg( "/minibee/data", 7, 0, 0, 0 ); // match
+n.sendMsg( "/minibee/data", 6, 0, 0, 0 ); // no match
+
+
+OSCdef( \test, { |msg| msg.postln; }, "/grid", argTemplate: [ 2, 3 ] );
+
+n.sendMsg( "/grid", 2, 3, 0.4 ); // match
+n.sendMsg( "/grid", 1, 2, 0.2 ); // no match
+
+// multiple items to match at second item in template:
+OSCdef( \test, { |msg| msg.postln; }, "/second", argTemplate: [ nil, [3,2] ] );
+
+n.sendMsg( "/second", 2, 3, 0.4 ); // match
+n.sendMsg( "/second", 2, 2, 0.4 ); // match
+n.sendMsg( "/second", 1, 4, 0.2 ); // no match
+
+::
