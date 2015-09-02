@@ -206,21 +206,21 @@ OSCMKtlDevice : MKtlDevice {
 
 
 	closeDevice{
-		this.cleanupElements;
+		this.cleanupElementsAndCollectives;
 		srcDevice = nil;
 		destDevice = nil;
 		recvPort = nil;
 	}
 
 	initElements{
-		oscFuncDictionary = IdentityDictionary.new;
-		// oscOutPathDictionary = IdentityDictionary.new;
+		if ( oscFuncDictionary.notNil ){
+			oscFuncDictionary = IdentityDictionary.new;
+		};
 		mktl.elementsDict.do{ |el|
 			var oscPath = el.elementDescription[ \oscPath ];
 			var ioType = el.elementDescription[ \ioType ];
 			var argTemplate = el.elementDescription[ \argTemplate ];
 			var valueIndex = el.elementDescription[ \valueAt ];
-			var filtering;
 			if ( [\in,\inout].includes( ioType ) or: ioType.isNil ){
 				oscFuncDictionary.put( el.key,
 					OSCFunc.new( { |msg|
@@ -229,18 +229,39 @@ OSCMKtlDevice : MKtlDevice {
 							"% - % > % | type: %, src:%"
 							.format(this.name, el.name, el.value.asStringPrec(3), el.type, el.source).postln;
 						}
-					}, oscPath, srcDevice, recvPort, argTemplate: argTemplate ); // optional add host/port
+					}, oscPath, srcDevice, recvPort, argTemplate: argTemplate );
 				);
 			};
-			/*
-			if ( [\in,\inout].includes( ioType ) and: ( el.elementDescription[ \type ] == \oscMessage) ){
-				// create special MKtlElementGroup from the elements referred to
-			}
-			*/
 		};
 	}
 
-	cleanupElements{
+	initCollectives{
+		if ( oscFuncDictionary.notNil ){
+			oscFuncDictionary = IdentityDictionary.new;
+		};
+		mktl.collectivesDict.do{ |el|
+			var oscPath = el.elementDescription[ \oscPath ];
+			var ioType = el.elementDescription[ \ioType ];
+			var argTemplate = el.elementDescription[ \argTemplate ];
+			var msgIndices, templEnd;
+			if ( [\in,\inout].includes( ioType ) and: ( el.elementDescription[ \type ] == \oscMessage) ){
+				templEnd = argTemplate.size + 1; // + 1 because argTemplate does not contain the oscpath as the first msg element
+				msgIndices = argTemplate.indicesOfEqual( nil ) + 1; // + 1 because argTemplate does not contain the oscpath as the first msg element
+				oscFuncDictionary.put( el.key,
+					OSCFunc.new( { |msg|
+						// clever msg index parsing
+						el.rawValueAction_( msg.at( msgIndices) ++ msg.copyToEnd( templEnd ) );
+						if(traceRunning) {
+							"% - % > % | type: %, src:%"
+							.format(this.name, el.name, el.value.asStringPrec(3), el.type, el.source).postln; // fix tracing
+						}
+					}, oscPath, srcDevice, recvPort, argTemplate: argTemplate ); // optional add host/port
+				);
+			};
+		};
+	}
+
+	cleanupElementsAndCollectives{
 		oscFuncDictionary.do{ |it| it.free };
 		oscFuncDictionary = nil;
 	}

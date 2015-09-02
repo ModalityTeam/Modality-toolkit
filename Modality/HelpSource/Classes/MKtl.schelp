@@ -4,11 +4,6 @@ categories:: Libraries>Modality, External Control
 related:: Overviews/Modality, Classes/MKtlDevice, Classes/MKtlElement
 
 DESCRIPTION::
-
-NOTE::
-For a guided tour, start reading at link::Overviews/Modality::.
-::
-
 MKtl provides an easy to use interface for devices you can connect to your computer through MIDI, HID, OSC, Serial and eventually other protocols. Beyond that, you will be able to use it for GUI based controllers (yet to be implemented).
 
 MKtl searches for controllers connected to your machine, and gives you a list of available devices. Or, if you already know which controller you want to use, it will look through this list and returns you the controller with that name. If it cannot find it, it will replace it with a graphical representation of the controller to simulate it.

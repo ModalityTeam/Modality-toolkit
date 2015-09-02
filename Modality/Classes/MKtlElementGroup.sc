@@ -1,4 +1,4 @@
-MKtlElementGroup : MKtlElement {
+MKtlElementGroup : MAbstractElement {
 
 	var <elements;
 	var <dict;
@@ -7,13 +7,8 @@ MKtlElementGroup : MKtlElement {
 		^super.newCopyArgs( nil, name ).elements_(elements);
 	}
 
-	*newFrom {|elements|
-		^this.new( elements: elements)
-	}
-
-	init {
+	init {		
 		var array;
-		tags = Set[];
 		dict = dict ? ();
 		elements = elements ?? { Array.new };
 		case { elements.isKindOf( Dictionary ) } {
@@ -48,9 +43,9 @@ MKtlElementGroup : MKtlElement {
 			});
 		};
 	}
-
+	
 	source { ^elements.first.source }
-
+	
 	sortElementsByType {
 		var order;
 		order = [ MKtlElement, MKtlElementGroup ];
@@ -134,7 +129,7 @@ MKtlElementGroup : MKtlElement {
 		});
 		^list
 	}
-
+	
 	asArray {
 		^elements.collect({ |item|
 			if( item.isKindOf( MKtlElementGroup ) ) {
@@ -146,13 +141,11 @@ MKtlElementGroup : MKtlElement {
 	}
 
 	value { ^elements.collect(_.value) }
-
-	rawValue { ^elements.collect(_.rawValue) }
-
+	
 	keys { ^elements.collect({ |item| dict.findKeyForValue( item ) }) }
-
+	
 	shape { ^elements.shape }
-
+	
 	flop { ^elements.flopTogether } /// a bit dirty but it works
 
 	attachChildren {
@@ -250,40 +243,6 @@ MKtlElementGroup : MKtlElement {
 			^super.doesNotUnderstand( selector, *args );
 		};
 	}
-
+	
 	getElementsForGUI { ^elements.collect({ |item| [ item.key, item ] }).flatten(1); }
-}
-
-MKtlElementCollective : MKtlElementGroup {
-
-	*new { |source, name, elementDescription|
-		^super.newCopyArgs( source, name).init( elementDescription );
-	}
-
-	init { |inElementDescription|
-		tags = Set[];
-		elementDescription = inElementDescription ?? { source.collectiveDescriptionFor(name); };
-		if( elementDescription.notNil ) {
-			ioType = elementDescription[\ioType];
-			elements = elementDescription[\elements].collect({ |item|
-				source.elementAt( *item );
-			});
-			this.addCollectiveToChildren;
-		};
-	}
-
-	addCollectiveToChildren {
-		elements.do(_.prAddCollective(this));
-	}
-
-	removeCollectiveFromChildren {
-		elements.do(_.prRemoveCollective(this));
-	}
-
-	rawValueAction_{|newvals|
-		newvals.do({ |item, i|
-			elements[i] !? _.rawValueAction_( item );
-		});
-	}
-
 }

@@ -105,11 +105,8 @@ More information can be found here:
 		resps.do(_.add);
 	}
 
-	*stop { |srcID|
-		// if ( srcID.notNil ){
-		// observedSrcID = nil; // is this a good idea?
-	// };
-		resps.do(_.free);
+	*stop {
+		resps.do(_.clear);
 	}
 
 	*postSrcInfo {
@@ -146,7 +143,7 @@ More information can be found here:
 	*compile {
 		var string =
 
-		"\n(\nvar dict = (idInfo: %, \nprotocol: 'midi');\n\n"
+		"\n(\nvar dict = (device: %, \nprotocol: 'midi');\n\n"
 		"dict.put('description', %\n);";
 
 		^string.format(this.devName.asCompileString, this.compileDesc);

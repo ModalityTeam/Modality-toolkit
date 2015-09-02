@@ -62,7 +62,7 @@ MKtl { // abstract class
 	openDescriptionFile {
 		var descfilepath;
 		var mydesc = MKtl.allDevDescs.detect { |desc|
-			desc[\idInfo] == this.deviceDescriptionName
+			desc[\device] == this.deviceDescriptionName
 		};
 
 		if (mydesc.isNil or: {
@@ -101,7 +101,6 @@ MKtl { // abstract class
 		// MIDI
 		this.addSpec(\midiNote, [0, 127, \lin, 1, 0]);
 		this.addSpec(\midiCC, [0, 127, \lin, 1, 0]);
-		this.addSpec(\midiProgram, [0, 127, \lin, 1, 0]);
 		this.addSpec(\midiVel, [0, 127, \lin, 1, 0]);
 		this.addSpec(\midiBut, [0, 127, \lin, 127, 0]);
 		this.addSpec(\midiTouch, [0, 127, \lin, 1, 0]);
@@ -189,7 +188,7 @@ MKtl { // abstract class
 
 	*findDeviceDescFromDeviceName{ |deviceName|
 		^allDevDescs.select{ |desc,key|
-			desc.at( \idInfo ) == deviceName;
+			desc.at( \device ) == deviceName;
 		}.asArray.first;
 	}
 
@@ -205,7 +204,7 @@ MKtl { // abstract class
 		}{
 			if ( deviceDesc.isKindOf( Dictionary ) ){
 				devDesc = deviceDesc;
-				deviceDescName = devDesc.at( \idInfo );
+				deviceDescName = devDesc.at( \device );
 			}{
 				// look up deviceDescName in allDescriptions
 				devDesc = this.getDeviceDescription( deviceDesc );
@@ -267,7 +266,7 @@ MKtl { // abstract class
 		// --- if name is not given, create one ---
 		if ( name.isNil ){
 			if ( deviceDesc.isKindOf( Dictionary ) ){
-				deviceDescName = deviceDesc.at( \idInfo );
+				deviceDescName = deviceDesc.at( \device );
 			}{
 				deviceDescName = deviceDesc;
 			};
@@ -313,11 +312,11 @@ MKtl { // abstract class
 		if ( newMKtlDevice.isNil ){
 			// maybe I gave a funky name, and can find the device from the spec
 			if ( devDesc.notNil ){
-				devName = MKtlDevice.findDeviceShortNameFromLongName( devDesc.at( \idInfo ) );
+				devName = MKtlDevice.findDeviceShortNameFromLongName( devDesc.at( \device ) );
 				if ( devName.notNil ){
 					newMKtlDevice = MKtlDevice.tryOpenDevice( devName, this );
 				}{
-					newMKtlDevice = MKtlDevice.tryOpenDeviceFromDesc( name, devDesc.at(\protocol), devDesc.at(\idInfo), this );
+					newMKtlDevice = MKtlDevice.tryOpenDeviceFromDesc( name, devDesc.at(\protocol), devDesc.at(\device), this );
 					devName = name;
 				};
 			};
@@ -342,7 +341,7 @@ MKtl { // abstract class
 			};
 		}{
 			if ( deviceDescriptionNameOrDict.isKindOf( Dictionary ) ){
-				devDescName = deviceDescriptionNameOrDict.at( \idInfo );
+				devDescName = deviceDescriptionNameOrDict.at( \device );
 				devDesc = deviceDescriptionNameOrDict;
 			}{
 				#devDesc, devDescName = this.class.findDeviceDesc( deviceDescriptionNameOrDict );
@@ -386,7 +385,7 @@ MKtl { // abstract class
 		}{
 			devDesc = MKtl.getDeviceDescription( deviceDescriptionName );
 			if ( devDesc.notNil ){
-				deviceName = devDesc.at( \idInfo );
+				deviceName = devDesc.at( \device );
 				shortDeviceName = MKtlDevice.findDeviceShortNameFromLongName( deviceName );
 			};
 		};
@@ -429,7 +428,7 @@ MKtl { // abstract class
 		if( MKtl.allDevDescs.isNil ){ MKtl.loadAllDescs };
 		^Dictionary.with(*
 			MKtl.allDevDescs.getPairs.clump(2)
-			.collect({ |xs| (MKtl.makeShortName(xs[1][\idInfo]).asSymbol -> xs[0]) }))
+			.collect({ |xs| (MKtl.makeShortName(xs[1][\device]).asSymbol -> xs[0]) }))
 	}
 
 	/*
@@ -457,7 +456,6 @@ MKtl { // abstract class
 		if ( deviceDescriptionArray.notNil ){
 			deviceDescriptionName = devDescName;
 			this.makeElements;
-			this.makeCollectives;
 			( "Created MKtl:" + name + "using device description" + deviceDescriptionName ).postln;
 		};
 	}
@@ -521,7 +519,7 @@ MKtl { // abstract class
 			.as(Array)
 			.select{ |desc| desc[\type] != \template }
 			.collect{ |desc| this.flattenDescription( desc ) }
-			.detect{ |desc| desc[ \idInfo ] == devName }
+			.detect{ |desc| desc[ \device ] == devName }
 		}
 	}
 
@@ -558,7 +556,7 @@ MKtl { // abstract class
 			foundSpec = localSpecs[specKey]; // implicitely looks in global spec, too
 
 			if (foundSpec.isNil) {
-				warn("Mktl - in description %, el %, spec for '%' is missing! please add it to the description file. For now using [0,1].asSpec instead"
+				warn("Mktl - in description %, el %, spec for '%' is missing! please add it to the description file."
 					.format(name, key, specKey, specKey)
 				);
 			};
@@ -567,16 +565,6 @@ MKtl { // abstract class
 		};
 
 		deviceInfo[\infoMessage] !? _.postln;
-
-	}
-
-	makeCollectives {
-		if( deviceInfoDict[ \collectives ].notNil ) {
-			collectivesDict = ();
-			deviceInfoDict[ \collectives ].keysValuesDo({ |key, value|
-				collectivesDict[ key ] = MKtlElementCollective( this, key, value );
-			})
-		};
 	}
 
 	//traversal function for combinations of dictionaries and arrays
@@ -728,10 +716,6 @@ MKtl { // abstract class
 
 	elementDescriptionFor { |elname|
 		^deviceDescriptionArray[deviceDescriptionArray.indexOf(elname) + 1]
-	}
-
-	collectiveDescriptionFor { |elname|
-		^deviceInfoDict[ \collectives ] !? { |x| deviceInfoDict[ \collectives ][ elname ]; };
 	}
 
 	postDeviceDescription {
@@ -923,9 +907,5 @@ MKtl { // abstract class
 		}
 	}
 
-	initialisationMessages{
-		if ( deviceInfoDict.isNil ){ ^nil };
-		^deviceInfoDict[\initialisationMessages];
-	}
 
 }

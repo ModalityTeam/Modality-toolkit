@@ -1,13 +1,13 @@
 title:: Modality
-summary:: Toolkit to simplify the creation of personal electronic instruments utilising hardware and software controllers of any kind.
+summary:: Toolkit to simplify the creation of personal (electronic) instruments utilising hardware and software controllers of any kind.
 categories:: Libraries>Modality, External Control
 related:: Overviews/Modality, Classes/MKtl, Tutorials/ModalityTutorial
 
 Section:: Introduction
 
-Modality is a toolkit created by a team of developers and users of SuperCollider.
+Modality is a toolkit created by a team of developers and (advanced) users of SuperCollider.
 
-One of its basic ideas is to simplify the creation of your very personal instruments with SuperCollider, using controllers of many different kinds. To this end, a common code interface, MKtl, is used for connecting  controllers from different sources (and protocols) like HID and MIDI and OSC.
+One of its basic ideas is to simplify the creation of your very personal instruments with SuperCollider, using controllers of many different kinds. To this end, a common code interface, MKtl, is used for connecting  controllers from different sources (and protocols) like HID and MIDI, Serial, OSC, GUI, etc.
 
 A second starting point is that the same physical interfaces (sets of sliders, buttons, motion sensors etc etc) can be used for many different purposes, and a highly modal approach to mapping and on-the-fly remapping can help to make a setup much more flexible, powerful, and interesting to play. For example, when improvising with acoustic musicians, highly modal interfaces allow much faster changes of overall (performing) direction.
 
@@ -35,84 +35,22 @@ code::
 MKtl.find;
 ::
 
-NOTE:: You may have to install drivers before code::MKtl.find:: is able to find your device. Some devices may show up as multiple protocols. Example: the code::ICON IControls:: show up as both code::MIDI:: and code::HID::.::
+NOTE:: You may have to install drivers before code::MKtl.find:: is able to find your device.::
 
 Each code::MKtl:: has elements such as sliders or knobs. It is possible to assign an action to such an element that is evaluated every time the value of that element gets updated.
 
 Below two examples of what you can do with this toolkit. For further explanation, refer to link::Tutorials/ModalityTutorial::.
 
-subsection:: Example Run'n'Drive Gamepad
-
-code::
-// plug in your Run'n'Drive gamepad and evaluate this line:
-k = MKtl('rnnd0');
-
-// If there is no such controller connected, you can open a fake gui-based controller by executing k.gui;
-
-// make sure there are no current assigned actions
-k.reset;
-
-// open a gui representation of the device
-k.gui;
-
-// boot the server
-s.boot;
-
-(
-// play a sound
-x = {
-	SinOsc.ar( \freq.kr(700, lag: 0.3) * SinOsc.ar( \fmfreq.kr( 100, lag: 0.3 ), 0, \fmmul.kr(0.2), 1 ), mul: 0.1 );
-}.play;
-
-// add specs for the controls
-Spec.add(\freq, [100, 3000, \exp]);
-Spec.add(\fmfreq, [10, 200, \exp]);
-Spec.add(\fmmul, [0, 0.5]);
-);
-
-k.elementAt( \joy, \l );
-k.elementAt( \throt, \l );
-
-// set actions to the left joystick, and left throttle control
-k.elementAt(\joy, \l, \y).action = {arg el;
-	x.set(\freq, \freq.asSpec.map(el.value))
-};
-k.elementAt(\joy, \l, \x).action = {arg el;
-	x.set(\fmfreq, \fmfreq.asSpec.map(el.value))
-};
-k.elementAt(\throt, \l).action = {arg el;
-	x.set(\fmmul, \fmmul.asSpec.map(el.value))
-};
-
-// after testing, free sound
-x.free;
-
-// remove all assigned actions
-k.reset;
-
-// set output element
-k.elementAt( \rumble, \l ).value_( 0.5 );
-k.elementAt( \rumble, \l ).value_( 0 );
-
-k.reset;
-::
-
 subsection:: Example NanoKontrol2
 
 code::
 // plug in your NanoKontrol2 and evaluate this line.
+// If there is no such controller connected, it opens a fake gui-based controller for you.
 k = MKtl('nnkn20');
 
-// If there is no such controller connected, you can open a fake gui-based controller by executing k.gui;
+k.gui; // opens a gui representation of the device
 
-// make sure there are no current assigned actions
-k.reset;
-
-// open a gui representation of the device
-k.gui;
-
-// boot the server
-s.boot;
+s.boot; // boot the server
 
 (
 // play a sound
@@ -145,33 +83,24 @@ k.elementAt(\sl, 2).action = {arg el;
 
 // after testing, free sound
 x.free;
-
-// remove all assigned actions
-k.reset;
 ::
 
 subsection:: Example BCR2000
 
 code::
 // plug in your BCR2000 and evaluate this line.
+// If there is no such controller connected, it opens a fake gui-based controller for you.
 k = MKtl('bcr20000');
 
-// If there is no such controller connected, you can open a fake gui-based controller by executing k.gui;
+k.gui;      // open a gui representation of the device
 
-// make sure there are no current assigned actions
-k.reset;
-
-// open a gui representation of the device
-k.gui;
-
-// dictionary of controls keys to MKtlElements
-k.elements;
+k.elements; // dictionary of controls keys to MKtlElements
 
 // elements can be accessed through their hierarchy:
 k.elementAt(\kn, 0, 0);
 
 // all knobs of the first row
-k.elementAt(\kn, 0); // -> MKtlElementGroup
+k.elementAt(\kn, 0); // -> MktElementArray
 
 // elements have a type:
 k.elementAt(\kn, 0, 0).type;
@@ -182,13 +111,9 @@ k.allElements.select{ |x| x.type == \encoder };
 // perform an action on turning knob [0,0] (upper left)
 k.elementAt(\kn, 0, 0).action = { |el| el.value.postln };
 
-// boot the server
-s.boot;
-
 // simple sound example
-x = { Splay.ar(RLPF.ar(Saw.ar(\freq.kr(440, 0.1), mul: 0.1), 1000))}.play;
+x = { RLPF.ar(Saw.ar(\freq.kr(440, 0.1), mul: 0.1), 1000)}.play;
 
-// .action overrides previously set actions
 (
 k.elementAt(\kn, 0, 0).action_({ |el|
 	x.set(\freq, el.value.linlin(0.0, 1, 300.0, 600));
@@ -200,13 +125,10 @@ x.free;
 
 // send data back to the device
 k.elementAt(\kn,0,0).value_(0.5);
-
-// remove all assigned actions
-k.reset;
 ::
 
 
-subsection::Bonus: Knob rotation demo with the BCR2000
+subsection::Bonus: Knob rotation demo
 code::
 (
 d = 0;
@@ -231,4 +153,4 @@ To do so, look at link::Tutorials/How_to_create_a_description_file::.
 
 section:: Acknowledgements
 Modality and its research meetings have kindly been supported by BEK in Bergen, Norway, and STEIM, Amsterdam.
-The ModalityTeam is, in no obvious order: Jeff Carey, Bjørnar Habbestad, Marije Baalman, Alberto de Campo, Tijs Ham, Wouter Snoei, Till Bovermann, Miguel Negrao, Robert van Heumen, Hannes Hoelzl, Tim Blechmann, Amelie Hinrichsen, and Dominik Hildebrand Marques Lopes.
+The ModalityTeam is, in no obvious order: Jeff Carey, Bjoernar Habbestad, Marije Baalman, Alberto de Campo, Tijs Ham, Wouter Snoei, Till Bovermann, Miguel Negrao, Robert van Heumen, Hannes Hoelzl, Tim Blechmann, Amelie Hinrichsen, and Dominik Hildebrand Marques Lopes.
