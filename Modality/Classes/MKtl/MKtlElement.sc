@@ -54,13 +54,13 @@ MAbstractElement {
 
 	updateTime { lastUpdateTime = Process.elapsedTime }
 
-	hasOut { ^elemDesc.notNil and: { [\out, \inout].includes( elemDesc[\ioType] ) } }
+	hasOut { ^elemDesc.notNil and: { [\out, \inout, \collectiveOut].includes( elemDesc[\ioType] ) } }
 
 	trySend {
 		if (this.hasOut
 			and: { source.notNil
 				and: { source.hasDevice }}) {
-			source.send(name, deviceValue);
+			source.send(name, this.deviceValue);
 			^true
 		};
 		^false

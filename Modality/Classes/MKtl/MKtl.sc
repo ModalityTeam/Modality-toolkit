@@ -606,7 +606,7 @@ MKtl { // abstract class
 		^mktlDevice.sendSpecialMessage(name);
 	}
 
-	send { |key ... val|
+	send { |key, val|
 		if ( mktlDevice.isNil ){ ^this };
 		mktlDevice.send( key, *val );
 	}

@@ -673,20 +673,24 @@ MKtl.addSpec(\pwm8bit, [0, 255, \linear, 1]);
 
 m = MKtl( \exampleCollectiveOut, ~descCollectiveOut );
 
+m.elementAt(\led).value_([1, 2, 3] / 3);
+m.elementAt(\led).value;
+m.collectivesDict[\leds].value_([0, 1, 2] / 2);
+m.elementAt(\led).value;
+
 // test to see what OSC messages are coming in:
 OSCFunc.trace( true );
 
 // do the collective send from the group:
-m.send(\leds, 1,2,3,4,5); // sending works
-
-m.collectivesDict[\leds].value_([0, 0.5, 1]); // setting the coll value broken
+m.send(\leds, 1,2,3,4,5); // direct sending works
 
 // trigger coll. send by setting value of single element
 m.elementAt( \led, 1 ).value_( 0.5 );   // does not trigger sending.
 m.elementAt( \led, 2 ).value_( 0.8 );
 m.elementAt( \led, 0 ).value_( 0.1 );
 
-m.elementAt( \led, 1 ).collectives[0].dump
+m.elementAt( \led, 1 )
+m.elementAt( \led, 1 ).collectives[0];
 
 (
 Tdef( \autoaction, {
