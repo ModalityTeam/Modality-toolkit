@@ -324,42 +324,18 @@ MKtl { // abstract class
 		lookupName = lookupInfo.lookupName;
 	}
 
-	initialisationMessages {
+	specialMessages {
 		if ( desc.isNil or: { desc.fullDesc.isNil }) { ^nil };
-		^desc.fullDesc[\initialisationMessages];
+		^desc.fullDesc[\specialMessages];
 	}
 
-
-	/*
-	init procedure:
-
-	- make both elements and elementsDict from MKtlDesc.elementsDesc
-
-	- flattenDescription on each element
-	- substitute each spec in the element for the real ControlSpec corresponding to it
-	- elements
-	*/
-
 	makeElements {
-
-		// if groupsByPort exist, only build the elemsToBuild:
-		var elemsToBuild;
-		if (desc.fullDesc[\groupsByPort].notNil) {
-			elemsToBuild = ();
-			desc.fullDesc[\groupsByPort][midiPortNameIndex].do { |elemGroupName|
-				elemsToBuild.put(elemGroupName,
-					desc.elementsDesc[elemGroupName]
-				);
-			}
-		} {
-			// if not, take all elements:
-			elemsToBuild = desc.elementsDesc;
-		};
+		var elementsToBuild = desc.elementsDesc;
 
 		elementsDict = ();
 
 		// array of dicts of arrays
-		elements = elemsToBuild.traverseCollect(
+		elements = elementsToBuild.traverseCollect(
 			doAtLeaf: { |desc, deepKeys|
 				var deepName = deepKeys.join($_).asSymbol;
 				var element = MKtlElement(deepName, desc, this);
@@ -380,8 +356,6 @@ MKtl { // abstract class
 	}
 
 	wrapCollElemsInGroups { |elemOrColl|
-		// "\n *** wrapCollElemsInGroups: ***".postln;
-		// "elemOrColl is: %\n".postf(elemOrColl);
 
 		if (elemOrColl.isNil) { ^elemOrColl };
 
@@ -401,7 +375,6 @@ MKtl { // abstract class
 				};
 			};
 		};
-	//	"*** wrapCollElemsInGroups: ***\n".postln;
 	}
 
 	makeCollectives {
@@ -619,7 +592,6 @@ MKtl { // abstract class
 	}
 
 	trace { |value=true|
-		this.hasDevice;
 		if ( this.hasDevice ){ mktlDevice.trace( value ) };
 		traceRunning = value;
 	}

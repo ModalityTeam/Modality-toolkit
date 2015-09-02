@@ -191,6 +191,10 @@ HIDMKtlDevice : MKtlDevice {
 	}
 
 	initElements {
+			var traceFunc = { |el|
+				"%: hid, % > % type: %".format(
+					mktl, el.name.cs, el.value.asStringPrec(3), el.type).postln
+			};
 
 		mktl.elementsDict.do { |el|
             var theseElements;
@@ -198,6 +202,7 @@ HIDMKtlDevice : MKtlDevice {
             var elid = el.elemDesc[\hidElementID];
             var page = el.elemDesc[\hidUsagePage];
             var usage = el.elemDesc[\hidUsage];
+
 
             // device specs should primarily use usage and usagePage,
             // only in specific instances - where the device has bad firmware
@@ -208,23 +213,17 @@ HIDMKtlDevice : MKtlDevice {
 				// could get raw value hidele.deviceValue
                 source.elements.at( elid ).action = { |v, hidele|
 					el.deviceValueAction_( v );
-					if(traceRunning) {
-						"% - % > % | type: %, src:%"
-						.format(this.name, el.name, el.value.asStringPrec(3),
-							el.type, el.source).postln
-					}
+					if(traceRunning) { traceFunc.value(el) }
 				};
             }{  // filter by usage and usagePage
                 // HIDFunc.usage( { |v| el.deviceValueAction_( v ) },
 				// usage, page, \devid, devid );
                 theseElements = source.findElementWithUsage( usage, page );
+					// could get raw value hidele.deviceValue
                 theseElements.do { |it|
-                    it.action = { |v, hidele| // could get raw value hidele.deviceValue
+                    it.action = { |v, hidele|
 						el.deviceValueAction_( v );
-						if(traceRunning) {
-							"% - % > % | type: %, src:%"
-							.format(this.name, el.name, el.value.asStringPrec(3), el.type, el.source).postln
-						}
+						if(traceRunning) { traceFunc.value(el) }
 					};
                 };
             };

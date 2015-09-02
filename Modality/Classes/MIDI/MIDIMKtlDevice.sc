@@ -349,7 +349,7 @@ MIDIMKtlDevice : MKtlDevice {
 				if (el.notNil) {
 					el.deviceValueAction_(value);
 					if(traceRunning) {
-						MIDIMKtlDevice.postMsgTrace(mktl, el, el.value,
+						MIDIMKtlDevice.postMsgTrace(mktl, el,
 						typeKey, value, nil, chan, src);
 					};
 				} {
@@ -382,7 +382,7 @@ MIDIMKtlDevice : MKtlDevice {
 				if (el.notNil) {
 					el.deviceValueAction_(value);
 					if(traceRunning) {
-						MIDIMKtlDevice.postMsgTrace(mktl, el, el.value,
+						MIDIMKtlDevice.postMsgTrace(mktl, el,
 						typeKey, value, num, chan, src);
 					};
 				} { // element is nil
@@ -406,7 +406,7 @@ MIDIMKtlDevice : MKtlDevice {
 		.format(mktl, msgType.cs, numStr, chan, msgType.cs, chan, numStr).inform;
 	}
 
-	*postMsgTrace { |mktl, elemName, elemVal, msgType, value, num, chan, src|
+	*postMsgTrace { |mktl, elem, msgType, value, num, chan|
 		var numStr = "";
 		if (num.notNil) {
 			numStr = msgType.switch(
@@ -414,16 +414,16 @@ MIDIMKtlDevice : MKtlDevice {
 				\control, "ccNum: %, ",
 				\noteOn, "vel: %, ",
 				\noteOff, "vel: %, ",
-				\polyTouch, "touchVal: %, ",
-				\polytouch, "touchVal: %, "
+				\polyTouch, "touch: %, ",
+				\polytouch, "touch: %, "
 			)
 			.format(num)
 		} { "" };
 
-		"%: %: %\n"
-		"  type: %, %midiChan: %, src: %, val: %"
-		.format(mktl, elemName.cs, elemVal.asStringPrec(3),
-			msgType.cs, numStr, chan, src, value).postln;
+		"% midi, % > %, raw: %, \n"
+		"   msg: %, %chan: %, type: %"
+		.format(mktl, elem.name.cs, elem.value.asStringPrec(3), value,
+			msgType.cs, numStr, chan, elem.type).postln;
 	}
 
 	// for the simpler chan based messages, collect chans,

@@ -190,6 +190,11 @@ OSCMKtlDevice : MKtlDevice {
 	//	MKtlLookup.allFor(\osc).remove(this);
 	}
 
+	postTrace { |el|
+		"% osc % > % | type: %".format(mktl, el.name,
+			el.value.round(0.001), el.type).postln;
+	}
+
 	initElements {
 
 		if ( oscFuncDictionary.isNil ){
@@ -215,11 +220,7 @@ OSCMKtlDevice : MKtlDevice {
 							if ( valueIndex.notNil ){
 								el.deviceValueAction_( msg[0].asString.split($/).at( valueIndex ) );
 							};
-							if(traceRunning) {
-								"% - % > % | type: %, src:%"
-								.format(this.name, el.name, el.value.asStringPrec(3),
-									el.type, el.source).postln;
-							}
+							if(traceRunning) { this.postTrace(el) };
 						}, oscPath, source, recvPort, argTemplate, dispatcher )
 						.permanent_( true );
 					);
@@ -229,12 +230,9 @@ OSCMKtlDevice : MKtlDevice {
 						// trigger osc func
 						oscFuncDictionary.put( el.name,
 							OSCFunc.new( { |msg|
-								el.deviceValueAction_( 1 ); // send a default value of 1
-								if(traceRunning) {
-									"% - % > % | type: %, src:%"
-									.format(this.name, el.name, el.value.asStringPrec(3),
-										el.type, el.source).postln;
-								}
+								// send a default value of 1
+								el.deviceValueAction_( 1 );
+								if(traceRunning) { this.postTrace(el) };
 							}, oscPath, source, recvPort, argTemplate, dispatcher )
 							.permanent_( true );
 						);
@@ -247,11 +245,7 @@ OSCMKtlDevice : MKtlDevice {
 								}{
 									el.deviceValueAction_( msg.last );
 								};
-								if(traceRunning) {
-									"% - % > % | type: %, src:%"
-									.format(this.name, el.name, el.value.asStringPrec(3),
-										el.type, el.source).postln;
-								}
+								if(traceRunning) { this.postTrace(el) };
 							}, oscPath, source, recvPort, argTemplate, dispatcher )
 							.permanent_( true );
 						);
@@ -305,13 +299,7 @@ OSCMKtlDevice : MKtlDevice {
 						};
 						el.deviceValueAction_( valueMsg );
 
-						if(traceRunning) {
-							"% - % > % | type: %, src: %"
-							.format(this.name, el.name,
-								el.value.collect { |it|
-									it.asStringPrec(3) },
-								el.type, el.source).postln;
-						}
+						if(traceRunning) { this.postTrace(el) };
 					}, oscPath, source, recvPort, argTemplate, dispatcher )
 					.permanent_( true );
 				);
