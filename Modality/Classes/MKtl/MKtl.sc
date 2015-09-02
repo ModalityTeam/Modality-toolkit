@@ -608,7 +608,7 @@ MKtl { // abstract class
 
 	send { |key, val|
 		if ( mktlDevice.isNil ){ ^this };
-		mktlDevice.send( key, *val );
+		mktlDevice.send( key, val );
 	}
 
 		// observe mktlDevice to create a description file
