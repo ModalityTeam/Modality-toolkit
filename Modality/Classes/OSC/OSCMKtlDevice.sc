@@ -326,18 +326,23 @@ OSCMKtlDevice : MKtlDevice {
 
 	// this should work for the simple usecase (not the group yet)
 	// from the group: \output, val: [ 0, 0, 0, 0 ]
-	send { |key ... val|
+	send { |key, val|
 		var el, oscPath, outvalues,valIndex;
 
-			// cant send without a destination
+			// dont send if no destination
 		if ( destination.isNil ) {
 			^this;
 		};
 
-			// its a collective
+			// prepare outmessage value for a collective - array of values to send
 		if ( val.isKindOf( Array ) ){
 			el = mktl.collectiveDescriptionFor( key );
 			valIndex = 0;
+			if (el.isNil) {
+				"%: no collective for % found.\n".postf(key, thisMethod);
+				^this
+			};
+
 			oscPath = el[\oscPath];
 			outvalues = List.new;
 			el[\argTemplate].do { |it|
@@ -351,8 +356,7 @@ OSCMKtlDevice : MKtlDevice {
 				outvalues = outvalues ++ (val.copyToEnd( valIndex ) ) };
 			outvalues = outvalues.asArray;
 		} {
-			// FIXME!
-			// el = mktl.elemDescFor( key );
+			// prepare outmessage for value of a single element:
 			el = mktl.desc.elementsDesc.at( key );
 			oscPath = el[\oscPath];
 			outvalues = el[\argTemplate].copy; // we will modify it maybe, so make a copy
@@ -362,6 +366,7 @@ OSCMKtlDevice : MKtlDevice {
 				outvalues = outvalues ++ val;
 			};
 		};
-		destination.sendMsg( *( [ oscPath ] ++ outvalues ).postln );
+		// and send
+		destination.sendMsg(oscPath, *outvalues);
 	}
 }
