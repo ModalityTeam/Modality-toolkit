@@ -306,7 +306,7 @@ OSCMKtlDevice : MKtlDevice {
 						el.deviceValueAction_( valueMsg );
 
 						if(traceRunning) {
-							"% - % > % | type: %, src:%"
+							"% - % > % | type: %, src: %"
 							.format(this.name, el.name,
 								el.value.collect { |it|
 									it.asStringPrec(3) },

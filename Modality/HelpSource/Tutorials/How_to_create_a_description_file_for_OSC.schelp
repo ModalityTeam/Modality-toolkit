@@ -42,9 +42,12 @@ code::
 'bt': (
 	oscPath: '/button',
 	type: 'button',
-	ioType: \in
+	ioType: \in,
+	spec: \but
 )
 ::
+
+An entry for code::\spec:: in the description is required to recognize this dict as an element description!
 
 Here is a complete working example:
 
@@ -57,12 +60,12 @@ code::
         'bt': (
             oscPath: '/bt',
             type: 'button',
-            spec: \unipolar,
+            spec: \but,
             ioType: \in
         )
     )
-)
 );
+)
 
 m = MKtl( \example1in, ~desc1In );
 // give the single button an action
@@ -73,11 +76,17 @@ m.elementAt(\bt).doAction;
 m.elementAt(\bt).valueAction_(1);
 m.elementAt(\bt).valueAction_(0);
 
-// and now simulate sending this value from an OSC device on the local network:
-n = NetAddr("127.0.0.1", NetAddr.langPort);
+// create a gui for the osc device:
+MKtlGUI(mktl: m);
+// post incoming data
+m.trace;
+
+// and now simulate sending values from an OSC device by network:
+n = NetAddr("127.0.0.1", NetAddr.langPort); // fake device address
 n.sendMsg("/bt", 0);
 n.sendMsg("/bt", 1);
 ::
+
 
 
 For a row of buttons, such devices often send an index of the button, e.g. for two buttons:
@@ -89,7 +98,7 @@ code::
 /button 1 0
 ::
 
-The description of the elements then is:
+The description of the elements then contains an argTemplate :
 
 code::
 (
@@ -110,7 +119,18 @@ code::
 )
 ::
 
-For a grid layout of elements, they usually send row and column indices of the element along, so a grid of buttons would be:
+Here is how the argTemplate works:
+The incoming message is [\bt, 0, 1];
+the name of the message is dropped, so the message content is [0, 1];
+this message body is compared with the argTemplate [0] :
+code::
+[0]
+[0, 1]
+::
+-> all elements contained in the argTemplate are the same as in the message body, so the message matches, and the element knows it should do its action.
+
+
+For a grid layout of e.g. button elements, devices usually send row and column indices of the element along, so a grid of buttons would be:
 
 code::
 // osc message path = /button, rowindex = 0, columnindex=1, value = 1, means the button is on
@@ -118,6 +138,8 @@ code::
 // osc message path = /button, rowindex = 1, columnindex=2, value = 0, means the button is off
 /button 1 2 0
 ::
+
+Here the incoming message has 4 items: the name (which is dropped), the next two indices which are matched with the argTemplate, and the last element is the new value.
 
 The description of the elements then is:
 
@@ -155,7 +177,7 @@ code::
 		]
 	);
 
-// or more concise with .collect:
+// or write more concise code with .collect:
 (
 'bt': 2.collect { |row|
 	2.collect { |column|
@@ -171,7 +193,7 @@ code::
 
 ::
 
-The code::argTemplate:: can also contain code::nil:: if there is an element in the osc message that needs to be ignored while filtering, see: link::#argTemplate matching:: for examples how argTemplates can be matched.
+The code::argTemplate:: can also contain code::nil:: if there is an element in the osc message that needs to be ignored while filtering, see: link::#argTemplate matching:: for more examples how argTemplates can be matched.
 
 If the osc message sends some other info that we are not interested in inside the message, we can specify at which index we want to read the data (by default we take the last value in the osc message):
 
@@ -194,7 +216,7 @@ code::
 ::
 
 
-After all this explanation, here is a full example of an OSC device description with one element using argTemplate, and valueAt specification. (Usually, there would be other knobs at at other row/column indices, left out here for shortness.)
+After all this explanation, here is a full example of an OSC device description with one element using argTemplate, and valueAt specification. (Usually, there would be other knobs at at other row/column indices, they are left out here for shortness.)
 
 code::
 (
@@ -204,8 +226,8 @@ code::
 	description: (
 		'kn': (
 			oscPath: '/knob',
-			// argTemplate: [ 1,2 ], // at row 1 and column 2
-			// valueAt: 3, // valueindex of osc message
+			argTemplate: [ 1,2 ], // the knob at row 1 and column 2
+			valueAt: 3, // the index in the osc message where the value is
 			type: 'knob',
 			spec: \midiCC,
 			ioType: \in
@@ -218,8 +240,7 @@ m = MKtl( \exampleOSCInput, ~descInput );
 MKtlLookup.postInfo // now also shows the opened 'osc device'
 
 // create a gui for the osc device:
-m.gui;
-
+MKtlGUI(mktl: m);
 // post incoming data
 m.trace;
 
@@ -227,12 +248,10 @@ n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
 
 // send messages:
 n.sendMsg( '/knob', 1, 2, 63, "extra", "data" );
+n.sendMsg( '/knob', 1, 2, 35, "are" );
+n.sendMsg( '/knob', 1, 2, 34, "ignored" );
 
-n.sendMsg( '/knob', 1, 2, 35 );
-
-n.sendMsg( '/knob', 1, 2, 34 );
-
-// close the device again
+// free the device again
 m.free;
 ::
 
@@ -264,8 +283,7 @@ m = MKtl( \exampleOSCInput, ~descInput );
 MKtlLookup.postInfo // now also shows the opened 'osc device'
 
 // create a gui for the osc device:
-m.gui;
-
+MKtlGUI(mktl: m);
 // post incoming data
 m.trace;
 
@@ -276,7 +294,7 @@ n.sendMsg( "/button/off" );
 n.sendMsg( "/button/on" );
 
 
-// close the device again
+// free the device again
 m.free;
 ::
 
@@ -305,12 +323,12 @@ m = MKtl( \exampleOSCInput, ~descInput );
 MKtlLookup.postInfo  // now also shows the opened 'osc device'
 
 // create a gui for the osc device:
-m.gui;
-m.elementAt(\tr).action = { "TRIG!".postln };
-m.elementAt(\tr).doAction;
-
+MKtlGUI(mktl: m);
 // post incoming data
 m.trace;
+
+m.elementAt(\tr).action = { "TRIG!".postln };
+m.elementAt(\tr).doAction;
 
 n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
 
@@ -318,7 +336,7 @@ n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
 n.sendMsg( "/trigger" );
 n.sendMsg( "/trigger" );
 
-// close the device again
+// free the device again
 m.free;
 ::
 
@@ -422,7 +440,7 @@ OSCFunc.trace( true );
 // set a value:
 m.elementAt( \led ).value_( 0.6 );
 m.elementAt( \led ).value_( 1.0.rand );
-// send in orig value range:
+// set and send in original value range of the device:
 m.elementAt( \led ).deviceValue_( 256.rand.postln );
 
 // cleanup:
@@ -458,18 +476,17 @@ code::
 	);
 );
 )
-
 m = MKtl( \exampleCollectiveIn, ~descCollectiveInput );
 m.trace;
 MKtlGUI(mktl: m);
 m.gui;
 
 // test setting it directly
-m.collectivesDict.buttons.deviceValueAction_([ 1, 1, 0, 1, 1 ].scramble);
+m.collectivesDict.buttons.deviceValueAction_([ 1, 1, 0, 0, 1 ].scramble);
 
 // and now from network:
 n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
-n.sendMsg( "/buttons", 1, 1, 0, 1, 1 );
+n.sendMsg( "/buttons", *[ 1, 1, 0, 0, 1 ].scramble );
 
 
 (
@@ -491,7 +508,7 @@ m.free;
 
 
 
-Similar as with the simple input example, we can use an code::argTemplate:: for the output messages. Any code::nil::s in the template will be assumed to contain relevant data. If you do not want to filter on a particular field, but it is not the required data, then you can use code::valueAt:: to specify the indices within the OSC message that you want to use for the values. See the following examples for clarification:
+As in the simple input examples, we can use an code::argTemplate:: for  output messages. Any code::nil::s in the template will be assumed to contain relevant data. If you do not want to filter on a particular field, but it is not the required data, then you can use code::valueAt:: to specify the indices within the OSC message that you want to use for the values. See the following examples for clarification:
 
 
 Matching a simple argument template:
@@ -511,19 +528,18 @@ code::
 		)
 	),
 	description: (
-		'bt': [
-			( type: 'button', ioType: \collectiveIn ),
-			( type: 'button', ioType: \collectiveIn ),
-			( type: 'button', ioType: \collectiveIn ),
-			( type: 'button', ioType: \collectiveIn ),
-			( type: 'button', ioType: \collectiveIn )
-		]
+		'bt': 5.collect {
+			( type: 'button', ioType: \collectiveIn, \spec: \but )
+		}
 	);
 );
 );
+m.free;
+m = MKtl( \exampleCollectiveIn, ~descCollectiveInput );
+MKtlGUI(mktl: m);
 
-m.rebuild( ~descCollectiveInput );
 
+n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
 // means messages like this are received:
 n.sendMsg( "/buttons", 7, 0, 1, 1, 0, 1 );
 // and this is not (4 != 7)
@@ -549,18 +565,15 @@ code::
 		)
 	),
 	description: (
-		'bt': [
-			( type: 'button', ioType: \collectiveIn ),
-			( type: 'button', ioType: \collectiveIn ),
-			( type: 'button', ioType: \collectiveIn ),
-			( type: 'button', ioType: \collectiveIn ),
-			( type: 'button', ioType: \collectiveIn )
-		]
-	);
+		'bt': 5.collect {
+			( type: 'button', ioType: \collectiveIn, \spec: \but )
+		}
+	)
 );
-);
+)
 
 m.rebuild( ~descCollectiveInput );
+m.trace;
 
 // means messages like this are received:
 n.sendMsg( "/buttons", 0, 1, 1, 0, 1, 7 );

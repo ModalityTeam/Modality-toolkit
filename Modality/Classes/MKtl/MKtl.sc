@@ -79,7 +79,8 @@ MKtl { // abstract class
 		this.addSpec(\lin255,  [0, 255, \lin, 1, 0]);
 		this.addSpec(\cent1,  [0, 1, \lin, 0, 0.5]);
 		this.addSpec(\lin1inv,  [1, 0, \lin, 0, 1]);
-		this.addSpec(\but,  [1, 0, \lin, 0, 1]);
+		this.addSpec(\but,  [0, 1, \lin, 1, 0]);
+		this.addSpec(\trigger,  [0, 1, \lin, 1, 1]);
 
 		// MIDI
 		this.addSpec(\midiNote, [0, 127, \lin, 1, 0]);
