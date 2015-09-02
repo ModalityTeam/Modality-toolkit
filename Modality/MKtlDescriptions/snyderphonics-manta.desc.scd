@@ -56,11 +56,13 @@ s.quit;
 idInfo: ( srcPort: 31417, ipAddress: "127.0.0.1", recvPort: 57120 ),
 protocol: \osc,
 
-initialisationMessages: [
-	[ "/manta/ledcontrol", "padandbutton", 1 ],
-	[ "/manta/ledcontrol", "slider", 1 ],
-	[ "/manta/ledcontrol", "button", 1 ]
-],
+specialMessages: (
+	enableLEDControl: [
+		[ "/manta/ledcontrol", "padandbutton", 1 ],
+		[ "/manta/ledcontrol", "slider", 1 ],
+		[ "/manta/ledcontrol", "button", 1 ]
+]),
+
 specs: (
 	mantaTouch: [ 0, 227 ].asSpec, // this seems to be the spec, looking at the github source code
 	mantaSlider: [ 0, 4095 ].asSpec, // slider sends values between 0 and 4095, releasing the slider sends 65536

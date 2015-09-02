@@ -757,11 +757,6 @@ m.free;
 ::
 
 
-/////////// TESTED - collective outs not working yet.
--------------------
-/////////// UNTESTED
-
-
 section:: Explore an OSC device
 
 To find out what an OSC device can do, the first thing you can do is read the documentation for the device and see what it tells about the OSC interface. Usually the documentation lists a number of messages that the device sends out, and a number of messages that it reacts upon. For OSC output to the device you have to rely on the documentation about the device to find out what you need to send to it. For the OSC input from the device, there is a tool (link::Classes/OSCMonitor::) to find out what messages it sends.
@@ -770,9 +765,10 @@ code::
 // create a fake OSC device that sends some messages:
 (
 n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
-Tdef( \fakeOSCdevice,{
-	loop{
-		n.sendMsg( "/pad", 4.rand, 4.rand, 128.rand ); // a 3 by 3 grid of pads that send out 7 bit data each
+Tdef( \fakeOSCdevice, {
+		// a 3 by 3 grid of pads that send out 7 bit data each
+	loop {
+		n.sendMsg( "/pad", 3.rand, 3.rand, 128.rand );
 		1.0.rand.wait;
 	};
 });
@@ -792,9 +788,20 @@ o.addresses;
 
 // messages names that were sent:
 o.msgNames;
+o.verbose = false;
+
+// In OSCMonitor, tracked sources can have nicknames
+// - some are already here by default:
+o.anaDict.nicknames;
+// you can ask which message names come from which addresses:
+o.anaDict.msgNamesByAddr;
+// and you can ask for sample messages from each address
+o.anaDict.messagesByAddr;
+o.anaDict.messagesByAddr.at(n).printAll;"";
+
 ::
 
-In this code example, we find out that there is a code::NetAddr( "127.0.0.1", 57120 ):: sending an OSC message code::[ '/pad', 0, 3, 127 ]::.
+In this code example, we find out that there is a code::NetAddr( "127.0.0.1", 57120 ):: sending an OSC message like this: code::[ '/pad', 0, 2, 67 ]::.
 
 For your actual OSC device you would move each control and look at what the incoming message looks like. This way, you can figure out which controls send out which OSC message with which parameters.
 
@@ -828,16 +835,16 @@ MKtl.all;
 
 MKtlLookup.postInfo  // now also shows the opened 'osc device'
 
-// create a gui for the osc device:
-m.gui;
+// create a gui for the new osc device:
+MKtlGUI(mktl: m);
 
 // post incoming data
 m.trace;
 
-m.closeDevice;
+m.free;
 ::
 
-So if this seems to work, we can expand the description:
+So if this seems to work, we can expand the description to have a grid of 4 x 4 pads:
 
 code::
 (
@@ -882,10 +889,6 @@ Tdef(\exosc, {
 Tdef(\exosc).stop;
 Tdef(\exosc).play;
 
-
-m.elements.dump;
-
-
 ::
 
 Now all 9 pads are in the description.
@@ -908,7 +911,7 @@ From this we understand that we should make two types of output elements. For th
 
 code::
 (
-bt: 4.collect{ |id|
+bt: 4.collect { |id|
 	led: (
 		oscPath: '/manta/led/button',
 		argTemplate: [ nil, id ],
@@ -924,7 +927,7 @@ For the pad leds we need:
 
 code::
 (
-pad: 48.collect{ |id|
+pad: 48.collect { |id|
 	led: (
 		oscPath: '/manta/led/pad',
 		argTemplate: [ nil, id ],
@@ -940,30 +943,31 @@ The code::spec:: needed is a special one, a link::Classes/ItemsSpec:: that defin
 
 code::
 specs: (
-	mantaLed: ItemsSpec.new( ["off","amber","red"] ), // led can be off, amber or red
+	// led can be off, amber or red
+	mantaLed: ItemsSpec( ["off","amber","red"] ),
 )
 ::
 
 For the complete Manta description take a look at its description file:
 
 code::
-MKtlDesc.loadDescs( "manta" );
-MKtlDesc.fromFile( \manta ).openFile;
+MKtlDesc.loadDescs( "snyder*" );
+MKtlDesc.at('snyderphonics-manta').openFile;
 ::
 
 section:: OSC device info
 
 The underlying protocol of OSC communication in SuperCollider and most other applications is UDP. The addressing of messages is done via IP adresses and ports.
 
-The elements in the OSC device info dictionary are: code::ipAddress, srcPort, recvPort, destPort::. All of these elements are optional. Each of them are described in the following subsections.
+The MKtlDesc for an OSC device has an info dictionary which can contain: code::ipAddress, srcPort, recvPort, destPort::. All of these elements are optional. Each of them are described in the following subsections.
 
 For a general discussion on OSC Communication, see this guide: link::Guides/OSC_communication::.
 
 subsection:: ipAddress
 
-The code::ipAddress:: field in the OSC device info is the ipAddress of the OSC device. If the device is a physical device connected to your computer that uses a particular protocol that is decoded by another program to OSC messages (as is the case for the Manta), then the code::ipAddress:: is the code::localhost:: or code::127.0.0.1::.
+The code::ipAddress:: field in the OSC device info is the ipAddress of the OSC device, so an incoming message will have this sending address. If the device is a physical device connected to your computer that uses a particular protocol that is decoded by another program to OSC messages (as is the case for the Manta), then the code::ipAddress:: is the code::\localhost:: or code::"127.0.0.1"::.
 
-If the OSC device is its own device that connects to a local network (via WIFI or wired), then the device will have its own IP address, and it will be something like code::192.168.2.42::.
+If the OSC device is its own device that connects to a local network (via WIFI or wired), then the device will have its own IP address, and it will be something like code::"192.168.2.42"::.
 
 code::
 idInfo: ( ipAddress: "127.0.0.1" ); // localhost example
@@ -974,28 +978,30 @@ If the OSC device is only sending data, you may leave the code::ipAddress:: unde
 
 subsection:: srcPort
 
-The code::srcPort:: defines where the OSC messages come from. This is different than the port that the device sends the OSC messages to (see link::#recvPort::).
+The code::srcPort:: defines where the OSC messages come from. This is different from the port that the device sends the OSC messages to (see link::#recvPort::).
 
 Some programs use a fixed port for this, others use a random port each time the OSC device is started (e.g. Max/MSP does not allow you to set the port that is sent from and uses a different one each time).
 
 In case the OSC device uses a fixed port, you can use this to filter the data that comes in:
 
 code::
+// the Manta lib sends from 31417
 idInfo: ( srcPort: 31417 )
 ::
 
 subsection:: recvPort
 
-SuperCollider is usually listening on port 57120, but takes another port if that one happens to be not available. You can check the current port by:
+SuperCollider is usually listening on port 57120, but takes another port if that one happens to be not available. You can check the current port by asking:
 
 code::
 NetAddr.langPort;
 ::
 
-If an OSC device wants to send OSC data to SuperCollider it needs to send to this port. However some OSC devices do not allow you to change the port to which they send, in that case you can define a port that SuperCollider needs to open to receive the data:
+If an OSC device wants to send OSC data to SuperCollider it needs to know the port to send to. As some OSC devices do not allow you to change the port to which they send, you can define a new port that SuperCollider opens to receive the data from this source:
 
 code::
-idInfo: ( recvPort: 31416 ); // example of the port to which MantaOSC sends its data
+// example of the port to which MantaOSC sends its data
+idInfo: ( recvPort: 31416 );
 ::
 
 If you leave the code::recvPort:: undefined then SuperCollider's default port (code::NetAddr.langPort::) is used, and you need to configure your OSC device to send to that port.
@@ -1025,20 +1031,23 @@ m.mktlDevice.destination;
 ::
 
 
-section:: OSC Initialisation messages
+section:: OSC special messages
 
-Some devices need initialisation messages to be sent before they can function properly with all their modes activated. You can define these messages in the code::initalisationMessages:: field of the device description.
+Some devices respond to special messages; e.g. one can send a message to the Manta to tell it to enable outside control of its LEDs. You can define these messages in the code::specialMessages:: field of the device description.
 For OSC these have to be an Array of messages that need to be sent, each element of the Array contains the OSC path and the parameters that need to be sent.
 
 For example for the Manta we need:
 
 code::
 (
-initialisationMessages: [
-	[ "/manta/ledcontrol", "padandbutton", 1 ],
-	[ "/manta/ledcontrol", "slider", 1 ],
-	[ "/manta/ledcontrol", "button", 1 ]
-]
+// ... other desc data
+// ...
+specialMessages: (
+	enableLEDControl: [
+		[ "/manta/ledcontrol", "padandbutton", 1 ],
+		[ "/manta/ledcontrol", "slider", 1 ],
+		[ "/manta/ledcontrol", "button", 1 ]
+])
 )
 ::
 
@@ -1053,30 +1062,30 @@ n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
 
 OSCdef( \test, { |msg| msg.postln; }, "/test", argTemplate: [ 0 ] );
 
-n.sendMsg( "/test", 0, 2 );
-n.sendMsg( "/test", 1, 1 );
+n.sendMsg( "/test", 0, 2 ); // match
+n.sendMsg( "/test", 1, 1 ); // no match
 
 OSCdef( \test, { |msg| msg.postln; }, "/test", argTemplate: [ "hello" ] );
 
-n.sendMsg( "/test", "hello", 2 );
-n.sendMsg( "/test", 1, 1 );
+n.sendMsg( "/test", "hello", 2 ); // match
+n.sendMsg( "/test", 1, 1 );       // no match
 
 OSCdef( \test, { |msg| msg.postln; }, "/minibee/data", argTemplate: [ 7 ] );
 
-n.sendMsg( "/minibee/data", 7, 0, 0 ,0 ); // matches
-n.sendMsg( "/minibee/data", 6, 0, 0 ,0 ); // doesn't match
+n.sendMsg( "/minibee/data", 7, 0, 0, 0 ); // match
+n.sendMsg( "/minibee/data", 6, 0, 0, 0 ); // no match
 
 
 OSCdef( \test, { |msg| msg.postln; }, "/grid", argTemplate: [ 2, 3 ] );
 
-n.sendMsg( "/grid", 2, 3, 0.4 ); // matches
-n.sendMsg( "/grid", 1, 2, 0.2 ); // doesn't match
+n.sendMsg( "/grid", 2, 3, 0.4 ); // match
+n.sendMsg( "/grid", 1, 2, 0.2 ); // no match
 
-
+// multiple items to match at second item in template:
 OSCdef( \test, { |msg| msg.postln; }, "/second", argTemplate: [ nil, [3,2] ] );
 
-n.sendMsg( "/second", 2, 3, 0.4 ); // matches
-n.sendMsg( "/second", 2, 2, 0.4 ); // matches
-n.sendMsg( "/second", 1, 4, 0.2 ); // doesn't match
+n.sendMsg( "/second", 2, 3, 0.4 ); // match
+n.sendMsg( "/second", 2, 2, 0.4 ); // match
+n.sendMsg( "/second", 1, 4, 0.2 ); // no match
 
 ::
