@@ -623,7 +623,7 @@ m.free;
 
 section:: Collective output
 
-Some OSC devices will listen for data of several elements within one OSC message. For example an OSC message updating all 3 leds of a device:
+Some OSC devices will listen for data of several elements within a single OSC message. For example an OSC device may have 3 LEDs which are set with one message for the array of 3 LEDs:
 
 code::
 /leds 1 1 0
@@ -672,25 +672,28 @@ MKtl.addSpec(\pwm8bit, [0, 255, \linear, 1]);
 )
 
 m = MKtl( \exampleCollectiveOut, ~descCollectiveOut );
+MKtlGUI(mktl: m);
 
+// test to see what OSC messages are coming in -
+// fake device is within SC, so we see messages to it by trace:
+OSCFunc.trace( true );
+
+// the collective sends an array of 3 led values via OSC
+// when setting value of a single element
+m.elementAt( \led, 1 ).value_( 0.5 );
+m.elementAt( \led, 2 ).value_( 0.8 );
+m.elementAt( \led, 0 ).value_( 0.1 );
+
+// if you set the value(s) of the group, the send happens 3 times:
 m.elementAt(\led).value_([1, 2, 3] / 3);
 m.elementAt(\led).value;
 m.collectivesDict[\leds].value_([0, 1, 2] / 2);
 m.elementAt(\led).value;
 
-// test to see what OSC messages are coming in:
-OSCFunc.trace( true );
 
-// do the collective send from the group:
-m.send(\leds, 1,2,3,4,5); // direct sending works
+// do a collective send directly:
+m.send(\leds, [0,64,255]);
 
-// trigger coll. send by setting value of single element
-m.elementAt( \led, 1 ).value_( 0.5 );   // does not trigger sending.
-m.elementAt( \led, 2 ).value_( 0.8 );
-m.elementAt( \led, 0 ).value_( 0.1 );
-
-m.elementAt( \led, 1 )
-m.elementAt( \led, 1 ).collectives[0];
 
 (
 Tdef( \autoaction, {
@@ -706,8 +709,6 @@ Tdef( \autoaction, {
 	};
 }).play;
 );
-
-m.gui;
 
 Tdef( \autoaction ).stop;
 

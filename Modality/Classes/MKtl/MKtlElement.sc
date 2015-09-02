@@ -54,7 +54,7 @@ MAbstractElement {
 
 	updateTime { lastUpdateTime = Process.elapsedTime }
 
-	hasOut { ^elemDesc.notNil and: { [\out, \inout, \collectiveOut].includes( elemDesc[\ioType] ) } }
+	hasOut { ^elemDesc.notNil and: { [\out, \inout].includes( elemDesc[\ioType] ) } }
 
 	trySend {
 		if (this.hasOut
@@ -300,6 +300,7 @@ MKtlElement : MAbstractElement {
 		// [newval, deviceSpec, deviceValue].postln;
 
 		this.trySend;
+		collectives.do(_.trySend);
 		this.updateBus;
 		lastUpdateTime = Process.elapsedTime;
 		this.changed( \value, newval );
@@ -316,6 +317,9 @@ MKtlElement : MAbstractElement {
 		if (newval.isNil) { ^this };
 		prevValue = deviceValue;
 		deviceValue = deviceSpec.map(newval);
+
+		this.trySend;
+		collectives.do(_.trySend);
 		this.updateBus;
 		lastUpdateTime = Process.elapsedTime;
 		this.doAction;
