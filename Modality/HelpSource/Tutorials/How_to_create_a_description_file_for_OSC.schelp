@@ -477,9 +477,8 @@ code::
 );
 )
 m = MKtl( \exampleCollectiveIn, ~descCollectiveInput );
-m.trace;
 MKtlGUI(mktl: m);
-m.gui;
+m.trace;
 
 // test setting it directly
 m.collectivesDict.buttons.deviceValueAction_([ 1, 1, 0, 0, 1 ].scramble);
@@ -488,7 +487,7 @@ m.collectivesDict.buttons.deviceValueAction_([ 1, 1, 0, 0, 1 ].scramble);
 n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
 n.sendMsg( "/buttons", *[ 1, 1, 0, 0, 1 ].scramble );
 
-
+// send new random states
 (
 Tdef( \autoaction, {
 	loop {
@@ -502,16 +501,11 @@ m.free;
 
 ::
 
-////////////////////// ^^^^^^ TESTED
-////////////////////// vvvvvv UNTESTED
+
+As in the simple input examples, we can use an code::argTemplate:: for collectives messages. Any wildcards (code::nil::) in the template will be assumed to contain relevant data. If you want a field to be ignored in the template, and it does not contain relevant data, you can use code::valueAt:: to specify which indices in the OSC message contain the values that are your desired input data. See the following examples for clarification:
 
 
-
-
-As in the simple input examples, we can use an code::argTemplate:: for  output messages. Any code::nil::s in the template will be assumed to contain relevant data. If you do not want to filter on a particular field, but it is not the required data, then you can use code::valueAt:: to specify the indices within the OSC message that you want to use for the values. See the following examples for clarification:
-
-
-Matching a simple argument template:
+Matching a simple argument template with the message ID is at the beginning of the message body:
 
 code::
 (
@@ -519,35 +513,38 @@ code::
 	idInfo: ( ipAddress: "127.0.0.1" ),
 	protocol: \osc,
 	collectives: (
-		data: (
-			// would fire the do something with the elements inside
+		buttons: (
+			// would fire then do something with the elements inside
 			oscPath: '/buttons',
-			argTemplate: [ 7 ],
-			elements: [ [\bt,0], [\bt,1], [\bt,2], [\bt,3], [\bt,4] ], // the order in this array determines the order how the message is parsed
-		ioType: \in
+			argTemplate: [ 7 ], // any message beginning with [7] is accepted
+			// the order in this array determines the order how the message is parsed:
+			elements: [ [\bt,0], [\bt,1], [\bt,2], [\bt,3], [\bt,4] ],
+			ioType: \in
 		)
 	),
+	// and the five button elements
 	description: (
 		'bt': 5.collect {
 			( type: 'button', ioType: \collectiveIn, \spec: \but )
 		}
 	);
 );
-);
-m.free;
+)
+
 m = MKtl( \exampleCollectiveIn, ~descCollectiveInput );
 MKtlGUI(mktl: m);
-
+m.trace;
 
 n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
-// means messages like this are received:
+// means messages like this are received, because message body starts with 7:
 n.sendMsg( "/buttons", 7, 0, 1, 1, 0, 1 );
-// and this is not (4 != 7)
+
+// while this message is ignored: (4 != 7)
 n.sendMsg( "/buttons", 4, 0, 1, 1, 0, 1 );
 ::
 
 
-Matching an argument template with the filter at the end:
+Matching an argument template with the ID to filter by at the end:
 
 code::
 (
@@ -575,14 +572,17 @@ code::
 m.rebuild( ~descCollectiveInput );
 m.trace;
 
-// means messages like this are received:
-n.sendMsg( "/buttons", 0, 1, 1, 0, 1, 7 );
-// and this is not (4 != 7 )
+// now messages _ending_ with 7 are accepted:
+n.sendMsg( "/buttons", 2.rand, 2.rand, 2.rand, 2.rand, 2.rand, 7 );
+
+// and messages with other final items are ignored:
 n.sendMsg( "/buttons", 0, 1, 1, 0, 1, 4 );
+
 ::
 
 
-Matching an argument template with a wildcard at the beginning, but interesting values are only later on in the message, so using code::valueAt:: explicitly:
+
+Here is an example for matching an argument template with a code::nil:: wildcard at the beginning, but interesting values are only later on in the message, so we use code::valueAt:: explicitly:
 
 code::
 (
@@ -600,31 +600,29 @@ code::
 		)
 	),
 	description: (
-		'bt': [
-			( type: 'button', ioType: \collectiveIn ),
-			( type: 'button', ioType: \collectiveIn ),
-			( type: 'button', ioType: \collectiveIn ),
-			( type: 'button', ioType: \collectiveIn ),
-			( type: 'button', ioType: \collectiveIn )
-		]
+		'bt': 5.collect {
+			( type: 'button', ioType: \collectiveIn, \spec: \but )
+		}
 	);
 );
-);
+)
 
 m.rebuild( ~descCollectiveInput );
 
-// means messages like this are received:
+// messages matching [nil, 7] are received:
 n.sendMsg( "/buttons", "blah".scramble, 7, 0, 1, 1, 0, 1 );
-// and this is not (4 != 7 )
+
+// others are ignored
 n.sendMsg( "/buttons", "blah".scramble, 4, 0, 1, 1, 0, 1 );
-::
 
 
-Cleaning up:
-
-code::
 m.free;
 ::
+
+
+/////////// TESTED
+-------------------
+/////////// UNTESTED
 
 section:: Collective output
 
