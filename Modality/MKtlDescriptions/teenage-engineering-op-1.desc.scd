@@ -6,7 +6,7 @@
 idInfo: "OP-1 Midi Device",
 protocol: \midi,
 deviceInfo: (
-	vendorURI: "http://www.steinberg.net/en/products/controllers/cmc_series/models/cmc_qc.html",
+	vendorURI: "https://www.teenageengineering.com/products/op-1",
 	// manualURI: "",
 	description: "Full-featured synth which can also be used as a general-purpose controller.",
 	features: [

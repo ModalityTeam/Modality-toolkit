@@ -4,17 +4,15 @@ MKtl works as follows:
 
 * MKtl.find discovers hardware devices currently available
 
-* MKtlDesc load or make an MKtlDesc for the one that should be opened
+* MKtlDesc loads or makes an MKtlDesc for the one that should be opened
 
 *  make MKtlElement from MKtlDesc.elementsDesc in multiple flavors:
 - elements      * hierarchical, = MKtlElementGroup
 - elementsDict  * flat for fast access by element key
-// - elementsArray * by pairs, needed somewhere?
 
-* makeDevice
+* make mktlDevice
 - if matching hardware is present, make mktlDevice, and open it
-- else this becomes a virtual MKtl which can do everything the
--   real device
+- else this becomes a virtual MKtl which does all the real device does
 
 */
 
@@ -31,7 +29,7 @@ MKtl { // abstract class
 	var <specs;
 
 	var <elements;			// all elements in ElementGroup in hierarchical order
-	var <elementsDict; 		// all elements in a single flat dict for fast access
+	var <elementsDict; 		// all elements in a single dict for fast access
 
 	var <collectivesDict; 	// has the collectives (combined elements and groups)
 	// from the device description
@@ -40,6 +38,7 @@ MKtl { // abstract class
 	var <mktlDevice; // interface to the connected device(s).
 
 	var <traceRunning = false;
+	// used to find its info in MKtlLookup:
 	var <lookupName, <lookupInfo;
 
 	*initClass {

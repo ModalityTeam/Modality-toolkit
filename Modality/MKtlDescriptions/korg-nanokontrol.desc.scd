@@ -35,8 +35,8 @@ description: [
 		[ (57..63)++[65,66],  0 ! 9 ],
 		[ (94..97)++(102..106), 0 ! 9 ],
 		[ 10 ! 9, (0..8) ]
-	].collect{ |page, iii|
-		page.flop.collect{ |xs, i|
+	].collect { |page, iii|
+		page.flop.collect { |xs, i|
 			(\midiMsgType: \cc, \type: \knob, \midiChan: xs[1], \midiNum: xs[0], \spec: \midiCC, \style: ( \row: 0, \column: (i*2) + 4 ), \page: iii )
 		}
 	},
@@ -46,9 +46,9 @@ description: [
 		[ [(67..75), 0 ! 9 ], [(76..84), 0 ! 9 ]],
 		[ [(107..115), 0 ! 9 ], [(116..124), 0 ! 9 ]],
 		[ [16 ! 9, [16]++(1..8)], [ 17 ! 9, (0..8) ]]
-	].collect{ |page, iii|
-		page.collect{ |row, ii|
-			row.flop.collect{ |xs, i|
+	].collect { |page, iii|
+		page.collect { |row, ii|
+			row.flop.collect { |xs, i|
 				(\midiMsgType: \cc, \type: \button, \midiChan: xs[1], \midiNum:  xs[0], \spec: \midiCC, \style: ( \row: [1,3][ii], \column: (i*2) + 3 ), \page: iii )
 			}
 		}
@@ -59,8 +59,8 @@ description: [
 		[ [42,43]++(50..56),  0 ! 9 ],
 		[ (85..93), 0 ! 9 ],
 		[ 7 ! 9, (0..8) ]
-	].collect{ |page, iii|
-		page.flop.collect{ |xs, i|
+	].collect { |page, iii|
+		page.flop.collect { |xs, i|
 			(\midiMsgType: \cc, \type: \slider, \midiChan: xs[1], \midiNum: xs[0], \spec: \midiCC, \style: ( \row: 1, \column: (i*2) + 4 ), \page: iii )
 		}
 	},

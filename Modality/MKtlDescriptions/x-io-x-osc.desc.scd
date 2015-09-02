@@ -1,11 +1,16 @@
 /*
 NOT DONE YET:
 * unpacking of multichan messages inAna, inDig, inComp
-* figure out spec ranges for 10 imu params
+-> can be done with collectives now!
+
+* figure out spec ranges for the 10 imu params
+
 * serial input messages are raw data, how to handle?
+
 * how to handle string only values?
   e.g. ping returns strings,
   and sending back to set stuff also
+-> PassSpec for not touching raw values
 */
 
 (

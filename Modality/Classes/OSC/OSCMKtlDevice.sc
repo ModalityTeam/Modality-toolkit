@@ -1,61 +1,3 @@
-// TODO:
-// * exploring
-// * send
-
-/// and testing;
-/*
-
-(
-MKtl.addSpec(\minibeeData, [0, 1]);
-
-
-~minibeeDesc = (
-device: "minibee",
-protocol: \osc,
-// port: 57600, // if messages are sent from a specific port
-description: (
-'acc': (
-x: (
-oscPath: '/minibee/data',
-//filterAt: [ 0 ], match: [ 1 ],
-argTemplate: [ 1 ],
-valueAt: 2,
-'type': 'accelerationAxis', spec: \minibeeData
-),
-y: (
-oscPath: '/minibee/data',
-// filterAt: [ 0 ], match: [ 1 ],
-argTemplate: [ 1 ],
-valueAt: 3,
-'type': 'accelerationAxis', spec: \minibeeData
-),
-z: (
-oscPath: '/minibee/data',
-// filterAt: [ 0 ], match: [ 1 ],
-argTemplate: [ 1 ],
-valueAt: 4,
-'type': 'accelerationAxis', spec: \minibeeData
-)
-),
-'rssi': (
-oscPath: '/minibee/data',
-// filterAt: [ 0 ], match: [ 1 ],
-argTemplate: [ 1 ],
-valueAt: 5,
-'type': 'rssi', spec: \minibeeData
-)
-)
-)
-);
-
-(
-MKtl( \testMinibee, ~minibeeDesc );
-m = MKtl( \testMinibee );
-);
-
-
-
-*/
 
 OSCMKtlDevice : MKtlDevice {
 	classvar <protocol = \osc;
@@ -343,7 +285,8 @@ OSCMKtlDevice : MKtlDevice {
 			// el = mktl.elemDescFor( key );
 			el = mktl.desc.elementsDesc.at( key );
 			oscPath = el[\oscPath];
-			outvalues = el[\argTemplate].copy; // we will modify it maybe, so make a copy
+			// we may modify it, so copy
+			outvalues = el[\argTemplate].copy;
 			if ( outvalues.includes( nil ) ){
 				outvalues.put( outvalues.indexOf( nil ), val );
 			}{
