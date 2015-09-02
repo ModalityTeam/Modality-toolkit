@@ -326,36 +326,42 @@ OSCMKtlDevice : MKtlDevice {
 
 	// this should work for the simple usecase (not the group yet)
 	// from the group: \output, val: [ 0, 0, 0, 0 ]
-	send { |key, val|
+	send { |key ... val|
 		var el, oscPath, outvalues,valIndex;
-		if ( destination.notNil ) {
-			if ( val.isKindOf( Array ) ){
-				el = mktl.collectiveDescriptionFor( key );
-				valIndex = 0;
-				oscPath = el[\oscPath];
-				outvalues = List.new;
-				el[\argTemplate].do { |it|
-					if ( it.isNil ) {
-						outvalues.add( val.at( valIndex ) ); valIndex = valIndex + 1;
-					}{
-						outvalues.add( it )
-					};
-				};
-				if ( valIndex < val.size ) { outvalues = outvalues ++ (val.copyToEnd( valIndex ) ) };
-				outvalues = outvalues.asArray;
-			} {
-				// FIXME!
-				// el = mktl.elemDescFor( key );
-				el = mktl.desc.elementsDesc.at( key );
-				oscPath = el[\oscPath];
-				outvalues = el[\argTemplate].copy; // we will modify it maybe, so make a copy
-				if ( outvalues.includes( nil ) ){
-					outvalues.put( outvalues.indexOf( nil ), val );
+
+			// cant send without a destination
+		if ( destination.isNil ) {
+			^this;
+		};
+
+			// its a collective
+		if ( val.isKindOf( Array ) ){
+			el = mktl.collectiveDescriptionFor( key );
+			valIndex = 0;
+			oscPath = el[\oscPath];
+			outvalues = List.new;
+			el[\argTemplate].do { |it|
+				if ( it.isNil ) {
+					outvalues.add( val.at( valIndex ) ); valIndex = valIndex + 1;
 				}{
-					outvalues = outvalues ++ val;
+					outvalues.add( it )
 				};
 			};
-			destination.sendMsg( *( [ oscPath ] ++ outvalues ) );
-		}
+			if ( valIndex < val.size ) {
+				outvalues = outvalues ++ (val.copyToEnd( valIndex ) ) };
+			outvalues = outvalues.asArray;
+		} {
+			// FIXME!
+			// el = mktl.elemDescFor( key );
+			el = mktl.desc.elementsDesc.at( key );
+			oscPath = el[\oscPath];
+			outvalues = el[\argTemplate].copy; // we will modify it maybe, so make a copy
+			if ( outvalues.includes( nil ) ){
+				outvalues.put( outvalues.indexOf( nil ), val );
+			}{
+				outvalues = outvalues ++ val;
+			};
+		};
+		destination.sendMsg( *( [ oscPath ] ++ outvalues ).postln );
 	}
 }

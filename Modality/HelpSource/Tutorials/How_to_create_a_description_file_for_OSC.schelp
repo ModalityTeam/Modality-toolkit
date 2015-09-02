@@ -609,6 +609,7 @@ code::
 
 m.rebuild( ~descCollectiveInput );
 
+
 // messages matching [nil, 7] are received:
 n.sendMsg( "/buttons", "blah".scramble, 7, 0, 1, 1, 0, 1 );
 
@@ -619,10 +620,6 @@ n.sendMsg( "/buttons", "blah".scramble, 4, 0, 1, 1, 0, 1 );
 m.free;
 ::
 
-
-/////////// TESTED
--------------------
-/////////// UNTESTED
 
 section:: Collective output
 
@@ -644,7 +641,9 @@ MKtl.addSpec(\pwm8bit, [0, 255, \linear, 1]);
 	'collectives': (
 		leds: (
 			oscPath: '/leds',
-			elements: [ [\led,0], [\led, 1], [\led, 2] ], // elements that make up the group in order that they should appear in the output message
+			// elements that make up the group in the order in which
+			// they should appear in the output message:
+			elements: [ [\led,0], [\led, 1], [\led, 2] ],
 			argTemplate: [ 7 ], // default arguments to send
 			ioType: \out
 		)
@@ -652,39 +651,46 @@ MKtl.addSpec(\pwm8bit, [0, 255, \linear, 1]);
 	description: (
 		'led': [
 			(
-				default: 0, // we need a default value to send out the first time any element changes
+				// we need a default value to send out the first time any element changes
+				default: 0,
 				type: 'led', spec: \pwm8bit,
 				ioType: \collectiveOut // use a group method to create the output
 			),
 			(
-				default: 0, // we need a default value to send out the first time any element changes
+				default: 0,
 				type: 'led', spec: \pwm8bit,
-				ioType: \collectiveOut // use a group method to create the output
+				ioType: \collectiveOut
 			),
 			(
-				default: 0, // we need a default value to send out the first time any element changes
+				default: 0,
 				type: 'led', spec: \pwm8bit,
-				ioType: \collectiveOut // use a group method to create the output
+				ioType: \collectiveOut
 			)
 		]
 	);
 );
-);
+)
 
 m = MKtl( \exampleCollectiveOut, ~descCollectiveOut );
 
 // test to see what OSC messages are coming in:
 OSCFunc.trace( true );
 
-m.elementAt( \led, 1 ).value_( 0.5 );
+// do the collective send from the group:
+m.send(\leds, 1,2,3,4,5); // sending works
 
+m.collectivesDict[\leds].value_([0, 0.5, 1]); // setting the coll value broken
+
+// trigger coll. send by setting value of single element
+m.elementAt( \led, 1 ).value_( 0.5 );   // does not trigger sending.
 m.elementAt( \led, 2 ).value_( 0.8 );
-
 m.elementAt( \led, 0 ).value_( 0.1 );
+
+m.elementAt( \led, 1 ).collectives[0].dump
 
 (
 Tdef( \autoaction, {
-	loop{
+	loop {
 		m.elementAt( \led, 0 ).value_( 1.0.rand );
 		1.0.wait;
 
@@ -747,14 +753,13 @@ m.rebuild( ~descCollectiveOut );
 
 Tdef( \autoaction ).play;
 
+m.free;
 ::
 
 
-Cleaning up:
-
-code::
-m.closeDevice;
-::
+/////////// TESTED - collective outs not working yet.
+-------------------
+/////////// UNTESTED
 
 
 section:: Explore an OSC device
