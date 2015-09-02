@@ -154,16 +154,34 @@ MKtlElementGroup : MKtlElement {
 	storeArgs { ^[name, type, elements.collect(_.name)] }
 
 	value { ^elements.collect(_.value) }
+	value_ { |newvals|
+		newvals.do { |val, i| elements[i].value = val }
+	}
+
+	deviceValue { ^elements.collect(_.deviceValue) }
+	deviceValue_ { |newvals|
+		newvals.do { |val, i| elements[i].deviceValue = val }
+	}
 
 	prettyValues {
-		^elements.collect{ |el|
+		^elements.collect { |el|
 			if (el.isKindOf(this)) {
 				[el.name, el.value]
 			} { el.value }
 		}
 	}
 
-	rawValue { ^elements.collect(_.rawValue) }
+	valueAction_ {|newvals|
+		newvals.do({ |item, i|
+			elements[i] !? _.valueAction_( item );
+		});
+	}
+
+	deviceValueAction_ {|newvals|
+		newvals.do({ |item, i|
+			elements[i] !? _.deviceValueAction_( item );
+		});
+	}
 
 	keys { ^elements.collect({ |item| dict.findKeyForValue( item ) }) }
 
@@ -297,12 +315,6 @@ MKtlElementCollective : MKtlElementGroup {
 
 	removeCollectiveFromChildren {
 		elements.do(_.prRemoveCollective(this));
-	}
-
-	deviceValueAction_ {|newvals|
-		newvals.do({ |item, i|
-			elements[i] !? _.deviceValueAction_( item );
-		});
 	}
 
 }
