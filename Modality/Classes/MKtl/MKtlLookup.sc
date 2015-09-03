@@ -1,10 +1,24 @@
 // TODO: check that we never add identical infos a second time
 
 MKtlLookup {
-	classvar <all, midiLists;
+	classvar <all, <midiAll;
 
 	*initClass {
 		all = ();
+		midiAll = ();
+	}
+
+	*names {
+		^all.keys(SortedList).array;
+	}
+
+	*allFor { |protocol|
+		protocol = (protocol ? MKtlDevice.allProtocols);
+		^all.select { |dict|
+			(dict.protocol == protocol) or: {
+				protocol.asArray.includes(dict.protocol);
+			}
+		};
 	}
 
 	*postInfo {
@@ -18,28 +32,10 @@ MKtlLookup {
 		};
 	}
 
-	*midiAt { |endPointType, index|
-		var list = (src: MIDIClient.sources,
-			dest: MIDIClient.destinations)[endPointType];
-		^if (list.notNil) { list[index] };
-	}
-
 	*addAllHID {
 		HIDMKtlDevice.devicesToShow.sortedKeysValuesDo { |index, info|
-			MKtlLookup.addHID(info, index); };
-	}
-
-	*allFor { |protocol|
-		protocol = (protocol ? MKtlDevice.allProtocols);
-		^all.select { |dict|
-			(dict.protocol == protocol) or: {
-				protocol.asArray.includes(dict.protocol);
-			}
+			MKtlLookup.addHID(info, index);
 		};
-	}
-
-	*names {
-		^all.keys(SortedList).array;
 	}
 
 	*addHID { | hidinfo, index |
@@ -66,26 +62,30 @@ MKtlLookup {
 	}
 
 	*addAllMIDI {
-		// join the ones that belong together first,
-		// and give them proper in/out srcIDs:
+		// join the ones with the same idInfo first,
+		// and collect all their srcIDs/destIDs:
 		MIDIClient.sources.do { |endpoint, index|
 			MKtlLookup.addOrMergeMIDI(endpoint, index, \src);
 		};
 		MIDIClient.destinations.do { |endpoint, index|
 			MKtlLookup.addOrMergeMIDI(endpoint, index, \dest);
 		};
+		// need to know all available devices in the big list first,
+		// then can sort out which ones belong together
+		midiAll.do { |dev|
+			this.midiSplit(dev);
+		}
 	}
 
 	*addOrMergeMIDI { |endpoint, index, endPointType|
-		var infoToMergeTo = MKtlLookup.allFor(\midi).detect { |info|
+		var infoToMergeTo = MKtlLookup.midiAll.detect { |info|
 			info.idInfo == endpoint.device
 		};
 		// "%: %\n".postf([endpoint, index, endPointType]);
 		if (infoToMergeTo.isNil) {
-			^MKtlLookup.addMIDI(endpoint, index, endPointType);
+			^MKtlLookup.addMIDI(endpoint, index, endPointType, midiAll);
 		};
 
-		this.merge (infoToMergeTo, \deviceInfo, endpoint);
 		if (endPointType == \src) {
 			this.merge (infoToMergeTo, \srcDevice, endpoint);
 		};
@@ -109,28 +109,74 @@ MKtlLookup {
 		};
 	}
 
-	*addMIDI { |endPoint, index, endPointType = \src|
+	*addMIDI { |endPoint, index, endPointType = \src, where, lookupName|
 
 		var protocol = \midi;
 		var idInfo = endPoint.device;
 		var filename = MKtlDesc.filenameForIDInfo(idInfo);
-		var lookupName = MKtl.makeLookupName(protocol, index, endPoint.device);
+		var dict;
+		lookupName = lookupName ?? {
+			MKtl.makeLookupName(protocol, index, endPoint.device);
+		};
 
-		var dict = (
+		dict = (
 			protocol: protocol,
 			idInfo: idInfo,
 			filename: filename,
 			desc: MKtlDesc.at(filename.asSymbol),
 			lookupName: lookupName
-		//	lookup: { MKtlLookup.midiAt(endPointType, index); }
 		);
 		dict.put(\deviceInfo, endPoint);
 		if (endPointType == \src) { dict.put(\srcDevice, endPoint) };
 		if (endPointType == \dest) { dict.put(\destDevice, endPoint) };
 
-		all.put(lookupName, dict);
+		(where ? all).put(lookupName, dict);
 
 		^dict
+	}
+
+	*midiSplit { |info|
+
+		var numSources, numDests, insOutsMatch, doAdvise;
+		var numInPorts, numOutPorts, numInDevices, numOutDevices;
+		var deviceName, postfix;
+		var count = this.allFor(\midi).size;
+
+		// does info have same number of srcs and dests?
+		// -> if yes, assume same order on ins and outs!
+		numSources = info.srcDevice.asArray.size;
+		numDests =  info.destDevice.asArray.size;
+		insOutsMatch = numSources == numDests;
+		numInPorts = info.srcDevice.as(Set).size;
+		numOutPorts = info.srcDevice.as(Set).size;
+		numInDevices = numSources / numOutPorts;
+		numOutDevices = numDests / numOutPorts;
+
+		info.srcDevice.do { |srcdev, i|
+			i = i + 1;
+			deviceName = "midi_%_%%"; postfix = "";
+			if (numInDevices > 1) { postfix = postfix ++ "_nr_%".format(i) };
+			if (numInPorts > 1) { postfix = postfix ++ "_port_%".format(i) };
+			// [srcdev, i, postfix].postln;
+			deviceName = deviceName.copy
+			.format(count + i, info.idInfo.toLower, postfix).asSymbol;
+			this.addMIDI(srcdev, count + i, \src, lookupName: deviceName);
+			if (insOutsMatch) {
+				all[deviceName].destDevice =info.destDevice[i]
+			};
+		};
+		if (insOutsMatch.not) {
+			info.destDevice.do { |destdev, i|
+				i = i + 1;
+				deviceName = "midi_%_%%"; postfix = "";
+				if (numInDevices > 1) { postfix = postfix ++ "_devc_%".format(i) };
+				if (numInPorts > 1) { postfix = postfix ++ "_port_%".format(i) };
+				// [destdev, i, postfix].postln;
+				deviceName = deviceName.copy
+				.format(count + i, info.idInfo.toLower, postfix).asSymbol.postcs;
+				this.addMIDI(destdev, count + i, \dest, lookupName: deviceName);
+			};
+		};
 	}
 
 	// check if already there before adding
