@@ -23,18 +23,20 @@ The main element is the code::description:: which contains all the elements/cont
 
 For physical devices, you need to define the protocol and the idInfo. The code::protocol:: is one of code::\osc, \midi, \hid::. The code::idInfo:: is different per protocol, check the respective tutorial for an elaborate description.
 
-If you want to create a virtual device, the minimum info required is the protocol: code::( protocol: \virtual):: and the description.
+If you want to create a virtual device, the minimum info required is the idInfo and protocol: code::(idInfo: \something, protocol: \virtual):: and in the description, every element needs an ioType and a spec.
 
 For example:
 
 code::
 (
 m = MKtl.new( \oneButton, (
+	idInfo: \oneBut,
 	protocol: \virtual,
-	description: ( \bt: ( type: \button, ioType: \in ) );
+	description: ( \bt: ( type: \button, ioType: \in, \spec: \but ) );
 ), false );
 );
 m.gui;
+m.free; // free m's resources and remove it from MKtl.all
 ::
 
 See also: link::Reference/MKtl_description_files:: for the complete description of all possible keys.
@@ -53,14 +55,61 @@ specs: (
 )
 ::
 
-The Specs that are common specs for many MKtl's can be found with:
+Many common specs in SC are in Spec.specs, and some specs that many MKtls share can be found in MKtl.specs:
 code::
-MKtl.specs.keys // get the names
-MKtl.specs.at( \hidHat ); // look up a particular one
+Spec.specs.keys;	// get the names
+MKtl.globalSpecs.keys;
+MKtl.specs.at( \hidHat ); // look up a specific one
 ::
 
 section:: Grouping of elements
 
+For multiple elements, one can make groups, which is helpful for sematinc clarity.
+
+For example, an MKtl with 5 sliders and 4 buttons, and labeled buttons (play and stop) would look like this:
+
+code::
+(
+m = MKtl.new( \sliders_knobs, (
+	idInfo: \ex,
+	protocol: \virtual,
+	description: (
+		\sl: 5.collect { ( type: \slider, ioType: \in, \spec: \midiCC ) },
+		\bt: 5.collect { ( type: \button, ioType: \in, \spec: \but ) },
+		\play: ( type: \button, ioType: \in, \spec: \but ),
+		\stop: ( type: \button, ioType: \in, \spec: \but )
+	)
+), false );
+);
+MKtlGUI(mktl: m);
+
+// you can access the elements by hierarchical names:
+m.elementAt(\play)
+m.elementAt(\stop).value_(1)
+m.elementAt(\bt)  // the group of 5 buttons
+m.elementAt(\bt, 2).value_(1)  // one of them
+m.elementAt(\sl).do(_.value_(1.0.rand))  // all sliders
+
+// one can als access them by direct names:
+m.elementsDict.at(\sl_1).action = { |sl| "yo slider: % > %\n".postf(sl.name, sl.value) };
+m.elementAt(\sl, 1).valueAction_(1.0.rand);
+
+m.free; // free m's resources and remove it from MKtl.all
+::
+
+
 
 section:: Finding descriptions for similar devices
 
+Many devices already hace description files, which are used by the link::Classes/MKtlDesc:: class. They can be found here:
+code::
+MKtlDesc.openFolder;
+::
+You are cordially invited to contribute desc files for any devices you have and find useful!
+For details on making descs for devices using MIDI, HID, or OSC, please read on here:
+
+list::
+##link::Tutorials/How_to_create_a_description_file_for_MIDI::
+##link::Tutorials/How_to_create_a_description_file_for_HID::
+##link::Tutorials/How_to_create_a_description_file_for_OSC::
+::
