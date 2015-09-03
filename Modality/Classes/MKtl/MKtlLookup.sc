@@ -142,10 +142,17 @@ MKtlLookup {
 		var deviceName, postfix;
 		var count = this.allFor(\midi).size;
 
-		// does info have same number of srcs and dests?
-		// -> if yes, assume same order on ins and outs!
 		numSources = info.srcDevice.asArray.size;
 		numDests =  info.destDevice.asArray.size;
+
+		// if single device, exit here!
+		if ((numSources <= 2) and: { numDests <= 2 }) {
+			all.put(info.lookupName, info);
+			^this
+		};
+
+		// does info have same number of srcs and dests?
+		// -> if yes, assume same order on ins and outs!
 		insOutsMatch = numSources == numDests;
 		numInPorts = info.srcDevice.as(Set).size;
 		numOutPorts = info.srcDevice.as(Set).size;
@@ -162,7 +169,7 @@ MKtlLookup {
 			.format(count + i, info.idInfo.toLower, postfix).asSymbol;
 			this.addMIDI(srcdev, count + i, \src, lookupName: deviceName);
 			if (insOutsMatch) {
-				all[deviceName].destDevice =info.destDevice[i]
+				all[deviceName].destDevice =info.destDevice.asArray[i]
 			};
 		};
 		if (insOutsMatch.not) {

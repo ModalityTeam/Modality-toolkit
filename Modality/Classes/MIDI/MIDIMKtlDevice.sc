@@ -163,6 +163,9 @@ MIDIMKtlDevice : MKtlDevice {
 		^newDev
 	}
 
+	enable { responders.do(_.enable); }
+	disable { responders.do(_.disable); }
+
 	/// ----(((((----- EXPLORING ---------
 
 	exploring {

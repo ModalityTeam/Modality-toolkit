@@ -291,25 +291,7 @@ MKtl { // abstract class
 			^this
 		};
 
-		if (desc.fullDesc[\groupsByPort].notNil) {
-			"%: desc says this device has multiple ports:\n".postf(this);
-			desc.fullDesc[\portNames].postcs;
-			desc.fullDesc[\groupsByPort].postcs;
-
-			"Please specify which portIndex to use: \n"
-			"%.initForPortIndex( _index_ );\n".postf(this);
-			^this
-		};
-
 		this.finishInit(lookForNew); // and finalise init
-	}
-
-	// can we do this multiple times?
-	// better not!
-	initForPortIndex { |index = 0, lookForNew = false|
-		midiPortNameIndex = index;
-		// later - maybe move filter here if we can...
-		this.finishInit(lookForNew);
 	}
 
 	finishInit { |lookForNew|
@@ -322,6 +304,9 @@ MKtl { // abstract class
 		lookupInfo = newInfo;
 		lookupName = lookupInfo.lookupName;
 	}
+
+	enable { mktlDevice !? { mktlDevice.enable } }
+	disable { mktlDevice !? { mktlDevice.disable } }
 
 	specialMessages {
 		if ( desc.isNil or: { desc.fullDesc.isNil }) { ^nil };

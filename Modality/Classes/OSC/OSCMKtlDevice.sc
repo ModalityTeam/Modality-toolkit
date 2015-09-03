@@ -54,6 +54,9 @@ OSCMKtlDevice : MKtlDevice {
 		};
 	}
 
+	enable { oscFuncDictionary.do(_.enable); }
+	disable { oscFuncDictionary.do(_.disable); }
+
 	*deinitDevices { } // doesn't do anything, but needs to be there
 
 	*postPossible {

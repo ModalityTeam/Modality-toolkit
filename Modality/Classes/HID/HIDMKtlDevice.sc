@@ -128,6 +128,11 @@ HIDMKtlDevice : MKtlDevice {
 		// this.sendInitialisationMessages;
 	}
 
+	// how to do that?
+	enable {  }
+	disable {  }
+
+
 	closeDevice {
 		this.cleanupElementsAndCollectives;
 		srcID = nil;
@@ -242,7 +247,7 @@ HIDMKtlDevice : MKtlDevice {
 	}
 
 	// still to be ported
-	sendInitialisationMessages {
+	sendSpecialMessage { |name|
 
 	}
 }
