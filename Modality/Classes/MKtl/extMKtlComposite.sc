@@ -1,12 +1,37 @@
 /* to do:
 
-***** COMPILES, BUT NOT WORKING CORRECTLY YET ***
-adapt to using MKtlDesc, then test again
+***** Does not work correctly yet ***
 
-if identical devices, do not merge;
-make it two elementGroups,
+ToDo:
+
+* composite as file only is risky
+- what if multiple devices match,
+- multiple desc files are there etc etc.
+
+Safer and clearer to try alt. strategy:
+* make component MKtls first, then merge them
+- safer when multiple devices present
+
+a = MKtl(\a, ...);
+b = MKtl(\b, ...);
+c = MKtl(\c, ...);
+MKtl.comp(\combi, [\a, \b, \c]);
+
+* better conflict-free merging strategy:
+MKtl(\combi).elements = MKtlElementGroup(\combi,
+	[a, b, c].collect(_.elements)
+);
+
+
+MKtl(\combi).elementAt(\a, \sl, 1);
+if first arg not found in top level, traverse down
+by one to lower levels
+
+Generally, check if merge is possible for dicts ...
+if identical devices, do not merge lowest dict,
+keep two elementGroups,
 or merge at a lower level to get
-e.g. 8 + 8 = 16 sliders etc.
+e.g. 8 + 8 + 8 = 24 sliders etc.
 */
 
 + MKtl {
@@ -79,8 +104,9 @@ e.g. 8 + 8 = 16 sliders etc.
 		var othernames = group.elements.collect(_.name);
 		var sharedNames = mynames.sect(othernames).postln;
 		if (sharedNames.size > 0) {
-			warn("Overlapping names: %\n".format(sharedNames))
-			};
+			warn("Overlapping names: %\n".format(sharedNames));
+
+		};
 		^MKtlElementGroup(name, this.elements ++ group.elements)
 
 	}
