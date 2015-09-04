@@ -11,6 +11,8 @@
 idInfo: "nanoKONTROL",
 protocol: \midi,
 numPorts: (src: 1, dest: 1),
+hardwarePages: [1, 2, 3, 4],
+
 deviceInfo: (
 	vendorURI: "http://www.korg.com/us/products/controllers/nanokontrol/",
 	// manualURI: "",
