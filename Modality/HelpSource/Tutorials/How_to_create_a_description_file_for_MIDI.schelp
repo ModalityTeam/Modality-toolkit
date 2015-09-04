@@ -113,7 +113,7 @@ code::
 ~descInput = (
 	idInfo: ~idInfo,
 	protocol: \midi,
-	    description: (
+	description: (
 		'key': (
 			type: 'pianoKey',
 			midiMsgType: \noteOn,
@@ -353,7 +353,7 @@ m.trace;
 subsection:: MIDI aftertouch messages
 
 
-Aftertouch is the pressure that is on a piano key after the initial pressing (which is translated to note velocity as explained above). The MIDI protocol implements after touch in two ways - as single aftertouch value - where you have to keep track of what the last note was and do something useful with the data - or on a per key basis. The latter is called code::\polyTouch::, short for polyphonic touch. The first one is called code::\touch:: (in some discussions on MIDI it is also called "channel pressure" and has not code::\midiNum:: indication in the argument - just one value per channel.
+Aftertouch is the pressure that is on a piano key after the initial pressing (which is translated to note velocity as explained above). The MIDI protocol implements after touch in two ways - as single aftertouch value - where you have to keep track of what the last note was and do something useful with the data - or on a per key basis. The latter is called code::\polyTouch::, short for polyphonic touch. The first one is called code::\touch:: - sometimes this is also called "channel pressure", and it has no code::\midiNum:: indication in the argument, just one single value for each channel.
 
 code::
 // midiMsgType: \polyTouch,
@@ -484,7 +484,7 @@ MIDIIn.connectAll; MIDIFunc.trace;
 m = MKtl( \testMIDI, ~descOutput );
 m.rebuild( ~descOutput ); // updating it
 
-	// turn on tracing of midi input, so we see incoming messages
+// turn on tracing of midi input, so we see incoming messages
 MIDIFunc.trace
 
 m.elementAt( \bt ).value_( 0 ); // see note above on noteOn message with velocity zero; may show up in the trace as a noteOff
@@ -705,13 +705,10 @@ m.elementAt( \prog ).value_( 1 );
 subsection:: MIDI system exclusive messages
 
 
-	///////////// ^^^^TESTED
-	-------------
-	///////////// vvvv UNTESTED
 
 section:: Explore a MIDI device
 
-	TODO: Update for MIDIMonitor
+(This will be updated when the MIDIMonitor class is finished.)
 
 First, find your device in the list posted by the following code and assign the MKtl to a variable.
 code::
@@ -781,15 +778,15 @@ Unless it does not make sense from the controller's layout (e.g. for record butt
 Also, make sure to fill in appropriate descriptions for code::\type:: fields.
 
 
-We here exemplify the process at hand of the following raw data (as it could possibly fall out from the code::MKtl().explore:: function mentioned above.
+We here exemplify the process at hand of the following raw data, as it could possibly fall out from the code::MKtl().explore:: function mentioned above.
 It contains information of a device with three knobs:
 
 code::
 (
-// ------ cc -------------
-'_elName_0_002_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  2,'spec': 'midiCC'),
-'_elName_0_003_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  3,'spec': 'midiCC'),
-'_elName_0_004_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  4,'spec': 'midiCC'),
+	// ------ cc -------------
+	'_elName_0_002_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  2,'spec': 'midiCC'),
+	'_elName_0_003_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  3,'spec': 'midiCC'),
+	'_elName_0_004_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  4,'spec': 'midiCC'),
 );
 ::
 
@@ -800,28 +797,28 @@ Edit the raw data and add it to a group:
 
 code::
 (
-// ------ cc -------------
-'kn': [
-	('midiMsgType': 'cc', 'type': 'knob', 'midiChan': 0, 'midiNum':  2,'spec': 'midiCC'),
-	('midiMsgType': 'cc', 'type': 'knob', 'midiChan': 0, 'midiNum':  3,'spec': 'midiCC'),
-	('midiMsgType': 'cc', 'type': 'knob', 'midiChan': 0, 'midiNum':  4,'spec': 'midiCC')
-]
+	// ------ cc -------------
+	'kn': [
+		('midiMsgType': 'cc', 'type': 'knob', 'midiChan': 0, 'midiNum':  2,'spec': 'midiCC'),
+		('midiMsgType': 'cc', 'type': 'knob', 'midiChan': 0, 'midiNum':  3,'spec': 'midiCC'),
+		('midiMsgType': 'cc', 'type': 'knob', 'midiChan': 0, 'midiNum':  4,'spec': 'midiCC')
+	]
 )
 ::
 
 In case, the controller has banks of groups, the hierarchical structure would look like this:
 
 code::
-	// raw data of two by three sliders
+// raw data of two by three sliders
 (
-// ------ cc -------------
-'_elName_0_002_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  2,'spec': 'midiCC'),
-'_elName_0_003_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  3,'spec': 'midiCC'),
-'_elName_0_004_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  4,'spec': 'midiCC'),
-'_elName_0_005_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  5,'spec': 'midiCC'),
-'_elName_0_006_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  6,'spec': 'midiCC'),
-'_elName_0_008_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  8,'spec': 'midiCC'),
- );
+	// ------ cc -------------
+	'_elName_0_002_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  2,'spec': 'midiCC'),
+	'_elName_0_003_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  3,'spec': 'midiCC'),
+	'_elName_0_004_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  4,'spec': 'midiCC'),
+	'_elName_0_005_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  5,'spec': 'midiCC'),
+	'_elName_0_006_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  6,'spec': 'midiCC'),
+	'_elName_0_008_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  8,'spec': 'midiCC'),
+);
 ::
 
 
@@ -829,17 +826,17 @@ code::
 
 code::
 (
-sl: [
-	[ // bank 0
-		('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  2,'spec': 'midiCC'),
-		('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  3,'spec': 'midiCC'),
-		('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  4,'spec': 'midiCC'),
-	], [ // bank 1
-		('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  5,'spec': 'midiCC'),
-		('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  6,'spec': 'midiCC'),
-		('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  8,'spec': 'midiCC')
+	sl: [
+		[ // bank 0
+			('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  2,'spec': 'midiCC'),
+			('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  3,'spec': 'midiCC'),
+			('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  4,'spec': 'midiCC'),
+		], [ // bank 1
+			('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  5,'spec': 'midiCC'),
+			('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  6,'spec': 'midiCC'),
+			('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  8,'spec': 'midiCC')
+		]
 	]
-]
 );
 ::
 
@@ -847,7 +844,7 @@ If a flat description for an element is required, it can be directly copied from
 
 note::
 You may want to restart the explore mode for this by evaluating
-	code::e.start.verbose_(true)::::
+code::e.start.verbose_(true)::::
 
 note::
 Its also possible to create a description file without an actual device being attached. As long as you keep the naming conventions in mind you will be able to create a working GUI version.
@@ -876,13 +873,32 @@ To test your description file, restart SuperCollider and follow instructions in 
 
 
 
+
 section:: MIDI device info
 
-In the simple case, your MIDI device creates either one MIDI port where it sends MIDI to, and/or one MIDI Port to which you can send MIDI. In this case you only need to define the name of the MIDI device, as it shows up when you do code::MKtl.find::.
-
+In the simple case, your MIDI device creates a single MIDI source port, by which it sends MIDI to the computer, and optionally a MIDI destination port by which you can send MIDI messages to it. In this case you only need to define the name of the MIDI device, as it shows up when you do code::MKtl.find::.
 code::
 ( idInfo: "Ableton Push" )
 ::
+
+If several devices of the same kind are connected, MKtl.find(\midi) will propose all of them as possible MKtls to choose, e.g. two nanoKontrol2s:
+
+code::
+MKtl.find(\midi);
+//  post:
+// Available MIDIMKtls:
+// MKtl(name, filename);
+		// *[ midi device, portname, uid]
+
+MKtl('midi_0_iac_d', 'midi_0_iac_driver');
+		// [ "IAC Driver", "IAC Bus 1", -476939297 ]
+MKtl('midi_1_nanok', 'midi_1_nanokontrol2_nr_1');
+		// [ "nanoKONTROL2", "SLIDER/KNOB", 1111689538 ]
+MKtl('midi_2_nanok', 'midi_2_nanokontrol2_nr_2');
+		// [ "nanoKONTROL2", "SLIDER/KNOB", 2129951315 ]
+::
+
+
 
 If your device makes multiple MIDI ports, then you may want to specify which port you want to use. You then make a Dictionary of the code::idInfo:: with the field code::name:: with the name of the device (as it shows up after code::MKtl.find::), and then define the code::sourcePortIndex:: and/or the code::destinationPortIndex::; if either one is not specified, it takes the first one.
 
@@ -891,32 +907,35 @@ code::
 ::
 
 
-section:: MIDI Initialisation messages
+section:: MIDI special messages
 
-Some devices need initialisation messages to be sent before they can function properly with all their modes activated. You can define these messages in the code::initalisationMessages:: field of the device description.
-For MIDI these have to be an Array of messages that need to be sent, each element of the Array contains the type of MIDI message (as you would send it with link::Classes/MIDIOut::) and the parameters that need to be sent.
+Some MIDI devices can be configured to special modes, eo one can e.g. set their LEDs to specific values, or generally, activate everything one wants to use. This is done by sending special messages (usually long and cryptic sysex). You can define these and other special messages in the code::specialMessages:: field of the device description.
+For MIDI such a message has to be an Array of messages, and message begins with the type of MIDI message (as you would send it with link::Classes/MIDIOut::) and then the parameters to be sent.
 
-For example for the nanoKONTROL2 we need a series of sysex messages - what these messages are exactly was found by monitoring what the Korg KONTROL editor sends out to the device when enabling external led control (and we found it in a code base of someone else again). If your device needs such messages, you will need to find out what messages it needs from the manual, or by monitoring what the configuration software from the vendor sends out, or a report from someone who found this out and documented it (online).
+For example: to configure the nanoKONTROL2 to a mode where one can access its LEDs from outside, one sends it a series of sysex messages. Some manufacturers do not document such technical details, and the messages in the nanoKONTROL2 desc file are simply exact reproductions of the messages the Korg KONTROL editor sends to the device when enabling external led control (which we found in a code base of someone else again). If your device responds special messages to tune its behavior, you can find out what they are  from the manual, by monitoring its configuration software, or get the info from someone who found this out and documented it (online, forums etc.)
 
 code::
 (
-initialisationMessages:
-[
-	[ \sysex, Int8Array[ 0xF0, 0x7E, 0x7F, 0x06, 0x01, 0xF7 ] ],
-	[ \sysex, Int8Array[ 0xF0, 0x42, 0x40, 0x00, 0x01, 0x13, 0x00, 0x1F, 0x12, 0x00, 0xF7] ],
-	[ \sysex, Int8Array[ 0xF0, 0x7E, 0x7F, 0x06, 0x01, 0xF7 ] ],
-	//	... incomplete
+	specialMessages: (
+	enableLEDControl:
+	[
+		[ \sysex, Int8Array[ 0xF0, 0x7E, 0x7F, 0x06, 0x01, 0xF7 ] ],
+		[ \sysex, Int8Array[ 0xF0, 0x42, 0x40, 0x00, 0x01, 0x13, 0x00, 0x1F, 0x12, 0x00, 0xF7] ],
+		[ \sysex, Int8Array[ 0xF0, 0x7E, 0x7F, 0x06, 0x01, 0xF7 ] ],
+		//	... incomplete
 ])
 )
 ::
 
-If you need to send out control messages, it would look like this:
+If the device expects control messages, it would look like this:
 
 code::
 (
-initialisationMessages:
+specialMessages: (
+	activateTurboBoost:
 [
-	[ \control, 0, 3, 64 ], // method name, chan, control, value
+	[ \control, 0, 3, 64 ], // message type name, chan, control, value
+	// .. and others
 ])
 )
 ::

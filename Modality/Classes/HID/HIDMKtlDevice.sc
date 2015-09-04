@@ -54,17 +54,18 @@ HIDMKtlDevice : MKtlDevice {
 
 	*postPossible {
 		var postables = MKtlLookup.allFor(\hid);
-		var postHidden = showAllDevices.not and: { HID.available.size != postables.size };
-		var hiddenStr = "// Some HIDs not shown that can crash the OS. See: HID.available;";
+		var foundHidden = showAllDevices.not and: { HID.available.size != postables.size };
+		var hiddenStr = "// HID: Some HIDs not shown that can crash the OS. See: HID.available;";
+
+		if (foundHidden) { hiddenStr.postln; };
 		if (postables.size == 0) {
-			"No HID devices available.".postln;
-			if (postHidden) { hiddenStr.postln; };
+			"// No HID devices available.".postln;
 			^this
 		};
 
-		if (postHidden) { hiddenStr.postln; };
 		"\n// Available HIDMKtlDevices:".postln;
-		"// MKtl(name, filename);  // [ product, vendor, (serial#) ]".postln;
+		"// MKtl('myNickName', 'lookupName');"
+		"\n\t\t// [ product, vendor, (serial#) ]\n".postln;
 		postables.sortedKeysValuesDo { |key, infodict|
 			var info = infodict.deviceInfo;
 			var product = info.productName;
@@ -76,8 +77,9 @@ HIDMKtlDevice : MKtlDevice {
 			if (serial.notEmpty) {
 				postList = postList.add(serial);
 			};
-			// filename = if (filename.isNil) { "" } { "," + quote(filename) };
-			"MKtl('renameMe', %);		// %\n".postf(key.cs, postList.cs);
+
+			"MKtl('%', %);\n\t\t// %\n"
+			.postf(key.asString.keep(12).asSymbol, key.cs, postList.cs);
 		};
 	}
 

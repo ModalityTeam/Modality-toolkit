@@ -34,7 +34,7 @@ MKtlLookup {
 			(orderedInfoKeys ++ extraInfoKeys.sort).do { |k|
 				"\t  %  %\n".postf((k.asString ++ ":").padRight(10), devdict[k].cs)
 			};
-			"\n".postln;
+			"   ---".postln;
 		};
 	}
 
@@ -68,6 +68,9 @@ MKtlLookup {
 	}
 
 	*addAllMIDI {
+		// clear first to avoid buildup
+		MKtlLookup.allFor(\midi).keysDo { |key| MKtlLookup.all.removeAt(key) };
+
 		// join the ones with the same idInfo first,
 		// and collect all their srcIDs/destIDs:
 		MIDIClient.sources.do { |endpoint, index|
@@ -152,7 +155,8 @@ MKtlLookup {
 		numDests =  info.destDevice.asArray.size;
 
 		// if single device, exit here!
-		if ((numSources <= 2) and: { numDests <= 2 }) {
+		if ((numSources < 2) and: { numDests < 2 }) {
+			// "\nMKtlLookup: single midi device -> to all: %\n\n".postf(info);
 			all.put(info.lookupName, info);
 			^this
 		};
@@ -160,10 +164,13 @@ MKtlLookup {
 		// does info have same number of srcs and dests?
 		// -> if yes, assume same order on ins and outs!
 		insOutsMatch = numSources == numDests;
-		numInPorts = info.srcDevice.as(Set).size;
-		numOutPorts = info.srcDevice.as(Set).size;
-		numInDevices = numSources / numOutPorts;
+		numInPorts = info.srcDevice.collectAs(_.name, Set).size;
+		numOutPorts = info.destDevice.collectAs(_.name, Set).size;
+		numInDevices = numSources / numInPorts;
 		numOutDevices = numDests / numOutPorts;
+
+		// "% numInPorts: %, numOutPorts: %, numInDevices: %, numOutDevices: %\n"
+		// .postf(info.lookupName, numInPorts, numOutPorts, numInDevices, numOutDevices);
 
 		info.srcDevice.do { |srcdev, i|
 			i = i + 1;

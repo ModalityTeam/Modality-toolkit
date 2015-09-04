@@ -103,15 +103,16 @@ MIDIMKtlDevice : MKtlDevice {
 		};
 
 		"\n// Available MIDIMKtls: ".postln;
-		"// MKtl(name, filename);  // *[ midi device, portname, uid]\n".postln;
-		postables.keysValuesDo { |key, infodict|
+		"// MKtl('myNickName', 'lookupName');  \n\t\t// *[ midi device, portname, uid]\n".postln;
+		postables.sortedKeysValuesDo { |key, infodict|
 			var endPoint = infodict.deviceInfo;
 			var postList = endPoint.bubble.flatten.collect({ |ep| [ep.device.cs, ep.name.cs, ep.uid] });
 			var filename = MKtlDesc.filenameForIDInfo(infodict.idInfo);
 
 			filename = if (filename.isNil) { "" } { "," + quote(filename) };
 			filename = if (filename.isNil) { "" } { "," + quote(filename) };
-			"MKtl('nameMe', %);		// %\n".postf(key.cs, postList.unbubble);
+			"MKtl('%', %);\n\t\t// %\n"
+			.postf(key.asString.keep(12).asSymbol, key.cs, postList.unbubble);
 		};
 	}
 
