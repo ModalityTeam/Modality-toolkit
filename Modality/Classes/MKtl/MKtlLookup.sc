@@ -3,6 +3,9 @@
 MKtlLookup {
 	classvar <all, <midiAll;
 
+	classvar orderedInfoKeys =
+	#[\idInfo, \protocol, \lookupName, \filename, \deviceInfo, \srcDevice, \destDevice];
+
 	*initClass {
 		all = ();
 		midiAll = ();
@@ -24,11 +27,14 @@ MKtlLookup {
 	*postInfo {
 		"%.all: \n".postf(this);
 		all.sortedKeysValuesDo { |devkey, devdict|
-			"\t%\n".postf(devkey);
-			devdict.sortedKeysValuesDo { |k, v|
-				"\t\t%: %\n".postf(k, v)
+			var extraInfoKeys;
+			"\ % : \n".postf(devkey.cs);
+
+			extraInfoKeys = devdict.keys(Array).removeAll(orderedInfoKeys);
+			(orderedInfoKeys ++ extraInfoKeys.sort).do { |k|
+				"\t  %  %\n".postf((k.asString ++ ":").padRight(10), devdict[k].cs)
 			};
-			"".postln;
+			"\n".postln;
 		};
 	}
 

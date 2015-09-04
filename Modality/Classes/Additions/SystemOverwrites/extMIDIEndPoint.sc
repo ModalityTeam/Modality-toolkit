@@ -1,8 +1,6 @@
 + MIDIEndPoint {
-	printOn { arg stream;
-		stream << this.class.name << "(" <<<*
-			[device, name, uid]  <<")"
-	}
+	storeArgs { ^[device, name, uid] }
+	printOn { arg stream; this.storeOn(stream) }
 
 	== { |anEndPoint|
 		^anEndPoint.isKindOf(MIDIEndPoint)

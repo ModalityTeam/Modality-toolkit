@@ -204,8 +204,9 @@ MKtl { // abstract class
 		// else try to make a desc from lookup info:
 
 		if (MKtl.descIsFaulty(newMKtlDesc)) {
-			inform("%(%): could not find a valid desc,\n"
-				"trying to derive from hardware...".format(this, name));
+			inform("% %: could not find a valid desc,\n"
+				"will try to infer from hardware.\n"
+				"desc is: %\n\n".format(this, name.cs, newMKtlDesc));
 		};
 
 		// now we have a name and a good enough desc
@@ -271,7 +272,8 @@ MKtl { // abstract class
 
 		all.put(name, this);
 
-		specsFromDesc = desc.fullDesc[\specs];
+		if(desc.notNil) { specsFromDesc = desc.fullDesc[\specs]; };
+
 		specs = ();
 		if (specsFromDesc.notNil) {
 			specsFromDesc.keysValuesDo { |key, val|
