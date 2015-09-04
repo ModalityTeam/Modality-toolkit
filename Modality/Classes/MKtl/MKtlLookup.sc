@@ -169,32 +169,39 @@ MKtlLookup {
 		numInDevices = numSources / numInPorts;
 		numOutDevices = numDests / numOutPorts;
 
-		// "% numInPorts: %, numOutPorts: %, numInDevices: %, numOutDevices: %\n"
+		// "% numInPorts: %, numOutPorts: %, numInDevs: %, numOutDevs: %\n"
 		// .postf(info.lookupName, numInPorts, numOutPorts, numInDevices, numOutDevices);
 
-		info.srcDevice.do { |srcdev, i|
-			i = i + 1;
+		info.srcDevice.do { |srcdev, index|
+			var index1 = index + 1;
+			info.sourcePortIndex = index;
 			deviceName = "midi_%_%%"; postfix = "";
-			if (numInDevices > 1) { postfix = postfix ++ "_nr_%".format(i) };
-			if (numInPorts > 1) { postfix = postfix ++ "_port_%".format(i) };
-			// [srcdev, i, postfix].postln;
+			if (numInDevices > 1) { postfix = postfix ++ "_nr_%".format(index1) };
+			if (numInPorts > 1) { postfix = postfix ++ "_port_%".format(index1) };
+			// [srcdev, index1, postfix].postln;
 			deviceName = deviceName.copy
-			.format(count + i, info.idInfo.toLower, postfix).asSymbol;
-			this.addMIDI(srcdev, count + i, \src, lookupName: deviceName);
+			.format(count + index1, info.idInfo.toLower, postfix)
+			.collect { |char| if (char.isAlphaNum, char, $_) }
+			.asSymbol;
+			this.addMIDI(srcdev, count + index1, \src, lookupName: deviceName);
 			if (insOutsMatch) {
-				all[deviceName].destDevice =info.destDevice.asArray[i]
+				all[deviceName].destDevice = info.destDevice.asArray[index];
+				info.destPortIndex = index;
 			};
 		};
 		if (insOutsMatch.not) {
-			info.destDevice.do { |destdev, i|
-				i = i + 1;
+			info.destDevice.do { |destdev, index|
+				var index1 = index + 1;
+				info.destPortIndex = index;
 				deviceName = "midi_%_%%"; postfix = "";
-				if (numInDevices > 1) { postfix = postfix ++ "_devc_%".format(i) };
-				if (numInPorts > 1) { postfix = postfix ++ "_port_%".format(i) };
-				// [destdev, i, postfix].postln;
+				if (numInDevices > 1) { postfix = postfix ++ "_devc_%".format(index1) };
+				if (numInPorts > 1) { postfix = postfix ++ "_port_%".format(index1) };
+				// [destdev, index1, postfix].postln;
 				deviceName = deviceName.copy
-				.format(count + i, info.idInfo.toLower, postfix).asSymbol.postcs;
-				this.addMIDI(destdev, count + i, \dest, lookupName: deviceName);
+				.format(count + index1, info.idInfo.toLower, postfix)
+				.collect { |char| if (char.isAlphaNum, char, $_) }
+				.asSymbol;
+				this.addMIDI(destdev, count + index1, \dest, lookupName: deviceName);
 			};
 		};
 	}
