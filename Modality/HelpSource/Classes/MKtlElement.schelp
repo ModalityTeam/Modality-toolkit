@@ -196,9 +196,9 @@ x.value_(0.55).value;
 x.deviceValue
 
 
+
 /// Here is an example for creating a derived MKtlElement:
-// this one converts values from x and y controls
-// to a polar / angle value
+// this converts values from x and y controls to a polar / angle value.
 
 // this covers github/modality issue #72
 // - Adding custom filter elements to an existing MKtlElement
@@ -207,19 +207,20 @@ x.deviceValue
 
 x = MKtlElement(\x, (spec: [-100, 100], type: \joyX, ioType: \in));
 x.action_(MFunc());  // use an MFunc for convenience and flexibility
+		// add posting to MFunc
 x.action.add(\post, { |el| [el.name, el.value].postln });
-x.action.remove(\post);
 
 x.value_(0.5);
 x.valueAction_(0.6);
 
+// same for y dimension
 y = MKtlElement(\y, (spec: [-100, 100], type: \joyY, ioType: \in));
 y.action_(MFunc());
 y.action.add(\post, { |el| [el.name, el.value].postln });
 
 // make a Slider2D to set x and y
 Slider2D(nil, Rect(0,0,200,200)).action_({ |sl2d|
-	x.valueAction_(sl2d.x); y.valueAction_(sl2d.y);
+    x.valueAction_(sl2d.x); y.valueAction_(sl2d.y);
 }).front;
 
 // make a derived element, which converts x and y to polar angle
@@ -233,15 +234,17 @@ z = MKtlElement(\polar, (spec: [-pi, pi], type: \xyPolar, ioType: 'filter'));
 z.action = MFunc();
 // first add a function to get and and y, and calc its value
 z.action.add(\calcAngle, { |polar|
-	var xy = [x.deviceValue, y.deviceValue];
-	var angle = atan2(x.deviceValue, y.deviceValue);
-	// [xy, angle].round(0.001).postln;
-	polar.deviceValue_(angle);
+    var xy = [x.deviceValue, y.deviceValue];
+    var angle = atan2(x.deviceValue, y.deviceValue);
+    // [xy, angle].round(0.001).postln;
+    polar.deviceValue_(angle);
 });
 
 // then one to do something with it, e.g. post it
+// angles: up is 0 deg, right is 0.5pi, down is +-pi, left is -0.5pi
+
 z.action.add(\postAtan2, { |polar|
-	"polar atan2 value: % \n".postf(polar.deviceValue);
+    "polar atan2 value: % \n".postf(polar.deviceValue);
 });
 
 // test pattern support with polar
@@ -253,6 +256,4 @@ a.stop;
 // get the angle value from z
 a = Pbind(\angle, Pfunc({ z.deviceValue })).trace.play;
 a.stop;
-
-
 ::
