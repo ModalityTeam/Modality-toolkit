@@ -239,7 +239,7 @@ MKtl { // abstract class
 				^true
 			} {
 				inform("// %: If you want to change the desc,"
-				" use %.rebuild( _newdesc_ );".format(this, this));
+					" use %.rebuild( _newdesc_ );".format(this, this));
 				^false
 			};
 		};
@@ -307,12 +307,29 @@ MKtl { // abstract class
 		lookupName = lookupInfo.lookupName;
 	}
 
-	enable { mktlDevice !? { mktlDevice.enable } }
+	enable { |sync=true|
+		mktlDevice !? {
+			mktlDevice.enable;
+			if (sync) { this.sync }
+		}
+	}
+
+	sync {
+		// if MKtl has outputs back to the device,
+		// this sends values out to adjust motor faders, lights etc
+		elementsDict.do { |el| el.value_(el.value); }
+	}
+
 	disable { mktlDevice !? { mktlDevice.disable } }
 
 	specialMessages {
 		if ( desc.isNil or: { desc.fullDesc.isNil }) { ^nil };
 		^desc.fullDesc[\specialMessages];
+	}
+
+	sendSpecial { |name|
+		var msgs = this.specialMessages[name];
+		mktlDevice.sendSpecial(msgs);
 	}
 
 	makeElements {
@@ -326,7 +343,7 @@ MKtl { // abstract class
 				var deepName = deepKeys.join($_).asSymbol;
 				var element = MKtlElement(deepName, desc, this);
 				elementsDict.put(deepName, element);
-			element; },
+				element; },
 			isLeaf: MKtlDesc.isElementTestFunc
 		);
 
@@ -371,7 +388,7 @@ MKtl { // abstract class
 				MKtlElementCollective( this, key, value );
 			})
 		};
- 	}
+	}
 
 	collectiveDescriptionFor { |elname|
 		^desc.fullDesc[ \collectives ] !?
@@ -406,7 +423,7 @@ MKtl { // abstract class
 		^elements.at( index );
 	}
 
-		//////////////// interface to elements:
+	//////////////// interface to elements:
 	deviceValueAt { |elName|
 		if (elName.isKindOf(Collection).not) {
 			^elementsDict.at(elName).deviceValue;
@@ -480,8 +497,8 @@ MKtl { // abstract class
 			labels = elem.elemDesc[\labels];
 			labels.notNil.if({
 				labels.includes(label)
-				}, {
-					false
+			}, {
+				false
 			})
 		};
 	}
@@ -498,7 +515,7 @@ MKtl { // abstract class
 		}
 	}
 
-		// new desc, so decommission everything,
+	// new desc, so decommission everything,
 	// remake elements from new desc,
 	// close mktldevice if there and try to open a new one
 
@@ -532,7 +549,7 @@ MKtl { // abstract class
 
 
 
-		// ------ make MKtlDevice and interface with it
+	// ------ make MKtlDevice and interface with it
 
 	openDevice { |lookAgain=true|
 		var protocol;
@@ -558,7 +575,7 @@ MKtl { // abstract class
 		^mktlDevice.notNil
 	}
 
-		// only for MIDI ...
+	// only for MIDI ...
 	listenTo { |srcIDindex|
 		if (this.hasDevice.not) {
 			"no mktlDevice.".postln
@@ -568,7 +585,7 @@ MKtl { // abstract class
 		mktlDevice.initElements(srcIDindex);
 	}
 
-		// only for MIDI ...
+	// only for MIDI ...
 	sendTo { |destIDindex|
 		if (this.hasDevice.not) {
 			"no mktlDevice.".postln
@@ -589,8 +606,10 @@ MKtl { // abstract class
 	}
 
 	specialMessageNames { ^desc.specialMessageNames }
-	sendSpecialMessage { |name|
-		^mktlDevice.sendSpecialMessage(name);
+
+	sendSpecialMessages { |name|
+		var messages = desc.specialMessage(name);
+		^mktlDevice.sendSpecialMessages(messages);
 	}
 
 	send { |key, val|
@@ -598,7 +617,7 @@ MKtl { // abstract class
 		mktlDevice.send( key, val );
 	}
 
-		// observe mktlDevice to create a description file
+	// observe mktlDevice to create a description file
 	explore { |mode=true|
 		if ( mktlDevice.isNil ){
 			"% is virtual, nothing to explore\n"

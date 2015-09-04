@@ -248,8 +248,9 @@ HIDMKtlDevice : MKtlDevice {
 		};
 	}
 
-	// still to be ported
-	sendSpecialMessage { |name|
-
+	// no cases yet in MKtlDesc folder
+	sendSpecialMessages { |msgs|
+		"% not implemented yet, no cases yet in MKtl descs.\n"
+		.postf(thisMethod);
 	}
 }

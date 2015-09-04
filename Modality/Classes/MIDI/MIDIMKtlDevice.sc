@@ -553,20 +553,11 @@ MIDIMKtlDevice : MKtlDevice {
 	}
 
 	// desc file might have a \specialMessages section
-	sendSpecialMessage { |name|
-		var msg = mktl.desc.specialMessage(name);
-
-		if (msg.notNil and: { midiOut.notNil } ) {
-			msg.do { |m| midiOut.performList( m[0], m[1..] ); }
+	sendSpecialMessages { |messages|
+		if (messages.notNil and: { midiOut.notNil } ) {
+			messages.do { |m| midiOut.performList( m[0], m[1..] ); }
 		} {
-			"%: could not send specialMessage %.\n".postf(this, name);
+			"%: could not send specialMessage %.\n".postf(mktl, name);
 		}
 	}
-
-
-	// sendInitialisationMessages {
-	// 	mktl.initialisationMessages.do { |it|
-	// 		midiOut.performList( it[0], it.copyToEnd(1) );
-	// 	}
-	// }
 }
