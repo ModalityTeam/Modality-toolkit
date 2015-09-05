@@ -18,6 +18,7 @@ deviceInfo: (
 	hasScribble: true
 ),
 status: "untested",
+
 description: (// display still missing because SysEx and different MIDI port...
 
 //------ pads -------------

@@ -40,47 +40,47 @@ description: (
 	// input elements:
 
 // 16 integer arguments represent the state of the 16 digital inputs (0 or 1). Sent only when the state of any digital input pin changes
-	inDig: (msgName: '/inputs/digital', type: \switch, spec: \switch, numIns: 16, ioType: \in),
+	inDig: (oscPath: '/inputs/digital', type: \switch, spec: \switch, numIns: 16, ioType: \in),
 
 // 16 floating-point arguments indicate the analogue readings for all 16 inputs. Sent at the analogue input message rate
-	inAna: (msgName: '/inputs/analogue', type: \analogIn, spec: \unipolar, numIns: 16, ioType: \in),
+	inAna: (oscPath: '/inputs/analogue', type: \analogIn, spec: \unipolar, numIns: 16, ioType: \in),
 
 
 // 16 integer arguments represent the current compare state of the 16 analogue inputs (0 if below or 1 if above the threshold). Sent only when a threshold on any channel is crossed
-	inComp: (msgName: '/inputs/analogue/comparator', type: \switch, spec: \switch, numIns: 16, ioType: \in),
+	inComp: (oscPath: '/inputs/analogue/comparator', type: \switch, spec: \switch, numIns: 16, ioType: \in),
 
 	// // 1 blob argument containing the raw serial data received on input <channel> (1 – 4)
-	// inS1: (msgName: '/inputs/serial/1', inType: \blob, ioType: \in),
-	// inS2: (msgName: '/inputs/serial/2', inType: \blob, ioType: \in),
-	// inS3: (msgName: '/inputs/serial/3', inType: \blob, ioType: \in),
-	// inS4: (msgName: '/inputs/serial/4', inType: \blob, ioType: \in),
+	// inS1: (oscPath: '/inputs/serial/1', inType: \blob, ioType: \in),
+	// inS2: (oscPath: '/inputs/serial/2', inType: \blob, ioType: \in),
+	// inS3: (oscPath: '/inputs/serial/3', inType: \blob, ioType: \in),
+	// inS4: (oscPath: '/inputs/serial/4', inType: \blob, ioType: \in),
 
 // 10 floating-point arguments indicating the current readings of the on board sensors. Arguments 1 – 3 gyroscope (°/s) x, y, z; arguments 4 – 6 accelerometer (g), x, y ,z; arguments 7 – 9 magnetometer (Ga) x, y ,z; argument 10 gyroscope temperature (°C)
-	imu: (msgName: \imu, numIns: 10, type: \imu, spec: [-10, 10].asSpec),
+	imu: (oscPath: \imu, numIns: 10, type: \imu, spec: [-10, 10].asSpec),
 
 	// 1 float indicating the current battery voltage
-	battery: (msgName: \battery, numIns: 1, ioType: \in,
+	battery: (oscPath: \battery, numIns: 1, ioType: \in,
 		type: \voltage, spec: [0, 3.7].asSpec),
 
 	// // /ping: 3 string arguments are the x-OSC local IP address (1st string), MAC address (2nd string) and firmware version (3rd string)
-	// ping: (msgName: \ping, numArgs: 3, ioType: \in),
+	// ping: (oscPath: \ping, numArgs: 3, ioType: \in),
 
 
 	// output elements going to XOsc:
 // If x-OSC receives a message that does not match any message in the following table the LED will flash red.
 
 	// // send new IP for XOsc as string, e.g. “169.254.1.2”
-	// setIP: (msgName: "/osc/remote/ip", ioType: \out),
+	// setIP: (oscPath: "/osc/remote/ip", ioType: \out),
 	// // send new remote port number for XOsc as int16 (0 – 65535)
-	// setRemotePort: (msgName: "/osc/remote/port", ioType: \out),
+	// setRemotePort: (oscPath: "/osc/remote/port", ioType: \out),
 	// // send new local port number for XOsc as int16 (0 – 65535)
-	// setLocalPort: (msgName: "/osc/local/port", ioType: \out),
+	// setLocalPort: (oscPath: "/osc/local/port", ioType: \out),
 	// // int 1 enables using bundles, 0 disables
-	// useBundles: (msgName: "/osc/bundles", ioType: \out),
+	// useBundles: (oscPath: "/osc/bundles", ioType: \out),
 	// // int 1 enables using prefix (e.g. “/xosc”), 0 disables
-	// usePrefix: (msgName: "/osc/prefix/enabled", ioType: \out),
+	// usePrefix: (oscPath: "/osc/prefix/enabled", ioType: \out),
 	// // set osc address prefix string, e.g. (e.g. “/xosc”)
-	// prefix: (msgName: "/osc/prefix/address", ioType: \out)
+	// prefix: (oscPath: "/osc/prefix/address", ioType: \out)
 );
 
 // /inputs/mode/analogue/<channel>

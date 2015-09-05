@@ -305,6 +305,8 @@ MKtlDesc {
 		// make elements in both forms
 		this.prMakeElemColls(this.elementsDesc);
 		this.inferName;
+		this.makeElemKeys;
+
 		if (this.protocol == \midi) {
 			this.getMidiMsgTypes;
 			missing = fullDesc[\elementsWithMissingType];
@@ -316,6 +318,14 @@ MKtlDesc {
 
 		this.resolveDescEntriesForPlatform;
 	}
+
+	makeElemKeys {
+		this.elementsDesc.traverseDo ({ |elem, deepKeys|
+			var elemKey = deepKeys.join($_).asSymbol;
+			elem.put(\elemKey, elemKey);
+		}, MKtlDesc.isElementTestFunc);
+	}
+
 
 	inferName { |inname, force = false|
 
@@ -419,10 +429,7 @@ MKtlDesc {
 		var type, missing = List[];
 
 		this.elementsDesc.traverseDo ({ |elem, deepKeys|
-			var elemKey = deepKeys.join($_).asSymbol;
 			var msgType;
-
-			elem.put(\elemKey, elemKey);
 			MKtlDesc.fillMidiDefaults(elem);
 			msgType = elem[\midiMsgType];
 
@@ -430,10 +437,10 @@ MKtlDesc {
 				msgTypesUsed.add(msgType.unbubble);
 			} {
 			//	"missing: ".post;
-				missing.add(elemKey);
+				missing.add(elem.elemKey);
 			};
 			// [elemKey, elem].postln;
-		}, MKtlDesc.isElementTestFunc); "";
+		}, MKtlDesc.isElementTestFunc);
 
 
 		// treat noteOnOff as noteOn / noteOff

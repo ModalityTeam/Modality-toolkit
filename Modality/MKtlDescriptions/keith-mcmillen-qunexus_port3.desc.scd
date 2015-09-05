@@ -44,6 +44,7 @@ QuNexus has four hardware modes, which concern port 1:
 ///////// GENERIC INFORMATION COPIED TO ALL QUNEXUS DESC FILES: ///////
 (
 idInfo: "QuNexus",
+portIndex: 3, // same for in and out
 protocol: \midi,
 
 deviceInfo: (
@@ -74,7 +75,7 @@ description: (
 
 	// ins are any 2 CVs from 0 to 5V
 	cvIn: [112, 113].collect { |ccnum|
-		('midiMsgType': 'cc', 'midiChan': 1, ioType: \in,
+		(type: \cvIn, 'midiMsgType': 'cc', 'midiChan': 1, ioType: \in,
 			'midiNum':  ccnum,'spec': 'midiCC')
 	},
 
@@ -94,11 +95,11 @@ description: (
 		// noteNum is held as value, held notes must be kept,
 		// released notes are released, only send
 
-		note: ('midiMsgType': 'noteOnOff', 'midiChan': 1, ioType: \out,
-			noteNum: \all, 'spec': 'midiCC'),
-		mod: ('midiMsgType': 'cc', 'midiChan': 1, ioType: \out,
+		note: (type: \cvOut, 'midiMsgType': 'noteOnOff', 'midiChan': 1, ioType: \out,
+			midiNum: \all, 'spec': 'midiCC'),
+		mod: (type: \cvOut, 'midiMsgType': 'cc', 'midiChan': 1, ioType: \out,
 			'midiNum':  1,'spec': 'midiCC'),
-		bend: ('midiMsgType': 'bend', 'midiChan': 1, ioType: \out,
+		bend: (type: \cvOut, 'midiMsgType': 'bend', 'midiChan': 1, ioType: \out,
 			'spec': 'midiBend')
 	)
 )

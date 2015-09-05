@@ -44,6 +44,7 @@ QuNexus has four hardware modes, which concern port 1:
 ///////// GENERIC INFORMATION COPIED TO ALL QUNEXUS DESC FILES: ///////
 (
 idInfo: "QuNexus",
+portIndex: 1, // same for in and out
 protocol: \midi,
 
 deviceInfo: (
