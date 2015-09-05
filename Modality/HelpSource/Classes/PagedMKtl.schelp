@@ -1,0 +1,94 @@
+TITLE:: PagedMKtl
+summary:: paged control for MKtls
+categories:: Undocumented classes
+related:: Classes/SomeRelatedClass, Reference/SomeRelatedStuff
+
+DESCRIPTION::
+A PagedMKtl has a dict of several MKtls, which are all controlled from the same physical interface. Paging to one of them enables this one, and disables all other pages/mktls.
+
+First code examples:
+
+code::
+// Attach a single nanoKontrol2 first if you have one, then find it:
+MKtl.find(\midi);
+
+// Make some MKtls which point to the same device
+MKtl('ada', "korg-nanokontrol2");
+MKtl('bob', "korg-nanokontrol2");
+MKtl('cyc', "korg-nanokontrol2");
+
+p = PagedMKtl(\nk2, [\ada, \bob, \cyc]);
+
+// now give each one a different action for the rew button
+MKtl('\ada').elementAt(\rew).action_({ "rew page ada".postln });
+MKtl('\bob').elementAt(\rew).action_({ "rew page bob".reverse.postln });
+MKtl('\cyc').elementAt(\rew).action_({ "rew page cyc".scramble.postln });
+
+// now hit the rew button - all three are active!
+
+p.page(\ada);  // hit rew
+p.page(\bob);  // again
+p.page(\cyc);  // and again
+
+p.up.currPage;  //
+p.down.currPage;  //
+p.down.currIndex;  //
+
+Note: The current implementation of HIDMKtlDevice does not allow
+making multiple MKtls that point to the same device. This could
+be fixed by redoing HIDMKtlDevice with HIDFuncs.
+
+::
+
+CLASSMETHODS::
+
+METHOD:: all
+all PagedMktls by name.
+
+private:: initClass
+
+METHOD:: new
+make a paged MKtl
+argument:: name
+name for the PagedMKtl
+argument:: mktlNames
+an array of names of MKtl names which already exist, and which are usually all controlled from the same physical interface.
+argument:: pageNames
+an optional list of names for the pages, which can be different from the MKtl names.
+
+INSTANCEMETHODS::
+
+private:: init
+
+METHOD:: name
+the name of the PagedMKtl
+
+METHOD:: mktlDict
+the dict of mktls used as pages
+
+METHOD:: pageNames
+get the list of pageNames
+
+METHOD:: currMktl
+get currently active MKtl/page
+METHOD:: currPage
+get the currently active page name
+METHOD:: currIndex
+get the index of the currently active page name
+
+METHOD:: up, down
+step pages by + 1 / -1
+
+METHOD:: page
+page to a name or index
+
+
+METHOD:: pageByIndex
+argument:: index
+argument:: wrap
+
+METHOD:: pageByName
+argument:: pageKey
+
+METHOD:: allOff
+turn all pages off
