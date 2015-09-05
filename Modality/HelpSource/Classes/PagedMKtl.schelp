@@ -1,7 +1,8 @@
 TITLE:: PagedMKtl
 summary:: paged control for MKtls
 categories:: Undocumented classes
-related:: Classes/SomeRelatedClass, Reference/SomeRelatedStuff
+related:: Classes/MKtl, Overviews/Modality
+
 
 DESCRIPTION::
 A PagedMKtl has a dict of several MKtls, which are all controlled from the same physical interface. Paging to one of them enables this one, and disables all other pages/mktls.
