@@ -30,8 +30,7 @@ Port 3 sends CV out on 0 to +5V
 * CV2 is mod on CC#1
 * CV3 is pitchbend (on chan 0?)
 
-
-QuNexus has four hardware modes, which concern port 1:
+QuNexus has four hardware modes, which concern elements on Port 1:
 
 	Preset A uses just noteOn/Off and channel bend
 	Preset B adds channel pressure
@@ -41,10 +40,10 @@ QuNexus has four hardware modes, which concern port 1:
 */
 
 
-///////// GENERIC INFORMATION COPIED TO ALL QUNEXUS DESC FILES: ///////
+///////// GENERIC INFORMATION on the QuNexus is here, ///////
+///////// SPECIFIC INFORMATION is in the actual descs! ///////
 (
 idInfo: "QuNexus",
-portIndex: 1, // same for in and out
 protocol: \midi,
 
 deviceInfo: (
@@ -63,18 +62,6 @@ deviceInfo: (
 	// hasScribble: false
 ),
 
-
-///////// SPECIFIC INFORMATION for this port and config: ///////
-
-portName: "Port 1",
-modeName: "Preset C",
-
-description: (
-
-	// Preset C mode is the most interesting:
-	// it adds Poly Pitch Bend on up to 10 channels rotating,
-	// plus pressure on cc1, which also rotates.
-	// how to make a special MKtl for it?
-	// same as Roli example ...
+numPorts: 3,
+hardwarePages: [\A, \B, \C, \D]
 )
-);

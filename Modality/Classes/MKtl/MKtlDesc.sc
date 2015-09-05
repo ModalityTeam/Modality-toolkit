@@ -8,6 +8,8 @@ Questions:
 MKtlDesc {
 	classvar <defaultFolder, <folderName = "MKtlDescriptions";
 	classvar <descExt = ".desc.scd", <compExt = ".comp.scd";
+	classvar <parentExt = ".parentDesc.scd";
+
 	classvar <descFolders;
 	classvar <allDescs;
 	classvar <cacheName = "_allDescs.cache.scd";
@@ -72,13 +74,17 @@ MKtlDesc {
 		descFolders[index].openOS;
 	}
 
-	*findFile { |filename = "*", folderIndex, postFound = false|
+	*findFile { |filename = "*", folderIndex, postFound = false, fileExt|
 		var foundPaths, foldersToLoad, plural = 0;
 		folderIndex = folderIndex ?? { (0 .. descFolders.size-1) };
 		foldersToLoad = descFolders[folderIndex.asArray].select(_.notNil);
 
+		fileExt = fileExt ? descExt;
+
 		foundPaths = foldersToLoad.collect { |dir|
-			(dir +/+ filename ++ descExt).pathMatch
+			(dir +/+ filename ++ fileExt).pathMatch
+			// add depth of one folders
+			++ (dir +/+ "*/" +/+ filename ++ fileExt).pathMatch
 		}.flatten(1);
 
 		if (postFound) {
@@ -302,6 +308,8 @@ MKtlDesc {
 		fullDesc = inDesc;
 		path = path ?? { fullDesc[\path]; };
 
+		this.findParent;
+
 		// make elements in both forms
 		this.prMakeElemColls(this.elementsDesc);
 		this.inferName;
@@ -318,6 +326,32 @@ MKtlDesc {
 
 		this.resolveDescEntriesForPlatform;
 	}
+
+	findParent {
+		var parentName = fullDesc[\parentDesc];
+		var parentPath, parentDesc;
+
+		if (parentName.isNil) { ^this };
+
+		"parent: % \n".postf(parentName);
+		parentPath = MKtlDesc.findFile(parentName, fileExt: parentExt).postln;
+
+		switch(parentPath.size,
+			0, { "no parent found.".postln; },
+			1, {
+				"parent found ... ".postln;
+				"loaded ...".postln;
+				parentDesc = parentPath[0].loadPaths[0];
+				if (parentDesc.isKindOf(Dictionary)) {
+					this.fullDesc.parent_(parentDesc);
+					"and adopted.".postln;
+				};
+
+			},
+			{ "multiple parents found???".postln; }
+		);
+	}
+
 
 	makeElemKeys {
 		this.elementsDesc.traverseDo ({ |elem, deepKeys|

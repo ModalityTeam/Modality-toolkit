@@ -41,7 +41,8 @@ QuNexus has four hardware modes, which concern elements on Port 1:
 */
 
 
-///////// GENERIC INFORMATION COPIED TO ALL QUNEXUS DESC FILES: ///////
+///////// GENERIC INFORMATION on the QuNexus is here, ///////
+///////// SPECIFIC INFORMATION is in the actual descs! ///////
 (
 idInfo: "QuNexus",
 protocol: \midi,
@@ -62,30 +63,6 @@ deviceInfo: (
 	// hasScribble: false
 ),
 
-
-///////// SPECIFIC INFORMATION for this port and config: ///////
-
-portName: "Port 1",
-modeName: "Preset AB",
-
-description: (
-
-	// Preset B has the same elements as Preset A, and some more - like Preset A:
-	// ------ noteOn -------------
-
-	keyOn: (24..108).collect { |midinote|
-		('midiMsgType': 'noteOn', 'type': 'key', 'midiChan': 0, 'midiNum':  midinote, 'spec': 'midiNote') },
-	// ---------noteOff ----------
-	keyOff: (24..108).collect { |midinote|
-		('midiMsgType': 'noteOff', 'type': 'key', 'midiChan': 0, 'midiNum':  midinote, 'spec': 'midiNote')
-	},
-
-	// ------- bend ------------
-	'bend': ('midiMsgType': 'bend', 'type': 'bender', 'midiChan': 0, 'midiNum':  0,'spec': 'midiBend'),
-
-
-// Preset B mode adds single channel pressure from all keys :
-// ------- cc ------------
-'monotouch': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  1,'spec': 'midiCC')
-)
+numPorts: 3,
+hardwarePages: [\A, \B, \C, \D]
 )
