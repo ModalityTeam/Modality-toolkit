@@ -1,27 +1,28 @@
 title:: MKtl description files
-summary:: describes the file format for MKtl desc files
+summary:: describes the format for MKtl desc files and the entries in them.
 categories:: Libraries>Modality
 related:: Overviews/Modality, Classes/MKtl, Tutorials/How_to_create_a_description_file
 
-A description file contains information of a controller, especially access information for each of its elements.
-Evaluation of the file should return a link::Classes/Dictionary:: of a well-defined structure. Description files are located at
+A description file contains detailed information about a controller, so it can be used to full advantage in Modality. Especially, precise information about each of its interaction elements (sliders, knobs, imus, and what-have-yous) help to create good performance setups very efficiently.
+
+Evaluating the code in a desc file should return a link::Classes/Dictionary:: of a well-defined structure. Description files are located here:
 code::
-MKtl.openDescriptionFolder;
+MKtlDesc.openFolder;
 ::
 
 NOTE::
-For a good overview on how a description file for your controller should look like, find a similar one that is alrady supported and look at its description file.
+For a good overview on how a description file for your controller should look like, find a similar one that is already supported and look at its description file.
 ::
 
 This document gives an overview on
 list::
-##link::#Filname convention::
+##link::#Filename conventions::
 ##link::#Semantic information::
 ##link::#Identifier naming convention::
 ##link::#Syntax::
 ::
 
-section:: Filname convention
+section:: Filename convention
 
 The filename should be of the following format:
 
@@ -34,19 +35,21 @@ where
 list::
 ## code::<vendor>:: is lower-case name of vendor with spaces replaced by code::-::
 ## code::<device_name>:: is lower-case name of the device with spaces replaced by code::-::
+This is both unique enough to identify devices, and allows linking to the modality website entry on each device.
 ::
 
 section:: Semantic information
 
 NOTE::
-A description file is bound to one protocol. If there is a device that communicates on multiple protocols (e.g. EMPHASIS::icon iCONTROLS::), it has to be merged further down in the processing chain.
+A description file is bound to a single protocol - currently one of \midi, \hid, and \osc. If there is a device that communicates on multiple protocols (e.g. the EMPHASIS::icon iCONTROLS::), its components have to be built from separate desc files and merged later on.
 ::
 
-subsection:: Toplevel
+subsection:: Top level
 
 DEFINITIONLIST::
 ## protocol [required]
 || The protocol used by the device
+
 ## idInfo | osx | linux [required]
 || For MIDI and HID: the device name as reported by the hardware or drivers. If the reported name is different in osx and linux then use the 'osx' and 'linux' dictionaries.
 For OSC this needs to be a dictionary with information on the ipAdresses and ports used.
@@ -61,32 +64,33 @@ For OSC this needs to be a dictionary with information on the ipAdresses and por
 || Specific groups that are needed to send or receive data from the device. In particular these can be used for OSC devices.
 
 ## status: [optional]
-|| A string describing the status of this description, e.g. code::"complete; tested; OSX, Linux"::, code::"incomplete; tested; OSX", ::code::"complete; tested; OSX;"::, code::"incomplete; untested;"::
+|| A string documenting the status of this description, e.g. code::"complete; tested; OSX, Linux"::, code::"incomplete; tested; OSX", ::code::"complete; tested; OSX;"::, code::"incomplete; untested;"::
 
 ## deviceType [optional]
-|| What kind of device it is. This will make it easier to find another device that might easily replace it. For example: code::\joystick::, code::\gamepad::, code::\mouse::.
+|| Semantic description of what kind of device it is. This will make it easier to find another device that might easily replace it. For example: code::\joystick::, code::\gamepad::, code::\mouse::.
 
 ## specs [optional]
-|| A dictionary with serialized specs like code::(\key: [0, 144, \lin])::. These overwrite existing definition locally for this description only.
+|| A dictionary with specs in serialized notation, like code::(\key: [0, 144, \lin])::. These overwrite existing spec definitions locally for this description only: When an element has a symbol for a spec, this is looked up locally first, then in MKtl.globalSpecs, then in Spec.specs.
 
 ::
 
 
-subsection:: In the description of an element
+subsection:: The description of a single element
 
-A control element is a part of a controller that does one or more of the following things
+A control element is a part of a controller (often for physical interaction, like a slider, knob, accelerometer etc. etc.) that does one or more of the following things:
 
 list::
-## spits out a one-dimensional stream of events,
-## accepts a one-dimensional stream of events.
+## creates and sends a one-dimensional stream of values when played,
+## accepts a one-dimensional stream of values when sent from software.
 ::
 
+An element description is a dict (or event) containing these entries:
 DEFINITIONLIST::
 
 ## midiMsgType
 || code::midiMsgType:: has to be present for elements belonging to a MIDI device.
 
-## hidEelmentID | <hidUsage|hidUsagePage>
+## hidElementID | <hidUsage|hidUsagePage>
 || code::hidElementID:: or both code::hidUsage:: and code::hidUsagePage:: have to be present for elements belonging to an HID device.
 
 ## oscPath
@@ -124,7 +128,7 @@ code::
 
 subsection:: deviceInfo
 
-The deviceInfo is of the following form. All entries are optional.
+The deviceInfo is typically of the following form. All entries are optional.
 
 code::
 (

@@ -9,9 +9,6 @@ MIDIMKtlDevice : MKtlDevice {
 	var <srcID /*Int*/, <source /*MIDIEndPoint*/;
 	var <dstID /*Int*/, <destination /*MIDIEndPoint*/, <midiOut /*MIDIOut*/;
 
-	// an action that is called every time a midi message comes in
-	// .value(type, src, chan, num/note, value/vel)
-
 	// optimisation for fast lookup in one flat dict:
 	var <midiKeyToElemDict;    // find element by e.g. midiCCKey
 
