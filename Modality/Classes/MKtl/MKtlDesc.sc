@@ -339,16 +339,16 @@ MKtlDesc {
 		switch(parentPath.size,
 			0, { "no parent found.".postln; },
 			1, {
-				"parent found ... ".postln;
-				"loaded ...".postln;
+				// "parent found ... ".postln;
 				parentDesc = parentPath[0].loadPaths[0];
+				// "loaded ...".postln;
 				if (parentDesc.isKindOf(Dictionary)) {
 					this.fullDesc.parent_(parentDesc);
-					"and adopted.".postln;
+					// "and adopted.".postln;
 				};
 
 			},
-			{ "multiple parents found???".postln; }
+			{ "multiple parents found ???".postln; }
 		);
 	}
 

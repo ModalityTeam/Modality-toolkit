@@ -64,6 +64,7 @@ MKtlDevice {
 			^nil
 		};
 
+		// try to find device by lokupName/info first:
 		lookupName = parentMKtl.lookupName;
 		lookupInfo = parentMKtl.lookupInfo ?? { MKtlLookup.all[lookupName] };
 		lookupName = lookupName ?? { if (lookupInfo.notNil) { lookupInfo.lookupName } };
@@ -76,12 +77,13 @@ MKtlDevice {
 			^subClass.new( lookupName, parentMKtl: parentMKtl );
 		};
 
-		// no luck with lookup info, so try desc next
+		// no luck with lookup info, so try with desc next
 
 		desc = parentMKtl.desc;
 		if (desc.isNil) {
 			if (verbose) {
-				"MKtldevice.open: parentMktl.desc.isNil - should not happen!".postln;
+				"MKtldevice.open: parentMktl.desc.isNil"
+				"- should not happen!".postln;
 			};
 			^nil
 		};
@@ -95,7 +97,8 @@ MKtlDevice {
 		if (deviceCandidates.size == 0) {
 			if (protocol != \osc) {
 				if (verbose) {
-					inform("%: could not open mktlDevice, no device candidates found."
+					inform("%: could not open mktlDevice,"
+						"no device candidates found."
 						.format(this));
 				};
 				^nil
@@ -114,7 +117,7 @@ MKtlDevice {
 			^nil
 		};
 
-		// exactly one candidate, so we take it:
+		// we have exactly one candidate, so we take it:
 		lookupInfo = deviceCandidates[0];
 
 		if (lookupInfo.notNil) {

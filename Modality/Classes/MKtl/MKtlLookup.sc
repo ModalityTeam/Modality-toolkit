@@ -247,7 +247,20 @@ MKtlLookup {
 	}
 
 	*findByIDInfo { |idInfo|
-		^all.select { |item| item.idInfo == idInfo };
+		var matches = true, res;
+		case
+		{ idInfo.isKindOf(String) } {
+			res = all.select { |infoDict| infoDict.idInfo == idInfo }; }
+		{ idInfo.isKindOf(Dictionary) } {
+			res = all.select { |infoDict|
+				matches = true;
+				infoDict[\idInfo].keysValuesDo { |key, value|
+					matches = matches and: (value == idInfo[key])
+				};
+				matches
+			};
+		};
+		^res
 	}
 }
 
