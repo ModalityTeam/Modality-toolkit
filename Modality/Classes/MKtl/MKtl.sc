@@ -189,7 +189,7 @@ MKtl { // abstract class
 			},
 			MKtlDesc, { newMKtlDesc = lookupNameOrDesc },
 			{
-				//  or is it a dictionary we can make a desc from
+				//  or is it a dictionary we can make a desc from?
 				if (MKtlDesc.isValidDescDict(lookupNameOrDesc)) {
 					lookupNameOrDesc.put(\filename, name);
 					newMKtlDesc = MKtlDesc.fromDict(lookupNameOrDesc);
