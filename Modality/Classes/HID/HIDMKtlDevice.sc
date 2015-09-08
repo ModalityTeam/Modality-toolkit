@@ -5,6 +5,7 @@ HIDMKtlDevice : MKtlDevice {
 	classvar <protocol = \hid;
 
 	var <srcID, <source;
+	var <enabled = true;
 
 	*initClass {
 		Platform.case(\osx, {
@@ -131,8 +132,8 @@ HIDMKtlDevice : MKtlDevice {
 	}
 
 	// how to do that?
-	enable {  }
-	disable {  }
+	enable { enabled = true }
+	disable { enabled = false }
 
 
 	closeDevice {
@@ -219,7 +220,7 @@ HIDMKtlDevice : MKtlDevice {
                 // HIDFunc.element( { |v| el.deviceValueAction_( v ) }, elid, \devid, devid );
 				// could get raw value hidele.deviceValue
                 source.elements.at( elid ).action = { |v, hidele|
-					el.deviceValueAction_( v );
+					if (enabled) { el.deviceValueAction_( v ); };
 					if(traceRunning) { traceFunc.value(el) }
 				};
             }{  // filter by usage and usagePage
@@ -229,7 +230,7 @@ HIDMKtlDevice : MKtlDevice {
 					// could get raw value hidele.deviceValue
                 theseElements.do { |it|
                     it.action = { |v, hidele|
-						el.deviceValueAction_( v );
+						if (enabled) { el.deviceValueAction_( v ); };
 						if(traceRunning) { traceFunc.value(el) }
 					};
                 };

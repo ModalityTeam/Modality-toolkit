@@ -198,8 +198,8 @@ MIDIMKtlDevice : MKtlDevice {
 		if ( mktl.elementsDict.isNil or: {
 			mktl.elementsDict.isEmpty
 		}) {
-			warn(mktl + "has no elements:\n" +
-				mktl.elementsDict.asCompileString;
+			warn(mktl.asString + ".elementsDict has no elements:\n" +
+				mktl.elementsDict;
 			);
 			^this;
 		};

@@ -193,7 +193,7 @@ MKtlLookup {
 			if (insOutsMatch) {
 				all[deviceLookupName].destDevice = info.destDevice.asArray[index];
 				idInfo.destPortIndex = index;
-				info.postcs;
+			//	info.postcs;
 			};
 		};
 
