@@ -59,6 +59,7 @@ MKtlLookup.allFor(\midi).choose.postcs;
 NOTE:: Currently, all endpoints found for the same device name are registered
 as one info dict. For most single-in, single-out devices this works perfectly.
 When multiple devices of the same kind are present (e.g. 2 midifader boxes)
+::
 
 CLASSMETHODS::
 
@@ -90,6 +91,20 @@ METHOD:: midiAt
 METHOD:: addOSC
 add an OSC source or dest. as these are not globally represented, make them by hand,
 with sendAddr, replyAddr, and (given) name.
+
+METHOD:: findByIDInfo
+
+code::
+// MKtl.find detects installed IAC Driver
+MKtl.find(\midi);
+// finds it directly by name
+MKtlLookup.findByIDInfo("IAC Driver");
+// also when given in a dict:
+MKtlLookup.findByIDInfo((deviceName: "IAC Driver"));
+// and even when the dict says sourcePortIndex 0,
+// and the lookup info has no sourcePortIndex (i.e. it is a single port
+MKtlLookup.findByIDInfo((deviceName: "IAC Driver", sourcePortIndex: 0 ));
+::
 
 INSTANCEMETHODS::
 

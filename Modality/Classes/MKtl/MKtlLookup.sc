@@ -187,6 +187,7 @@ MKtlLookup {
 			if (insOutsMatch) {
 				all[deviceName].destDevice = info.destDevice.asArray[index];
 				info.destPortIndex = index;
+				info.postcs;
 			};
 		};
 		if (insOutsMatch.not) {
@@ -246,19 +247,35 @@ MKtlLookup {
 
 	}
 
-	*findByIDInfo { |idInfo|
+	*findByIDInfo { |inIdInfo|
 		var matches = true, res;
-		case
-		{ idInfo.isKindOf(String) } {
-			res = all.select { |infoDict| infoDict.idInfo == idInfo }; }
-		{ idInfo.isKindOf(Dictionary) } {
-			res = all.select { |infoDict|
-				matches = true;
-				infoDict[\idInfo].keysValuesDo { |key, value|
-					matches = matches and: (value == idInfo[key])
-				};
-				matches
+
+		var inIdDict;
+		if (inIdInfo.isKindOf(String)) {
+			inIdDict = (deviceName: inIdInfo);
+		} {
+			inIdDict = inIdInfo
+		};
+
+		// inIdDict.postcs;
+
+		res = all.select { |hereInfo|
+			var hereIdInfo, hereIdDict, matches = true;
+
+			hereIdInfo = hereInfo[\idInfo];
+			if (hereIdInfo.isKindOf(String)) {
+				hereIdDict = (deviceName: hereIdInfo);
+			} {
+				hereIdDict = hereIdInfo;
 			};
+
+			inIdDict.keysValuesDo { |key, value|
+				var hereIDval = hereIdDict[key];
+			//	[key, value, hereIDval].postcs;
+				matches = matches and:
+				((value == hereIDval) or: hereIDval.isNil)
+			};
+			matches
 		};
 		^res
 	}

@@ -19,15 +19,15 @@ Port 3 sends CV out on 0 to +5V
 
 ///////// GENERIC INFORMATION COPIED TO ALL QUNEXUS DESC FILES: ///////
 (
-idInfo: "QuNexus",
+deviceName: "QuNexus",
 protocol: \midi,
 numPorts: 3,
 
 ///////// SPECIFIC INFORMATION for this port and config: ///////
 	// port 3, CV in/outs get converted to/from MIDI
 
+idInfo: (deviceName: "QuNexus", sourcePortIndex: 2, destPortIndex: 2),
 portName: "Port 3",
-portIndex: 2, // same for in and out
 
 
 description: (
