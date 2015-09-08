@@ -899,11 +899,31 @@ MKtl('midi_2_nanok', 'midi_2_nanokontrol2_nr_2');
 ::
 
 
-
-If your device makes multiple MIDI ports, then you may want to specify which port you want to use. You then make a Dictionary of the code::idInfo:: with the field code::name:: with the name of the device (as it shows up after code::MKtl.find::), and then define the code::sourcePortIndex:: and/or the code::destinationPortIndex::; if either one is not specified, it takes the first one.
+Some MIDI devices use multiple MIDI ports, and MKtl treats these as separate devices for which you can make independent MKtls. E.g. the Steinberg CMC-PD or the QuNexus do this. For such devices, you can make separate descriptions for each port number, and you specify the port number in the description:
+You then make a Dictionary of the code::idInfo:: with the field code::name:: with the name of the device (as it shows up after code::MKtl.find::), and then define the code::sourcePortIndex:: and/or the code::destinationPortIndex::; if either one is not specified, it takes the first one.
 
 code::
-( idInfo: ( name: "Ableton Push", sourcePortIndex: 1, destinationPortIndex: 1 ) )
+// Steinberg CMC-PD or the QuNexus have 3 ports each,
+// and their desc files know about them.
+MKtlDesc.openFolder;
+MKtlDesc.loadDescs("*qunexus*").do(_.openFile);
+MKtlDesc.loadDescs("*cmc-pd*").do(_.openFile);
+MKtlLookup.all.keys
+
+(
+deviceName: "QuNexus",
+...
+)
+// source/dest port numbers, you write:
+(
+idInfo: (
+	deviceName: "QuNexus",
+	sourcePortIndex: 0,
+	destPortIndex: 0
+),
+...
+)
+
 ::
 
 
