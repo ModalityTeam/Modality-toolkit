@@ -82,7 +82,7 @@ MKtlLookup {
 		// need to know all available devices in the big list first,
 		// then can sort out which ones belong together
 		midiAll.do { |dev|
-			this.midiSplit(dev);
+			this.splitMIDI(dev);
 		}
 	}
 
@@ -118,11 +118,10 @@ MKtlLookup {
 		};
 	}
 
-	*addMIDI { |endPoint, index, endPointType = \src, where, lookupName|
+	*addMIDI { |endPoint, index, endPointType = \src, where, lookupName, idInfo|
 
 		var protocol = \midi;
-		var idInfo = endPoint.device;
-		var filename = MKtlDesc.filenameForIDInfo(idInfo);
+		var deviceName = endPoint.device;
 		var dict;
 		lookupName = lookupName ?? {
 			MKtl.makeLookupName(protocol, index, endPoint.device);
@@ -130,11 +129,11 @@ MKtlLookup {
 
 		dict = (
 			protocol: protocol,
-			idInfo: idInfo,
-			filename: filename,
-			desc: MKtlDesc.at(filename.asSymbol),
+			deviceName: deviceName,
+			idInfo: idInfo ? deviceName,
 			lookupName: lookupName
 		);
+
 		dict.put(\deviceInfo, endPoint);
 		if (endPointType == \src) { dict.put(\srcDevice, endPoint) };
 		if (endPointType == \dest) { dict.put(\destDevice, endPoint) };
@@ -144,11 +143,11 @@ MKtlLookup {
 		^dict
 	}
 
-	*midiSplit { |info|
+	*splitMIDI { |info|
 
 		var numSources, numDests, insOutsMatch, doAdvise;
 		var numInPorts, numOutPorts, numInDevices, numOutDevices;
-		var deviceName, postfix;
+		var deviceName, deviceLookupName, postfix;
 		var count = this.allFor(\midi).size;
 
 		numSources = info.srcDevice.asArray.size;
@@ -157,9 +156,13 @@ MKtlLookup {
 		// if single device, exit here!
 		if ((numSources < 2) and: { numDests < 2 }) {
 			// "\nMKtlLookup: single midi device -> to all: %\n\n".postf(info);
+			// TODO: findMKtlDescs here,
+			// if only a single desc, then set filename
 			all.put(info.lookupName, info);
 			^this
 		};
+
+		// from here on we have multiple ins and/or outs
 
 		// does info have same number of srcs and dests?
 		// -> if yes, assume same order on ins and outs!
@@ -169,40 +172,46 @@ MKtlLookup {
 		numInDevices = numSources / numInPorts;
 		numOutDevices = numDests / numOutPorts;
 
-		// "% numInPorts: %, numOutPorts: %, numInDevs: %, numOutDevs: %\n"
-		// .postf(info.lookupName, numInPorts, numOutPorts, numInDevices, numOutDevices);
+		// either multiple devices, or multiple ports, or both...
+		 "% numInPorts: %, numOutPorts: %, numInDevs: %, numOutDevs: %\n"
+		 .postf(info.lookupName, numInPorts, numOutPorts, numInDevices, numOutDevices);
 
 		info.srcDevice.do { |srcdev, index|
 			var index1 = index + 1;
-			info.sourcePortIndex = index;
-			deviceName = "midi_%_%%"; postfix = "";
+			var idInfo = (deviceName: info.deviceName);
+			idInfo.sourcePortIndex = index;
+			deviceLookupName = "midi_%_%%"; postfix = "";
 			if (numInDevices > 1) { postfix = postfix ++ "_nr_%".format(index1) };
 			if (numInPorts > 1) { postfix = postfix ++ "_port_%".format(index1) };
 			// [srcdev, index1, postfix].postln;
-			deviceName = deviceName.copy
+			deviceLookupName = deviceLookupName.copy
 			.format(count + index1, info.idInfo.toLower, postfix)
 			.collect { |char| if (char.isAlphaNum, char, $_) }
 			.asSymbol;
-			this.addMIDI(srcdev, count + index1, \src, lookupName: deviceName);
+			this.addMIDI(srcdev, count + index1, \src,
+				lookupName: deviceLookupName, idInfo: idInfo);
 			if (insOutsMatch) {
-				all[deviceName].destDevice = info.destDevice.asArray[index];
-				info.destPortIndex = index;
+				all[deviceLookupName].destDevice = info.destDevice.asArray[index];
+				idInfo.destPortIndex = index;
 				info.postcs;
 			};
 		};
+
+		// unlikely case: we have some independent outs left over
 		if (insOutsMatch.not) {
 			info.destDevice.do { |destdev, index|
 				var index1 = index + 1;
-				info.destPortIndex = index;
-				deviceName = "midi_%_%%"; postfix = "";
+				var idInfo = (destPortIndex: index);
+				deviceLookupName = "midi_%_%%"; postfix = "";
 				if (numInDevices > 1) { postfix = postfix ++ "_devc_%".format(index1) };
 				if (numInPorts > 1) { postfix = postfix ++ "_port_%".format(index1) };
 				// [destdev, index1, postfix].postln;
-				deviceName = deviceName.copy
-				.format(count + index1, info.idInfo.toLower, postfix)
+				deviceLookupName = deviceLookupName.copy
+				.format(count + index1, idInfo.toLower, postfix)
 				.collect { |char| if (char.isAlphaNum, char, $_) }
 				.asSymbol;
-				this.addMIDI(destdev, count + index1, \dest, lookupName: deviceName);
+				this.addMIDI(destdev, count + index1, \dest,
+					lookupName: deviceLookupName, idInfo: idInfo);
 			};
 		};
 	}
