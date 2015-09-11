@@ -1,6 +1,7 @@
 (
 idInfo: "USB Optical Mouse_",
 protocol: 'hid',
+deviceType: \mouse,
 deviceInfo: (
 	// vendorURI: "",
 	// manualURI: "",
@@ -10,7 +11,7 @@ deviceInfo: (
 		"scroll wheel"
 	],
 	// notes: "",
-	// type: [\pointer],
+	elementTypes: [\button, \mouseAxis, \mouseWheel],
 	// hasScribble: false
 ),
 description: (

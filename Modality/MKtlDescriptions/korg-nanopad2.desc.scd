@@ -8,13 +8,15 @@ k = MIDIMKtl('nnpd20');
 (
 idInfo: "nanoPAD2",
 protocol: \midi,
+deviceType: \drumpad,
+
 deviceInfo: (
 	vendorURI: "http://www.korg.com/us/products/controllers/nanopad2/",
 	// manualURI: "",
 	// description: "",
 	// features: [],
 	// notes: "",
-	type: [\pad, \touchpad, \button],
+	elementTypes: [\pad, \touchpad, \button],
 ),
 description: (
 	\pad: (

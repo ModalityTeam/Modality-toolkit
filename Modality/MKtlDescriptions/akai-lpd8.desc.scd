@@ -3,6 +3,8 @@
 (
 idInfo: "LPD8",
 protocol: \midi,
+deviceType: \drumpad,
+
 deviceInfo: (
 	vendorURI: "http://www.akaipro.com/product/lpd8",
 	// manualURI: "",
@@ -12,7 +14,7 @@ deviceInfo: (
 		"4 knobs"
 	],
 	// notes: "",
-	type: [\pad, \knob],
+	elementTypes: [\pad, \knob],
 ),
 description: (
 	\kn: Event.newFrom( (1..8).collect{ |midiNum, i|

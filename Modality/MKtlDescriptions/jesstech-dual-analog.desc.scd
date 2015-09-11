@@ -1,13 +1,15 @@
 (
 protocol: \hid,
 idInfo: "Dual Analog Pad_Jess Tech",
+deviceType: \gamepad,
+
 deviceInfo: (
 	// vendorURI: "",
 	// manualURI: "",
 	// description: "",
 	// features: [],
 	// notes: "",
-	type: [\gamepad],
+	elementTypes: [\button, \joyAxis, \hat],
 ),
 description: (
 

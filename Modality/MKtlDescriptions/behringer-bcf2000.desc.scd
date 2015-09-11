@@ -18,6 +18,8 @@ sl[row][column]
 idInfo: "BCF2000",
 protocol: \midi,
 hardwarePages: [1, 2, 3, 4],
+deviceType: \faderbox,
+
 deviceInfo: (
 	vendorURI: "http://www.behringer.com/EN/Products/BCR2000.aspx",
 	manualURI: "http://www.behringer.com/assets/BCF2000_BCR2000_M_EN.pdf",

@@ -56,6 +56,7 @@ s.quit;
 deviceName: \manta,
 idInfo: ( srcPort: 31417, ipAddress: "127.0.0.1", recvPort: 57120 ),
 protocol: \osc,
+deviceType: \manta,
 
 specialMessages: (
 	enableLEDControl: [

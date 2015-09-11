@@ -43,13 +43,15 @@ MIDIFunc.trace
 idInfo:"Steinberg CMC-PD",
 portIndex: 2,
 protocol: \midi,
+deviceType: \drumPad,
+
 deviceInfo: (
 	vendorURI: "http://www.steinberg.net/en/products/controllers/cmc_series/models/cmc_pd.html",
 	// manualURI: "",
 	// description: "",
 	// features: "",
 	// notes: "",
-	type: [\pad, \button]
+	elementTypes: [\pad, \button]
 ),
 description:
 

@@ -3,13 +3,14 @@
 (
 idInfo: "USB Trigger Finger",
 protocol: \midi,
+deviceType: \drumpad,
 deviceInfo: (
 	// vendorURI: "",
 	// manualURI: "",
 	// description: "",
 	features: [\pad, \slider, \knob],
 	// notes: "",
-	type: [\pad, \button, \slider],
+	elementTypes: [\pad, \button, \slider],
 	// hasScribble: false
 ),
 description: (

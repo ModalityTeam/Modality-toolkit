@@ -4,6 +4,8 @@ todo
 (
 idInfo:"Steinberg CMC-FD",
 protocol: \midi,
+deviceType: \controller,
+
 deviceInfo: (
 	vendorURI: "http://www.steinberg.net/en/products/controllers/cmc_series/models/cmc_fd.html",
 	// manualURI: "",

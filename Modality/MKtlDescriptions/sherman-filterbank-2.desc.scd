@@ -2,6 +2,8 @@
 (
 idInfo: "Sherman FilterBank 2",
 protocol: \midi,
+deviceType: \filterbank,
+
 deviceInfo: (
 	// vendorURI: "",
 	// manualURI: "",

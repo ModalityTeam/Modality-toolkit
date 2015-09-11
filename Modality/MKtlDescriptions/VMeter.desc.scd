@@ -9,13 +9,14 @@ k.verbose_(true);
 (
 idInfo: "VMeter 1.30 A",
 protocol: \midi,
+\deviceType: \fader,
 deviceInfo: (
 	vendorURI: "http://www.vmeter.net/",
 	// manualURI: "",
 	// description: "",
 	// features: [],
 	// notes: "",
-	type: [\fader],
+	elementTypes: [\fader],
 	// hasScribble: false
 ),
 description: (

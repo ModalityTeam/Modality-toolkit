@@ -4,6 +4,8 @@
 (
 idInfo: "Launch Control XL",
 protocol: \midi,
+deviceType: \mixer,
+
 hardwarePages: (
 	factory: [1,2,3,4,5,6,7,8],
 	user: [1,2,3,4,5,6,7,8]
@@ -21,7 +23,7 @@ deviceInfo: (
 		"8 “user”-pages + 8 “factory”-pages",
 	],
 	// notes: "",
-	type: [\mixer],
+	type: [\fader, \button, \knob],
 	// hasScribble: false
 ),
 description:

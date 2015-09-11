@@ -1,13 +1,15 @@
 (
 idInfo: "iCON iControls V2.00_iCON",
 protocol: 'hid',
+deviceType: \joystick,
+
 deviceInfo: (
 	// vendorURI: "",
 	// manualURI: "",
 	// description: "",
 	// features: [],
 	// notes: "",
-	type: [\mixer],
+	elementTypes: [\joyAxis],
 	// hasScribble: false
 ),
 description: (

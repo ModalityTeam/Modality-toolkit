@@ -1,13 +1,15 @@
 (
 idInfo: "Traktor Kontrol Z2 Input",
 protocol: 'midi',
+deviceType: \mixer,
+
 deviceInfo: (
 	vendorURI: "http://www.native-instruments.com/en/products/traktor/dj-mixer/traktor-kontrol-z2/",
 	// manualURI: "",
 	// description: "",
 	// features: [],
 	// notes: "",
-	type: [\mixer],
+	elementTypes: [\fader, \button],
 	// hasScribble: false
 ),
 description: (

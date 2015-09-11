@@ -16,6 +16,8 @@ NOT DONE YET:
 (
 idInfo: ( srcPort: 8000, ipAddress: "169.254.1.1", recvPort: 9000 ), // ip for adhoc mode
 protocol: \osc,
+deviceType: \multiController,
+
 deviceInfo: (
 	vendorURI: "http://www.x-io.co.uk/products/x-osc/",
 	manualURI: "http://www.x-io.co.uk/downloads/x-OSC-User-Manual-v0.4.pdf",
@@ -29,7 +31,7 @@ deviceInfo: (
 		"4× serial communication channels"
 	],
 	notes: "",
-	type: [\accelerometer],
+	type: [\accelerometer, \sensor, \serial],
 ),
 specs: (
 	\switch: [0, 1, \lin, 1].asSpec,

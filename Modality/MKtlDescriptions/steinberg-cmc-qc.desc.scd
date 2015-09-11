@@ -1,6 +1,7 @@
 (
-idInfo:"Steinberg CMC-FD",
+idInfo:"Steinberg CMC-QC",
 protocol: \midi,
+deviceType: \controller,
 deviceInfo: (
 	// vendorURI: "http://www.steinberg.net/en/products/controllers/cmc_series/models/cmc_qc.html",
 	// manualURI: "",

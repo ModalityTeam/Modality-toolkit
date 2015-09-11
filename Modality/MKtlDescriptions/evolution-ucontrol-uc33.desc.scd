@@ -1,6 +1,8 @@
 (
 idInfo: "UC-33 USB MIDI Controller",
 protocol: \midi,
+deviceType: \faderbox,
+
 deviceInfo: (
 	// vendorURI: "",
 	// manualURI: "",

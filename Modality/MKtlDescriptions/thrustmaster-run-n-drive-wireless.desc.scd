@@ -1,13 +1,15 @@
 (
 idInfo: "Run'N' Drive Wireless_Thrustmaster",
 protocol: \hid,
+deviceType: \gamepad,
+
 deviceInfo: (
 	vendorURI: "http://www.thrustmaster.com/products/runndrive-wireless-3-in1-rumble-force",
 	// manualURI: "",
 	// description: "",
 	// features: [],
 	// notes: "",
-	type: [\gamepad],
+	elementTypes: [\joystick, \button, \wheel, \throttle, \compass, \rumble]
 	// hasScribble: false
 ),
 specs: (\compassRND: [0, 8, \lin, 1, 1].asSpec),

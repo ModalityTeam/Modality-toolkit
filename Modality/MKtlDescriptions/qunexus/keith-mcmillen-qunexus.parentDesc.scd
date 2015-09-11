@@ -46,6 +46,7 @@ QuNexus has four hardware modes, which concern elements on Port 1:
 (
 idInfo: "QuNexus",
 protocol: \midi,
+deviceType: \keyboard,
 
 deviceInfo: (
 
@@ -59,7 +60,7 @@ deviceInfo: (
 		"5 function buttons",
 	],
 	// notes: "",
-	type: [\button, \keyboard],
+	type: [\button, \pianoKey, \bend],
 	// hasScribble: false
 ),
 

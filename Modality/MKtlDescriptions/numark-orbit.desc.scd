@@ -3,6 +3,8 @@ MKtl.addSpec(\selectNumark, [0, 4]);
 (
 idInfo: "Numark ORBIT",
 protocol: 'midi',
+deviceType: \djController,
+
 deviceInfo: (
 	vendorURI: "http://www.numark.com/product/orbit",
 	// manualURI: "",
@@ -16,7 +18,7 @@ deviceInfo: (
 		"control wheel",
 	],
 	// notes: "",
-	type: [\button, \encoder]
+	elementTypes: [\button, \encoder]
 ),
 description:
 (

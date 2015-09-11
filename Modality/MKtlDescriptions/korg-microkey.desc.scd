@@ -1,6 +1,7 @@
 (
 idInfo: "microKEY",
 protocol: 'midi',
+deviceType: \keyboard,
 deviceInfo: (
 	vendorURI: "http://www.korg.com/us/products/controllers/microkey/",
 	// manualURI: "",
@@ -10,7 +11,7 @@ deviceInfo: (
 		"three models: 25-key / 37-key / 61-key"
 	],
 	// notes: "",
-	type: [\keyboard],
+	elementTypes: [\pianoKey]
 ),
 description: (
 

@@ -11,6 +11,8 @@ MKtlDevice {
 	classvar <allProtocols;
 	classvar <subClassDict;
 
+	classvar <deviceTypes;
+
 	// lookup name, full device name, the mktl it was made for
 	var <name, <deviceName, <>mktl;
 
@@ -31,6 +33,11 @@ MKtlDevice {
 		} {
 			allProtocols = [\midi,\osc];
 		};
+		deviceTypes = List[
+			\mouse, \gamepad, \joystick,
+			\faderbox, \multiController, \drumpad, \keyboard, \mixer,
+			\imu, \phoneApp,
+		];
 
 		subClassDict = ();
 		this.allSubclasses.do { |cl| subClassDict.put(cl.protocol, cl) };

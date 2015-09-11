@@ -5,6 +5,7 @@
 (
 idInfo: "Launchpad",
 protocol: \midi,
+deviceType: \launchpad,
 deviceInfo: (
 	vendorURI: "http://us.novationmusic.com/midi-controllers-digital-dj/launchpad",
 	manualURI: "http://us.novationmusic.com/support/product-downloads?product=Launchpad",
@@ -15,7 +16,7 @@ deviceInfo: (
 		"8 other buttons",
 	],
 	// notes: "",
-	type: [\button],
+	elementTypes: [\button],
 	hasScribble: true
 ),
 description: (

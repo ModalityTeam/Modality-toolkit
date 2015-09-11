@@ -1,13 +1,15 @@
 (
 idInfo: "USB Joystick_MegaWorldectronics",
 protocol: \hid,
+deviceType: \joystick,
+
 deviceInfo: (
 	// vendorURI: "",
 	// manualURI: "",
 	// description: "",
 	// features: [],
 	// notes: "",
-	type: [\joystick],
+	type: [\joystick, \button, \hat, \slider],
 	// hasScribble: false
 ),
 description: (

@@ -6,6 +6,8 @@
 (
 idInfo: "MPK mini",
 protocol: \midi,
+deviceType: \keyboard,
+
 deviceInfo: (
 	vendorURI: "http://www.akaipro.com/product/mpkmini",
 	// manualURI: "",
@@ -16,7 +18,7 @@ deviceInfo: (
 		"8 Q-link knobs",
 	],
 	notes: "Desc file is made for the Factory Preset ```Preset3-MPC```, downloadable from http://www.akaipro.com/product/mpkmini#downloads",
-	type: [\keyboard, \pads, \slider],
+	elementTypes: [\keyboard, \pads, \slider],
 	// hasScribble: false
 ),
 description: (

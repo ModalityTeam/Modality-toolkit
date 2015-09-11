@@ -2,7 +2,11 @@
 (
 idInfo: "Livid Guitar Wing",
 protocol: 'midi',
-deviceInfo: (),
+deviceType: \multiController,
+
+deviceInfo: (
+	elementTypes: [\button, \touchFader, \pad]
+),
 
 'description': (
 	//	noteOn 127 for start, cc for val, noteOff 0

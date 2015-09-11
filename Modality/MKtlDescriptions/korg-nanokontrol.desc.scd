@@ -10,6 +10,8 @@
 (
 idInfo: "nanoKONTROL",
 protocol: \midi,
+deviceType: \faderbox,
+
 numPorts: (src: 1, dest: 1),
 hardwarePages: [1, 2, 3, 4],
 
@@ -19,7 +21,7 @@ deviceInfo: (
 	// description: "",
 	// features: [],
 	// notes: "",
-	type: [\faders, \knobs, \buttons],
+	elementTypes: [\faders, \knobs, \buttons],
 	hasScribble: true
 ),
 description: [

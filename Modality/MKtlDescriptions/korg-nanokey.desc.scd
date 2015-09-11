@@ -4,13 +4,14 @@
 ((
 	idInfo: "nanoKEY",
 	protocol: 'midi',
+	deviceType: \keyboard,
 	deviceInfo: (
 		// vendorURI: "",
 		// manualURI: "",
 		// description: "",
 		// features: [],
 		// notes: "",
-		type: [\keyboard],
+		elementTypes: [\pianoKey],
 		// hasScribble: false
 	),
 	description: (

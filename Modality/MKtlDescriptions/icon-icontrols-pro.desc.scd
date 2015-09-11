@@ -3,13 +3,14 @@
 (
 idInfo: "iCON iControls_Pro V1.02",
 protocol: \midi,
+deviceType: \faderbox,
 deviceInfo: (
 	// vendorURI: "",
 	// manualURI: "",
 	// description: "",
 	// features: [],
 	// notes: "",
-	type: [\fader, \button],
+	elementTypes: [\fader, \button],
 	// hasScribble: false
 ),
 description: [

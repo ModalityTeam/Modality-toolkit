@@ -1,6 +1,7 @@
 (
 idInfo: "Generic Mouse",
 protocol: 'hid',
+deviceType: \mouse,
 deviceInfo: (
 	// vendorURI: "",
 	// manualURI: "",
@@ -10,7 +11,7 @@ deviceInfo: (
 		"scroll wheel",
 	],
 	// notes: "",
-	type: [\pointer],
+	elementTypes: [\mouseAxis, \button, \mouseWheel],
 	// hasScribble: false
 ),
 description: (

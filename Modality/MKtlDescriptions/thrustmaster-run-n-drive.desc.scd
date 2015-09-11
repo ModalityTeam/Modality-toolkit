@@ -46,6 +46,8 @@ f.elementAt(\joy, \r, \hat).action = { |el| [el.name, el.value].postln };
 (
 idInfo: "Run'N' Drive_Thrustmaster",
 protocol: \hid,
+deviceType: \gamepad,
+
 deviceInfo: (
 	vendorURI: "http://www.thrustmaster.com/products/runndrive-wireless-3-in1-rumble-force",
 	// manualURI: "",
@@ -54,6 +56,7 @@ deviceInfo: (
 	// notes: "",
 	// type: [],
 	// hasScribble: false
+	elementTypes: [\joystick, \button, \wheel, \throttle, \compass, \rumble]
 ),
 specs: (\compassRND: [0, 8, \lin, 1, 1].asSpec),
 description: (

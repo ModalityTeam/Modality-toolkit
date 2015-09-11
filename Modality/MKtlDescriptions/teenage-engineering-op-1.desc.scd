@@ -5,6 +5,8 @@
 (
 idInfo: "OP-1 Midi Device",
 protocol: \midi,
+\deviceType: \keyboard,
+
 deviceInfo: (
 	vendorURI: "https://www.teenageengineering.com/products/op-1",
 	// manualURI: "",

@@ -46,27 +46,29 @@ MKtl(\tOsc).elements.action = { |el|
 *******************************/
 (
 (
-	idInfo: (srcPort: 12345, recvPort: 57120, ipAddress: "192.168.2.79"),
-	protocol: \osc,
-	deviceInfo: (),
-	deviceType: [\accelerometer],
-	specs: (\toggle: [0, 1, \lin, 1].asSpec),
+idInfo: (srcPort: 12345, recvPort: 57120, ipAddress: "192.168.2.79"),
+protocol: \osc,
+deviceInfo: (),
+deviceType: \phoneApp,
+elementTypes: [\accelerometer, \fader, \button]
 
-	description: [
-		\xfader -> (oscPath: '/1/fader5', type: 'slider',
-			spec: \unipolar, ioType: \in),
-		\sl -> (1..4).collect { |num|
-			(
-				oscPath: "/1/fader%".format(num).asSymbol,
-				type: \slider, spec: \unipolar, ioType: \in
-			)
-		},
-		\bt -> (1..4).collect { |num|
-			(
-				oscPath: "/1/toggle%".format(num).asSymbol,
-				type: \button, spec: \toggle, ioType: \in
-			)
-		}
-	]
+specs: (\toggle: [0, 1, \lin, 1].asSpec),
+
+description: [
+	\xfader -> (oscPath: '/1/fader5', type: 'slider',
+		spec: \unipolar, ioType: \in),
+	\sl -> (1..4).collect { |num|
+		(
+			oscPath: "/1/fader%".format(num).asSymbol,
+			type: \slider, spec: \unipolar, ioType: \in
+		)
+	},
+	\bt -> (1..4).collect { |num|
+		(
+			oscPath: "/1/toggle%".format(num).asSymbol,
+			type: \button, spec: \toggle, ioType: \in
+		)
+	}
+]
 );
 )

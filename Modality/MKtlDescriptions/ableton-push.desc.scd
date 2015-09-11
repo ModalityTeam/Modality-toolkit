@@ -1,6 +1,8 @@
 (
 idInfo: "Ableton Push",
 protocol: \midi,
+deviceType: \push,
+
 deviceInfo: (
 	vendorURI: "https://www.ableton.com/en/push/",
 	manualURI: "https://www.ableton.com/en/manual/using-push/",
@@ -14,7 +16,7 @@ deviceInfo: (
 		"24 LEDs for navigation",
 	],
 	notes: "Currently only ```User-mode``` supported.",
-	type: [\pad, \button, \encoder, \display, \bend],
+	elementTypes: [\pad, \button, \encoder, \display, \bend],
 	hasScribble: true
 ),
 status: "untested",
