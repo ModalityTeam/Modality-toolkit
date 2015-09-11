@@ -449,7 +449,7 @@ MKtl { // abstract class
 
 	setValueAt { |elName, val|
 		if (elName.isKindOf(Collection).not) {
-			^this.at(elName).value_(val);
+			^this.elementsDict[elName].value_(val);
 		};
 		[elName, val].flop.do { |pair|
 			elementsDict[pair[0]].value_(pair[1])
@@ -486,10 +486,6 @@ MKtl { // abstract class
 		}
 	}
 
-	// allElements { // unneeded
-	// 	^elementsDict.asArray
-	// }
-
 	elementsLabeled { |label|
 		var labels;
 
@@ -517,7 +513,8 @@ MKtl { // abstract class
 
 	// new desc, so decommission everything,
 	// remake elements from new desc,
-	// close mktldevice if there and try to open a new one
+	// close mktldevice if there,
+	// and try to open a new one
 
 
 	rebuild { |descNameOrDict| // could be a string/symbol or dictionary
@@ -575,7 +572,7 @@ MKtl { // abstract class
 		^mktlDevice.notNil
 	}
 
-	// only for MIDI ...
+	// only for MIDI, to support multiple identical devices
 	listenTo { |srcIDindex|
 		if (this.hasDevice.not) {
 			"no mktlDevice.".postln

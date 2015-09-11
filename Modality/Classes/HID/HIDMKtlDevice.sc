@@ -119,8 +119,16 @@ HIDMKtlDevice : MKtlDevice {
 		.initHIDMKtl( foundSource );
 	}
 
+
 	initHIDMKtl { |argSource, argUid|
 		// HID is only ever one source, hopefully
+
+		// To make HID polyphonic:
+		// find out if HID is already open first;
+		// be polite and only add hidele.actions with
+		// hidele.action = hidele.action.addFunc(newaction);
+		// and keep the as they are actions somewhere for removeFunc
+
         source = argSource.open;
 		srcID = source.id;
 
