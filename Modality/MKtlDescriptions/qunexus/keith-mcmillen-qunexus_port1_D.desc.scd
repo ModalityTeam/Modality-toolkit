@@ -25,6 +25,7 @@ modeName: "Preset D",
 
 	// Preset D mode is for drums and clips -
 	// please add when someone needs that mode.
+	// add page: \D to elements when known
 description: (
 
 )

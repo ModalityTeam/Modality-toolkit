@@ -10,7 +10,7 @@ On this port and in these modes, the keys and control on the QuNexus itself
 can be played into the computer and set from it.
 
 	Preset A uses just noteOn/Off and channel bend,
-	Preset B adds channel pressure.
+	Preset B adds channel pressure - so only use Preset B.
 */
 
 (
@@ -28,22 +28,22 @@ modeName: "Preset AB",
 
 description: (
 
-	// Preset B has the same elements as Preset A, and some more - like Preset A:
+	// Preset B has the same elements as Preset A, and one more - like Preset A:
 	// ------ noteOn -------------
 
 	keyOn: (24..108).collect { |midinote|
-		('midiMsgType': 'noteOn', 'type': 'key', 'midiChan': 0, 'midiNum':  midinote, 'spec': 'midiNote') },
+		('midiMsgType': 'noteOn', 'type': 'key', 'midiChan': 0, 'midiNum':  midinote, 'spec': 'midiNote', page: B) },
 	// ---------noteOff ----------
 	keyOff: (24..108).collect { |midinote|
-		('midiMsgType': 'noteOff', 'type': 'key', 'midiChan': 0, 'midiNum':  midinote, 'spec': 'midiNote')
+		('midiMsgType': 'noteOff', 'type': 'key', 'midiChan': 0, 'midiNum':  midinote, 'spec': 'midiNote', page: B)
 	},
 
 	// ------- bend ------------
-	'bend': ('midiMsgType': 'bend', 'type': 'bender', 'midiChan': 0, 'midiNum':  0,'spec': 'midiBend'),
+	'bend': ('midiMsgType': 'bend', 'type': 'bender', 'midiChan': 0, 'midiNum':  0,'spec': 'midiBend', page: B),
 
 
-// Preset B mode adds single channel pressure from all keys :
+// Preset B mode only adds single channel pressure from all keys :
 // ------- cc ------------
-'monotouch': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  1,'spec': 'midiCC')
+'monotouch': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  1,'spec': 'midiCC', page: B)
 )
 )

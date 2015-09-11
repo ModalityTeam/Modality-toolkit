@@ -34,5 +34,6 @@ description: (
 	// plus pressure on cc1, which also rotates.
 	// how to make a special MKtl for it?
 	// see the Roli example ... to be adapted soonish.
+	// add page: \C to all elements
 )
 );

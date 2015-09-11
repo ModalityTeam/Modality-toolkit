@@ -43,19 +43,19 @@ description: (
 		]
 	],
 
-	//upper row of encoders when pressed
+	//upper row of encoders when pressed, 4 pages, 8 rows
 	\tr:4.collect{ |j|
 		8.collect{ |i|
 			// top knob push mode
-			(\midiMsgType: \cc, \type: \encoder, \midiChan: 0, \midiNum: 33+(8*j)+i, \spec: \midiCC, \ioType: \in)
+			(\midiMsgType: \cc, \type: \encoder, \midiChan: 0, \midiNum: 33+(8*j)+i, \spec: \midiCC, \ioType: \in, page: j + 1)
 		}
 	},
 
-	//upper row of encoders
+	//upper row of encoders, 4 pages, 8 rows
 	\knUp:4.collect{ |j|
 		8.collect{ |i|
 			// top knob push mode
-			(\midiMsgType: \cc, \type: \encoder, \midiChan: 0, \midiNum: 1+(8*j)+i, \spec: \midiCC, \ioType: \inout)
+			(\midiMsgType: \cc, \type: \encoder, \midiChan: 0, \midiNum: 1+(8*j)+i, \spec: \midiCC, \ioType: \inout, page: j + 1)
 		}
 	},
 
