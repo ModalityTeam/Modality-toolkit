@@ -90,7 +90,7 @@ MKtlDevice {
 		if (desc.isNil) {
 			if (verbose) {
 				"MKtldevice.open: parentMktl.desc.isNil"
-				"- should not happen!".postln;
+				" - should not happen!".postln;
 			};
 			^nil
 		};
@@ -105,16 +105,13 @@ MKtlDevice {
 			if (protocol != \osc) {
 				if (verbose) {
 					inform("%: could not open mktlDevice,"
-						"no device candidates found."
+						" no device candidates found."
 						.format(this));
 				};
 				^nil
 			};
 		};
 
-		// FIXME: how to get multiple merged devices distinguished properly?
-		// currently two nanoKontrols would get merged, which would be wrong.
-		// - unless one merges controllers as well
 		if (deviceCandidates.size > 1) {
 			inform("%: multiple device candidates found, please disambiguate by lookupName:"
 				.format(this.name));

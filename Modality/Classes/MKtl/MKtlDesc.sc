@@ -333,8 +333,8 @@ MKtlDesc {
 
 		if (parentName.isNil) { ^this };
 
-		"parent: % \n".postf(parentName);
-		parentPath = MKtlDesc.findFile(parentName, fileExt: parentExt).postln;
+		// "parent: % \n".postf(parentName);
+		parentPath = MKtlDesc.findFile(parentName, fileExt: parentExt);
 
 		switch(parentPath.size,
 			0, { "no parent found.".postln; },

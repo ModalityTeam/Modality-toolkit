@@ -54,8 +54,6 @@ MIDIMKtlDevice : MKtlDevice {
 		destination = nil;
 	}
 
-	prSetSrcID { |argID| srcID = argID; }
-
 	// open all ports
 	*initDevices { |force = false|
 
