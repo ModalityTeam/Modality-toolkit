@@ -18,18 +18,18 @@ deviceInfo: (
 ),
 description: (
 	\kn: Event.newFrom( (1..8).collect{ |midiNum, i|
-		[ i+1, (\midiMsgType: \cc, \type: \knob, \midiChan: 0, \midiNum: midiNum, \spec: \midiCC, \ioType: \inout ) ]
+		[ (i+1).asSymbol, (\midiMsgType: \cc, \type: \knob, \midiChan: 0, \midiNum: midiNum, \spec: \midiCC, \ioType: \inout ) ]
 	}.flatten ),
 	\pad: (
 		\on: Event.newFrom( (36..43).collect{ |note, i|
 			[
-				i+1,
+				(i+1).asSymbol,
 				(\midiMsgType: \noteOn, \type: \pad, \midiChan: 0, \midiNum:  note, \spec: \midiVel, \ioType: \inout)
 			]
 		}.flatten ),
 		\off: Event.newFrom( (36..43).collect{ |note, i|
 			[
-				i+1,
+				(i+1).asSymbol,
 				(\midiMsgType: \noteOff, \type: \pad, \midiChan: 0, \midiNum:  note, \spec: \midiVel, \ioType: \inout)
 			]
 		}.flatten )
