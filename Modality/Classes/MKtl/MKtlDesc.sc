@@ -136,6 +136,9 @@ MKtlDesc {
 		^allDescs[descName]
 	}
 
+	// FIXME: cache file does not support multiple files for some
+	// hardware deviceName yet...
+
 	// create lookup dicts for filename -> idInfo and back
 	// this will allow loading just the file needed, not all files.
 
@@ -174,6 +177,7 @@ MKtlDesc {
 
 	}
 
+
 	*loadCache {
 		// clear first? maybe better not
 		descFolders.do { |folder|
@@ -194,7 +198,25 @@ MKtlDesc {
 		// and if so, make a new cache file.
 	}
 
-	// integrity checks
+
+	// ANALYSIS of loaded descs:
+	*postDescKeysUsed {
+		// all keys used in fullDescs
+		var allKeys = MKtlDesc.allDescs.collectAs(_.fullDesc, Array)
+		.collect(_.keys(Array));
+		var keySet = allKeys.flat.asSet.collectAs({ |key|
+			[key, allKeys.count(_.includes(key)) ];
+
+		}, Array).sort { |a, b| a[1] > b[1] };
+		"\n\n/*** All keys used in MKtlDesc.allDescs: ***/\n".postln;
+		keySet.do { |list, i|
+			[i, list].postcs;
+		};
+		"\n/*** end MKtlDesc.allDescs - keys. ***/\n".postln;
+		^keySet
+	}
+
+	// integrity checks for dicts at all levels:
 
 	// according to current definition,
 	// \idInfo, \protocol, \description are required;
@@ -226,6 +248,7 @@ MKtlDesc {
 		// "% - dict not valid: %\n\n".postf(thisMethod, dict);
 	}
 
+	//
 	*isValidMidiDesc { |dict| }
 	*isValidHIDDesc { |dict| }
 	*isValidOSCDesc { |dict| }

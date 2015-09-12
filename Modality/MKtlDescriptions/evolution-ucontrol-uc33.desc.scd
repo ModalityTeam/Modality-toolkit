@@ -2,6 +2,8 @@
 idInfo: "UC-33 USB MIDI Controller",
 protocol: \midi,
 deviceType: \faderbox,
+\elementTypes: [\slider, \knob, \button],
+status: "unknown",
 
 deviceInfo: (
 	// vendorURI: "",
@@ -9,7 +11,7 @@ deviceInfo: (
 	// description: "",
 	// features: (),
 	// notes: ""
-	type: [\slider, \knob, \button],
+
 	hasScribble: false
 ),
 

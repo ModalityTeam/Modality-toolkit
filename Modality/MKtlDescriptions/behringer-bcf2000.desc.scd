@@ -15,10 +15,17 @@ sl[row][column]
 
 
 (
-idInfo: "BCF2000",
+
+deviceName: "BCF2000",
 protocol: \midi,
-hardwarePages: [1, 2, 3, 4],
 deviceType: \faderbox,
+elementTypes: [\fader, \button, \encoder],
+status: "unknown",
+
+idInfo: "BCF2000",
+
+hardwarePages: [1, 2, 3, 4],
+
 
 deviceInfo: (
 	vendorURI: "http://www.behringer.com/EN/Products/BCR2000.aspx",
@@ -26,7 +33,6 @@ deviceInfo: (
 	// description: "",
 	// features: [],
 	// notes: "",
-	type: [\fader, \rotary],
 	hasScribble: true
 ),
 description: (

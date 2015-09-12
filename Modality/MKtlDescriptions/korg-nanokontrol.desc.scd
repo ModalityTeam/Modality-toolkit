@@ -8,11 +8,13 @@
 //	// 4 hardware scenes, flattened out with underscores
 
 (
-idInfo: "nanoKONTROL",
+deviceName: "nanoKONTROL",
 protocol: \midi,
 deviceType: \faderbox,
+elementTypes: [\fader, \knob, \button],
 
-numPorts: (src: 1, dest: 1),
+idInfo: "nanoKONTROL",
+
 hardwarePages: [1, 2, 3, 4],
 
 deviceInfo: (
@@ -21,7 +23,7 @@ deviceInfo: (
 	// description: "",
 	// features: [],
 	// notes: "",
-	elementTypes: [\faders, \knobs, \buttons],
+
 	hasScribble: true
 ),
 description: [

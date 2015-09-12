@@ -1,7 +1,11 @@
 (
-idInfo: "The Ribbon",
+deviceName: "The Ribbon",
 protocol: \midi,
 deviceType: \ribbon,
+elementTypes: [\ribbon, \pad],
+status: "unknown",
+
+idInfo: "The Ribbon",
 
 deviceInfo: (
 	vendorURI: "http://www.eowave.com/instruments.php?prod=78",
@@ -12,7 +16,6 @@ deviceInfo: (
 		"capacitive sensing touch field",
 	],
 	// notes: "",
-	elementTypes: [\ribbon, \pad],
 	// hasScribble: false
 ),
 

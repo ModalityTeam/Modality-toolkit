@@ -2,6 +2,8 @@
 idInfo: "iCON iControls V2.00_iCON",
 protocol: 'hid',
 deviceType: \joystick,
+status: "unknown",
+elementTypes: [\joyAxis],
 
 deviceInfo: (
 	// vendorURI: "",
@@ -9,7 +11,7 @@ deviceInfo: (
 	// description: "",
 	// features: [],
 	// notes: "",
-	elementTypes: [\joyAxis],
+
 	// hasScribble: false
 ),
 description: (

@@ -3,8 +3,13 @@
 // hardware scenes: DJ, Effector and Drummer seems to work, flattened out with underscores.
 
 (
-idInfo: "iCON iStage V1.00",
+deviceName: "iCON iStage V1.00",
 protocol: \midi,
+deviceType: \drumpad,
+elementTypes: [\pad, \button, \fader, \display, \led],
+status: "unknown",
+
+idInfo: "iCON iStage V1.00",
 deviceInfo: (
 	vendorURI: "http://www.icon-global.com/Keyboards%2FPads_Pads_iStage.htm",
 	// manualURI: "",
@@ -18,7 +23,7 @@ deviceInfo: (
 		"1 assignable fader",
 	],
 	// notes: "",
-	type: [\button],
+
 	// hasScribble: false
 ),
 description: (

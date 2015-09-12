@@ -15,9 +15,13 @@ k.elements[\kn][0][2].action = { |el| Ndef(\test).setUni(\reso, el.value.postln)
 */
 
 (
-idInfo: "Arturia MINILAB",
+deviceName: "Arturia MINILAB",
 protocol: \midi,
 deviceType: \keyboard,
+elementTypes: [\pianoKey, \encoder, \button],
+status: "unknown",
+
+idInfo: "Arturia MINILAB",
 
 deviceInfo: (
 	vendorURI: "http://www.arturia.com/products/hybrid-synths/minilab/overview",
@@ -29,7 +33,6 @@ deviceInfo: (
 		"buttons and directional arrows",
 	],
 	notes: "Desc file only for absolute knob mode.",
-	elementTypes: [\keyboard, \encoder, \button],
 	// hasScribble: false
 ),
 description: (

@@ -17,9 +17,12 @@ ip addr should be passed in later.
 
 (
 deviceName: "gyrosc",
-idInfo: ( srcPort: 31417, ipAddress: "1.2.3.4", recvPort: 57120 ),
 protocol: \osc,
 deviceType: \phoneApp,
+elementTypes: [\imu, \accelerometer],
+status: "incomplete",
+
+idInfo: ( srcPort: 31417, ipAddress: "1.2.3.4", recvPort: 57120 ),
 
 deviceInfo: (
 	vendorURI: "http://www.bitshapesoftware.com/instruments/gyrosc/",
@@ -27,7 +30,6 @@ deviceInfo: (
 	// description: "",
 	// features: [],
 	// notes: "",
-	elementTypes: [\imu, \accelerometer],
 	// hasScribble: false
 ),
 	// actually about 7 more messages possible.

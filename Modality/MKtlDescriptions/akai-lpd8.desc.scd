@@ -1,9 +1,13 @@
 // AKAI professional LPD8 Laptop Pad controller specs
 
 (
-idInfo: "LPD8",
+deviceName: "LPD8",
 protocol: \midi,
 deviceType: \drumpad,
+elementTypes: [\pad, \knob],
+status: "unknown",
+
+idInfo: "LPD8",
 
 deviceInfo: (
 	vendorURI: "http://www.akaipro.com/product/lpd8",
@@ -14,7 +18,6 @@ deviceInfo: (
 		"4 knobs"
 	],
 	// notes: "",
-	elementTypes: [\pad, \knob],
 ),
 description: (
 	\kn: Event.newFrom( (1..8).collect{ |midiNum, i|

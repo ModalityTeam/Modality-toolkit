@@ -29,7 +29,6 @@ numPorts: 3,
 idInfo: (deviceName: "QuNexus", sourcePortIndex: 2, destPortIndex: 2),
 portName: "Port 3",
 
-
 description: (
 
 	// ins are any 2 CVs from 0 to 5V

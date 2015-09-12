@@ -1,7 +1,11 @@
 (
-idInfo: "Ableton Push",
+deviceName: "Ableton Push",
 protocol: \midi,
 deviceType: \push,
+elementTypes: [\pad, \button, \encoder, \display, \bend],
+status: "untested",
+
+idInfo: "Ableton Push",
 
 deviceInfo: (
 	vendorURI: "https://www.ableton.com/en/push/",
@@ -16,23 +20,22 @@ deviceInfo: (
 		"24 LEDs for navigation",
 	],
 	notes: "Currently only ```User-mode``` supported.",
-	elementTypes: [\pad, \button, \encoder, \display, \bend],
 	hasScribble: true
 ),
-status: "untested",
 
-description: (// display still missing because SysEx and different MIDI port...
+	// display still missing because SysEx and different MIDI port...
+description: (
 
 //------ pads -------------
 \pad: (
-		 \on: (36..99).collect{|num|
+		 \on: (36..99).collect { |num|
 			('midiMsgType': \noteOn, \type: \pad, \midiChan: 0, \midiNum: num, \spec: \midiNote, \ioType: \inout)
 }.clump(8),
-		 \off: (36..99).collect{|num|
+		 \off: (36..99).collect { |num|
 			('midiMsgType': \noteOff, \type: \pad, \midiChan: 0, \midiNum: num, \spec: \midiNote, \ioType: \inout)
 }.clump(8)
 	),
-\poly: (36..99).collect{|num|
+\poly: (36..99).collect { |num|
 	('midiMsgType': 'polyTouch', 'type': 'keytouch', 'midiChan': 0, 'midiNum': num,'spec': 'midiCC', \ioType: \in)
 }.clump(8),
 
@@ -43,10 +46,10 @@ description: (// display still missing because SysEx and different MIDI port...
 
 
 //------ encoderTopRow
-\encHat: (0..8).collect{|num|
+\encHat: (0..8).collect { |num|
 	(midiMsgType: \noteOnOff, type: 'button', midiChan: 0, midiNum: num, spec: \midiVel)
 },
-\enc: (71..79).collect{|num|
+\enc: (71..79).collect { |num|
 	(midiMsgType: \cc, type: \encoder, midiChan: 0, midiNum: num, spec: \midiCC)
 },
 
@@ -59,10 +62,10 @@ rEnc: (midiMsgType: \cc, type: \encoder, midiChan: 0, midiNum: 15, spec: \midiBu
 
 //------ color button rows
 \colorBut: [
-	(20..27).collect{|num|
+	(20..27).collect { |num|
 		('midiMsgType': 'cc', 'type': 'button', 'midiChan': 0, 'midiNum':    num, 'spec': 'midiCC', \ioType: \inout)
 },
-	(102..109).collect{|num|
+	(102..109).collect { |num|
 		('midiMsgType': 'cc', 'type': 'button', 'midiChan': 0, 'midiNum':    num, 'spec': 'midiCC', \ioType: \inout)
 }
 ],

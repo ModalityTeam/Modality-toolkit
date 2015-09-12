@@ -4,6 +4,8 @@
 idInfo: "nanoKONTROL2",
 protocol: \midi,
 deviceType: \faderbox,
+elementTypes: [\fader, \knob, \button],
+status: "tested",
 
 deviceInfo: (
 	vendorURI: "http://www.korg.com/us/products/controllers/nanokontrol2/",
@@ -11,8 +13,9 @@ deviceInfo: (
 	// description: "",
 	// features: [],
 	// notes: "",
-	elementTypes: [\fader, \knob, \button],
+
 ),
+
 description: [
 	\rew -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 43, \spec: \midiBut, \mode: \push, \ioType: \inout, \style: (row: 3, showLabel: true) ),
 	\fwd -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 44, \spec: \midiBut, \mode: \push, \ioType: \inout, \style: (row: 3, showLabel: true)),
@@ -27,15 +30,15 @@ description: [
 	\tright -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 59, \spec: \midiBut, \mode: \push, \ioType: \inout, \label: ">", \style: (row: 1.125, column: 1, height: 0.75, showLabel: true)),
 
 	// scene:
-	\sl -> (0..7).collect{ |i, ii|
+	\sl -> (0..7).collect { |i, ii|
 		(\midiMsgType: \cc, \type: \slider, \midiChan: 0, \midiNum: i, \spec: \midiCC, \style: (row: 1, column: 7+(ii*2)))
 	},
 
-	\kn -> (16..23).collect{ |i, ii|
+	\kn -> (16..23).collect { |i, ii|
 		(\midiMsgType: \cc, \type: \knob, \midiChan: 0, \midiNum: i, \spec: \midiCC, \style: (row: 0, column: 7+(ii*2)))
 	},
 
-	\bt -> [(32..39),(48..55),(64..71)].collect{ |xs, ii|
+	\bt -> [(32..39),(48..55),(64..71)].collect { |xs, ii|
 		xs.collect{ |i, iii|
 			(\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum:  i, \spec: \midiCC, \ioType: \inout, \label: ["S", "M", "R"][ii], \style: (row: 1+ii, column: 6+(iii*2), showLabel: true ))
 		}

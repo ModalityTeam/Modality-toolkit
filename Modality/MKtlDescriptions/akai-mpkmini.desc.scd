@@ -4,9 +4,13 @@
 // made by Joost van Dalen
 
 (
-idInfo: "MPK mini",
+deviceName: "MPK mini",
 protocol: \midi,
 deviceType: \keyboard,
+elementTypes: [\pianoKey, \pads, \slider],
+status: "unknown",
+
+idInfo: "MPK mini",
 
 deviceInfo: (
 	vendorURI: "http://www.akaipro.com/product/mpkmini",
@@ -18,7 +22,6 @@ deviceInfo: (
 		"8 Q-link knobs",
 	],
 	notes: "Desc file is made for the Factory Preset ```Preset3-MPC```, downloadable from http://www.akaipro.com/product/mpkmini#downloads",
-	elementTypes: [\keyboard, \pads, \slider],
 	// hasScribble: false
 ),
 description: (

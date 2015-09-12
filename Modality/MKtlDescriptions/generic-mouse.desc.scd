@@ -2,6 +2,11 @@
 idInfo: "Generic Mouse",
 protocol: 'hid',
 deviceType: \mouse,
+elementTypes: [\mouseAxis, \button, \mouseWheel],
+status: "unknown",
+
+deviceName: "Generic Mouse",
+
 deviceInfo: (
 	// vendorURI: "",
 	// manualURI: "",
@@ -11,7 +16,6 @@ deviceInfo: (
 		"scroll wheel",
 	],
 	// notes: "",
-	elementTypes: [\mouseAxis, \button, \mouseWheel],
 	// hasScribble: false
 ),
 description: (

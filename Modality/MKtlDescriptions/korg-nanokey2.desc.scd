@@ -1,7 +1,11 @@
 (
-idInfo: "nanoKEY2",
+deviceName: "nanoKEY2",
 protocol: 'midi',
 deviceType: \keyboard,
+elementTypes: [\pianoKey, \button],
+status: "unknown",
+
+idInfo: "nanoKEY2",
 
 deviceInfo: (
 	vendorURI: "http://www.korg.com/us/products/controllers/nanokey2/",
@@ -9,7 +13,7 @@ deviceInfo: (
 	// description: "",
 	// features: [],
 	// notes: "",
-	elementTypes: [\pianoKey, \button],
+
 ),
 description: (
 	'keyOn':

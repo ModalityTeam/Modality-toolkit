@@ -18,20 +18,25 @@ MIDIMKtl('bcr20000').elements.kn[0][0].value_(0.5)
 
 
 (
-idInfo: "BCR2000",
+deviceName: "BCR2000",
 protocol: \midi,
 deviceType: \mixer,
+elementTypes: [\encoder, \button],
+status: "unknown",
+
+idInfo: "BCR2000",
 
 hardwarePages: [1,2,3,4],
+
 deviceInfo: (
 	vendorURI: "http://www.behringer.com/EN/Products/BCR2000.aspx",
 	manualURI: "http://www.behringer.com/assets/BCF2000_BCR2000_M_EN.pdf",
 	// description: "",
 	// features: [],
 	// notes: "",
-	elementTypes: [\encoder, \button],
 	hasScribble: false
 ),
+
 description: (
 	//buttons at bottom right
 	\pr: [

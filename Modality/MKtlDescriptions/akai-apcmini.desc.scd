@@ -6,9 +6,13 @@ a.elementAt(\keyOn).action_({ |elem| [\ON, elem.name, elem.value].postln; });
 a.elementAt(\keyOff).action_({ |elem| [\OFF, elem.name, elem.value].postln; });
 */
 (
-idInfo: "APC MINI",
+deviceName: "APC MINI",
 protocol: 'midi',
 deviceType: [\launchpad],
+elementTypes: [\fader, \pad, \button],
+status: "unknown",
+
+idInfo: "APC MINI",
 
 deviceInfo: (
 	vendorURI: "http://www.akaipro.com/product/apc-mini",
@@ -19,7 +23,7 @@ deviceInfo: (
 		"9 faders",
 		"17 buttons",
 	],
-	elementTypes: [\fader, \pad, \button],
+
 	// notes: "",
 	// hasScribble: false
 ),

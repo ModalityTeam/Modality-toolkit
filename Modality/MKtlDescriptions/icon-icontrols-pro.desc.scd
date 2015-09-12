@@ -1,16 +1,21 @@
 // incomplete, but what is there works
 
 (
-idInfo: "iCON iControls_Pro V1.02",
+deviceName: "iCON iControls_Pro V1.02",
 protocol: \midi,
 deviceType: \faderbox,
+elementTypes: [\fader, \button],
+status: "unknown",
+
+idInfo: "iCON iControls_Pro V1.02",
+
 deviceInfo: (
 	// vendorURI: "",
 	// manualURI: "",
 	// description: "",
 	// features: [],
 	// notes: "",
-	elementTypes: [\fader, \button],
+
 	// hasScribble: false
 ),
 description: [

@@ -1,11 +1,22 @@
 (
 (
-idInfo: "Livid Guitar Wing",
+deviceName: "Livid Guitar Wing",
 protocol: 'midi',
 deviceType: \multiController,
+elementTypes: [\button, \touchFader, \pad],
+status: "tested",
+
+idInfo: "Livid Guitar Wing",
+
 
 deviceInfo: (
-	elementTypes: [\button, \touchFader, \pad]
+	vendorURI: "http://lividinstruments.com/products/guitar-wing/“,
+	manualURI: "http://lividinstruments.com/support/“,
+	description: “controller for guitar”,
+	features: [
+	],
+	notes: “_none_”,
+	hasScribble: true
 ),
 
 'description': (

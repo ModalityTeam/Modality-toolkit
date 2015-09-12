@@ -40,10 +40,11 @@ y.noteOn(0, 60, 127);
 MIDIFunc.trace
 */
 (
-idInfo:"Steinberg CMC-PD",
-portIndex: 2,
+deviceName: "Steinberg CMC-PD",
 protocol: \midi,
 deviceType: \drumPad,
+
+idInfo: (deviceName: "Steinberg CMC-PD", sourcePortIndex: 2, destPortIndex: 2),
 
 deviceInfo: (
 	vendorURI: "http://www.steinberg.net/en/products/controllers/cmc_series/models/cmc_pd.html",

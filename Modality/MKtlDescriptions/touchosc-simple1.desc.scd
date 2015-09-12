@@ -46,13 +46,15 @@ MKtl(\tOsc).elements.action = { |el|
 *******************************/
 (
 (
-idInfo: (srcPort: 12345, recvPort: 57120, ipAddress: "192.168.2.79"),
+deviceName: "touchOSC",
 protocol: \osc,
-deviceInfo: (),
 deviceType: \phoneApp,
 elementTypes: [\accelerometer, \fader, \button],
+status: "unknown",
 
-specs: (\toggle: [0, 1, \lin, 1].asSpec),
+idInfo: (srcPort: 12345, recvPort: 57120, ipAddress: "192.168.2.79"),
+
+deviceInfo: (),
 
 description: [
 	\xfader -> (oscPath: '/1/fader5', type: 'slider',
@@ -66,7 +68,7 @@ description: [
 	\bt -> (1..4).collect { |num|
 		(
 			oscPath: "/1/toggle%".format(num).asSymbol,
-			type: \button, spec: \toggle, ioType: \in
+			type: \button, spec: \but, ioType: \in
 		)
 	}
 ]
