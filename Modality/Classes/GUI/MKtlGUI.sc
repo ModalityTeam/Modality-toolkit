@@ -5,6 +5,8 @@ MKtlElementView {
 	var <element;
 	var <>parent, <>view, <>value, <>getValueFunc;
 
+	var <>snapbackValue = 0, <snapback = false;
+
 	*new { |parent, bounds, element|
 		^this.newCopyArgs( element ).makeView( parent, bounds );
 	}
@@ -12,12 +14,7 @@ MKtlElementView {
 	*initClass {
 		makeViewFuncDict = (
 			'button': { |parent, bounds, label, element|
-				var mouseDownAction;
-				if( element.elemDesc[ \mode ] == \push ) {
-					mouseDownAction = { |bt| bt.valueAction = 1 };
-				};
 				Button( parent, bounds.insetBy( MKtlGUI.margin ) )
-				.mouseDownAction_( mouseDownAction )
 				.states_([[ label ? "" ],[ label ? "", Color.black, Color.gray(0.33) ]]);
 			},
 			'slider': { |parent, bounds, label|
@@ -28,8 +25,8 @@ MKtlElementView {
 			},
 			'pad': { |parent, bounds, label|
 				MPadView( parent, bounds.insetBy( MKtlGUI.margin ) )
-					.useUpValue_( true )
-					.autoUpTime_( 0.2 );
+				.useUpValue_( true )
+				.autoUpTime_( 0.2 );
 			},
 			'unknown': { |parent, bounds, label|
 				var vw;
@@ -58,6 +55,17 @@ MKtlElementView {
 		view = this.getMakeViewFunc( element.type ).value( parent, bounds, label, element );
 		getValueFunc = this.makeGetValueFunc( element, view );
 
+		view.keyDownAction = { |vw, key|
+			(	$t: { this.snapback_(false) },
+				$m: { this.snapback_(true) }
+			)[key].value;
+		};
+
+		if ((element.type == \button) and: {
+			element.elemDesc[ \mode ] == \push;
+		}) {
+			this.snapback_(true);
+		};
 	}
 
 	getMakeViewFunc { |type|
@@ -73,7 +81,7 @@ MKtlElementView {
 		var getValueFunc, value, ctrl, changed = true;
 
 		ctrl = SimpleController( element )
-			.put( \value, { |obj| changed = true });
+		.put( \value, { |obj| changed = true });
 
 		getValueFunc = { if( changed == true ) { changed = false; element.value; }; };
 		value = getValueFunc.value;
@@ -100,6 +108,26 @@ MKtlElementView {
 		};
 	}
 
+	snapback_ { |flag = true|
+		snapback = flag;
+		if (snapback) {
+			"% gui: switching to momentary action with snapback.\n".postf(element);
+			if (view.isKindOf(Button)) {
+				view.mouseDownAction = { |bt| "down".postln; bt.valueAction = 1 };
+			};
+			view.mouseUpAction = {
+				defer ({
+					"snap up".postln;
+					element.valueAction = snapbackValue;
+					view.value = snapbackValue;
+				}, 0.05);
+			};
+		} {
+			"% gui: switching to toggle action.\n".postf(element);
+			if (view.isKindOf(Button)) { view.mouseDownAction = nil; };
+			view.mouseUpAction = nil;
+		};
+	}
 }
 
 MKtlGUI {
@@ -168,16 +196,17 @@ MKtlGUI {
 				};
 			});
 		})
+		.acceptsMouse_(false) // allow using underlying views.
 		.visible_( false );
 
 		traceButton = Button( parent, Rect(2,2,80,16) )
-			.states_([["trace"],["trace", Color.black, Color.green]])
-			.action_({ |bt| mktl.trace( bt.value.booleanValue ) })
-			.value_( mktl.traceRunning.binaryValue );
+		.states_([["trace"],["trace", Color.black, Color.green]])
+		.action_({ |bt| mktl.trace( bt.value.booleanValue ) })
+		.value_( mktl.traceRunning.binaryValue );
 
 		labelButton = Button( parent, Rect(84,2,80,16) )
-			.states_([["labels"],["labels", Color.black, Color.green]])
-			.action_({ |bt| this.showLabels( bt.value.booleanValue ) });
+		.states_([["labels"],["labels", Color.black, Color.green]])
+		.action_({ |bt| this.showLabels( bt.value.booleanValue ) });
 
 		if( pages.notNil ) {
 			Button( parent, Rect( 168, 2, 16, 16 ) )
