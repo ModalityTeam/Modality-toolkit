@@ -32,18 +32,18 @@ description: (
 	// ------ noteOn -------------
 
 	keyOn: (24..108).collect { |midinote|
-		('midiMsgType': 'noteOn', 'type': 'key', 'midiChan': 0, 'midiNum':  midinote, 'spec': 'midiNote', page: B) },
+		('midiMsgType': 'noteOn', 'type': 'key', 'midiChan': 0, 'midiNum':  midinote, 'spec': 'midiNote', page: \B) },
 	// ---------noteOff ----------
 	keyOff: (24..108).collect { |midinote|
-		('midiMsgType': 'noteOff', 'type': 'key', 'midiChan': 0, 'midiNum':  midinote, 'spec': 'midiNote', page: B)
+		('midiMsgType': 'noteOff', 'type': 'key', 'midiChan': 0, 'midiNum':  midinote, 'spec': 'midiNote', page: \B)
 	},
 
 	// ------- bend ------------
-	'bend': ('midiMsgType': 'bend', 'type': 'bender', 'midiChan': 0, 'midiNum':  0,'spec': 'midiBend', page: B),
+	'bend': ('midiMsgType': 'bend', 'type': 'bender', 'midiChan': 0, 'midiNum':  0,'spec': 'midiBend', page: \B),
 
 
 // Preset B mode only adds single channel pressure from all keys :
 // ------- cc ------------
-'monotouch': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  1,'spec': 'midiCC', page: B)
+'monotouch': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  1,'spec': 'midiCC', page: \B)
 )
 )

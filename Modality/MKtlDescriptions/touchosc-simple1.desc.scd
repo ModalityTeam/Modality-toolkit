@@ -50,7 +50,7 @@ idInfo: (srcPort: 12345, recvPort: 57120, ipAddress: "192.168.2.79"),
 protocol: \osc,
 deviceInfo: (),
 deviceType: \phoneApp,
-elementTypes: [\accelerometer, \fader, \button]
+elementTypes: [\accelerometer, \fader, \button],
 
 specs: (\toggle: [0, 1, \lin, 1].asSpec),
 
