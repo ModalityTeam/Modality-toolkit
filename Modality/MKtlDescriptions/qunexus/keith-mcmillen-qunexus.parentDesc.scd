@@ -44,9 +44,11 @@ QuNexus has four hardware modes, which concern elements on Port 1:
 ///////// GENERIC INFORMATION on the QuNexus is here, ///////
 ///////// SPECIFIC INFORMATION is in the actual descs! ///////
 (
-idInfo: "QuNexus",
+deviceName: "QuNexus",
 protocol: \midi,
 deviceType: \keyboard,
+// elementTypes in childDescs,
+status: "in progress",
 
 deviceInfo: (
 

@@ -15,12 +15,11 @@ can be played into the computer and set from it.
 
 (
 ///////// GENERIC INFORMATION COPIED TO ALL QUNEXUS DESC FILES: ///////
-deviceName: "QuNexus",
-protocol: \midi,
 parentDesc: "keith-mcmillen-qunexus",
-numPorts: 3,
 
 ///////// SPECIFIC INFORMATION for this port and config: ///////
+
+status: "tested and working",
 
 idInfo: (deviceName: "QuNexus", sourcePortIndex: 0, destPortIndex: 0),
 portName: "Port 1",

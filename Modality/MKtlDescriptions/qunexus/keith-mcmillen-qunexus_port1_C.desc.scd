@@ -15,12 +15,12 @@ to be adapted from an example for the Roli keyboard soon.
 
 (
 ///////// GENERIC INFORMATION COPIED TO ALL QUNEXUS DESC FILES: ///////
-deviceName: "QuNexus",
-protocol: \midi,
+
 parentDesc: "keith-mcmillen-qunexus",
-numPorts: 3,
 
 ///////// SPECIFIC INFORMATION for this port and config: ///////
+
+status: "not done yet",
 
 idInfo: (deviceName: "QuNexus", sourcePortIndex: 0, destPortIndex: 0),
 portName: "Port 1",

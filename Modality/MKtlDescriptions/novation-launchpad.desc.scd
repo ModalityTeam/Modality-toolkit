@@ -3,9 +3,15 @@
 // no hardware scenes, flattened out with underscores
 
 (
-idInfo: "Launchpad",
+deviceName: "Launchpad",
 protocol: \midi,
 deviceType: \launchpad,
+elementTypes: [\button],
+status: "unknown",
+
+idInfo: "Launchpad",
+
+
 deviceInfo: (
 	vendorURI: "http://us.novationmusic.com/midi-controllers-digital-dj/launchpad",
 	manualURI: "http://us.novationmusic.com/support/product-downloads?product=Launchpad",
@@ -16,7 +22,7 @@ deviceInfo: (
 		"8 other buttons",
 	],
 	// notes: "",
-	elementTypes: [\button],
+
 	hasScribble: true
 ),
 description: (
@@ -29,17 +35,17 @@ description: (
 	\user2:   (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 110, \spec: \midiBut, \mode: \push),
 	\mixer:   (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 111, \spec: \midiBut, \mode: \push),
 
-	\padOn: ((0, 16 .. 112) +.t (0..7)).flat.collect{|num, i|
+	\padOn: ((0, 16 .. 112) +.t (0..7)).flat.collect {|num, i|
 		(\midiMsgType: \noteOn, \type: \pad, \midiChan: 0, \midiNum: num, \spec: \midiVel)
 	},
-	\padOff: ((0, 16 .. 112) +.t (0..7)).flat.collect{|num, i|
+	\padOff: ((0, 16 .. 112) +.t (0..7)).flat.collect {|num, i|
 		(\midiMsgType: \noteOff, \type: \pad, \midiChan: 0, \midiNum: num, \spec: \midiVel)
 	},
 
-	\arrOn: ((0, 16 .. 112) + 8).flat.collect{|num, i|
+	\arrOn: ((0, 16 .. 112) + 8).flat.collect {|num, i|
 		(\midiMsgType: \noteOn, \type: \pad, \midiChan: 0, \midiNum: num, \spec: \midiVel)
 	},
-	\arrOff: ((0, 16 .. 112) + 8).flat.collect{|num, i|
+	\arrOff: ((0, 16 .. 112) + 8).flat.collect {|num, i|
 		(\midiMsgType: \noteOff, \type: \pad, \midiChan: 0, \midiNum: num, \spec: \midiVel)
 	}
 )

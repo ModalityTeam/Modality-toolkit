@@ -1,14 +1,19 @@
 (
-idInfo: "Logitech Extreme 3D_Logitech",
+deviceName: "Logitech Extreme 3D_Logitech",
 protocol: 'hid',
 deviceType: \joystick,
+elementTypes:  [\joystick, \button],
+status: "unknown",
+
+idInfo: "Logitech Extreme 3D_Logitech",
+
 deviceInfo: (
 	vendorURI: "http://gaming.logitech.com/en-us/product/extreme-3d-pro-joystick",
 	manualURI: "http://support.logitech.com/product/extreme-3d-pro",
 	description: "",
 	// features: [],
 	// notes: "",
-	type: [\joystick, \button],
+
 	hasScribble: true
 ),
 description: (

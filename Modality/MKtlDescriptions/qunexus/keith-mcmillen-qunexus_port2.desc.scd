@@ -13,12 +13,11 @@ the elements would then represent this connected device.
 
 (
 ///////// GENERIC INFORMATION COPIED TO ALL QUNEXUS DESC FILES: ///////
-deviceName: "QuNexus",
-protocol: \midi,
 parentDesc: "keith-mcmillen-qunexus",
 
 ///////// SPECIFIC INFORMATION for this port and config: ///////
 
+status: "untested",
 idInfo: (deviceName: "QuNexus", sourcePortIndex: 0, destPortIndex: 0),
 portName: "Port 2",
 

@@ -1,16 +1,21 @@
 // M-audio Trigger finger - MKtl
 
 (
-idInfo: "USB Trigger Finger",
+deviceName: "USB Trigger Finger",
 protocol: \midi,
 deviceType: \drumpad,
+elementTypes: [\pad, \button, \slider],
+status: "unknown",
+
+idInfo: "USB Trigger Finger",
+
 deviceInfo: (
 	// vendorURI: "",
 	// manualURI: "",
 	// description: "",
 	features: [\pad, \slider, \knob],
 	// notes: "",
-	elementTypes: [\pad, \button, \slider],
+
 	// hasScribble: false
 ),
 description: (

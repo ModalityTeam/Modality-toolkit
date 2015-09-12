@@ -1,9 +1,13 @@
 MKtl.addSpec(\selectNumark, [0, 4]);
 
 (
-idInfo: "Numark ORBIT",
+deviceName: "Numark ORBIT",
 protocol: 'midi',
 deviceType: \djController,
+elementTypes: [\button, \encoder],
+status: "unknown",
+
+idInfo: "Numark ORBIT",
 
 deviceInfo: (
 	vendorURI: "http://www.numark.com/product/orbit",
@@ -18,13 +22,12 @@ deviceInfo: (
 		"control wheel",
 	],
 	// notes: "",
-	elementTypes: [\button, \encoder]
 ),
 description:
 (
 
 'pad':
-	4.collect{ arg chan;
+	4.collect { arg chan;
 		(36..51).collect{ arg num;
 			 ('midiMsgType': 'noteOn', 'type': 'key', 'midiChan': chan, 'midiNum':  num, 'spec': 'midiNote')
 		}
@@ -32,7 +35,7 @@ description:
 ,
 
 'padOff': (
-	4.collect{ arg chan;
+	4.collect { arg chan;
 		(36..51).collect{ arg num;
 			 ('midiMsgType': 'noteOff', 'type': 'key', 'midiChan': chan, 'midiNum':  num, 'spec': 'midiNote')
 		}
@@ -60,7 +63,7 @@ description:
 ,
 
 'move' :
-4.collect{ arg chan;
+4.collect { arg chan;
 (
 	'l' : ('midiMsgType': 'cc', 'type': 'movement', 'midiChan': chan, 'midiNum':  9,'spec': 'midiCC'),
 	'r' : ('midiMsgType': 'cc', 'type': 'movement', 'midiChan': chan, 'midiNum':  10,'spec': 'midiCC')

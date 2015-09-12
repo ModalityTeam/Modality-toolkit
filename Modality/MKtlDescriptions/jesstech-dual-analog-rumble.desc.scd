@@ -1,7 +1,11 @@
 (
+deviceName: "Dual Analog Rumble Pad_Jess Tech",
 protocol: \hid,
-idInfo: "Dual Analog Rumble Pad_Jess Tech",
 deviceType: \gamepad,
+elementTypes: [\joyAxis, \button, \hat],
+status: "unknown",
+
+idInfo: "Dual Analog Rumble Pad_Jess Tech",
 
 deviceInfo: (
 	// vendorURI:
@@ -9,7 +13,7 @@ deviceInfo: (
 	// description:
 	// features:
 	// notes:
-	elementTypes: [\joyAxis, \button, \hat]
+
 ),
 description: (
 

@@ -2,9 +2,13 @@
 // factory: channel 8
 
 (
-idInfo: "Launch Control XL",
+deviceName: "Launch Control XL",
 protocol: \midi,
 deviceType: \mixer,
+elementTypes: [\fader, \button, \knob],
+status: "unknown",
+
+idInfo: "Launch Control XL",
 
 hardwarePages: (
 	factory: [1,2,3,4,5,6,7,8],
@@ -23,7 +27,6 @@ deviceInfo: (
 		"8 “user”-pages + 8 “factory”-pages",
 	],
 	// notes: "",
-	type: [\fader, \button, \knob],
 	// hasScribble: false
 ),
 description:

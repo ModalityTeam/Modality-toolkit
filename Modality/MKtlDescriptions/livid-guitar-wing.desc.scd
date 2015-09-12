@@ -10,12 +10,11 @@ idInfo: "Livid Guitar Wing",
 
 
 deviceInfo: (
-	vendorURI: "http://lividinstruments.com/products/guitar-wing/“,
-	manualURI: "http://lividinstruments.com/support/“,
-	description: “controller for guitar”,
-	features: [
-	],
-	notes: “_none_”,
+	vendorURI: "http://lividinstruments.com/products/guitar-wing/",
+	manualURI: "http://lividinstruments.com/support/",
+	description: "controller for guitar",
+	features: [],
+	notes: "_none_",
 	hasScribble: true
 ),
 
