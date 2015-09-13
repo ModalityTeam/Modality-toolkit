@@ -202,13 +202,14 @@ MAbstractElement {
 }
 
 MKtlElement : MAbstractElement {
-	classvar <types;
+	classvar <types, <elementTypes;
 
 	// for mapping between numbers from device
 	// and internal value between [0, 1]
 	var <deviceSpec;
 
 	*initClass {
+		elementTypes = [ 'accelerometer', 'bend', 'bender', 'button', 'compass', 'display', 'encoder', 'fader', 'hat', 'imu', 'joyAxis', 'joystick', 'keyTouch', 'keyboard', 'knob', 'led', 'mouseAxis', 'mouseWheel', 'pad', 'pads', 'pianoKey', 'pianoKeyChan', 'ribbon', 'rumble', 'sensor', 'serial', 'slider', 'throttle', 'touch', 'touchFader', 'touchpad', 'voltage', 'wheel' ];
 		types = (
 			\slider: \x,
 			\button: \x,
