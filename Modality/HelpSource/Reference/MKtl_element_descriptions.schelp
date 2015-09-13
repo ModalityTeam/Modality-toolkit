@@ -1,0 +1,127 @@
+title:: MKtl element descriptions
+summary:: defines the format for descriptions of individual elements in MKtl desc files.
+categories:: Libraries>Modality
+related:: Overviews/Modality, Classes/MKtl, Tutorials/How_to_create_a_description_file, Reference/MKtl_description_files
+
+
+section:: The element description hierarchy
+
+The elements description is the main section of a <name_of_device>.desc.scd file.  It contains a dictionary that can contain other dictionaries or arrays, which define the hierarchical structure of the elements and their groupings. At the leaves of this data structure must be single dictionaries describing an element each, as described below.
+
+subsection:: The hierarchy of element groups
+code::
+(
+...
+description: (
+	\key: [
+		(elementType: \pianoKey, \midiMsgType: \noteOn, midiNum: 24, ...),
+		(elementType: \pianoKey, \midiMsgType: \noteOn, midiNum: 25, ...),
+		...
+	],
+	sl:
+		(elementType: \slider, \midiMsgType: \cc, midiNum: 1, ...),
+		(elementType: \slider, \midiMsgType: \cc, midiNum: 2, ...),
+	...
+	},
+	...
+),
+...
+)
+::
+
+subsection:: elementTypes naming conventions
+
+The naming conventions for elementTypes within each individual element are:
+list::
+## code::slider:: for sliders,
+## code::knob:: for knobs,
+## code::button:: for buttons,
+## code::key:: for keys,
+## code::pad:: for pads
+## code::oscMessage:: for osc-messages (of collectives)
+## code::pad::
+## code::knob::
+## code::encoder::
+## code::mixer::
+## code::fader::
+## code::gamepad::
+## code::joystick::
+## code::pointer::
+## code::keyboard::
+::
+
+Note that they are always written in singular.
+
+subsection:: group identifier naming conventions
+
+The naming conventions for identifiers for groups of elements use short names:
+list::
+## code::kn:: for knobs,
+## code::sl:: for sliders,
+## code::bt:: for buttons,
+## code::key:: for keys,
+## code::pad:: for pads, etc.
+::
+Elements with names or symbols on them should have that name, e.g. a play button should be called \play, a rewind button \rew, etc.
+
+note::
+The description file for the "Korg nanoKONTROL 2"
+code::
+Korg_nanoKONTROL2.desc.scd
+::
+is a good example for element naming. All naming examples are taken from there.
+::
+
+
+Generally, element names should be as clear as possible, and reasonably short to allow for compact code. The main advantage of following the conventions is that similar elements across devices will have identical or at least simlar names, and thus allow substituting one device for a similar one with minimal code changes.
+
+	Unnamed buttons should be called \bt, sliders \sl, knobs \kn, pads \pad, etc., and when they are physically in arrays, they should be given as, e.g.
+code::
+ \kn: (16..23).collect { |i|
+		(\midiMsgType: \cc, \type: \knob, \midiChan: 0, \midiNum: i, \spec: \midiCC)
+	}.
+::
+	When in rows and columns, these can be nested:
+code::
+	\bt: [(32..39),(48..55),(64..71)].collect{ |xs|
+		xs.collect{ |i|
+			(\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum:  i, \spec: \midiCC)
+		}
+	}
+::
+	Elements with names or symbols on them should be given that name,
+	e.g.  a button name "play" or with a > sign on it  should be
+	called \play or \playBt. in the nanoKontrol 2 file, such button names include transport buttons \rew, \fwd, \stop, \play, \rec,
+	\cycle, track buttons \tleft, \tright, and marker buttons \mset, \mleft, \mright.
+
+	When in doubt, consult files of devices with similar elements, and follow the naming schemes there.
+
+
+subsection:: The description of a single element
+
+A control element is a part of a controller (often for physical interaction, like a slider, knob, accelerometer etc. etc.) that does one or more of the following things:
+
+list::
+## it creates and sends a one-dimensional stream of values when played,
+## it accepts a one-dimensional stream of values when sent from software.
+::
+
+An element description is a dict (or event) containing these entries:
+DEFINITIONLIST::
+
+## midiMsgType
+|| code::midiMsgType:: for MIDI devices; the type of midi message used. See
+code::MIDIMKtlDevice.allMsgTypes::
+
+## hidElementID | <hidUsage|hidUsagePage>
+|| code::hidElementID:: or both code::hidUsage:: and code::hidUsagePage:: have to be present for elements belonging to an HID device.
+
+## oscPath
+|| code::oscPath:: has to be present for elements belonging to an OSC device, or it has to use code::ioType: \groupIn:: or code::ioType: \groupOut::
+
+##  spec
+|| The element code::\spec:: has to be present and is a symbol that, if called code::.asSpec:: upon, returns the (global) code::ControlSpec:: suitable for this element.
+## \midiChan, \midiNum
+|| Needed, if code::\midiType:: is part of the config string. The identifiers code::\bend, \touch, \program:: only need code::\midiChan:: to be specified.
+::
+
