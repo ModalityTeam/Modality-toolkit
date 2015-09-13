@@ -56,6 +56,7 @@ s.quit;
 deviceName: \manta,
 idInfo: ( srcPort: 31417, ipAddress: "127.0.0.1", recvPort: 57120 ),
 protocol: \osc,
+elementTypes: [\pad, \slider],
 deviceType: \manta,
 
 specialMessages: (
@@ -70,6 +71,7 @@ specs: (
 	mantaSlider: [ 0, 4095 ].asSpec, // slider sends values between 0 and 4095, releasing the slider sends 65536
 	mantaLed: ItemsSpec.new( ["off","amber","red"] ), // led can be off, amber or red
 ),
+
 deviceInfo: (
 	vendorURI: "http://www.snyderphonics.com/products.htm",
 	manualURI: "http://www.snyderphonics.com/documentation.htm",
@@ -81,7 +83,6 @@ deviceInfo: (
 		"68 user-controllable LEDs",
 	],
 	notes: "This device relies on mantaOSC which is part of [libmantassfr’s libmanta implementation](https://github.com/ssfrr/libmanta).",
-	type: [\pad, \slider],
 	hasScribble: true
 ),
 description: (

@@ -1,14 +1,19 @@
 (
-idInfo:"Steinberg CMC-QC",
+deviceName: "Steinberg CMC-QC",
 protocol: \midi,
 deviceType: \controller,
+elementTypes: [\encoder, \button],
+status: "unknown",
+
+idInfo:"Steinberg CMC-QC",
+
 deviceInfo: (
 	// vendorURI: "http://www.steinberg.net/en/products/controllers/cmc_series/models/cmc_qc.html",
 	// manualURI: "",
 	// description: "",
 	// features: [],
 	// notes: "",
-	type: [\encoder, \button],
+
 ),
 description:
 (

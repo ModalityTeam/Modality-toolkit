@@ -1,7 +1,11 @@
 (
-idInfo: "USB Joystick_MegaWorldectronics",
+deviceName: "USB Joystick_MegaWorldectronics",
 protocol: \hid,
 deviceType: \joystick,
+elementTypes: [\joystick, \button, \hat, \slider],
+status: "unknown",
+
+idInfo: "USB Joystick_MegaWorldectronics",
 
 deviceInfo: (
 	// vendorURI: "",
@@ -9,7 +13,7 @@ deviceInfo: (
 	// description: "",
 	// features: [],
 	// notes: "",
-	type: [\joystick, \button, \hat, \slider],
+
 	// hasScribble: false
 ),
 description: (

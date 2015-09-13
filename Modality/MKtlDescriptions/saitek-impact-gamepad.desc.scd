@@ -5,10 +5,15 @@ MKtl.deviceDescriptionFolder.openOS
 MKtl.addSpec(\compassImpact, [0, 1.0]);
 
 (
-idInfo: "USB Game Controllers_Mega World",
+deviceName: "USB Game Controllers_Mega World",
 protocol: 'hid',
 deviceType: \gamepad,
-// specs: (compassImpact: [0, 7, \lin, 1].asSpec),
+elementTypes: [\joystick, \button, \compass],
+status: "unknown",
+
+idInfo: "USB Game Controllers_Mega World",
+
+specs: (compassImpact: [0, 7, \lin, 1].asSpec),
 
 deviceInfo: (
 	// vendorURI: "",
@@ -16,7 +21,7 @@ deviceInfo: (
 	// description: "",
 	// features: [],
 	// notes: "",
-	elementTypes: [\joystick, \button, \compass],
+
 	// hasScribble: false
 ),
 description: (

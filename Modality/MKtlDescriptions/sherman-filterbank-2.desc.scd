@@ -1,8 +1,12 @@
 // Sherman Filterbank 2 Descriptionfile
 (
-idInfo: "Sherman FilterBank 2",
+deviceName: "Sherman FilterBank 2",
 protocol: \midi,
 deviceType: \filterbank,
+elementTypes: [\button, \knob],
+status: "unknown",
+
+idInfo: "Sherman FilterBank 2",
 
 deviceInfo: (
 	// vendorURI: "",
@@ -10,7 +14,7 @@ deviceInfo: (
 	// description: "",
 	// features: [],
 	// notes: "",
-	type: [\filter],
+
 ),
 description: (
 // MIDI coming in from the Sherman Filterbank

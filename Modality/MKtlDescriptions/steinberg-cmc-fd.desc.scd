@@ -2,9 +2,13 @@
 todo
 */
 (
-idInfo:"Steinberg CMC-FD",
+deviceName: "Steinberg CMC-FD",
 protocol: \midi,
 deviceType: \controller,
+elementTypes: [\fader, \button],
+status: "unknown",
+
+idInfo:"Steinberg CMC-FD",
 
 deviceInfo: (
 	vendorURI: "http://www.steinberg.net/en/products/controllers/cmc_series/models/cmc_fd.html",
@@ -12,7 +16,7 @@ deviceInfo: (
 	// description: "",
 	// features: [],
 	// notes: "",
-	type: [\fader, \button],
+
 ),
 description: (
 

@@ -7,16 +7,21 @@ k.verbose_(true);
 */
 
 (
-idInfo: "VMeter 1.30 A",
+deviceName: "VMeter 1.30 A",
 protocol: \midi,
-\deviceType: \fader,
+deviceType: \fader,
+elementTypes: [\fader],
+status: "unknown",
+
+idInfo: "VMeter 1.30 A",
+
 deviceInfo: (
 	vendorURI: "http://www.vmeter.net/",
 	// manualURI: "",
 	// description: "",
 	// features: [],
 	// notes: "",
-	elementTypes: [\fader],
+
 	// hasScribble: false
 ),
 description: (

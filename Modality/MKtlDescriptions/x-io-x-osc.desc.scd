@@ -14,9 +14,13 @@ NOT DONE YET:
 */
 
 (
-idInfo: ( srcPort: 8000, ipAddress: "169.254.1.1", recvPort: 9000 ), // ip for adhoc mode
+deviceName: "x-osc",
 protocol: \osc,
 deviceType: \multiController,
+elementTypes: [\accelerometer, \sensor, \serial],
+status: "incomplete",
+
+idInfo: ( srcPort: 8000, ipAddress: "169.254.1.1", recvPort: 9000 ), // ip for adhoc mode
 
 deviceInfo: (
 	vendorURI: "http://www.x-io.co.uk/products/x-osc/",
@@ -31,8 +35,8 @@ deviceInfo: (
 		"4× serial communication channels"
 	],
 	notes: "",
-	type: [\accelerometer, \sensor, \serial],
 ),
+
 specs: (
 	\switch: [0, 1, \lin, 1].asSpec,
 	\pass: PassSpec,

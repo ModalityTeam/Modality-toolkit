@@ -1,16 +1,21 @@
 MKtl.addSpec(\compassShanWan, [0, 7]);
 
 (
-idInfo: "USB WirelessGamepad _ShanWan",
+deviceName: "USB WirelessGamepad _ShanWan",
 protocol: 'hid',
 deviceType: \gamepad,
+elementTypes: [\button, \joyAxis, \compass],
+status: "unknown",
+
+idInfo: "USB WirelessGamepad _ShanWan",
+
 deviceInfo: (
 	// vendorURI: "",
 	// manualURI: "",
 	// description: "",
 	// features: [],
 	// notes: "",
-	type: [\button, \joyAxis, \compass],
+
 	// hasScribble: false
 ),
 description: (

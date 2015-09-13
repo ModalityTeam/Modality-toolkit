@@ -43,6 +43,8 @@ MIDIFunc.trace
 deviceName: "Steinberg CMC-PD",
 protocol: \midi,
 deviceType: \drumPad,
+elementTypes: [\pad, \button],
+status: "incomplete",
 
 idInfo: (deviceName: "Steinberg CMC-PD", sourcePortIndex: 2, destPortIndex: 2),
 
@@ -52,13 +54,12 @@ deviceInfo: (
 	// description: "",
 	// features: "",
 	// notes: "",
-	elementTypes: [\pad, \button]
 ),
 description:
 
 (
 // ------ noteOnOff -------------
-'pad': (52..63).collect ({ |num| ('midiMsgType': 'noteOnOff', 'type': 'key', 'midiChan': 0, 'midiNum': num, 'spec': 'midiNote') }),
+'pad': (52..63).collect { |num| ('midiMsgType': 'noteOnOff', 'type': 'key', 'midiChan': 0, 'midiNum': num, 'spec': 'midiNote') },
 
 'shift': ('midiMsgType': 'noteOnOff', 'type': 'key', 'midiChan': 0, 'midiNum':  70, 'spec': 'midiBut'),
 'curveSetup': ('midiMsgType': 'noteOnOff', 'type': 'key', 'midiChan': 0, 'midiNum':  114, 'spec': 'midiNote'),

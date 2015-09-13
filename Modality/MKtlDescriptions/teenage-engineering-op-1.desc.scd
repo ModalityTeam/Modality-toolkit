@@ -3,9 +3,13 @@
 // and lots of buttons (mostly with icons)
 
 (
-idInfo: "OP-1 Midi Device",
+deviceName: "OP-1 Midi Device",
 protocol: \midi,
-\deviceType: \keyboard,
+deviceType: \keyboard,
+elementTypes: [\keyboard, \knob, \button],
+status: "unknown",
+
+idInfo: "OP-1 Midi Device",
 
 deviceInfo: (
 	vendorURI: "https://www.teenageengineering.com/products/op-1",
@@ -18,7 +22,7 @@ deviceInfo: (
 		"20 buttons (1-4, 1-8 and special-purpose)",
 	],
 	notes: "Put the OP-1 into control-mode (<shift>-<COM>, then 2)",
-	type: [\keyboard, \knob, \button],
+
 	hasScribble: true
 ),
 description: (
