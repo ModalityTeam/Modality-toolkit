@@ -1,9 +1,11 @@
 (
-idInfo: "UC-33 USB MIDI Controller",
+deviceName: "UC-33 USB MIDI Controller",
 protocol: \midi,
 deviceType: \faderbox,
 \elementTypes: [\slider, \knob, \button],
 status: "unknown",
+
+idInfo: "UC-33 USB MIDI Controller",
 
 deviceInfo: (
 	// vendorURI: "",

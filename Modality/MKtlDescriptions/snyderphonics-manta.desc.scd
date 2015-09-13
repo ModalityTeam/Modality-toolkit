@@ -54,10 +54,12 @@ s.quit;
 
 (
 deviceName: \manta,
-idInfo: ( srcPort: 31417, ipAddress: "127.0.0.1", recvPort: 57120 ),
 protocol: \osc,
 elementTypes: [\pad, \slider],
 deviceType: \manta,
+status: "incomplete",
+
+idInfo: ( srcPort: 31417, ipAddress: "127.0.0.1", recvPort: 57120 ),
 
 specialMessages: (
 	enableLEDControl: [

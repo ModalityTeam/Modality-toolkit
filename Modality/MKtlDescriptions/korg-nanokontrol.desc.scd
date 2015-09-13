@@ -12,6 +12,7 @@ deviceName: "nanoKONTROL",
 protocol: \midi,
 deviceType: \faderbox,
 elementTypes: [\fader, \knob, \button],
+status: "tested",
 
 idInfo: "nanoKONTROL",
 

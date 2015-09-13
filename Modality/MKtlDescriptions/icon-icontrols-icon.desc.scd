@@ -1,9 +1,11 @@
 (
-idInfo: "iCON iControls V2.00_iCON",
+deviceName: "iCON iControls V2.00_iCON",
 protocol: 'hid',
 deviceType: \joystick,
 status: "unknown",
 elementTypes: [\joyAxis],
+
+idInfo: "iCON iControls V2.00_iCON",
 
 deviceInfo: (
 	// vendorURI: "",

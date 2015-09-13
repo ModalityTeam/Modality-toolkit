@@ -1,9 +1,11 @@
 (
-idInfo: "USB Optical Mouse_",
+deviceName: "USB Optical Mouse_",
 protocol: 'hid',
 deviceType: \mouse,
 elementTypes: [\button, \mouseAxis, \mouseWheel],
 status: "unknown",
+
+idInfo: "USB Optical Mouse_",
 
 idInfo: "USB Optical Mouse_",
 

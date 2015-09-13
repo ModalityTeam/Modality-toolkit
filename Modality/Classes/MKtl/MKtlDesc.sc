@@ -224,13 +224,14 @@ MKtlDesc {
 	// e.g. check whether description is wellformed
 	*isValidDescDict { |dict|
 		var ok = dict.isKindOf(Dictionary)
-		and: { dict[\idInfo].notNil
+		and:  ({ dict[\parentDesc].notNil
+		or: { dict[\idInfo].notNil
 			and: { dict[\protocol].notNil
 				and: { dict[\description].notNil
 					//	and: { this.checkElementsDesc(dict) }
 				}
 			}
-		};
+		}});
 		if (ok) { ^true };
 		"% - dict not valid: %\n\n".postf(thisMethod, dict);
 	}

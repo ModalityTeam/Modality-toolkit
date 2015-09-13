@@ -19,6 +19,7 @@ parentDesc: "keith-mcmillen-qunexus",
 
 ///////// SPECIFIC INFORMATION for this port and config: ///////
 
+elementTypes: [\pianoKey, \bender, \touch],
 status: "tested and working",
 
 idInfo: (deviceName: "QuNexus", sourcePortIndex: 0, destPortIndex: 0),
@@ -31,10 +32,10 @@ description: (
 	// ------ noteOn -------------
 
 	keyOn: (24..108).collect { |midinote|
-		('midiMsgType': 'noteOn', 'type': 'key', 'midiChan': 0, 'midiNum':  midinote, 'spec': 'midiNote', page: \B) },
+		('midiMsgType': 'noteOn', 'type': 'pianoKey', 'midiChan': 0, 'midiNum':  midinote, 'spec': 'midiNote', page: \B) },
 	// ---------noteOff ----------
 	keyOff: (24..108).collect { |midinote|
-		('midiMsgType': 'noteOff', 'type': 'key', 'midiChan': 0, 'midiNum':  midinote, 'spec': 'midiNote', page: \B)
+		('midiMsgType': 'noteOff', 'type': 'pianoKey', 'midiChan': 0, 'midiNum':  midinote, 'spec': 'midiNote', page: \B)
 	},
 
 	// ------- bend ------------
@@ -43,6 +44,6 @@ description: (
 
 // Preset B mode only adds single channel pressure from all keys :
 // ------- cc ------------
-'monotouch': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  1,'spec': 'midiCC', page: \B)
+'monotouch': ('midiMsgType': 'cc', 'type': 'keyTouch', 'midiChan': 0, 'midiNum':  1,'spec': 'midiCC', page: \B)
 )
 )

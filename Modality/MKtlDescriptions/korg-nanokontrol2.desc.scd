@@ -1,11 +1,13 @@
 //	// KORG nanoKONTROL2 specs:
 //	// only cc messages,
 (
-idInfo: "nanoKONTROL2",
+deviceName: "nanoKONTROL2",
 protocol: \midi,
 deviceType: \faderbox,
 elementTypes: [\fader, \knob, \button],
 status: "tested",
+
+idInfo: "nanoKONTROL2",
 
 deviceInfo: (
 	vendorURI: "http://www.korg.com/us/products/controllers/nanokontrol2/",
