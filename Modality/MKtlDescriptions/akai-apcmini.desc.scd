@@ -8,7 +8,7 @@ a.elementAt(\keyOff).action_({ |elem| [\OFF, elem.name, elem.value].postln; });
 (
 deviceName: "APC MINI",
 protocol: 'midi',
-deviceType: [\launchpad],
+deviceType: \launchpad,
 elementTypes: [\fader, \pad, \button],
 status: "unknown",
 

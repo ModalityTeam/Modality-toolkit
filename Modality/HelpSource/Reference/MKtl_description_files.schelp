@@ -27,7 +27,7 @@ section:: Filename convention
 The filename should be of the following format:
 
 code::
-<vendor>-<device_name>.desc.scd
+<vendor>-<device_name>_<optional_setup_naming>.desc.scd
 ::
 
 where
@@ -36,9 +36,10 @@ list::
 ## code::<vendor>:: is lower-case name of vendor with spaces replaced by code::-::
 ## code::<device_name>:: is lower-case name of the device with spaces replaced by code::-::
 This is both unique enough to identify devices, and allows linking to the modality website entry on each device.
+## code::<optional_setup_naming>:: can be used to create multiple desc files for the same device, e.g. to support multiple ports (as e.g. the QuNexus keyboard), or for special presets, such as making separate desc files for switchable hardware pages.
 ::
 
-section:: Semantic information
+section:: Semantic and technical information
 
 NOTE::
 A description file is bound to a single protocol - currently one of \midi, \hid, and \osc. If there is a device that communicates on multiple protocols (e.g. the EMPHASIS::icon iCONTROLS::), its components have to be built from separate desc files and merged later on.
@@ -47,12 +48,34 @@ A description file is bound to a single protocol - currently one of \midi, \hid,
 subsection:: Top level
 
 DEFINITIONLIST::
+
+## deviceName | osx | linux [required]
+|| For MIDI and HID, this is the device name as reported by the hardware or OS drivers.
 ## protocol [required]
 || The protocol used by the device
+## deviceType [optional, but highly recommended]
+|| Semantic description of what kind of device it is. This will make it easier to find another device that might easily replace it. For examples, do: 
+code::
+MKtlDevice.deviceTypes; 
+MKtlDesc.loadDescs.collectAs ({ |desc| desc.fullDesc.deviceType }, Set).asArray.sort.postcs;
+-> [ 'controller', 'djController', 'drumPad', 'drumpad', 'fader', 'faderbox', 'filterbank', 'gamepad', 'joystick', 'keyboard', 'launchpad', 'manta', 'mixer', 'mouse', 'multiController', 'phoneApp', 'push', 'ribbon' ]
+::
+## elementTypes [optional, but highly recommended]
+|| Description of what kind of elements the device has. For example, code:: 
+\fader, \button, \knob, \encoder, \joyAxis::, etc etc.
+
+## status: [optional, but highly recommended]
+|| A string describing the status of this description, e.g. code::"complete; tested; OSX, Linux"::, code::"incomplete; tested; OSX", ::code::"complete; tested; OSX;"::, code::"incomplete; untested;"::
 
 ## idInfo | osx | linux [required]
-|| For MIDI and HID: the device name as reported by the hardware or drivers. If the reported name is different in osx and linux then use the 'osx' and 'linux' dictionaries.
-For OSC this needs to be a dictionary with information on the ipAdresses and ports used.
+|| The info used to fully identify the device.
+For HID devices, this is <productname>_<vendorname>.
+For MIDI devices with single src and/or dest port, this is the same as the deviceName.
+For multi-port MIDI devices, this should be a dictionary with entries for
+(deviceName: <deviceName>,
+sourcePortIndex: <index in MIDIClient.sources>,
+destPortIndex: <index in MIDIClient.destinations>);
+For OSC devices, this is a dictionary with information on the ipAdresses and ports used. (As NetAddresses may change, this sometimes requires fixing by hand).
 
 ## description [required]
 || A dictionary describing the controls on the device. These controls are called elements within the Modality toolkit.
@@ -63,14 +86,8 @@ For OSC this needs to be a dictionary with information on the ipAdresses and por
 ## collectives [optional]
 || Specific groups that are needed to send or receive data from the device. In particular these can be used for OSC devices.
 
-## status: [optional]
-|| A string documenting the status of this description, e.g. code::"complete; tested; OSX, Linux"::, code::"incomplete; tested; OSX", ::code::"complete; tested; OSX;"::, code::"incomplete; untested;"::
-
-## deviceType [optional]
-|| Semantic description of what kind of device it is. This will make it easier to find another device that might easily replace it. For example: code::\joystick::, code::\gamepad::, code::\mouse::.
-
 ## specs [optional]
-|| A dictionary with specs in serialized notation, like code::(\key: [0, 144, \lin])::. These overwrite existing spec definitions locally for this description only: When an element has a symbol for a spec, this is looked up locally first, then in MKtl.globalSpecs, then in Spec.specs.
+|| A dictionary with specs in serialized notation, like code::(\key: [0, 144, \lin])::. These overwrite existing spec definitions locally for this description only: When an element has a symbol for a spec, this is looked up locally first, then in MKtl.globalSpecs, then in global Spec.specs.
 
 ::
 

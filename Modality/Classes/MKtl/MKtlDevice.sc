@@ -34,10 +34,10 @@ MKtlDevice {
 			allProtocols = [\midi,\osc];
 		};
 		deviceTypes = List[
-			\mouse, \gamepad, \joystick,
-			\faderbox, \multiController, \drumpad, \keyboard, \mixer,
-			\imu, \phoneApp,
-		];
+			'controller', 'djController', 'drumPad', 'drumpad', 'fader',
+			'faderbox', 'filterbank', 'gamepad', 'joystick', 'keyboard',
+			'launchpad', 'manta', 'mixer', 'mouse', 'multiController',
+			'phoneApp', 'push', 'ribbon' ];
 
 		subClassDict = ();
 		this.allSubclasses.do { |cl| subClassDict.put(cl.protocol, cl) };

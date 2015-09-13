@@ -32,7 +32,7 @@ m.elementAt(\padOff, 1, 2).addAction({ |...args| args.post; "pad2 sc1 off YO !".
 (
 deviceName: "Akai MPD18",
 protocol: \midi,
-deviceType: [\drumpad],
+deviceType: \drumpad,
 elementTypes: [\pad, \slider],
 status: "unknown",
 
