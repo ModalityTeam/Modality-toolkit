@@ -4,7 +4,7 @@
 
 1. An example for a simple desc file (LPD8) with comments
 
-2. general info section in full detail
+2. the general info section in full detail
 
 3. the entire elementsDesc in full detail
 
@@ -23,7 +23,7 @@
 
 (
 /* elementType: user-readable name for the physical type of thing */
-// Typically one of MKtl.elementTypes;
+// Typically one of MKtl.elementTypes; // <- in desc_redef branch ATM
 elementType: \slider,
 
 // ioType: whether and how it gets input/output.
@@ -41,7 +41,7 @@ spec: \hidBut,
 spec: \but,
 
 
-// valueType: \absolute (default) or \relative
+/* valueType: \absolute (default) or \relative */
 	// element sends absolute value, such as fader position
 	// default, so this is assumed if not given.
 valueType: \absolute,
@@ -55,20 +55,20 @@ valueType: \relative,
 	// so the current value of the destination object is changed.
 
 
-// how buttons act:
+/* buttonMode: - how buttons behave */
 // trigger action on release only for toggle buttons (default):
 buttonMode: \toggle,
 // trigger action on push and release,
 // so active value only while holding down
 buttonMode: \momentary,
 
-
+/* releaseMode & snapbackValue */
 // all other elements, e.g. faders and joystick axes:
 	// releaseMode: what to do on release,
 	// default: value is held where it is
 releaseMode: \hold,
 	// specify these two for joy axes which have springs
-	// that return them to center:
+	// that return them to center when letting go:
 releaseMode: \snapback,
 snapbackValue: 0.5,
 
@@ -81,7 +81,8 @@ midiMsgType: \control,
 
 	// on which chan to listen/send
 midiChan: 0,
-	 // if noteOn, noteOff, cc, or polyTouch:
+	 // for note/cc specific controls
+	// such as noteOn, noteOff, cc, or polyTouch:
 	// which noteNum, ccNum to use
 midiNum: 60,
 
@@ -100,4 +101,5 @@ oscPath: "/minibee/imu",
 	// specify addressing keys for this element in argTemplate:
 // "How to create a description file for an OSC device".openHelpFile;
 argTemplate: [ 1, 2 ],
+
 

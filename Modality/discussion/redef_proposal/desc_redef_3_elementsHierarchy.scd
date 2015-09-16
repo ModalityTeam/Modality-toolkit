@@ -14,6 +14,7 @@
 
 // 3. the elementsDesc in full detail
 
+// general section her for completeness only...
 (
 deviceName: "LPD8",
 protocol: \midi,
@@ -33,15 +34,23 @@ deviceInfo: (
 	notes: "use only recommended hardware mode XYZ.",
 ),
 
+// and here the details begin:
+// changed from description: to elementsDesc: for clarity,
+// the elements themselves are under elements:,
+// so other info for the group can go here for flexibility
+
 elementsDesc: (
+
+	// maybe a reserved name for comment-like things
 	'_info': (
 		text: "anything useful for this group of elements",
 		anyKey: [\what, \so, \ever],
 	),
 
-	// optional other groupings of these elements
+	// optional alternative groupings of these elements,
+	// which should best live in the elementGroup itself
 	// any elements contained in this group can be used,
-	// and usually one only does this at the top level
+	// and usually one only creates alt-groups at the top level
 	groups: (
 		padUpper: [\pad, \on, [4,5,6,7]],
 		padLower: [\pad, \on, [0,1,2,3]]
@@ -50,11 +59,14 @@ elementsDesc: (
 	// formerly known as collectives for OSC mainly,
 	// new name and exact creation implementation to be rethought
 	// should know to create shared responders/messageSends.
-	valueGroups: (
+	// ( collectives in too nice a name to reserve for a technical
+	// necessity only :-)
+
+	sharedValueGroups: (
 
 	),
 
-	// any shared element or group properties,
+	// any shared element or group properties can be set once,
 	// e.g. same midiChan: 0, midiMsgType: \cc etc
 	shared: (),
 
