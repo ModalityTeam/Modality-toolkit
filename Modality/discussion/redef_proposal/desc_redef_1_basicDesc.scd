@@ -1,16 +1,18 @@
 /*********
 
-3 steps towards redefining .desc.scd files:
+4 steps towards redefining .desc.scd files:
 
 1. An example for a simple desc file (LPD8) with comments
 
-2. general info section in full detail
+2. the general info section in full detail
 
-3. elementsDesc in full detail
+3. the entire elementsDesc in full detail
+
+4. the single elementDesc in full detail
 
 *********/
 
-// 1. the file itself with sparse comments
+// 1. An example for a simple desc file (LPD8) with comments
 // ------ snip here ----
 
 /* AKAI LPD8 Laptop Pad controller */
@@ -50,7 +52,7 @@ elementsDesc: (
 	//	groupName: \kn, // auto-generated from key above
 
 		// properties that all elements in this group share:
-		shared: (\elemType: \knob, \midiMsgType: \cc, \spec: \midiCC, \ioType: \inout, midiChan: 0),
+		shared: (\elementType: \knob, \midiMsgType: \cc, \spec: \midiCC, \ioType: \inout, midiChan: 0),
 
 		// the elements themselves:
 		elements: (
@@ -67,7 +69,7 @@ elementsDesc: (
 	\pad: (
 	//	groupName: \pad, // auto-generated from key above
 
-		shared: (\elemType: \pad, \spec: \midiVel, \ioType: \inout),
+		shared: (\elementType: \pad, \spec: \midiVel, \ioType: \inout),
 
 		elements: (
 
