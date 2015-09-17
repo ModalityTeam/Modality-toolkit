@@ -7,8 +7,6 @@ status: "unknown",
 
 idInfo: "USB Optical Mouse_",
 
-idInfo: "USB Optical Mouse_",
-
 deviceInfo: (
 	// vendorURI: "",
 	// manualURI: "",
