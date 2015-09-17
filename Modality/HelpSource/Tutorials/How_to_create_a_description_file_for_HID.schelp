@@ -5,7 +5,6 @@ related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Cl
 
 
 
-
 Section:: Introduction
 
 The functionality of link::Classes/MKtl:: relies on descriptions of the used devices. For some Controllers, there are already descriptions available, chances are that your device is not among them.
@@ -25,7 +24,7 @@ section:: Simple element
 An element for an HID device looks in general like this:
 
 code::
-'b1': ('hidUsage': 1, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', 'spec': \hidBut )
+'bt_1': ('hidUsage': 1, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', 'spec': \hidBut )
 ::
 
 code::hidUsage:: and code::hidUsagePage:: are the keys that identify the control from the device - these keys are crossplatform compatible. The code::ioType:: can be code::\in:: or code::\out::. Examples of input elements are mouse axes, joystick axes, and buttons. Examples of output elements are LEDs on the device, or forcefeedback or rumble (e.g. on gamepads).
@@ -42,19 +41,27 @@ code::
 'b1': ('hidElementID': 1, 'type': 'button', 'ioType': 'in', 'spec': \hidBut )
 ::
 
-Instead of code::hidUsage:: and code::hidUsagePage:: we have an identifier code::hidElementID::. This identifier may not be cross platform compatible, as different operating systems may list the order of elements differently.
+Instead of code::hidUsage:: and code::hidUsagePage:: we have an identifier code::hidElementID::. This identifier may not be cross platform compatible, as different operating systems may list the order of elements differently. However, on the same operating system, it should always be the same, and thus usable with caution.
+
 
 section:: Write a description file and explore an HID device
 
 code::
 // look for available devices:
 MKtl.find(\hid);
+// On OSX, the standard keyboard and trackpad (on laptops) are not shown,
+// as initializing them can crash the interpreter on some OSX versions.
+// On 10.10.5, they cannot be opened, but do not crash.
+// you can still see them in HID:
+HID.available;
+HID.postAvailable;
+
 // posts:
 /*
-MKtl('sbpt0');  // [ "USB Optical Mouse", "" ]
+MKtl('nameMe', "generic-usb-optical-mouse");  // [ "USB Optical Mouse", "" ]
 */
 // open it:
-m = MKtl( \sbpt0, 'hid_0_usb_optical_mouse' );
+m = MKtl( \mouse, "generic-usb-optical-mouse");
 ::
 
 For HID devices, you can automatically generate a description file, as the device reports what it's inputs and outputs are.
@@ -106,6 +113,8 @@ description: (
 
 // assign the desc to the mouse:
 m.rebuild( ~mouseDesc );
+// make a gui for it
+MKtlGUI(mktl: m);
 
 // and check the incoming data:
 m.trace;
@@ -148,12 +157,13 @@ description: (
 
 // assign the desc to the mouse:
 m.rebuild( ~mouseDesc );
+// and make a gui for it
+MKtlGUI(mktl: m);
 
 // and check the incoming data:
 m.trace;
 
-// and make a gui:
-m.gui;
+
 ::
 
 Next we refine the description by grouping the buttons in the description:
@@ -182,20 +192,28 @@ m.rebuild( ~mouseDesc );
 m.trace;
 
 // and make a gui:
-m.gui;
+MKtlGUI(mktl: m);
+
 
 m.trace( false );
 
+m.elements.deepAt(\bt)
 // seems the same as we had before, but now we can do:
 m.elementAt( \bt ); // the group of buttons
-m.elementAt( \bt ).action = { args ...args; args.postln; }; // the group of buttons
 
-// and:
-m.elementAt( \bt, \right );
-// that is, we can assign actions to the group of buttons.
+// we can assign one single action for the group of buttons:
+m.elementAt( \bt ).action = { arg ... args; args.postln; };
+
+// this posts the args that are passed into the group function:
+// first the element, then up the hierarchy, so the \bt group.
+-> [ MKtlElement('bt_left', 'button', 'left'), MKtlElementGroup('bt', 'button', [ 'bt_left', 'bt_middle', 'bt_right' ]) ]
+
 ::
 
 Then, looking back at the initially created file, we had three more elements that need a further definition, we will guess that they are the X and Y-axis of the mouse, and the mouse wheel.
+
+Note that mouse axes and wheels usually create only relative values; that is, the number value tells you by how much the mouse was moved since its last position scan. You can use this to do a relative set on a process parameter,
+e.g. with the RelSet class.
 
 code::
 (
@@ -223,8 +241,8 @@ m.rebuild( ~mouseDesc );
 // and check the incoming data:
 m.trace;
 
-// and make a gui:
-m.gui;
+// and make a gui
+MKtlGUI(mktl: m);
 
 ::
 
@@ -261,7 +279,7 @@ m.rebuild( ~mouseDesc );
 m.trace;
 
 // and make a gui:
-m.gui;
+MKtlGUI(mktl: m);
 
 // cleanup:
 m.trace( false );
@@ -270,11 +288,12 @@ m.closeDevice;
 
 section:: HID device info
 
-The device info for an HID device that needs to be in the description file, is created from the device's productName and vendorName.
+In the description file, an HID device needs an idInfo, which is created from the device's productName and vendorName.
 
 code::
-m = MKtl( \sbpt0 );
-// inspect productName:
+// dump the info the HID object has:
+m.mktlDevice.source.info.dump
+// inspect just the productName:
 m.mktlDevice.source.info.productName.postcs
 // posts: "USB Optical Mouse"
 // inspect vendorName:
@@ -293,3 +312,4 @@ section:: HID Initialisation messages
 Some devices need initialisation messages to be sent before they can function properly with all their modes activated. You can define these messages in the code::initalisationMessages:: field of the device description.
 
 For HID we do not have a usecase yet where this is needed, so we do not know yet how to format these messages. Write us if you have a usecase!
+
