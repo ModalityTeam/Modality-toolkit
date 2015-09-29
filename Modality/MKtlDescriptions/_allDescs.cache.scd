@@ -38,6 +38,7 @@ Dictionary[
 	("novation-launchcontrol-xl" -> "Launch Control XL"),
 	("novation-launchpad" -> "Launchpad"),
 	("numark-orbit" -> "Numark ORBIT"),
+	("saitek-cyborg-x" -> "Cyborg X_Saitek"),
 	("saitek-impact-gamepad" -> "USB Game Controllers_Mega World"),
 	("shanwan-wirelessgamepad" -> "USB WirelessGamepad _ShanWan"),
 	("sherman-filterbank-2" -> "Sherman FilterBank 2"),
