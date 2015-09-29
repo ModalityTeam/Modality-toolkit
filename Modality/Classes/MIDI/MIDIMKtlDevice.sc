@@ -99,14 +99,14 @@ MIDIMKtlDevice : MKtlDevice {
 
 		"\n// Available MIDIMKtls: ".postln;
 		"// MKtl('myNickName', 'lookupName');  \n\t\t// *[ midi device, portname, uid]\n".postln;
-		postables.sortedKeysValuesDo { |nameKey, infodict|
+		postables.sortedKeysValuesDo { |lookupKey, infodict|
 			var endPoint = infodict.deviceInfo;
+			var nameKey = lookupKey.asString.keep(12).asSymbol;
 			var postList = endPoint.bubble.flatten.collect({ |ep| [ep.device.cs, ep.name.cs, ep.uid] });
 			var filenames = MKtlDesc.filenamesForIDInfo(infodict.idInfo);
 
 			"MKtl(%, %);\n\t\t// %\n"
-			.postf(nameKey.asString.keep(12).asSymbol.cs,
-				nameKey.cs, postList.unbubble);
+			.postf(nameKey.cs, lookupKey.cs, postList.unbubble);
 
 			// post with desc file names:
 			filenames.size.switch(
