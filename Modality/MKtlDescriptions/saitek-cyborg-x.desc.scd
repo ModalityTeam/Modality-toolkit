@@ -13,6 +13,11 @@ how to map that in a spec?
 deviceName: "Cyborg X_Saitek",
 idInfo: "Cyborg X_Saitek",
 protocol: 'hid',
+status: (
+	linux: "unknown",
+	osx: "tested and working",
+	win: "unknown"),
+
 
 deviceInfo: (
 
@@ -45,17 +50,21 @@ description: (
 		'14': ('hidUsage': 14, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', 'spec': \hidBut),
 
 	),
+	scroll: (
+		up: ('hidUsage': 12, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', 'spec': \hidBut),
+		down: ('hidUsage': 13, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', 'spec': \hidBut),
+	),
 	joy: (
-		x: ('hidUsage': 48, 'hidUsagePage': 1, 'type': 'joyAxis', 'ioType': 'in', 'spec': \cent1023),
-		y: ('hidUsage': 49, 'hidUsagePage': 1, 'type': 'joyAxis', 'ioType': 'in', 'spec': \cent1023),
-		z: ('hidUsage': 53, 'hidUsagePage': 1, 'type': 'joyAxis', 'ioType': 'in', 'spec': \cent255)
+		x: ('hidUsage': 48, 'hidUsagePage': 1, 'type': 'joyAxis', 'ioType': 'in', 'spec': \cent1),
+		y: ('hidUsage': 49, 'hidUsagePage': 1, 'type': 'joyAxis', 'ioType': 'in', 'spec': \cent1),
+		z: ('hidUsage': 53, 'hidUsagePage': 1, 'type': 'joyAxis', 'ioType': 'in', 'spec': \cent1)
 	),
 
-	compass:  ('hidUsage': 53, 'hidUsagePage': 1, 'type': 'joyAxis', 'ioType': 'in', 'spec': \compass),
+	compass:  ('hidUsage': 57, 'hidUsagePage': 1, 'type': 'joyAxis', 'ioType': 'in', 'spec': \compass),
 
 	'lever': (
-		left:  ('hidUsage': 50, 'hidUsagePage': 1, 'type': 'lever', 'ioType': 'in', 'spec': \lin255),
-		right: ('hidUsage': 54, 'hidUsagePage': 1, 'type': 'lever', 'ioType': 'in', 'spec': \lin255),
+		left:  ('hidUsage': 50, 'hidUsagePage': 1, 'type': 'lever', 'ioType': 'in', 'spec': \unipolar),
+		right: ('hidUsage': 54, 'hidUsagePage': 1, 'type': 'lever', 'ioType': 'in', 'spec': \unipolar),
 	)
 );
 )
