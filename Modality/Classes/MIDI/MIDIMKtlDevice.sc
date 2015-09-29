@@ -99,15 +99,26 @@ MIDIMKtlDevice : MKtlDevice {
 
 		"\n// Available MIDIMKtls: ".postln;
 		"// MKtl('myNickName', 'lookupName');  \n\t\t// *[ midi device, portname, uid]\n".postln;
-		postables.sortedKeysValuesDo { |key, infodict|
+		postables.sortedKeysValuesDo { |nameKey, infodict|
 			var endPoint = infodict.deviceInfo;
 			var postList = endPoint.bubble.flatten.collect({ |ep| [ep.device.cs, ep.name.cs, ep.uid] });
-			var filename = MKtlDesc.filenameForIDInfo(infodict.idInfo);
+			var filenames = MKtlDesc.filenamesForIDInfo(infodict.idInfo);
 
-			filename = if (filename.isNil) { "" } { "," + quote(filename) };
-			filename = if (filename.isNil) { "" } { "," + quote(filename) };
-			"MKtl('%', %);\n\t\t// %\n"
-			.postf(key.asString.keep(12).asSymbol, key.cs, postList.unbubble);
+			"MKtl(%, %);\n\t\t// %\n"
+			.postf(nameKey.asString.keep(12).asSymbol.cs,
+				nameKey.cs, postList.unbubble);
+
+			// post with desc file names:
+			filenames.size.switch(
+				0, 	{ "\t\t// no matching desc files found!\n".inform; },
+				1, 	{ "\t\t// create from desc file:".postln; },
+				{ "\t\t// multiple desc files found!\n"
+					  "\t\t//choose one of them to create the MKtl:".postln;
+			});
+			filenames.do { |filename|
+				"MKtl(%, %);\n".postf(nameKey.cs, filename.cs);
+			};
+			"".postln;
 		};
 	}
 

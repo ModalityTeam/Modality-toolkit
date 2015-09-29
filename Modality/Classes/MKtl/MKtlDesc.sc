@@ -144,7 +144,12 @@ MKtlDesc {
 
 	*idInfoForFilename { |filename| ^fileToIDDict.at(filename) }
 
-	*filenameForIDInfo { |idInfo| ^fileToIDDict.findKeyForValue(idInfo) }
+	*filenamesForIDInfo { |idInfo|
+		^fileToIDDict.select { |info, filename|
+			// may need better matching
+			info == idInfo
+		}.keys(Array).sort
+	}
 
 	*writeCache {
 		var dictForFolder = Dictionary.new, file;
@@ -161,7 +166,11 @@ MKtlDesc {
 			};
 			file = File.open(path, "w");
 			if (file.isOpen) {
-				file.write(dictForFolder.cs.replace("), (", "),\n ("));
+				file.write("Dictionary[\n");
+				dictForFolder.sortedKeysValuesDo { |key, val|
+					file.write("\t" ++ (key -> val).cs ++ ",\n");
+				};
+				file.write("]\n");
 				file.close;
 				"MKtlDesc cache written at %.\n".postf(path);
 			} {
@@ -249,7 +258,7 @@ MKtlDesc {
 		// "% - dict not valid: %\n\n".postf(thisMethod, dict);
 	}
 
-	//
+	// to be defined and tested
 	*isValidMidiDesc { |dict| }
 	*isValidHIDDesc { |dict| }
 	*isValidOSCDesc { |dict| }
@@ -536,7 +545,7 @@ MKtlDesc {
 			if (entry.isKindOf(Dictionary) and:
 				{ entry.keys.sect(platForms).notEmpty }) {
 				foundval = entry[myPlatform];
-				"MKtlDesc:resolveForPlatform - replacing: ".post;
+				// "MKtlDesc:resolveForPlatform - replacing: ".post;
 				^key -> foundval;
 		} };
 
@@ -547,8 +556,8 @@ MKtlDesc {
 			};
 			if (foundPlatformDep) {
 				foundval = entry[myPlatform];
-				"MKtlDesc:resolveForPlatform - replacing: ".post;
-				dict.put(*[dictkey, foundval].postln);
+				// "MKtlDesc:resolveForPlatform - replacing: ".post;
+				dict.put(dictkey, foundval);
 			};
 		}
 		^dict

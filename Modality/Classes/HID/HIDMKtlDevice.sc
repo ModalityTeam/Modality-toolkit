@@ -67,20 +67,34 @@ HIDMKtlDevice : MKtlDevice {
 		"\n// Available HIDMKtlDevices:".postln;
 		"// MKtl('myNickName', 'lookupName');"
 		"\n\t\t// [ product, vendor, (serial#) ]\n".postln;
-		postables.sortedKeysValuesDo { |key, infodict|
+		postables.sortedKeysValuesDo { |lookupKey, infodict|
 			var info = infodict.deviceInfo;
 			var product = info.productName;
 			var vendor = info.vendorName;
 			var serial = info.serialNumber;
 			var postList = [product, vendor];
-			var filename = MKtlDesc.filenameForIDInfo(infodict.idInfo);
+			var filenames = MKtlDesc.filenamesForIDInfo(infodict.idInfo);
+
+			var nameKey = lookupKey.asString.keep(12).asSymbol;
 
 			if (serial.notEmpty) {
 				postList = postList.add(serial);
 			};
 
+			// post with lookupKey
 			"MKtl('%', %);\n\t\t// %\n"
-			.postf(key.asString.keep(12).asSymbol, key.cs, postList.cs);
+			.postf(nameKey, lookupKey.cs, postList.cs);
+
+			// post with desc file names:
+			filenames.size.switch(
+				0, 	{ "\t\t// no matching desc files found!".warn },
+				1, 	{ "\t\t// create from desc file:".postln; },
+					{ "\t\t// multiple desc files found: \n"
+					  "\t\t//choose one of them to create the MKtl:".postln;
+			});
+			filenames.do { |filename|
+				"MKtl('%', %);\n".postf(nameKey, filename.cs);
+			};
 		};
 	}
 

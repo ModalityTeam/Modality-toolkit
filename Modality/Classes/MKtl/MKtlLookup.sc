@@ -48,19 +48,26 @@ MKtlLookup {
 		var protocol = \hid;
 		var lookupName = MKtl.makeLookupName(\hid, index, hidinfo.productName);
 		var idInfo = [hidinfo.productName, hidinfo.vendorName].join($_);
-		var filename = MKtlDesc.filenameForIDInfo(idInfo);
+		var filenames = MKtlDesc.filenamesForIDInfo(idInfo);
 
 		var dict = (
 			protocol: \hid,
 			idInfo: idInfo,
 			deviceInfo: hidinfo,
-			filename: filename,
+			filenames: filenames,
 			lookupName: lookupName
 		);
 
-		if (filename.notNil) {
-			MKtlDesc.loadDescs(filename);
-			dict.put(\desc, MKtlDesc.at(filename.asSymbol));
+		if (filenames.notEmpty) {
+			MKtlDesc.loadDescs(filenames);
+			if (filenames.size < 2) {
+				dict.put(\desc, MKtlDesc.at(filenames[0]));
+			} {
+				dict.put(\descs,
+					filenames.collect { |filename|
+						MKtlDesc.at(filename)
+				});
+			};
 		};
 
 		all.put(lookupName, dict);

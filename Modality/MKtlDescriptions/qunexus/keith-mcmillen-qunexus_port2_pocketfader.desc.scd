@@ -33,6 +33,4 @@ description: (
 			midiChan: 0, midiNum: i, spec: \midiCC)
 	}
 )
-)
-
 );
