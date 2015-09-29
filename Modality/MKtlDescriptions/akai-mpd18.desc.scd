@@ -34,7 +34,10 @@ deviceName: "Akai MPD18",
 protocol: \midi,
 deviceType: \drumpad,
 elementTypes: [\pad, \slider],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: "Akai MPD18",
 

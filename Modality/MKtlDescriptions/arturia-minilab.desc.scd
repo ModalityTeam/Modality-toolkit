@@ -19,7 +19,10 @@ deviceName: "Arturia MINILAB",
 protocol: \midi,
 deviceType: \keyboard,
 elementTypes: [\pianoKey, \encoder, \button],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: "Arturia MINILAB",
 

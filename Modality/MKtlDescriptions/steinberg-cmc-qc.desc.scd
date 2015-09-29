@@ -3,7 +3,10 @@ deviceName: "Steinberg CMC-QC",
 protocol: \midi,
 deviceType: \controller,
 elementTypes: [\encoder, \button],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo:"Steinberg CMC-QC",
 

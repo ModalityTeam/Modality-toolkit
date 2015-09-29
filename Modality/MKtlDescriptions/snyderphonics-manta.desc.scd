@@ -57,7 +57,10 @@ deviceName: \manta,
 protocol: \osc,
 elementTypes: [\pad, \slider],
 deviceType: \manta,
-status: "incomplete",
+status: (
+	linux: "unknown",
+	osx: "incomplete",
+	win: "unknown"),
 
 idInfo: ( srcPort: 31417, ipAddress: "127.0.0.1", recvPort: 57120 ),
 

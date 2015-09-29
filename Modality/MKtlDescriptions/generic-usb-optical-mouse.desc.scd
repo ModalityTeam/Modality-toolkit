@@ -3,7 +3,10 @@ deviceName: "USB Optical Mouse_",
 protocol: 'hid',
 deviceType: \mouse,
 elementTypes: [\button, \mouseAxis, \mouseWheel],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: "USB Optical Mouse_",
 

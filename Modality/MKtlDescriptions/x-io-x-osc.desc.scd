@@ -18,7 +18,10 @@ deviceName: "x-osc",
 protocol: \osc,
 deviceType: \multiController,
 elementTypes: [\accelerometer, \sensor, \serial],
-status: "incomplete",
+status: (
+	linux: "unknown",
+	osx: "incomplete",
+	win: "unknown"),
 
 idInfo: ( srcPort: 8000, ipAddress: "169.254.1.1", recvPort: 9000 ), // ip for adhoc mode
 

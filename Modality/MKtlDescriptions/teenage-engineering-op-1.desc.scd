@@ -7,7 +7,10 @@ deviceName: "OP-1 Midi Device",
 protocol: \midi,
 deviceType: \keyboard,
 elementTypes: [\keyboard, \knob, \button],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: "OP-1 Midi Device",
 

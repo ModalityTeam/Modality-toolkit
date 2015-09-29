@@ -5,7 +5,10 @@ deviceName: "USB Trigger Finger",
 protocol: \midi,
 deviceType: \drumpad,
 elementTypes: [\pad, \button, \slider],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: "USB Trigger Finger",
 

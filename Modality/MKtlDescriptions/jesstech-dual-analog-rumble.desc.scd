@@ -3,7 +3,10 @@ deviceName: "Dual Analog Rumble Pad_Jess Tech",
 protocol: \hid,
 deviceType: \gamepad,
 elementTypes: [\joyAxis, \button, \hat],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: "Dual Analog Rumble Pad_Jess Tech",
 

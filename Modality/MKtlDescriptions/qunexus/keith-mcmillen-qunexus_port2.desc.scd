@@ -19,8 +19,11 @@ parentDesc: "keith-mcmillen-qunexus",
 
 elementTypes: [],
 
-status: "untested",
-idInfo: (deviceName: "QuNexus", sourcePortIndex: 0, destPortIndex: 0),
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
+idInfo: (deviceName: "QuNexus", sourcePortIndex: 1, destPortIndex: 1),
 portName: "Port 2",
 
 // port is for connecting a MIDI device by midi plugs,

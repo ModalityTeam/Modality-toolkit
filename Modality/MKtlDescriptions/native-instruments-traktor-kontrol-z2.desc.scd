@@ -3,7 +3,10 @@ deviceName: "Traktor Kontrol Z2 Input",
 protocol: 'midi',
 deviceType: \mixer,
 elementTypes: [\fader, \button],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: "Traktor Kontrol Z2 Input",
 

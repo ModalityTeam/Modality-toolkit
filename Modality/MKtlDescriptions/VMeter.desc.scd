@@ -11,7 +11,10 @@ deviceName: "VMeter 1.30 A",
 protocol: \midi,
 deviceType: \fader,
 elementTypes: [\fader],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: "VMeter 1.30 A",
 

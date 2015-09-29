@@ -10,7 +10,10 @@ deviceName: "APC MINI",
 protocol: 'midi',
 deviceType: \launchpad,
 elementTypes: [\fader, \pad, \button],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: "APC MINI",
 

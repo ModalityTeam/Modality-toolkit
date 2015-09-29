@@ -9,7 +9,10 @@ deviceName: "USB Game Controllers_Mega World",
 protocol: 'hid',
 deviceType: \gamepad,
 elementTypes: [\joystick, \button, \compass],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: "USB Game Controllers_Mega World",
 

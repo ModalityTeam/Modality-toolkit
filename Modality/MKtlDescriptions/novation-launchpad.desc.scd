@@ -7,7 +7,10 @@ deviceName: "Launchpad",
 protocol: \midi,
 deviceType: \launchpad,
 elementTypes: [\button],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: "Launchpad",
 

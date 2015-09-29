@@ -20,7 +20,10 @@ deviceName: "gyrosc",
 protocol: \osc,
 deviceType: \phoneApp,
 elementTypes: [\imu, \accelerometer],
-status: "incomplete",
+status: (
+	linux: "unknown",
+	osx: "incomplete",
+	win: "unknown"),
 
 idInfo: ( srcPort: 31417, ipAddress: "1.2.3.4", recvPort: 57120 ),
 

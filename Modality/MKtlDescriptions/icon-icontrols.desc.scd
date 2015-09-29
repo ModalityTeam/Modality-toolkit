@@ -6,7 +6,10 @@ deviceName: "iCON iControls V2.00",
 protocol: \midi,
 deviceType: \faderbox,
 elementTypes: [\fader],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: "iCON iControls V2.00",
 

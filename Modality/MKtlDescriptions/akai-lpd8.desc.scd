@@ -5,7 +5,10 @@ deviceName: "LPD8",
 protocol: \midi,
 deviceType: \drumpad,
 elementTypes: [\pad, \knob],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: "LPD8",
 

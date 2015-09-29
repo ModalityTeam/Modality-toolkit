@@ -20,7 +20,10 @@ parentDesc: "keith-mcmillen-qunexus",
 ///////// SPECIFIC INFORMATION for this port and config: ///////
 
 elementTypes: [\pianoKey, \bender, \touch],
-status: "tested and working",
+status: (
+	linux: "unknown",
+	osx: "tested and working",
+	win: "unknown"),
 
 idInfo: (deviceName: "QuNexus", sourcePortIndex: 0, destPortIndex: 0),
 portName: "Port 1",

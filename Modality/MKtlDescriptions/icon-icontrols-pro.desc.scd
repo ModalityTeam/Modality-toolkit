@@ -5,7 +5,10 @@ deviceName: "iCON iControls_Pro V1.02",
 protocol: \midi,
 deviceType: \faderbox,
 elementTypes: [\fader, \button],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: "iCON iControls_Pro V1.02",
 

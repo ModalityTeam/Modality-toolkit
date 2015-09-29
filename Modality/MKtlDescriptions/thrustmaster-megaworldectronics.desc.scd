@@ -3,7 +3,10 @@ deviceName: "USB Joystick_MegaWorldectronics",
 protocol: \hid,
 deviceType: \joystick,
 elementTypes: [\joystick, \button, \hat, \slider],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: "USB Joystick_MegaWorldectronics",
 

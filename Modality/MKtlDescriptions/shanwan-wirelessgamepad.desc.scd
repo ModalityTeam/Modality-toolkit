@@ -5,7 +5,10 @@ deviceName: "USB WirelessGamepad _ShanWan",
 protocol: 'hid',
 deviceType: \gamepad,
 elementTypes: [\button, \joyAxis, \compass],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: "USB WirelessGamepad _ShanWan",
 

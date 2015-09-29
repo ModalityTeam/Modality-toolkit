@@ -3,7 +3,10 @@ deviceName: "Ableton Push",
 protocol: \midi,
 deviceType: \push,
 elementTypes: [\pad, \button, \encoder, \display, \bend],
-status: "untested",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: "Ableton Push",
 

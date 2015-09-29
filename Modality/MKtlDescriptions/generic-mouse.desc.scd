@@ -3,7 +3,10 @@ idInfo: "Generic Mouse",
 protocol: 'hid',
 deviceType: \mouse,
 elementTypes: [\mouseAxis, \button, \mouseWheel],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 deviceName: "Generic Mouse",
 

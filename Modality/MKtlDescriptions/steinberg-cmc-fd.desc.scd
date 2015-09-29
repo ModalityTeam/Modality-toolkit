@@ -6,7 +6,10 @@ deviceName: "Steinberg CMC-FD",
 protocol: \midi,
 deviceType: \controller,
 elementTypes: [\fader, \button],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo:"Steinberg CMC-FD",
 

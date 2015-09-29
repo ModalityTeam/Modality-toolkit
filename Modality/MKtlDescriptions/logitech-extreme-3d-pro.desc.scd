@@ -3,7 +3,10 @@ deviceName: "Logitech Extreme 3D_Logitech",
 protocol: 'hid',
 deviceType: \joystick,
 elementTypes:  [\joystick, \button],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: "Logitech Extreme 3D_Logitech",
 

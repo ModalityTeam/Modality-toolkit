@@ -22,7 +22,10 @@ deviceName: "BCR2000",
 protocol: \midi,
 deviceType: \mixer,
 elementTypes: [\encoder, \button],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: "BCR2000",
 

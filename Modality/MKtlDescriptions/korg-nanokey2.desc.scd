@@ -3,7 +3,10 @@ deviceName: "nanoKEY2",
 protocol: 'midi',
 deviceType: \keyboard,
 elementTypes: [\pianoKey, \button],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: "nanoKEY2",
 

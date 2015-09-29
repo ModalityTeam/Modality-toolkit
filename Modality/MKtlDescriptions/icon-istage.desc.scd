@@ -7,7 +7,10 @@ deviceName: "iCON iStage V1.00",
 protocol: \midi,
 deviceType: \drumpad,
 elementTypes: [\pad, \button, \fader, \display, \led],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: "iCON iStage V1.00",
 deviceInfo: (

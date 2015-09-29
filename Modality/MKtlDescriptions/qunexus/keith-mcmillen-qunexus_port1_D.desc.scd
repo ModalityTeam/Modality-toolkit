@@ -22,7 +22,10 @@ elementTypes: [],
 idInfo: (deviceName: "QuNexus", sourcePortIndex: 0, destPortIndex: 0),
 portName: "Port 1",
 modeName: "Preset D",
-status: "not done yet",
+status: (
+	linux: "not done yet",
+	osx: "not done yet",
+	win: "not done yet"),
 
 	// Preset D mode is for drums and clips -
 	// please add when someone needs that mode.

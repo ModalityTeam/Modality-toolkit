@@ -6,7 +6,10 @@ deviceName: "Launch Control XL",
 protocol: \midi,
 deviceType: \mixer,
 elementTypes: [\fader, \button, \knob],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: "Launch Control XL",
 

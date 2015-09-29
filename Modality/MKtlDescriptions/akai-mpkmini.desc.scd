@@ -8,7 +8,10 @@ deviceName: "MPK mini",
 protocol: \midi,
 deviceType: \keyboard,
 elementTypes: [\pianoKey, \pads, \slider],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: "MPK mini",
 

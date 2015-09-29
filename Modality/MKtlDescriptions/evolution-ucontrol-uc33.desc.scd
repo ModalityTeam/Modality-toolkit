@@ -3,7 +3,10 @@ deviceName: "UC-33 USB MIDI Controller",
 protocol: \midi,
 deviceType: \faderbox,
 \elementTypes: [\slider, \knob, \button],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: "UC-33 USB MIDI Controller",
 

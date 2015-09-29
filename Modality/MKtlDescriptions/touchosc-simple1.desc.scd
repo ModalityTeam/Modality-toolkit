@@ -50,7 +50,10 @@ deviceName: "touchOSC",
 protocol: \osc,
 deviceType: \phoneApp,
 elementTypes: [\accelerometer, \fader, \button],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: (srcPort: 12345, recvPort: 57120, ipAddress: "192.168.2.79"),
 

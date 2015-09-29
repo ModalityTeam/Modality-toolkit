@@ -5,7 +5,10 @@ deviceName: "Numark ORBIT",
 protocol: 'midi',
 deviceType: \djController,
 elementTypes: [\button, \encoder],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: "Numark ORBIT",
 

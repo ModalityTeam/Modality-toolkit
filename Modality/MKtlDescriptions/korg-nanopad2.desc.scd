@@ -10,7 +10,10 @@ deviceName: "nanoPAD2",
 protocol: \midi,
 deviceType: \drumpad,
 elementTypes: [\pad, \touchpad, \button],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: "nanoPAD2",
 

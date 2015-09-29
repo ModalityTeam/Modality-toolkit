@@ -3,7 +3,10 @@ deviceName: "Run'N' Drive Wireless_Thrustmaster",
 protocol: \hid,
 deviceType: \gamepad,
 elementTypes: [\joystick, \button, \wheel, \throttle, \compass, \rumble],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: "Run'N' Drive Wireless_Thrustmaster",
 

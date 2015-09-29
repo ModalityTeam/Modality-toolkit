@@ -25,7 +25,10 @@ parentDesc: "keith-mcmillen-qunexus",
 	// port 3, CV in/outs get converted to/from MIDI
 
 elementTypes: [\voltage],
-status: "untested",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: (deviceName: "QuNexus", sourcePortIndex: 2, destPortIndex: 2),
 portName: "Port 3",

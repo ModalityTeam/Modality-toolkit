@@ -4,7 +4,10 @@ deviceName: "Livid Guitar Wing",
 protocol: 'midi',
 deviceType: \multiController,
 elementTypes: [\button, \touchFader, \pad],
-status: "tested",
+status: (
+	linux: "unknown",
+	osx: "tested and working",
+	win: "unknown"),
 
 idInfo: "Livid Guitar Wing",
 

@@ -7,7 +7,10 @@ deviceName: "nanoKEY",
 protocol: 'midi',
 deviceType: \keyboard,
 elementTypes: [\pianoKey],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: "nanoKEY",
 

@@ -4,7 +4,10 @@ deviceName: "Sherman FilterBank 2",
 protocol: \midi,
 deviceType: \filterbank,
 elementTypes: [\button, \knob],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: "Sherman FilterBank 2",
 

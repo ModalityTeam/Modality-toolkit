@@ -3,7 +3,10 @@ deviceName: "The Ribbon",
 protocol: \midi,
 deviceType: \ribbon,
 elementTypes: [\ribbon, \pad],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: "The Ribbon",
 

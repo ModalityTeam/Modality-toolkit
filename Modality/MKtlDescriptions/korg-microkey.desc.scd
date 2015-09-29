@@ -3,7 +3,10 @@ deviceName: "microKEY",
 protocol: 'midi',
 deviceType: \keyboard,
 elementTypes: [\pianoKey],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: "microKEY",
 

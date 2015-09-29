@@ -44,7 +44,10 @@ deviceName: "Steinberg CMC-PD",
 protocol: \midi,
 deviceType: \drumPad,
 elementTypes: [\pad, \button],
-status: "incomplete",
+status: (
+	linux: "unknown",
+	osx: "incomplete",
+	win: "unknown"),
 
 idInfo: (deviceName: "Steinberg CMC-PD", sourcePortIndex: 2, destPortIndex: 2),
 

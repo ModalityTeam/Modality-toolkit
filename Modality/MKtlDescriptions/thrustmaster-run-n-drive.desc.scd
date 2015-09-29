@@ -48,7 +48,10 @@ deviceName: "Run'N' Drive_Thrustmaster",
 protocol: \hid,
 deviceType: \gamepad,
 elementTypes: [\joystick, \button, \wheel, \throttle, \compass, \rumble],
-status: "tested and working",
+status: (
+	linux: "unknown",
+	osx: "tested and working",
+	win: "unknown"),
 
 idInfo: "Run'N' Drive_Thrustmaster",
 

@@ -20,7 +20,10 @@ deviceName: "BCF2000",
 protocol: \midi,
 deviceType: \faderbox,
 elementTypes: [\fader, \button, \encoder],
-status: "unknown",
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
 
 idInfo: "BCF2000",
 
