@@ -5,7 +5,7 @@ deviceType: \gamepad,
 elementTypes: [\joystick, \button, \wheel, \throttle, \compass, \rumble],
 status: (
 	linux: "unknown",
-	osx: "unknown",
+	osx: "tested and working",
 	win: "unknown"),
 
 idInfo: "Run'N' Drive Wireless_Thrustmaster",
