@@ -11,7 +11,7 @@ deviceType: \gamepad,
 elementTypes: [\joystick, \button, \compass],
 status: (
 	linux: "unknown",
-	osx: "unknown",
+	osx: "tested and working",
 	win: "unknown"),
 
 idInfo: "USB Game Controllers_Mega World",

@@ -7,7 +7,7 @@ deviceType: \drumpad,
 elementTypes: [\pad, \knob],
 status: (
 	linux: "unknown",
-	osx: "unknown",
+	osx: "tested and working",
 	win: "unknown"),
 
 idInfo: "LPD8",
