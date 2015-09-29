@@ -45,7 +45,7 @@ Dictionary[
 	("steinberg-cmc-fd" -> "Steinberg CMC-FD"),
 	("steinberg-cmc-pd_port1" -> ( 'destPortIndex': 0, 'sourcePortIndex': 0, 'deviceName': "Steinberg CMC-PD" )),
 	("steinberg-cmc-pd_port2" -> ( 'destPortIndex': 1, 'sourcePortIndex': 1, 'deviceName': "Steinberg CMC-PD" )),
-	("steinberg-cmc-qc" -> "Steinberg CMC-QC"),
+	("steinberg-cmc-qc_port1" -> ( 'destPortIndex': 0, 'sourcePortIndex': 0, 'deviceName': "Steinberg CMC-QC" )),
 	("teenage-engineering-op-1" -> "OP-1 Midi Device"),
 	("thrustmaster-megaworldectronics" -> "USB Joystick_MegaWorldectronics"),
 	("thrustmaster-run-n-drive" -> "Run'N' Drive_Thrustmaster"),

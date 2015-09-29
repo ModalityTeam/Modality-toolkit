@@ -1,23 +1,13 @@
 (
-deviceName: "Steinberg CMC-QC",
-protocol: \midi,
-deviceType: \controller,
-elementTypes: [\encoder, \button],
+parentDesc: "steinberg-cmc-qc",
+
 status: (
 	linux: "unknown",
-	osx: "unknown",
+	osx: "test device not working, not sure whether old dat still valid.",
 	win: "unknown"),
 
-idInfo:"Steinberg CMC-QC",
+idInfo: (deviceName: "Steinberg CMC-QC", sourcePortIndex: 0, destPortIndex: 0),
 
-deviceInfo: (
-	// vendorURI: "http://www.steinberg.net/en/products/controllers/cmc_series/models/cmc_qc.html",
-	// manualURI: "",
-	// description: "",
-	// features: [],
-	// notes: "",
-
-),
 description:
 (
 
