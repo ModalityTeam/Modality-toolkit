@@ -422,8 +422,8 @@ MIDIMKtlDevice : MKtlDevice {
 			numStr = msgType.switch(
 				\cc, "ccNum: %, ",
 				\control, "ccNum: %, ",
-				\noteOn, "vel: %, ",
-				\noteOff, "vel: %, ",
+				\noteOn, "noteNum: %, ",
+				\noteOff, "noteNum: %, ",
 				\polyTouch, "touch: %, ",
 				\polytouch, "touch: %, "
 			)

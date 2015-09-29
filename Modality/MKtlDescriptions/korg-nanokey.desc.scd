@@ -9,7 +9,7 @@ deviceType: \keyboard,
 elementTypes: [\pianoKey],
 status: (
 	linux: "unknown",
-	osx: "unknown",
+	osx: "tested and working",
 	win: "unknown"),
 
 idInfo: "nanoKEY",
@@ -29,11 +29,11 @@ description: (
 	//from 0-120
 	'keyOn': (0..120).collect { |midinum| ('midiMsgType': 'noteOn', 'type': 'key', 'midiChan': 0, 'midiNum': midinum, 'spec': 'midiNote') },
 
-	// ---------noteOff ----------
 	'keyOff': (0..120).collect { |midinum| ('midiMsgType': 'noteOn', 'type': 'key', 'midiChan': 0, 'midiNum': midinum, 'spec': 'midiNote') },
 
+	mod: ('midiMsgType': 'cc', 'type': 'button', 'midiChan': 0, 'midiNum': 1,'spec': 'midiBut'),
 	// ------ cc -------------
-	cc: [1, (14..31), (80..87)].flat.collect { |midinum|
+	cc: ((14..31) ++ (80..87)).collect { |midinum|
 		('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum': midinum,'spec': 'midiCC') },
 
 	// ------- bend ------------
