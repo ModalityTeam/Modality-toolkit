@@ -145,7 +145,7 @@ MKtlLookup {
 
 	*splitMIDI { |info|
 
-		var numSources, numDests, insOutsMatch, doAdvise;
+		var numSources, numDests, insOutsMatch;
 		var numInPorts, numOutPorts, numInDevices, numOutDevices;
 		var deviceName, deviceLookupName, postfix;
 		var count = this.allFor(\midi).size;
@@ -167,8 +167,8 @@ MKtlLookup {
 		// does info have same number of srcs and dests?
 		// -> if yes, assume same order on ins and outs!
 		insOutsMatch = numSources == numDests;
-		numInPorts = info.srcDevice.collectAs(_.name, Set).size;
-		numOutPorts = info.destDevice.collectAs(_.name, Set).size;
+		numInPorts = info.srcDevice.asArray.collectAs(_.name, Set).size;
+		numOutPorts = info.destDevice.asArray.collectAs(_.name, Set).size;
 		numInDevices = numSources / numInPorts;
 		numOutDevices = numDests / numOutPorts;
 
