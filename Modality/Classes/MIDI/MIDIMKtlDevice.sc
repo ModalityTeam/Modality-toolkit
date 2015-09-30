@@ -89,7 +89,28 @@ MIDIMKtlDevice : MKtlDevice {
 		};
 	}
 
-	// display all ports in readable fashion, copy/paste-able directly
+	*descFileStrFor { |nameKey, filenames, multiIndex|
+
+		var str = filenames.size.switch(
+			0, 	{ "\t\t// no matching desc files found!\n"; },
+			1, 	{ "\t\t// create from desc file:\n"; },
+			{ 	"\t\t// multiple desc files found!\n"
+				"\t\t//choose one for the MKtl:\n";
+		});
+
+		filenames.do { |filename|
+		str = str ++ "MKtl(%, %);\n".format(
+			nameKey.cs,
+			filename.cs,
+				if (multiIndex.notNil, "," + multiIndex, ""
+				)
+			);
+		};
+		^str ++ "\n\n";
+	}
+
+	// display all ports in readable fashion,
+	// copy/paste-able directly
 	*postPossible {
 		var postables = MKtlLookup.allFor(\midi);
 		if (postables.size == 0) {
@@ -98,7 +119,7 @@ MIDIMKtlDevice : MKtlDevice {
 		};
 
 		"\n// Available MIDIMKtls: ".postln;
-		"// MKtl('myNickName', 'lookupName');  \n\t\t// *[ midi device, portname, uid]\n".postln;
+		"// MKtl('myNickName', 'lookupName');  \n\t\t// [ midi device, portname, uid]\n".postln;
 		postables.sortedKeysValuesDo { |lookupKey, infodict|
 			var endPoint = infodict.deviceInfo;
 			var nameKey = lookupKey.asString.keep(12).asSymbol;
@@ -111,15 +132,8 @@ MIDIMKtlDevice : MKtlDevice {
 			.postf(nameKey.cs, lookupKey.cs, postList.unbubble);
 
 			// post with desc file names:
-			filenames.size.switch(
-				0, 	{ "\t\t// no matching desc files found!\n".inform; },
-				1, 	{ "\t\t// create from desc file:".postln; },
-				{ "\t\t// multiple desc files found!\n"
-					  "\t\t//choose one of them to create the MKtl:".postln;
-			});
-			filenames.do { |filename|
-				"MKtl(%, %);\n".postf(nameKey.cs, filename.cs);
-			};
+			this.descFileStrFor(nameKey, filenames,
+				infodict.multiIndex).postln;
 			"".postln;
 		};
 	}
@@ -140,6 +154,9 @@ MIDIMKtlDevice : MKtlDevice {
 			^this;
 		};
 
+		// not sure these are still needed?
+		// can find multiple devices already.
+
 		foundInfo = MKtlLookup.findByIDInfo(idInfo);
 		if (foundInfo.size > 1) {
 			"multiple MIDIMKtls of same name not supported yet - taking first.".postln;
@@ -147,8 +164,8 @@ MIDIMKtlDevice : MKtlDevice {
 
 		foundInfo = foundInfo.asArray.first;
 
-		foundSources = foundInfo[\srcDevice].postln;
-		foundDestinations = foundInfo[\destDevice].postln;
+		foundSources = foundInfo[\srcDevice];
+		foundDestinations = foundInfo[\destDevice];
 
 		// for a single device only for now:
 		if (parentMKtl.midiPortNameIndex.notNil) {
