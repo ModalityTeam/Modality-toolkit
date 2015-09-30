@@ -106,7 +106,7 @@ MIDIMKtlDevice : MKtlDevice {
 				)
 			);
 		};
-		^str ++ "\n\n";
+		^str ++ "\n";
 	}
 
 	// display all ports in readable fashion,
@@ -134,7 +134,6 @@ MIDIMKtlDevice : MKtlDevice {
 			// post with desc file names:
 			this.descFileStrFor(nameKey, filenames,
 				infodict.multiIndex).postln;
-			"".postln;
 		};
 	}
 
