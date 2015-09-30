@@ -102,8 +102,10 @@ MIDIMKtlDevice : MKtlDevice {
 		postables.sortedKeysValuesDo { |lookupKey, infodict|
 			var endPoint = infodict.deviceInfo;
 			var nameKey = lookupKey.asString.keep(12).asSymbol;
-			var postList = endPoint.bubble.flatten.collect({ |ep| [ep.device.cs, ep.name.cs, ep.uid] });
-			var filenames = MKtlDesc.filenamesForIDInfo(infodict.idInfo);
+			var postList = endPoint.bubble.flatten.collect({ |ep|
+				[ep.device.cs, ep.name.cs, ep.uid]
+			});
+			var filenames = infodict.filenames;
 
 			"MKtl(%, %);\n\t\t// %\n"
 			.postf(nameKey.cs, lookupKey.cs, postList.unbubble);
@@ -473,7 +475,8 @@ MIDIMKtlDevice : MKtlDevice {
 				\noteOn,      { this.makeChanNumMsgMIDIFunc(msgType, srcID) },
 				\noteOff,     { this.makeChanNumMsgMIDIFunc(msgType, srcID) },
 				\noteOnOff,   {
-					"%: tying to build a responder for \noteOnOffm which should be prevented in MKtlDesc:getMidiMsgTypes.\n".postf(this)
+					"%: trying to build a responder for \noteOnOff which should\n"
+					"be prevented in MKtlDesc:getMidiMsgTypes.\n".postf(this)
 					//this.makeChanNumMsgMIDIFunc(\noteOn, srcID);
 					//this.makeChanNumMsgMIDIFunc(\noteOff, srcID);
 				},

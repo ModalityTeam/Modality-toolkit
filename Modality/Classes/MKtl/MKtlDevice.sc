@@ -61,7 +61,7 @@ MKtlDevice {
 		};
 	}
 
-	*open { |name, parentMKtl|
+	*open { |name, parentMKtl, multiIndex|
 		var lookupName, lookupInfo, protocol, idInfo;
 		var desc, subClass, newDevice;
 		var deviceCandidates;
@@ -104,21 +104,27 @@ MKtlDevice {
 		if (deviceCandidates.size == 0) {
 			if (protocol != \osc) {
 				if (verbose) {
-					inform("%: could not open mktlDevice,"
+					inform("%: could not open mktlDevice -"
 						" no device candidates found."
-						.format(this));
+						.format(thisMethod));
 				};
 				^nil
 			};
 		};
 
 		if (deviceCandidates.size > 1) {
-			inform("%: multiple device candidates found, please disambiguate by lookupName:"
+			if (multiIndex.notNil) {
+				lookupInfo = deviceCandidates[0];
+			} {
+				inform("%: multiple device candidates found,"
+					"please disambiguate by providing a multiIndex"
 				.format(this.name));
-			deviceCandidates.do { |cand|
-				"\n MKtl(%, %)".format(this.name, cand.lookupName);
+				deviceCandidates.do { |cand|
+					"\n MKtl(%, %, multiIndex: ?)"
+					.format(this.name.cs, cand.filenames).postln;
+				};
+				^nil
 			};
-			^nil
 		};
 
 		// we have exactly one candidate, so we take it:

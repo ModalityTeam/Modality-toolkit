@@ -140,11 +140,11 @@ MKtl { // abstract class
 	// or returns a new empty instance.
 	// If no physcal device is present, this becomes a virtual MKtl.
 
-	*new { |name, lookupNameOrDesc, lookForNew = false |
+	*new { |name, lookupNameOrDesc, lookForNew = false, multiIndex |
 		var res, lookupName, lookupInfo, descName, newMKtlDesc, protocol;
 
 		if (name.isNil) {
-			"%: please specify name.".format(this).inform;
+			"%: please specify name.".format(thisMethod).inform;
 			^nil;
 		};
 
@@ -152,7 +152,8 @@ MKtl { // abstract class
 
 		if (res.isNil and: { lookupNameOrDesc.isNil }) {
 			"%(%): not instantiated yet.\n"
-			"Please specify lookupName or desc filename.".format(this, name).inform;
+			"Please specify lookupName or desc filename."
+				.format(this, name).inform;
 			^nil;
 		};
 
@@ -211,7 +212,7 @@ MKtl { // abstract class
 		};
 
 		// now we have a name and a good enough desc
-		^super.newCopyArgs(name).init(newMKtlDesc, lookupName, lookupInfo, lookForNew );
+		^super.newCopyArgs(name).init(newMKtlDesc, lookupName, lookupInfo, lookForNew, multiIndex );
 	}
 
 	checkIdentical { |lookupNameOrDesc|
@@ -264,7 +265,7 @@ MKtl { // abstract class
 	storeArgs { ^[name] }
 	printOn { |stream| this.storeOn(stream) }
 
-	init { |argDesc, argLookupName, argLookupInfo, lookForNew = false|
+	init { |argDesc, argLookupName, argLookupInfo, lookForNew = false, multiIndex|
 		var specsFromDesc;
 
 		desc = argDesc;
@@ -296,13 +297,13 @@ MKtl { // abstract class
 			^this
 		};
 
-		this.finishInit(lookForNew); // and finalise init
+		this.finishInit(lookForNew, multiIndex); // and finalise init
 	}
 
-	finishInit { |lookForNew|
+	finishInit { |lookForNew, multiIndex|
 		this.makeElements;
 		this.makeCollectives;
-		this.openDevice( lookForNew );
+		this.openDevice( lookForNew, multiIndex );
 	}
 
 	updateLookupInfo { |newInfo|
@@ -551,7 +552,7 @@ MKtl { // abstract class
 
 	// ------ make MKtlDevice and interface with it
 
-	openDevice { |lookAgain=true|
+	openDevice { |lookAgain=true, multiIndex|
 		var protocol;
 		if ( this.mktlDevice.notNil ) {
 			"%: Device already opened.\n"
@@ -565,7 +566,7 @@ MKtl { // abstract class
 		protocol = desc !? { desc.protocol };
 		MKtlDevice.initHardwareDevices( lookAgain, protocol);
 
-		mktlDevice = MKtlDevice.open( this.name, this );
+		mktlDevice = MKtlDevice.open( this.name, this, multiIndex );
 		if(this.hasDevice.not) {
 			inform("%.openDevice: remaining virtual.".format(this));
 		}

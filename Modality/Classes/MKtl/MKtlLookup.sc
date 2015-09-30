@@ -48,30 +48,32 @@ MKtlLookup {
 		var protocol = \hid;
 		var lookupName = MKtl.makeLookupName(\hid, index, hidinfo.productName);
 		var idInfo = [hidinfo.productName, hidinfo.vendorName].join($_);
-		var filenames = MKtlDesc.filenamesForIDInfo(idInfo);
 
 		var dict = (
 			protocol: \hid,
 			idInfo: idInfo,
 			deviceInfo: hidinfo,
-			filenames: filenames,
 			lookupName: lookupName
 		);
 
-		if (filenames.notEmpty) {
-			MKtlDesc.loadDescs(filenames);
-			if (filenames.size < 2) {
-				dict.put(\desc, MKtlDesc.at(filenames[0]));
-			} {
-				dict.put(\descs,
-					filenames.collect { |filename|
-						MKtlDesc.at(filename)
-				});
-			};
-		};
+		this.addFilenamesAndDescs(dict, idInfo);
 
 		all.put(lookupName, dict);
 		^dict
+	}
+
+	*addFilenamesAndDescs { |dict, idInfo|
+		var filenames = MKtlDesc.filenamesForIDInfo(idInfo);
+		var descs = MKtlDesc.loadDescs(filenames);
+		// "filenames: %\n".postf(filenames);
+
+		dict.put(\filenames, filenames);
+		dict.put(\descs, descs);
+
+		if (filenames.size < 2) {
+			dict.put(\filename, filenames[0]);
+			dict.put(\desc, MKtlDesc.at(filenames[0]));
+		};
 	}
 
 	*addAllMIDI {
@@ -130,20 +132,23 @@ MKtlLookup {
 		var protocol = \midi;
 		var deviceName = endPoint.device;
 		var dict;
+
 		lookupName = lookupName ?? {
-			MKtl.makeLookupName(protocol, index, endPoint.device);
+			MKtl.makeLookupName(protocol, index, deviceName);
 		};
 
 		dict = (
 			protocol: protocol,
 			deviceName: deviceName,
 			idInfo: idInfo ? deviceName,
-			lookupName: lookupName
+			lookupName: lookupName,
+			deviceInfo: endPoint
 		);
 
-		dict.put(\deviceInfo, endPoint);
 		if (endPointType == \src) { dict.put(\srcDevice, endPoint) };
 		if (endPointType == \dest) { dict.put(\destDevice, endPoint) };
+
+		this.addFilenamesAndDescs(dict, deviceName);
 
 		(where ? all).put(lookupName, dict);
 
@@ -163,8 +168,6 @@ MKtlLookup {
 		// if single device, exit here!
 		if ((numSources < 2) and: { numDests < 2 }) {
 			// "\nMKtlLookup: single midi device -> to all: %\n\n".postf(info);
-			// TODO: findMKtlDescs here,
-			// if only a single desc, then set filename
 			all.put(info.lookupName, info);
 			^this
 		};
@@ -173,15 +176,15 @@ MKtlLookup {
 
 		// does info have same number of srcs and dests?
 		// -> if yes, assume same order on ins and outs!
-		insOutsMatch = numSources == numDests;
+		insOutsMatch = (numSources == numDests);
 		numInPorts = info.srcDevice.asArray.collectAs(_.name, Set).size;
 		numOutPorts = info.destDevice.asArray.collectAs(_.name, Set).size;
 		numInDevices = numSources / numInPorts;
 		numOutDevices = numDests / numOutPorts;
 
 		// either multiple devices, or multiple ports, or both...
-		 "% numInPorts: %, numOutPorts: %, numInDevs: %, numOutDevs: %\n"
-		 .postf(info.lookupName, numInPorts, numOutPorts, numInDevices, numOutDevices);
+		// "%: numInPorts: %, numOutPorts: %, numInDevs: %, numOutDevs: %\n"
+		// .postf(info.lookupName, numInPorts, numOutPorts, numInDevices, numOutDevices);
 
 		info.srcDevice.do { |srcdev, index|
 			var index1 = index + 1;

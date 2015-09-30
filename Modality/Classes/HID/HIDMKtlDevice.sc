@@ -114,7 +114,7 @@ HIDMKtlDevice : MKtlDevice {
 				foundSource = foundSource.deviceInfo;
 			}
 		} {
-			// // FIXME: is this a usb path?
+			// // FIXME: is this a USB path?
 			// // and what about multiple matches (e.g. Apple Keyboard)?
 			// foundSource = HID.findBy( path: path ).asArray.first;
 		};
@@ -153,7 +153,7 @@ HIDMKtlDevice : MKtlDevice {
 		// this.sendInitialisationMessages;
 	}
 
-	// how to do that?
+	// how best to do that?
 	enable { enabled = true }
 	disable { enabled = false }
 
