@@ -55,6 +55,27 @@ MKtlDevice {
 		};
 	}
 
+	*descFileStrFor { |nameKey, filenames, multiIndex|
+
+		var str = filenames.size.switch(
+			0, 	{ "\t\t// no matching desc files found!\n"; },
+			1, 	{ "\t\t// create from desc file:\n"; },
+			{ 	"\t\t// multiple desc files found!\n"
+				"\t\t//choose one for the MKtl:\n";
+		});
+
+		filenames.do { |filename|
+		str = str ++ "MKtl(%, %);\n".format(
+			nameKey.cs,
+			filename.cs,
+				if (multiIndex.notNil, "," + multiIndex, ""
+				)
+			);
+		};
+		^str ++ "\n";
+	}
+
+
 	*initHardwareDevices { |force = false, protocols|
 		this.subFor(protocols).do { |cl|
 			cl.initDevices( force );
@@ -97,7 +118,7 @@ MKtlDevice {
 
 		protocol = desc.protocol;
 		idInfo = desc.idInfo;
-		deviceCandidates = MKtlLookup.findByIDInfo(idInfo).asArray;
+		deviceCandidates = MKtlLookup.findByIDInfo(idInfo);
 
 
 		// "number of device candidates: %\n".postf(deviceCandidates.size);
@@ -114,10 +135,10 @@ MKtlDevice {
 
 		if (deviceCandidates.size > 1) {
 			if (multiIndex.notNil) {
-				lookupInfo = deviceCandidates[0];
+				lookupInfo = deviceCandidates[multiIndex];
 			} {
 				inform("%: multiple device candidates found,"
-					"please disambiguate by providing a multiIndex"
+					"please disambiguate by providing a multiIndex!"
 				.format(this.name));
 				deviceCandidates.do { |cand|
 					"\n MKtl(%, %, multiIndex: ?)"

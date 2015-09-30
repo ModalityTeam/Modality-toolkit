@@ -86,15 +86,8 @@ HIDMKtlDevice : MKtlDevice {
 			.postf(nameKey, lookupKey.cs, postList.cs);
 
 			// post with desc file names:
-			filenames.size.switch(
-				0, 	{ "\t\t// no matching desc files found!".warn },
-				1, 	{ "\t\t// create from desc file:".postln; },
-					{ "\t\t// multiple desc files found: \n"
-					  "\t\t//choose one of them to create the MKtl:".postln;
-			});
-			filenames.do { |filename|
-				"MKtl('%', %);\n".postf(nameKey, filename.cs);
-			};
+			this.descFileStrFor(nameKey, filenames,
+				infodict.multiIndex).post;
 		};
 	}
 

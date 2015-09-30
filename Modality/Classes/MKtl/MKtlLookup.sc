@@ -267,7 +267,7 @@ MKtlLookup {
 	}
 
 	*findByIDInfo { |inIdInfo|
-		var matches = true, res;
+		var matches = true, matching, ordered;
 
 		var inIdDict;
 		if (inIdInfo.isKindOf(String)) {
@@ -278,7 +278,7 @@ MKtlLookup {
 
 		// inIdDict.postcs;
 
-		res = all.select { |hereInfo|
+		matching = all.select { |hereInfo|
 			var hereIdInfo, hereIdDict, matches = true;
 
 			hereIdInfo = hereInfo[\idInfo];
@@ -296,7 +296,12 @@ MKtlLookup {
 			};
 			matches
 		};
-		^res
+		ordered = [];
+		matching.sortedKeysValuesDo { |key, cand, i|
+			cand.put(\multiIndex, i);
+			ordered = ordered.add(cand);
+		};
+		^ordered
 	}
 }
 

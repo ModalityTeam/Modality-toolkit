@@ -89,26 +89,6 @@ MIDIMKtlDevice : MKtlDevice {
 		};
 	}
 
-	*descFileStrFor { |nameKey, filenames, multiIndex|
-
-		var str = filenames.size.switch(
-			0, 	{ "\t\t// no matching desc files found!\n"; },
-			1, 	{ "\t\t// create from desc file:\n"; },
-			{ 	"\t\t// multiple desc files found!\n"
-				"\t\t//choose one for the MKtl:\n";
-		});
-
-		filenames.do { |filename|
-		str = str ++ "MKtl(%, %);\n".format(
-			nameKey.cs,
-			filename.cs,
-				if (multiIndex.notNil, "," + multiIndex, ""
-				)
-			);
-		};
-		^str ++ "\n";
-	}
-
 	// display all ports in readable fashion,
 	// copy/paste-able directly
 	*postPossible {
@@ -133,7 +113,7 @@ MIDIMKtlDevice : MKtlDevice {
 
 			// post with desc file names:
 			this.descFileStrFor(nameKey, filenames,
-				infodict.multiIndex).postln;
+				infodict.multiIndex).post;
 		};
 	}
 
