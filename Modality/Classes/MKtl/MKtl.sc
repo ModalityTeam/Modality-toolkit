@@ -579,24 +579,25 @@ MKtl { // abstract class
 		^mktlDevice.notNil
 	}
 
-	// only for MIDI, to support multiple identical devices
-	listenTo { |srcIDindex|
-		if (this.hasDevice.not) {
-			"no mktlDevice.".postln
-			^this
-		};
-		// only for MIDI so far
-		mktlDevice.initElements(srcIDindex);
-	}
-
-	// only for MIDI ...
-	sendTo { |destIDindex|
-		if (this.hasDevice.not) {
-			"no mktlDevice.".postln
-			^this
-		};
-		mktlDevice.setDstID(mktlDevice.destination[destIDindex].uid);
-	}
+		// obsolete I think
+	// // only for MIDI, to support multiple identical devices
+	// listenTo { |srcIDindex|
+	// 	if (this.hasDevice.not) {
+	// 		"no mktlDevice.".postln
+	// 		^this
+	// 	};
+	// 	// only for MIDI so far
+	// 	mktlDevice.initElements(srcIDindex);
+	// }
+	//
+	// // only for MIDI ...
+	// sendTo { |destIDindex|
+	// 	if (this.hasDevice.not) {
+	// 		"no mktlDevice.".postln
+	// 		^this
+	// 	};
+	// 	mktlDevice.setDstID(mktlDevice.destination[destIDindex].uid);
+	// }
 
 	trace { |value=true|
 		if ( this.hasDevice ){ mktlDevice.trace( value ) };

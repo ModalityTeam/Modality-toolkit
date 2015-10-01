@@ -47,6 +47,16 @@ k = MKtl('mynano2', "korg-nanokontrol2");
 
 // description file name can also contain wildcards:
 l = MKtl('op1', "*op-1");
+
+// if you have several devices of the same kind connected,
+// say two nanoKontrol2s, you can get to each of them by multiIndex:
+m = MKtl('nk2A', "korg-nanokontrol2", multiIndex: 0);
+n = MKtl('nk2B', "korg-nanokontrol2", multiIndex: 1);
+
+// Note that this is the index of the list of multiples only,
+// and in the order they show up in the system,
+// as is posted from MKtl.find. If you connect your
+// devices to the same plugs, they will get the same multiIndex again.
 ::
 
 argument:: name
@@ -57,6 +67,9 @@ The device description that you want to use. This can be the lookupName of a dev
 
 argument:: lookForNew
 Boolean flag whether or not to look for newly attached devices or newly added device descriptions. Default is false. It will always look for devices and device descriptions the first time you open an MKtl.
+
+argument:: multiIndex
+if several devices of the identical make are used, multiIndex is the index within the array of identical devices. The order depends on USB plug order, but will be reproduceable if the same plugs are used.
 
 
 SUBSECTION:: Using specs in MKtl
@@ -109,8 +122,8 @@ MKtl.loadDescsMatching("*run-n-drive*");
 ::
 
 METHOD:: postPossible
-post all possible devices for the protocol(s) given.
-
+post all possible (i.e. currently connected or known) devices for the protocol(s) given.
+MKtl.postPossible;
 
 Method:: makeLookupName
 make a lookupName for a device based on (typically) its protocol, id number and productName.
@@ -118,7 +131,7 @@ code::
 MKtl.makeLookupName(\hid, 0, "Run'N'Drive - Wireless");
 MKtl.makeLookupName(\midiSrc, 0, "nanoKEY");
 // osc - is ip addr and port good here?
-MKtl.makeLookupName(\osc, "127.0.0.1pt57110", "sclang");
+MKtl.makeLookupName(\osc, "127.0.0.1_57110", "sclang");
 ::
 
 INSTANCEMETHODS::
@@ -139,6 +152,9 @@ METHOD:: gui
 Open a gui representation for the MKtl
 code::
 MKtl(\mynano2).gui;
+// or newer and nicer:
+MKtlGUI(mktl: MKtl(\mynano2));
+
 ::
 
 
@@ -169,6 +185,9 @@ Open the hardware device for this MKtl if it was not opened already. It will loo
 
 argument:: lookAgain
 Whether or not to look for newly attached hardware devices.
+
+argument:: multiIndex
+Needed when using multiple identical devices to identify which one to create.
 
 code::
 // while the run'n'drive is not yet attached,
@@ -209,8 +228,14 @@ METHOD::rebuild
 If new description given is valid, this will rebuild the elements from the new description.
 warning:: This will remove any actions you have attached, so only use this method when you are really sure that you want to replace the device description.::
 
-SUBSECTION:: Elements of the MKtl
+METHOD::enable, disable
+enable and disable this MKtl, so one can make multiple MKtls (with different setups of elements) for the same physical device.
 
+METHOD::sync
+send all current MKtl values to the physical device, e.g. to move all motorfaders to a freshly recalled preset.
+
+
+SUBSECTION:: Elements of the MKtl
 
 METHOD:: elements
 all control elements (MKtlElement) on the device you may want to listen or talk to. this returns an link::Classes/MKtlElementGroup:: containing a hierarchical tree of link::Classes/MKtlElement::s, organised via link::Classes/MKtlElementGroup::.
@@ -225,12 +250,16 @@ m.elementNames;
 
 METHOD:: postElements
 A pretty printed hierarchical list of the names of the elements
+code::
 m = MKtl(\manta, "*manta*");
 m.postElements;
+::
 
 METHOD:: elementsDict
 all elements in one flat event so they can be accessed very fast.
+code::
 MKtl(\funky).elementsDict;
+::
 
 METHOD:: inputElements, outputElements
 code::
@@ -289,6 +318,7 @@ code::
 m = MKtl( 'funky', "*run-n-drive" );
 m.deviceValueAt( \compass );
 m.deviceValueAt( \bt_2 );
+m.deviceValueAt( \joy_l_x );
 ::
 
 
@@ -312,13 +342,17 @@ Returns a Boolean whether or not a device is currently being explored.
 METHOD:: createDescriptionFile
 When a device doesn't have a description file yet, this method can be used to create a description file.
 
+METHOD:: specialMessages
+a dict of special messages for this device, typically to change setup on a MIDI device by sending it a sysex message.
+
+METHOD:: sendSpecialMessages
+send specMessage with name to the device
+
+
 Subsection:: Collectives and Composite MKtl
 
 ... create collectives in new mktl - to be written.
 METHOD:: collectivesDict, collectiveDescriptionFor
-
-will be used for creating composite MKtls, not fully tested yet.
-METHOD:: initComp
 
 methods for finding info on available devices in MKtlLookup.
 METHOD:: lookupInfo, lookupName, updateLookupInfo
@@ -327,4 +361,5 @@ various tests
 METHOD:: checkAllCtls, checkIdentical, hasDevice
 
 private:: wrapCollElemsInGroups, specialMessageNames, sendSpecialMessage, prMatchedElements
-PRIVATE:: storeArgs, printOn, init, makeElements, makeCollectives
+PRIVATE:: storeArgs, printOn, init, makeElements, makeCollectives, finishInit
+
