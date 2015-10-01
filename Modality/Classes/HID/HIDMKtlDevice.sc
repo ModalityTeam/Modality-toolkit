@@ -98,7 +98,7 @@ HIDMKtlDevice : MKtlDevice {
 	}
 
     // create with a uid, or access by name
-	*new { |name, path, parentMKtl|
+	*new { |name, path, parentMKtl, multiIndex|
 		var foundSource;
 
 		if (path.isNil) {
@@ -127,23 +127,29 @@ HIDMKtlDevice : MKtlDevice {
 	}
 
 
-	initHIDMKtl { |argSource, argUid|
+	initHIDMKtl { |argSource|
 		// HID is only ever one source, hopefully
-
+		var foundOpenHID;
 		// To make HID polyphonic:
 		// find out if HID is already open first;
 		// be polite and only add hidele.actions with
 		// hidele.action = hidele.action.addFunc(newaction);
 		// and keep the as they are actions somewhere for removeFunc
 
+		foundOpenHID = HID.openDevices.detect { |hid|
+			hid.info.path == argSource.path };
+		if (foundOpenHID.notNil) {
+			warn("%: HID already open for: \n%!"
+				"\nHID polyphony not supported yet, so not opening again."
+				.format(thisMethod, argSource));
+			^this
+		};
+
         source = argSource.open;
 		srcID = source.id;
 
 		this.initElements;
 		this.initCollectives;
-
-		// only do this explicitly
-		// this.sendInitialisationMessages;
 	}
 
 	// how best to do that?
