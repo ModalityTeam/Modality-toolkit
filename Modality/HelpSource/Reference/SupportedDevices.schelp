@@ -63,6 +63,16 @@ list::
 ## gyrosc
 ::
 
+code::
+// see the file names for all currently supported devices:
+MKtlDesc.postLoadable;
+
+// load them all, and post their current status:
+MKtlDesc.loadDescs.do { |desc|
+	[desc.fullDesc.filename, desc.fullDesc.status].postcs;
+};"";
+::
+
 Section:: Undescribed Controller
 
 Have a controller that is not known to the system? See link::Tutorials/How_to_create_a_description_file:: on how to set it up.

@@ -45,15 +45,23 @@ subsection:: Example NanoKontrol2
 
 code::
 // plug in your NanoKontrol2 and evaluate this line.
-k = MKtl('nnkn20');
+k = MKtl('nk2', "korg-nanokontrol2");
 
-// If there is no such controller connected, you can open a fake gui-based controller by executing k.gui;
+// or do this first, grab the last line pasted,
+MKtl.find(\midi);
+// and change the name:
+k = MKtl('myNK2', "korg-nanokontrol2");
+
+// turn on trace, then move some elements to see that the nano works
+k.trace;
+k.trace(false);
+
+// If no such controller is connected, you can still open
+// a gui controller instead that has the same elements:
+MKtlGUI(mktl: k);
 
 // make sure there are no current assigned actions
 k.reset;
-
-// open a gui representation of the device
-k.gui;
 
 // boot the server
 s.boot;
@@ -90,28 +98,31 @@ k.elementAt(\sl, 2).action = {arg el;
 // after testing, free sound
 x.free;
 
-// remove all assigned actions
-k.reset;
+// and free the device
+k.free;
 ::
 
 subsection:: Example BCR2000
 
 code::
 // plug in your BCR2000 and evaluate this line.
-k = MKtl('bcr20000');
+k = MKtl('myBCR', "behringer-bcr2000");
 
-// If there is no such controller connected, you can open a fake gui-based controller by executing k.gui;
+// turn on trace, then move some elements to see that the nano works
+k.trace;
+k.trace(false);
+
+// If no such controller is connected, you can still open
+// a gui controller instead that has the same elements:
+MKtlGUI(mktl: k);
 
 // make sure there are no current assigned actions
 k.reset;
 
-// open a gui representation of the device
-k.gui;
-
 // dictionary of controls keys to MKtlElements
 k.elements;
 
-// elements can be accessed through their hierarchy:
+// elements can be accessed through a hierarchy:
 k.elementAt(\kn, 0, 0);
 
 // all knobs of the first row
@@ -121,7 +132,7 @@ k.elementAt(\kn, 0); // -> MKtlElementGroup
 k.elementAt(\kn, 0, 0).type;
 
 // select elements by their type:
-k.allElements.select{ |x| x.type == \encoder };
+k.elementsDict.select { |x| x.type == \encoder };
 
 // perform an action on turning knob [0,0] (upper left)
 k.elementAt(\kn, 0, 0).action = { |el| el.value.postln };
@@ -155,10 +166,10 @@ code::
 (
 d = 0;
 {
-	loop{
+	loop {
 		0.05.wait;
 		d = d + 0.01;
-		8.do{ |i|
+		8.do { |i|
 			k.elementAt(\kn, 0, i).value_(
 				(d + (i/7)).mod(1.0);
 			);
