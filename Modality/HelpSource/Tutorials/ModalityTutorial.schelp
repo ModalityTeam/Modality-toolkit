@@ -14,18 +14,19 @@ code::
 MKtl.find;
 ::
 
-This will post a description of all the devices available to Modality. Each line is an code::MKtl(...)::, followed by its name.
+This will find all currently available devices, info on them,
+and example lines of code that can generate an MKtl for the device. Each line is code::MKtl('a_shortname', "a_desc_filename")::.
 
 Copy the code::MKtl(...)::-line of the device you want to use from the post window to your document and assign it to a variable.
 
-If you try to create an code::MKtl():: but the device is not connected, you can still open the MKtl and open a GUI for it by executing code::.gui::.
+If you try to create an code::MKtl():: but the device is not connected, you can still create a virtual MKtl and open a GUI for it.
 
 code::
 // open the MKtl
-k = MKtl('nnkn20');
+k = MKtl('mynk2', "korg-nanokontrol2");
 
 // create a gui if the devive is not connected
-k.gui;
+MKtlGUI(mktl: k);
 ::
 
 You can see the output from all elements by doing
@@ -43,11 +44,11 @@ section:: Identifying elements
 Each control (i.e. knob, slider, button, etc) on the device is mapped to an link::Classes/MKtlElement:: . To discover the elements that are available, we look at code::MKtl:elements::.
 
 code::
-//all elements in a dictionary
+// print all elements in the top level group:
 k.elements.printAll;
 ::
 
-This structure is a group (link::Classes/MKtlElementGroup::), which possibly contains nested groups, where the final node is an link::Classes/MKtlElement::. The structure of the groups mimics the spatial organization of the controls on the device according to rows, columns and pages.
+This structure is an (link::Classes/MKtlElementGroup::) which can contain nested groups, where the final node is an link::Classes/MKtlElement::. The structure of the groups mimics the spatial and/or logical organization of the controls on the device according to rows, columns and pages.
 
 
 code::
@@ -77,7 +78,7 @@ k.elementAt(\bt, 1)
 //all buttons on column 5
 k.elementAt(\bt).asArray.flop[4]
 
-//flopping switches rows and columns
+// .flop switches rows and columns
 (
 [
 	[1,2],
@@ -85,7 +86,8 @@ k.elementAt(\bt).asArray.flop[4]
 ].flop.postln
 )
 
-//note: this does not work with the nanoKONTROL2, however, if the controller would have hardware scenes, the button on row 2 and column 5 of scene 4 would be at:  k.elements[\bt][3][1][4]
+//note: this does not work with the nanoKONTROL, which has four hardware scenes. There, e.g. in scene 4, the button on row 2 and column 5 would be at:
+code:: k.elements[\bt][3][1][4] ::
 ::
 
 section:: Assigning actions
