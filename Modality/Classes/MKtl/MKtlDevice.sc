@@ -18,8 +18,8 @@ MKtlDevice {
 
 	var <traceRunning = false;
 
-	trace { |mode=true|
-		traceRunning = mode;
+	trace { |bool = true|
+		traceRunning = bool;
 	}
 
 	*initClass {
@@ -197,7 +197,7 @@ MKtlDevice {
 		this.subclassResponsibility(thisMethod)
 	}
 
-	explore { |mode=true|
+	explore { |bool = true|
 		this.subclassResponsibility(thisMethod)
 	}
 

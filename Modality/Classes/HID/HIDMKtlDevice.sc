@@ -173,8 +173,8 @@ HIDMKtlDevice : MKtlDevice {
 		^(HIDExplorer.observedSrcDev == this.source);
 	}
 
-	explore { |mode=true|
-		if ( mode ){
+	explore { |bool = true|
+		if ( bool ){
 			"Using HIDExplorer. (see its Helpfile for Details)\n\n".post;
 			"HIDExplorer started. Wiggle all elements of your controller,"
 			" then do:".postln;

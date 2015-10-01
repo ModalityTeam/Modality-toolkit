@@ -599,9 +599,9 @@ MKtl { // abstract class
 	// 	mktlDevice.setDstID(mktlDevice.destination[destIDindex].uid);
 	// }
 
-	trace { |value=true|
-		if ( this.hasDevice ){ mktlDevice.trace( value ) };
-		traceRunning = value;
+	trace { |bool = true|
+		if ( this.hasDevice ){ mktlDevice.trace( bool ) };
+		traceRunning = bool;
 	}
 
 	closeDevice {
@@ -623,14 +623,14 @@ MKtl { // abstract class
 	}
 
 	// observe mktlDevice to create a description file
-	explore { |mode=true|
+	explore { |bool = true|
 		if ( mktlDevice.isNil ){
 			"% is virtual, nothing to explore\n"
 			.format( this ).inform;
 
 			^this
 		};
-		mktlDevice.explore( mode );
+		mktlDevice.explore( bool );
 	}
 
 	exploring {

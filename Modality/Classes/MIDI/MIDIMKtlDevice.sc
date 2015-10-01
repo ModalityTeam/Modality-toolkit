@@ -165,8 +165,8 @@ MIDIMKtlDevice : MKtlDevice {
 		^(MIDIExplorer.observedSrcID == srcID );
 	}
 
-	explore { |mode=true|
-		if ( mode ){
+	explore { |bool = true|
+		if ( bool ){
 			"Using MIDIExplorer. (see its Helpfile for Details)\n"
 			"\n"
 			"MIDIExplorer started. Wiggle all elements of your controller then\n"
