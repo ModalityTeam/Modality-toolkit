@@ -15,8 +15,13 @@ More general info can be found in link::Classes/MKtl:: and link::Classes/MKtlDev
 
 CLASSMETHODS::
 
-private:: initialized, sourceDeviceDict, prepareDeviceDicts, deinitDevices
+private:: initialized
 
+METHOD:: deviceProductNamesToHide, devicesToShow
+On OSX, some devices show up as HID that will cause system crashes when opened. these devices can be excluded from MKtl for safety.
+
+METHOD:: showAllDevices
+a flag whether to show risky devices or not.
 
 METHOD:: find
 Find all currently connected HID devices.
@@ -40,12 +45,10 @@ argument:: force
 Whether or not to do this again if it was already done before.
 
 METHOD:: makeDeviceName
-Convenience method to create a device name from the information from link::Classes/HIDInfo:: to put in the device description.
+Convenience method to create a device name from the information from link::Classes/HIDInfo:: for idInfo lookup.
 
-ARGUMENT:: hidinfo
-(describe argument here)
-
-returns:: (describe returnvalue here)
+METHOD:: getIDInfoFrom
+get the idInfo string from a HIDInfo object.
 
 
 METHOD::new
@@ -61,10 +64,18 @@ The path of the device to open (optional).
 argument:: parentMKtl
 The instance of link::Classes/MKtl:: that this MKtlDevice will belong to.
 
+argument:: multiIndex
+When using multiple identical devices, the index which one to use.
+
 
 INSTANCEMETHODS::
 
-private:: initHIDMKtl, setHIDActions, removeHIDActions, initCollectives
+private:: initHIDMKtl, initCollectives, cleanupElementsAndCollectives
+
+METHOD:: enable, disable
+enable or disable this device.
+METHOD:: enabled
+a boolean whether device is currently enabled.
 
 METHOD:: closeDevice
 Close the device and clean up anything that it used.
@@ -73,7 +84,7 @@ Close the device and clean up anything that it used.
 METHOD:: explore
 When opening a device that is not known yet by MKtl, you want to explore the device. See for a full tutorial: link::Tutorials/How_to_create_a_description_file::
 
-ARGUMENT:: mode
+ARGUMENT:: bool
 a Boolean to turn this on or off.
 
 METHOD:: exploring
@@ -85,11 +96,6 @@ Create and open a description file for this MKtlDevice, after exploring it.
 
 METHOD:: initElements
 Initialize all elements and hook them up to the hardware elements.
-
-
-METHOD:: cleanupElementsAndCollectives
-De-initialize all elements and collectives
-
 
 METHOD:: send
 Send the value of the element to the HID device; called if you set the value of an MKtlElement that is an output.
