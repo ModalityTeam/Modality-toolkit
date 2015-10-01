@@ -95,14 +95,16 @@ MKtlDevice {
 		// try to find device by lokupName/info first:
 		lookupName = parentMKtl.lookupName;
 		lookupInfo = parentMKtl.lookupInfo ?? { MKtlLookup.all[lookupName] };
-		lookupName = lookupName ?? { if (lookupInfo.notNil) { lookupInfo.lookupName } };
+		lookupName = lookupName ?? {
+			if (lookupInfo.notNil) { lookupInfo.lookupName }
+		};
 
 		// if we know the device lookupName already,
 		// and it is a single name only, we can get it from here:
 		if (lookupInfo.notNil) {
 		//	[lookupName, lookupInfo].postln;
 			subClass = MKtlDevice.subFor(lookupInfo.protocol);
-			^subClass.new( lookupName, parentMKtl: parentMKtl );
+			^subClass.new( lookupName, parentMKtl: parentMKtl, multiIndex: multiIndex);
 		};
 
 		// no luck with lookup info, so try with desc next
@@ -120,7 +122,6 @@ MKtlDevice {
 		idInfo = desc.idInfo;
 		deviceCandidates = MKtlLookup.findByIDInfo(idInfo);
 
-
 		// "number of device candidates: %\n".postf(deviceCandidates.size);
 		if (deviceCandidates.size == 0) {
 			if (protocol != \osc) {
@@ -136,31 +137,31 @@ MKtlDevice {
 		if (deviceCandidates.size > 1) {
 			if (multiIndex.notNil) {
 				lookupInfo = deviceCandidates[multiIndex];
+				lookupName = lookupInfo.lookupName;
 			} {
 				inform("%: multiple device candidates found,"
 					"please disambiguate by providing a multiIndex!"
 				.format(this.name));
-				deviceCandidates.do { |cand|
-					"\n MKtl(%, %, multiIndex: ?)"
-					.format(this.name.cs, cand.filenames).postln;
-				};
 				^nil
 			};
+		} {
+			// we have exactly one candidate, so we take it:
+			lookupInfo = deviceCandidates[0];
+			lookupName = lookupInfo.lookupName;
 		};
 
-		// we have exactly one candidate, so we take it:
-		lookupInfo = deviceCandidates[0];
-
-		if (lookupInfo.notNil) {
-			lookupName = lookupInfo.lookupName;
+		if (lookupName.notNil) {
+			lookupInfo.lookupName = lookupName;
 			parentMKtl.updateLookupInfo(lookupInfo);
 		} {
 			lookupName = name;
 		};
 
-
+		"% gets to end . lookupName: %.\n\n\n".postf(thisMethod, lookupName);
 		subClass = MKtlDevice.subFor(desc.protocol);
-		^subClass.new(lookupName,  parentMKtl: parentMKtl );
+		^subClass.new(lookupName,
+			parentMKtl: parentMKtl,
+			multiIndex: multiIndex);
 
 	}
 

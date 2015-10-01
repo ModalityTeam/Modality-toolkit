@@ -117,7 +117,7 @@ MIDIMKtlDevice : MKtlDevice {
 		};
 	}
 
-	*new { |name, idInfo, parentMKtl|
+	*new { |name, idInfo, parentMKtl, multiIndex|
 
 		var lookupInfo = parentMKtl.lookupInfo;
 		var foundInfo, foundSources, foundDestinations;
@@ -133,20 +133,16 @@ MIDIMKtlDevice : MKtlDevice {
 			^this;
 		};
 
-		// not sure these are still needed?
-		// can find multiple devices already.
+		// should not need to look again actually -
+		// logic is still too loopy, but no time to simplify now.
 
-		foundInfo = MKtlLookup.findByIDInfo(idInfo);
-		if (foundInfo.size > 1) {
-			"multiple MIDIMKtls of same name not supported yet - taking first.".postln;
-		};
-
-		foundInfo = foundInfo.asArray.first;
+	//	"%: %: %\n".postf(thisMethod, \multiIndex, multiIndex);
+		foundInfo = MKtlLookup.findByIDInfo(lookupInfo.deviceName)
+		.at(multiIndex ? 0);
 
 		foundSources = foundInfo[\srcDevice];
 		foundDestinations = foundInfo[\destDevice];
 
-		// for a single device only for now:
 		if (parentMKtl.midiPortNameIndex.notNil) {
 			foundSources = foundSources[parentMKtl.midiPortNameIndex];
 			foundDestinations = foundDestinations
@@ -155,14 +151,6 @@ MIDIMKtlDevice : MKtlDevice {
 
 		newDev = super.basicNew(name, lookupInfo.idInfo, parentMKtl );
 		newDev.initMIDIMKtl(name, foundSources, foundDestinations );
-
-		if (newDev.srcID.isKindOf(SimpleNumber).not) {
-			"%: multiple uids found: %. \nplease provide the index to listen to:"
-			.format(parentMKtl, newDev.srcID).postln;
-			"%.listenTo( _index_ );".format(parentMKtl).postln;
-			"/*** no elements and responder funcs made yet! ***/".postln;
-			^newDev
-		};
 
 		newDev.initElements;
 		^newDev

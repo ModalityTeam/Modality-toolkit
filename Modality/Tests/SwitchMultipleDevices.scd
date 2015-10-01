@@ -18,24 +18,29 @@ and still make sure the identical devices are connected to the same USB plugs.
 postPossible
 MKtl.find(\midi);
 MKtl.find(\hid);
+MKtlLookup.all.midi_1_nanokontrol2_nr_1;
 MKtlLookup.all.midi_2_nanokontrol2_nr_2;
-MIDIClient.init;
+MIDIClient.sources;
+
+
 
 // by desc filename and multiIndex:
 l = MKtl('nk2b', "korg-nanokontrol2", multiIndex: 0).trace;
 m = MKtl('nk2w', "korg-nanokontrol2", multiIndex: 1).trace;
+l.mktlDevice.srcID;
+m.mktlDevice.srcID;
 
-// recompile, then try by lookupName
-n = MKtl('nk2', 'midi_1_nanokontrol2_nr_1').trace;
-k = MKtl('nk2w', 'midi_2_nanokontrol2_nr_2').trace;
-
+// free them, then try by lookupName
+MKtl('nk2b').free; MKtl('nk2w').free;
+l = MKtl('nk2b', 'midi_1_nanokontrol2_nr_1').trace;
+m = MKtl('nk2w', 'midi_2_nanokontrol2_nr_2').trace;
 
 // works, but not with two gamepads on the same USB expander - ?
 // by desc filename and multiIndex:
 MKtl('gp1', "saitek-impact-gamepad", multiIndex: 0).trace;
 MKtl('gp2', "saitek-impact-gamepad", multiIndex: 1).trace;
 
-// recompile, then try by lookupName
+// free them, then try by lookupName
+MKtl('gp1').free; MKtl('gp2').free;
 MKtl('gp1', 'hid_5_usb_game_controllers').trace;
 MKtl('gp2', 'hid_6_usb_game_controllers').trace;
-
