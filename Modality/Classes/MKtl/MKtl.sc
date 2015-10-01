@@ -172,9 +172,12 @@ MKtl { // abstract class
 
 		lookupNameOrDesc.class.switch(
 			Symbol, {
-				MKtlDevice.initHardwareDevices;
 				lookupName = lookupNameOrDesc;
 				lookupInfo = MKtlLookup.all[lookupName];
+				if (lookupInfo.isNil) {
+					MKtlDevice.initHardwareDevices;
+					lookupInfo = MKtlLookup.all[lookupName];
+				};
 				if (lookupInfo.notNil) {
 					protocol = lookupInfo.protocol;
 					newMKtlDesc = lookupInfo.desc ?? {
@@ -311,7 +314,7 @@ MKtl { // abstract class
 		lookupName = lookupInfo.lookupName;
 	}
 
-	enable { |sync=true|
+	enable { |sync = true|
 		mktlDevice !? {
 			mktlDevice.enable;
 			if (sync) { this.sync }
