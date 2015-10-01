@@ -8,7 +8,7 @@ related:: Classes/MKtl, Classes/MKtlElement, Classes/MKtlElementGroup
 DESCRIPTION::
 
 MKtlDesc can read description files for hardware interface devices from its folder or other folders. It converts them into MKtlDesc objects, which contain general information about the device, and detailed information about all of its interface elements (such as sliders, buttons, joysticks, etc etc). MKtlDescs are used to create MKtls and its elements.
-Usually, MKtlDescs are created automatically when making MKtls,
+Usually, MKtlDescs are created automatically when making MKtls.
 
 Some examples:
 code::
@@ -38,12 +38,13 @@ x.fullDesc.keys;	// the description items:
 x.protocol;			// one of [\midi, \hid, \osc];
 x.idInfo			// the device name under which it registers in the OS
 x.elementsDesc;		// the descriptions of the elements, hierarchical
-x.elementsDesc[\padOn];	// access elements by name
-x.elementsDesc.at(\padOff);
+x.elementsDesc[\pad];	// access elements by name
+x.elementsDesc.at(\pad).at(\off);
 
 x.postInfo;			// post overview info
 x.postInfo(postElements: true); // and the elements too
-
+	// not working properly
+x.postElements;
 ::
 
 CLASSMETHODS::
@@ -67,10 +68,6 @@ open folder(s) in descFolders by index.
 
 METHOD:: loadDescs
 load matching descriptions in descFolders.
-
-METHOD:: loadComps
-load matching composite descriptions in descFolders.
-not fully in use yet.
 
 METHOD:: postLoadable
 post the filenames of descs that can be loaded
@@ -122,19 +119,20 @@ SUBSECTION:: internal methods
 Method:: compExt, descExt
 legal extensions for filenames
 
-Method:: fileToIDDict, idInfoForFilename, filenameForIDInfo
+Method:: fileToIDDict, idInfoForFilename, filenamesForIDInfo
 find filenames and device idInfos for each other
 
 Method:: writeCache, cacheName, loadCache, updateCache
 support methods for cache of filenames and idInfos
 
-private:: fillMidiDefaults, resolveForPlatform, isElementTestFunc
+private:: fillMidiDefaults, resolveForPlatform, isElementTestFunc, findParent, prMakeElemColls, makeElemKeys
 
 
 INSTANCEMETHODS::
 
 METHOD:: fullDesc
 get MKtlDesc's properties, or set them from a dict
+fullDesc.elementsDesc contains the description of all elements
 
 METHOD:: path
 the path where file was read (if so)
@@ -160,6 +158,9 @@ get and set the hardware protocol of the device.
 
 METHOD:: openFile
 open the desc file from which the MKtlDesc was generated
+
+METHOD:: elementsAssocArray
+contains all elements in an assocArray, for internal use.
 
 PRIVATE:: init, storeArgs, printOn, writeCache, loadCache
 

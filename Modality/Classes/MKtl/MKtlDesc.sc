@@ -471,6 +471,7 @@ MKtlDesc {
 		if (postElements) { this.postElements }
 	}
 
+	// FIXME
 	postElements {
 		this.elementsDesc.traverseDo({ |el, deepKeys|
 			deepKeys.size.do { $\t.post };

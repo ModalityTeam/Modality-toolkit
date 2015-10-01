@@ -9,9 +9,9 @@ NOTE::
 For a guided tour, start reading at link::Overviews/Modality::.
 ::
 
-MKtl provides an easy to use interface for devices you can connect to your computer through MIDI, HID, OSC, Serial and eventually other protocols. Beyond that, you will be able to use it for GUI based controllers (yet to be implemented).
+MKtl provides an easy to use interface for devices you can connect to your computer through MIDI, HID, OSC and eventually Serial and other protocols. Beyond that, you will be able to use it for GUI based controllers (yet to be implemented).
 
-MKtl searches for controllers connected to your machine, and gives you a list of available devices. Or, if you already know which controller you want to use, it will look through this list and returns the controller with that name. If it cannot find it, it will replace it with a graphical representation of the controller to simulate it.
+MKtl searches for controllers connected to your machine, and gives you a list of available devices. Or, if you already know which controller you want to use, it will look through this list and returns the controller with that name. If it cannot find it, it will represent the physical controller with a GUI so you can simulate using it.
 
 For most devices, this requires that someone has made a description file for the device; if there is none, it is easy to make one following the instructions here:
 link::Tutorials/How_to_create_a_description_file::
@@ -345,8 +345,8 @@ When a device doesn't have a description file yet, this method can be used to cr
 METHOD:: specialMessages
 a dict of special messages for this device, typically to change setup on a MIDI device by sending it a sysex message.
 
-METHOD:: sendSpecialMessages
-send specMessage with name to the device
+METHOD:: sendSpecial
+send specialMessage with that name to the device
 
 
 Subsection:: Collectives and Composite MKtl
