@@ -329,16 +329,6 @@ MKtl { // abstract class
 
 	disable { mktlDevice !? { mktlDevice.disable } }
 
-	specialMessages {
-		if ( desc.isNil or: { desc.fullDesc.isNil }) { ^nil };
-		^desc.fullDesc[\specialMessages];
-	}
-
-	sendSpecial { |name|
-		var msgs = this.specialMessages[name];
-		mktlDevice.sendSpecial(msgs);
-	}
-
 	makeElements {
 		var elementsToBuild = desc.elementsDesc;
 
@@ -612,9 +602,14 @@ MKtl { // abstract class
 
 	specialMessageNames { ^desc.specialMessageNames }
 
-	sendSpecialMessages { |name|
-		var messages = desc.specialMessage(name);
-		^mktlDevice.sendSpecialMessages(messages);
+	specialMessages {
+		if ( desc.isNil or: { desc.fullDesc.isNil }) { ^nil };
+		^desc.fullDesc[\specialMessages];
+	}
+
+	sendSpecialMessage { |name|
+		var message = this.specialMessages(name);
+		^mktlDevice.sendSpecialMessage(message);
 	}
 
 	send { |key, val|

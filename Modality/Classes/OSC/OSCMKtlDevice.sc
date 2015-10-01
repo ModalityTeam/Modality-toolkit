@@ -304,7 +304,7 @@ OSCMKtlDevice : MKtlDevice {
 		destination.sendMsg(oscPath, *outvalues);
 	}
 
-	sendSpecialMessages { |messages|
+	sendSpecialMessage { |messages|
 		if (destination.notNil) {
 			messages.do { |msg| destination.sendMsg(msg.postln) }
 		};

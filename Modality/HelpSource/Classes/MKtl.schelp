@@ -345,7 +345,7 @@ When a device doesn't have a description file yet, this method can be used to cr
 METHOD:: specialMessages
 a dict of special messages for this device, typically to change setup on a MIDI device by sending it a sysex message.
 
-METHOD:: sendSpecial
+METHOD:: sendSpecialMessage
 send specialMessage with that name to the device
 
 

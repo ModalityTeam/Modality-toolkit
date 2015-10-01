@@ -207,7 +207,7 @@ MKtlDevice {
 
 	// initialisation messages
 
-	sendSpecialMessages {
+	sendSpecialMessage {
 		this.subclassResponsibility(thisMethod)
 	}
 

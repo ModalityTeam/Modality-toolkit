@@ -546,7 +546,7 @@ MIDIMKtlDevice : MKtlDevice {
 	}
 
 	// desc file might have a \specialMessages section
-	sendSpecialMessages { |messages|
+	sendSpecialMessage { |messages|
 		if (messages.notNil and: { midiOut.notNil } ) {
 			messages.do { |m| midiOut.performList( m[0], m[1..] ); }
 		} {

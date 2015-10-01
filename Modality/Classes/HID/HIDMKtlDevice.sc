@@ -271,7 +271,7 @@ HIDMKtlDevice : MKtlDevice {
 	}
 
 	// no cases yet in MKtlDesc folder
-	sendSpecialMessages { |msgs|
+	sendSpecialMessage { |msgs|
 		"% not implemented yet, no cases yet in MKtl descs.\n"
 		.postf(thisMethod);
 	}
