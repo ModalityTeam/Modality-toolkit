@@ -132,6 +132,12 @@ MKtlDesc {
 		"******\n".postln;
 	}
 
+	*postStatus {
+		MKtlDesc.loadDescs
+		.sort { |a, b| a.fullDesc.status < b.fullDesc.status; }
+		.do { |a| [a.fullDesc.status, a.name].postcs; };
+	}
+
 	*at { |descName|
 		^allDescs[descName]
 	}

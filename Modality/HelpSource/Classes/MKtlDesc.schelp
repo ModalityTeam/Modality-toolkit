@@ -49,7 +49,7 @@ x.postElements;
 
 CLASSMETHODS::
 
-PRIVATE:: initClass
+PRIVATE:: initClass, docURI, parentExt, webview
 
 METHOD:: defaultFolder
 the path where the folder for MKtlDesc files lives.
@@ -75,11 +75,20 @@ post the filenames of descs that can be loaded
 METHOD:: postLoaded
 post currently loaded descs
 
+METHOD:: postDescKeysUsed
+post all element keys used in loaded descs
+
 METHOD:: allDescs
 all currently loaded descs
 
 METHOD:: isValidDescDict
 check whether dict is a valid description dict.
+
+PRIVATE:: isValidElemDesc, isValidHIDDesc, isValidMidiDesc, isValidOSCDesc
+
+METHOD:: postStatus
+post status and name of all loaded descs
+
 
 METHOD:: new
 create an MKtlDesc with a name, from a well-formed description file.
@@ -159,12 +168,15 @@ get and set the hardware protocol of the device.
 METHOD:: openFile
 open the desc file from which the MKtlDesc was generated
 
+METHOD::  web
+open a webview on the device's info page at Modality website.
+
 METHOD:: elementsAssocArray
 contains all elements in an assocArray, for internal use.
 
 PRIVATE:: init, storeArgs, printOn, writeCache, loadCache
 
-private:: docURI, elementsDesc, elementsDesc = type, getMidiMsgTypes, inferName, name, resolveDescEntriesForPlatform, specialMessage, specialMessageNames, web
+private:: docURI, elementsDesc, elementsDesc = type, getMidiMsgTypes, inferName, name, resolveDescEntriesForPlatform, specialMessage, specialMessageNames, findParent, makeElemKeys, prMakeElemColls
 
 EXAMPLES::
 
