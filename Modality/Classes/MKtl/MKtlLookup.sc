@@ -228,7 +228,7 @@ MKtlLookup {
 
 	// check if already there before adding
 	// should be serialisable to write to file
-	*addOSC { |sendAddr, name, replyAddr|
+	*addOSC { |sendAddr, deviceName, replyAddr|
 
 		var protocol = \osc;
 		var idInfo = [sendAddr.addr, sendAddr.port].join($_);
@@ -237,11 +237,11 @@ MKtlLookup {
 		// (dict.protocol == \osc) };
 		// var nameAndInfo = if (name.notNil) { [name.asString, idInfo].join($_); };
 		// var lookupName = MKtl.makeLookupName(protocol, index, nameAndInfo ? idInfo);
-		var lookupName = MKtl.makeLookupName(protocol, name, idInfo);
+		var lookupName = MKtl.makeLookupName(protocol, deviceName, idInfo);
 		var filename = MKtlDesc.filenamesForIDInfo(idInfo);
 
 		var dict = (
-			name: name,
+			deviceName: deviceName,
 			protocol: protocol,
 			ipAddress: sendAddr.ip,
 			srcPort: sendAddr.port,

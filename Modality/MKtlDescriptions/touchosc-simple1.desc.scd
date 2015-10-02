@@ -1,23 +1,24 @@
 /****************************
 // first pass on MKtl support for touchOSC
-// this only supports touchOSC page 1 of Layout Simple
-//    ( other scenes to be added later! )
+// in the touchOSC app, this only supports Layout Simple, page 1
+// ( other scenes may be added later, in separate desc files )
 
 // INSTRUCTIONS to test:
 // * have touchosc and laptop with SC be in the same network
 
 /////// in the touchOSC app,
-// * set OSC host ip to sclang's, as seen in network settings,
-//    e.g. 192.168.2.77 // or find them in unixCmd("ifconfig")
+// * set OSC host ip to the laptops IP, as seen in network settings,
+//    e.g. 192.168.178.51
+// or find them in unixCmd("ifconfig")
 // * switch Layout to 'Simple',
 // * in options,
-// * turn accelerometer on, touch and ping off
+// * turn accelerometer on, and touch and ping off
 
-/////// in SC
+/////// in SC:
 // * check if anything is coming, and note the sending address
 OSCFunc.trace(true);
 OSCFunc.trace(false);
-// * if not, check that touchosc sends to proper port:
+// * if nothing, check that touchosc sends to proper port:
 NetAddr.langPort
 
 ////// the protocol for scene 1 is
@@ -30,19 +31,20 @@ NetAddr.langPort
 
 // maybe turn off debug info,
 OSCMKtlDevice.verbose = false;
-// maybe clear MKtls
+// maybe clear MKtls first
 MKtl.all.do(_.free).clear;
 
 // make our tosc
-MKtl(\tOsc, "touchosc-simple1");
+t = MKtl(\tosca, "touchosc-simple1");
 
 // update the touchOSC send address to the one you see in OSCFunc.trace:
-MKtl(\tOsc).mktlDevice.updateSrcAddr("192.168.2.79", 55228);
+MKtl(\tosca).mktlDevice.updateSrcAddr("192.168.178.53", 62523);
 // and give it an action for all its elements
-MKtl(\tOsc).elements.action = { |el|
+MKtl(\tosca).elements.action = { |el|
 "tOsc %: %\n".postf(el.name, el.value.round(0.001))
 };
 
+MKtlGUI(mktl: t);
 *******************************/
 (
 (
@@ -55,10 +57,20 @@ status: (
 	osx: "unknown",
 	win: "unknown"),
 
-idInfo: (srcPort: 12345, recvPort: 57120, ipAddress: "192.168.2.79"),
+idInfo: (srcPort: 9000, recvPort: 57120, ipAddress: "192.168.178.51"),
 
 deviceInfo: (),
 
+// seem to be the max accel values on iphone
+specs: (accx: [-3.0, 3.0, \lin]),
+
+collectives: (
+        accel: (
+            oscPath: '/accxyz',
+            elements: [ [\accel, \x], [\accel, \y], [\accel, \z]],
+            ioType: \in
+        )
+    ),
 description: [
 	\xfader -> (oscPath: '/1/fader5', type: 'slider',
 		spec: \unipolar, ioType: \in),
@@ -73,7 +85,12 @@ description: [
 			oscPath: "/1/toggle%".format(num).asSymbol,
 			type: \button, spec: \but, ioType: \in
 		)
-	}
+	},
+	\accel -> (
+		\x: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'accx' ),
+		\y: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'accx' ),
+		\z: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'accx' )
+	)
 ]
 );
 )
