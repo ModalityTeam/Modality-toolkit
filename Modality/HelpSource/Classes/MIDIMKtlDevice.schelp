@@ -13,9 +13,9 @@ More general info can be found in link::Classes/MKtl:: and link::Classes/MKtlDev
 
 CLASSMETHODS::
 
-PRIVATE:: initialized, sourceDeviceDict, destinationDeviceDict, prepareDeviceDicts
+PRIVATE:: initialized, postMsgNotFound, postMsgTrace
 
-PRIVATE:: makeNoteOnKey, makeNoteOffKey, makeCCKey, makeBendKey, makeProgramKey,  makePolyTouchKey, makeTouchKey, noteKeyToChanNote, ccKeyToChanCtl
+PRIVATE:: makeNoteOnKey, makeNoteOffKey, makeCCKey, makeBendKey, makeProgramKey,  makePolyTouchKey, makeTouchKey, noteKeyToChanNote, ccKeyToChanCtl, makeMsgKey
 
 METHOD:: find
 Find all currently connected MIDI controllers.
@@ -50,6 +50,9 @@ The lookup idInfo as in MKtlLookup if device is present.
 argument:: parentMKtl
 The instance of link::Classes/MKtl:: that this MKtlDevice will belong to.
 
+argument:: multiIndex
+When using multiple identical devices, the index which one to use.
+
 
 
 METHOD:: allMsgTypes
@@ -59,12 +62,14 @@ All midi message types supported by MIDIMKtlDevice.
 
 INSTANCEMETHODS::
 
-PRIVATE:: elementHashDict, prepareElementHashDict, hashToElNameDict, elNameToMidiDescDict, destination, dstID, srcID, initMIDIMKtl, makeHashKey
-PRIVATE:: makeRespFuncs, makeNoteOff, makeNoteOn, makeBend, makeTouch, makeCC, makePolyTouch, makeProgram
+PRIVATE:: destination, dstID, srcID, setDstID, initMIDIMKtl
+PRIVATE:: makeRespFuncs, makeChanMsgMIDIFunc, makeChanNumMsgMIDIFunc, makeHashKey, makeCCKey, noteKeyToChanNote, ccKeyToChanCtl, midiKeyToElemDict
+PRIVATE:: checkAllCtls, findChans, prepareLookupDicts
+PRIVATE:: initCollectives, sendSpecialMessage
 
-PRIVATE:: makeNoteOnKey, makeNoteOffKey, makeCCKey, makeBendKey, makeProgramKey,  makePolyTouchKey, makeTouchKey, noteKeyToChanNote, ccKeyToChanCtl
+METHOD:: enable, disable
+turn this device on and off
 
-PRIVATE::removeRespFuncs, initCollectives
 
 METHOD:: closeDevice
 Close the device and clean up anything that it used.
@@ -75,7 +80,6 @@ the midi messages types used by this device
 
 METHOD:: global
 a dict of global response functions for all msgTypes used by this device. This can be used for global responders, e.g. to noteOn/Off messages :
-
 
 
 METHOD:: midiOut
@@ -105,7 +109,7 @@ The uid of the destination.
 METHOD:: explore
 When opening a device that is not known yet by MKtl, you want to explore the device. See for a full tutorial: link::Tutorials/How_to_create_a_description_file::
 
-ARGUMENT:: mode
+ARGUMENT:: bool
 a Boolean to turn this on or off.
 
 METHOD:: exploring
