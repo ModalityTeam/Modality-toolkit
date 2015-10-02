@@ -6,6 +6,7 @@ HIDMKtlDevice : MKtlDevice {
 
 	var <srcID, <source;
 	var <enabled = true;
+	var <hidElemDict, <hidElemFuncDict;
 
 	*initClass {
 		Platform.case(\osx, {
@@ -36,7 +37,7 @@ HIDMKtlDevice : MKtlDevice {
 
 	*devicesToShow {
 		^HID.available.select { |dev, id|
-		//	(dev.productName + ": ").post;
+			//	(dev.productName + ": ").post;
 			showAllDevices or: {
 				deviceProductNamesToHide.every({ |prodname|
 					[dev.productName, prodname];
@@ -97,7 +98,7 @@ HIDMKtlDevice : MKtlDevice {
 		}
 	}
 
-    // create with a uid, or access by name
+	// create with a uid, or access by name
 	*new { |name, path, parentMKtl, multiIndex|
 		var foundSource;
 
@@ -115,7 +116,7 @@ HIDMKtlDevice : MKtlDevice {
 		// make a new one
 		if (foundSource.isNil) {
 			warn("HIDMKtl:"
-			"	No HID source with USB port ID % exists! please check again.".format(path));
+				"	No HID source with USB port ID % exists! please check again.".format(path));
 			// ^MKtl.prMakeVirtual(name);
 			^nil;
 		};
@@ -145,16 +146,19 @@ HIDMKtlDevice : MKtlDevice {
 			^this
 		};
 
-        source = argSource.open;
+		hidElemDict = ();
+		hidElemFuncDict = ();
+
+		source = argSource.open;
 		srcID = source.id;
 
 		this.initElements;
 		this.initCollectives;
 	}
 
-	// how best to do that?
-	enable { enabled = true }
-	disable { enabled = false }
+	// // how best to do that?
+	// enable { enabled = true }
+	// disable { enabled = false }
 
 
 	closeDevice {
@@ -163,9 +167,9 @@ HIDMKtlDevice : MKtlDevice {
 		if (source.isOpen) { source.close };
 	}
 
-    *makeDeviceName { |hidinfo|
+	*makeDeviceName { |hidinfo|
 		^(hidinfo.productName.asString ++ "_" ++ hidinfo.vendorName);
-    }
+	}
 
 	// postRawSpecs { this.class.postRawSpecsOf(source) }
 
@@ -199,9 +203,9 @@ HIDMKtlDevice : MKtlDevice {
 	cleanupElementsAndCollectives {
 		mktl.elementsDict.do{ |el|
 			var theseElements;
-            var elid = el.elemDesc[\hidElementID];
-            var page = el.elemDesc[\hidUsagePage];
-            var usage = el.elemDesc[\hidUsage];
+			var elid = el.elemDesc[\hidElementID];
+			var page = el.elemDesc[\hidUsagePage];
+			var usage = el.elemDesc[\hidUsage];
 
 			if ( elid.notNil ) { // filter by element id
 				source.elements.at( elid ).action = nil;
@@ -220,54 +224,91 @@ HIDMKtlDevice : MKtlDevice {
 	}
 
 	initElements {
-			var traceFunc = { |el|
-				"%: hid, % > % type: %".format(
-					mktl, el.name.cs, el.value.asStringPrec(3), el.type).postln
+		var traceFunc = { |el|
+			"%: hid, % > % type: %".format(
+				mktl, el.name.cs, el.value.asStringPrec(3), el.type).postln
+		};
+
+		mktl.elementsDict.keysValuesDo { |elemKey, elem|
+			var theseElements;
+
+			var elid = elem.elemDesc[\hidElementID];
+			var page = elem.elemDesc[\hidUsagePage];
+			var usage = elem.elemDesc[\hidUsage];
+
+			var hidElemFunc = { |val, hidElem|
+				if (enabled) { elem.deviceValueAction_( val ); };
+				if(traceRunning) { traceFunc.value(elem) }
 			};
+			var hidElem, hidElems;
 
-		mktl.elementsDict.do { |el|
-            var theseElements;
-
-            var elid = el.elemDesc[\hidElementID];
-            var page = el.elemDesc[\hidUsagePage];
-            var usage = el.elemDesc[\hidUsage];
-
-
-            // device specs should primarily use usage and usagePage,
-            // only in specific instances - where the device has bad firmware
+			// device specs should primarily use usage and usagePage,
+			// only in specific instances - where the device has bad firmware
 			// use elementIDs which will possibly be operating system dependent
 
-            if ( elid.notNil ){ // filter by element id
-                // HIDFunc.element( { |v| el.deviceValueAction_( v ) }, elid, \devid, devid );
-				// could get raw value hidele.deviceValue
-                source.elements.at( elid ).action = { |v, hidele|
-					if (enabled) { el.deviceValueAction_( v ); };
-					if(traceRunning) { traceFunc.value(el) }
-				};
-            }{  // filter by usage and usagePage
-                // HIDFunc.usage( { |v| el.deviceValueAction_( v ) },
+			if ( elid.notNil ){ // filter by element id
+				hidElem = source.elements.at( elid );
+			}{  // filter by usage and usagePage
+				// HIDFunc.usage( { |v| el.deviceValueAction_( v ) },
 				// usage, page, \devid, devid );
-                theseElements = source.findElementWithUsage( usage, page );
-					// could get raw value hidele.deviceValue
-                theseElements.do { |it|
-                    it.action = { |v, hidele|
-						if (enabled) { el.deviceValueAction_( v ); };
-						if(traceRunning) { traceFunc.value(el) }
-					};
-                };
-            };
-    	};
+				hidElems = source.findElementWithUsage( usage, page );
+				if (hidElems.size > 1) {
+					"%: hidElems.size is % - should not happen.\n"
+					.postf(thisMethod, hidElems.size);
+				} {
+					hidElem = hidElems.first ;
+				};
+			};
+
+			hidElemDict.put(elemKey, hidElem);
+			hidElemFuncDict.put(elemKey, hidElemFunc);
+			hidElem.action = hidElem.action.addFunc(hidElemFunc);
+		};
 	}
 
-	send { |key,val|
-		var thisMktlElement, thisHIDElement;
-		thisMktlElement = mktl.elementsDict[ key ].elemDesc;
-		if ( thisMktlElement.notNil ){
-			thisHIDElement = source.findElementWithUsage( thisMktlElement.at( 'hidUsage' ), thisMktlElement.at( 'hidUsagePage' ) ).first;
-			if ( thisHIDElement.notNil ){
-				thisHIDElement.value = val;
-			};
+	enableElement { |elemKey|
+		var hidElem = hidElemDict[elemKey];
+		var funcToAdd = hidElemFuncDict[elemKey];
+		var hidElemAction = hidElem.action;
+
+		// only add once, so remove first, then add
+		hidElem.action = hidElemAction
+		.removeFunc(funcToAdd)
+		.addFunc(funcToAdd);
+	}
+
+	disableElement {|elemKey|
+		var hidElem = hidElemDict[elemKey];
+		var funcToRemove = hidElemFuncDict[elemKey];
+		var hidElemAction = hidElem.action;
+		hidElem.action = hidElemAction.removeFunc(funcToRemove);
+	}
+
+	enable { |elemKeys|
+		(elemKeys ? mktl.elementsDict.keys).do { |elem|
+			this.enableElement(elem);
+		}
+	}
+
+	disable { |elemKeys|
+		(elemKeys ? mktl.elementsDict.keys).do { |elem|
+			this.disableElement(elem);
+		}
+	}
+
+	send { |key, val|
+		var mktlElem, elemDesc, hidElem;
+		mktlElem = mktl.elementsDict[ key ];
+		if (mktlElem.isNil) {
+			^this
 		};
+		elemDesc = mktlElem.elemDesc;
+		if ( elemDesc.isNil ){
+			^this
+		};
+
+		hidElem = hidElemDict[key];
+		hidElem.value = val;
 	}
 
 	// no cases yet in MKtlDesc folder
