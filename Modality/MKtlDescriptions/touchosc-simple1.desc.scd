@@ -54,7 +54,7 @@ deviceType: \phoneApp,
 elementTypes: [\accelerometer, \fader, \button],
 status: (
 	linux: "unknown",
-	osx: "unknown",
+	osx: "tested and working",
 	win: "unknown"),
 
 idInfo: (srcPort: 9000, recvPort: 57120, ipAddress: "192.168.178.51"),
