@@ -35,9 +35,9 @@ MKtlDevice {
 		};
 		deviceTypes = List[
 			'controller', 'djController', 'drumPad', 'drumpad', 'fader',
-			'faderbox', 'filterbank', 'gamepad', 'joystick', 'keyboard',
-			'launchpad', 'manta', 'mixer', 'mouse', 'multiController',
-			'phoneApp', 'push', 'ribbon' ];
+			'faderbox', 'filterbank', 'gamepad', 'hidKeyboard','joystick',
+			'launchpad', 'manta', 'midiKeyboard', 'mixer', 'mouse',
+			'multiController', 'phoneApp', 'push', 'ribbon' ];
 
 		subClassDict = ();
 		this.allSubclasses.do { |cl| subClassDict.put(cl.protocol, cl) };

@@ -1,7 +1,7 @@
 (
 deviceName: "microKEY",
 protocol: 'midi',
-deviceType: \keyboard,
+deviceType: \midiKeyboard,
 elementTypes: [\pianoKey],
 status: (
 	linux: "unknown",
@@ -15,7 +15,7 @@ deviceInfo: (
 	// manualURI: "",
 	// description: "",
 	features: [
-		"Velocity-sensitive mini-keyboard",
+		"Velocity-sensitive mini-midiKeyboard",
 		"three models: 25-key / 37-key / 61-key"
 	],
 	// notes: "",

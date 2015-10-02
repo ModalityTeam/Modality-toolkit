@@ -6,7 +6,7 @@
 (
 deviceName: "MPK mini",
 protocol: \midi,
-deviceType: \keyboard,
+deviceType: \midiKeyboard,
 elementTypes: [\pianoKey, \pads, \slider],
 status: (
 	linux: "unknown",
@@ -20,7 +20,7 @@ deviceInfo: (
 	// manualURI: "",
 	// description: "",
 	features: [
-		"25 key velocity-sensitive keyboard",
+		"25 key velocity-sensitive midiKeyboard",
 		"8 backlit MPC-style pads",
 		"8 Q-link knobs",
 	],

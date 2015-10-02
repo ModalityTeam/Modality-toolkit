@@ -17,7 +17,7 @@ k.elements[\kn][0][2].action = { |el| Ndef(\test).setUni(\reso, el.value.postln)
 (
 deviceName: "Arturia MINILAB",
 protocol: \midi,
-deviceType: \keyboard,
+deviceType: \midiKeyboard,
 elementTypes: [\pianoKey, \encoder, \button],
 status: (
 	linux: "unknown",

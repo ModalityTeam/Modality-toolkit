@@ -5,8 +5,8 @@
 (
 deviceName: "OP-1 Midi Device",
 protocol: \midi,
-deviceType: \keyboard,
-elementTypes: [\keyboard, \knob, \button],
+deviceType: \midiKeyboard,
+elementTypes: [\pianoKey, \knob, \button],
 status: (
 	linux: "unknown",
 	osx: "unknown",
@@ -19,7 +19,7 @@ deviceInfo: (
 	// manualURI: "",
 	description: "Full-featured synth which can also be used as a general-purpose controller.",
 	features: [
-		"2-octave keyboard witch transpose buttons",
+		"2-octave midiKeyboard witch transpose buttons",
 		"4 encoders with hat-switch",
 		"transport section",
 		"20 buttons (1-4, 1-8 and special-purpose)",

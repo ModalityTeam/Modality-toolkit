@@ -5,7 +5,7 @@
 (
 deviceName: "nanoKEY",
 protocol: 'midi',
-deviceType: \keyboard,
+deviceType: \midiKeyboard,
 elementTypes: [\pianoKey],
 status: (
 	linux: "unknown",
