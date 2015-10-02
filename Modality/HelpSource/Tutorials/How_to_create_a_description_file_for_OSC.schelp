@@ -78,7 +78,7 @@ m.elementAt(\bt).valueAction_(0);
 
 // create a gui for the osc device:
 MKtlGUI(mktl: m);
-// post incoming data
+// post incoming OSC data
 m.trace;
 
 // and now simulate sending values from an OSC device by network:

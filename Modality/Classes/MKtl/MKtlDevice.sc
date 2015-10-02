@@ -137,7 +137,9 @@ MKtlDevice {
 		if (deviceCandidates.size > 1) {
 			if (multiIndex.notNil) {
 				lookupInfo = deviceCandidates[multiIndex];
-				lookupName = lookupInfo.lookupName;
+				if (lookupInfo.notNil) {
+					lookupName = lookupInfo.lookupName;
+				};
 			} {
 				inform("%: multiple device candidates found,"
 					"please disambiguate by providing a multiIndex!"
@@ -147,7 +149,9 @@ MKtlDevice {
 		} {
 			// we have exactly one candidate, so we take it:
 			lookupInfo = deviceCandidates[0];
-			lookupName = lookupInfo.lookupName;
+			if (lookupInfo.notNil) {
+				lookupName = lookupInfo.lookupName;
+			};
 		};
 
 		if (lookupName.notNil) {
@@ -157,7 +161,7 @@ MKtlDevice {
 			lookupName = name;
 		};
 
-		"% gets to end . lookupName: %.\n\n\n".postf(thisMethod, lookupName);
+		// "% gets to end . lookupName: %.\n\n\n".postf(thisMethod, lookupName);
 		subClass = MKtlDevice.subFor(desc.protocol);
 		^subClass.new(lookupName,
 			parentMKtl: parentMKtl,

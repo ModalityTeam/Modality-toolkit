@@ -128,7 +128,10 @@ SUBSECTION:: internal methods
 Method:: compExt, descExt
 legal extensions for filenames
 
-Method:: fileToIDDict, idInfoForFilename, filenamesForIDInfo
+Method:: fileToIDDict
+a dictionary that contains the idInfos for every desc file
+
+Method:: idInfoForFilename, filenamesForIDInfo
 find filenames and device idInfos for each other
 
 Method:: writeCache, cacheName, loadCache, updateCache
@@ -178,8 +181,3 @@ PRIVATE:: init, storeArgs, printOn, writeCache, loadCache
 
 private:: docURI, elementsDesc, elementsDesc = type, getMidiMsgTypes, inferName, name, resolveDescEntriesForPlatform, specialMessage, specialMessageNames, findParent, makeElemKeys, prMakeElemColls
 
-EXAMPLES::
-
-code::
-(some example code)
-::

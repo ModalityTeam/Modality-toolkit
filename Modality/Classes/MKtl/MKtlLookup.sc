@@ -238,7 +238,7 @@ MKtlLookup {
 		// var nameAndInfo = if (name.notNil) { [name.asString, idInfo].join($_); };
 		// var lookupName = MKtl.makeLookupName(protocol, index, nameAndInfo ? idInfo);
 		var lookupName = MKtl.makeLookupName(protocol, name, idInfo);
-		var filename = MKtlDesc.filenameForIDInfo(idInfo);
+		var filename = MKtlDesc.filenamesForIDInfo(idInfo);
 
 		var dict = (
 			name: name,

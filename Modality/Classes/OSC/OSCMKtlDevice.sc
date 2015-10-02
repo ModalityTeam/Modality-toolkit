@@ -69,7 +69,7 @@ OSCMKtlDevice : MKtlDevice {
 		};
 	}
 
-	*new { |name, devInfo, parentMKtl|
+	*new { |name, devInfo, parentMKtl, multiIndex|
 
 		devInfo = devInfo ?? { parentMKtl.desc; };
 		if (devInfo.isNil) {
