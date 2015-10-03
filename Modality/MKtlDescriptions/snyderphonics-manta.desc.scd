@@ -64,7 +64,7 @@ elementTypes: [\pad, \slider],
 deviceType: \manta,
 status: (
 	linux: "unknown",
-	osx: "incomplete",
+	osx: "tested and working",
 	win: "unknown"),
 
 idInfo: ( srcPort: 31417, ipAddress: "127.0.0.1", recvPort: 31416 ),
@@ -169,47 +169,3 @@ description: (
 	};
 )
 );
-
-/*
-old version:
-
-MKtl.addSpec(\mantaPad, [0, 200]);
-MKtl.addSpec(\mantaPad, [10, 4086]);
-
-(
-idInfo: "manta",
-protocol: \osc,
-description: (
-	'pad': (
-		vel: (0..47).collect { |i|
-			i -> (
-				msgName: '/manta/velocity/pad',
-				num: i, 'type': 'pad', spec: \mantaPad
-		) },
-		'con': (0..47).collect { |i|
-			i -> (
-				msgName: '/manta/continuous/pad',
-				num: i, 'type': 'pad', spec: \mantaPad
-		) }
-	),
-	'bt': (
-		vel: (0..3).collect { |i|
-			i -> (
-				msgName: '/manta/velocity/button',
-				num: i, 'type': 'pad', spec: \mantaPad
-		) },
-		'con': (0..3).collect { |i|
-			i -> (
-				msgName: '/manta/continuous/button',
-				num: i, 'type': 'pad', spec: \mantaPad
-		) }
-	),
-
-	'sl': (0..1).collect { |i|
-		i -> (
-			msgName: '/manta/continuous/slider',
-			num: i, 'type': 'slider', spec: \mantaPad
-	) }
-)
-)
-*/
