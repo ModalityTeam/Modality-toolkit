@@ -1,32 +1,31 @@
 // for Manta controller made by Jeff Snyder,
 // control names as they come from libmanta
-// based USB2OSC bridge unixCmd program.
+// based USB to OSC bridge unixCmd program.
 /*
+(
 q = q ? ();
 q.manta = ();
-q.manta.path = "/Users/adc/scgit/libmanta/MantaOSC/build/";
+// download and build libmanta, MantaOSC first, e.g. here:
+q.manta.path = "~/scgit/libmanta/MantaOSC/build/";
 q.manta.binaryName = "MantaOSC";
-q.manta.run = { |d| (d.path +/+ d.binaryName).runInTerminal; };
 
+// only a single copy of mantaOSC can run,
+// so make sure you end any existing ones before running it
+q.manta.end = { |d| unixCmd("killall" + d.binaryName) };
+q.manta.run = { |d|
+	q.manta.end;
+	(d.path +/+ d.binaryName).runInTerminal;
+};
+)
 q.manta.run;
+q.manta.end;
+q.manta.run;
+
 q.manta.desc = MKtlDesc("*manta*");
 
 MKtl(\manta, q.manta.desc);
-MKtl(\manta).trace(true);
+MKtl(\manta).trace;
 
-// changing
-MKtl(\manta).mktlDevice.source;
-MKtl(\manta).mktlDevice.updateSrcAddr("1.2.3.4", 56789);
-MKtl(\manta).mktlDevice.source;
-// -> disconnected now!
-
-// reconnect:
-MKtl(\manta).mktlDevice.updateSrcAddr("127.0.0.1", 31417);
-MKtl(\manta).mktlDevice.source;
-
-// same with dest
-MKtl(\manta).mktlDevice.updateDestAddr(port: 1234, hostname: "5.6.7.8");
-MKtl(\manta).mktlDevice.destination;
 
 /// test with dumb sound
 s.boot;
@@ -42,13 +41,19 @@ MKtl(\manta).elementAt(\pad, 0, \con).action = { |el|
 // all pads, all pad controls
 MKtl(\manta).elementAt(\pad).action = { |el| [el.name, el.value.round(0.001)].postln };
 
-///////// old, not yet working again :
-// make a custom group ... how to add it as a collective?
-q.manta.padBot8 = MKtlElementGroup( 'padBot8',
+// make a custom group
+q.manta.padBot8 = MKtlElementGroup( 'padBot8', MKtl(\manta),
 	MKtl(\manta).elementAt( \pad, (0..7)).collect(_.at(\vel))
 );
-q.manta.padBot8.elements[0].dump
+q.manta.padBot8.elements;
+q.manta.padBot8.action = { |el| \padBot8_vel.postln };
 
+// add this group to collectives
+// or other collection of extra groups, e.g. in
+MKtl(\manta).collectivesDict.put(\padBot8, q.manta.padBot8);
+MKtl(\manta).collectivesDict;
+
+q.manta.end;
 s.quit;
 */
 
@@ -62,7 +67,7 @@ status: (
 	osx: "incomplete",
 	win: "unknown"),
 
-idInfo: ( srcPort: 31417, ipAddress: "127.0.0.1", recvPort: 57120 ),
+idInfo: ( srcPort: 31417, ipAddress: "127.0.0.1", recvPort: 31416 ),
 
 specialMessages: (
 	enableLEDControl: [

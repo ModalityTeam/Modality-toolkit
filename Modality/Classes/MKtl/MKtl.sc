@@ -378,8 +378,8 @@ MKtl { // abstract class
 	}
 
 	makeCollectives {
+		collectivesDict = ();
 		if( desc.fullDesc[ \collectives ].notNil ) {
-			collectivesDict = ();
 			desc.fullDesc[ \collectives ].keysValuesDo({ |key, value|
 				collectivesDict[ key ] =
 				MKtlElementCollective( this, key, value );
