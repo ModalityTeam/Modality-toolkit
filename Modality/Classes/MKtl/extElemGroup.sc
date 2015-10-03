@@ -2,20 +2,29 @@
 
 + MKtlElementGroup {
 
-	canFlatten {
-		// see if top level of names can be dropped:
-		// if there are any name overlaps between the second level, we can!
-		var allNames = this.at.collect(_.name).postln.flat;
-		var uniqueNames = allNames.asSet.postln;
-		^uniqueNames.size < allNames.size;
+	// see if top level of names can be dropped:
+	// if no name overlaps between second levels, ok.
+	canFlatten { |post = true|
+		var ok, allNames, dupes;
+		if (elements.any { |el| el.respondsTo(\collect).not }) {
+			if (post) {
+				inform("Cannot flatten elements because some are not groups.".format(dupes));
+			};
+			ok = false;
+			^ok
+		};
+
+		allNames = this.elements.collect(_.collect(_.name));
+		dupes = allNames.flat.duplicates;
+		ok = (dupes.size == 0);
+		if (post and: ok.not) {
+			inform("Cannot flatten elements because of duplicated names: %".format(dupes)) };
+		^ok
 	}
 
-	tryFlatten {
-		if (this.canFlatten) {
-			elements = elements.collect(_.elements).flatten(1);
-		} {
-			inform("Cannot flatten elements because of non-unique names:");
-			this.at.collect(_.name).flat.sort.postln;
-		};
+	flatten {
+		MKtlElement.addGroupsAsParent = true;
+		this.elements = elements.collect(_.elements).flatten(1);
+		MKtlElement.addGroupsAsParent = false;
 	}
 }

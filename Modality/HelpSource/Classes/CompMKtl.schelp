@@ -1,0 +1,110 @@
+TITLE:: CompMKtl
+summary:: create composite MKtls
+categories:: Modality
+related:: Classes/MKtl, Overviews/Modality
+
+DESCRIPTION::
+CompMKtl allows combining MKtls into a single MKtl which contains the elements of all these MKtls. For playing interfaces consisting of technically separate devices, it may semantically make sense to merge them into a single MKtl, so one
+create groups of elements that belong together.
+CompMKtl is only a first pass at this and incomplete,
+so this file also contains tests.
+
+
+First code examples:
+
+code::
+// make some component MKtls, then combine them
+MKtl(\nk2a, "*nanokontrol2");
+MKtl(\nk2b, "*nanokontrol2");
+MKtl(\gpd, "*impact*");  // a gamepad
+MKtl(\gyro, "gyrosc_ga");  // phone app with gyro and accel
+
+// combine two into one:
+a = CompMKtl(\combi, [\nk2a, \nk2b]);
+// the MKtls become names in the elementGroup
+a.mktlDict;
+a.elementGroup;
+// access nanoktl at 0, sl 5
+a.elementAt(0, \sl, 0);
+a.elementAt(1, \sl, 0);
+
+// elementGroup lookup by name not working yet:
+a.elementAt(\nk2b, \sl, 0);
+
+
+// combine two different devices:
+b = CompMKtl(\ng, [\nk2a, \gpd]);
+b.elementAt(0, \play);
+b.elementAt(1, \joy);
+
+
+// two different ones
+c = CompMKtl(\gpgy, [\gpd, \gyro]);
+// why is the order [ 'gpd', 'gyro'] ?
+c.elementGroup;
+c.elementAt(1);
+c.elementAt(0);
+
+// and one with 3 devices
+d = CompMKtl(\ngg, [\nk2a, \gpd, \gyro]);
+d.elementGroup;
+// why is the order [ 'nk2a', 'gyro', 'gpd' ] ?
+d.elementAt(0, \rew);
+d.elementAt(1, \gyro, \pitch);
+d.elementAt(2, \bt, 0);
+
+
+// test flattening elementGroups:
+
+// two nanokontrols: cannot flatten into a single ElementGroup,
+// because the two groups have the same element/group-names:
+a.elementGroup.canFlatten;
+
+// nanokontrol and gamepad: no luck, both have \bt elements
+b.elementGroup.canFlatten;
+
+// gamepad and gyro - yes!
+c.elementGroup.canFlatten;
+// so do it:
+c.flattenElements;
+c.elementGroup
+
+// lookup works with index already,
+c.elementAt(0, \x);
+// but not yet with name - why?
+c.elementAt(\accel, \x);
+
+::
+
+CLASSMETHODS::
+
+METHOD:: all
+dict for all CompMKtls
+
+private:: initClass
+
+METHOD:: new
+make a new MKtl with a name, and the names of existing MKtls
+argument:: name
+argument:: mktlNames
+
+
+INSTANCEMETHODS::
+
+METHOD:: name
+This CompMKtl's name and also its key in .all
+
+METHOD:: mktlNames
+The names of the composed MKtls
+
+METHOD:: mktlDict
+A dict with the MKtls
+
+METHOD:: elementGroup
+The elementGroup containing all elements
+
+METHOD:: elementAt
+look up element as in MKtl
+(except top level names not working yet)
+
+private:: init
