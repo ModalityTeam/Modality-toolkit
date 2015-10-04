@@ -105,18 +105,32 @@ elementsDesc: (
 			elements: (
 
 				// a sublist of noteOn/offs - shared params:
-				shared: (\midiMsgType: \noteOn, \midiChan: 0),
+				shared: (\midiMsgType: \noteOnOff, \midiChan: 0),
 
-				// element groups for noteOn, noteOff,
+				// element groups for noteOnOff,
 				// here generated algorithmically:
-				elements: (
-					\on: Event.newFrom( (36..43).collect { |note, i|
+				elements: Event.newFrom(
+					(36..43).collect { |note, i|
 						[ (i+1).asSymbol, (\midiNum: note) ]
-					}.flatten ),
-					\off: Event.newFrom( (36..43).collect { |note, i|
-						[ (i+1).asSymbol, (\midiNum: note) ]
-					}.flatten )
-				)
+				}.flatten)
+			)
+		),
+		// a single slider which has a noteOnOff for touch
+		sl: (
+			shared: (midiChan: 0, ioType: \in),
+			elements: (
+				touch: (midiMsgName: \noteOnOff, spec: \midiBut),
+				pos: (midiMsgName: \cc, spec: \midiCC)
+			)
+		),
+		// example gamepad thumbStick
+		stick: (
+			elementType: \thumbStick,
+			shared: (ioType: \in),
+			elements: (
+				\x: (elementType: \joyAxis, spec: \hidAxis),
+				\y: (elementType: \joyAxis, spec: \hidAxis),
+				\hat: (elementType: \hatSwitch, spec: \hidBut)
 			)
 		)
 	)

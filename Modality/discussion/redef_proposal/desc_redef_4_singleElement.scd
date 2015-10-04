@@ -24,6 +24,7 @@
 (
 /* elementType: user-readable name for the physical type of thing */
 // Typically one of MKtl.elementTypes; // <- in desc_redef branch ATM
+// or also in MKtlElement.types
 elementType: \slider,
 
 // ioType: whether and how it gets input/output.
@@ -91,7 +92,8 @@ midiNum: 60,
 'hidUsage': 5,
 'hidUsagePage': 9,
 
-// is this currently used? how?
+// or if the HID's firmware is bad,
+// id is better by hidElementID
 'hidElementID': 0,
 
 // OSC specifics:
@@ -100,6 +102,5 @@ oscPath: "/minibee/imu",
 	// if multiple elements use the same message name,
 	// specify addressing keys for this element in argTemplate:
 // "How to create a description file for an OSC device".openHelpFile;
-argTemplate: [ 1, 2 ],
-
-
+argTemplate: [ 1, 2 ]
+)
