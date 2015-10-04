@@ -81,7 +81,7 @@ m = MKtl.new( \sliders_knobs, (
 	)
 ), false );
 );
-MKtlGUI(mktl: m);
+m.gui;
 
 // you can access the elements by hierarchical names:
 m.elementAt(\play)

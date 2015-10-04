@@ -99,7 +99,8 @@ MKtl.find; // find all MDIDI devices and list them
 MKtl('lpd', "*lpd8"); // make an MKtl for LPD8.
 MKtl('lpd').trace;
 
-g = MKtlGUI(mktl: MKtl('lpd')); // make a gui for it
+// make a gui for it
+g = MKtl('lpd').gui;
 
 // a synthdef
 (

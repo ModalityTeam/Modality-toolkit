@@ -44,7 +44,7 @@ MKtl(\tosca).elements.action = { |el|
 "tOsc %: %\n".postf(el.name, el.value.round(0.001))
 };
 
-MKtlGUI(mktl: t);
+t.gui;
 *******************************/
 (
 (

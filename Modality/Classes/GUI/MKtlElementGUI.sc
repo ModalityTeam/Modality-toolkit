@@ -293,6 +293,6 @@ MKtlElementGroupGUI : MKtlElementGUI {
 
 + MKtl {
 	gui { |parent, bounds|
-		^this.elements.gui( parent, bounds );
+		^MKtlGUI( parent, bounds, this );
 	}
 }

@@ -152,9 +152,6 @@ METHOD:: gui
 Open a gui representation for the MKtl
 code::
 MKtl(\mynano2).gui;
-// or newer and nicer:
-MKtlGUI(mktl: MKtl(\mynano2));
-
 ::
 
 

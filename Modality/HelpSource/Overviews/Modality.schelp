@@ -58,7 +58,7 @@ k.trace(false);
 
 // If no such controller is connected, you can still open
 // a gui controller instead that has the same elements:
-MKtlGUI(mktl: k);
+k.gui;
 
 // make sure there are no current assigned actions
 k.reset;
@@ -114,7 +114,7 @@ k.trace(false);
 
 // If no such controller is connected, you can still open
 // a gui controller instead that has the same elements:
-MKtlGUI(mktl: k);
+k.gui;
 
 // make sure there are no current assigned actions
 k.reset;

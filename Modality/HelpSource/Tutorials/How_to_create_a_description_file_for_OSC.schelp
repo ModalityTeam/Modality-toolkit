@@ -77,7 +77,7 @@ m.elementAt(\bt).valueAction_(1);
 m.elementAt(\bt).valueAction_(0);
 
 // create a gui for the osc device:
-MKtlGUI(mktl: m);
+m.gui;
 // post incoming OSC data
 m.trace;
 
@@ -240,7 +240,7 @@ m = MKtl( \exampleOSCInput, ~descInput );
 MKtlLookup.postInfo // now also shows the opened 'osc device'
 
 // create a gui for the osc device:
-MKtlGUI(mktl: m);
+m.gui;
 // post incoming data
 m.trace;
 
@@ -283,7 +283,7 @@ m = MKtl( \exampleOSCInput, ~descInput );
 MKtlLookup.postInfo // now also shows the opened 'osc device'
 
 // create a gui for the osc device:
-MKtlGUI(mktl: m);
+m.gui;
 // post incoming data
 m.trace;
 
@@ -323,7 +323,7 @@ m = MKtl( \exampleOSCInput, ~descInput );
 MKtlLookup.postInfo  // now also shows the opened 'osc device'
 
 // create a gui for the osc device:
-MKtlGUI(mktl: m);
+m.gui;
 // post incoming data
 m.trace;
 
@@ -477,7 +477,7 @@ code::
 );
 )
 m = MKtl( \exampleCollectiveIn, ~descCollectiveInput );
-MKtlGUI(mktl: m);
+m.gui;
 m.trace;
 
 // test setting it directly
@@ -532,7 +532,7 @@ code::
 )
 
 m = MKtl( \exampleCollectiveIn, ~descCollectiveInput );
-MKtlGUI(mktl: m);
+m.gui;
 m.trace;
 
 n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
@@ -672,7 +672,7 @@ MKtl.addSpec(\pwm8bit, [0, 255, \linear, 1]);
 )
 
 m = MKtl( \exampleCollectiveOut, ~descCollectiveOut );
-MKtlGUI(mktl: m);
+m.gui;
 
 // test to see what OSC messages are coming in -
 // fake device is within SC, so we see messages to it by trace:
@@ -841,7 +841,7 @@ MKtl.all;
 MKtlLookup.postInfo  // now also shows the opened 'osc device'
 
 // create a gui for the new osc device:
-MKtlGUI(mktl: m);
+m.gui;
 
 // post incoming data
 m.trace;
