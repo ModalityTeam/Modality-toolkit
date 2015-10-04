@@ -101,19 +101,12 @@ elementsDesc: (
 
 			groupType: \padGroup,
 
-			sharedProperties: (\elementType: \pad, \spec: \midiVel, \ioType: \inout),
+			sharedProperties: (\elementType: \pad, \spec: \midiVel, \ioType: \inout,
+				\midiMsgType: \noteOnOff, \midiChan: 0),
 
-			elements: (
-
-				// a sublist of noteOn/offs
-				sharedProperties: (\midiMsgType: \noteOnOff, \midiChan: 0),
-
-				// element groups for noteOnOff,
-				// here generated algorithmically:
-				elements: Event.newFrom(
-					(36..43).collect { |note, i|
-						[ (i+1).asSymbol, (\midiNum: note) ]
-				}.flatten)
+			elements: (36..43).collect { |note, i|
+				(i+1).asSymbol -> (\midiNum: note)
+				}
 			)
 		),
 
