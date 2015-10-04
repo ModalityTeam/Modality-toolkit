@@ -41,6 +41,10 @@ MKtl { // abstract class
 	// used to find its info in MKtlLookup:
 	var <lookupName, <lookupInfo;
 
+	*protocols   { ^MKtlDevice.allProtocols }
+	*deviceTypes { ^MKtlDevice.deviceTypes }
+	*elementTypes { ^MKtlElement.elementTypes }
+
 	*initClass {
 		Class.initClassTree(Spec);
 		all = ();
