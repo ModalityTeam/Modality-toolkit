@@ -1,5 +1,5 @@
 /*
-todo
+todo: write little example here
 */
 (
 deviceName: "Steinberg CMC-FD",
@@ -8,7 +8,7 @@ deviceType: \controller,
 elementTypes: [\fader, \button],
 status: (
 	linux: "unknown",
-	osx: "unknown",
+	osx: "tested and working",
 	win: "unknown"),
 
 idInfo:"Steinberg CMC-FD",
@@ -41,6 +41,7 @@ description: (
 
 // ------- bend ------------
 // high res fader values (10 bit )
-'fader': (0..3).collect { |chan| ('midiMsgType': 'bend', 'type': 'bender', 'midiChan': 0, 'midiNum':  0,'spec': 'midiBend') }
+'fader': (0..3).collect { |chan| ('midiMsgType': 'bend', 'type': 'bender', 'midiChan': chan, 'midiNum':  0,'spec': 'midiBend') }
 );
 )
+
