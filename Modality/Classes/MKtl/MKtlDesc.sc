@@ -215,7 +215,7 @@ MKtlDesc {
 
 
 	// ANALYSIS of loaded descs:
-	*postDescKeysUsed {
+	*descKeysUsed {
 		// all keys used in fullDescs
 		var allKeys = MKtlDesc.allDescs.collectAs(_.fullDesc, Array)
 		.collect(_.keys(Array));
@@ -230,6 +230,20 @@ MKtlDesc {
 		"\n/*** end MKtlDesc.allDescs - keys. ***/\n".postln;
 		^keySet
 	}
+
+	*deviceTypesUsed {
+		var types = Set.new;
+		MKtlDesc.allDescs.do {|d|
+			var devtype = d.fullDesc.deviceType;
+			if (devtype.notNil) { types = types.add(devtype) };
+		};
+		^types.asArray.sort;
+	}
+
+	*elementTypesUsed {
+
+	}
+
 
 	// integrity checks for dicts at all levels:
 

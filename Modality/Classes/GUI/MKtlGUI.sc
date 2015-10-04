@@ -111,7 +111,7 @@ MKtlElementView {
 	snapback_ { |flag = true|
 		snapback = flag;
 		if (snapback) {
-			"% gui: switching to momentary action with snapback.\n".postf(element);
+			// "% gui: switching to momentary action with snapback.\n".postf(element);
 			if (view.isKindOf(Button)) {
 				view.mouseDownAction = { |bt| "down".postln; bt.valueAction = 1 };
 			};
@@ -245,6 +245,8 @@ MKtlGUI {
 		}).flop.collect(_.maxItem) + 1;
 	}
 
+	// assumes that pages are indices starting with 0,
+	// pages often are named, e.g. A, B, C, D on qunexus.
 	getNumPages {
 		^mktl.elements.flat.collect({ |item| item.elemDesc[ \page ] }).select(_.notNil).maxItem !? (_+1);
 	}

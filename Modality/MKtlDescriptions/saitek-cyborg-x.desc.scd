@@ -11,6 +11,7 @@ how to map that in a spec?
 */
 (
 deviceName: "Cyborg X_Saitek",
+deviceType: \joyStick,
 idInfo: "Cyborg X_Saitek",
 protocol: 'hid',
 status: (
