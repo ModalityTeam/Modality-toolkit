@@ -209,12 +209,8 @@ MKtlElement : MAbstractElement {
 	var <deviceSpec;
 
 	*initClass {
-		types = (
-			\slider: \x,
-			\button: \x,
-			\thumbStick: [\joyAxis, \joyAxis, \button],
-			\joyStick: [\joyAxis, \joyAxis, \button]
-		)
+		// types found with MKtlDesc.elementTypesUsed
+		types = [ 'accelAxis', 'analogIn', 'bender', 'button', 'buttons', 'chantouch', 'compass', 'cvIn', 'cvOut', 'dial', 'encoder', 'hatSwitch', 'imu', 'joyAxis', 'key', 'keyTouch', 'keytouch', 'knob', 'led', 'lever', 'midiBut', 'mouseAxis', 'mouseWheel', 'movement', 'option', 'pad', 'pianoKey', 'ribbon', 'rumble', 'slider', 'springFader', 'switch', 'touchButton', 'touchFader', 'trigger', 'voltage', 'wheel', 'xfade' ]
 	}
 
 	// source is used for sending back to the device.

@@ -241,7 +241,31 @@ MKtlDesc {
 	}
 
 	*elementTypesUsed {
+		var allUsed = Set[];
+		MKtlDesc.allDescs.do { |desc|
+			allUsed = allUsed.union(desc.elementTypesUsed)
+		};
+		^allUsed.asArray.sort
+	}
 
+	elementTypesUsed {
+		var used = Set[];
+		var getFunc = { |elem|
+			if (elem.isKindOf(Dictionary)) {
+				if(elem[\type].notNil) {
+					used = used.add(elem[\type]); };
+				if(elem[\elementType].notNil) {
+					used = used.add(elem[\elementType]); };
+				elem.do (getFunc);
+			};
+			if (elem.isKindOf(Array)) {
+				elem.do (getFunc);
+			};
+		};
+		this.elementsDesc.do { |elDesc|
+			getFunc.(elDesc);
+		};
+		^used.asArray.sort
 	}
 
 
@@ -254,12 +278,12 @@ MKtlDesc {
 	*isValidDescDict { |dict|
 		var ok = dict.isKindOf(Dictionary)
 		and:  ({ dict[\parentDesc].notNil
-		or: { dict[\idInfo].notNil
-			and: { dict[\protocol].notNil
-				and: { dict[\description].notNil
-					//	and: { this.checkElementsDesc(dict) }
+			or: { dict[\idInfo].notNil
+				and: { dict[\protocol].notNil
+					and: { dict[\description].notNil
+						//	and: { this.checkElementsDesc(dict) }
+					}
 				}
-			}
 		}});
 		if (ok) { ^true };
 		"% - dict not valid: %\n\n".postf(thisMethod, dict);
@@ -524,7 +548,7 @@ MKtlDesc {
 			if (msgType.notNil) {
 				msgTypesUsed.add(msgType.unbubble);
 			} {
-			//	"missing: ".post;
+				//	"missing: ".post;
 				missing.add(elem.elemKey);
 			};
 			// [elemKey, elem].postln;

@@ -7,12 +7,16 @@ DESCRIPTION::
 A named element within an link::Classes/MKtl::, which can typically represent a slider, a button, a joystick axis etc etc. It has a description with a deviceSpec (e.g. \midiNum for a midi faderbox slider), and a type (e.g. \slider). It also has a deviceValue (in the deviceSpec range), and a value (in range 0.0 - 1.0).
 It is mostly created automatically when an link::Classes/MKtl:: is made.
 
-
 CLASSMETHODS::
 
 METHOD:: types
-Available types of elements:
-
+The types of elements used in descs so far:
+code::
+MKtlElement.types;
+// to update after adding more desc files:
+MKtlDesc.loadDescs;
+MKtlDesc.elementTypesUsed;
+::
 private:: initClass
 
 METHOD:: new

@@ -15,11 +15,11 @@ list::
 ##link::Tutorials/How_to_create_a_description_file_for_OSC::
 ::
 
-section:: Basic setup of the description file
+section:: Basic structure of the description file
 
-The basic setup of the description file is that is is a Dictionary with a number of key elements.
+The description file is a Dictionary with a number of required entries.
 
-The main element is the code::description:: which contains all the elements/controls of a device.
+The main entry is the code::description:: which contains all the elements/controls of a device.
 
 For physical devices, you need to define the protocol and the idInfo. The code::protocol:: is one of code::\osc, \midi, \hid::. The code::idInfo:: is different per protocol, check the respective tutorial for an elaborate description.
 
@@ -62,7 +62,13 @@ MKtl.globalSpecs.keys;
 MKtl.specs.at( \hidHat ); // look up a specific one
 ::
 
-section:: Grouping of elements
+section:: Elements
+
+
+Elements require a type describing which kind of physical thing it is,
+such as button, slider, joyAxis, mouseWheel, or any of:
+
+code::MKtlElement.types::
 
 For multiple elements, one can make groups, which is helpful for sematinc clarity.
 
@@ -96,7 +102,6 @@ m.elementAt(\sl, 1).valueAction_(1.0.rand);
 
 m.free; // free m's resources and remove it from MKtl.all
 ::
-
 
 
 section:: Finding descriptions for similar devices
