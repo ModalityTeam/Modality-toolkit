@@ -3,7 +3,7 @@ NamedList : List {
 
 	// very clear
 	*new { |pairs|
-		^this.fromPairs(pairs );
+		^this.fromPairs(pairs);
 	}
 
 	// very efficient
@@ -222,10 +222,13 @@ NamedList : List {
 	}
 
 	dump {
-		"NamedList's dict:\n".post; dict.dump;
+		"% dict:\n".postf(this.class);
+		dict.keysValuesDo { |k, v|
+			"	%: %".format(k, v).postln;
+		};
 		"NamedList's names/array:\n".post;
 		names.do { |name, i|
-			"% : %\n".postf(name.cs, array[i].cs);
+			"	%: %: %\n".postf(i, name.cs, array[i].cs);
 		};
 	}
 
