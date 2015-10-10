@@ -41,6 +41,42 @@
 			this.keysValuesDo(postfunc);
 		}
 	}
+
+	traverseAt {|keys|
+		var key, otherKeys;
+
+		# key ... otherKeys = keys;
+
+		if (otherKeys.isEmpty) {
+			^this.at(key)
+		} {
+			^(this.at(key).traverseAt(otherKeys))
+		}
+	}
+
+	traversePut {|keys, value|
+		var key, otherKeys, next;
+
+		// do nothing if keys are empty
+		if (keys.isNil) {^this};
+
+		# key ... otherKeys = keys;
+
+		if (otherKeys.isEmpty) {
+			this.put(key, value);
+			^this
+		};
+
+		next = this.at(key);
+		if (next.isNil) { // create sub-dicts if needed
+			this.put(
+				key,
+				next = this.class.new
+			);
+
+		};
+		next.traversePut(otherKeys, value);
+	}
 }
 
 + SequenceableCollection {
