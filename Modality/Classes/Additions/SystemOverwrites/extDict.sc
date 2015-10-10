@@ -43,14 +43,16 @@
 	}
 
 	traverseAt {|keys|
-		var key, otherKeys;
+		var key, otherKeys, preResult;
 
 		# key ... otherKeys = keys;
 
+		preResult = this.at(key);
+
 		if (otherKeys.isEmpty) {
-			^this.at(key)
+			^preResult
 		} {
-			^(this.at(key).traverseAt(otherKeys))
+			^(preResult !? {preResult.traverseAt(otherKeys)})
 		}
 	}
 
