@@ -14,14 +14,15 @@ o.anaDict.msgNamesByAddr.keys.postcs
 // which msgNames from where?
 o.anaDict.msgNamesByAddr
 // the last n messages from all addresses
-o.anaDict.messagesByAddr
+o.anaDict.messagesByAddr.postcs
+o.disable;
 
 // or rawer:
 OSCFunc.trace;
 OSCFunc.trace(false);
 
 
-g = MKtl(\gyr, "gyrosc");
+g = MKtl(\gyr, "gyrosc*");
 // update with the address seen in OSCMonitor or OSCFunc.trace:
 g.mktlDevice.updateSrcAddr("192.168.178.53", 60329);
 
@@ -44,7 +45,8 @@ idInfo: ( srcPort: 12345, ipAddress: "1.2.3.4", recvPort: 57120 ),
 
 specs: (
 	gyroAxis: [-3, 3],
-	accelAxis: [-3, -3]),
+	accelAxis: [-3, 3]
+),
 
 deviceInfo: (
 	vendorURI: "http://www.bitshapesoftware.com/instruments/gyrosc/",
@@ -61,11 +63,11 @@ collectives: (
 		elements: [[\gyro, \pitch], [\gyro, \roll], [\gyro, \yaw]],
 		ioType: \in
 	),
-        accel: (
-            oscPath: '/gyrosc/accel',
-            elements: [ [\accel, \x], [\accel, \y], [\accel, \z]],
-            ioType: \in
-        )
+	accel: (
+		oscPath: '/gyrosc/accel',
+		elements: [ [\accel, \x], [\accel, \y], [\accel, \z]],
+		ioType: \in
+	)
 	// similar for comp, matrix, rrate, quat, grav, mag, gps
 ),
 	// actually about 7 more messages possible.

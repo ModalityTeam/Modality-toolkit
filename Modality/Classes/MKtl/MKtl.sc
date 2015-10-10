@@ -79,6 +79,7 @@ MKtl { // abstract class
 		this.addSpec(\cent1023,  [0, 1023, \lin, 1, 512]);
 		this.addSpec(\cent1,  [0, 1, \lin, 0, 0.5]);
 		this.addSpec(\lin1inv,  [1, 0, \lin, 0, 1]);
+		this.addSpec(\lin1,  [0, 1, \lin, 0, 1]);
 		this.addSpec(\but,  [0, 1, \lin, 1, 0]);
 		this.addSpec(\trigger,  [0, 1, \lin, 1, 1]);
 

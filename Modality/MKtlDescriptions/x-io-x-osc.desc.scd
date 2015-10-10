@@ -1,16 +1,37 @@
 /*
 NOT DONE YET:
-* unpacking of multichan messages inAna, inDig, inComp
--> can be done with collectives now!
 
-* figure out spec ranges for the 10 imu params
-
-* serial input messages are raw data, how to handle?
-
-* how to handle string only values?
-  e.g. ping returns strings,
-  and sending back to set stuff also
++ output communication
++ figure out spec ranges for the 10 imu params
++ serial input messages are raw data, how to handle?
++ how to handle string only values?
+  + ping returns strings,
+  + sending back to set stuff uses strings
 -> PassSpec for not touching raw values
+
+
+o = OSCMonitor.new;
+o.enable;
+// which sending addresses?
+o.anaDict.msgNamesByAddr.keys.postcs
+// which msgNames from where?
+o.anaDict.msgNamesByAddr
+// the last n messages from all addresses
+o.anaDict.messagesByAddr.collect(_.keep(-10)).postcs
+o.disable;
+
+
+OSCFunc.trace;
+OSCFunc.trace(false);
+
+g = MKtl(\xosc, "*x-osc");
+// update with the address seen in OSCMonitor or OSCFunc.trace:
+g.mktlDevice.updateSrcAddr("169.254.1.1", 9000);
+
+g.trace
+g.trace(false)
+
+g.gui
 */
 
 (
@@ -21,9 +42,9 @@ elementTypes: [\accelerometer, \sensor, \serial],
 status: (
 	linux: "unknown",
 	osx: "incomplete",
-	win: "unknown"),
-
-idInfo: ( srcPort: 8000, ipAddress: "169.254.1.1", recvPort: 9000 ), // ip for adhoc mode
+	win: "unknown"
+),
+idInfo: ( ipAddress: "169.254.1.1", recvPort: 57120 ), // ip for adhoc mode
 
 deviceInfo: (
 	vendorURI: "http://www.x-io.co.uk/products/x-osc/",
@@ -41,22 +62,85 @@ deviceInfo: (
 ),
 
 specs: (
-	\switch: [0, 1, \lin, 1].asSpec,
+	\switch: [0, 1, \lin, 1],
 	\pass: PassSpec,
-	\imu: [-10, 10, \lin].asSpec
+	gyroAxis: [-8, 8],
+	accelAxis: [-8, 8],
+	temp: [0, 100]
 ),
+
+collectives: (
+	imu: (
+		oscPath: '/imu',
+		elements: [
+			[\gyro, \pitch], [\gyro, \roll], [\gyro, \yaw],
+			[\accel, \x], [\accel, \y], [\accel, \z],
+			[\magnet, \pitch], [\magnet, \roll], [\magnet, \yaw],
+			[\temp]
+		],
+		ioType: \in
+	),
+	dIn: (
+		oscPath: '/inputs/digital',
+		elements: 16.collect{|i|
+			[\inD, i]
+		},
+		ioType: \in
+	),
+	aIn: (
+		oscPath: '/inputs/analogue',
+		elements: 16.collect{|i|
+			[\inA, i]
+		},
+		ioType: \in
+	),
+	aCIn: (
+		oscPath: '/inputs/analogue/comparator',
+		elements: 16.collect{|i|
+			[\inC, i]
+		},
+		ioType: \in
+	)
+),
+
 description: (
 	// input elements:
 
-// 16 integer arguments represent the state of the 16 digital inputs (0 or 1). Sent only when the state of any digital input pin changes
-	inDig: (oscPath: '/inputs/digital', type: \switch, spec: \switch, numIns: 16, ioType: \in),
+	// 10 floating-point arguments indicating the current readings of the on board sensors. Arguments 1 – 3 gyroscope (°/s) x, y, z; arguments 4 – 6 accelerometer (g), x, y ,z; arguments 7 – 9 magnetometer (Ga) x, y ,z; argument 10 gyroscope temperature (°C)
+	\accel: (
+		\x: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' ),
+		\y: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' ),
+		\z: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' )
+	),
+	\gyro: (
+		\pitch: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'gyroAxis' ),
+		\roll: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'gyroAxis' ),
+		\yaw: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'gyroAxis' )
+	),
+	\magnet: (
+		\pitch: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'gyroAxis' ),
+		\roll: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'gyroAxis' ),
+		\yaw: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'gyroAxis' )
+	),
+	\temp: (type: 'cvIn', ioType: \collectiveIn, \spec: 'temp' ),
+
+
+
+	// 16 integer arguments represent the state of the 16 digital inputs (0 or 1). Sent only when the state of any digital input pin changes
+	inD: 16.collect{|i|
+		(type: \switch, spec: \switch, ioType: \collectiveIn)
+	},
 
 // 16 floating-point arguments indicate the analogue readings for all 16 inputs. Sent at the analogue input message rate
-	inAna: (oscPath: '/inputs/analogue', type: \analogIn, spec: \unipolar, numIns: 16, ioType: \in),
+	inA: 16.collect{|i|
+		(type: \voltage, spec: \lin1, ioType: \collectiveIn)
+	},
 
 
 // 16 integer arguments represent the current compare state of the 16 analogue inputs (0 if below or 1 if above the threshold). Sent only when a threshold on any channel is crossed
-	inComp: (oscPath: '/inputs/analogue/comparator', type: \switch, spec: \switch, numIns: 16, ioType: \in),
+	inC: 16.collect{|i|
+		(type: \switch, spec: \switch, ioType: \collectiveIn)
+	},
 
 	// // 1 blob argument containing the raw serial data received on input <channel> (1 – 4)
 	// inS1: (oscPath: '/inputs/serial/1', inType: \blob, ioType: \in),
@@ -64,12 +148,11 @@ description: (
 	// inS3: (oscPath: '/inputs/serial/3', inType: \blob, ioType: \in),
 	// inS4: (oscPath: '/inputs/serial/4', inType: \blob, ioType: \in),
 
-// 10 floating-point arguments indicating the current readings of the on board sensors. Arguments 1 – 3 gyroscope (°/s) x, y, z; arguments 4 – 6 accelerometer (g), x, y ,z; arguments 7 – 9 magnetometer (Ga) x, y ,z; argument 10 gyroscope temperature (°C)
-	imu: (oscPath: \imu, numIns: 10, type: \imu, spec: [-10, 10].asSpec),
 
 	// 1 float indicating the current battery voltage
-	battery: (oscPath: \battery, numIns: 1, ioType: \in,
-		type: \voltage, spec: [0, 3.7].asSpec),
+	battery: (oscPath: '/battery', ioType: \in,
+	 type: \voltage, spec: [0, 3.7].asSpec),
+
 
 	// // /ping: 3 string arguments are the x-OSC local IP address (1st string), MAC address (2nd string) and firmware version (3rd string)
 	// ping: (oscPath: \ping, numArgs: 3, ioType: \in),
@@ -90,7 +173,7 @@ description: (
 	// usePrefix: (oscPath: "/osc/prefix/enabled", ioType: \out),
 	// // set osc address prefix string, e.g. (e.g. “/xosc”)
 	// prefix: (oscPath: "/osc/prefix/address", ioType: \out)
-);
+)
 
 // /inputs/mode/analogue/<channel>
 // sets the input <channel> (1 – 16) to analogue mode
