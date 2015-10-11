@@ -243,6 +243,7 @@ MKtlLookup {
 		var dict = (
 			deviceName: deviceName,
 			protocol: protocol,
+			idInfo: idInfo,
 			ipAddress: sendAddr.ip,
 			srcPort: sendAddr.port,
 			destPort: (replyAddr ? sendAddr).port,
@@ -270,13 +271,15 @@ MKtlLookup {
 		var matches = true, matching, ordered;
 
 		var inIdDict;
+		if (inIdInfo.isNil) {
+			"%: inIdInfo is nil!\n".postf(thisMethod);
+			^[]
+		};
 		if (inIdInfo.isKindOf(String)) {
 			inIdDict = (deviceName: inIdInfo);
 		} {
 			inIdDict = inIdInfo
 		};
-
-		// inIdDict.postcs;
 
 		matching = all.select { |hereInfo|
 			var hereIdInfo, hereIdDict, matches = true;
