@@ -58,7 +58,7 @@ s.quit;
 */
 
 (
-deviceName: \manta,
+deviceName: "manta",
 protocol: \osc,
 elementTypes: [\pad, \slider],
 deviceType: \manta,
@@ -67,7 +67,8 @@ status: (
 	osx: "tested and working",
 	win: "unknown"),
 
-idInfo: ( srcPort: 31417, ipAddress: "127.0.0.1", recvPort: 31416 ),
+idInfo: "manta",
+netAddrInfo: ( srcPort: 31417, ipAddress: "127.0.0.1", recvPort: 31416 ),
 
 specialMessages: (
 	enableLEDControl: [

@@ -33,7 +33,8 @@ status: (
 	osx: "tested and working, subset of sensors only.",
 	win: "unknown"),
 
-idInfo: ( srcPort: 12345, ipAddress: "1.2.3.4", recvPort: 57120 ),
+netAddrInfo: ( srcPort: 12345, ipAddress: "1.2.3.4", recvPort: 57120 ),
+idInfo: "minibee1",
 
 specs: (
 	gyroAxis: [-3, 3],

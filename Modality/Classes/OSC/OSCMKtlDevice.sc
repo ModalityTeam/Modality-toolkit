@@ -84,25 +84,25 @@ OSCMKtlDevice : MKtlDevice {
 
 	init { |desc|
 		desc = desc ?? { mktl.desc };
-		this.initOSCMKtl( desc.idInfo ).initElements;
+		this.initOSCMKtl( desc.fullDesc[\netAddrInfo] ).initElements;
 	}
 
-	initOSCMKtl { |idInfo|
-		if ( idInfo.at( \ipAddress ).notNil ) {
-			source = NetAddr.new( idInfo.at( \ipAddress ), idInfo.at( \srcPort ) );
-			if ( idInfo.at( \destPort ).notNil ){
-				destination = NetAddr.new( idInfo.at( \ipAddress ), idInfo.at( \destPort ) );
+	initOSCMKtl { |info|
+		if ( info.at( \ipAddress ).notNil ) {
+			source = NetAddr.new( info.at( \ipAddress ), info.at( \srcPort ) );
+			if ( info.at( \destPort ).notNil ){
+				destination = NetAddr( info.at( \ipAddress ), info.at( \destPort ) );
 			}{ // assume destination port is same as srcPort
-				destination = NetAddr.new( idInfo.at( \ipAddress ), idInfo.at( \srcPort ) );
+				destination = NetAddr( info.at( \ipAddress ), info.at( \srcPort ) );
 			};
 		}{
-			if ( idInfo.at( \destPort ).notNil ){
-				destination = NetAddr.new( "127.0.0.1", idInfo.at( \destPort ) );
+			if ( info.at( \destPort ).notNil ){
+				destination = NetAddr( "127.0.0.1", info.at( \destPort ) );
 			}{ // assume destination port is same as srcPort
-				destination = NetAddr.new( "127.0.0.1", idInfo.at( \srcPort ) );
+				destination = NetAddr( "127.0.0.1", info.at( \srcPort ) );
 			};
 		};
-		recvPort = idInfo.at( \recvPort );
+		recvPort = info.at( \recvPort );
 
 		this.initCollectives;
 
@@ -111,10 +111,9 @@ OSCMKtlDevice : MKtlDevice {
 	}
 
 	addToLookup {
-		// remove me first to avoid duplicates?
-		// MKtlLookup.all.remove(this);
-		var dict = MKtlLookup.addOSC(source, name, destination);
-		dict.put(\mktl, this.mktl); // so we can remove this dict
+		MKtlLookup.all.select { |info| info.mktl == this.mktl }
+		.keysDo { |key| MKtlLookup.all.removeAt(key) };
+		MKtlLookup.addOSC(source, mktl.desc.idInfo, destination, this.mktl);
 	}
 
 	// source is used in all OSCFuncs, so sticking in new ip/port
@@ -136,7 +135,7 @@ OSCMKtlDevice : MKtlDevice {
 		source = nil;
 		destination = nil;
 		recvPort = nil;
-	//	MKtlLookup.allFor(\osc).remove(this);
+		MKtlLookup.removeEvery { |info| info.mktl == this.mktl };
 	}
 
 	postTrace { |el|

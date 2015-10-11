@@ -41,7 +41,8 @@ status: (
 	osx: "tested and working, subset of sensors only.",
 	win: "unknown"),
 
-idInfo: ( srcPort: 12345, recvPort: 57120 ),
+idInfo: "gyrosc",
+netAddrInfo: ( srcPort: 12345, recvPort: 57120 ),
 
 //	gps: lat, long, alt, course, speed, time
 //	ipport: ip, port

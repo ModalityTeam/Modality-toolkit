@@ -228,34 +228,52 @@ MKtlLookup {
 
 	// check if already there before adding
 	// should be serialisable to write to file
-	*addOSC { |sendAddr, deviceName, replyAddr|
+	*addOSC { |sendAddr, deviceName, replyAddr, mktl|
 
 		var protocol = \osc;
-		var idInfo = [sendAddr.addr, sendAddr.port].join($_);
-			// maybe needed, but makes it hard to avoid duplicates
-		// var index = MKtlLookup.all.count { |dict|
-		// (dict.protocol == \osc) };
-		// var nameAndInfo = if (name.notNil) { [name.asString, idInfo].join($_); };
-		// var lookupName = MKtl.makeLookupName(protocol, index, nameAndInfo ? idInfo);
-		var lookupName = MKtl.makeLookupName(protocol, deviceName, idInfo);
-		var filename = MKtlDesc.filenamesForIDInfo(idInfo);
+		var filenames, filename, count, netInfo, lookupName, dict;
 
-		var dict = (
+		var foundByAddrData = MKtlLookup.all.select { |infodict|
+			(infodict[\sendAddr] == deviceName)
+			and: {
+				(infodict[\sendAddr] == sendAddr)
+				and: { (infodict[\replyAddr] == replyAddr)
+			} }
+		};
+		if (foundByAddrData.size > 0) {
+			if (foundByAddrData.size == 1) {
+				^this
+			};
+			"%: found multiple matching infos: %\n"
+			.postf(thisMethod,  foundByAddrData.cs)
+		};
+
+		count = MKtlLookup.all.count { |dict| (dict.protocol == \osc) };
+		netInfo = [sendAddr.ip, sendAddr.port].join($_);
+		lookupName = MKtl.makeLookupName(protocol ++ count, deviceName, netInfo);
+
+		filenames = MKtlDesc.filenamesForIDInfo(deviceName);
+		if (filenames.size == 1) {
+			filename = filenames.first;
+		};
+
+		dict = (
 			deviceName: deviceName,
 			protocol: protocol,
-			idInfo: idInfo,
+			idInfo: deviceName,
+			sendAddr: sendAddr,
+			replyAddr: replyAddr,
 			ipAddress: sendAddr.ip,
 			srcPort: sendAddr.port,
 			destPort: (replyAddr ? sendAddr).port,
-		//	deviceInfo: nil,
+			filenames: filenames,
 			filename: filename,
-			desc: MKtlDesc.at(filename.asSymbol),
-			lookupName: lookupName
-		//	lookup: { MKtlLookup.all[lookupName]; }
+			lookupName: lookupName,
+			mktl: mktl,
+			desc: if (mktl.notNil) { mktl.desc }
 		);
 
 		all.put(lookupName, dict);
-		^dict
 	}
 
 	/*

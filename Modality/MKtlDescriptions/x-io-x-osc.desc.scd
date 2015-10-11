@@ -44,7 +44,9 @@ status: (
 	osx: "incomplete",
 	win: "unknown"
 ),
-idInfo: ( ipAddress: "169.254.1.1", recvPort: 57120 ), // ip for adhoc mode
+
+idInfo: "x-osc",
+netAddrInfo: ( ipAddress: "169.254.1.1", recvPort: 57120 ), // ip for adhoc mode
 
 deviceInfo: (
 	vendorURI: "http://www.x-io.co.uk/products/x-osc/",
