@@ -88,7 +88,7 @@ MKtlDevice {
 		var deviceCandidates;
 
 		if (parentMKtl.isNil) {
-			"MKtlDevice.open: parentMktl.isNil - should not happen!".postln;
+			"%: parentMktl.isNil - should not happen!\n".postf(thisMethod);
 			^nil
 		};
 
@@ -142,8 +142,10 @@ MKtlDevice {
 				};
 			} {
 				inform("%: multiple device candidates found,"
-					"please disambiguate by providing a multiIndex!"
-				.format(this.name));
+					" please disambiguate by providing a multiIndex!"
+					"\nThe candidates are:"
+				.format(thisMethod));
+				deviceCandidates.printcsAll;
 				^nil
 			};
 		} {
@@ -161,7 +163,7 @@ MKtlDevice {
 			lookupName = name;
 		};
 
-		// "% gets to end . lookupName: %.\n\n\n".postf(thisMethod, lookupName);
+		// "% gets to end. lookupName: %.\n\n\n".postf(thisMethod, lookupName);
 		subClass = MKtlDevice.subFor(desc.protocol);
 		^subClass.new(lookupName,
 			parentMKtl: parentMKtl,
