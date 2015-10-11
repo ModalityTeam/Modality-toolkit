@@ -1,5 +1,4 @@
 // // minibee generic
-// for using gyrosc nametag ID concept, see note below.
 
 /*
 o = OSCMonitor.new;
@@ -16,7 +15,7 @@ OSCFunc.trace;
 OSCFunc.trace(false);
 
 
-g = MKtl(\mini1, "minibee1-xpee");
+h = MKtl(\mini1xp, "*minibee1-xpee");
 // update with the address seen in OSCMonitor or OSCFunc.trace:
 g.mktlDevice.updateSrcAddr("192.168.100.105", 40474);
 

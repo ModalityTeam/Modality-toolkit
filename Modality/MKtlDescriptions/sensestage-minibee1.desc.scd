@@ -1,5 +1,4 @@
 // // minibee generic
-// for using gyrosc nametag ID concept, see note below.
 
 /*
 o = OSCMonitor.new;
