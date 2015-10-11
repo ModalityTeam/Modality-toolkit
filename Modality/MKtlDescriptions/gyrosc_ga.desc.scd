@@ -41,11 +41,21 @@ status: (
 	osx: "tested and working, subset of sensors only.",
 	win: "unknown"),
 
-idInfo: ( srcPort: 12345, ipAddress: "1.2.3.4", recvPort: 57120 ),
+idInfo: ( srcPort: 12345, recvPort: 57120 ),
+
+//	gps: lat, long, alt, course, speed, time
+//	ipport: ip, port
+// receiving: /reorient, /vibrate
 
 specs: (
-	gyroAxis: [-3, 3],
-	accelAxis: [-3, 3]
+	gyroAxis: [-pi, pi],
+	accelAxis: [-3, 3],
+	compass: [0, 360],
+	rotMatAxis: \bipolar,
+	rotRateAxis:  [-3, 3],
+	quaternionAxis: \bipolar,
+	gravityAxis:  \bipolar,
+	magFieldAxis: [-50, 50],
 ),
 
 deviceInfo: (
