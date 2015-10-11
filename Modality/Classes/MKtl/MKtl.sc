@@ -210,12 +210,12 @@ MKtl { // abstract class
 		// else try to make a desc from lookup info:
 
 		if (MKtl.descIsFaulty(newMKtlDesc)) {
-			inform("% %: could not find a valid desc,\n"
-				"will try to infer from hardware.\n"
-				"desc is: %\n\n".format(this, name.cs, newMKtlDesc));
+			inform("% %: could not find a valid desc - \n"
+				"desc is: %\n\n".format(thisMethod,
+					name.cs, newMKtlDesc));
 		};
 
-		// now we have a name and a good enough desc
+		// assume that now we have a name and a good enough desc
 		^super.newCopyArgs(name).init(newMKtlDesc, lookupName, lookupInfo, lookForNew, multiIndex );
 	}
 
@@ -240,19 +240,21 @@ MKtl { // abstract class
 				^false
 			};
 
-			if (this.desc.notNil and: { this.desc.idInfo == lookupInfo.idInfo }) {
+			if (this.desc.notNil and: {
+				this.desc.idInfo == lookupInfo.idInfo
+			}) {
 				// yes, identical, so ignored
 				^true
 			} {
-				inform("// %: If you want to change the desc,"
-					" use %.rebuild( _newdesc_ );".format(this, this));
+				inform("%: To change my desc,"
+					"use %.rebuild(<desc>);".format(this, this));
 				^false
 			};
 		};
 	}
 
 	// interface to desc:
-
+	// could be a more precise integrity test
 	*descIsFaulty { |argDesc|
 		^argDesc.isKindOf(MKtlDesc).not or:
 		{ argDesc.fullDesc.isNil }
@@ -276,8 +278,6 @@ MKtl { // abstract class
 		lookupName = argLookupName;
 		lookupInfo = argLookupInfo;
 
-		all.put(name, this);
-
 		if(desc.notNil and: { desc.fullDesc.notNil }) {
 			specsFromDesc = desc.fullDesc[\specs];
 		};
@@ -294,14 +294,14 @@ MKtl { // abstract class
 		};
 
 		if (desc.isNil) {
-			inform(
-				"%:init - no desc given, cannot\n"
-				"open device or make elements and collectives.".format(this)
-			);
+			"%: no desc given, cannot open device or create elements."
+				.format(thisMethod).inform;
 			^this
 		};
 
 		this.finishInit(lookForNew, multiIndex); // and finalise init
+		// only put in all if everything worked
+		all.put(name, this);
 	}
 
 	finishInit { |lookForNew, multiIndex|

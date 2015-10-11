@@ -45,12 +45,14 @@ OSCMKtlDevice : MKtlDevice {
 
 	*initDevices { |force=false| // force has no real meaning here
 		var postables = MKtlLookup.allFor(\osc);
-		initialized = true;
-		if (verbose and: { postables.size == 0 }) {
-			"\n\n// OSCMKtlDevice: No known sending addresses so far.\n"
-			"// To detect OSC devices by hand, use OSCMonitor: ".postln;
-			"o = OSCMonitor.new.enable.show;".postln;
-			^this
+		if (force or: initialized.not) {
+			initialized = true;
+			if (verbose and: { postables.size == 0 }) {
+				"\n\n// OSCMKtlDevice: No known sending addresses so far.\n"
+				"// To detect OSC devices by hand, use OSCMonitor: ".postln;
+				"o = OSCMonitor.new.enable.show;".postln;
+				^this
+			};
 		};
 	}
 
@@ -115,6 +117,8 @@ OSCMKtlDevice : MKtlDevice {
 		dict.put(\mktl, this.mktl); // so we can remove this dict
 	}
 
+	// source is used in all OSCFuncs, so sticking in new ip/port
+	// values will redirect OSCfuncs to the new address data
 	updateSrcAddr { |hostname, port|
 		if (hostname.notNil) { source.hostname = hostname };
 		if (port.notNil) { source.port = port };
