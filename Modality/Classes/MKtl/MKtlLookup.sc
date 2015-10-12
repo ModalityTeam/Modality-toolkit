@@ -167,7 +167,7 @@ MKtlLookup {
 
 		// if single device, exit here!
 		if ((numSources < 2) and: { numDests < 2 }) {
-			// "\nMKtlLookup: single midi device -> to all: %\n\n".postf(info);
+			"\n%: single midi device -> to all: %\n\n".postf(thisMethod, info);
 			all.put(info.lookupName, info);
 			^this
 		};
@@ -183,6 +183,7 @@ MKtlLookup {
 		numOutDevices = numDests / numOutPorts;
 
 		// either multiple devices, or multiple ports, or both...
+		// "%: either multiple devices, or multiple ports, or both:".postln;
 		// "%: numInPorts: %, numOutPorts: %, numInDevs: %, numOutDevs: %\n"
 		// .postf(info.lookupName, numInPorts, numOutPorts, numInDevices, numOutDevices);
 
@@ -211,13 +212,16 @@ MKtlLookup {
 		if (insOutsMatch.not) {
 			info.destDevice.do { |destdev, index|
 				var index1 = index + 1;
-				var idInfo = (destPortIndex: index);
+				var idInfo = (
+					deviceName: info.deviceName,
+					destPortIndex: index
+				);
 				deviceLookupName = "midi_%_%%"; postfix = "";
 				if (numInDevices > 1) { postfix = postfix ++ "_devc_%".format(index1) };
 				if (numInPorts > 1) { postfix = postfix ++ "_port_%".format(index1) };
 				// [destdev, index1, postfix].postln;
 				deviceLookupName = deviceLookupName.copy
-				.format(count + index1, idInfo.toLower, postfix)
+				.format(count + index1, info.idInfo.toLower, postfix)
 				.collect { |char| if (char.isAlphaNum, char, $_) }
 				.asSymbol;
 				this.addMIDI(destdev, count + index1, \dest,
@@ -311,7 +315,7 @@ MKtlLookup {
 
 			inIdDict.keysValuesDo { |key, value|
 				var hereIDval = hereIdDict[key];
-			//	[key, value, hereIDval].postcs;
+				// [key, value, hereIDval].postcs;
 				matches = matches and:
 				((value == hereIDval) or: hereIDval.isNil)
 			};

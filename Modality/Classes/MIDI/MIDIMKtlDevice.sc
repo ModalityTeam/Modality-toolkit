@@ -102,7 +102,7 @@ MIDIMKtlDevice : MKtlDevice {
 		"// MKtl('myNickName', 'lookupName');  \n\t\t// [ midi device, portname, uid]\n".postln;
 		postables.sortedKeysValuesDo { |lookupKey, infodict|
 			var endPoint = infodict.deviceInfo;
-			var nameKey = lookupKey.asString.keep(12).asSymbol;
+			var nameKey = lookupKey;
 			var postList = endPoint.bubble.flatten.collect({ |ep|
 				[ep.device.cs, ep.name.cs, ep.uid]
 			});
