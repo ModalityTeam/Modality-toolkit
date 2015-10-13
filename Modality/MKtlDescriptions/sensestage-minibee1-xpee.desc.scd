@@ -1,32 +1,9 @@
-// // minibee generic
-
-/*
-o = OSCMonitor.new;
-o.enable;
-// which sending addresses?
-o.anaDict.msgNamesByAddr.keys.postcs
-// which msgNames from where?
-o.anaDict.msgNamesByAddr
-// the last n messages from all addresses
-o.anaDict.messagesByAddr
-
-// or rawer:
-OSCFunc.trace;
-OSCFunc.trace(false);
-
-
-h = MKtl(\mini1xp, "*minibee1-xpee");
-// update with the address seen in OSCMonitor or OSCFunc.trace:
-g.mktlDevice.updateSrcAddr("192.168.100.105", 40474);
-
-g.trace;
-g.trace(false);
-*/
+// redo info and example
 
 (
 deviceName: "minibee1-xpee",
 protocol: \osc,
-deviceType: \gyroPlus,
+deviceType: \minibee,
 elementTypes: [\accelerometer],
 status: (
 	linux: "unknown",
@@ -34,7 +11,7 @@ status: (
 	win: "unknown"),
 
 idInfo: "minibee1-xpee",
-netAddrInfo: ( srcPort: 12345, ipAddress: "1.2.3.4", recvPort: 57120 ),
+netAddrInfo: ( srcPort: nil, ipAddress: "1.2.3.4", recvPort: 57120 ),
 
 specs: (
 	ins: [0, 1],
@@ -53,7 +30,10 @@ collectives: (
 	data: (
 		oscPath: '/minibee/data',
 		argTemplate: [ 1 ],
-		elements: [ [\in, 0], [\in, 1], [\in, 2], [\in, 3], [\accel, \x], [\accel, \y], [\accel, \z]],
+		elements: [
+			[\in, 0], [\in, 1], [\in, 2], [\in, 3],
+			[\accel, \x], [\accel, \y], [\accel, \z]
+		],
 		ioType: \in
 	)
 ),
@@ -66,8 +46,6 @@ description: (
 	\in: 4.collect{|i|
 		(type: 'bender', ioType: \collectiveIn, \spec: 'ins' )
 	}
-
-
 )
 )
 

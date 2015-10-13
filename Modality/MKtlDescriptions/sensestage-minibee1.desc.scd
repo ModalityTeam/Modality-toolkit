@@ -9,18 +9,58 @@ o.anaDict.msgNamesByAddr.keys.postcs
 o.anaDict.msgNamesByAddr
 // the last n messages from all addresses
 o.anaDict.messagesByAddr
+o.disable:
 
-// or rawer:
+// As an update to Tills example starting this issue,
+// here is a working example for making two minibees
+// and distinguishing them by argTemplate only.
+// this assumes  they send date from the same hive app, same netaddr.
+(
+~beeAddr = NetAddr("192.168.100.105", 54615);
+~bee1 = MKtl(\bee1, "*minibee1");
+// update with the address as seen in OSCMonitor or OSCFunc.trace:
+~bee1.mktlDevice.updateSrcAddr(~beeAddr.hostname);
+)
+
+~bee2 = MKtl(\bee2, "*minibee1", false);
+// update with the address as seen in OSCMonitor or OSCFunc.trace:
+~bee2.mktlDevice.updateSrcAddr(~beeAddr.hostname);
+~bee2.mktlDevice.source;
+
+
+// func for faking OSC message from a given NetAddr:
+~fakeSendFrom = { |netaddr, msg, recvPort|
+recvPort = recvPort ?? NetAddr.langPort;
+thisProcess.recvOSCmessage(nil, netaddr, recvPort, msg);
+};
+
 OSCFunc.trace;
+~fakeSendFrom.(~beeAddr, ['/test', 1, 2, 3]);
 OSCFunc.trace(false);
 
+~bee1.trace;
+~bee2.trace;
+// now both bees match
+~fakeSendFrom.(~beeAddr, ['/minibee/data', 1, 1, 2, 3]);
 
-g = MKtl(\mini1, "minibee1");
-// update with the address seen in OSCMonitor or OSCFunc.trace:
-g.mktlDevice.updateSrcAddr("192.168.100.105", 54615);
+// lookup argTemplate ...
+~bee1.mktlDevice.oscFuncDictionary[\accel].argTemplate;
+// ... and update argTemplate for ~bee2 to number 2:
+~bee2.mktlDevice.oscFuncDictionary[\accel].argTemplate.put(0, 2);
 
-g.trace;
-g.trace(false);
+// this fake-sends from minibee1 instance 1 (argTemplate 1)
+~fakeSendFrom.(~beeAddr, ['/minibee/data', 1, 1, 2, 3]);
+// posts: MKtl('bee1') osc accel > [ 0.667, 0.833, 1 ] | type: nil
+
+~fakeSendFrom.(~beeAddr, ['/minibee/data', 2, 1, 2, 3]);
+// posts: MKtl('bee2') osc accel > [ 0.667, 0.833, 1 ] | type: nil
+
+// test different argTemplate value - no post
+~fakeSendFrom.(~beeAddr, ['/minibee/data', 42, 1, 2, 3]);
+// from different address, also no post
+~fakeSendFrom.(NetAddr.localAddr, ['/minibee/data', 1, 1, 2, 3]);
+
+
 */
 
 (
@@ -33,7 +73,7 @@ status: (
 	osx: "tested and working, subset of sensors only.",
 	win: "unknown"),
 
-netAddrInfo: ( srcPort: 12345, ipAddress: "1.2.3.4", recvPort: 57120 ),
+netAddrInfo: ( srcPort: nil, ipAddress: "1.2.3.4", recvPort: 57120 ),
 idInfo: "minibee1",
 
 specs: (
