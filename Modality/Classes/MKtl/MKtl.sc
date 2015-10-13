@@ -7,7 +7,7 @@ MKtl works as follows:
 * MKtlDesc loads or makes an MKtlDesc for the one that should be opened
 
 *  make MKtlElement from MKtlDesc.elementsDesc in multiple flavors:
-- elements      * hierarchical, = MKtlElementGroup
+- elementsGroup      * hierarchical, = MKtlElementGroup
 - elementsDict  * flat for fast access by element key
 
 * make mktlDevice
@@ -28,7 +28,7 @@ MKtl { // abstract class
 	var <desc;
 	var <specs;
 
-	var <elements;			// all elements in ElementGroup in hierarchical order
+	var <elementsGroup;			// all elements in ElementGroup in hierarchical order
 	var <elementsDict; 		// all elements in a single dict for fast access
 
 	var <collectivesDict; 	// has the collectives (combined elements and groups)
@@ -330,13 +330,16 @@ MKtl { // abstract class
 
 	disable { mktlDevice !? { mktlDevice.disable } }
 
+	// safety fallback for renamed elements -> elementsGroup
+	elements { ^elementsGroup }
+
 	makeElements {
 		var elementsToBuild = desc.elementsDesc;
 
 		elementsDict = ();
 
 		// array of dicts of arrays
-		elements = elementsToBuild.traverseCollect(
+		elementsGroup = elementsToBuild.traverseCollect(
 			doAtLeaf: { |desc, deepKeys|
 				var deepName = deepKeys.join($_).asSymbol;
 				var element = MKtlElement(deepName, desc, this);
@@ -345,13 +348,13 @@ MKtl { // abstract class
 			isLeaf: MKtlDesc.isElementTestFunc
 		);
 
-		// elements.keys.postcs;
+		// elementsGroup.keys.postcs;
 		MKtlElement.addGroupsAsParent = true;
 
-		if (elements.notEmpty) {
-			this.wrapCollElemsInGroups(elements);
+		if (elementsGroup.notEmpty) {
+			this.wrapCollElemsInGroups(elementsGroup);
 		};
-		elements = MKtlElementGroup(this.name, this, elements);
+		elementsGroup = MKtlElementGroup(this.name, this, elementsGroup);
 
 		MKtlElement.addGroupsAsParent = false;
 	}
@@ -410,18 +413,27 @@ MKtl { // abstract class
 			};
 		};
 		"/////// % .postElements : //////\n".postf(this);
-		postOne.value(elements);
+		postOne.value(elementsGroup);
 	}
 
 	elementAt { |...args|
-		^elements.deepAt(*args)
+		^elementsGroup.deepAt(*args)
+	}
+
+	collAt { |...args|
+		^collectivesDict.deepAt2(*args)
+	}
+
+	elAt { |...args|
+		^elementsGroup.deepAt2(*args)
+		?? { collectivesDict.deepAt2(*args) }
 	}
 
 	at { |index|
-		^elements.at( index );
+		^elementsGroup.at( index );
 	}
 
-	//////////////// interface to elements:
+	//////////////// interface to elementsGroup:
 	deviceValueAt { |elName|
 		if (elName.isKindOf(Collection).not) {
 			^elementsDict.at(elName).deviceValue;
@@ -539,7 +551,7 @@ MKtl { // abstract class
 		};
 		desc = newDesc;
 		this.init(desc);
-		this.changed( \elements );
+		this.changed( \elementsGroup );
 	}
 
 
@@ -645,7 +657,7 @@ MKtl { // abstract class
 	}
 
 	free {
-		elements = elementsDict = nil;
+		elementsGroup = elementsDict = nil;
 		this.closeDevice;
 		all.removeAt( name );
 

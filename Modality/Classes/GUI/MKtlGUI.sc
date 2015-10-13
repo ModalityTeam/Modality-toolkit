@@ -171,7 +171,7 @@ MKtlGUI {
 			});
 		};
 
-		views = mktl.elements.flat.collect({ |item|
+		views = mktl.elementsGroup.flat.collect({ |item|
 			var style, bounds, view = parent;
 			style = item.elemDesc[ \style ] ?? { ( row: 0, column: 0, width: 0, height: 0 ) };
 			if( pages.notNil && { item.elemDesc[ \page ].notNil }) {
@@ -235,7 +235,7 @@ MKtlGUI {
 	}
 
 	getNumRowsColumns {
-		^mktl.elements.flat.collect({ |item|
+		^mktl.elementsGroup.flat.collect({ |item|
 			var desc = item.elemDesc;
 			desc !? {
 				((desc[ \style ] ?? { ( row: 0, column: 0, width: 0, height: 0 ) })
@@ -248,7 +248,7 @@ MKtlGUI {
 	// assumes that pages are indices starting with 0,
 	// pages often are named, e.g. A, B, C, D on qunexus.
 	getNumPages {
-		^mktl.elements.flat.collect({ |item| item.elemDesc[ \page ] }).select(_.notNil).maxItem !? (_+1);
+		^mktl.elementsGroup.flat.collect({ |item| item.elemDesc[ \page ] }).select(_.notNil).maxItem !? (_+1);
 	}
 
 	layoutElements { |pages|
@@ -311,7 +311,7 @@ MKtlGUI {
 			};
 		};
 
-		scanFunc.(mktl.elements);
+		scanFunc.(mktl.elementsGroup);
 	}
 
 	updateGUI {
