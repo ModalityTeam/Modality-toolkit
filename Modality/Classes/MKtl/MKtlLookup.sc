@@ -101,7 +101,7 @@ MKtlLookup {
 		};
 		// "%: %\n".postf([endpoint, index, endPointType]);
 		if (infoToMergeTo.isNil) {
-			^MKtlLookup.addMIDI(endpoint, index, endPointType, midiAll);
+			^MKtlLookup.addMIDI(endpoint, midiAll.size, endPointType, midiAll);
 		};
 
 		if (endPointType == \src) {
