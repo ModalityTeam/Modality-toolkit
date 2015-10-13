@@ -167,7 +167,7 @@ MKtlLookup {
 
 		// if single device, exit here!
 		if ((numSources < 2) and: { numDests < 2 }) {
-			"\n%: single midi device -> to all: %\n\n".postf(thisMethod, info);
+		//	"\n%: single midi device -> to all: %\n\n".postf(thisMethod, info);
 			all.put(info.lookupName, info);
 			^this
 		};
@@ -208,7 +208,7 @@ MKtlLookup {
 			};
 		};
 
-		// unlikely case: we have some independent outs left over
+		// we have some independent outs left over
 		if (insOutsMatch.not) {
 			info.destDevice.do { |destdev, index|
 				var index1 = index + 1;
