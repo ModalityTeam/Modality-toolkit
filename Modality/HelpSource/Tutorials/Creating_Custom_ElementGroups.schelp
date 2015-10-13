@@ -1,0 +1,116 @@
+title:: Creating Custom ElementGroups
+summary:: Organize alternative groups of elements in an MKtl for particular purposes
+categories:: Libraries>Modality, Tutorials
+related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files
+
+section:: Background
+MKtl objects contain a hierarchical organisation of their interaction elements
+in MKtl.elementsGroup. This group contains and defines every element once, and one can access every element directly by its element key, or by its hierarchical address. At times there are multiple possibilities for thinking of ways to group these elements, and MKtl supports multiple such orders.
+The examples below show that for two simple cases.
+
+section:: Examples
+code::
+// make a nanokontrol2
+n = MKtl(\nk, "korg-*ol2");
+n.gui;
+n.trace;
+
+// the logical organization of elements and their direct names:
+n.postElements;
+
+
+// it has five transport buttons which are flat in the top level of
+n.elementsGroup;
+
+(
+// put those buttons in a new group:
+x = MKtlElementGroup(\transport, n, n.elementAt([\rew, \fwd, \stop, \play, \rec]));
+// and add that group to collectives
+n.collectivesDict.put(\transport, x);
+)
+
+// access directly
+n.elementAt(\rew);
+// or access from new group
+x[\rew];
+
+// access in collectivesDict
+n.collAt(\transport);
+n.collAt(\transport, 4); // by index
+n.collAt(\transport, \stop); // or name/key
+
+// elAt looks first in elementsGroup, then in collectives
+n.elAt(\rew);
+n.elAt(\transport, \rew);
+n.elAt(\transport, \nopey); // returns nil for not found, no error
+::
+
+
+The nanokontrol is actually structured like a mixer, so rather than grouping sliders, knobs and buttons in separate groups, one could also make a group of each of the 8 mixer channels, with each containing a knob, a slider and 3 buttons.
+
+code::
+
+(
+// needed for lookup by name
+MKtlElementGroup.addGroupsAsParent = true;
+
+// nested - the top group is mixchan,
+y = MKtlElementGroup(\mixchan, n,
+	8.collect { |i|
+		// inner group is a list of 8 channels, index 0-7
+		MKtlElementGroup(i, n,
+			// note the assocs which are needed for access by name later!
+			[ 	\kn -> n.elementAt(\kn, i),
+				\sl -> n.elementAt(\sl, i),
+				\bt_S -> n.elementAt(\bt, 0, i),
+				\bt_M -> n.elementAt(\bt, 1, i),
+				\bt_R -> n.elementAt(\bt, 2, i)
+			]
+		)
+	};
+);
+MKtlElementGroup.addGroupsAsParent = false;
+
+n.collectivesDict.put(\mixchan, y);
+)
+
+// access variants
+n.collectivesDict[\mixchan];
+n.collAt(\mixchan);
+// index 0 is channel 1...
+n.collAt(\mixchan, 0, 0);
+n.collAt(\mixchan, 0, \bt_R);
+
+
+
+// same example, but make symbolic names for the channels as well
+(
+MKtlElementGroup.addGroupsAsParent = true;
+// bigger example - make a group of 8 mixerChan groups:
+y = MKtlElementGroup(\mixchan, n,
+	8.collect { |i|
+		var chanName = ("ch_" ++ (i + 1)).asSymbol;
+		chanName -> MKtlElementGroup(chanName, n,
+			[ 	\kn -> n.elementAt(\kn, i),
+				\sl -> n.elementAt(\sl, i),
+				\bt_S -> n.elementAt(\bt, 0, i),
+				\bt_M -> n.elementAt(\bt, 1, i),
+				\bt_R -> n.elementAt(\bt, 2, i)
+			]
+		)
+	};
+);
+MKtlElementGroup.addGroupsAsParent = false;
+
+n.collectivesDict.put(\mixchan, y);
+)
+
+// access variants
+n.collectivesDict[\mixchan];
+n.collAt(\mixchan);
+
+n.elAt(\mixchan, 'ch_1');
+n.elAt(\mixchan, 0);
+n.elAt(\mixchan, 'ch_1', \bt_R);
+n.elAt(\bt, 0, 0);
+::
