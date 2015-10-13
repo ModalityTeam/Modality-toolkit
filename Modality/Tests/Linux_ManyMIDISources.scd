@@ -44,4 +44,3 @@ MKtlLookup.all.sortedKeysValuesDo { |key, val|
 MKtl(\x, "korg-nanokontrol");
 MKtl(\br1, "behringer-bcr2000");
 
-MKtlLookup.midiAll.midi_3_nanokontrol
