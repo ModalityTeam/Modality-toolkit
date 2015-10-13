@@ -79,7 +79,8 @@ MKtlElementGroup : MKtlElement {
 		if( index.size > 0 ) {
 			^index.collect({ |item| this.at( item ) });
 		} {
-			^elements.detect({ |item| item.key === index }) ?? { elements[ index ]; }
+			^elements.detect({ |item| item.key === index })
+			?? { if (index.isKindOf(Integer)) { elements[ index ] }; }
 		};
 	}
 
@@ -169,6 +170,20 @@ MKtlElementGroup : MKtlElement {
 				[el.name, el.value]
 			} { el.value }
 		}
+	}
+
+	postElements {
+		var postOne = { |elemOrGroup, index, depth = 0|
+			depth.do { $\t.post; };
+			index.post; $\t.post;
+			if (elemOrGroup.isKindOf(MKtlElementGroup)) {
+				"Group: ".post; elemOrGroup.name.postcs;
+				elemOrGroup.do({ |item, i| postOne.value(item, i, depth + 1) });
+			} {
+				elemOrGroup.name.postcs;
+			};
+		};
+		postOne.value(this, "-");
 	}
 
 	valueAction_ {|newvals|

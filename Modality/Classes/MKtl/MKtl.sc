@@ -402,18 +402,8 @@ MKtl { // abstract class
 	}
 
 	postElements {
-		var postOne = { |elemOrGroup, index, depth = 0|
-			if (elemOrGroup.isKindOf(MKtlElementGroup)) {
-				depth.do { $\t.post; };
-				"Group: ".post; elemOrGroup.name.postln;
-				elemOrGroup.do({ |item, i| postOne.value(item, i, depth + 1) });
-			} {
-				depth.do { $\t.post; };
-				elemOrGroup.name.postln;
-			};
-		};
 		"/////// % .postElements : //////\n".postf(this);
-		postOne.value(elementsGroup);
+		elementsGroup.postElements;
 	}
 
 	elementAt { |...args|
