@@ -22,11 +22,12 @@ deviceInfo: (
 ),
 
 description: [
-	\rew -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 43, \spec: \midiBut, \mode: \push, \ioType: \inout, \style: (row: 3, showLabel: true) ),
-	\fwd -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 44, \spec: \midiBut, \mode: \push, \ioType: \inout, \style: (row: 3, showLabel: true)),
-	\stop -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 42, \spec: \midiBut, \mode: \push, \ioType: \inout, \style: (row: 3, showLabel: true)),
-	\play -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 41, \spec: \midiBut, \mode: \push, \ioType: \inout, \style: (row: 3, showLabel: true)),
-	\rec -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 45, \spec: \midiBut, \mode: \push, \ioType: \inout, \style: (row: 3, showLabel: true)),
+	\rew -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 43, \spec: \midiBut, \mode: \push, \ioType: \inout, \style: (row: 3, column: 0, showLabel: true) ),
+	\fwd -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 44, \spec: \midiBut, \mode: \push, \ioType: \inout, \style: (row: 3, column: 1, showLabel: true)),
+	\stop -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 42, \spec: \midiBut, \mode: \push, \ioType: \inout, \style: (row: 3, column: 2, showLabel: true)),
+	\play -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 41, \spec: \midiBut, \mode: \push, \ioType: \inout, \style: (row: 3, column: 3, showLabel: true)),
+	\rec -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 45, \spec: \midiBut, \mode: \push, \ioType: \inout, \style: (row: 3, column: 4, showLabel: true)),
+
 	\cycle -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 46, \spec: \midiBut, \mode: \push, \ioType: \inout, \style: (row: 2.125, column: 0, height: 0.75, showLabel: true)),
 	\mset -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 60, \spec: \midiBut, \mode: \push, \ioType: \inout, \label: "set", \style: (row: 2.125, column: 2, height: 0.75, showLabel: true)),
 	\mleft -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 61, \spec: \midiBut, \mode: \push, \ioType: \inout, \label: "<", \style: (row: 2.125, column: 3, height: 0.75, showLabel: true)),
