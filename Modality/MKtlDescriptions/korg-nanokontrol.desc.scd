@@ -33,12 +33,12 @@ deviceInfo: (
 description: [
 
 	// the same in all scenes:
-	\rew ->  (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 47, \spec: \midiBut, \mode: \push, style: (\row: 1.5, \showLabel: true )),
-	\play -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 45, \spec: \midiBut, \mode: \push, style: ( \showLabel: true )),
-	\fwd -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 48, \spec: \midiBut, \mode: \push, style: ( \showLabel: true )),
-	\loop -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 49, \spec: \midiBut, \mode: \push, style: ( \row: 2.5, \column: 0, \showLabel: true )),
-	\stop -> (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 46, \spec: \midiBut, \mode: \push, style: ( \showLabel: true )),
-	\rec ->  (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 44, \spec: \midiBut, \mode: \push, style: ( \showLabel: true )),
+	\rew ->  (\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum: 47, \spec: \midiBut, \mode: \push, style: (\row: 1.5, \showLabel: true )),
+	\play -> (\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum: 45, \spec: \midiBut, \mode: \push, style: ( \showLabel: true )),
+	\fwd -> (\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum: 48, \spec: \midiBut, \mode: \push, style: ( \showLabel: true )),
+	\loop -> (\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum: 49, \spec: \midiBut, \mode: \push, style: ( \row: 2.5, \column: 0, \showLabel: true )),
+	\stop -> (\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum: 46, \spec: \midiBut, \mode: \push, style: ( \showLabel: true )),
+	\rec ->  (\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum: 44, \spec: \midiBut, \mode: \push, style: ( \showLabel: true )),
 
 	\kn -> [
 		[ (14..22), 0 ! 9 ],
@@ -47,7 +47,7 @@ description: [
 		[ 10 ! 9, (0..8) ]
 	].collect { |page, iii|
 		page.flop.collect { |xs, i|
-			(\midiMsgType: \cc, \type: \knob, \midiChan: xs[1], \midiNum: xs[0], \spec: \midiCC, \style: ( \row: 0, \column: (i*2) + 4 ), \page: iii )
+			(\midiMsgType: \cc, \elementType: \knob, \midiChan: xs[1], \midiNum: xs[0], \spec: \midiCC, \style: ( \row: 0, \column: (i*2) + 4 ), \page: iii )
 		}
 	},
 
@@ -59,7 +59,7 @@ description: [
 	].collect { |page, iii|
 		page.collect { |row, ii|
 			row.flop.collect { |xs, i|
-				(\midiMsgType: \cc, \type: \button, \midiChan: xs[1], \midiNum:  xs[0], \spec: \midiCC, \style: ( \row: [1,3][ii], \column: (i*2) + 3 ), \page: iii )
+				(\midiMsgType: \cc, \elementType: \button, \midiChan: xs[1], \midiNum:  xs[0], \spec: \midiCC, \style: ( \row: [1,3][ii], \column: (i*2) + 3 ), \page: iii )
 			}
 		}
 	},
@@ -71,7 +71,7 @@ description: [
 		[ 7 ! 9, (0..8) ]
 	].collect { |page, iii|
 		page.flop.collect { |xs, i|
-			(\midiMsgType: \cc, \type: \slider, \midiChan: xs[1], \midiNum: xs[0], \spec: \midiCC, \style: ( \row: 1, \column: (i*2) + 4 ), \page: iii )
+			(\midiMsgType: \cc, \elementType: \slider, \midiChan: xs[1], \midiNum: xs[0], \spec: \midiCC, \style: ( \row: 1, \column: (i*2) + 4 ), \page: iii )
 		}
 	},
 

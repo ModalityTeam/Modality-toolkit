@@ -39,12 +39,12 @@ collectives: (
 ),
 description: (
 	\accel: (
-		\x: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' ),
-		\y: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' ),
-		\z: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' )
+		\x: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' ),
+		\y: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' ),
+		\z: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' )
 	),
 	\in: 4.collect{|i|
-		(type: 'bender', ioType: \collectiveIn, \spec: 'ins' )
+		(elementType: 'bender', ioType: \collectiveIn, \spec: 'ins' )
 	}
 )
 )

@@ -68,14 +68,14 @@ description:
 (
 // ------ noteOnOff -------------
 
-'shift': ('midiMsgType': 'noteOnOff', 'type': 'key', 'midiChan': 0, 'midiNum':  70, 'spec': 'midiBut'),
-'curveSetup': ('midiMsgType': 'noteOnOff', 'type': 'key', 'midiChan': 0, 'midiNum':  114, 'spec': 'midiNote'),
-'4velMode': ('midiMsgType': 'noteOnOff', 'type': 'key', 'midiChan': 0, 'midiNum':  115, 'spec': 'midiNote'),
-'browse': ('midiMsgType': 'noteOnOff', 'type': 'key', 'midiChan': 0, 'midiNum':  58, 'spec': 'midiNote'),
+'shift': ('midiMsgType': 'noteOnOff', 'elementType': 'key', 'midiChan': 0, 'midiNum':  70, 'spec': 'midiBut'),
+'curveSetup': ('midiMsgType': 'noteOnOff', 'elementType': 'key', 'midiChan': 0, 'midiNum':  114, 'spec': 'midiNote'),
+'4velMode': ('midiMsgType': 'noteOnOff', 'elementType': 'key', 'midiChan': 0, 'midiNum':  115, 'spec': 'midiNote'),
+'browse': ('midiMsgType': 'noteOnOff', 'elementType': 'key', 'midiChan': 0, 'midiNum':  58, 'spec': 'midiNote'),
 
 // ------ cc -------------
 // relative: clockwise = 1, faster is 2, 3, 4; ccw is 65 .. 66, 67, 68..72
 
-'kn': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  60,'spec': 'midiRel'),
+'kn': ('midiMsgType': 'cc', 'elementType': 'slider', 'midiChan': 0, 'midiNum':  60,'spec': 'midiRel'),
 )
 );

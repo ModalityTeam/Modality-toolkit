@@ -102,21 +102,21 @@ description: (
 			con: (
 				oscPath: '/manta/continuous/pad',
 				argTemplate: [ id ],
-				type: 'pad',
+				elementType: 'pad',
 				spec: 'mantaTouch',
 				ioType: \in
 			),
 			vel: (
 				oscPath: '/manta/velocity/pad',
 				argTemplate: [ id ],
-				type: 'pad',
+				elementType: 'pad',
 				spec: 'mantaTouch',
 				ioType: \in
 			),
 			led: (
 				oscPath: '/manta/led/pad',
 				argTemplate: [ nil, id ],
-				type: 'led',
+				elementType: 'led',
 				spec: 'mantaLed',
 				ioType: \out
 			);
@@ -127,21 +127,21 @@ description: (
 			con: (
 				oscPath: '/manta/continuous/button',
 				argTemplate: [ id ],
-				type: 'pad',
+				elementType: 'pad',
 				spec: 'mantaTouch',
 				ioType: \in
 			),
 			vel: (
 				oscPath: '/manta/velocity/button',
 				argTemplate: [ id ],
-				type: 'pad',
+				elementType: 'pad',
 				spec: 'mantaTouch',
 				ioType: \in
 			),
 			led: (
 				oscPath: '/manta/led/button',
 				argTemplate: [ nil, id ],
-				type: 'led',
+				elementType: 'led',
 				spec: 'mantaLed',
 				ioType: \out
 			);
@@ -153,7 +153,7 @@ description: (
 			con: (
 				oscPath: '/manta/continuous/slider',
 				argTemplate: [ id ],
-				type: 'slider',
+				elementType: 'slider',
 				spec: 'mantaSlider',
 				ioType: \in
 			),
@@ -161,7 +161,7 @@ description: (
 				(
 					oscPath: '/manta/led/slider',
 					argTemplate: [ nil, id, jd ],
-					type: 'led',
+					elementType: 'led',
 					spec: 'mantaLed',
 					ioType: \out
 				);

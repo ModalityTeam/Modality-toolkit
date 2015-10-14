@@ -59,21 +59,21 @@ description: (
 // ------ noteOnOff -------------
 'pad': (
 	\1: [35, 36, 38, 40,   39,44,42,46,   41,45,47,48,  51,55,49,56]
-	.collect { |num| ('midiMsgType': 'noteOnOff', 'type': 'pad',
+	.collect { |num| ('midiMsgType': 'noteOnOff', 'elementType': 'pad',
 		'midiChan': 0, 'midiNum': num, 'spec': 'midiVel') },
-	\2: (4..19)   .collect { |num| ('midiMsgType': 'noteOnOff', 'type': 'pad',
+	\2: (4..19)   .collect { |num| ('midiMsgType': 'noteOnOff', 'elementType': 'pad',
 		'midiChan': 0, 'midiNum': num, 'spec': 'midiVel') },
-	\3: (20..35)  .collect { |num| ('midiMsgType': 'noteOnOff', 'type': 'pad',
+	\3: (20..35)  .collect { |num| ('midiMsgType': 'noteOnOff', 'elementType': 'pad',
 		'midiChan': 0, 'midiNum': num, 'spec': 'midiVel') },
-	\4: (36..51)  .collect { |num| ('midiMsgType': 'noteOnOff', 'type': 'pad',
+	\4: (36..51)  .collect { |num| ('midiMsgType': 'noteOnOff', 'elementType': 'pad',
 		'midiChan': 0, 'midiNum': num, 'spec': 'midiVel') },
-	\5: (52..67)  .collect { |num| ('midiMsgType': 'noteOnOff', 'type': 'pad',
+	\5: (52..67)  .collect { |num| ('midiMsgType': 'noteOnOff', 'elementType': 'pad',
 		'midiChan': 0, 'midiNum': num, 'spec': 'midiVel') },
-	\6: (68..83)  .collect { |num| ('midiMsgType': 'noteOnOff', 'type': 'pad',
+	\6: (68..83)  .collect { |num| ('midiMsgType': 'noteOnOff', 'elementType': 'pad',
 		'midiChan': 0, 'midiNum': num, 'spec': 'midiVel') },
-	\7: (84..99)  .collect { |num| ('midiMsgType': 'noteOnOff', 'type': 'pad',
+	\7: (84..99)  .collect { |num| ('midiMsgType': 'noteOnOff', 'elementType': 'pad',
 		'midiChan': 0, 'midiNum': num, 'spec': 'midiVel') },
-	\8: (100..115).collect { |num| ('midiMsgType': 'noteOnOff', 'type': 'pad',
+	\8: (100..115).collect { |num| ('midiMsgType': 'noteOnOff', 'elementType': 'pad',
 		'midiChan': 0, 'midiNum': num, 'spec': 'midiVel') }
 )
 )

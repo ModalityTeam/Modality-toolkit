@@ -85,14 +85,14 @@ collectives: (
 	// replace wildcard later with nameTag as set in iphone used.
 description: (
 	\accel: (
-		\x: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' ),
-		\y: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' ),
-		\z: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' )
+		\x: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' ),
+		\y: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' ),
+		\z: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' )
 	),
 	\gyro: (
-		\pitch: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'gyroAxis' ),
-		\roll: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'gyroAxis' ),
-		\yaw: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'gyroAxis' )
+		\pitch: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'gyroAxis' ),
+		\roll: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'gyroAxis' ),
+		\yaw: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'gyroAxis' )
 	)
 	// similar for comp, matrix, rrate, quat, grav, mag, gps
 )

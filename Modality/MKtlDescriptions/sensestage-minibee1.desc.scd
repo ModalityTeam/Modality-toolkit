@@ -99,9 +99,9 @@ collectives: (
 ),
 description: (
 	\accel: (
-		\x: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' ),
-		\y: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' ),
-		\z: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' )
+		\x: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' ),
+		\y: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' ),
+		\z: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' )
 	)
 )
 )

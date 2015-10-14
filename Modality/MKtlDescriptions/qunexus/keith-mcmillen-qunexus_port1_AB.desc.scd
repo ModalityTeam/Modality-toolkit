@@ -35,18 +35,18 @@ description: (
 	// ------ noteOn -------------
 
 	keyOn: (24..108).collect { |midinote|
-		('midiMsgType': 'noteOn', 'type': 'pianoKey', 'midiChan': 0, 'midiNum':  midinote, 'spec': 'midiNote', preset: \B) },
+		('midiMsgType': 'noteOn', 'elementType': 'pianoKey', 'midiChan': 0, 'midiNum':  midinote, 'spec': 'midiNote', preset: \B) },
 	// ---------noteOff ----------
 	keyOff: (24..108).collect { |midinote|
-		('midiMsgType': 'noteOff', 'type': 'pianoKey', 'midiChan': 0, 'midiNum':  midinote, 'spec': 'midiNote', preset: \B)
+		('midiMsgType': 'noteOff', 'elementType': 'pianoKey', 'midiChan': 0, 'midiNum':  midinote, 'spec': 'midiNote', preset: \B)
 	},
 
 	// ------- bend ------------
-	'bend': ('midiMsgType': 'bend', 'type': 'bender', 'midiChan': 0, 'midiNum':  0,'spec': 'midiBend', preset: \B),
+	'bend': ('midiMsgType': 'bend', 'elementType': 'bender', 'midiChan': 0, 'midiNum':  0,'spec': 'midiBend', preset: \B),
 
 
 // Preset B mode only adds single channel pressure from all keys :
 // ------- cc ------------
-'monotouch': ('midiMsgType': 'cc', 'type': 'keyTouch', 'midiChan': 0, 'midiNum':  1,'spec': 'midiCC', preset: \B)
+'monotouch': ('midiMsgType': 'cc', 'elementType': 'keyTouch', 'midiChan': 0, 'midiNum':  1,'spec': 'midiCC', preset: \B)
 )
 )

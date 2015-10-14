@@ -24,26 +24,26 @@ deviceInfo: (
 ),
 description: (
 	\kn: Event.newFrom( (1..8).collect{ |midiNum, i|
-		[ (i+1).asSymbol, (\midiMsgType: \cc, \type: \knob, \midiChan: 0, \midiNum: midiNum, \spec: \midiCC, \ioType: \inout ) ]
+		[ (i+1).asSymbol, (\midiMsgType: \cc, \elementType: \knob, \midiChan: 0, \midiNum: midiNum, \spec: \midiCC, \ioType: \inout ) ]
 	}.flatten ),
 	\pad: (
 		\on: Event.newFrom( (36..43).collect{ |note, i|
 			[
 				(i+1).asSymbol,
-				(\midiMsgType: \noteOn, \type: \pad, \midiChan: 0, \midiNum:  note, \spec: \midiVel, \ioType: \inout)
+				(\midiMsgType: \noteOn, \elementType: \pad, \midiChan: 0, \midiNum:  note, \spec: \midiVel, \ioType: \inout)
 			]
 		}.flatten ),
 		\off: Event.newFrom( (36..43).collect{ |note, i|
 			[
 				(i+1).asSymbol,
-				(\midiMsgType: \noteOff, \type: \pad, \midiChan: 0, \midiNum:  note, \spec: \midiVel, \ioType: \inout)
+				(\midiMsgType: \noteOff, \elementType: \pad, \midiChan: 0, \midiNum:  note, \spec: \midiVel, \ioType: \inout)
 			]
 		}.flatten )
 	),
 	/*
 	//no pad cc because it uses the same cc numbers as knobs... dugh...
 	\padCC: ((1..6)++[8,9]).collect{ |cc|
-	(\midiMsgType: \cc, \type: \pad, \midiChan: 0, \midiNum:  cc, \spec: \midiCC)
+	(\midiMsgType: \cc, \elementType: \pad, \midiChan: 0, \midiNum:  cc, \spec: \midiCC)
 	}*/
 );
 );

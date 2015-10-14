@@ -78,19 +78,19 @@ description: [
 	\sl -> (1..4).collect { |num|
 		(
 			oscPath: "/1/fader%".format(num).asSymbol,
-			type: \slider, spec: \unipolar, ioType: \in
+			elementType: \slider, spec: \unipolar, ioType: \in
 		)
 	},
 	\bt -> (1..4).collect { |num|
 		(
 			oscPath: "/1/toggle%".format(num).asSymbol,
-			type: \button, spec: \but, ioType: \in
+			elementType: \button, spec: \but, ioType: \in
 		)
 	},
 	\accel -> (
-		\x: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'accx' ),
-		\y: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'accx' ),
-		\z: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'accx' )
+		\x: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accx' ),
+		\y: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accx' ),
+		\z: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accx' )
 	)
 ]
 );
