@@ -36,7 +36,7 @@ ioType: \inout,
 // e.g. for midi controls, this is \midiCC,
 // which is [0, 127, \lin, 1, 0].asSpec;
 spec: \midiCC,
-// for hid buttons:
+// hid buttons send values of 0 or 1, which is reflected here:
 spec: \hidBut,
 // or just
 spec: \but,

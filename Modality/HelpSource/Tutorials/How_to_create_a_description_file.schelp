@@ -1,7 +1,7 @@
 title:: How to create a description file
 summary:: How to create a description file to use with the Modality toolkit.
 categories:: Libraries>Modality
-related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Classes/MIDIExplorer, Classes/HIDExplorer
+related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Classes/MIDIExplorer, Classes/HIDExplorer, Reference/Naming_conventions_in_element_descriptions
 
 Section:: Introduction
 
@@ -70,7 +70,7 @@ such as button, slider, joyAxis, mouseWheel, or any of:
 
 code::MKtlElement.types::
 
-For multiple elements, one can make groups, which is helpful for sematinc clarity.
+For multiple elements, one can make groups, which is helpful for semantic clarity.
 
 For example, an MKtl with 5 sliders and 4 buttons, and labeled buttons (play and stop) would look like this:
 
@@ -102,6 +102,9 @@ m.elementAt(\sl, 1).valueAction_(1.0.rand);
 
 m.free; // free m's resources and remove it from MKtl.all
 ::
+
+For full details on single element description see also:
+link::Reference/Naming_conventions_in_element_descriptions::
 
 
 section:: Finding descriptions for similar devices

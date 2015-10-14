@@ -1,7 +1,7 @@
 title:: MKtl description files
 summary:: describes the format for MKtl desc files and the entries in them.
 categories:: Libraries>Modality
-related:: Overviews/Modality, Classes/MKtl, Tutorials/How_to_create_a_description_file
+related:: Overviews/Modality, Classes/MKtl, Tutorials/How_to_create_a_description_file, Reference/Naming_conventions_in_element_descriptions
 
 A description file contains detailed information about a controller, so it can be used to full advantage in Modality. Especially, precise information about each of its interaction elements (sliders, knobs, imus, and what-have-yous) help to create good performance setups very efficiently.
 
@@ -97,6 +97,9 @@ list::
 ## creates and sends a one-dimensional stream of values when played,
 ## accepts a one-dimensional stream of values when sent from software.
 ::
+
+For full details on single element description see also:
+link::Reference/Naming_conventions_in_element_descriptions::
 
 An element description is a dict (or event) containing these entries:
 DEFINITIONLIST::
