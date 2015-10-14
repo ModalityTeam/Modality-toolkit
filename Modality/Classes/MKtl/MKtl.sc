@@ -465,6 +465,27 @@ MKtl { // abstract class
 		};
 	}
 
+	// interface for presets
+	getKeysValues { |keys|
+		keys = keys ?? { elementsDict.keys(SortedList) };
+		^keys.collect { |key| [key, elementsDict[key].value] };
+	}
+
+	setKeysValues { |pairs|
+		pairs.do { |pair|
+			var elem = elementsDict[pair[0]];
+			if (elem.notNil) { elem.value_(pair[1]) };
+		};
+	}
+
+	setKVAction { |pairs|
+		pairs.do { |pair|
+			var elem = elementsDict[pair[0]];
+			if (elem.notNil) { elem.valueAction_(pair[1]) };
+		};
+	}
+
+
 	reset {
 		elementsDict.do( _.resetAction )
 	}

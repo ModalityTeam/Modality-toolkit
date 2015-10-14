@@ -313,7 +313,9 @@ HIDMKtlDevice : MKtlDevice {
 		};
 
 		hidElem = hidElemDict[key];
-		hidElem.value = val;
+		if (hidElem.notNil) {
+			hidElem.value = val;
+		};
 	}
 
 	// no cases yet in MKtlDesc folder
