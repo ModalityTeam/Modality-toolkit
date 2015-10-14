@@ -34,7 +34,7 @@ INSTANCEMETHODS::
 METHOD:: deviceSpec
 The spec that maps between the device's numerical value and the the unipolar range in the MKtlElement.
 
-private:: init, setSpecFromDesc
+private:: init, setSpecFromDesc, updateDescription
 
 METHOD:: defaultValue
 The element's default value
@@ -91,6 +91,29 @@ and the actions of its parents, up to the containing MKtl.
 
 argument:: sendValue
 Whether or not to send the value out to the device if this is an output element.
+
+Method:: enabled
+ask whether this element's action is currently enabled
+Method:: enable, disable
+enable and disable this element's action. works hierarchically in MKtlElementGroup as well:
+code::
+make a
+g = MKtl(\fer, "*run*drive"); g.gui;
+g.dictAt(\wheel).action = { |el| [el.name, el.value.round(0.001)].postln };
+g.elAt(\wheel).disable;
+g.elAt(\wheel).enable;
+
+// set action for bt group and bt_1:
+g.elAt(\bt).action = { |el| [\bt, el.name, el.value.round(0.001)].postln };
+g.dictAt(\bt_1).action = { "yo, 1!".postln };
+// bt1 posts from two actions!
+// disable group: bt1 posts its action, not group action
+g.elAt(\bt).disable;
+// disable bt 1, enable group:
+g.elAt(\bt, 0).disable; g.elAt(\bt).enable;
+// disable all individual button actions:
+g.elAt(\bt).do(_.enable);
+::
 
 
 METHOD:: resetAction

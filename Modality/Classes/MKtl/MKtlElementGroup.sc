@@ -257,7 +257,7 @@ MKtlElementGroup : MKtlElement {
 
 	doAction { |...children|
 		children = children.add( this );
-		action.value( *children );
+		if (enabled) { action.value( *children ) };
 		parent !? _.doAction( *children );
 		groups.do( _.doAction( *children ) );
 		this.changed( \doAction, *children );

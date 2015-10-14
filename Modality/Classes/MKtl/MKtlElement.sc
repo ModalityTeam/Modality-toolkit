@@ -17,6 +17,7 @@ MAbstractElement {
 	var <ioType; // can be \in, \out, \inout
 
 	var <>action;
+	var <>enabled = true;
 
 	// keep current and previous value here
 	var <deviceValue;
@@ -106,8 +107,11 @@ MAbstractElement {
 
 	timeSinceLast { ^Process.elapsedTime - lastUpdateTime }
 
+	enable { enabled = true }
+	disable { enabled = false }
+
 	doAction {
-		action.value( this );
+		if (enabled) { action.value( this ) };
 		parent !? _.doAction( this );
 		groups.do( _.doAction( this ) );
 	}
