@@ -227,7 +227,7 @@ MKtlElement : MAbstractElement {
 		};
 		// fill instvars
 		elemDesc = dict;
-		type = elemDesc[\type];
+		type = elemDesc[\elementType] ? elemDesc[\type];
 		ioType = elemDesc[\ioType] ? \in;
 
 		this.setSpecFromDesc(dict);
@@ -273,7 +273,7 @@ MKtlElement : MAbstractElement {
 		};
 		// sync back if these changed
 		this.deviceSpec_(dict[\spec]);
-		type = elemDesc[\type];
+		type = elemDesc[\elementType] ? elemDesc[\type];
 		ioType = elemDesc[\ioType] ? \in;
 	}
 

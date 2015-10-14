@@ -1,6 +1,6 @@
 + MKtl {
 	checkAllCtls {
-		if(mktlDevice.notNil) { mktlDevice.checkAllCtls }
+		if(device.notNil) { device.checkAllCtls }
 	}
 }
 

@@ -24,7 +24,7 @@ OSCFunc.trace(false);
 
 g = MKtl(\gyr, "gyrosc*");
 // update with the address seen in OSCMonitor or OSCFunc.trace:
-g.mktlDevice.updateSrcAddr("192.168.178.53", 60329);
+g.device.updateSrcAddr("192.168.178.53", 60329);
 
 g.trace;
 g.trace(false);

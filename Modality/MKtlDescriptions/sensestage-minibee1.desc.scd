@@ -19,13 +19,13 @@ o.disable:
 ~beeAddr = NetAddr("192.168.100.105", 54615);
 ~bee1 = MKtl(\bee1, "*minibee1");
 // update with the address as seen in OSCMonitor or OSCFunc.trace:
-~bee1.mktlDevice.updateSrcAddr(~beeAddr.hostname);
+~bee1.device.updateSrcAddr(~beeAddr.hostname);
 )
 
 ~bee2 = MKtl(\bee2, "*minibee1", false);
 // update with the address as seen in OSCMonitor or OSCFunc.trace:
-~bee2.mktlDevice.updateSrcAddr(~beeAddr.hostname);
-~bee2.mktlDevice.source;
+~bee2.device.updateSrcAddr(~beeAddr.hostname);
+~bee2.device.source;
 
 
 // func for faking OSC message from a given NetAddr:
@@ -44,9 +44,9 @@ OSCFunc.trace(false);
 ~fakeSendFrom.(~beeAddr, ['/minibee/data', 1, 1, 2, 3]);
 
 // lookup argTemplate ...
-~bee1.mktlDevice.oscFuncDictionary[\accel].argTemplate;
+~bee1.device.oscFuncDictionary[\accel].argTemplate;
 // ... and update argTemplate for ~bee2 to number 2:
-~bee2.mktlDevice.oscFuncDictionary[\accel].argTemplate.put(0, 2);
+~bee2.device.oscFuncDictionary[\accel].argTemplate.put(0, 2);
 
 // this fake-sends from minibee1 instance 1 (argTemplate 1)
 ~fakeSendFrom.(~beeAddr, ['/minibee/data', 1, 1, 2, 3]);

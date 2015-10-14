@@ -10,8 +10,8 @@ MKtl works as follows:
 - elementGroup      * hierarchical, = MKtlElementGroup
 - elementsDict  * flat for fast access by element key
 
-* make mktlDevice
-- if matching hardware is present, make mktlDevice, and open it
+* make MKtl.device
+- if matching hardware is present, make device, and open it
 - else this becomes a virtual MKtl which does all the real device does
 
 */
@@ -35,7 +35,7 @@ MKtl { // abstract class
 	// from the device description
 
 	var <midiPortNameIndex;  // only needed when multiple midi ports
-	var <mktlDevice; // interface to the connected device(s).
+	var <device; // interface to the connected device(s).
 
 	var <traceRunning = false;
 	// used to find its info in MKtlLookup:
@@ -316,8 +316,8 @@ MKtl { // abstract class
 	}
 
 	enable { |sync = true|
-		mktlDevice !? {
-			mktlDevice.enable;
+		device !? {
+			device.enable;
 			if (sync) { this.sync }
 		}
 	}
@@ -328,10 +328,17 @@ MKtl { // abstract class
 		elementsDict.do { |el| el.value_(el.value); }
 	}
 
-	disable { mktlDevice !? { mktlDevice.disable } }
+	disable { device !? { device.disable } }
 
 	// safety fallback for renamed elements -> elementGroup
-	elements { ^elementGroup }
+	elements {
+		this.deprecated(thisMethod, Document.findMethod(\elementGroup));
+		^elementGroup
+	}
+	mktlDevice {
+		this.deprecated(thisMethod, Document.findMethod(\device));
+		^device
+	}
 
 	makeElements {
 		var elementsToBuild = desc.elementsDesc;
@@ -534,10 +541,10 @@ MKtl { // abstract class
 		};
 
 		// close old device
-		if (mktlDevice.notNil) {
-			mktlDevice.closeDevice;
-			mktlDevice.cleanupElementsAndCollectives;
-			mktlDevice = nil;
+		if (device.notNil) {
+			device.closeDevice;
+			device.cleanupElementsAndCollectives;
+			device = nil;
 		};
 		desc = newDesc;
 		this.init(desc);
@@ -550,7 +557,7 @@ MKtl { // abstract class
 
 	openDevice { |lookAgain=true, multiIndex|
 		var protocol;
-		if ( this.mktlDevice.notNil ) {
+		if ( this.device.notNil ) {
 			"%: Device already opened.\n"
 			"Please close it first with %.closeDevice;\n"
 			.format(this, this).warn;
@@ -562,45 +569,45 @@ MKtl { // abstract class
 		protocol = desc !? { desc.protocol };
 		MKtlDevice.initHardwareDevices( lookAgain, protocol);
 
-		mktlDevice = MKtlDevice.open( this.name, this, multiIndex );
+		device = MKtlDevice.open( this.name, this, multiIndex );
 		if(this.hasDevice.not) {
 			inform("%.openDevice: remaining virtual.".format(this));
 		}
 	}
 
 	hasDevice {
-		^mktlDevice.notNil
+		^device.notNil
 	}
 
 		// obsolete I think
 	// // only for MIDI, to support multiple identical devices
 	// listenTo { |srcIDindex|
 	// 	if (this.hasDevice.not) {
-	// 		"no mktlDevice.".postln
+	// 		"no device.".postln
 	// 		^this
 	// 	};
 	// 	// only for MIDI so far
-	// 	mktlDevice.initElements(srcIDindex);
+	// 	device.initElements(srcIDindex);
 	// }
 	//
 	// // only for MIDI ...
 	// sendTo { |destIDindex|
 	// 	if (this.hasDevice.not) {
-	// 		"no mktlDevice.".postln
+	// 		"no device.".postln
 	// 		^this
 	// 	};
-	// 	mktlDevice.setDstID(mktlDevice.destination[destIDindex].uid);
+	// 	device.setDstID(device.destination[destIDindex].uid);
 	// }
 
 	trace { |bool = true|
-		if ( this.hasDevice ){ mktlDevice.trace( bool ) };
+		if ( this.hasDevice ){ device.trace( bool ) };
 		traceRunning = bool;
 	}
 
 	closeDevice {
-		if ( mktlDevice.isNil ){ ^this };
-		mktlDevice.closeDevice;
-		mktlDevice = nil;
+		if ( device.isNil ){ ^this };
+		device.closeDevice;
+		device = nil;
 	}
 
 	specialMessageNames { ^desc.specialMessageNames }
@@ -612,38 +619,38 @@ MKtl { // abstract class
 
 	sendSpecialMessage { |name|
 		var message = this.specialMessages(name);
-		^mktlDevice.sendSpecialMessage(message);
+		^device.sendSpecialMessage(message);
 	}
 
 	send { |key, val|
-		if ( mktlDevice.isNil ){ ^this };
-		mktlDevice.send( key, val );
+		if ( device.isNil ){ ^this };
+		device.send( key, val );
 	}
 
-	// observe mktlDevice to create a description file
+	// observe device to create a description file
 	explore { |bool = true|
-		if ( mktlDevice.isNil ){
+		if ( device.isNil ){
 			"% is virtual, nothing to explore\n"
 			.format( this ).inform;
 
 			^this
 		};
-		mktlDevice.explore( bool );
+		device.explore( bool );
 	}
 
 	exploring {
-		if ( mktlDevice.isNil ){ ^false };
-		^mktlDevice.exploring;
+		if ( device.isNil ){ ^false };
+		^device.exploring;
 	}
 
 	createDescriptionFile {
-		if ( mktlDevice.isNil ){
+		if ( device.isNil ){
 			"% is virtual, cannot create description file\n"
 			.format( this ).inform;
 
 			^this
 		};
-		mktlDevice.createDescriptionFile;
+		device.createDescriptionFile;
 	}
 
 	free {

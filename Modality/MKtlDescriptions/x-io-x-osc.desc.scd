@@ -26,7 +26,7 @@ OSCFunc.trace(false);
 
 g = MKtl(\xosc, "*x-osc");
 // update with the address seen in OSCMonitor or OSCFunc.trace:
-g.mktlDevice.updateSrcAddr("169.254.1.1", 9000);
+g.device.updateSrcAddr("169.254.1.1", 9000);
 
 g.trace
 g.trace(false)

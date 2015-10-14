@@ -99,7 +99,7 @@ MKtl('nnkn0');  // does not work yet
 
 MKtl('nnkn0').trace;
 // elements and ElementGroups are working again:
-MKtl('nnkn0').mktlDevice.send('bt_1_0', 1);
+MKtl('nnkn0').device.send('bt_1_0', 1);
 MKtl('nnkn0').elementsDict['bt_1_0_1']
 MKtl('nnkn0').elements[\fwd].elementDescription;
 MKtl('nnkn0').elementsDict.size;
@@ -124,11 +124,11 @@ MKtl('nnkn0').elementsDict[\bt_1_1_1].doAction; // button and top
 MKtl('nnkn0').elementsDict[\bt_0_0_1].doAction; // button, row and top
 
 
-MKtl('nnkn0').mktlDevice.dump;
-MKtl('nnkn0').mktlDevice.midiKeyToElemDict;
-MKtl('nnkn0').mktlDevice.responders;
-MKtl('nnkn0').mktlDevice.global;
-MKtl('nnkn0').mktlDevice.msgTypes;
+MKtl('nnkn0').device.dump;
+MKtl('nnkn0').device.midiKeyToElemDict;
+MKtl('nnkn0').device.responders;
+MKtl('nnkn0').device.global;
+MKtl('nnkn0').device.msgTypes;
 
 
 // unfinished tests
@@ -142,7 +142,7 @@ MKtl('nnkn0').traceRunning;
 
 MKtl('nnkn0').desc.openFile;
 MKtl('nnkn0').desc.elementsDesc.keys;
-MKtl('nnkn0').mktlDevice;
+MKtl('nnkn0').device;
 MKtl('nnkn0').desc.postInfo(true);
 
 MKtl(\myOpi).desc.postElements;

@@ -46,7 +46,7 @@ MKtl('nnkn20', "nanoKONTROL2").trace(true); // OK!
 
 MKtl('nnkn20', "nanoKONTROL2"); // OK!
 
-MKtl('nnkn20').mktlDevice.checkAllCtls;
+MKtl('nnkn20').checkAllCtls;
 MKtl('nnkn20').trace(false).checkAllCtls;
 
 MKtlDesc.openFolder;

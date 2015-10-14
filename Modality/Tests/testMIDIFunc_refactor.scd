@@ -15,7 +15,7 @@ MKtl.find(\midi);
 
 // noteOn, noteOff works
 MKtl('lpd80', "akai-lpd8");
-MKtl('lpd80').mktlDevice.responders;
+MKtl('lpd80').device.responders;
 MKtl('lpd80').trace(true);
 MKtl('lpd80').trace(false);
 
@@ -25,7 +25,7 @@ MKtl('nnkn0').trace(true);
 MKtl('nnkn0').elementsDict.keys;
 
 // does it when called directly, but not from MIDIIn
-MKtl('nnkn0').mktlDevice.responders.cc.func.value(127, 7, 0, -130);
+MKtl('nnkn0').device.responders.cc.func.value(127, 7, 0, -130);
 //  but not from MIDIIn - why???
 MIDIIn.doControlAction(-123, 0, 7, 64);
 MIDIIn.control.dump
@@ -34,5 +34,5 @@ MIDIIn.control.dump
 // bend works:
 MKtl('qnxs0', "keith-mcmillen-qunexus");
 
-MKtl('qnxs0').mktlDevice.responders;
+MKtl('qnxs0').device.responders;
 

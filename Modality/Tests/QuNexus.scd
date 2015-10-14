@@ -12,11 +12,11 @@ z =  MKtl('qnxs0', "keith-mcmillen-qunexus", );
 
 // fix the srcID - take the first one
 x = MIDIClient.sources.collect(_.uid);
-z.mktlDevice.prSetSrcID(x[0]); //
+z.device.prSetSrcID(x[0]); //
 
 // then free the responders and remake them
-z.mktlDevice.responders.do(_.free);
-z.mktlDevice.makeRespFuncs;
+z.device.responders.do(_.free);
+z.device.makeRespFuncs;
 // a debug post for all elements:
 z.elements.action = { |el| [el.name, el.value].postln };
 

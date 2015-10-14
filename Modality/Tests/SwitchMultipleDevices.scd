@@ -27,8 +27,8 @@ MIDIClient.sources;
 // by desc filename and multiIndex:
 l = MKtl('nk2b', "korg-nanokontrol2", multiIndex: 0).trace;
 m = MKtl('nk2w', "korg-nanokontrol2", multiIndex: 1).trace;
-l.mktlDevice.srcID;
-m.mktlDevice.srcID;
+l.device.srcID;
+m.device.srcID;
 
 // free them, then try by lookupName
 MKtl('nk2b').free; MKtl('nk2w').free;

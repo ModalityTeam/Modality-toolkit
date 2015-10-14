@@ -126,7 +126,7 @@ MKtlDevice {
 		if (deviceCandidates.size == 0) {
 			if (protocol != \osc) {
 				if (verbose) {
-					inform("%: could not open mktlDevice -"
+					inform("%: could not open device -"
 						" no device candidates found."
 						.format(thisMethod));
 				};

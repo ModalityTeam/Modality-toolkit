@@ -1,7 +1,7 @@
 // tests for all kinds of responders
 
 m = MKtl(\mpd18, "akai-mpd18");
-m.mktlDevice.msgTypes;
+m.device.msgTypes;
 // -> Set[ cc, noteOn, noteOff, touch ]
 
 m.elements.action = { |el|
@@ -18,9 +18,9 @@ m.elements.at(\touch_0).action = { |el|
 	"you can't touch this: %\n".postf(el.value);
 };
 
-m.mktlDevice.class.allMsgTypes
+m.device.class.allMsgTypes
 m.elements.at(\touch_0).valueAction_(1.0.rand);
-m.mktlDevice.responders.touch.enabled;
+m.device.responders.touch.enabled;
 
 // noteOn, cc
 // bend test - steinberg CMC-FD has 4 chans of bend

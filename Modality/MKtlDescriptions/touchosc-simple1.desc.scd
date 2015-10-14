@@ -38,7 +38,7 @@ MKtl.all.do(_.free).clear;
 t = MKtl(\tosca, "touchosc-simple1");
 
 // update the touchOSC send address to the one you see in OSCFunc.trace:
-MKtl(\tosca).mktlDevice.updateSrcAddr("192.168.178.53", 62523);
+MKtl(\tosca).device.updateSrcAddr("192.168.178.53", 62523);
 // and give it an action for all its elements
 MKtl(\tosca).elements.action = { |el|
 "tOsc %: %\n".postf(el.name, el.value.round(0.001))
