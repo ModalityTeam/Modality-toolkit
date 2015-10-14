@@ -54,19 +54,17 @@ DEFINITIONLIST::
 ## protocol [required]
 || The protocol used by the device
 ## deviceType [optional, but highly recommended]
-|| Semantic description of what kind of device it is. This will make it easier to find another device that might easily replace it. For examples, do: 
+|| Semantic description of what kind of device it is. This will make it easier to find another device that might easily replace it. For examples, do:
 code::
-MKtlDevice.deviceTypes; 
+MKtlDevice.deviceTypes;
 MKtlDesc.loadDescs.collectAs ({ |desc| desc.fullDesc.deviceType }, Set).asArray.sort.postcs;
+
 -> [ 'controller', 'djController', 'drumPad', 'drumpad', 'fader', 'faderbox', 'filterbank', 'gamepad', 'joystick', 'keyboard', 'launchpad', 'manta', 'mixer', 'mouse', 'multiController', 'phoneApp', 'push', 'ribbon' ]
 ::
 ## elementTypes [optional, but highly recommended]
-|| Description of what kind of elements the device has. For example, code:: 
-\fader, \button, \knob, \encoder, \joyAxis::, etc etc.
-
-## status: [optional, but highly recommended]
+|| Description of what kind of elements the device has. For example, code:: \fader, \button, \knob, \encoder, \joyAxis ... ::
+## status [optional, but highly recommended]
 || A string describing the status of this description, e.g. code::"complete; tested; OSX, Linux"::, code::"incomplete; tested; OSX", ::code::"complete; tested; OSX;"::, code::"incomplete; untested;"::
-
 ## idInfo | osx | linux [required]
 || The info used to fully identify the device.
 For HID devices, this is <productname>_<vendorname>.
@@ -75,7 +73,7 @@ For multi-port MIDI devices, this should be a dictionary with entries for
 (deviceName: <deviceName>,
 sourcePortIndex: <index in MIDIClient.sources>,
 destPortIndex: <index in MIDIClient.destinations>);
-For OSC devices, this is a dictionary with information on the ipAdresses and ports used. (As NetAddresses may change, this sometimes requires fixing by hand).
+For OSC devices, this is a dictionary with information on the ipAdresses and ports used. (As NetAddresses may change, this often requires updating by hand).
 
 ## description [required]
 || A dictionary describing the controls on the device. These controls are called elements within the Modality toolkit.
@@ -88,7 +86,6 @@ For OSC devices, this is a dictionary with information on the ipAdresses and por
 
 ## specs [optional]
 || A dictionary with specs in serialized notation, like code::(\key: [0, 144, \lin])::. These overwrite existing spec definitions locally for this description only: When an element has a symbol for a spec, this is looked up locally first, then in MKtl.globalSpecs, then in global Spec.specs.
-
 ::
 
 
@@ -206,7 +203,7 @@ list::
 note::
 The description file for the "Korg nanoKONTROL 2"
 code::
-Korg_nanoKONTROL2.desc.scd
+korg-nanokontrol2.desc.scd
 ::
 is a good example for element naming. All naming examples are taken from there.
 ::
