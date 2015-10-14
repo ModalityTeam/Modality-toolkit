@@ -107,7 +107,8 @@ description: (
 	// --------- output elements ----------
 	'rumble':(
 		\l: ('hidUsage': 187, 'hidUsagePage': 1, 'type': 'rumble', 'ioType': 'out', spec: \lin255, mode: \minimum ),
-		\r: ('hidUsage': 0, 'hidUsagePage': 1, 'type': 'rumble', 'ioType': 'out', spec: \lin255, mode: \minimum ) // this one is different in OSX due to a bug in the Apple API, but does not work yet anyways
+		// this one is different in OSX due to a bug in the Apple API, but does not work yet anyways
+		\r: ('hidUsage': 0, 'hidUsagePage': 1, 'type': 'rumble', 'ioType': 'out', spec: \lin255, mode: \minimum )
 	)
 )
 );

@@ -253,16 +253,21 @@ HIDMKtlDevice : MKtlDevice {
 				// usage, page, \devid, devid );
 				hidElems = source.findElementWithUsage( usage, page );
 				if (hidElems.size > 1) {
-					"%: hidElems.size is % - should not happen.\n"
-					.postf(thisMethod, hidElems.size);
-				} {
-					hidElem = hidElems.first ;
+					"%: hidElems.size is % - should not be > 1!\n"
+					.postf(mktl, hidElems.size);
+					"taking first of :".postln(hidElems);
+					hidElems.printAll;
 				};
+				hidElem = hidElems.first;
 			};
-
-			hidElemDict.put(elemKey, hidElem);
-			hidElemFuncDict.put(elemKey, hidElemFunc);
-			hidElem.action = hidElem.action.addFunc(hidElemFunc);
+			if (hidElem.isNil) {
+				"%: in % no hidElem was found for elemKey % !\n"
+					.postf(mktl, thisMethod, elemKey.cs);
+			} {
+				hidElemDict.put(elemKey, hidElem);
+				hidElemFuncDict.put(elemKey, hidElemFunc);
+				hidElem.action = hidElem.action.addFunc(hidElemFunc);
+			};
 		};
 	}
 
