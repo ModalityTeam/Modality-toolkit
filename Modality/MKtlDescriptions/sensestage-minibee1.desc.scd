@@ -66,7 +66,7 @@ OSCFunc.trace(false);
 (
 deviceName: "minibee1",
 protocol: \osc,
-deviceType: \gyroPlus,
+deviceType: \minibee,
 elementTypes: [\accelerometer],
 status: (
 	linux: "unknown",
