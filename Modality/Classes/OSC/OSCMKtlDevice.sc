@@ -88,20 +88,11 @@ OSCMKtlDevice : MKtlDevice {
 	}
 
 	initOSCMKtl { |info|
-		if ( info.at( \ipAddress ).notNil ) {
-			source = NetAddr.new( info.at( \ipAddress ), info.at( \srcPort ) );
-			if ( info.at( \destPort ).notNil ){
-				destination = NetAddr( info.at( \ipAddress ), info.at( \destPort ) );
-			}{ // assume destination port is same as srcPort
-				destination = NetAddr( info.at( \ipAddress ), info.at( \srcPort ) );
-			};
-		}{
-			if ( info.at( \destPort ).notNil ){
-				destination = NetAddr( "127.0.0.1", info.at( \destPort ) );
-			}{ // assume destination port is same as srcPort
-				destination = NetAddr( "127.0.0.1", info.at( \srcPort ) );
-			};
-		};
+		var ipAddr = info.at( \ipAddress ) ? "127.0.0.1";
+
+		source = NetAddr.new( ipAddr, info.at( \srcPort ) );
+		destination = NetAddr( ipAddr,
+			info.at( \destPort ) ? info.at( \srcPort ));
 		recvPort = info.at( \recvPort );
 
 		this.initCollectives;
