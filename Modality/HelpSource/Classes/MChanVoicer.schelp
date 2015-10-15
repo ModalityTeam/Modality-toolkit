@@ -87,7 +87,7 @@ MIDIIn.connectAll;
 	~voicers[chan].noteOff(note, vel);
 }, srcID: nil);
 
-// and now you could add bend and press control on each channel...
+// do full test here with bend and press control on each channel...
 
 
 ::
@@ -130,5 +130,5 @@ EXAMPLES::
 
 code::
 _some_example_code_
-long example with all possible controllers here ...
+long and good sounding example with all possible controllers here ...
 ::

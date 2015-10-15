@@ -6,8 +6,7 @@ related:: Classes/MKtl, Overviews/Modality
 DESCRIPTION::
 CompMKtl allows combining MKtls into a single MKtl which contains the elements of all these MKtls. For playing interfaces consisting of technically separate devices, it may semantically make sense to merge them into a single MKtl, so one
 create groups of elements that belong together.
-CompMKtl is only a first pass at this and incomplete,
-so this file also contains tests.
+CompMKtl is not fully incomplete, so this file also contains tests and design questions.
 
 
 First code examples:
@@ -62,7 +61,6 @@ d.elAt(\gyro, \gyro, \pitch);
 d.elAt(\gpd, \bt, 0);
 
 
-
 // test flattening elementGroups:
 
 // two nanokontrols: cannot flatten into a single ElementGroup,
@@ -85,7 +83,11 @@ c.elAt(1);
 c.elAt(\joy);
 c.elAt(\accel, \x);
 
+
 ::
+
+Question:
+How much and what of the MKtl interface should CompMKtl support or pass through?
 
 CLASSMETHODS::
 
