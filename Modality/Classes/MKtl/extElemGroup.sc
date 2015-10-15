@@ -23,8 +23,11 @@
 	}
 
 	flatten {
+		var flattenedElements;
 		MKtlElement.addGroupsAsParent = true;
-		this.elements = elements.collect(_.elements).flatten(1);
+		flattenedElements = elements.collect(_.elements).flatten(1)
+		.collect { |elem| elem.name -> elem };
+		this.elements =flattenedElements;
 		MKtlElement.addGroupsAsParent = false;
 	}
 }

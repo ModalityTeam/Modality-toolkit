@@ -19,39 +19,48 @@ MKtl(\nk2b, "*nanokontrol2");
 MKtl(\gpd, "*impact*");  // a gamepad
 MKtl(\gyro, "gyrosc_ga");  // phone app with gyro and accel
 
-// combine two into one:
+// combine two identical devices into one:
 a = CompMKtl(\combi, [\nk2a, \nk2b]);
 // the MKtls become names in the elementGroup
 a.mktlDict;
+a.mktlNames;
 a.elementGroup;
 // access nanoktl at 0, sl 5
-a.elementAt(0, \sl, 0);
-a.elementAt(1, \sl, 0);
+a.elAt(0, \sl, 5);
+a.elAt(1, \sl, 6);
 
-// elementGroup lookup by name not working yet:
-a.elementAt(\nk2b, \sl, 0);
-
+// lookup by mktl name :
+a.elAt(\nk2b, \sl, 7);
 
 // combine two different devices:
 b = CompMKtl(\ng, [\nk2a, \gpd]);
-b.elementAt(0, \play);
-b.elementAt(1, \joy);
+b.elAt(0, \play);
+b.elAt(1, \joy);
+
+b.elAt(\nk2a, \play);
+b.elAt(\gpd, \joy);
 
 
 // two different ones
 c = CompMKtl(\gpgy, [\gpd, \gyro]);
-// why is the order [ 'gpd', 'gyro'] ?
 c.elementGroup;
-c.elementAt(1);
-c.elementAt(0);
+c.elAt(1);
+c.elAt(0);
 
-// and one with 3 devices
+c.elAt(\gyro, \accel, \x);
+
+
+// and make one with 3 devices
 d = CompMKtl(\ngg, [\nk2a, \gpd, \gyro]);
 d.elementGroup;
-// why is the order [ 'nk2a', 'gyro', 'gpd' ] ?
-d.elementAt(0, \rew);
-d.elementAt(1, \gyro, \pitch);
-d.elementAt(2, \bt, 0);
+d.elAt(0, \rew);
+d.elAt(1, \bt, 0);
+d.elAt(2, \gyro, \pitch);
+
+d.elAt(\nk2a, \rew);
+d.elAt(\gyro, \gyro, \pitch);
+d.elAt(\gpd, \bt, 0);
+
 
 
 // test flattening elementGroups:
@@ -65,14 +74,16 @@ b.elementGroup.canFlatten;
 
 // gamepad and gyro - yes!
 c.elementGroup.canFlatten;
+c.elementGroup;
 // so do it:
-c.flattenElements;
-c.elementGroup
+c.flattenElementGroup;
+c.elementGroup; // now elementGroup has the groups from
 
-// lookup works with index already,
-c.elementAt(0, \x);
-// but not yet with name - why?
-c.elementAt(\accel, \x);
+// lookup by index
+c.elAt(1);
+// and by name
+c.elAt(\joy);
+c.elAt(\accel, \x);
 
 ::
 
@@ -105,6 +116,11 @@ The elementGroup containing all elements
 
 METHOD:: elementAt
 look up element as in MKtl
-(except top level names not working yet)
+
+METHOD:: elAt
+like elementAt, but returns nil when find fails.
+
+METHOD:: flattenElementGroup
+flattens the elements in the top level group if possible.
 
 private:: init

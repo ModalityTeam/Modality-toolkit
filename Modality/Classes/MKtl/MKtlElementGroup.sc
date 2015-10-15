@@ -14,7 +14,7 @@ MKtlElementGroup : MKtlElement {
 	init {
 		var array;
 		tags = Set[];
-		dict = dict ? ();
+		dict = ();
 		elements = elements ?? { Array.new };
 		case { elements.isKindOf( Dictionary ) } {
 			elements.sortedKeysValuesDo({ |key, value|
@@ -33,9 +33,9 @@ MKtlElementGroup : MKtlElement {
 				};
 			});
 		};
-		dict.values.do({ |item|
+		dict.keysValuesDo({ |key, item|
 			if( elements.includes( item ).not ) {
-				dict.remove( item );
+				dict.removeAt( key );
 			};
 		});
 		// "elements.size: % - %\n".postf(elements.size, elements);

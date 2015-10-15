@@ -15,17 +15,21 @@ CompMKtl {
 	init {
 		all.put(name, this);
 		mktlDict = ();
-		mktlNames.do { |mkname|
-			mktlDict.put(mkname, MKtl(mkname));
+		mktlNames.do { |mktlName|
+			mktlDict.put(mktlName, MKtl(mktlName));
 		};
+
 		MKtlElement.addGroupsAsParent = true;
-		elementGroup = MKtlElementGroup(name, this,
-			mktlDict.collectAs(_.elements, Array));
+		elementGroup = MKtlElementGroup(name,
+			this,
+			mktlNames.collect ({ |mktlName|
+				mktlName -> MKtl(mktlName).elementGroup
+		}, Array));
 		MKtlElement.addGroupsAsParent = false;
 		// elementGroup.canFlatten.postln;
 	}
 
-	flattenElements {
+	flattenElementGroup {
 		if (elementGroup.canFlatten) {
 			elementGroup.flatten
 		}
@@ -34,4 +38,9 @@ CompMKtl {
 	elementAt { |...args|
 		^elementGroup.deepAt(*args)
 	}
+
+	elAt { |...args|
+		^elementGroup.deepAt2(*args)
+	}
+
 }
