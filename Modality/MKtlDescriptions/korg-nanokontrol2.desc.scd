@@ -1,5 +1,23 @@
-//	// KORG nanoKONTROL2 specs:
-//	// only cc messages,
+/*	KORG nanoKONTROL2 specs:
+* all cc messages
+* transport buttons,
+* track buttons
+* 8x sliders, knobs, 3 buttons
+
+
+// simple tests
+n.free;
+n = MKtl(\nk2, "*trol2");
+n.gui;
+n.trace;
+// an action for all buttons
+n.elAt(\bt).action = { |el ... groups|
+	[el.name, el.value, "groups:", groups.collect(_.name)].postln;
+};
+// just for slider 1
+n.elAt(\sl, \1).action = { |el| [el.name, el.value].postln };
+
+*/
 (
 deviceName: "nanoKONTROL2",
 protocol: \midi,
@@ -47,10 +65,12 @@ description: [
 	},
 
 	\bt -> [(32..39),(48..55),(64..71)].collect { |nums, i|
-		[\S, \M, \R][i] ->
+		var label = [\S, \M, \R][i];
+		label ->
 		nums.collect { |num, j|
+			(j + 1).asSymbol ->
 			(\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum:
-				num, \spec: \midiCC, \ioType: \inout,
+				num, \spec: \midiCC, \ioType: \inout, label: label,
 				\style: (row: 1+i, column: 6+(j*2), showLabel: true ))
 		}
 	}
