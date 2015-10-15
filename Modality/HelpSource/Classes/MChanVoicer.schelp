@@ -1,0 +1,134 @@
+TITLE:: MChanVoicer
+summary:: a monophonic voicer for midi channel polyphony
+categories:: Libraries>Modality
+related:: Classes/MKtl, Overviews/Modality
+
+DESCRIPTION::
+
+MChanVoicer is intended for channel rotation polyphony as used in the Roli Saeboard and QuNexus keyboard. It accepts one channel of incoming noteOn, noteOff, bend, and press messages,
+and has an MKtlElement for note, vel, bend, press, and velOff.
+NoteOn and NoteOff are interpreted monophonically, such that:
+
+noteOn sets note and vel values from incoming values;
+
+noteOff behavior depends:
+  if there are held notes, note value is set from the latest of those.
+  if not, noteOff sets vel to 0, and offVelEl is set.
+
+First code examples:
+
+code::
+
+s.boot; s.latency = nil;
+
+m = MChanVoicer(0);
+
+Ndef(\m, { |pitch=60, amp = 0.0|
+	VarSaw.ar(pitch.midicps) * 0.5 * amp.lag(0.1) ! 2;
+}).play;
+
+m.noteEl.action = { |el| Ndef(\m).set(\pitch, el.deviceValue); };
+m.velEl.action = { |el| Ndef(\m).set(\amp, el.value.squared); };
+m.startFunc = { "roger, starting note, over".postln };
+m.endFunc = { "over and out.".postln };
+
+m.noteOn(64, 80);
+m.noteOn(67, 40);
+m.heldNotes; // two held notes
+m.noteOff(67); // down to previous note
+m.noteOff(64); // now off
+
+// connect a midi keyboard
+MIDIIn.connectAll;
+
+// single channel only
+~non = MIDIFunc.noteOn({ |vel, note, chan|
+	m.noteOn(note, vel);
+}, nil, m.chan);
+
+~nof = MIDIFunc.noteOff({ |vel, note, chan|
+	m.noteOff(note, vel);
+}, nil, m.chan);
+
+// and add responders for bend and press ...
+
+
+
+// and with a rotating polyphony keyboard, try this:
+
+s.boot; s.latency = nil;
+
+g = NPVoicer(Ndef(\piano));     // make an NPVoicer with an Ndef in it
+g.prime(\default);            // prepare it with the default synthdef
+g.play;                    // play it
+
+// test by hand
+g.put(1, [\freq, 48.midicps]);
+g.setAt(1, \freq, 60.midicps);
+g.release(1);
+
+// make 10 voicers
+~voicers = (0..9).collect { |i|
+	var v = MChanVoicer(i);
+	var ii = i + 10;
+	v.startFunc = { |voicer, note, vel|  g.put(ii, [\freq, note.midicps, \vel, (vel / 127).squared].postln); };
+	v.noteEl.action = { |el| g.setAt(ii, \pitch, el.deviceValue); };
+	v.velEl.action = { |el| g.setAt(ii, \amp, el.value.squared); };
+	v.endFunc = { g.release(ii) };
+};
+
+// listen to all channels
+MIDIIn.connectAll;
+~non = MIDIFunc.noteOn({ |vel, note, chan|
+	~voicers[chan].noteOn(note, vel);
+}, srcID: nil);
+
+~nof = MIDIFunc.noteOff({ |vel, note, chan|
+	~voicers[chan].noteOff(note, vel);
+}, srcID: nil);
+
+// and now you could add bend and press control on each channel...
+
+
+::
+
+CLASSMETHODS::
+
+METHOD:: new
+make a new MChanVoicer with a (MIDI) channel,
+and pass in MKtlElements if desired; else they are created.
+
+INSTANCEMETHODS::
+
+private:: init
+
+METHOD:: chan
+the chan value
+
+METHOD:: noteEl, velEl, bendEl, pressEl, offVelEl
+the MKtlElements for note, amp, bend, press, velOff values
+
+METHOD:: noteOn, noteOff
+pass in noteOn and noteOff messages
+
+METHOD:: bend, press
+pass in bend and press messages
+
+METHOD:: startFunc
+get and set the function that happens when a new note starts
+
+METHOD:: endFunc
+get and set the function that happens when the note ends
+
+METHOD:: heldNotes
+the currently held notes in the order they were played in
+
+METHOD:: startNote, endNote
+trigger startFunc and endFunc
+
+EXAMPLES::
+
+code::
+_some_example_code_
+long example with all possible controllers here ...
+::
