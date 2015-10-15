@@ -108,11 +108,11 @@
 		isLeaf = isLeaf ? { |el| (el.mutable and: { el.respondsTo(\traverseDo) }).not };
 
 		this.do { |elem, index|
-			var myDeepKeys = deepKeys.asArray ++ index;
+			var myDeepKeys;
 			var isAssoc = elem.isKindOf(Association);
-			var deeperValue;
-
 			if (isAssoc) { index = elem.key; elem = elem.value };
+			myDeepKeys = deepKeys.asArray ++ index;
+
 			if (isLeaf.(elem, myDeepKeys)) {
 				doAtLeaf.(elem, myDeepKeys)
 			} {
@@ -130,15 +130,15 @@
 	}
 
 	traverseCollect { |doAtLeaf, isLeaf, deepKeys, doAtNode|
-		var deeperValue;
+
 		var canTraverse = { |el| el.mutable and: { el.respondsTo(\traverseCollect) } };
 		isLeaf = isLeaf ? { |el| (el.mutable and: { el.respondsTo(\traverseCollect) }).not };
 		^this.collect { |elem, index|
-			var myDeepKeys = deepKeys.asArray ++ index;
-			var result, deeperValue;
+			var myDeepKeys, result;
 			var isAssoc = elem.isKindOf(Association);
-
 			if (isAssoc) { index = elem.key; elem = elem.value };
+			myDeepKeys = deepKeys.asArray ++ index;
+
 			if (isLeaf.(elem, myDeepKeys)) {
 				result = doAtLeaf.(elem, myDeepKeys)
 			} {
@@ -196,11 +196,9 @@
 	}
 
 	traverseCollect { |doAtLeaf, isLeaf, deepKeys, doAtNode|
-		var deeperValue;
 		var canTraverse = { |el| el.mutable and: { el.respondsTo(\traverseDo) } };
 		isLeaf = isLeaf ? canTraverse.not;
 		^this.collect { |elem, key|
-			var deeperValue;
 			var result;
 			var myDeepKeys = deepKeys.asArray ++ key;
 			if (isLeaf.(elem)) {
