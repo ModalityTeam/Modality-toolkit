@@ -64,7 +64,7 @@ MKtlElementView {
 		if ((element.type == \button) and: {
 			element.elemDesc[ \mode ] == \push;
 		}) {
-			this.snapback_(true);
+			this.snapback_(true, false);
 		};
 	}
 
@@ -108,11 +108,12 @@ MKtlElementView {
 		};
 	}
 
-	snapback_ { |flag = true|
+	snapback_ { |flag = true, post = true|
 		snapback = flag;
 		if (snapback) {
-			"% gui: switching to momentary action with snapback.\n"
-			.postf(element);
+			if (post) {
+				"% gui: switching to momentary action/snapback.\n".postf(element);
+			};
 			if (view.isKindOf(Button)) {
 				view.mouseDownAction = { |bt| bt.valueAction = 1 };
 			};
@@ -124,7 +125,9 @@ MKtlElementView {
 				}, 0.05);
 			};
 		} {
-			"% gui: switching to toggle action.\n".postf(element);
+			if (post) {
+				"% gui: switching to toggle action.\n".postf(element);
+			};
 			if (view.isKindOf(Button)) { view.mouseDownAction = nil; };
 			view.mouseUpAction = nil;
 		};
