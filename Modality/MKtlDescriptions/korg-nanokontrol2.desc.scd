@@ -36,20 +36,22 @@ description: [
 	\tright -> (\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum: 59, \spec: \midiBut, \mode: \push, \ioType: \inout, \label: ">", \style: (row: 1.125, column: 1, height: 0.75, showLabel: true)),
 
 	// scene:
-	\sl -> (0..7).collect { |i, ii|
+	\sl -> (0..7).collect { |num, i|
 		(i + 1).asSymbol ->
-		(\midiMsgType: \cc, \elementType: \slider, \midiChan: 0, \midiNum: i, \spec: \midiCC, \style: (row: 1, column: 7+(ii*2)))
+		(\midiMsgType: \cc, \elementType: \slider, \midiChan: 0, \midiNum: num, \spec: \midiCC, \style: (row: 1, column: 7+(i*2)))
 	},
 
-	\kn -> (16..23).collect { |i, ii|
+	\kn -> (16..23).collect { |num, i|
 		(i + 1).asSymbol ->
-		(\midiMsgType: \cc, \elementType: \knob, \midiChan: 0, \midiNum: i, \spec: \midiCC, \style: (row: 0, column: 7+(ii*2)))
+		(\midiMsgType: \cc, \elementType: \knob, \midiChan: 0, \midiNum: num, \spec: \midiCC, \style: (row: 0, column: 7+(i*2)))
 	},
 
-	\bt -> [(32..39),(48..55),(64..71)].collect { |xs, ii|
-		[\S, \M, \R][ii] ->
-		xs.collect{ |i, iii|
-			(\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum:  i, \spec: \midiCC, \ioType: \inout, \label: ["S", "M", "R"][ii], \style: (row: 1+ii, column: 6+(iii*2), showLabel: true ))
+	\bt -> [(32..39),(48..55),(64..71)].collect { |nums, i|
+		[\S, \M, \R][i] ->
+		nums.collect { |num, j|
+			(\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum:
+				num, \spec: \midiCC, \ioType: \inout,
+				\style: (row: 1+i, column: 6+(j*2), showLabel: true ))
 		}
 	}
 ],
