@@ -111,13 +111,14 @@ MKtlElementView {
 	snapback_ { |flag = true|
 		snapback = flag;
 		if (snapback) {
-			// "% gui: switching to momentary action with snapback.\n".postf(element);
+			"% gui: switching to momentary action with snapback.\n"
+			.postf(element);
 			if (view.isKindOf(Button)) {
-				view.mouseDownAction = { |bt| "down".postln; bt.valueAction = 1 };
+				view.mouseDownAction = { |bt| bt.valueAction = 1 };
 			};
+			// elasticity
 			view.mouseUpAction = {
 				defer ({
-					"snap up".postln;
 					element.valueAction = snapbackValue;
 					view.value = snapbackValue;
 				}, 0.05);
