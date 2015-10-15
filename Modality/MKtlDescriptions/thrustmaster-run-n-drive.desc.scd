@@ -65,50 +65,84 @@ deviceInfo: (
 	// hasScribble: false
 ),
 specs: (\compassRND: [0, 8, \lin, 1, 1].asSpec),
-description: (
-	'bt': (
+description: [
+	'bt' -> [
 		// --------- input elements ----------
-		1: ('hidUsage': 1, 'hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in', spec: \hidBut, mode: \push ),
-		2: ('hidUsage': 2, 'hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in', spec: \hidBut, mode: \push ),
-		3: ('hidUsage': 3, 'hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in', spec: \hidBut, mode: \push ),
-		4: ('hidUsage': 4, 'hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in', spec: \hidBut, mode: \push ),
-		5: ('hidUsage': 5, 'hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in', spec: \hidBut, mode: \push ),
-		6: ('hidUsage': 6, 'hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in', spec: \hidBut, mode: \push ),
-		7: ('hidUsage': 7, 'hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in', spec: \hidBut, mode: \push ),
-		8: ('hidUsage': 8, 'hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in', spec: \hidBut, mode: \push ),
-		9: ('hidUsage': 9, 'hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in', spec: \hidBut, mode: \push ),
-		10: ('hidUsage': 10, 'hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in', spec: \hidBut, mode: \push )
-		// moved 11 and 12 to joy_l_hat, joy_r_hat.
-		// 11: ('hidUsage': 12, 'hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in', spec: \hidBut, mode: \push ),
-		// 12: ('hidUsage': 12, 'hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in', spec: \hidBut, mode: \push ),
+		'1' -> ('hidUsage': 1, 'style': (row: 1.8, column: 4.4, showLabel: true)),
+		'2' -> ('hidUsage': 2, 'style': (row: 2.6, column: 5.2, showLabel: true)),
+		'3' -> ('hidUsage': 3, 'style': (row: 1.8, column: 6.0, showLabel: true)),
+		'4' -> ('hidUsage': 4, 'style': (row: 1.0, column: 5.2, showLabel: true)),
+		// shoulders
+		'5' -> ('hidUsage': 5, 'style': (row: 0, column: 1, showLabel: true)),
+		'6' -> ('hidUsage': 6, 'style': (row: 0, column: 5, showLabel: true)),
+		// underside
+		'7' -> ('hidUsage': 7, 'style': (row: 0, column: 2.5, showLabel: true)),
+		'8' -> ('hidUsage': 8, 'style': (row: 0, column: 3.5, showLabel: true)),
+		'9' -> ('hidUsage': 9, 'style': (row: 1.6, column: 2.5, showLabel: true)),
+		'10'-> ('hidUsage': 10,'style': (row: 1.6, column: 3.5, showLabel: true))
+	].collect { |assoc|
+		assoc.value.putAll(('hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in', spec: \hidBut, mode: \push))
+	},
+
+	'compass' -> ('hidUsage': 57, 'hidUsagePage': 1, 'elementType': 'compass',
+		'ioType': 'in', spec: \compassRND, mode: \center,
+		'style': (row: 1.8, column: 1.3, showLabel: true)
 	),
 
-	'compass': ('hidUsage': 57, 'hidUsagePage': 1, 'elementType': 'compass', 'ioType': 'in', spec: \compassRND, mode: \center),
+	'joy' -> [
+		\l -> [
+			\x -> ('hidUsage': 48, 'hidUsagePage': 1, 'elementType': 'joyAxis', 'ioType': 'in', spec: \cent1, mode: \center,
+				'style': (row: 4, column: 1, showLabel: true)
+			),
+			\y -> ('hidUsage': 49, 'hidUsagePage': 1, 'elementType': 'joyAxis',
+				'ioType': 'in', spec: \cent1, mode: \center,
+				'style': (row: 4, column: 2, showLabel: true)
+			),
+			\hat -> ('hidUsage': 11, 'hidUsagePage': 9, 'elementType': 'button',
+				'ioType': 'in', spec: \hidBut, mode: \push,
+				'style': (row: 3.2, column: 1.5, showLabel: true)
+			)
+		],
+		\r -> [
+			\x -> ('hidUsage': 50, 'hidUsagePage': 1, 'elementType': 'joyAxis',
+				'ioType': 'in', spec: \cent1, mode: \center,
+				'style': (row: 4, column: 3, showLabel: true)
+			),
+			\y -> ('hidUsage': 53, 'hidUsagePage': 1, 'elementType': 'joyAxis',
+				'ioType': 'in', spec: \cent1, mode: 'center',
+				'style': (row: 4, column: 4, showLabel: true)
+			),
+			\hat -> ('hidUsage': 12, 'hidUsagePage': 9, 'elementType': 'button',
+				'ioType': 'in', spec: \hidBut, mode: \push,
+				'style': (row: 3.2, column: 3.5, showLabel: true)
+			)
+		]
+	],
 
-	'joy': (
-		\l:(
-			\x: ('hidUsage': 48, 'hidUsagePage': 1, 'elementType': 'joyAxis', 'ioType': 'in', spec: \cent1, mode: \center ),
-			\y: ('hidUsage': 49, 'hidUsagePage': 1, 'elementType': 'joyAxis', 'ioType': 'in', spec: \cent1, mode: \center ),
-			\hat: ('hidUsage': 11, 'hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in', spec: \hidBut, mode: \push )
+	'throt' -> [
+		\l -> ('hidUsage': 51, 'hidUsagePage': 1, 'elementType': 'springFader',
+			'ioType': 'in', mode: \minimum, spec: \lin1inv,
+			'style': (row: 0, column: 0, showLabel: true)
 		),
-		\r:(
-			\x: ('hidUsage': 50, 'hidUsagePage': 1, 'elementType': 'joyAxis', 'ioType': 'in', spec: \cent1, mode: \center ),
-			\y: ('hidUsage': 53, 'hidUsagePage': 1, 'elementType': 'joyAxis', 'ioType': 'in', spec: \cent1, mode: 'center' ),
-			\hat: ('hidUsage': 12, 'hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in', spec: \hidBut, mode: \push )
+		\r -> ('hidUsage': 52, 'hidUsagePage': 1, 'elementType': 'springFader',
+			'ioType': 'in', mode: \minimum, spec: \lin1inv,
+			'style': (row: 0, column: 6, showLabel: true)
 		)
+	],
+	'wheel' -> ('hidUsage': 54, 'hidUsagePage': 1, 'elementType': 'springFader',
+		'ioType': 'in', spec: \cent1inv, mode: \center,
+		'style': (row: 1, column: 0, showLabel: true)
 	),
-
-	'throt': (
-		\l: ('hidUsage': 51, 'hidUsagePage': 1, 'elementType': 'springFader', 'ioType': 'in', mode: \minimum, spec: \lin1inv ),
-		\r: ('hidUsage': 52, 'hidUsagePage': 1, 'elementType': 'springFader', 'ioType': 'in', mode: \minimum, spec: \lin1inv )
-	),
-	'wheel': ('hidUsage': 54, 'hidUsagePage': 1, 'elementType': 'springFader', 'ioType': 'in', spec: \cent1inv, mode: \center ),
 
 	// --------- output elements ----------
-	'rumble':(
-		\l: ('hidUsage': 187, 'hidUsagePage': 1, 'elementType': 'rumble', 'ioType': 'out', spec: \lin255, mode: \minimum ),
+	'rumble' -> [
+		\l -> ('hidUsage': 187, 'hidUsagePage': 1, 'elementType': 'rumble', 'ioType': 'out', spec: \lin255, mode: \minimum,
+			'style': (row: 4, column: 1, showLabel: true)
+		),
 		// this one is different in OSX due to a bug in the Apple API, but does not work yet anyways
-		\r: ('hidUsage': 0, 'hidUsagePage': 1, 'elementType': 'rumble', 'ioType': 'out', spec: \lin255, mode: \minimum )
-	)
-)
+		\r -> ('hidUsage': 0, 'hidUsagePage': 1, 'elementType': 'rumble', 'ioType': 'out', spec: \lin255, mode: \minimum,
+			'style': (row: 4, column: 1, showLabel: true)
+		)
+	]
+]
 );
