@@ -2,11 +2,7 @@
 /*
 desc file for Thrustmater ferrari gamepad.
 
-two details:
- bt 11 and 12 are actually joy_l_hat and joy_r_hat,
-so moved them there.
-
-in \compass, id 57, the reported range is wrong:
+In \compass, id 57, the reported range is wrong:
 instead of [0, 7], it it is [0, 15] when including
 the value 15, which is sent when compass but is released.
 the directions are:
@@ -17,28 +13,34 @@ the directions are:
   5      3
      4
 
+// find gp and trace it:
+MKtl.find(\hid);
+f = MKtl('f', "thrustmaster-run-n-drive");
+f.postElements;
+f.trace;
+
 // example for fixing this and using compass directions:
-
-HIDMKtl.find;
-f = HIDMKtl('rnnd0');
-f.printElementNames;
-
-c = f.elementsDict[\compass];
-c.action = { |el|
-// calc integer value for indexing:
-var intVal = (el.value * 15).round.asInteger;
-var dir;
-[el.value, intVal, el.rawValue].round(0.001).postln;
-if (intVal == 15) {
-"rnd compass released.".postln
-} {
-dir = [\N, \NE, \E, \SE, \S, \SW, \W, \NW][intVal];
-"rnd compass direction: %\n".postf(dir);
-};
+f.dictAt(\compass).action = { |el|
+	// calc integer value for indexing:
+	var intVal = (el.deviceValue * 7).round.asInteger;
+	var dir;
+	[el.value, intVal, el.deviceValue].round(0.001).postln;
+	if (intVal == 15) {
+		"rnd compass released.".postln
+	} {
+		dir = [\N, \NE, \E, \SE, \S, \SW, \W, \NW][intVal];
+		"rnd compass direction: %\n".postf(dir);
+	};
 };
 
-// test that joy hat works:
-f.elementsDict[\joy_l_hat].action = { |el| [el.name, el.value].postln };
+// test that joy hat accessing works:
+f.trace(false);
+f.elAt(\joy, \l, \hat);
+f.dictAt(\joy_l_hat);
+f.elAt(\joy, 0, 2); // left is index 0, hat is index 2
+
+
+f.dictAt(\joy_l_hat).action = { |el| [el.name, el.value].postln };
 f.elementAt(\joy, \r, \hat).action = { |el| [el.name, el.value].postln };
 
 */
@@ -78,10 +80,13 @@ description: [
 		// underside
 		'7' -> ('hidUsage': 7, 'style': (row: 0, column: 2.5, showLabel: true)),
 		'8' -> ('hidUsage': 8, 'style': (row: 0, column: 3.5, showLabel: true)),
+		// top center
 		'9' -> ('hidUsage': 9, 'style': (row: 1.6, column: 2.5, showLabel: true)),
 		'10'-> ('hidUsage': 10,'style': (row: 1.6, column: 3.5, showLabel: true))
 	].collect { |assoc|
-		assoc.value.putAll(('hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in', spec: \hidBut, mode: \push))
+		assoc.value.putAll(('hidUsagePage': 9, 'elementType': 'button',
+			'ioType': 'in', spec: \hidBut, mode: \push));
+		assoc;
 	},
 
 	'compass' -> ('hidUsage': 57, 'hidUsagePage': 1, 'elementType': 'compass',
