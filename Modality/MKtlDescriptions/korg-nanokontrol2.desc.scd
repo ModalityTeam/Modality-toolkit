@@ -37,14 +37,17 @@ description: [
 
 	// scene:
 	\sl -> (0..7).collect { |i, ii|
+		(i + 1).asSymbol ->
 		(\midiMsgType: \cc, \elementType: \slider, \midiChan: 0, \midiNum: i, \spec: \midiCC, \style: (row: 1, column: 7+(ii*2)))
 	},
 
 	\kn -> (16..23).collect { |i, ii|
+		(i + 1).asSymbol ->
 		(\midiMsgType: \cc, \elementType: \knob, \midiChan: 0, \midiNum: i, \spec: \midiCC, \style: (row: 0, column: 7+(ii*2)))
 	},
 
 	\bt -> [(32..39),(48..55),(64..71)].collect { |xs, ii|
+		[\S, \M, \R][ii] ->
 		xs.collect{ |i, iii|
 			(\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum:  i, \spec: \midiCC, \ioType: \inout, \label: ["S", "M", "R"][ii], \style: (row: 1+ii, column: 6+(iii*2), showLabel: true ))
 		}
