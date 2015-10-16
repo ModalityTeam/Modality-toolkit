@@ -172,7 +172,7 @@ a.fullDesc;		// a dict built from the description file
 a.fullDesc.keys;	// the keys of the items in it
 a.protocol;			// e.g. the protocol used
 a.elementsDesc; 	// the dict of the elements described
-a.postElements; 	// post element names and keys/indices in hierarchical order
+// a.postElements; 	// post element names and keys/indices in hierarchical order
 ::
 For more, see MKtlDesc
 
@@ -203,12 +203,13 @@ m.openDevice; // finds it automatically
 METHOD:: closeDevice
 Closes the hardware device if it was open.
 
-METHOD:: mktlDevice
+METHOD:: device, mktlDevice
 The instance of MKtlDevice that this MKtl uses.
+(mktlDevice is a deprecated alias for device)
 
 METHOD:: free
 Frees the MKtl again and forgets about its existence.
-If there was an mktlDevice, closes it.
+If there was an device, this closes it.
 
 METHOD:: reset
 Reset all actions of the elements in this MKtl to nil.
@@ -234,10 +235,11 @@ send all current MKtl values to the physical device, e.g. to move all motorfader
 
 SUBSECTION:: Elements of the MKtl
 
-METHOD:: elements
-all control elements (MKtlElement) on the device you may want to listen or talk to. this returns an link::Classes/MKtlElementGroup:: containing a hierarchical tree of link::Classes/MKtlElement::s, organised via link::Classes/MKtlElementGroup::.
+METHOD:: elementGroup, elements
+All the control elements (MKtlElement) on the device you may want to listen or talk to. this returns an link::Classes/MKtlElementGroup:: containing a hierarchical tree of link::Classes/MKtlElement::s, organised via link::Classes/MKtlElementGroup::.
+(elements is a deprecated alias of elementGroup).
 code::
-MKtl(\funky).elements;
+MKtl(\funky).elementGroup;
 ::
 
 METHOD:: elementNames
@@ -246,7 +248,7 @@ m = MKtl(\manta, "*manta*");
 m.elementNames;
 
 METHOD:: postElements
-A pretty printed hierarchical list of the names of the elements
+A pretty printed hierarchical list of the names and indices of all elements
 code::
 m = MKtl(\manta, "*manta*");
 m.postElements;
@@ -255,7 +257,9 @@ m.postElements;
 METHOD:: elementsDict
 all elements in one flat event so they can be accessed very fast.
 code::
-MKtl(\funky).elementsDict;
+m.elementsDict;
+m.dictAt('pad_13_con');
+
 ::
 
 METHOD:: inputElements, outputElements
@@ -269,8 +273,8 @@ m.outputElements
 METHOD:: elementsOfType, elementsNotOfType
 return all elements that are of the type given, or not
 code::
-MKtl(\mynano2).elementsOfType(\slider);
-k.elementsNotOfType(\slider);
+m.elementsOfType(\slider);
+m.elementsNotOfType(\slider);
 ::
 
 METHOD:: elementsLabeled
@@ -280,32 +284,69 @@ o = MKtl(\opi1, "teenage*");
 o.elementsLabeled(\white);
 ::
 
+subsection:: Accessing elements and groups
 
 METHOD:: elementAt
-Access an element in the elements hierarchy by passing in the indexes to arrays/dictionaries as arguments of elementAt:
+Access an element or group in the elementGroup by
+hierarchical indices or names in the groups:
 
 code::
-MKtl(\mynano2).elements
-MKtl(\mynano2).elementAt(\sl,0);
-//the same as
-MKtl(\mynano2).elements[\sl][0];
+MKtl(\mynano2).elementGroup
+
+MKtl(\mynano2).elementAt(\rew); // a top level button
+
+MKtl(\mynano2).elementAt(\sl); // the group of all sliders
+MKtl(\mynano2).elementAt(\sl, 0); // the first slider by index
+MKtl(\mynano2).elementAt(\sl, \1); // the first slider by name
+MKtl(\mynano2).elementGroup[\sl][0]; // same by hand
+
+MKtl(\mynano2).elementAt(\bt); // the group of all buttons
+MKtl(\mynano2).elementAt(\bt, \S); // the S buttons
+MKtl(\mynano2).elementAt(\bt, \M, \1); // the first  button
+
 ::
 
-METHOD:: at
-Access an element in the elements hierarchy by passing in one index.
-code:: MKtl(\funky).at(0); ::
+METHOD:: elAt
+Like elementAt, but looks in the elementGroup and in collectivesDict,
+and returns nil if not found.
+TODO: nil or \all for wildcard matching
 
-argument:: index
-Index to get from the elements.
+MKtl(\mynano2).elAt(\rew); // a top level button
+
+MKtl(\mynano2).elAt(\sl); // the group of all sliders
+MKtl(\mynano2).elAt(\sl, 24); // nil
+MKtl(\mynano2).elAt(\sl, \1); // the first slider by name
+
+MKtl(\mynano2).elAt(\bt); // the group of all buttons
+MKtl(\mynano2).elAt(\bt, \S); // the S buttons
+MKtl(\mynano2).elAt(\bt, \X, \1); // no X buttons, so nil
+
+METHOD:: collAt
+Access an element in the collectivesDict by hierarchical name.
+See link::Tutorials/Creating_Custom_ElementGroups::
+
+code:: MKtl(\mynano2).collAt(\mixchan, \1, \sl); ::
+
+METHOD:: dictAt
+Access an element in the elementsDict directly by its full name.
+This is a very fast lookup.
+code:: MKtl(\mynano2).dictAt(\sl_1); ::
+
+
+METHOD:: at
+Access an element in the elementGroup by index.
+code:: MKtl(\mynano2).at(0); ::
+
+
+subsection:: Getting and setting element values
 
 METHOD:: valueAt
-Access an element's value by the element key
+Access an element's value by the direct element key
 
 code::
 m = MKtl( 'funky', "*run-n-drive" );
 m.valueAt( \compass );
 m.valueAt( \bt_2 );
-
 ::
 
 METHOD:: deviceValueAt
@@ -318,9 +359,40 @@ m.deviceValueAt( \bt_2 );
 m.deviceValueAt( \joy_l_x );
 ::
 
-
 METHOD:: setValueAt, setDeviceValueAt
-Set an element's value or deviceValue by element key
+Set an element's value or deviceValue directly by element key
+
+subsection:: Getting and setting multiple elements
+
+METHOD:: getKeysValues
+get multiple key/value pairs for a list of element keys.
+this is intended for more robust storage of presets.
+code::
+m.getKeysValues; // gets all keys and values
+m.getKeysValues( [\compass, \wheel] ); // two elements
+m.getKeysValues( [\joy_l_x, \joy_l_y, \joy_r_x, \joy_r_y, ] );
+m.getKeysValues( m.elAt(\bt).collect(_.name) ); // the bt group
+::
+
+METHOD:: setKeysValues
+set multiple key/value pairs from a list of key/value arrays.
+code::
+m.setKeysValues( [[\compass, 0.125], [\wheel, 1.0]] ); // two elements
+m.gui;
+::
+
+
+METHOD:: setKVAction
+same as setKeysValues, but with doAction of the elements being set
+
+
+METHOD:: set
+set multiple key/value pairs from a list of key, value arguments.
+m.set(\joy_l_x, 1.0.rand, \joy_l_y, 1.0.rand, \joy_r_x,1.0.rand,  \joy_r_y, 1.0.rand);
+m.gui;
+
+METHOD:: setAction
+same as set, but with doAction of the elements being set
 
 METHOD:: send
 Send the value of the element to the hardware device; called if you set the value of an MKtlElement that is an output.
@@ -351,12 +423,16 @@ Subsection:: Collectives and Composite MKtl
 ... create collectives in new mktl - to be written.
 METHOD:: collectivesDict, collectiveDescriptionFor
 
-methods for finding info on available devices in MKtlLookup.
+Methods for finding info on available devices in MKtlLookup.
 METHOD:: lookupInfo, lookupName, updateLookupInfo
 
-various tests
+Method:: midiPortNameIndex
+needed for identifying multiple midi devices
+
+Various tests
 METHOD:: checkAllCtls, checkIdentical, hasDevice
 
 private:: wrapCollElemsInGroups, specialMessageNames, sendSpecialMessage, prMatchedElements
 PRIVATE:: storeArgs, printOn, init, makeElements, makeCollectives, finishInit
+
 

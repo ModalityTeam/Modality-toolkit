@@ -465,7 +465,7 @@ MKtl { // abstract class
 		};
 	}
 
-	// interface for presets
+	// interface for presets - uses direct element names only
 	getKeysValues { |keys|
 		keys = keys ?? { elementsDict.keys(SortedList) };
 		^keys.collect { |key| [key, elementsDict[key].value] };
@@ -484,6 +484,20 @@ MKtl { // abstract class
 			if (elem.notNil) { elem.valueAction_(pair[1]) };
 		};
 	}
+	// N/P/Tdef style
+	set { |...args|
+		args.pairsDo { |elemKey, val|
+			var elem = elementsDict[elemKey];
+			if (elem.notNil) { elem.value_(val) };
+		}
+	}
+
+	setAction { |...args|
+		args.pairsDo { |elemKey, val|
+			var elem = elementsDict[elemKey];
+			if (elem.notNil) { elem.valueAction_(val) };
+		}
+	}
 
 
 	reset {
@@ -494,13 +508,13 @@ MKtl { // abstract class
 
 	elementsOfType { |type|
 		^elementsDict.select { |elem|
-			elem.elemDesc[\type] == type
+			elem.elemDesc[\elementType] == type
 		}
 	}
 
 	elementsNotOfType { |type|
 		^elementsDict.select { |elem|
-			elem.elemDesc[\type] != type
+			elem.elemDesc[\elementType] != type
 		}
 	}
 
