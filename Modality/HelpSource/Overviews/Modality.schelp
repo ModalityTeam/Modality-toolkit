@@ -22,9 +22,13 @@ LIST::
 ##link::Reference/SupportedDevices::
 ::
 
-There are tutorial files and examples of common usage cases of MKtl available here:
+Find many tutorial files and examples of common use cases of MKtl here:
 link::https://github.com/ModalityTeam/ModalityWorkshop::
-
+Also, many description files have little examples for their device:
+code::
+MKtlDesc.openFolder;
+MKtlDesc.loadDescs.choose.openFile;
+::
 
 SECTION:: Overview
 

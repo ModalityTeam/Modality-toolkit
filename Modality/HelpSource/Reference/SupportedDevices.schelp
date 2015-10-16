@@ -3,7 +3,23 @@ summary:: Devices currently known by the Modality toolkit.
 categories:: Libraries>Modality, External Control
 related:: Overviews/Modality, Classes/MKtl
 
-section::Supported devices
+
+section::Browse, look up, check devices
+
+code::
+// browse the info website
+MKtlDesc.web;
+
+// see the file names for all currently supported devices:
+MKtlDesc.postLoadable;
+
+// load them all, and post their current status:
+MKtlDesc.loadDescs; MKtlDesc.postStatus;
+::
+
+Have a controller that is not known to the system? See link::Tutorials/How_to_create_a_description_file:: on how to set it up.
+
+section:: Supported devices by categories (incomplete)
 
 subsection:: Pad controllers
 list::
@@ -31,6 +47,7 @@ list::
 ## nanoKEY2
 ## Teenage_OP1
 ## ArturiaMINILAB
+## Keith McMillen QuNexus
 ::
 
 subsection:: Gamepads
@@ -57,22 +74,16 @@ list::
 ## ICONIStage
 ::
 
+subsection:: Smartphone/Pad apps
+list::
+## gyrosc
+## touchOSC
+::
+
 subsection:: Exotic
 list::
+## Snyderphonics Manta
 ## EOWave Ribbon
-## gyrosc
+## x-io X-Osc
+## Livid Instruments Guitar Wing
 ::
-
-code::
-// see the file names for all currently supported devices:
-MKtlDesc.postLoadable;
-
-// load them all, and post their current status:
-MKtlDesc.loadDescs.do { |desc|
-	[desc.fullDesc.filename, desc.fullDesc.status].postcs;
-};"";
-::
-
-Section:: Undescribed Controller
-
-Have a controller that is not known to the system? See link::Tutorials/How_to_create_a_description_file:: on how to set it up.
