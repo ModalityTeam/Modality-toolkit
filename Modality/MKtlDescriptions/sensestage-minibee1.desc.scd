@@ -44,9 +44,9 @@ OSCFunc.trace(false);
 ~fakeSendFrom.(~beeAddr, ['/minibee/data', 1, 1, 2, 3]);
 
 // lookup argTemplate ...
-~bee1.device.oscFuncDictionary[\accel].argTemplate;
+~bee1.device.oscFuncDictionary[\data].argTemplate;
 // ... and update argTemplate for ~bee2 to number 2:
-~bee2.device.oscFuncDictionary[\accel].argTemplate.put(0, 2);
+~bee2.device.oscFuncDictionary[\data].argTemplate.put(0, 2);
 
 // this fake-sends from minibee1 instance 1 (argTemplate 1)
 ~fakeSendFrom.(~beeAddr, ['/minibee/data', 1, 1, 2, 3]);
@@ -90,7 +90,7 @@ deviceInfo: (
 ),
 
 collectives: (
-	accel: (
+	data: (
 		oscPath: '/minibee/data',
 		argTemplate: [ 1 ],
 		elements: [ [\accel, \x], [\accel, \y], [\accel, \z]],
