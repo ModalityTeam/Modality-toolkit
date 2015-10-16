@@ -1,4 +1,5 @@
-// redo info and example
+// access minibees with an XPee expansion board.
+// see sensestage-minibee1 for more information.
 
 (
 deviceName: "minibee1-xpee",
@@ -11,7 +12,7 @@ status: (
 	win: "unknown"),
 
 idInfo: "minibee1-xpee",
-netAddrInfo: ( srcPort: nil, ipAddress: "1.2.3.4", recvPort: 57120 ),
+netAddrInfo: ( srcPort: nil, ipAddress: "127.0.0.1", recvPort: 57120 ),
 
 specs: (
 	ins: [0, 1],
@@ -39,12 +40,12 @@ collectives: (
 ),
 description: (
 	\accel: (
-		\x: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' ),
-		\y: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' ),
-		\z: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' )
+		\x: (elementType: 'accelAxis', elementType: \accelerationAxis, ioType: \collectiveIn, \spec: 'accelAxis' ),
+		\y: (elementType: 'accelAxis', elementType: \accelerationAxis, ioType: \collectiveIn, \spec: 'accelAxis' ),
+		\z: (elementType: 'accelAxis', elementType: \accelerationAxis, ioType: \collectiveIn, \spec: 'accelAxis' )
 	),
 	\in: 4.collect{|i|
-		(elementType: 'bender', ioType: \collectiveIn, \spec: 'ins' )
+		(elementType: 'bender', elementType: \multiPurpose, ioType: \collectiveIn, \spec: 'ins' )
 	}
 )
 )

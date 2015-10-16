@@ -1,4 +1,4 @@
-// // minibee generic
+// sensestage minibee
 
 /*
 o = OSCMonitor.new;
@@ -11,12 +11,14 @@ o.anaDict.msgNamesByAddr
 o.anaDict.messagesByAddr
 o.disable:
 
-// As an update to Tills example starting this issue,
-// here is a working example for making two minibees
-// and distinguishing them by argTemplate only.
-// this assumes  they send date from the same hive app, same netaddr.
+// example for making two minibees and distinguishing them by
+// ```argTemplate``` only.
+// this assumes they send data from the same hive app, i.e sharing a netaddr.
+
 (
-~beeAddr = NetAddr("192.168.100.105", 54615);
+// ~beeAddr = NetAddr("192.168.100.105", 54615);
+// port nil will listen to messages from all sending ports.
+~beeAddr = NetAddr("192.168.100.105", nil);
 ~bee1 = MKtl(\bee1, "*minibee1");
 // update with the address as seen in OSCMonitor or OSCFunc.trace:
 ~bee1.device.updateSrcAddr(~beeAddr.hostname);
@@ -73,7 +75,7 @@ status: (
 	osx: "tested and working, subset of sensors only.",
 	win: "unknown"),
 
-netAddrInfo: ( srcPort: nil, ipAddress: "1.2.3.4", recvPort: 57120 ),
+netAddrInfo: ( srcPort: nil, ipAddress: "127.0.0.1", recvPort: 57120 ),
 idInfo: "minibee1",
 
 specs: (
@@ -99,9 +101,9 @@ collectives: (
 ),
 description: (
 	\accel: (
-		\x: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' ),
-		\y: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' ),
-		\z: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' )
+		\x: (elementType: 'accelAxis', elementType: \accelerationAxis, ioType: \collectiveIn, \spec: 'accelAxis' ),
+		\y: (elementType: 'accelAxis', elementType: \accelerationAxis, ioType: \collectiveIn, \spec: 'accelAxis' ),
+		\z: (elementType: 'accelAxis', elementType: \accelerationAxis, ioType: \collectiveIn, \spec: 'accelAxis' )
 	)
 )
 )
