@@ -35,7 +35,7 @@ deviceName: "LPD8",
 	simple MKtls can only have a single protocol.
 	Must be one of the supported MKtl protocols:
 MKtlDevice.allProtocols.postcs;
-MKtl.protocols;
+MKtlDevice.allProtocols;
 -> [ 'hid', 'midi', 'osc' ]
 */
 protocol: \midi,
@@ -43,7 +43,7 @@ protocol: \midi,
 /* deviceType:: recommended
 	user-readable name for the type of this device or source.
 	Typically this is one of:
-MKtl.deviceTypes.postcs; // <- in desc_redef branch
+MKtlDevice.deviceTypes.postcs; // <- in desc_redef branch
 ->
 */
 deviceType: \drumpad,
@@ -52,7 +52,7 @@ deviceType: \drumpad,
 /* elementTypes: recommended
 	user-readable collection of names of the elements
 	this MKtl contains. Typically this is one of:
-MKtl.elementTypes.postcs; // <- in desc_redef branch
+MKtlElement.types.postcs;
 ->
 */
 elementTypes: [\pad, \knob], 	// several of MKtl.elementTypes
@@ -64,7 +64,7 @@ elementTypes: [\pad, \knob], 	// several of MKtl.elementTypes
 ->
 */
 status: (
-	osx: "complete, working",
+	osx: "tested and working",
 	linux: "complete, untested",
 	win: "unknown"
 ),
@@ -84,15 +84,15 @@ filepath: "~/git/Modality-toolkit/Modality/MKtlDescriptions/akai-lpd8.desc.scd",
 	// as created by HID
 idInfo: "Run'N' Drive Wireless_Thrustmaster",
 
-	// MIDI idInfo for single port device - same as deviceName:
+	// MIDI idInfo for single port device is the same as deviceName:
 idInfo: "LPD8",
 
-	// MIDI idInfo for multiport device:
-// a dict with (deviceName: , sourcePortIndex: , destPortIndex)
+	// MIDI idInfo for multiport devices:
+// a dict with (deviceName: "<devname>", sourcePortIndex: n, destPortIndex: n)
 idInfo: (deviceName: "QuNexus", sourcePortIndex: 0, destPortIndex: 0),
+
 // in this case, we recommend also specifying the port name:
 portName: "Port 1",
-
 
 	// mostly MIDI - if there are hardware pages / presets,
 	// as in the korg nanokontrol, or the QuNexus keyboard,
@@ -102,7 +102,6 @@ hardwarePages: [\A, \B, \C, \D],
 // if this desc refers to a single hardware page/preset,
 // please specify which one:
 pageName: \B,
-
 
 /* deviceInfo:  user-readable text info on the device */
 
@@ -120,9 +119,9 @@ deviceInfo: (
 ),
 
 
-/* specs: a dict of named specs for the elements in this desc/MKtl */
-// should be an array of params, or a symbol only,
-// to be created with .asSpec
+/* specs: a dict of named specs for use in the the elements in this desc/MKtl */
+// should be an array of params, or a symbol, to be created with .asSpec
+// some specs are also provided in MKtl.globalSpecs
 specs: (
 	'sevenSteps': [0, 6, \lin, 1, 0],
 	'disorder': \bipolar // lookup in spec.specs
@@ -131,20 +130,30 @@ specs: (
 
 /* collectives: should move to elementsDesc */
 
-/* elementsDesc: see desc_file_redef_3 ! */
+/* elementsDesc: see desc_file_redef_3 for full details! */
 elementsDesc: (
-	elements: (
-		shared: (elementType: \knob, midiMsgType: \control, midiChan: 0),
-		kn: (
-			1: (midiNum: 1),
-			2: (midiNum: 2)
-			// ...
-		),
-		pad: (
-			// ..
-		)
-	)
+	info: (anyKey: "anyStrings"),
+	sharedValues: (midiChan: 0),
+	sharedValueGroups: (),
 
+	elements: [
+		\kn -> (
+			sharedValues: (elementType: \knob, midiMsgType: \control),
+			elements: [
+				\1 -> (midiNum: 1),
+				\2 -> (midiNum: 2)
+			]
+		),
+		\pad -> (
+			sharedValues: (elementType: \pad, midiMsgType: \noteOnOff),
+			// ...
+			elements: [
+				\1 -> (midiNum: 36),
+				\2 -> (midiNum: 37),
+				// ...
+			]
+		)
+	]
 ),
 
 /* specialMessages: a dict of special messages to send to the device */
@@ -156,17 +165,17 @@ specialMessages: (
 	// in OSC, they could  have any name:
 	hyperSpeed: [
 		['/ledControlOn', [1, 2, 3]],
-		['/abracadabra', [\r, \g, \b]]]
+		['/abracadabra', [\r, \g, \b]]
 	],
 	activateImprobabilityDrive: [
-	['/setProb', 1e-42],
-	['/startTime', \now]
+		['/setProb', 1e-42],
+		['/startTime', \now]
 	],
 	// in MIDI, they look like this:
-	[
-		[\sysex, [... hex numbers ...]],
-		[\sysex, [... hex numbers ...]],
-		[\sysex, [... hex numbers ...]]
+	midiMessage: [
+		[\sysex, ["... hex numbers ..."]],
+		[\sysex, ["... hex numbers ..."]],
+		[\sysex, ["... hex numbers ..."]]
 	]
 )
 
