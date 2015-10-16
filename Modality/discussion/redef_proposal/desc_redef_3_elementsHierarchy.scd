@@ -31,7 +31,7 @@ deviceInfo: (
 	features: [
 		// ...
 	],
-	notes: "use only recommended hardware mode XYZ.",
+	notes: "use only recommended hardware mode PAD.",
 ),
 
 // and here the details begin:
@@ -41,8 +41,8 @@ deviceInfo: (
 
 elementsDesc: (
 
-	// maybe a reserved name for comment-like things
-	'_info': (
+	// a reserved name for comment-like things
+	'info': (
 		text: "anything useful for this group of elements",
 		anyKey: [\what, \so, \ever],
 	),
@@ -51,9 +51,10 @@ elementsDesc: (
 	// which should best live in the elementGroup itself
 	// any elements contained in this group can be used,
 	// and usually one only creates alt-groups at the top level
+
 	groups: (
-		padUpper: [\pad, \on, [4,5,6,7]],
-		padLower: [\pad, \on, [0,1,2,3]]
+		padUpper: [\pad, [4,5,6,7]],
+		padLower: [\pad, [0,1,2,3]]
 	),
 
 	// formerly known as collectives for OSC mainly,
@@ -66,13 +67,13 @@ elementsDesc: (
 
 	),
 
-	// any shared element or group properties can be set once,
+	// any shared element or group properties to be set once,
 	// e.g. same midiChan: 0, midiMsgType: \cc etc
-	shared: (),
+	sharedValues: (),
 
 	// and these are the actual elements, again in groups:
-	elements: (
-		\kn: (
+	elements: [
+		\kn -> (
 			//	groupName: \kn, // auto-generated from key above
 			groupType: \knobGroup,
 
@@ -82,20 +83,20 @@ elementsDesc: (
 
 			// and the elements themselves, here as a named dict,
 			// listed one by one - only the differing items need be here
-			// (can also not use shared: and just put everything here.)
-			elements: (
-				'1': (\midiNum: 1),
-				'2': (\midiNum: 2),
-				'3': (\midiNum: 3),
-				'4': (\midiNum: 4),
-				'5': (\midiNum: 5),
-				'6': (\midiNum: 6),
-				'7': (\midiNum: 7),
-				'8': (\midiNum: 8)
-			)
+			// (can also not use sharedValues, and just put everything here.)
+			elements: [
+				'1' -> (\midiNum: 1),
+				'2' -> (\midiNum: 2),
+				'3' -> (\midiNum: 3),
+				'4' -> (\midiNum: 4),
+				'5' -> (\midiNum: 5),
+				'6' -> (\midiNum: 6),
+				'7' -> (\midiNum: 7),
+				'8' -> (\midiNum: 8)
+			]
 		),
 
-		\pad: (
+		\pad -> (
 			//	groupName: \pad, // auto-generated from key above,
 
 			groupType: \padGroup,
@@ -105,7 +106,7 @@ elementsDesc: (
 			elements: (
 
 				// a sublist of noteOn/offs - shared params:
-				shared: (\midiMsgType: \noteOnOff, \midiChan: 0),
+				sharedValues: (\midiMsgType: \noteOnOff, \midiChan: 0),
 
 				// element groups for noteOnOff,
 				// here generated algorithmically:
@@ -115,23 +116,26 @@ elementsDesc: (
 				}.flatten)
 			)
 		),
+
 		// a single slider which has a noteOnOff for touch
-		sl: (
-			shared: (midiChan: 0, ioType: \in),
-			elements: (
-				touch: (midiMsgName: \noteOnOff, spec: \midiBut),
-				pos: (midiMsgName: \cc, spec: \midiCC)
-			)
+		\sl -> (
+			sharedValues: (midiChan: 0, ioType: \in),
+			elements: [
+				\touch -> (elementType: \touch, midiMsgName: \noteOnOff, spec: \midiBut),
+				\pos -> (elementType: \slider, midiMsgName: \cc, spec: \midiCC)
+			]
 		),
+
 		// example gamepad thumbStick
-		stick: (
+		\stick -> (
 			elementType: \thumbStick,
 			shared: (ioType: \in),
-			elements: (
-				\x: (elementType: \joyAxis, spec: \hidAxis),
-				\y: (elementType: \joyAxis, spec: \hidAxis),
-				\hat: (elementType: \hatSwitch, spec: \hidBut)
-			)
+			elements: [
+				\x -> (elementType: \joyAxis, spec: \hidAxis),
+				\y -> (elementType: \joyAxis, spec: \hidAxis),
+				\hat -> (elementType: \hatSwitch, spec: \hidBut)
+			]
 		)
-	)
+	]
+)
 );

@@ -21,7 +21,9 @@ elementType: \slider,
 
 	/* ioType: whether and how it is an  input and/or output element.
 		// usually one of
-		MKtl.ioTypes; // [\in, \out, \inout, ...];
+		MKtl.ioTypes; // [\in, \out, \inout, \collectiveIn, ...];
+		// or soon to be:
+		// [\in, \out, \inout, \sharedIn, \sharedOut, \sharedInOut];
 	*/
 ioType: \inout,
 
