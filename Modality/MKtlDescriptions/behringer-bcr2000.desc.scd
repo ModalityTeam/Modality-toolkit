@@ -44,12 +44,12 @@ description: (
 	//buttons at bottom right
 	\pr: [
 		[
-			(\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 105, \spec: \midiBut, \mode: \toggle, \ioType: \inout),
-			(\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 106, \spec: \midiBut, \mode: \toggle, \ioType: \inout)
+			(midiMsgType: \cc, elementType: \button, midiChan: 0, midiNum: 105, spec: \midiBut, mode: \toggle, ioType: \inout),
+			(midiMsgType: \cc, elementType: \button, midiChan: 0, midiNum: 106, spec: \midiBut, mode: \toggle, ioType: \inout)
 		],
 		[
-			(\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 107, \spec: \midiBut, \mode: \toggle, \ioType: \inout),
-			(\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 108, \spec: \midiBut, \mode: \toggle, \ioType: \inout)
+			(midiMsgType: \cc, elementType: \button, midiChan: 0, midiNum: 107, spec: \midiBut, mode: \toggle, ioType: \inout),
+			(midiMsgType: \cc, elementType: \button, midiChan: 0, midiNum: 108, spec: \midiBut, mode: \toggle, ioType: \inout)
 		]
 	],
 
@@ -57,7 +57,7 @@ description: (
 	\tr:4.collect{ |j|
 		8.collect{ |i|
 			// top knob push mode
-			(\midiMsgType: \cc, \type: \encoder, \midiChan: 0, \midiNum: 33+(8*j)+i, \spec: \midiCC, \ioType: \in, page: j + 1)
+			(midiMsgType: \cc, elementType: \encoder, midiChan: 0, midiNum: 33+(8*j)+i, spec: \midiCC, ioType: \in, page: j + 1)
 		}
 	},
 
@@ -65,21 +65,21 @@ description: (
 	\knUp:4.collect{ |j|
 		8.collect{ |i|
 			// top knob push mode
-			(\midiMsgType: \cc, \type: \encoder, \midiChan: 0, \midiNum: 1+(8*j)+i, \spec: \midiCC, \ioType: \inout, page: j + 1)
+			(midiMsgType: \cc, elementType: \encoder, midiChan: 0, midiNum: 1+(8*j)+i, spec: \midiCC, ioType: \inout, page: j + 1)
 		}
 	},
 
 	//buttons
 	\bt:[65,73].collect{ |ccStart|
 		8.collect{ |i|
-			(\midiMsgType: \cc, \type: \midiBut, \midiChan: 0, \midiNum: ccStart+i, \spec: \midiCC, \ioType: \inout)
+			(midiMsgType: \cc, elementType: \midiBut, midiChan: 0, midiNum: ccStart+i, spec: \midiCC, ioType: \inout)
 		}
 	},
 
 	//other encoders
 	\kn:[81,89,97].collect{ |ccStart|
 		8.collect{ |i|
-			(\midiMsgType: \cc, \type: \encoder, \midiChan: 0, \midiNum: ccStart+i, \spec: \midiCC, \ioType: \inout)
+			(midiMsgType: \cc, elementType: \encoder, midiChan: 0, midiNum: ccStart+i, spec: \midiCC, ioType: \inout)
 		}
 	}
 )

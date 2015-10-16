@@ -39,38 +39,46 @@ deviceInfo: (
 	hasScribble: true
 ),
 description: (
+
 	//buttons at bottom right
-	\pr_u_l: (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 89, \spec: \midiBut, \mode: \toggle, \ioType: \inout),
-	\pr_u_r: (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 90, \spec: \midiBut, \mode: \toggle, \ioType: \inout),
-	\pr_d_l: (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 91, \spec: \midiBut, \mode: \toggle, \ioType: \inout),
-	\pr_d_r: (\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 92, \spec: \midiBut, \mode: \toggle, \ioType: \inout),
+	pr: (
+		up: (
+			l: (\midiMsgType: \cc, elementType: \button, midiChan: 0, midiNum: 89, spec: \midiBut, mode: \toggle, ioType: \inout),
+			r: (\midiMsgType: \cc, elementType: \button, midiChan: 0, midiNum: 90, spec: \midiBut, mode: \toggle, ioType: \inout)
+		),
+		down: (
+			l: (\midiMsgType: \cc, elementType: \button, midiChan: 0, midiNum: 91, spec: \midiBut, mode: \toggle, ioType: \inout),
+			r: (\midiMsgType: \cc, elementType: \button, midiChan: 0, midiNum: 92, spec: \midiBut, mode: \toggle, ioType: \inout),
+		)
+
+	),
 
 	//upper row of encoders when pressed, 4 pages, 8 rows
-	\tr: 4.collect { |j|
+	tr: 4.collect { |j|
 		8.collect { |i|
-			// top knob knpush mode
-			(\midiMsgType: \cc, \type: \encoder, \midiChan: 0, \midiNum: 33+(8*j)+i, \spec: \midiCC, \ioType: \in, page: j + 1)
+			// top knob push mode
+			(\midiMsgType: \cc, elementType: \encoder, midiChan: 0, midiNum: 33+(8*j)+i, spec: \midiCC, ioType: \in, page: j + 1)
 		}
 	},
 
 	//upper row of encoders, 4 pages, 8 rows
-	\kn:4.collect { |j|
+	kn: 4.collect { |j|
 		8.collect { |i|
 			// top knob push mode
-			(\midiMsgType: \cc, \type: \encoder, \midiChan: 0, \midiNum: 1+(8*j)+i, \spec: \midiCC, \ioType: \inout, page: j + 1)
+			(\midiMsgType: \cc, elementType: \encoder, midiChan: 0, midiNum: 1+(8*j)+i, spec: \midiCC, ioType: \inout, page: j + 1)
 		}
 	},
 
 	//buttons
-	\bt:[65,73].collect{ |ccStart|
+	bt:[65,73].collect{ |ccStart|
 		8.collect{ |i|
-			(\midiMsgType: \cc, \type: \midiBut, \midiChan: 0, \midiNum: ccStart+i, \spec: \midiCC, \ioType: \inout)
+			(\midiMsgType: \cc, elementType: \midiBut, midiChan: 0, midiNum: ccStart+i, spec: \midiCC, ioType: \inout)
 		}
 	},
 
 	//sliders
-	sl:8.collect{ |i|
-		(\midiMsgType: \cc, \type: \encoder, \midiChan: 0, \midiNum: 81+i, \spec: \midiCC, \ioType: \inout)
+	sl: 8.collect{ |i|
+		(\midiMsgType: \cc, elementType: \encoder, midiChan: 0, midiNum: 81+i, spec: \midiCC, ioType: \inout)
 	}
 )
 )
