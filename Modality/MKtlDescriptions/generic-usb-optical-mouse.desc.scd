@@ -25,12 +25,12 @@ deviceInfo: (
 description: (
 // --------- input elements ----------
 	bt: (
-		'left': ('hidUsage': 1, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', \spec: \hidBut),
-		'right': ('hidUsage': 2, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', \spec: \hidBut),
-		'middle': ('hidUsage': 3, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', \spec: \hidBut)
+		left:   (hidUsage: 1, hidUsagePage: 9, elementType: 'button', ioType: 'in', spec: \hidBut),
+		right:  (hidUsage: 2, hidUsagePage: 9, elementType: 'button', ioType: 'in', spec: \hidBut),
+		middle: (hidUsage: 3, hidUsagePage: 9, elementType: 'button', ioType: 'in', spec: \hidBut)
 	),
-	x: ('hidUsage': 48, 'hidUsagePage': 1, 'type': 'mouseAxis', 'ioType': 'in', \spec: \mouseAxis, valueType: \relative ),
-	y: ('hidUsage': 49, 'hidUsagePage': 1, 'type': 'mouseAxis', 'ioType': 'in', \spec: \mouseAxis, valueType: \relative ),
-	wheel: ('hidUsage': 56, 'hidUsagePage': 1, 'type': 'mouseWheel', 'ioType': 'in', \spec: \mouseWheel, valueType: \relative ),
+	x:     (hidUsage: 48, hidUsagePage: 1, elementType: 'mouseAxis',  ioType: 'in', spec: \mouseAxis, valueType: \relative ),
+	y:     (hidUsage: 49, hidUsagePage: 1, elementType: 'mouseAxis',  ioType: 'in', spec: \mouseAxis, valueType: \relative ),
+	wheel: (hidUsage: 56, hidUsagePage: 1, elementType: 'mouseWheel', ioType: 'in', spec: \mouseWheel, valueType: \relative ),
 )
 );
