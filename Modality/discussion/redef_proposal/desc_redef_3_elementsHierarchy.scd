@@ -59,17 +59,17 @@ elementsDesc: (
 
 	// formerly known as collectives for OSC mainly,
 	// new name and exact creation implementation to be rethought
-	// should know to create shared responders/messageSends.
+	// should know to create shared device responders/messageSends.
 	// ( collectives in too nice a name to reserve for a technical
 	// necessity only :-)
 
-	sharedValueGroups: (
+	deviceIOGroups: (
 
 	),
 
 	// any shared element or group properties to be set once,
 	// e.g. same midiChan: 0, midiMsgType: \cc etc
-	sharedValues: (),
+	sharedProperties: (),
 
 	// and these are the actual elements, again in groups:
 	elements: [
@@ -78,12 +78,12 @@ elementsDesc: (
 			groupType: \knobGroup,
 
 			// properties that all elements in this group share:
-			shared: (\elementType: \knob, \midiMsgType: \cc,
+			sharedProperties: (\elementType: \knob, \midiMsgType: \cc,
 				\spec: \midiCC, \ioType: \inout, midiChan: 0),
 
 			// and the elements themselves, here as a named dict,
 			// listed one by one - only the differing items need be here
-			// (can also not use sharedValues, and just put everything here.)
+			// (can also not use sharedProperties, and just put everything here.)
 			elements: [
 				'1' -> (\midiNum: 1),
 				'2' -> (\midiNum: 2),
@@ -101,12 +101,12 @@ elementsDesc: (
 
 			groupType: \padGroup,
 
-			shared: (\elementType: \pad, \spec: \midiVel, \ioType: \inout),
+			sharedProperties: (\elementType: \pad, \spec: \midiVel, \ioType: \inout),
 
 			elements: (
 
-				// a sublist of noteOn/offs - shared params:
-				sharedValues: (\midiMsgType: \noteOnOff, \midiChan: 0),
+				// a sublist of noteOn/offs
+				sharedProperties: (\midiMsgType: \noteOnOff, \midiChan: 0),
 
 				// element groups for noteOnOff,
 				// here generated algorithmically:
@@ -119,7 +119,7 @@ elementsDesc: (
 
 		// a single slider which has a noteOnOff for touch
 		\sl -> (
-			sharedValues: (midiChan: 0, ioType: \in),
+			sharedProperties: (midiChan: 0, ioType: \in),
 			elements: [
 				\touch -> (elementType: \touch, midiMsgName: \noteOnOff, spec: \midiBut),
 				\pos -> (elementType: \slider, midiMsgName: \cc, spec: \midiCC)
@@ -129,7 +129,7 @@ elementsDesc: (
 		// example gamepad thumbStick
 		\stick -> (
 			elementType: \thumbStick,
-			shared: (ioType: \in),
+			sharedProperties: (ioType: \in),
 			elements: [
 				\x -> (elementType: \joyAxis, spec: \hidAxis),
 				\y -> (elementType: \joyAxis, spec: \hidAxis),

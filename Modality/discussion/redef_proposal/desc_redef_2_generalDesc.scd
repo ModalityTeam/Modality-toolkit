@@ -133,19 +133,19 @@ specs: (
 /* elementsDesc: see desc_file_redef_3 for full details! */
 elementsDesc: (
 	info: (anyKey: "anyStrings"),
-	sharedValues: (midiChan: 0),
-	sharedValueGroups: (),
+	sharedProperties: (midiChan: 0),
+	deviceIOGroups: (),
 
 	elements: [
 		\kn -> (
-			sharedValues: (elementType: \knob, midiMsgType: \control),
+			sharedProperties: (elementType: \knob, midiMsgType: \control),
 			elements: [
 				\1 -> (midiNum: 1),
 				\2 -> (midiNum: 2)
 			]
 		),
 		\pad -> (
-			sharedValues: (elementType: \pad, midiMsgType: \noteOnOff),
+			sharedProperties: (elementType: \pad, midiMsgType: \noteOnOff),
 			// ...
 			elements: [
 				\1 -> (midiNum: 36),

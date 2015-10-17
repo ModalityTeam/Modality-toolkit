@@ -57,7 +57,7 @@ elementsDesc: (
 	'info': (anyKey: "any strings etc pp."),
 
 	// any values that all elements below should inherit
-	'sharedValues': (),
+	'sharedProperties': (),
 
 	// any alternative elementgroups that belong to this MKtl
 	'groups': (
@@ -65,7 +65,7 @@ elementsDesc: (
 	),
 
 	// formerly collectives: groups that share I/O communication
-	sharedValueGroups: (
+	deviceIOGroups: (
 
 	),
 
@@ -78,7 +78,7 @@ elementsDesc: (
 			groupName: \kn,
 
 			// properties that all elements in this group share:
-			sharedValues: (\elementType: \knob, \midiMsgType: \cc, \spec: \midiCC,
+			sharedProperties: (\elementType: \knob, \midiMsgType: \cc, \spec: \midiCC,
 				\ioType: \inout, midiChan: 0),
 
 			// the elements themselves, best as assocArray:
@@ -98,7 +98,7 @@ elementsDesc: (
 			// auto-generated from key above
 			//	groupName: \pad,
 
-			shared: (\elementType: \pad, \spec: \midiVel, \ioType: \inout),
+			sharedProperties: (\elementType: \pad, \spec: \midiVel, \ioType: \inout),
 
 			elements: [
 				\1 -> [
