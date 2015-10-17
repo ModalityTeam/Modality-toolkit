@@ -17,20 +17,22 @@ parentDesc: "keith-mcmillen-qunexus",
 
 ///////// SPECIFIC INFORMATION for this port and config: ///////
 
-elementTypes: [\joyAxis],
+elementTypes: [],
+deviceType: \externalMidiPort,
 
-status: "untested",
-idInfo: (deviceName: "QuNexus", sourcePortIndex: 0, destPortIndex: 0),
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"),
+
+idInfo: (deviceName: "QuNexus", sourcePortIndex: 1, destPortIndex: 1),
 portName: "Port 2",
 
 // port is for connecting a MIDI device by midi plugs,
-// so put the info of your device in copies of this file.
-
-// here, these are the elements for a Doepfer PocketFader:
+// so you can put the info of your device in copies of this file,
+// or plug it in from the desc file of a MIDI-only device.
 description: (
-	sl: (0..15).collect { |i|
-		(elementType: \slider, midiMsgType: \control,
-			midiChan: 0, midiNum: i, spec: \midiCC)
-	}
+
 )
+
 );
