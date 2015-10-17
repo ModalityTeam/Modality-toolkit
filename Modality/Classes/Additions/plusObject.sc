@@ -22,10 +22,8 @@
 		//
 	deepAt3 { |first ... rest|
 		var res;
-		[first, rest].postln;
 		if (first.isNil or: { first == \all }) {
-			"%: wildcard %\n".postf(thisMethod, first);
-			if (rest.isEmpty) {
+				if (rest.isEmpty) {
 				^this;
 			} {
 				^this.collect(_.deepAt3(*rest));
@@ -41,8 +39,6 @@
 			if (rest.isEmpty) {
 				^res
 			} {
-				"recur here.".postln;
-				"res.deepAt % \n".postf(rest);
 				^res.deepAt3(*rest)
 			};
 		};
