@@ -22,26 +22,24 @@ o.disable:
 ~bee1 = MKtl(\bee1, "*minibee1");
 // update with the address as seen in OSCMonitor or OSCFunc.trace:
 ~bee1.device.updateSrcAddr(~beeAddr.hostname);
-)
 
 ~bee2 = MKtl(\bee2, "*minibee1", false);
 // update with the address as seen in OSCMonitor or OSCFunc.trace:
 ~bee2.device.updateSrcAddr(~beeAddr.hostname);
 ~bee2.device.source;
 
-
 // func for faking OSC message from a given NetAddr:
 ~fakeSendFrom = { |netaddr, msg, recvPort|
-recvPort = recvPort ?? NetAddr.langPort;
-thisProcess.recvOSCmessage(nil, netaddr, recvPort, msg);
+	recvPort = recvPort ?? NetAddr.langPort;
+	thisProcess.recvOSCmessage(nil, netaddr, recvPort, msg);
 };
+)
 
 OSCFunc.trace;
-~fakeSendFrom.(~beeAddr, ['/test', 1, 2, 3]);
+~fakeSendFrom.(~beeAddr, ['/minibee/data', 1, 1, 2, 3]);
 OSCFunc.trace(false);
 
-~bee1.trace;
-~bee2.trace;
+~bee1.trace; ~bee2.trace;
 // now both bees match
 ~fakeSendFrom.(~beeAddr, ['/minibee/data', 1, 1, 2, 3]);
 
@@ -62,6 +60,13 @@ OSCFunc.trace(false);
 // from different address, also no post
 ~fakeSendFrom.(NetAddr.localAddr, ['/minibee/data', 1, 1, 2, 3]);
 
+
+// test groupAction - to the collective \data:
+~datagrp = ~bee1.collAt(\data);
+~datagrp.groupAction = { |grp| [grp.name, grp.value].postln };
+~datagrp.doGroupAction;
+~datagrp.deviceValueAction_([3,2,1]);
+~fakeSendFrom.(~beeAddr, ['/minibee/data', 1, -2, 0, 2]);
 
 */
 
