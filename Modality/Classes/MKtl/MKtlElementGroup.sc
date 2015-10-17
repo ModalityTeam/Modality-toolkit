@@ -190,18 +190,15 @@ MKtlElementGroup : MKtlElement {
 
 	valueAction_ {|newvals|
 		var pairs = [elements, newvals].flop;
-		this.groupValueAction_(newvals);
-		pairs.do { |assoc|
-			assoc[0] !? _.valueAction_( assoc[1] );
-		};
-
+		this.value_(newvals);
+		this.doGroupAction;
+		this.doAction;
 	}
 
 	deviceValueAction_ {|newvals|
-		var pairs = [elements, newvals].flop;
-		pairs.do { |assoc|
-			assoc[0] !? _.deviceValueAction_( assoc[1] );
-		};
+		this.deviceValue_(newvals);
+		this.doGroupAction;
+		this.doAction;
 	}
 
 	doGroupAction { groupAction.value(this) }
@@ -274,7 +271,7 @@ MKtlElementGroup : MKtlElement {
 	}
 
 	doAction { |...children|
-		children = children.add( this );
+		children = children.copy.add( this );
 		if (enabled) { action.value( *children ) };
 		parent !? _.doAction( *children );
 		groups.do( _.doAction( *children ) );

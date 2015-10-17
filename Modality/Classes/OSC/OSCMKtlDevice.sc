@@ -198,11 +198,12 @@ OSCMKtlDevice : MKtlDevice {
 		if ( oscFuncDictionary.isNil ){
 			oscFuncDictionary = IdentityDictionary.new;
 		};
-		mktl.collectivesDict.do { |el|
-			var oscPath = el.elemDesc[ \oscPath ];
-			var ioType = el.elemDesc[ \ioType ];
-			var argTemplate = el.elemDesc[ \argTemplate ];
-			var valueIndices = el.elemDesc[ \valueAt ];
+		mktl.collectivesDict.do { |coll|
+			var collDesc = coll.elemDesc;
+			var oscPath = collDesc[ \oscPath ];
+			var ioType = collDesc[ \ioType ];
+			var argTemplate = collDesc[ \argTemplate ];
+			var valueIndices = collDesc[ \valueAt ];
 			var msgIndices, templEnd;
 			var dispatcher = this.class.messageSizeDispatcher;
 
@@ -223,10 +224,10 @@ OSCMKtlDevice : MKtlDevice {
 						templEnd = 1;
 					};
 				};
-				if ( oscFuncDictionary.at( el.name ).notNil ){
-					oscFuncDictionary.at( el.name ).free };
+				if ( oscFuncDictionary.at( coll.name ).notNil ){
+					oscFuncDictionary.at( coll.name ).free };
 
-				oscFuncDictionary.put( el.name,
+				oscFuncDictionary.put( coll.name,
 					OSCFunc.new( { |msg|
 						// "clever" msg index parsing
 						var valueMsg;
@@ -236,9 +237,10 @@ OSCMKtlDevice : MKtlDevice {
 						}{
 							 valueMsg = msg.copyToEnd( templEnd );
 						};
-						el.deviceValueAction_( valueMsg );
 
-						if(traceRunning) { this.postTrace(el) };
+						coll.deviceValueAction_( valueMsg );
+						if(traceRunning) { this.postTrace(coll) };
+
 					}, oscPath, source, recvPort, argTemplate, dispatcher )
 					.permanent_( true );
 				);
