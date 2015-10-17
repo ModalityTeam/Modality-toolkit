@@ -43,6 +43,19 @@ f.elAt(\joy, 0, 2); // left is index 0, hat is index 2
 f.dictAt(\joy_l_hat).action = { |el| [el.name, el.value].postln };
 f.elementAt(\joy, \r, \hat).action = { |el| [el.name, el.value].postln };
 
+
+// test for rumble outputs:
+k = MKtl(\k, "*drive");
+k.elementAt( \rumble, \l ).value_(1);
+k.elementAt( \rumble, \l ).value_(0.5);
+k.elementAt( \rumble, \l ).value_(0);
+
+k.elementAt( \rumble, \r ).value_(1);
+k.elementAt( \rumble, \r ).value_(0.5);
+k.elementAt( \rumble, \r ).value_(0);
+
+
+
 */
 
 (
@@ -141,12 +154,14 @@ description: [
 
 	// --------- output elements ----------
 	'rumble' -> [
-		\l -> ('hidUsage': 187, 'hidUsagePage': 1, 'elementType': 'rumble', 'ioType': 'out', spec: \lin255, mode: \minimum,
-			'style': (row: 4, column: 1, showLabel: true)
+		\l -> ('hidUsage': 187, 'hidUsagePage': 1, hidElementID: 32,
+			'elementType': 'rumble', 'ioType': 'out', spec: \lin255,
+			mode: \minimum, 'style': (row: 4, column: 1, showLabel: true)
 		),
 		// this one is different in OSX due to a bug in the Apple API, but does not work yet anyways
-		\r -> ('hidUsage': 0, 'hidUsagePage': 1, 'elementType': 'rumble', 'ioType': 'out', spec: \lin255, mode: \minimum,
-			'style': (row: 4, column: 1, showLabel: true)
+		\r -> ('hidUsage': 0, 'hidUsagePage': 1, hidElementID: 32,
+			'elementType': 'rumble', 'ioType': 'out', spec: \lin255,
+			mode: \minimum, 'style': (row: 4, column: 1, showLabel: true)
 		)
 	]
 ]
