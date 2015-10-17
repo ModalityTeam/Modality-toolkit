@@ -21,7 +21,7 @@ MKtlElementGroup : MKtlElement {
 				dict.put( key, value );
 				array = array.add( value );
 			});
-			elements = array;
+			elements = array ?? {[]};
 			this.sortElementsByType;
 		} { elements.isKindOf( Array ) } {
 			elements = elements.collect({ |item|

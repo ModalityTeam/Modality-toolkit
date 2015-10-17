@@ -203,12 +203,12 @@ MKtlGUI {
 		.acceptsMouse_(false) // allow using underlying views.
 		.visible_( false );
 
-		traceButton = Button( parent, Rect(2,2,80,16) )
+		traceButton = Button( parent, Rect(2,2,50,16) )
 		.states_([["trace"],["trace", Color.black, Color.green]])
 		.action_({ |bt| mktl.trace( bt.value.booleanValue ) })
 		.value_( mktl.traceRunning.binaryValue );
 
-		labelButton = Button( parent, Rect(84,2,80,16) )
+		labelButton = Button( parent, Rect(54,2,50,16) )
 		.states_([["labels"],["labels", Color.black, Color.green]])
 		.action_({ |bt| this.showLabels( bt.value.booleanValue ) });
 
@@ -239,6 +239,9 @@ MKtlGUI {
 	}
 
 	getNumRowsColumns {
+		if (mktl.elementGroup.elements.isEmpty) {
+			^[1, 2]
+		};
 		^mktl.elementGroup.flat.collect({ |item|
 			var desc = item.elemDesc;
 			desc !? {
@@ -249,8 +252,10 @@ MKtlGUI {
 		}).flop.collect(_.maxItem) + 1;
 	}
 
-	// assumes that pages are indices starting with 0,
-	// pages often are named, e.g. A, B, C, D on qunexus.
+	// this assumes that pages are indices starting with 0,
+	// hardware pages often are named, e.g. A, B, C, D on qunexus,
+	// or 1,2,3,4 on nanoKontrol 1.
+
 	getNumPages {
 		^mktl.elementGroup.flat.collect({ |item| item.elemDesc[ \page ] }).select(_.notNil).maxItem !? (_+1);
 	}
