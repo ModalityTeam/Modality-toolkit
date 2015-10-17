@@ -1,8 +1,20 @@
-MPushHelper {
+MPush : MKtl{
 	classvar <lightDict;
+
+	*new {|name, multiIndex = 1 |
+		^super.new(name, "ableton-push", multiIndex: multiIndex)
+	}
 
 	*initClass {
 		lightDict = ();
+
+
+		lightDict.ctlIntensity = IdentityDictionary[
+			\off    -> 0,
+			\dim    -> 1,
+			\full   -> 7,
+		];
+
 
 		lightDict.topRowIntensity = IdentityDictionary[
 			\dim -> 0,
@@ -83,4 +95,7 @@ MPushHelper {
 		})
 	}
 
+	setCtlLight {|which, intensity = \full, blink = \steady, color = \red|
+		this.elementAt(which).bubble.flat.do{|e| e.deviceValue_(this.class.buttonLightCode(intensity, blink, color))};
+	}
 }
