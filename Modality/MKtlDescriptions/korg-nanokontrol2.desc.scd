@@ -17,6 +17,29 @@ n.elAt(\bt).action = { |el ... groups|
 // just for slider 1
 n.elAt(\sl, \1).action = { |el| [el.name, el.value].postln };
 
+
+// test for enabling LED control:
+// make a nanokon
+n = MKtl(\nk2, "korg-nanokontrol2");
+// check if you already have LEDs enabled -
+// if they all go on and off, they are enabled:
+n.outputElements.do(_.value_(1));
+n.outputElements.do(_.value_(0));
+
+// if not, enable them:
+n.sendSpecialMessage('makeButtonLEDsWriteable');
+// now they should go on and off:
+n.outputElements.do(_.value_(1));
+n.outputElements.do(_.value_(0));
+
+// To restore the nanoK to factory settings:
+* power it down
+* hold down track buttons "<" and ">" and "cycle"
+* power up and wait for ca. 5 seconds
+
+
+
+
 */
 (
 deviceName: "nanoKONTROL2",

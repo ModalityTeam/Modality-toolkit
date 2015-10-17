@@ -655,7 +655,7 @@ MKtl { // abstract class
 	}
 
 	sendSpecialMessage { |name|
-		var message = this.specialMessages(name);
+		var message = this.specialMessages[name];
 		^device.sendSpecialMessage(message);
 	}
 
