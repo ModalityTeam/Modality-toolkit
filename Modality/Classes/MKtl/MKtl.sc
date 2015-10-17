@@ -612,29 +612,17 @@ MKtl { // abstract class
 		}
 	}
 
+	openDeviceVia { |idInfo, lookAgain=true, multiIndex|
+		if (idInfo.notNil) {
+			"%: replacing idInfo: % with: % to openDevice.\n"
+			.postf(this, desc.idInfo.cs, idInfo.cs);
+			this.desc.fullDesc.put(idInfo);
+		};
+	}
+
 	hasDevice {
 		^device.notNil
 	}
-
-		// obsolete I think
-	// // only for MIDI, to support multiple identical devices
-	// listenTo { |srcIDindex|
-	// 	if (this.hasDevice.not) {
-	// 		"no device.".postln
-	// 		^this
-	// 	};
-	// 	// only for MIDI so far
-	// 	device.initElements(srcIDindex);
-	// }
-	//
-	// // only for MIDI ...
-	// sendTo { |destIDindex|
-	// 	if (this.hasDevice.not) {
-	// 		"no device.".postln
-	// 		^this
-	// 	};
-	// 	device.setDstID(device.destination[destIDindex].uid);
-	// }
 
 	trace { |bool = true|
 		if ( this.hasDevice ){ device.trace( bool ) };
