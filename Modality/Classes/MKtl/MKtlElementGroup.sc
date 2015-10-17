@@ -156,12 +156,14 @@ MKtlElementGroup : MKtlElement {
 
 	value { ^elements.collect(_.value) }
 	value_ { |newvals|
-		newvals.do { |val, i| elements[i].value = val }
+		var pairs = [elements, newvals].flop;
+		pairs.do { |assoc| assoc[0].value = assoc[1] }
 	}
 
 	deviceValue { ^elements.collect(_.deviceValue) }
 	deviceValue_ { |newvals|
-		newvals.do { |val, i| elements[i].deviceValue = val }
+		var pairs = [elements, newvals].flop;
+		pairs.do { |assoc| assoc[0].deviceValue = assoc[1] }
 	}
 
 	prettyValues {
@@ -187,15 +189,17 @@ MKtlElementGroup : MKtlElement {
 	}
 
 	valueAction_ {|newvals|
-		newvals.do({ |item, i|
-			elements[i] !? _.valueAction_( item );
-		});
+		var pairs = [elements, newvals].flop;
+		pairs.do { |assoc|
+			assoc[0] !? _.valueAction_( assoc[1] );
+		};
 	}
 
 	deviceValueAction_ {|newvals|
-		newvals.do({ |item, i|
-			elements[i] !? _.deviceValueAction_( item );
-		});
+		var pairs = [elements, newvals].flop;
+		pairs.do { |assoc|
+			assoc[0] !? _.deviceValueAction_( assoc[1] );
+		};
 	}
 
 	keys { ^elements.collect({ |item| dict.findKeyForValue( item ) }) }
