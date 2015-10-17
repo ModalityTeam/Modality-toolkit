@@ -41,13 +41,13 @@ description: (
 	\pad: (
 		\on: (36..99).collect { |num|
 			(midiMsgType: \noteOn,  elementType: \pad, midiChan: 0, midiNum: num, spec: \midiNote, ioType: \inout)
-		}.clump(8),
+		}.clump(8).reverse,
 		\off: (36..99).collect { |num|
 			(midiMsgType: \noteOff, elementType: \pad, midiChan: 0, midiNum: num, spec: \midiNote, ioType: \inout)
-		}.clump(8),
+		}.clump(8).reverse,
 		\poly: (36..99).collect { |num|
 			(midiMsgType: 'polyTouch', elementType: 'keytouch', midiChan: 0, midiNum: num,            spec: 'midiCC', ioType: \in)
-		}.clump(8)
+		}.clump(8).reverse
 	),
 
 
@@ -87,17 +87,17 @@ description: (
 			(midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: num,  spec: 'midiCC', ioType: \inout)
 		}
 	],
-	btLen: (
-		//------ note lentgh buttons
-		'132t':			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum:    43, spec: 'midiCC', ioType: \inout),
-		'132':			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum:    42, spec: 'midiCC', ioType: \inout),
-		'116t':			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum:    41, spec: 'midiCC', ioType: \inout),
-		'116':			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum:    40, spec: 'midiCC', ioType: \inout),
-		'18t':			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum:    39, spec: 'midiCC', ioType: \inout),
-		'18':			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum:    38, spec: 'midiCC', ioType: \inout),
-		'14t':			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum:    37, spec: 'midiCC', ioType: \inout),
-		'14':			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum:    36, spec: 'midiCC', ioType: \inout),
-	),
+	btLen: [
+		//------ note length buttons
+		'132t' ->			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum:    43, spec: 'midiCC', ioType: \inout),
+		'132'->			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum:    42, spec: 'midiCC', ioType: \inout),
+		'116t'->			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum:    41, spec: 'midiCC', ioType: \inout),
+		'116'->			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum:    40, spec: 'midiCC', ioType: \inout),
+		'18t'->			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum:    39, spec: 'midiCC', ioType: \inout),
+		'18'->			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum:    38, spec: 'midiCC', ioType: \inout),
+		'14t'->			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum:    37, spec: 'midiCC', ioType: \inout),
+		'14'->			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum:    36, spec: 'midiCC', ioType: \inout),
+	],
 	btCtl: (
 		//------ ctl buttons
 		\tapTempo:		 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum:     3, spec: 'midiCC', ioType: \inout),

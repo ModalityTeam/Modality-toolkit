@@ -95,7 +95,33 @@ MPush : MKtl{
 		})
 	}
 
-	setCtlLight {|which, intensity = \full, blink = \steady, color = \red|
-		this.elementAt(which).bubble.flat.do{|e| e.deviceValue_(this.class.buttonLightCode(intensity, blink, color))};
+	lightsOff {
+		this.setCtlLight(\btCtl, \off);
+		this.setCtlLight(\btLen, \off);
+		this.setBtLight(this.elementAt(\bt, 0), \off);
+		this.setBtLight(this.elementAt(\bt, 1), \off);
+		this.setPadLight(\pad, \off);
+	}
+
+
+	setPadLight {|elem, intensity = \full, blink = \steady, color = \red|
+		elem.isKindOf(Symbol).if{
+			elem = this.elementAt(elem, \on);
+		};
+		elem.bubble.flat.do{|e| e.deviceValue_(this.class.padLightCode(intensity, blink, color))};
+	}
+
+	setCtlLight {|elem, intensity = \full, blink = \steady, color = \red|
+		elem.isKindOf(Symbol).if{
+			elem = this.elementAt(elem);
+		};
+		elem.bubble.flat.do{|e| e.deviceValue_(this.class.buttonLightCode(intensity, blink, color))};
+	}
+
+	setBtLight {|elem, intensity = \full, blink = \steady, color = \red|
+		elem.isKindOf(Symbol).if{
+			elem = this.elementAt(elem);
+		};
+		elem.bubble.flat.do{|e| e.deviceValue_(this.class.buttonLightCode(intensity, blink, color, elem.parent.index))}
 	}
 }
