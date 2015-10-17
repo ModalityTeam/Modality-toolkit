@@ -2,6 +2,7 @@ MKtlElementGroup : MKtlElement {
 
 	var <elements;
 	var <dict;
+	var <>groupAction;
 
 	*new { |name, source, elements|
 		^super.newCopyArgs( name, source ).elements_(elements);
@@ -84,10 +85,12 @@ MKtlElementGroup : MKtlElement {
 		};
 	}
 
+	// should keep dict in sync
 	put { |index, element|
 		this.elements = this.elements.put( index, element );
 	}
 
+	// should keep dict in sync
 	add { |element|
 		this.elements = this.elements.add( element );
 	}
@@ -108,9 +111,6 @@ MKtlElementGroup : MKtlElement {
 		},{
 			elements;
 		})
-	}
-
-	makePlain {
 	}
 
 	removeAll {
@@ -190,9 +190,11 @@ MKtlElementGroup : MKtlElement {
 
 	valueAction_ {|newvals|
 		var pairs = [elements, newvals].flop;
+		this.groupValueAction_(newvals);
 		pairs.do { |assoc|
 			assoc[0] !? _.valueAction_( assoc[1] );
 		};
+
 	}
 
 	deviceValueAction_ {|newvals|
@@ -200,6 +202,18 @@ MKtlElementGroup : MKtlElement {
 		pairs.do { |assoc|
 			assoc[0] !? _.deviceValueAction_( assoc[1] );
 		};
+	}
+
+	doGroupAction { groupAction.value(this) }
+
+	groupValueAction_ { |newvals|
+		this.value_(newvals)
+		.doGroupAction;
+	}
+
+	groupDeviceValueAction_ { |newvals|
+		this.deviceValue_(newvals)
+		.doGroupAction;
 	}
 
 	keys { ^elements.collect({ |item| dict.findKeyForValue( item ) }) }
