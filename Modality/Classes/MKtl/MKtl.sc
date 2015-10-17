@@ -424,8 +424,8 @@ MKtl { // abstract class
 	dictAt { |key| ^elementsDict[key] }
 
 	elAt { |...args|
-		^elementGroup.deepAt3(*args)
-		?? { collectivesDict.deepAt3(*args) }
+		^elementGroup.deepAt2(*args)
+		?? { collectivesDict.deepAt2(*args) }
 	}
 
 	at { |index|
