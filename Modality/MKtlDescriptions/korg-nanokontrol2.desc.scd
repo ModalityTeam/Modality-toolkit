@@ -19,7 +19,7 @@ n.elAt(\sl, \1).action = { |el| [el.name, el.value].postln };
 
 
 // test for enabling LED control:
-// make a nanokon
+// make an MKtl for it
 n = MKtl(\nk2, "korg-nanokontrol2");
 // check if you already have LEDs enabled -
 // if they all go on and off, they are enabled:
@@ -36,9 +36,6 @@ n.outputElements.do(_.value_(0));
 * power it down
 * hold down track buttons "<" and ">" and "cycle"
 * power up and wait for ca. 5 seconds
-
-
-
 
 */
 (
@@ -62,42 +59,60 @@ deviceInfo: (
 
 ),
 
-description: [
-	\rew -> (\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum: 43, \spec: \midiBut, \mode: \push, \ioType: \inout, \style: (row: 3, column: 0, showLabel: true) ),
-	\fwd -> (\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum: 44, \spec: \midiBut, \mode: \push, \ioType: \inout, \style: (row: 3, column: 1, showLabel: true)),
-	\stop -> (\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum: 42, \spec: \midiBut, \mode: \push, \ioType: \inout, \style: (row: 3, column: 2, showLabel: true)),
-	\play -> (\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum: 41, \spec: \midiBut, \mode: \push, \ioType: \inout, \style: (row: 3, column: 3, showLabel: true)),
-	\rec -> (\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum: 45, \spec: \midiBut, \mode: \push, \ioType: \inout, \style: (row: 3, column: 4, showLabel: true)),
+elementsDesc: (
+	sharedProperties: (\midiMsgType: \cc, \midiChan: 0),
+	elements: [
+		\transport -> (
+			sharedProperties: (\elementType: \button, \spec: \midiBut,
+				\mode: \push, \ioType: \inout),
+			elements: [
+				\rew ->  (\midiNum: 43, \style: (row: 3, column: 0, showLabel: true)),
+				\fwd ->  (\midiNum: 44, \style: (row: 3, column: 1, showLabel: true)),
+				\stop -> (\midiNum: 42, \style: (row: 3, column: 2, showLabel: true)),
+				\play -> (\midiNum: 41, \style: (row: 3, column: 3, showLabel: true)),
+				\rec ->  (\midiNum: 45, \style: (row: 3, column: 4, showLabel: true)),
 
-	\cycle -> (\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum: 46, \spec: \midiBut, \mode: \push, \ioType: \inout, \style: (row: 2.125, column: 0, height: 0.75, showLabel: true)),
-	\mset -> (\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum: 60, \spec: \midiBut, \mode: \push, \ioType: \inout, \label: "set", \style: (row: 2.125, column: 2, height: 0.75, showLabel: true)),
-	\mleft -> (\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum: 61, \spec: \midiBut, \mode: \push, \ioType: \inout, \label: "<", \style: (row: 2.125, column: 3, height: 0.75, showLabel: true)),
-	\mright -> (\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum: 62, \spec: \midiBut, \mode: \push, \ioType: \inout, \label: ">", \style: (row: 2.125, column: 4, height: 0.75, showLabel: true)),
-	\tleft -> (\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum: 58, \spec: \midiBut, \mode: \push, \ioType: \inout, \label: "<", \style: (row: 1.125, column: 0, height: 0.75, showLabel: true)),
-	\tright -> (\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum: 59, \spec: \midiBut, \mode: \push, \ioType: \inout, \label: ">", \style: (row: 1.125, column: 1, height: 0.75, showLabel: true)),
+				\cycle -> (\midiNum: 46,
+					\style: (row: 2.125, column: 0, height: 0.75, showLabel: true)),
+				\mset -> (\midiNum: 60, \label: "set",
+					\style: (row: 2.125, column: 2, height: 0.75, showLabel: true)),
+				\mleft -> (\midiNum: 61, \label: "<",
+					\style: (row: 2.125, column: 3, height: 0.75, showLabel: true)),
+				\mright -> (\midiNum: 62, \label: ">",
+					\style: (row: 2.125, column: 4, height: 0.75, showLabel: true)),
+				\tleft -> (\midiNum: 58, \label: "<",
+					\style: (row: 1.125, column: 0, height: 0.75, showLabel: true)),
+				\tright -> (\midiNum: 59, \label: ">",
+					\style: (row: 1.125, column: 1, height: 0.75, showLabel: true)),
+			]
+		),
+		\sl -> (
+			sharedProperties: (\elementType: \slider, \spec: \midiCC),
+			elements: (1..8).collect { |num, i|
+				(i+1).asSymbol -> (\midiNum: num, \style: (row: 1, column: 7+(i*2)))
+			}
+		),
+		\kn -> (
+			sharedProperties: (\elementType: \knob, \spec: \midiCC),
+			elements: (16..23).collect { |num, i|
+				(i + 1).asSymbol -> (\midiNum: num, \style: (row: 0, column: 7+(i*2)))
+			}
+		),
+		\bt -> (
+			sharedProperties: (\elementType: \button, \spec: \midiBut),
 
-	// scene:
-	\sl -> (0..7).collect { |num, i|
-		(i + 1).asSymbol ->
-		(\midiMsgType: \cc, \elementType: \slider, \midiChan: 0, \midiNum: num, \spec: \midiCC, \style: (row: 1, column: 7+(i*2)))
-	},
-
-	\kn -> (16..23).collect { |num, i|
-		(i + 1).asSymbol ->
-		(\midiMsgType: \cc, \elementType: \knob, \midiChan: 0, \midiNum: num, \spec: \midiCC, \style: (row: 0, column: 7+(i*2)))
-	},
-
-	\bt -> [(32..39),(48..55),(64..71)].collect { |nums, i|
-		var label = [\S, \M, \R][i];
-		label ->
-		nums.collect { |num, j|
-			(j + 1).asSymbol ->
-			(\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum:
-				num, \spec: \midiCC, \ioType: \inout, label: label,
-				\style: (row: 1+i, column: 6+(j*2), showLabel: true ))
-		}
-	}
-],
+			elements: [\S, \M, \R].collect { |label, i|
+				var nums = [(32..39),(48..55),(64..71)][i];
+				label -> (
+					elements: nums.collect { |num, j|
+						(j + 1).asSymbol -> (\midiNum: num, label: label,
+							\style: (row: 1+i, column: 6+(j*2), showLabel: true ))
+					}
+				)
+			}
+		)
+	]
+),
 
 // don't touch the following code: these are sysex messages found from the Korg NanoKontrol2 editor.
 // found at: https://github.com/overtone/overtone/blob/master/src/overtone/device/midi/nanoKONTROL2.clj
@@ -141,5 +156,4 @@ specialMessages: (
 	[ \sysex, Int8Array[ 0xF0, 0x42, 0x40, 0x00, 0x01, 0x13, 0x00, 0x1F, 0x11, 0x00, 0xF7 ] ]
 ];
 )
-
 )

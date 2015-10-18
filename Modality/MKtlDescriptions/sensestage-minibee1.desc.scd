@@ -96,7 +96,7 @@ deviceInfo: (
 	// hasScribble: false
 ),
 
-collectives: (
+deviceIOGroups: (
 	data: (
 		oscPath: '/minibee/data',
 		argTemplate: [ 1 ],
@@ -104,12 +104,12 @@ collectives: (
 		ioType: \in
 	)
 ),
-description: (
-	\accel: (
-		\x: (elementType: 'accelAxis', elementType: \accelerationAxis, ioType: \collectiveIn, \spec: 'accelAxis' ),
-		\y: (elementType: 'accelAxis', elementType: \accelerationAxis, ioType: \collectiveIn, \spec: 'accelAxis' ),
-		\z: (elementType: 'accelAxis', elementType: \accelerationAxis, ioType: \collectiveIn, \spec: 'accelAxis' )
-	)
+elementsDesc: (
+	groupName: \accel,
+	sharedProperties: (elementType: 'accelAxis', elementType: \accelerationAxis, ioType: \collectiveIn, \spec: 'accelAxis' ),
+	elements: [\x, \y, \z ].collect { |key, i|
+		key -> ()
+	};
 )
 )
 
