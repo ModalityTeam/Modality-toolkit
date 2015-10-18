@@ -6,6 +6,7 @@ Questions:
 */
 
 MKtlDesc {
+
 	classvar <defaultFolder, <folderName = "MKtlDescriptions";
 	classvar <descExt = ".desc.scd", <compExt = ".comp.scd";
 	classvar <parentExt = ".parentDesc.scd";
@@ -36,6 +37,13 @@ MKtlDesc {
 		this.loadCache;
 	}
 
+	// access
+	*at { |descName|
+		^allDescs[descName]
+	}
+
+	// WEB interface
+
 	*web { |ctlname = ""|
 		webview = webview ?? { WebView() };
 		webview.front.url_((docURI +/+ ctlname).postcs);
@@ -53,7 +61,7 @@ MKtlDesc {
 		this.class.web(this.docURI(relative: true));
 	}
 
-	// Files admin methods:
+	//----------- File admin methods:
 
 	*addFolder { |path, name = (folderName)|
 		var folderPath = path.standardizePath +/+ name;
@@ -97,20 +105,6 @@ MKtlDesc {
 		^foundPaths
 	}
 
-	// convenience only
-	*loadDescs { |filename = "*", folderIndex, post = false|
-		var paths = this.findFile(filename, folderIndex);
-		var descs = paths.collect {|path|
-			try { this.fromPath(path); };
-		}.select(_.notNil);
-
-		if (post) {
-			"\n// MKtlDesc loaded % valid description files - see:"
-			"\nMKtlDesc.allDescs;\n".postf(paths.size);
-		};
-		^descs
-	}
-
 	*postLoadable {|folderIndex|
 		folderIndex = folderIndex ?? { (0..descFolders.lastIndex) };
 		descFolders[folderIndex.asArray].do { |folder, i|
@@ -124,6 +118,19 @@ MKtlDesc {
 		};
 	}
 
+	*loadDescs { |filename = "*", folderIndex, post = false|
+		var paths = this.findFile(filename, folderIndex);
+		var descs = paths.collect {|path|
+			try { this.fromPath(path); };
+		}.select(_.notNil);
+
+		if (post) {
+			"\n// MKtlDesc loaded % valid description files - see:"
+			"\nMKtlDesc.allDescs;\n".postf(paths.size);
+		};
+		^descs
+	}
+
 	*postLoaded {
 		"\n*** MKtlDesc - loaded descs: ***".postln;
 		allDescs.keys(SortedList).do { |key|
@@ -132,18 +139,13 @@ MKtlDesc {
 		"******\n".postln;
 	}
 
+	// info
 	*postStatus {
 		MKtlDesc.loadDescs
 		.sort { |a, b| a.fullDesc.status < b.fullDesc.status; }
 		.do { |a| [a.fullDesc.status, a.name].postcs; };
 	}
 
-	*at { |descName|
-		^allDescs[descName]
-	}
-
-	// FIXME: cache file does not support multiple files for some
-	// hardware deviceName yet...
 
 	// create lookup dicts for filename -> idInfo and back
 	// this will allow loading just the file needed, not all files.
@@ -183,15 +185,7 @@ MKtlDesc {
 				warn("MKtlDesc: could not write cache at %.\n".format(path));
 			}
 		};
-
-		/*
-		MKtlDesc.writeCache;
-		MKtlDesc.loadCache;
-		MKtlDesc.fileToIDDict;
-		*/
-
 	}
-
 
 	*loadCache {
 		// clear first? maybe better not
@@ -272,43 +266,72 @@ MKtlDesc {
 	// integrity checks for dicts at all levels:
 
 	// according to current definition,
-	// \idInfo, \protocol, \description are required;
-	// can add more tests here,
-	// e.g. check whether description is wellformed
+	// \idInfo, \protocol, \elementsDesc are required;
+
 	*isValidDescDict { |dict|
 		var ok = dict.isKindOf(Dictionary)
-		and:  ({ dict[\parentDesc].notNil
+		and:  ({ dict[\parentDescXXX].notNil
 			or: { dict[\idInfo].notNil
 				and: { dict[\protocol].notNil
-					and: { dict[\description].notNil
+					and: { dict[\elementsDesc].notNil
 						//	and: { this.checkElementsDesc(dict) }
 					}
 				}
 		}});
 		if (ok) { ^true };
-		"% - dict not valid: %\n\n".postf(thisMethod, dict);
+		// todo: more detailed info here
+		"% - dict not valid: %\n\n".postf(thisMethod, dict.deviceName);
 	}
 
 	*isValidElemDesc { |dict, protocol|
-		// var ok = dict.isKindOf(Dictionary)
-		// and: { dict[\type].notNil
-		// 	and: { dict[\protocol].notNil
-		// 		and: { dict[\description].notNil
-		// 			//	and: { this.checkElementsDesc(dict) }
-		// 		}
-		// 	}
-		// };
-		// if (ok) { ^true };
-		// "% - dict not valid: %\n\n".postf(thisMethod, dict);
+		var ok = dict.isKindOf(Dictionary)
+		and: { dict[\elementType].notNil
+			and: { dict[\ioType].notNil
+				and: { dict[\spec].notNil }
+			}
+		};
+		if (ok) { ^true };
+		"% - dict not valid: %\n\n".postf(thisMethod, dict);
 	}
 
 	// to be defined and tested
-	*isValidMidiDesc { |dict| }
-	*isValidHIDDesc { |dict| }
-	*isValidOSCDesc { |dict| }
+	*isValidMidiDesc { |dict|
+		^dict[\midiMsgType].notNil
+	}
+	*isValidHIDDesc { |dict|
+		^(dict[\usage].notNil and: dict[\usagePage].notNil)
+		or: { dict[\hidElementID].notNil }
+
+	}
+	*isValidOSCDesc { |dict| true }
+
+	// plug sharedProperties in as parents
+	*sharePropsToElements { |dict, toShare|
+		var shared, elements, subProps;
+		if (dict.isKindOf(Dictionary).not) {
+		//	"cant share in %\n".postf(dict);
+			^this
+		};
+
+		shared = dict[\sharedProperties] ? ();
+		elements = dict[\elements];
+		if (toShare.notNil) {
+		//	"shared: % parent: %\n\n".postf(shared, toShare);
+			shared.parent = toShare;
+		};
+		elements.do { |elemDict|
+			if (elemDict[\elements].notNil) {
+				this.sharePropsToElements(elemDict, shared);
+			} {
+			//	"elem: % shared: %\n\n".postf(elemDict, shared);
+				elemDict.parent = shared
+			};
+		};
+	}
 
 
 	// creation methods
+
 	*fromFileName { |filename, folderIndex, multi = false|
 		var paths = this.findFile(filename, folderIndex, false);
 		if (paths.isEmpty) {
@@ -326,7 +349,6 @@ MKtlDesc {
 		};
 
 		^paths.collect(this.fromPath(_)).unbubble;
-
 	}
 
 	*fromPath { |path|
@@ -372,6 +394,7 @@ MKtlDesc {
 	}
 
 	// initialisation/preparation
+
 	fullDesc_ { |inDesc|
 		var missing;
 		if (this.class.isValidDescDict(inDesc).not) {
@@ -391,6 +414,7 @@ MKtlDesc {
 		this.prMakeElemColls(this.elementsDesc);
 		this.inferName;
 		this.makeElemKeys;
+		MKtlDesc.sharePropsToElements(this.elementsDesc);
 
 		if (this.protocol == \midi) {
 			this.getMidiMsgTypes;
@@ -402,6 +426,21 @@ MKtlDesc {
 		};
 
 		this.resolveDescEntriesForPlatform;
+	}
+
+	elAt { |... args|
+		var res = this.elementsDesc;
+		args.do { |key|
+			case { key.isNumber } {
+				res = res[\elements][key]
+			} {
+				res = res.elements.detect { |el| el[\key] == key }
+			};
+			if (res.isNil) {
+				^res
+			};
+		};
+		^res
 	}
 
 	findParent {
@@ -432,7 +471,7 @@ MKtlDesc {
 
 	makeElemKeys {
 		this.elementsDesc.traverseDo ({ |elem, deepKeys|
-			var elemKey = deepKeys.join($_).asSymbol;
+			var elemKey = deepKeys.reject(_ == \elements).join($_).asSymbol;
 			elem.put(\elemKey, elemKey);
 		}, MKtlDesc.isElementTestFunc);
 	}
@@ -487,8 +526,8 @@ MKtlDesc {
 	idInfo { ^fullDesc[\idInfo] }
 	idInfo_ { |type| ^fullDesc[\idInfo] = type }
 
-	elementsDesc { ^fullDesc[\description] }
-	elementsDesc_ { |type| ^fullDesc[\description] = type }
+	elementsDesc { ^fullDesc[\elementsDesc] }
+	elementsDesc_ { |type| ^fullDesc[\elementsDesc] = type }
 
 	specialMessage {|name|
 		if ( fullDesc[\specialMessages].notNil) {
@@ -594,21 +633,24 @@ MKtlDesc {
 				^key -> foundval;
 		} };
 
-		dict.keysValuesDo { |dictkey, entry|
-			var foundPlatformDep = false, foundval;
-			if (entry.isKindOf(Dictionary)) {
-				foundPlatformDep = entry.keys.sect(platForms).notEmpty;
-			};
-			if (foundPlatformDep) {
-				foundval = entry[myPlatform];
-				// "MKtlDesc:resolveForPlatform - replacing: ".post;
-				dict.put(dictkey, foundval);
-			};
+		if (dict.isKindOf(Dictionary)) {
+			dict.keysValuesDo { |dictkey, entry|
+				var foundPlatformDep = false, foundval;
+				if (entry.isKindOf(Dictionary)) {
+					foundPlatformDep = entry.keys.sect(platForms).notEmpty;
+				};
+				if (foundPlatformDep) {
+					foundval = entry[myPlatform];
+					// "MKtlDesc:resolveForPlatform - replacing: ".post;
+					dict.put(dictkey, foundval);
+				};
+			}
+			^dict
 		}
+		// cant change it
 		^dict
 	}
 
-	// (-: just in case programming ;-)
 	resolveDescEntriesForPlatform {
 		if (fullDesc.isNil) { ^this };
 		this.class.resolveForPlatform(fullDesc);
