@@ -22,6 +22,7 @@ MKtlDesc {
 	classvar <>isElementTestFunc;
 
 	var <name, <fullDesc, <path, <>elementsAssocArray;
+	var <elementsDict;
 
 	*initClass {
 		defaultFolder = MKtlDesc.filenameSymbol.asString.dirname.dirname.dirname
@@ -281,6 +282,7 @@ MKtlDesc {
 		if (ok) { ^true };
 		// todo: more detailed info here
 		"% - dict not valid: %\n\n".postf(thisMethod, dict.deviceName);
+		^false
 	}
 
 	*isValidElemDesc { |dict, protocol|
@@ -413,6 +415,7 @@ MKtlDesc {
 		// make elements in both forms
 		this.prMakeElemColls(this.elementsDesc);
 		this.inferName;
+		elementsDict = ();
 		this.makeElemKeys;
 		MKtlDesc.sharePropsToElements(this.elementsDesc);
 
@@ -427,6 +430,8 @@ MKtlDesc {
 
 		this.resolveDescEntriesForPlatform;
 	}
+
+	dictAt { |key| ^elementsDict[key] }
 
 	elAt { |... args|
 		var res = this.elementsDesc;
@@ -473,6 +478,7 @@ MKtlDesc {
 		this.elementsDesc.traverseDo ({ |elem, deepKeys|
 			var elemKey = deepKeys.reject(_ == \elements).join($_).asSymbol;
 			elem.put(\elemKey, elemKey);
+			elementsDict.put(elemKey, elem);
 		}, MKtlDesc.isElementTestFunc);
 	}
 
