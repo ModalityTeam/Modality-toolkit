@@ -28,34 +28,25 @@ deviceInfo: (
 ),
 
 elementsDesc: (
-	groupName: \lpd8,
-
+	key: \lpd8,
 	'sharedProperties': (\ioType: \inout, midiChan: 0),
 	// 'groups': ( ), deviceIOGroups: ( ),
 
 	elements: [
-		\kn -> (
+		(
+			key: \kn,
 			sharedProperties: (\elementType: \knob, \midiMsgType: \cc,
 				\spec: \midiCC),
-
-			elements: [
-				'1' -> (\midiNum: 1),
-				'2' -> (\midiNum: 2),
-				'3' -> (\midiNum: 3),
-				'4' -> (\midiNum: 4),
-				'5' -> (\midiNum: 5),
-				'6' -> (\midiNum: 6),
-				'7' -> (\midiNum: 7),
-				'8' -> (\midiNum: 8)
-			]
+			elements: (1..8).collect { |num|
+				(key: num.asSymbol, \midiNum: num)
+			}
 		),
-
-		\pad -> (
+		(
+			key: \pad,
 			sharedProperties: (\elementType: \pad, midiMsgType: \noteOnOff,
-				\spec: \midiVel, \ioType: \inout, midiChan: 0),
-
+				\spec: \midiVel),
 			elements: (36..43).collect { |num, i|
-				(i+1).asSymbol -> (midiNum: num)
+				(key: (i+1).asSymbol, midiNum: num)
 			}
 		)
 	]

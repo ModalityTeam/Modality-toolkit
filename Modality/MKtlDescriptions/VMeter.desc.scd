@@ -29,7 +29,8 @@ deviceInfo: (
 ),
 elementsDesc: (
 	elements: [
-		\slider -> (elementType: \slider, 'midiMsgType': 'cc',
-			'midiChan': 0, 'midiNum':  20,'spec': 'midiCC')
+		(key: \slider, elementType: \slider, ioType: \inout,
+			'midiMsgType': 'cc', 'midiChan': 0, 'midiNum':  20,'spec': 'midiCC')
 	]
+)
 )

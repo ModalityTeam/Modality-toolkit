@@ -27,11 +27,11 @@ deviceInfo: (
 ),
 
 elementsDesc: (
-	groupName: \sl,
+	key: \sl,
 	sharedProperties: (elementType: \slider, midiMsgType: \control,
-			midiChan: 0, spec: \midiCC),
+			midiChan: 0, spec: \midiCC, \ioType: \inout),
 	elements: (
-		(1..16).collect { |num, i| num.asSymbol -> (midiNum: i) }
+		(1..16).collect { |num, i| (key: num.asSymbol, midiNum: i) }
 	)
 )
 );

@@ -101,14 +101,17 @@ deviceIOGroups: (
 		oscPath: '/minibee/data',
 		argTemplate: [ 1 ],
 		elements: [ [\accel, \x], [\accel, \y], [\accel, \z]],
+
+		// why ioType in? really needed, and does it do something?
 		ioType: \in
 	)
 ),
+
 elementsDesc: (
-	groupName: \accel,
-	sharedProperties: (elementType: 'accelAxis', elementType: \accelerationAxis, ioType: \collectiveIn, \spec: 'accelAxis' ),
+	\key: \accel,
+	sharedProperties: (elementType: 'accelAxis', elementType: \accelAxis, ioType: \collectiveIn, \spec: 'accelAxis' ),
 	elements: [\x, \y, \z ].collect { |key, i|
-		key -> ()
+		(key: key)
 	};
 )
 )

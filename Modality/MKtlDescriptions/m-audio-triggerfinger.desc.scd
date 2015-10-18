@@ -22,26 +22,30 @@ deviceInfo: (
 	// hasScribble: false
 ),
 elementsDesc: (
+	sharedProperties: (\midiChan: 0, ioType: \in),
 	elements: [
-		\pad -> (
+		(
+			key: \pad,
 			sharedProperties: ( elementType: \pad, \midiMsgType: \note,
-				spec: \midiVel, \midiChan: 0),
+				spec: \midiVel),
 			elements: ((0..15) + 35).collect { |num, i|
-				(i + 1).asSymbol -> (\midiNum: num)
+				(key: (i + 1).asSymbol, \midiNum: num)
 			}
 		),
-		\sl -> (
+		(
+			key: \sl,
 			sharedProperties: ( elementType: \slider, \midiMsgType: \cc,
-				spec: \midiCC, \midiChan: 0),
+				spec: \midiCC),
 			elements: ( #[7, 1, 71, 74].collect { |num, i|
-				(i + 1).asSymbol -> (\midiNum: num )
+				(key: (i + 1).asSymbol, \midiNum: num )
 			})
 		),
-		\kn -> (
+		(
+			key: \kn,
 			sharedProperties: ( elementType: \knob, \midiMsgType: \cc,
-				spec: \midiCC, \midiChan: 0),
+				spec: \midiCC),
 			elements: ( #[10, 91, 12, 93, 5, 73, 84, 72].collect { |num, i|
-				(i + 1).asSymbol -> (\midiNum: num )
+				(key: (i + 1).asSymbol, \midiNum: num )
 			})
 		)
 	]

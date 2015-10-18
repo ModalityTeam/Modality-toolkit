@@ -41,14 +41,17 @@ deviceInfo: (
 ),
 
 elementsDesc: (
-	groupName: \joy,
+	key: \joy,
 	sharedProperties: (elementType: \joyAxis, midiMsgType: \control,
-			spec: \midiCC, midiChan: 0),
+			spec: \midiCC, midiChan: 0, ioType: \inout),
 	elements: (0..7).collect { |i|
-		(i+1).asSymbol -> [
-			\x -> (midiNum: i * 2),
-			\y -> (midiNum: i * 2 + 1)
-		];
+		(
+			key: (i+1).asSymbol,
+			elements: [
+				(key: \x, midiNum: i * 2),
+				(key: \y, midiNum: i * 2 + 1)
+			]
+		);
 	}
 )
 );

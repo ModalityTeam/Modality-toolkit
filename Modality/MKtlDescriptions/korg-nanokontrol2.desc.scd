@@ -62,50 +62,57 @@ deviceInfo: (
 elementsDesc: (
 	sharedProperties: (\midiMsgType: \cc, \midiChan: 0),
 	elements: [
-		\transport -> (
+		(
+			key: \transport,
+
 			sharedProperties: (\elementType: \button, \spec: \midiBut,
 				\mode: \push, \ioType: \inout),
-			elements: [
-				\rew ->  (\midiNum: 43, \style: (row: 3, column: 0, showLabel: true)),
-				\fwd ->  (\midiNum: 44, \style: (row: 3, column: 1, showLabel: true)),
-				\stop -> (\midiNum: 42, \style: (row: 3, column: 2, showLabel: true)),
-				\play -> (\midiNum: 41, \style: (row: 3, column: 3, showLabel: true)),
-				\rec ->  (\midiNum: 45, \style: (row: 3, column: 4, showLabel: true)),
 
-				\cycle -> (\midiNum: 46,
+			elements: [
+				(key: \rew,  \midiNum: 43, \style: (row: 3, column: 0, showLabel: true)),
+				(key: \fwd,  \midiNum: 44, \style: (row: 3, column: 1, showLabel: true)),
+				(key: \stop, \midiNum: 42, \style: (row: 3, column: 2, showLabel: true)),
+				(key: \play, \midiNum: 41, \style: (row: 3, column: 3, showLabel: true)),
+				(key: \rec,  \midiNum: 45, \style: (row: 3, column: 4, showLabel: true)),
+
+				(key: \cycle, \midiNum: 46,
 					\style: (row: 2.125, column: 0, height: 0.75, showLabel: true)),
-				\mset -> (\midiNum: 60, \label: "set",
+				(key: \mset, \midiNum: 60, \label: "set",
 					\style: (row: 2.125, column: 2, height: 0.75, showLabel: true)),
-				\mleft -> (\midiNum: 61, \label: "<",
+				(key: \mleft, \midiNum: 61, \label: "<",
 					\style: (row: 2.125, column: 3, height: 0.75, showLabel: true)),
-				\mright -> (\midiNum: 62, \label: ">",
+				(key: \mright, \midiNum: 62, \label: ">",
 					\style: (row: 2.125, column: 4, height: 0.75, showLabel: true)),
-				\tleft -> (\midiNum: 58, \label: "<",
+				(key: \tleft, \midiNum: 58, \label: "<",
 					\style: (row: 1.125, column: 0, height: 0.75, showLabel: true)),
-				\tright -> (\midiNum: 59, \label: ">",
+				(key: \tright, \midiNum: 59, \label: ">",
 					\style: (row: 1.125, column: 1, height: 0.75, showLabel: true)),
 			]
 		),
-		\sl -> (
+		(
+			key: \sl,
 			sharedProperties: (\elementType: \slider, \spec: \midiCC),
 			elements: (1..8).collect { |num, i|
-				(i+1).asSymbol -> (\midiNum: num, \style: (row: 1, column: 7+(i*2)))
+				(key: (i + 1).asSymbol, \midiNum: num, \style: (row: 1, column: 7+(i*2)))
 			}
 		),
-		\kn -> (
+		(
+			key: \kn,
 			sharedProperties: (\elementType: \knob, \spec: \midiCC),
 			elements: (16..23).collect { |num, i|
-				(i + 1).asSymbol -> (\midiNum: num, \style: (row: 0, column: 7+(i*2)))
+				(key: (i + 1).asSymbol, \midiNum: num, \style: (row: 0, column: 7+(i*2)))
 			}
 		),
-		\bt -> (
+		(
+			key: \bt,
 			sharedProperties: (\elementType: \button, \spec: \midiBut),
 
 			elements: [\S, \M, \R].collect { |label, i|
 				var nums = [(32..39),(48..55),(64..71)][i];
-				label -> (
+				 (
+					key: label,
 					elements: nums.collect { |num, j|
-						(j + 1).asSymbol -> (\midiNum: num, label: label,
+						 (key: (j + 1).asSymbol, \midiNum: num, label: label,
 							\style: (row: 1+i, column: 6+(j*2), showLabel: true ))
 					}
 				)
