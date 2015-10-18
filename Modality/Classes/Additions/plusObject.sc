@@ -14,12 +14,12 @@
 			if (rest.isEmpty) {
 				^this;
 			} {
-				^this.collect(_.deepAt3(*rest));
+				^this.collect(_.deepAt2(*rest));
 			}
 		};
 		if (first.isCollection) {
 			^first.collect { |idx|
-				this.deepAt3(idx, *rest) };
+				this.deepAt2(idx, *rest) };
 		};
 		// first is a single key or index now
 		if (this.respondsTo(\at)) {
@@ -27,7 +27,7 @@
 			if (rest.isEmpty) {
 				^res
 			} {
-				^res.deepAt3(*rest)
+				^res.deepAt2(*rest)
 			};
 		};
 		^nil
