@@ -40,13 +40,14 @@ deviceInfo: (
 
 ),
 
-description: (
-	joy: (0..7).collect { |i|
-		i.asSymbol -> [
-			\x -> (elementType: \joyAxis, midiMsgType: \control,
-			midiChan: 0, midiNum: i * 2, spec: \midiCC),
-			\y -> (elementType: \joyAxis, midiMsgType: \control,
-			midiChan: 0, midiNum: i * 2 + 1, spec: \midiCC)
+elementsDesc: (
+	groupName: \joy,
+	sharedProperties: (elementType: \joyAxis, midiMsgType: \control,
+			spec: \midiCC, midiChan: 0),
+	elements: (0..7).collect { |i|
+		(i+1).asSymbol -> [
+			\x -> (midiNum: i * 2),
+			\y -> (midiNum: i * 2 + 1)
 		];
 	}
 )

@@ -2,7 +2,7 @@
 
 /*
 MIDIMKtl.find;
-k = MIDIMKtl('vmtr1300');
+k = MIDIMKtl('vmtr', "vmeter");
 k.verbose_(true);
 */
 
@@ -23,12 +23,13 @@ deviceInfo: (
 	// manualURI: "",
 	// description: "",
 	// features: [],
-	// notes: "",
+	notes: "out of production",
 
 	// hasScribble: false
 ),
-description: (
-
-	\slider: ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  20,'spec': 'midiCC')
-)
+elementsDesc: (
+	elements: [
+		\slider -> (elementType: \slider, 'midiMsgType': 'cc',
+			'midiChan': 0, 'midiNum':  20,'spec': 'midiCC')
+	]
 )

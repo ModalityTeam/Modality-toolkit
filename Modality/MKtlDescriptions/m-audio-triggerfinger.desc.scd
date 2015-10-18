@@ -21,16 +21,30 @@ deviceInfo: (
 
 	// hasScribble: false
 ),
-description: (
-	pad: ((0..15)+35).collect{ |num|
-		( type: \pad, spec: \midiVel, \midiMsgType: \note, \midiChan: 0, \midiNum: num)
-	},
-	sl: #[7, 1, 71, 74].collect{ |num|
-		( type: \slider, spec: \midiCC, \midiMsgType: \cc, \midiChan: 0, \midiNum: num )
-	},
-	kn: #[10, 91, 12, 93, 5, 73, 84, 72].collect{ |num|
-		( type: \knob, spec: \midiCC, \midiMsgType: \cc, \midiChan: 0, \midiNum: num )
-	}
+elementsDesc: (
+	elements: [
+		\pad -> (
+			sharedProperties: ( elementType: \pad, \midiMsgType: \note,
+				spec: \midiVel, \midiChan: 0),
+			elements: ((0..15) + 35).collect { |num, i|
+				(i + 1).asSymbol -> (\midiNum: num)
+			}
+		),
+		\sl -> (
+			sharedProperties: ( elementType: \slider, \midiMsgType: \cc,
+				spec: \midiCC, \midiChan: 0),
+			elements: ( #[7, 1, 71, 74].collect { |num, i|
+				(i + 1).asSymbol -> (\midiNum: num )
+			})
+		),
+		\kn -> (
+			sharedProperties: ( elementType: \knob, \midiMsgType: \cc,
+				spec: \midiCC, \midiChan: 0),
+			elements: ( #[10, 91, 12, 93, 5, 73, 84, 72].collect { |num, i|
+				(i + 1).asSymbol -> (\midiNum: num )
+			})
+		)
+	]
 )
 )
 
