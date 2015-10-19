@@ -12,6 +12,36 @@ MKtlElementGroup : MKtlElement {
 		^this.new( elements: elements)
 	}
 
+	*fromDesc { |desc, srcMktl, deepKeys|
+		var elems, isElem, group, elemKey;
+		// deepKeys = deepKeys ? [] ++ desc.key;
+		^if (desc.isKindOf(Dictionary)) {
+			elems = desc[\elements];
+			isElem = elems.isNil;
+			if (isElem) {
+				elemKey = deepKeys.join($_).asSymbol;
+				// should be elemKey when working
+				MKtlElement(elemKey, desc, srcMktl);
+			} {
+				// elements is always an array
+				elems = elems.collect { |desc2|
+					this.fromDesc(desc2, srcMktl, deepKeys.copy ++ desc2.key);
+				};
+				group = MKtlElementGroup(desc.key, srcMktl, elems);
+
+				group.do { |elem|
+					group.dict.put(elem.name, elem);
+					if (MKtlElementGroup.addGroupsAsParent) {
+						elem.parent_(group)
+					};
+				};
+			};
+		} {
+			"%: should not get here! desc is likely malformed.\n".postf(thisMethod);
+			nil;
+		};
+	}
+
 	init {
 		var array;
 		tags = Set[];
@@ -25,15 +55,21 @@ MKtlElementGroup : MKtlElement {
 			elements = array ?? {[]};
 			this.sortElementsByType;
 		} { elements.isKindOf( Array ) } {
-			elements = elements.collect({ |item|
+			elements = elements.collect({ |item, i|
+				var key;
 				if( item.isKindOf( Association ) ) {
 					dict.put( item.key, item.value );
 					item.value;
 				} {
+					// a dict with an entry for key:
+					item.postln;
+					key = item.key ?? { (i+1).asSymbol };
+					dict.put( key, item );
 					item;
 				};
 			});
 		};
+
 		dict.keysValuesDo({ |key, item|
 			if( elements.includes( item ).not ) {
 				dict.removeAt( key );
@@ -46,7 +82,7 @@ MKtlElementGroup : MKtlElement {
 			elements.do({ |item|
 				if( addGroupsAsParent ) { item.parent = this };
 				if( item.type != type ) {
-					type = 'mixed';
+				 	type = 'mixed';
 				};
 			});
 		};
@@ -84,6 +120,8 @@ MKtlElementGroup : MKtlElement {
 			?? { if (index.isKindOf(Integer)) { elements[ index ] }; }
 		};
 	}
+
+	elAt { |...args| ^this.deepAt2(*args) }
 
 	// should keep dict in sync
 	put { |index, element|
@@ -152,7 +190,7 @@ MKtlElementGroup : MKtlElement {
 		});
 	}
 	// for printOn only, this will not remake it properly from code.
-	storeArgs { ^[name, type, elements.collect(_.name)] }
+	storeArgs { ^[name, source, type, elements.collect(_.name)] }
 
 	value { ^elements.collect(_.value) }
 	value_ { |newvals|
