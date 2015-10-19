@@ -3,8 +3,6 @@ summary:: handling descriptions of interface devices in Modality
 categories:: Overviews/Modality
 related:: Classes/MKtl, Classes/MKtlElement, Classes/MKtlElementGroup
 
-
-
 DESCRIPTION::
 
 MKtlDesc can read description files for hardware interface devices from its folder or other folders. It converts them into MKtlDesc objects, which contain general information about the device, and detailed information about all of its interface elements (such as sliders, buttons, joysticks, etc etc). MKtlDescs are used to create MKtls and its elements.
@@ -31,15 +29,16 @@ MKtlDesc('korg-nanokey2').dump;	// look at one
 MKtlDesc('korg-nanokey2').web;	// open its web documentation
 
 	// make one from a desc filename
-x = MKtlDesc.fromFileName("korg-nanopad2");
+x = MKtlDesc.fromFileName("korg-nanokontrol2");
 x.openFile;			// open its file
 x.fullDesc			// the dict that has contains the info
 x.fullDesc.keys;	// the description items:
 x.protocol;			// one of [\midi, \hid, \osc];
-x.idInfo			// the device name under which it registers in the OS
-x.elementsDesc;		// the descriptions of the elements, hierarchical
-x.elementsDesc[\pad];	// access elements by name
-x.elementsDesc.at(\pad).at(\off);
+x.idInfo.postcs;	// the device name under which it registers in the OS
+x.elementsDesc;		// the hierarchical description of the elements
+x.elAt(\sl);		// access single elements or groups by name or index
+x.elAt(\sl, 0);		// access elements by name or index
+x.elementsDict.keys;
 
 x.postInfo;			// post overview info
 x.postInfo(postElements: true); // and the elements too

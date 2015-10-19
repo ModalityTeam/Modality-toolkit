@@ -2,7 +2,6 @@
 Questions:
 * update only when files newer than cache were added
 - it is really fast anyway, so just do on every startup? -
-
 */
 
 MKtlDesc {
@@ -10,8 +9,8 @@ MKtlDesc {
 	classvar <defaultFolder, <folderName = "MKtlDescriptions";
 	classvar <descExt = ".desc.scd", <compExt = ".comp.scd";
 	classvar <parentExt = ".parentDesc.scd";
-
 	classvar <descFolders;
+
 	classvar <allDescs;
 	classvar <cacheName = "_allDescs.cache.scd";
 	classvar <fileToIDDict;
@@ -19,9 +18,9 @@ MKtlDesc {
 	classvar <webview;
 	classvar <docURI = "http://modalityteam.github.io/controllers/";
 
-	classvar <>isElementTestFunc;
+	classvar <>isElemFunc;
 
-	var <name, <fullDesc, <path, <>elementsAssocArray;
+	var <name, <fullDesc, <path;
 	var <elementsDict;
 
 	*initClass {
@@ -29,8 +28,8 @@ MKtlDesc {
 		+/+ folderName;
 		descFolders = List[defaultFolder];
 		allDescs =();
-		isElementTestFunc = { |el|
-			el.isKindOf(Dictionary) and: { el[\spec].notNil }
+		isElemFunc = { |el|
+			el.isKindOf(Dictionary) and: { el[\elements].isNil }
 		};
 
 		fileToIDDict = Dictionary.new;
@@ -38,13 +37,12 @@ MKtlDesc {
 		this.loadCache;
 	}
 
-	// access
+	// access to all
 	*at { |descName|
 		^allDescs[descName]
 	}
 
 	// WEB interface
-
 	*web { |ctlname = ""|
 		webview = webview ?? { WebView() };
 		webview.front.url_((docURI +/+ ctlname).postcs);
@@ -247,8 +245,6 @@ MKtlDesc {
 		var used = Set[];
 		var getFunc = { |elem|
 			if (elem.isKindOf(Dictionary)) {
-				if(elem[\type].notNil) {
-					used = used.add(elem[\type]); };
 				if(elem[\elementType].notNil) {
 					used = used.add(elem[\elementType]); };
 				elem.do (getFunc);
@@ -271,7 +267,7 @@ MKtlDesc {
 
 	*isValidDescDict { |dict|
 		var ok = dict.isKindOf(Dictionary)
-		and:  ({ dict[\parentDescXXX].notNil
+		and:  ({ dict[\parentDesc].notNil
 			or: { dict[\idInfo].notNil
 				and: { dict[\protocol].notNil
 					and: { dict[\elementsDesc].notNil
@@ -293,19 +289,22 @@ MKtlDesc {
 			}
 		};
 		if (ok) { ^true };
-		"% - dict not valid: %\n\n".postf(thisMethod, dict);
+		"% - elemDesc not valid: %\n\n".postf(thisMethod, dict);
 	}
 
 	// to be defined and tested
-	*isValidMidiDesc { |dict|
+	*isValidMIDIDesc { |dict|
 		^dict[\midiMsgType].notNil
 	}
 	*isValidHIDDesc { |dict|
-		^(dict[\usage].notNil and: dict[\usagePage].notNil)
+		^(dict[\usage].notNil
+			and: { dict[\usagePage].notNil })
 		or: { dict[\hidElementID].notNil }
-
 	}
-	*isValidOSCDesc { |dict| true }
+
+	*isValidOSCDesc { |dict|
+		true
+	}
 
 	// plug sharedProperties in as parents
 	*sharePropsToElements { |dict, toShare|
@@ -413,10 +412,9 @@ MKtlDesc {
 		this.findParent;
 
 		// make elements in both forms
-		this.prMakeElemColls(this.elementsDesc);
 		this.inferName;
 		elementsDict = ();
-		this.makeElemKeys;
+		this.makeElemKeys(this.elementsDesc, []);
 		MKtlDesc.sharePropsToElements(this.elementsDesc);
 
 		if (this.protocol == \midi) {
@@ -433,6 +431,7 @@ MKtlDesc {
 
 	dictAt { |key| ^elementsDict[key] }
 
+	// not expanding yet - not sure if needed
 	elAt { |... args|
 		var res = this.elementsDesc;
 		args.do { |key|
@@ -473,15 +472,20 @@ MKtlDesc {
 		);
 	}
 
-
-	makeElemKeys {
-		this.elementsDesc.traverseDo ({ |elem, deepKeys|
-			var elemKey = deepKeys.reject(_ == \elements).join($_).asSymbol;
-			elem.put(\elemKey, elemKey);
-			elementsDict.put(elemKey, elem);
-		}, MKtlDesc.isElementTestFunc);
+	makeElemKeys { |dict, deepKeys|
+		var key = dict[\key];
+		var elemKey;
+		dict = dict ? this.elementsDesc;
+		deepKeys = (deepKeys.copy ?? {[]}).add(key);
+		elemKey = deepKeys.reject(_.isNil).join($_).asSymbol;
+		dict.put(\elemKey, elemKey);
+		if (dict.elements.isNil) {
+			elementsDict.put(elemKey, dict);
+		};
+		dict.elements.do { |elem|
+			this.makeElemKeys(elem, deepKeys);
+		};
 	}
-
 
 	inferName { |inname, force = false|
 
@@ -504,16 +508,6 @@ MKtlDesc {
 		} {
 			name = name.asSymbol;
 			allDescs.put(name, this);
-		};
-	}
-
-	prMakeElemColls { |inDesc|
-		if (inDesc.isKindOf(Dictionary)) {
-			elementsAssocArray = inDesc.asAssociations;
-		};
-		if (inDesc.isKindOf(Array) and: { inDesc.isAssociationArray }) {
-			elementsAssocArray = inDesc;
-			this.elementsDesc = inDesc.asDict.as(Event);
 		};
 	}
 
@@ -551,13 +545,15 @@ MKtlDesc {
 	}
 
 	postInfo { |postElements = false|
+		var elements = this.elementsDesc.elements;
 		("---\n//" + this + $:) .postln;
 		"deviceFilename: %\n".postf(this.deviceFilename);
 		"protocol: %\n".postf(this.protocol);
 		"idInfo: %\n".postf(this.idInfo);
 		"desc keys: %\n".postf(this.elementsDesc.keys);
+		"elements keys: %\n".postf(elements !? { elements.collect(_.key) });
 
-		if (postElements) { this.postElements }
+		if (postElements) { this.postElements };
 	}
 
 	// FIXME
@@ -597,7 +593,7 @@ MKtlDesc {
 				missing.add(elem.elemKey);
 			};
 			// [elemKey, elem].postln;
-		}, MKtlDesc.isElementTestFunc);
+		}, MKtlDesc.isElemFunc);
 
 
 		// treat noteOnOff as noteOn / noteOff
