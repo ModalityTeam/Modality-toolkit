@@ -251,7 +251,7 @@ MKtlElement : MAbstractElement {
 		};
 
 		if (mySpecOrName.isNil) {
-			warn("deviceSpec for '%' is missing!".format(this));
+			warn("% : deviceSpec for '%' is missing!".format(this, mySpecOrName));
 			"using [0, 1].asSpec instead".postln;
 		} {
 		mySpecOrName = mySpecOrName.asSpec;
