@@ -7,11 +7,11 @@ instead of [0, 7], it it is [0, 15] when including
 the value 15, which is sent when compass but is released.
 the directions are:
 
-0
-7      1
-6    15    2
-5      3
-4
+//     0
+//   7    1
+// 6   15   2
+//   5    3
+//     4
 
 // find gp and trace it:
 MKtl.find(\hid);
