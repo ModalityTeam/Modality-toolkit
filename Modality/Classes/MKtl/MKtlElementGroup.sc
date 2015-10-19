@@ -12,25 +12,28 @@ MKtlElementGroup : MKtlElement {
 		^this.new( elements: elements)
 	}
 
-	*fromDesc { |desc, srcMktl, deepKeys|
+	*fromDesc { |desc, srcMktl|
 		var elems, isElem, group, elemKey;
-		// deepKeys = deepKeys ? [] ++ desc.key;
+		var mktlElemDict = srcMktl !? { srcMktl.elementsDict };
+		var newElem;
+
 		^if (desc.isKindOf(Dictionary)) {
 			elems = desc[\elements];
 			isElem = elems.isNil;
 			if (isElem) {
-				elemKey = deepKeys.join($_).asSymbol;
-				// should be elemKey when working
-				MKtlElement(elemKey, desc, srcMktl);
+				elemKey = desc.elemKey;
+				newElem = MKtlElement(elemKey, desc, srcMktl);
+				mktlElemDict !? { mktlElemDict.put(elemKey, newElem) };
+				newElem;
 			} {
 				// elements is always an array
 				elems = elems.collect { |desc2|
-					this.fromDesc(desc2, srcMktl, deepKeys.copy ++ desc2.key);
+					this.fromDesc(desc2, srcMktl);
 				};
 				group = MKtlElementGroup(desc.key, srcMktl, elems);
 
 				group.do { |elem|
-					group.dict.put(elem.name, elem);
+					// group.dict.put(elem.elemDesc[\key], elem);
 					if (MKtlElementGroup.addGroupsAsParent) {
 						elem.parent_(group)
 					};
@@ -62,7 +65,6 @@ MKtlElementGroup : MKtlElement {
 					item.value;
 				} {
 					// a dict with an entry for key:
-					item.postln;
 					key = item.key ?? { (i+1).asSymbol };
 					dict.put( key, item );
 					item;

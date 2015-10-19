@@ -11,9 +11,13 @@ MKtlDesc.openFolder;
 ~pf.elementsDesc.elements[0].midiMsgType;
 ~pf.elAt(\3);
 ~pf.elAt(0);
+~pf.elementsDesc.elements.collect (_[\key])
+
 
 ~dj = MKtlDesc("decampo-joybox");
-~dj.elAt(0, \x).ioType;
+~dj.elAt(0, \x);
+~dj.elAt(\1, \y);
+~dj.elAt(0, \x)[\ioType];
 
 ~mb = MKtlDesc("sensestage-minibee1");
 ~mb.elAt(\x).elementType;
@@ -22,7 +26,10 @@ MKtlDesc.openFolder;
 ~mb.fullDesc.deviceIOGroups;
 
 ~trig = MKtlDesc("*finger");
-~trig.elAt(0, 0);
+~trig.elAt(0).key;
+~trig.elAt(1).key;
+~trig.elAt(\pad, 0);
+
 ~trig.elAt(\pad, 12);
 ~trig.elAt(\kn, 7).spec;
 
@@ -32,14 +39,28 @@ MKtlDesc.openFolder;
 
 ~nk2 = MKtlDesc("*trol2");
 ~nk2.elAt(\kn, 0);
+
 ~nk2.elAt(\bt, \S, 1);
 ~nk2.elAt(\knixi, 0);
 
+
 ~gp = MKtlDesc("*drive");
-~gp.elAt(\bt, \1);
 ~gp.elAt(\compass);
-~gp.elAt(\wheel);
-~gp.elAt(\throt);
+~gp.elAt(\bt, 0);
+
+g = MKtlElementGroup.fromDesc(~gp.elementsDesc);
+
+MKtl(\gp, "*drive");
+MKtl(\gp).postElements;
+MKtl(\gp).elementsDict.keys;
+
+MKtl(\nk, "*trol2");
+MKtl(\nk).gui;
+MKtl(\nk).elementGroup.dict.keys; // still wrong, should be the names
+MKtl(\gp).elementGroup;
+
+
+
 
 
 // done already - sharing properties down
@@ -52,3 +73,19 @@ MKtlDesc.postStatus;
 MKtlDesc.elementTypesUsed;
 MKtlDesc.deviceTypesUsed;
 
+localNameKey:
+hierarKey:
+hierKey:
+
+(key: )
+
+srcAddr
+destAddr
+// elementKey: \joy_l_x
+
+
+-dictAt (key)
+-elAt ( ... args)
+-elKeys
+-elementTypesUsed
+-elementsDict

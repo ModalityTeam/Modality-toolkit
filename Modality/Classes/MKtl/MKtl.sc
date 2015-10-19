@@ -345,51 +345,10 @@ MKtl { // abstract class
 	}
 
 	makeElements {
-		var elementsToBuild = desc.elementsDesc;
-
+		MKtlElementGroup.addGroupsAsParent = true;
 		elementsDict = ();
-
-		// array of dicts of arrays
-		elementGroup = elementsToBuild.traverseCollect(
-			doAtLeaf: { |desc, deepKeys|
-				var deepName = deepKeys.join($_).asSymbol;
-				var element = MKtlElement(deepName, desc, this);
-				elementsDict.put(deepName, element);
-				element; },
-			isLeaf: MKtlDesc.isElementTestFunc
-		);
-
-		// elementGroup.keys.postcs;
-		MKtlElement.addGroupsAsParent = true;
-
-		if (elementGroup.notEmpty) {
-			this.wrapCollElemsInGroups(elementGroup);
-		};
-		elementGroup = MKtlElementGroup(this.name, this, elementGroup);
-
-		MKtlElement.addGroupsAsParent = false;
-	}
-
-	wrapCollElemsInGroups { |elemOrColl|
-
-		if (elemOrColl.isNil) { ^elemOrColl };
-
-		if (elemOrColl.isKindOf(MKtlElement)) {
-			^elemOrColl
-		};
-
-		^elemOrColl.valuesKeysDo { |elem, keyIndex, i|
-			var changedElem;
-			if (elem.isKindOf(Collection)) {
-				this.wrapCollElemsInGroups(elem);
-				changedElem = MKtlElementGroup(keyIndex, this, elem);
-				if (elemOrColl.isAssociationArray) {
-					elemOrColl.put(i, keyIndex -> changedElem);
-				} {
-					elemOrColl.put(keyIndex, changedElem);
-				};
-			};
-		};
+		elementGroup = MKtlElementGroup.fromDesc(desc.elementsDesc, this);
+		MKtlElementGroup.addGroupsAsParent = false;
 	}
 
 	makeCollectives {
@@ -428,7 +387,7 @@ MKtl { // abstract class
 	dictAt { |key| ^elementsDict[key] }
 
 	elAt { |...args|
-		^elementGroup.deepAt2(*args)
+		^elementGroup.elAt(*args)
 		?? { collectivesDict.deepAt2(*args) }
 	}
 
