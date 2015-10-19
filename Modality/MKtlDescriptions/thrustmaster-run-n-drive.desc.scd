@@ -88,6 +88,7 @@ elementsDesc: (
 			key: 'bt',
 			sharedProperties: ('hidUsagePage': 9, 'elementType': 'button',
 				'ioType': 'in', spec: \hidBut, mode: \push),
+
 			elements: [
 				(key: '1', 'hidUsage': 1, 'style': (row: 1.8, column: 4.4, showLabel: true)),
 				(key: '2', 'hidUsage': 2, 'style': (row: 2.6, column: 5.2, showLabel: true)),
@@ -150,7 +151,7 @@ elementsDesc: (
 		(
 			key: 'throt',
 			sharedProperties: ('hidUsagePage': 1, 'elementType': 'springFader',
-				'ioType': 'in', mode: \minimum, spec: \lin1inv)
+				'ioType': 'in', mode: \minimum, spec: \lin1inv),
 			elements: [
 				(key: \l, 'hidUsage': 51, 'style': (row: 0, column: 0, showLabel: true)),
 				(key: \r, 'hidUsage': 52, 'style': (row: 0, column: 6, showLabel: true))
