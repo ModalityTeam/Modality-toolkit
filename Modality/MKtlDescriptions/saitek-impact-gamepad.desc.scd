@@ -1,5 +1,11 @@
 /*
-MKtl.deviceDescriptionFolder.openOS
+ToDO:
+* check output elements - LEDs?
+* make little example.
+* copy gui layout from Ferrari
+
+MKtlDesc.openFolder;
+
 */
 
 MKtl.addSpec(\compassImpact, [0, 1.0]);
@@ -27,36 +33,50 @@ deviceInfo: (
 
 	// hasScribble: false
 ),
-description: (
-
-
-// --------- input elements ----------
-	'joy': (
-		'l': (
-			'x': ('hidUsage': 48, 'hidUsagePage': 1, 'elementType': 'joyAxis', 'ioType': 'in', spec: \cent1, mode: \center ),
-			'y': ('hidUsage': 49, 'hidUsagePage': 1, 'elementType': 'joyAxis', 'ioType': 'in', spec: \cent1, mode: \center )
+elementsDesc: (
+	elements: [
+		(
+			key: \bt,
+			shared: ('hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in',spec: \hidBut ),
+			elements: [
+				(key: \1, 'hidUsage': 1),
+				(key: \2, 'hidUsage': 2),
+				(key: \3, 'hidUsage': 3),
+				(key: \4, 'hidUsage': 4),
+				(key: \5, 'hidUsage': 5),
+				(key: \6, 'hidUsage': 6),
+				(key: \7, 'hidUsage': 7),
+				(key: \8, 'hidUsage': 8),
+				(key: \9, 'hidUsage': 9),
+				(key: \10, 'hidUsage': 10),
+				(key: \11, 'hidUsage': 11),
+				(key: \12, 'hidUsage': 12)
+			]
 		),
-		'r': (
-			'y': ('hidUsage': 50, 'hidUsagePage': 1, 'elementType': 'joyAxis', 'ioType': 'in', spec: \cent1, mode: \center ),
-			'x': ('hidUsage': 53, 'hidUsagePage': 1, 'elementType': 'joyAxis', 'ioType': 'in', spec: \cent1, mode: \center ),
-		)
-	),
-	'bt': (
-		1: ('hidUsage': 1, 'hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in',spec: \hidBut ),
-		2: ('hidUsage': 2, 'hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in',spec: \hidBut ),
-		3: ('hidUsage': 3, 'hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in',spec: \hidBut ),
-		4: ('hidUsage': 4, 'hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in',spec: \hidBut ),
-		5: ('hidUsage': 5, 'hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in',spec: \hidBut ),
-		6: ('hidUsage': 6, 'hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in',spec: \hidBut ),
-		7: ('hidUsage': 7, 'hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in',spec: \hidBut ),
-		8: ('hidUsage': 8, 'hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in',spec: \hidBut ),
-		9: ('hidUsage': 9, 'hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in',spec: \hidBut ),
-		10: ('hidUsage': 10, 'hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in',spec: \hidBut ),
-		11: ('hidUsage': 11, 'hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in',spec: \hidBut ),
-		12: ('hidUsage': 12, 'hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in',spec: \hidBut )
-	),
-
-	'compass': ('hidUsage': 57, 'hidUsagePage': 1, 'elementType': 'compass', 'ioType': 'in', spec: \compassImpact ),
+		(
+			key: 'compass',
+			'hidUsage': 57, 'hidUsagePage': 1, 'elementType': 'compass', 'ioType': 'in', spec: \compassImpact
+		),
+		(
+			key: \joy,
+			shared: ('hidUsagePage': 1, 'elementType': 'joyAxis', 'ioType': 'in',
+				spec: \cent1, mode: \center ),
+			elements: [
+				(key: \l,
+					elements: [
+						(key: \x, 'hidUsage': 48),
+						(key: \y, 'hidUsage': 49)
+					]
+				),
+				(key: \r,
+					elements: [
+						(key: \x, 'hidUsage': 50),
+						(key: \y, 'hidUsage': 53)
+					]
+				)
+			]
+		),
+	]
 
 // --------- output elements ----------
 	// '<element name undefined>': ('hidUsage': 67, 'hidUsagePage': 8, 'elementType': '<type Led>', 'ioType': 'out' ),

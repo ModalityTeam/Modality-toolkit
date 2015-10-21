@@ -38,15 +38,26 @@ collectives: (
 		ioType: \in
 	)
 ),
-description: (
-	\accel: (
-		\x: (elementType: 'accelAxis', elementType: \accelerationAxis, ioType: \collectiveIn, \spec: 'accelAxis' ),
-		\y: (elementType: 'accelAxis', elementType: \accelerationAxis, ioType: \collectiveIn, \spec: 'accelAxis' ),
-		\z: (elementType: 'accelAxis', elementType: \accelerationAxis, ioType: \collectiveIn, \spec: 'accelAxis' )
-	),
-	\in: 4.collect{|i|
-		(elementType: 'bender', elementType: \multiPurpose, ioType: \collectiveIn, \spec: 'ins' )
-	}
+elementsDesc: (
+	elements: [
+		(
+			key: \accel,
+			shared: (elementType: 'accelAxis', elementType: \accelerationAxis, ioType: \collectiveIn, \spec: 'accelAxis' )
+			elements: [
+				(key: \x),
+				(key: \y),
+				(key: \z),
+			]
+		),
+		(
+			key: \in,
+			shared: (elementType: 'bender', elementType: \multiPurpose, ioType:
+				\collectiveIn, \spec: 'ins'),
+			elements: (1..4).collect {|num, i|
+				(key: num.asSymbol)
+			}
+		)
+	]
 )
 )
 
