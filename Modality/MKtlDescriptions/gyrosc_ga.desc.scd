@@ -4,6 +4,10 @@
 // implemented as example: gyro and accel,
 // others can be added later as needed.
 
+/* todo:
+  add others movement sensors
+*/
+
 // for using gyrosc nametag ID concept, see note below.
 
 /*
@@ -83,18 +87,28 @@ collectives: (
 ),
 	// actually about 7 more messages possible.
 	// replace wildcard later with nameTag as set in iphone used.
-description: (
-	\accel: (
-		\x: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' ),
-		\y: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' ),
-		\z: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' )
-	),
-	\gyro: (
-		\pitch: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'gyroAxis' ),
-		\roll: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'gyroAxis' ),
-		\yaw: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'gyroAxis' )
-	)
-	// similar for comp, matrix, rrate, quat, grav, mag, gps
+elementsDesc: (
+	elements: [
+		(
+			key: \accel,
+			sharedProperties: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' ),
+			elements: [
+				(key: \x),
+				(key: \y ),
+				(key: \z )
+			],
+		),
+		(
+			key: \gyro,
+			sharedProperties: (elementType: 'gyroAxis', ioType: \collectiveIn, \spec: 'gyroAxis' ),
+			elements: [
+				(key: \pitch),
+				(key: \roll),
+				(key: \yaw),
+			]
+		)
+		// similar for comp, matrix, rrate, quat, grav, mag, gps
+	]
 )
 )
 

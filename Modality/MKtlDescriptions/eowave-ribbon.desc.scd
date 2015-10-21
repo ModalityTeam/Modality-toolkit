@@ -1,3 +1,7 @@
+/*
+needs initialisation messages for different configs,
+see github/modality #24
+*/
 (
 deviceName: "The Ribbon",
 protocol: \midi,
@@ -22,27 +26,38 @@ deviceInfo: (
 	// hasScribble: false
 ),
 
-description: (
+elementsDesc: (
+	elements: [
 	// ribbon
 	// [ noteOn, val, 127, num, 78, chan, 0, src, -1477523613 ]
 	// [ noteOff, val, 0, num, 78, chan, 0, src, -1477523613 ]
-	ribbon: (
-		touch: (
-			on:  (36..82).collect{|num|
-				(midiMsgType:  \noteOn, elementType: \slider, midiChan: 0, midiNum: num, spec: \midiBut)
-			},
-			off:  (36..82).collect{|num|
-				 (midiMsgType: \noteOff, elementType: \slider, midiChan: 0, midiNum: num, spec: \midiBut)
-			}
-		),
-		bend: (midiMsgType: \bend, elementType: \slider, midiChan: 0, midiNum: 0, spec: \midiBend),
-
-		// [ cc, val, 82, num, 7, chan, 0, src, -1477523613 ]
-		pressure: (midiMsgType: \cc, elementType: \slider, midiChan: 0, midiNum: 7, spec: \midiCC)
-	),
-		// expressionPad
-// [ cc, val, 0, num, 1, chan, 0, src, -1477523613 ]
-	pad: (midiMsgType: \cc, elementType: \pad, midiChan: 0, midiNum: 1, spec: \midiCC)
+		(
+			key: \ribbon,
+			sharedProperties: (midiChan: 0),
+			elements: [
+				(
+					key: \touch,
+					sharedProperties: (elementType: \slider, midiMsgType: \noteOnOff,
+						spec: \midiBut),
+					elements: (36..82).collect {|num| (midiNum: num, spec: \midiBut) }
+				),
+				(
+					key: \bend,
+					midiMsgType: \bend, elementType: \slider, midiNum: 0, spec: \midiBend
+				),
+				(
+					key: \pressure,
+					midiMsgType: \cc, elementType: \slider, midiNum: 7, spec: \midiCC
+				),
+				// expressionPad
+				// [ cc, val, 0, num, 1, chan, 0, src, -1477523613 ]
+				(
+					key: \pad,
+					midiMsgType: \cc, elementType: \pad, midiNum: 1, spec: \midiCC
+				)
+			]
+		)
+	]
 )
 )
 

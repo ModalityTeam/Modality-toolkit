@@ -17,31 +17,56 @@ deviceInfo: (
 	vendorURI: "http://www.steinberg.net/en/products/controllers/cmc_series/models/cmc_fd.html",
 	// manualURI: "",
 	// description: "",
-	// features: [],
-	// notes: "",
+	// features: ["4 touch faders" ],
+	notes: "discontinued.",
 
 ),
 description: (
-
-// ------ noteOnOff -------------
-
-// the buttons
-'bankLeft': ('midiMsgType': 'noteOnOff', 'elementType': 'key', 'midiChan': 0, 'midiNum':  46, 'spec': 'midiNote'),
-'bankRight': ('midiMsgType': 'noteOnOff', 'elementType': 'key', 'midiChan': 0, 'midiNum':  47, 'spec': 'midiNote'),
-'chanLeft': ('midiMsgType': 'noteOnOff', 'elementType': 'key', 'midiChan': 0, 'midiNum':  48, 'spec': 'midiNote'),
-'chanRight': ('midiMsgType': 'noteOnOff', 'elementType': 'key', 'midiChan': 0, 'midiNum':  49, 'spec': 'midiNote'),
-
-'shift': ('midiMsgType': 'noteOnOff', 'elementType': 'key', 'midiChan': 0, 'midiNum':  70, 'spec': 'midiNote'),
-
-// fader touched or not
-'faderTouch': (104..107).collect { |noteNum| ('midiMsgType': 'noteOnOff', 'elementType': 'key', 'midiChan': 0, 'midiNum':  noteNum, 'spec': 'midiNote') },
-
-// fader touched when shift is down sends channel mute
-'faderMute': (8..11).collect { |noteNum| ('midiMsgType': 'noteOnOff', 'elementType': 'key', 'midiChan': 0, 'midiNum':  noteNum, 'spec': 'midiNote') },
-
-// ------- bend ------------
-// high res fader values (10 bit )
-'fader': (0..3).collect { |chan| ('midiMsgType': 'bend', 'elementType': 'bender', 'midiChan': chan, 'midiNum':  0,'spec': 'midiBend') }
+	sharedProperties: ('midiMsgType': 'noteOnOff', 'elementType': 'button',
+		'midiChan': 0, 'spec': 'midiBut'),
+	elements: [
+		// the buttons
+		(
+			key: \bt,
+			elements: [
+				(key: 'bankLeft',  'midiNum':  46),
+				(key: 'bankRight', 'midiNum':  47),
+				(key: 'chanLeft',  'midiNum':  48),
+				(key: 'chanRight', 'midiNum':  49)
+			]
+		),
+		(
+			key: 'shift',
+			'midiMsgType': 'noteOnOff', 'elementType': 'button', 'midiNum':  70, 'spec': 'midiBut'
+		),
+		// fader touched or not
+		(
+			key: 'faderTouch',
+			sharedProperties: ('midiMsgType': 'noteOnOff', 'elementType': 'button',
+				'midiChan': 0, 'spec': 'midiBut'),
+			elements: (104..107).collect { |note, i|
+				('midiNum': note)
+			};
+		),
+		// fader touched when shift is down sends channel mute
+		(
+			key: 'faderMute',
+			sharedProperties: ('midiMsgType': 'noteOnOff', 'elementType': 'key',
+				'midiChan': 0, 'spec': 'midiNote'),
+			elements: (8..11).collect { |noteNum|
+				('midiNum':  noteNum)
+			}
+		),
+		// bend : high res fader values (10 bit )
+		(
+			key: 'fader',
+			sharedProperties: ('midiMsgType': 'bend', 'elementType': 'fader',
+				'midiChan': 0, 'spec': 'midiBend'),
+			elements: (0..3).collect { |chan|
+				('midiChan': chan,'spec': 'midiBend')
+			}
+		)
+	]
 );
 )
 
