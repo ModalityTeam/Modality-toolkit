@@ -1,6 +1,16 @@
 /*
-a = MKtl('pcmn0');
 
+	/* todo:
+	* proper indexing of 8x8 pads,
+	* labels for buttons:
+	- up, down left right buttons,
+	- fader ctrl: volume, pan, send, device
+	- sceneLaunch: ...
+	- gui layout of all of them
+	*/
+
+a = MKtl('apc1', "akai-apcmini");
+a.gui;
 a.elementAt(\sl).action_({ |elem| [elem.name, elem.value].postln; });
 a.elementAt(\keyOn).action_({ |elem| [\ON, elem.name, elem.value].postln; });
 a.elementAt(\keyOff).action_({ |elem| [\OFF, elem.name, elem.value].postln; });
@@ -30,17 +40,46 @@ deviceInfo: (
 	// notes: "",
 	// hasScribble: false
 ),
-description: (
+elementsDesc: (
 
-	'keyOn': [(0..63),(64..71),(82..89),[98]].collect { |xs| xs.collect({ |midinote|  
-		(midiMsgType: 'noteOn', elementType: 'key', midiChan: 0, midiNum:  midinote, spec: 'midiNote', ioType: \inout) }) 
-	},
-	'keyOff': [(0..63),(64..71),(82..89),[98]].collect { |xs| xs.collect({ |midinote|  
-		(midiMsgType: 'noteOff', elementType: 'key', midiChan: 0, midiNum:  midinote, spec: 'midiNote', ioType: \inout) }) 
-	},
-	\sl: (48..56).collect { |midinote|  
-		(midiMsgType: 'cc', elementType: 'slider', midiChan: 0, midiNum:  midinote, spec: 'midiCC', ioType: \in)
-	}
+	elements: [
+		(
+			key: \pad,
+			sharedProperties: (midiMsgType: 'noteOnOff', elementType: 'pad',
+				midiChan: 0, spec: 'midiNote', ioType: \inout),
+			elements: (0..63).collect { |midiNote| (midiNum: midiNote)  }
+		),
+		(
+			key: \navBut,
+			sharedProperties: (midiMsgType: 'noteOnOff', elementType: 'button',
+				midiChan: 0, spec: 'midiBut', ioType: \inout),
+			elements: (64..67).collect { |midiNote| (midiNum: midiNote)  }
+		),
+		(
+			key: \ctrlBut,
+			sharedProperties: (midiMsgType: 'noteOnOff', elementType: 'button',
+				midiChan: 0, spec: 'midiBut', ioType: \inout),
+			elements: (68..71).collect { |midiNote| (midiNum: midiNote)  }
+		),
+		(
+			key: \launchBut,
+			sharedProperties: (midiMsgType: 'noteOnOff', elementType: 'button',
+				midiChan: 0, spec: 'midiBut', ioType: \inout),
+			elements: (82..89).collect { |midiNote| (midiNum: midiNote)  }
+		),
+		(
+			key: \shift,
+			midiMsgType: 'noteOnOff', elementType: 'button',
+			midiChan: 0, midiNum:  98, spec: 'midiBut', ioType: \inout
+		),
+		(
+			key: \sl,
+			sharedProperties: (midiMsgType: 'cc', elementType: 'slider',
+				midiChan: 0, spec: 'midiBut', ioType: \in),
+			elements: (48..56).collect { |midinote|
+				(midiNum: midinote, spec: 'midiCC', ioType: \in)
+			}
+		)
+	]
 )
 )
-
