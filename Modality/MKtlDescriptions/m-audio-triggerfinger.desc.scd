@@ -36,9 +36,9 @@ elementsDesc: (
 			key: \sl,
 			sharedProperties: ( elementType: \slider, \midiMsgType: \cc,
 				spec: \midiCC),
-			elements: ( #[7, 1, 71, 74].collect { |num, i|
+			elements: #[7, 1, 71, 74].collect { |num, i|
 				(key: (i + 1).asSymbol, \midiNum: num )
-			})
+			}
 		),
 		(
 			key: \kn,

@@ -116,12 +116,12 @@ elementsDesc: (
 				(
 					key: \l, 'hidUsage': 187, 'hidUsagePage': 1, hidElementID: 32,
 					'elementType': 'rumble', 'ioType': 'out', spec: \lin255,
-					mode: \minimum, 'style': (row: 4, column: 1, showLabel: true)
+					mode: \minimum, 'style': (row: 4, column: 0, showLabel: true)
 				),
 				(
 					key: \r, 'hidUsage': 0, 'hidUsagePage': 1, hidElementID: 32,
 					'elementType': 'rumble', 'ioType': 'out', spec: \lin255,
-					mode: \minimum, 'style': (row: 4, column: 1, showLabel: true)
+					mode: \minimum, 'style': (row: 4, column: 5, showLabel: true)
 				)
 			]
 		)
