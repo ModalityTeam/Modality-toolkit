@@ -72,26 +72,36 @@ collectives: (
             ioType: \in
         )
     ),
-description: [
-	\xfader -> (oscPath: '/1/fader5', type: 'slider',
-		spec: \unipolar, ioType: \in),
-	\sl -> (1..4).collect { |num|
+elementsDesc: (
+	elements: [
 		(
-			oscPath: "/1/fader%".format(num).asSymbol,
-			elementType: \slider, spec: \unipolar, ioType: \in
-		)
-	},
-	\bt -> (1..4).collect { |num|
+			key: \xfader,
+			oscPath: '/1/fader5', type: 'slider', spec: \unipolar, ioType: \in
+		),
 		(
-			oscPath: "/1/toggle%".format(num).asSymbol,
-			elementType: \button, spec: \but, ioType: \in
+			key: \sl,
+			shared: (elementType: \slider, spec: \unipolar, ioType: \in),
+			elements: (1..4).collect { |num|
+				(oscPath: "/1/fader%".format(num).asSymbol)
+			}
+		),
+		(
+			key: \bt,
+			shared: (elementType: \button, spec: \but, ioType: \in),
+			elements: (1..4).collect { |num|
+				(oscPath: "/1/toggle%".format(num).asSymbol)
+			}
+		),
+		(
+			key: \accel,
+			shared: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accx' ),
+			elements: [
+				(key: \x),
+				(key: \y),
+				(key: \z)
+			]
 		)
-	},
-	\accel -> (
-		\x: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accx' ),
-		\y: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accx' ),
-		\z: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accx' )
-	)
-]
+	]
+)
 );
 )
