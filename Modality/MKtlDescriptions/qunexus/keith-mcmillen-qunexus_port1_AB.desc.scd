@@ -29,24 +29,26 @@ idInfo: (deviceName: "QuNexus", sourcePortIndex: 0, destPortIndex: 0),
 portName: "Port 1",
 modeName: "Preset AB",
 
-description: (
+elementsDesc: (
+	sharedProperties: ('midiChan': 0, preset: \B),
 
-	// Preset B has the same elements as Preset A, and one more - like Preset A:
-	// ------ noteOn -------------
-
-	keyOn: (24..108).collect { |midinote|
-		('midiMsgType': 'noteOn', 'elementType': 'pianoKey', 'midiChan': 0, 'midiNum':  midinote, 'spec': 'midiNote', preset: \B) },
-	// ---------noteOff ----------
-	keyOff: (24..108).collect { |midinote|
-		('midiMsgType': 'noteOff', 'elementType': 'pianoKey', 'midiChan': 0, 'midiNum':  midinote, 'spec': 'midiNote', preset: \B)
-	},
-
-	// ------- bend ------------
-	'bend': ('midiMsgType': 'bend', 'elementType': 'bender', 'midiChan': 0, 'midiNum':  0,'spec': 'midiBend', preset: \B),
-
-
-// Preset B mode only adds single channel pressure from all keys :
-// ------- cc ------------
-'monotouch': ('midiMsgType': 'cc', 'elementType': 'keyTouch', 'midiChan': 0, 'midiNum':  1,'spec': 'midiCC', preset: \B)
+	// Preset B has the same elements as Preset A, and single channel pressure.
+	elements: [
+		(
+			key: \pianoKey,
+			sharedProperties: ('midiMsgType': 'noteOnOff', 'elementType': 'pianoKey', 'spec': 'midiVel')
+			elements: (24..108).collect { |midinote|
+				('midiNum':  midinote)
+			}
+		),
+		(
+			key: 'bend',
+			'midiMsgType': 'bend', 'elementType': 'bender', 'midiNum':  0,'spec': 'midiBend'
+		),
+		// Preset B mode only adds single channel pressure from all keys
+		(
+			key: 'monotouch',
+			'midiMsgType': 'cc', 'elementType': 'keyTouch', 'midiNum':  1,'spec': 'midiCC')
+	]
 )
 )

@@ -1,5 +1,3 @@
-// handmade from crappy MIDIExplorer.openDoc printout;
-// should be compressed by default.
 
 (
 (
@@ -23,21 +21,32 @@ deviceInfo: (
 
 	// hasScribble: false
 ),
-description: (
-
-	// ------ noteOnOff -------------
-	//from 0-120
-	'keyOn': (0..120).collect { |midinum| ('midiMsgType': 'noteOn', 'elementType': 'key', 'midiChan': 0, 'midiNum': midinum, 'spec': 'midiNote') },
-
-	'keyOff': (0..120).collect { |midinum| ('midiMsgType': 'noteOn', 'elementType': 'key', 'midiChan': 0, 'midiNum': midinum, 'spec': 'midiNote') },
-
-	mod: ('midiMsgType': 'cc', 'elementType': 'button', 'midiChan': 0, 'midiNum': 1,'spec': 'midiBut'),
-	// ------ cc -------------
-	cc: ((14..31) ++ (80..87)).collect { |midinum|
-		('midiMsgType': 'cc', 'elementType': 'slider', 'midiChan': 0, 'midiNum': midinum,'spec': 'midiCC') },
-
-	// ------- bend ------------
-	'bend': ('midiMsgType': 'bend', 'elementType': 'buttons', 'midiChan': 0, 'midiNum':  0,'spec': 'midiBend')
-);
-
-));
+elementsDesc: (
+	sharedProperties: (midiChan: 0),
+	elements: [
+		(
+			key: \pkey,
+			elements: (0..120).collect { |midinum|
+				('midiMsgType': 'noteOnOff', 'elementType': 'key', 'midiNum': midinum, 'spec': 'midiVel')
+			}
+		),
+		(
+			key: \mod,
+			'midiMsgType': 'cc', 'elementType': 'button', 'midiNum': 1,'spec': 'midiBut'
+		),
+		// where do these come from? keys as cc?
+		(
+			key: \cc,
+			sharedProperties: ('midiMsgType': 'cc', 'elementType': 'slider', 'spec': 'midiCC'),
+			elements: ((14..31) ++ (80..87)).collect { |midinum, i|
+				('midiNum': midinum)
+			}
+		),
+		(
+			key: \bend,
+			'midiMsgType': 'bend', 'elementType': 'button', 'spec': 'midiBend'
+		)
+	]
+)
+)
+)
