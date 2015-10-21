@@ -36,7 +36,7 @@ elementsDesc: (
 	elements: [
 		(
 			key: \pianoKey,
-			sharedProperties: ('midiMsgType': 'noteOnOff', 'elementType': 'pianoKey', 'spec': 'midiVel')
+			sharedProperties: ('midiMsgType': 'noteOnOff', 'elementType': 'pianoKey', 'spec': 'midiVel'),
 			elements: (24..108).collect { |midinote|
 				('midiNum':  midinote)
 			}
