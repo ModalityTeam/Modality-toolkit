@@ -7,7 +7,7 @@ NOT DONE YET:
 + how to handle string only values?
   + ping returns strings,
   + sending back to set stuff uses strings
--> PassSpec for not touching raw values
+-> use PassSpec for not touching raw values
 
 
 o = OSCMonitor.new;
@@ -105,44 +105,47 @@ collectives: (
 	)
 ),
 
-description: (
+elementsDesc: (
 	// input elements:
 
 	// 10 floating-point arguments indicating the current readings of the on board sensors. Arguments 1 – 3 gyroscope (°/s) x, y, z; arguments 4 – 6 accelerometer (g), x, y ,z; arguments 7 – 9 magnetometer (Ga) x, y ,z; argument 10 gyroscope temperature (°C)
-	\accel: (
-		\x: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' ),
-		\y: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' ),
-		\z: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' )
-	),
-	\gyro: (
-		\pitch: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'gyroAxis' ),
-		\roll: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'gyroAxis' ),
-		\yaw: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'gyroAxis' )
-	),
-	\magnet: (
-		\pitch: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'gyroAxis' ),
-		\roll: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'gyroAxis' ),
-		\yaw: (type: 'accelAxis', ioType: \collectiveIn, \spec: 'gyroAxis' )
-	),
-	\temp: (type: 'cvIn', ioType: \collectiveIn, \spec: 'temp' ),
-
-
+	elements: [
+		(
+			key: \accel,
+			shared: (elementType: 'accelAxis', ioType: \collectiveIn,
+				\spec: 'accelAxis' ),
+			elements: [\x, \y, \z].collect( (key: _))),
+		(
+			key: \gyro,
+			shared: (elementType: 'gyroAxis', ioType: \collectiveIn,
+				\spec: 'gyroAxis' ),
+			elements: [\pitch, \roll, \yaw].collect( (key: _))),
+		(
+			key: \magnet,
+			shared: (elementType: 'gyroAxis', ioType: \collectiveIn,
+				\spec: 'gyroAxis' ),
+			elements: [\pitch, \roll, \yaw].collect( (key: _))),
+		(
+			key: \temp, elementType: 'cvIn', ioType: \collectiveIn,
+			\spec: 'temp' ),
 
 	// 16 integer arguments represent the state of the 16 digital inputs (0 or 1). Sent only when the state of any digital input pin changes
-	inD: 16.collect{|i|
-		(type: \switch, spec: \switch, ioType: \collectiveIn)
-	},
+		(
+			key: \inD,
+			shared: (type: \switch, spec: \switch, ioType: \collectiveIn),
+			elements: (1..16).collect ( (key: _) )),
 
 // 16 floating-point arguments indicate the analogue readings for all 16 inputs. Sent at the analogue input message rate
-	inA: 16.collect{|i|
-		(type: \voltage, spec: \lin1, ioType: \collectiveIn)
-	},
-
+		(
+			key: \inA,
+			shared: (type: \voltage, spec: \lin1, ioType: \collectiveIn),
+			elements: (1..16).collect ( (key: _) )),
 
 // 16 integer arguments represent the current compare state of the 16 analogue inputs (0 if below or 1 if above the threshold). Sent only when a threshold on any channel is crossed
-	inC: 16.collect{|i|
-		(type: \switch, spec: \switch, ioType: \collectiveIn)
-	},
+		(
+			key: \inC,
+			shared: (type: \switch, spec: \switch, ioType: \collectiveIn),
+			elements: (1..16).collect ( (key: _) )),
 
 	// // 1 blob argument containing the raw serial data received on input <channel> (1 – 4)
 	// inS1: (oscPath: '/inputs/serial/1', inType: \blob, ioType: \in),
@@ -152,10 +155,12 @@ description: (
 
 
 	// 1 float indicating the current battery voltage
-	battery: (oscPath: '/battery', ioType: \in,
-	 type: \voltage, spec: [0, 3.7].asSpec),
-
-
+		(
+			key: \battery, oscPath: '/battery', ioType: \in,
+			type: \voltage, spec: [0, 3.7].asSpec),
+	]
+)
+);
 	// // /ping: 3 string arguments are the x-OSC local IP address (1st string), MAC address (2nd string) and firmware version (3rd string)
 	// ping: (oscPath: \ping, numArgs: 3, ioType: \in),
 
@@ -175,7 +180,7 @@ description: (
 	// usePrefix: (oscPath: "/osc/prefix/enabled", ioType: \out),
 	// // set osc address prefix string, e.g. (e.g. “/xosc”)
 	// prefix: (oscPath: "/osc/prefix/address", ioType: \out)
-)
+
 
 // /inputs/mode/analogue/<channel>
 // sets the input <channel> (1 – 16) to analogue mode
@@ -240,4 +245,4 @@ description: (
 // the timeout of the input buffer for the specified serial <channel> (1 – 4) is set to the value of i (0 – 1000 ms)
 // /serial/framing/<channel>
 // integer argument (-1 – 255) sets the framing character for the specified serial <channel> (1 – 4)
-)
+

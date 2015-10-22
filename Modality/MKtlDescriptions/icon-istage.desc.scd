@@ -29,25 +29,49 @@ deviceInfo: (
 
 	// hasScribble: false
 ),
-description: (
-	\cf: (\midiMsgType: \cc, \type: \xfade,   \midiChan: 0, \midiNum: 7, \spec: \midiCC),
-	\bt: (0..19).collect{|num| (0..11).collect{|chan|
-		(\midiMsgType: \noteOnOff, \type: \button, \midiChan: chan, \midiNum: num, spec: \midiBut, \mode: \push)
-}},
-	\play: (0..19).collect{|num|
-		(\midiMsgType: \noteOnOff, \type: \button, \midiChan: 12, \midiNum: num, spec: \midiBut, \mode: \push)
-	},
-	\stop: (0..12).collect{|chan|
-		(\midiMsgType: \noteOnOff, \type: \button, \midiChan: chan, \midiNum: 103, spec: \midiBut, \mode: \push)
-	},
+elementsDesc: (
+	elements: [
+		(
+			key: \cf, \midiMsgType: \cc, \type: \xfade,
+			\midiChan: 0, \midiNum: 7, \spec: \midiCC),
+		(
+			key: \bt,
+			shared: (\midiMsgType: \noteOnOff, \type: \button,
+				spec: \midiBut, \mode: \push),
+			elements: (0..19).collect { |num|
+				(
+					elements: (0..11).collect { |chan|
+						(midiChan: chan, \midiNum: num)
+					}
+				)
+			}),
+		(
+			key: \play,
+			shared: (\midiMsgType: \noteOnOff, \type: \button, \midiChan: 12,
+				spec: \midiBut, \mode: \push),
+			elements: (0..19).collect { |num| (\midiNum: num) }),
+		(
+			key: \stop,
+			shared: (\midiMsgType: \noteOnOff, \type: \button, \midiNum: 103,
+				spec: \midiBut, \mode: \push),
+			elements: (0..12).collect { |chan| (\midiChan: chan) }),
+
 	// drummer
-	bluL: (60..75).collect{|num|
-		(\midiMsgType: \noteOnOff, \type: \button, \midiChan: 9, \midiNum: num, spec: \midiVel, \mode: \push)
-	},
-// duplication in here (42)!
-	red: #[35, 48, 37, 36, 49, 47, 40, 38, 50, 45, 42, 42, 51, 43, 46, 44].collect{|num, i|
-		(\midiMsgType: \noteOnOff, \type: \button, \midiChan: 9, \midiNum: num, spec: \midiVel, \mode: \push)
-	}
+		(
+			key: \bluL,
+			shared: (\midiMsgType: \noteOnOff, \type: \button, \midiChan: 9,
+				spec: \midiVel, \mode: \push),
+			elements: (60..75).collect { |num| (\midiNum: num) }),
+
+		// duplication in here (42)!
+		(
+			key: \red,
+			shared: (\midiMsgType: \noteOnOff, \type: \button, \midiChan: 9,
+				spec: \midiVel, \mode: \push),
+			elements: #[35,48,37,36, 49,47,40,38, 50,45,42,42, 51,43,46,44]
+			.collect { |num, i| ( \midiNum: num) })
+	]
+
 /*++
 // left blue is duplicate of red
 #[35, 48, 37, 36, 49, 47, 40, 38, 50, 45, 42, 42, 51, 43, 46, 44].collect{|num, i|
