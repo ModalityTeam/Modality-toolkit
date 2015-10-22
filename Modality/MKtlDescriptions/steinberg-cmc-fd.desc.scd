@@ -21,7 +21,7 @@ deviceInfo: (
 	notes: "discontinued.",
 
 ),
-description: (
+elementsDesc: (
 	shared: ('midiMsgType': 'noteOnOff', 'elementType': 'button',
 		'midiChan': 0, 'spec': 'midiBut'),
 	elements: [
