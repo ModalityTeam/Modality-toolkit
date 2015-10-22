@@ -38,47 +38,79 @@ deviceInfo: (
 	// notes: "",
 	hasScribble: true
 ),
-description: (
-
+elementsDesc: (
+	elements: [
 	//buttons at bottom right
-	pr: (
-		up: (
-			l: (\midiMsgType: \cc, elementType: \button, midiChan: 0, midiNum: 89, spec: \midiBut, mode: \toggle, ioType: \inout),
-			r: (\midiMsgType: \cc, elementType: \button, midiChan: 0, midiNum: 90, spec: \midiBut, mode: \toggle, ioType: \inout)
+		(
+			key: \pr,
+			shared: (\midiMsgType: \cc, elementType: \button, midiChan: 0,
+				spec: \midiBut, mode: \toggle, ioType: \inout),
+			elements: [
+				(
+					key: \up,
+					elements: [
+						(key: \l, midiNum: 89),
+						(key: \r, midiNum: 90),
+					]
+				),
+				(
+					key: \down,
+					elements: [
+						(key: \l, midiNum: 89),
+						(key: \r, midiNum: 90),
+					]
+				)
+			]
 		),
-		down: (
-			l: (\midiMsgType: \cc, elementType: \button, midiChan: 0, midiNum: 91, spec: \midiBut, mode: \toggle, ioType: \inout),
-			r: (\midiMsgType: \cc, elementType: \button, midiChan: 0, midiNum: 92, spec: \midiBut, mode: \toggle, ioType: \inout),
-		)
 
-	),
-
-	//upper row of encoders when pressed, 4 pages, 8 rows
-	tr: 4.collect { |j|
-		8.collect { |i|
-			// top knob push mode
-			(\midiMsgType: \cc, elementType: \encoder, midiChan: 0, midiNum: 33+(8*j)+i, spec: \midiCC, ioType: \in, page: j + 1)
-		}
-	},
-
-	//upper row of encoders, 4 pages, 8 rows
-	kn: 4.collect { |j|
-		8.collect { |i|
-			// top knob push mode
-			(\midiMsgType: \cc, elementType: \encoder, midiChan: 0, midiNum: 1+(8*j)+i, spec: \midiCC, ioType: \inout, page: j + 1)
-		}
-	},
-
+		//upper row of encoders when pressed, 4 pages, 8 rows
+		(
+			key: \tr,
+			shared: (\midiMsgType: \cc, elementType: \encoder, midiChan: 0,
+				spec: \midiCC, ioType: \in),
+			elements: 4.collect { |j|
+				(
+					elements: 8.collect { |i|
+						// top knob push mode
+						(midiNum: 33+(8*j)+i, page: j + 1)
+					}
+				)
+			}
+		),
+		//upper row of encoders, 4 pages, 8 rows
+		(
+			key: \kn,
+			shared: (\midiMsgType: \cc, elementType: \encoder, midiChan: 0,
+				spec: \midiCC, ioType: \in),
+			elements: 4.collect { |j|
+				(
+					elements: 8.collect { |i|
+						// top knob push mode
+						(midiNum: 1+(8*j)+i, page: j + 1)
+					}
+				)
+			}
+		),
 	//buttons
-	bt:[65,73].collect{ |ccStart|
-		8.collect{ |i|
-			(\midiMsgType: \cc, elementType: \midiBut, midiChan: 0, midiNum: ccStart+i, spec: \midiCC, ioType: \inout)
-		}
-	},
-
+		(
+			key: \bt,
+			shared: (\midiMsgType: \cc, elementType: \midiBut, midiChan: 0,
+				spec: \midiCC, ioType: \inout),
+			elements: [65,73].collect { |ccStart|
+				(
+					elements: 8.collect { |i|
+						(midiNum: ccStart+i)
+					}
+				)
+			}
+		),
 	//sliders
-	sl: 8.collect{ |i|
-		(\midiMsgType: \cc, elementType: \encoder, midiChan: 0, midiNum: 81+i, spec: \midiCC, ioType: \inout)
-	}
+		(
+			key: \sl,
+			shared: (\midiMsgType: \cc, elementType: \encoder, midiChan: 0,
+				spec: \midiCC, ioType: \inout),
+			elements: 8.collect { |i| (midiNum: 81+i) }
+		)
+	]
 )
 )

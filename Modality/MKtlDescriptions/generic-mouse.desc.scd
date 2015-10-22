@@ -21,15 +21,33 @@ deviceInfo: (
 	// notes: "",
 	// hasScribble: false
 ),
-description: (
+elementsDesc: (
 // --------- input elements ----------
-	bt: (
-		left:   (hidUsage: 1, hidUsagePage: 9, elementType: \button, ioType: 'in', spec: \hidBut),
-		right:  (hidUsage: 2, hidUsagePage: 9, elementType: \button, ioType: 'in', spec: \hidBut),
-		middle: (hidUsage: 3, hidUsagePage: 9, elementType: \button, ioType: 'in', spec: \hidBut)
-	),
-	x:     (hidUsage: 48, hidUsagePage: 1, elementType: \mouseAxis,  ioType: 'in', spec: \mouseAxis, valueType: \relative),
-	y:     (hidUsage: 49, hidUsagePage: 1, elementType: \mouseAxis,  ioType: 'in', spec: \mouseAxis ),
-	wheel: (hidUsage: 56, hidUsagePage: 1, elementType: \mouseWheel, ioType: 'in', spec: \mouseAxis, valueType: \relative ),
+	elements: [
+		(
+			key: \bt,
+			shared: (hidUsagePage: 9, elementType: \button, ioType: 'in', spec: \hidBut),
+			elements: [
+				(key: \left, hidUsage: 1),
+				(key: \right,  hidUsage: 2),
+				(key: \middle,  hidUsage: 3)
+			]
+		),
+		(
+			key: \x,
+			hidUsage: 48, hidUsagePage: 1, elementType: \mouseAxis,
+			ioType: 'in', spec: \mouseAxis, valueType: \relative
+		),
+		(
+			key: \y,
+			hidUsage: 49, hidUsagePage: 1, elementType: \mouseAxis,
+			ioType: 'in', spec: \mouseAxis, valueType: \relative
+		),
+		(
+			key: \wheel,
+			hidUsage: 56, hidUsagePage: 1, elementType: \mouseWheel,
+			ioType: 'in', spec: \mouseAxis, valueType: \relative
+		)
+	]
 )
 );
