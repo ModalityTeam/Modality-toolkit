@@ -19,20 +19,34 @@ deviceInfo: (
 
 	// hasScribble: false
 ),
-description: (
-
-	// --------- input elements ----------
-	'bt': (
-		1: ('hidUsage': 1, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', spec: \hidBut, mode: \push ),
-		2: ('hidUsage': 2, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', spec: \hidBut, mode: \push ),
-		3: ('hidUsage': 3, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', spec: \hidBut, mode: \push ),
-		4: ('hidUsage': 4, 'hidUsagePage': 9, 'type': 'button', 'ioType': 'in', spec: \hidBut, mode: \push )
-	),
-	'Hat': ('hidUsage': 57, 'hidUsagePage': 1, 'type': 'hatSwitch', 'ioType': 'in', spec: \cent1, mode: \center ),
-	joy:(
-		x: ('hidUsage': 48, 'hidUsagePage': 1, 'type': 'joyAxis', 'ioType': 'in',  spec: \cent1, mode: \center ),
-		y: ('hidUsage': 49, 'hidUsagePage': 1, 'type': 'joyAxis', 'ioType': 'in',  spec: \cent1, mode: \center )
-	),
-	'Slider': ('hidUsage': 187, 'hidUsagePage': 2, 'type': 'slider', 'ioType': 'in', spec: \cent1, mode: \center )
+elementsDesc: (
+	elements: [
+		(
+			key: \bt,
+			shared: ('hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in',spec: \hidBut ),
+			elements: [
+				(key: \1, 'hidUsage': 1),
+				(key: \2, 'hidUsage': 2),
+				(key: \3, 'hidUsage': 3),
+				(key: \4, 'hidUsage': 4),
+			]
+		),
+		(
+			key: 'hat',
+			'hidUsage': 57, 'hidUsagePage': 1, 'elementType': 'hatSwitch',
+			'ioType': 'in', spec: \cent1, mode: \center),
+		(
+			key: \joy,
+			shared: ('hidUsagePage': 1, 'elementType': 'joyAxis', 'ioType': 'in',
+				spec: \cent1, mode: \center ),
+			elements: [
+				(key: \x, 'hidUsage': 48),
+				(key: \y, 'hidUsage': 49)
+			]
+		),
+		(
+			key: 'sl', 'hidUsage': 187, 'hidUsagePage': 2, 'elementType': 'slider',
+			'ioType': 'in', spec: \cent1, mode: \center )
+	]
 )
 )

@@ -19,25 +19,56 @@ deviceInfo: (
 	// notes: "",
 
 ),
-description: (
-// MIDI coming in from the Sherman Filterbank
-'tr': [
-	('midiMsgType': 'noteOnOff', 'type': 'button', 'midiChan': 15, 'midiNum':  78, 'spec': 'midiNote'),
-	('midiMsgType': 'noteOnOff', 'type': 'button', 'midiChan': 15, 'midiNum':  82, 'spec': 'midiNote')
-],
-
-// MIDI being send to the Sherman Filterbank
-'cutFil1': ('midiMsgType': 'bend', 'type': 'knob', 'midiChan': 15, 'spec': 'midiBend', 'ioType': 'out'),
-'resFil1': ('midiMsgType': 'touch', 'type': 'knob', 'midiChan': 15, 'spec': 'midiTouch', 'ioType': 'out'),
-'cutFil2': ('midiMsgType': 'cc', 'type': 'knob', 'midiChan': 15, 'midiNum': 1, 'spec': 'midiCC', 'ioType': 'out'),
-'resFil2': ('midiMsgType': 'cc', 'type': 'knob', 'midiChan': 15, 'midiNum': 2, 'spec': 'midiCC', 'ioType': 'out'),
-'fmDepth': ('midiMsgType': 'cc', 'type': 'knob', 'midiChan': 15, 'midiNum': 4, 'spec': 'midiCC', 'ioType': 'out'),
-'vcaBias': ('midiMsgType': 'cc', 'type': 'knob', 'midiChan': 15, 'midiNum': 7, 'spec': 'midiCC', 'ioType': 'out'),
-'amDepth': ('midiMsgType': 'cc', 'type': 'knob', 'midiChan': 15, 'midiNum': 11, 'spec': 'midiCC', 'ioType': 'out'),
-'attADSR': ('midiMsgType': 'cc', 'type': 'knob', 'midiChan': 15, 'midiNum': 5, 'spec': 'midiCC', 'ioType': 'out'),
-'decADSR': ('midiMsgType': 'cc', 'type': 'knob', 'midiChan': 15, 'midiNum': 16, 'spec': 'midiCC', 'ioType': 'out'),
-'relADSR': ('midiMsgType': 'cc', 'type': 'knob', 'midiChan': 15, 'midiNum': 17, 'spec': 'midiCC', 'ioType': 'out'),
-'attAR': ('midiMsgType': 'cc', 'type': 'knob', 'midiChan': 15, 'midiNum': 18, 'spec': 'midiCC', 'ioType': 'out'),
-'relAR': ('midiMsgType': 'cc', 'type': 'knob', 'midiChan': 15, 'midiNum': 19, 'spec': 'midiCC', 'ioType': 'out'),
+elementsDesc: (
+	shared: ('midiChan': 15),
+	elements: [
+		// MIDI coming in from the Sherman Filterbank
+		(
+			key: 'tr',
+			shared: ('midiMsgType': 'noteOnOff', 'type': 'button',
+				'spec': 'midiVel'),
+			elements: [
+				('midiNum':  78),
+				('midiNum':  82)
+			]
+		),
+		// MIDI being sent to the Sherman Filterbank:
+		(
+			key: 'cutFil1', 'midiMsgType': 'bend', 'type': 'knob',
+			'midiChan': 15, 'spec': 'midiBend', 'ioType': 'out'),
+		(
+			key: 'resFil1', 'midiMsgType': 'touch', 'type': 'knob',
+			'spec': 'midiTouch', 'ioType': 'out'),
+		(
+			key: 'cutFil2', 'midiMsgType': 'cc', 'type': 'knob',
+			'midiNum': 1, 'spec': 'midiCC', 'ioType': 'out'),
+		(
+			key: 'resFil2', 'midiMsgType': 'cc', 'type': 'knob',
+			'midiNum': 2, 'spec': 'midiCC', 'ioType': 'out'),
+		(
+			key: 'fmDepth', 'midiMsgType': 'cc', 'type': 'knob',
+			'midiNum': 4, 'spec': 'midiCC', 'ioType': 'out'),
+		(
+			key: 'vcaBias', 'midiMsgType': 'cc', 'type': 'knob',
+			'midiNum': 7, 'spec': 'midiCC', 'ioType': 'out'),
+		(
+			key: 'amDepth', 'midiMsgType': 'cc', 'type': 'knob',
+			'midiNum': 11, 'spec': 'midiCC', 'ioType': 'out'),
+		(
+			key: 'attADSR', 'midiMsgType': 'cc', 'type': 'knob',
+			'midiNum': 5, 'spec': 'midiCC', 'ioType': 'out'),
+		(
+			key: 'decADSR', 'midiMsgType': 'cc', 'type': 'knob',
+			'midiNum': 16, 'spec': 'midiCC', 'ioType': 'out'),
+		(
+			key: 'relADSR', 'midiMsgType': 'cc', 'type': 'knob',
+			'midiNum': 17, 'spec': 'midiCC', 'ioType': 'out'),
+		(
+			key: 'attAR', 'midiMsgType': 'cc', 'type': 'knob',
+			'midiNum': 18, 'spec': 'midiCC', 'ioType': 'out'),
+		(
+			key: 'relAR', 'midiMsgType': 'cc', 'type': 'knob',
+			'midiNum': 19, 'spec': 'midiCC', 'ioType': 'out')
+	]
 );
 );

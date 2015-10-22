@@ -20,21 +20,36 @@ deviceInfo: (
 	hasScribble: false
 ),
 
-// preset 3
-description: (
-	sl: #[105, 106, 107, 108, 110, 111, 112, 116, 26].collect {|num, i|
-		(midiMsgType: \cc, elementType: \slider, midiChan: 0, midiNum: num, spec: \midiCC,  ioType: \in)
-	},
-	kn: #[
-		[45, 46, 47,  5, 80, 81, 82, 83], 
-		[50, 51, 55, 87, 75, 76, 77, 78], 
-		[20, 21, 40, 43, 70, 71, 72, 73]
-	].collect{|row| row.collect {|num, i|
-			(midiMsgType: \cc, elementType: \knob,   midiChan: 0, midiNum: num, spec: \midiCC,  ioType: \in)
-	}},
-	bt: #[57, 52, 53, 54, 41, 42, 44, 22, 23, 24].collect {|num, i|
-		(midiMsgType: \cc, elementType: \button, midiChan: 0, midiNum: num, spec: \midiBut, ioType: \in, mode: \toggle)
-	}
-
+// preset 3 only:
+elementsDesc: (
+	shared: (midiMsgType: \cc, midiChan: 0,  ioType: \in),
+	elements: [
+		(
+			key: \sl,
+			shared: ( elementType: \slider, spec: \midiCC),
+			elements: #[105, 106, 107, 108, 110, 111, 112, 116, 26]
+			.collect {|num, i| (midiNum: num) }
+		),
+		(
+			key: \kn,
+			shared: (elementType: \knob, spec: \midiCC),
+			elements: #[
+				[45, 46, 47,  5, 80, 81, 82, 83],
+				[50, 51, 55, 87, 75, 76, 77, 78],
+				[20, 21, 40, 43, 70, 71, 72, 73]
+			].collect { |row|
+				(
+					elements: row.collect {|num, i| (midiNum: num) }
+				)
+			}
+		),
+		(
+			key: \bt,
+			shared: (elementType: \button, mode: \toggle, spec: \midiBut),
+			elements: #[57, 52, 53, 54, 41, 42, 44, 22, 23, 24].collect {|num, i|
+				(midiNum: num)
+			}
+		)
+	]
 )
 )
