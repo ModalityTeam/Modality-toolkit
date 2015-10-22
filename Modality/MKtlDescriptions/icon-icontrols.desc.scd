@@ -22,29 +22,44 @@ deviceInfo: (
 
 	// hasScribble: false
 ),
-description: (
-
-	bt: #[
-		[ 16, 17, 18, 19, 20, 21, 22, 23, 48 ],
-		[  8,  9, 10, 11, 12, 13, 14, 15, 49 ]
-	].collect{ |xs, row|
-		xs.collect { |note, column|
-			(midiMsgType: \noteOnOff, elementType: \button, midiChan: 0, midiNum:  note, spec: \midiVel)
-		}
-	},
-	sl:
-	(0..8).collect { |i, n|
-		(midiMsgType: \cc, elementType: \slider, midiChan: i, midiNum:  13, spec: \midiCC)
-	},
-
-	kn:((16..23)++[12]).collect { |i, n|
-		(midiMsgType: \cc, elementType: \slider, midiChan: 0, midiNum:   i, spec: \midiCC)
-	},
-	rew:   (midiMsgType: \noteOnOff, elementType: \button, midiChan: 0, midiNum:  91, spec: \midiVel),
-	play:  (midiMsgType: \noteOnOff, elementType: \button, midiChan: 0, midiNum:  94, spec: \midiVel),
-	fwd:   (midiMsgType: \noteOnOff, elementType: \button, midiChan: 0, midiNum:  92, spec: \midiVel),
-	cycle: (midiMsgType: \noteOnOff, elementType: \button, midiChan: 0, midiNum:  86, spec: \midiVel),
-	stop:  (midiMsgType: \noteOnOff, elementType: \button, midiChan: 0, midiNum:  93, spec: \midiVel),
-	rec:   (midiMsgType: \noteOnOff, elementType: \button, midiChan: 0, midiNum:  95, spec: \midiVel),
+elementsDesc: (
+	elements: [
+		(
+			key: \bt,
+			shared: (midiMsgType: \noteOnOff, elementType: \button,
+				midiChan: 0, spec: \midiVel),
+			elements: #[
+				[ 16, 17, 18, 19, 20, 21, 22, 23, 48 ],
+				[  8,  9, 10, 11, 12, 13, 14, 15, 49 ]
+			].collect { |xs, row|
+				(elements: xs.collect { |note, col| (midiNum: note) })
+			}
+		),
+		(
+			key: \sl,
+			shared: (midiMsgType: \cc, elementType: \slider,
+				midiNum:  13, spec: \midiCC),
+			elements: (0..8).collect { |i, n| (midiChan: i) }
+		),
+		(
+			key: \kn,
+			shared: (midiMsgType: \cc, elementType: \slider,
+				midiChan: 0, spec: \midiCC),
+			elements: ((16..23)++[12]).collect { |i, n| (midiNum: i) }
+		),
+		(
+			key: \tr,
+			shared: (midiMsgType: \noteOnOff, elementType: \button,
+				midiChan: 0, spec: \midiBut),
+			elements: [
+				(key: \rew, 	midiNum:  91),
+				(key: \play, 	midiNum:  94),
+				(key: \fwd, 	midiNum:  92),
+				(key: \cycle, 	midiNum:  86),
+				(key: \stop, 	midiNum:  93),
+				(key: \rec, 	midiNum:  95)
+			]
+		)
+	]
 )
-)
+);

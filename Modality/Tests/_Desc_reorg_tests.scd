@@ -58,17 +58,14 @@ g.deepAt2(\bt, \2);
 MKtl(\gp, "*drive");
 MKtl(\gp).postElements;
 MKtl(\gp).gui;
-MKtl(\gp).trace
+MKtl(\gp).trace;
 MKtl(\gp).elementsDict.keys;
 MKtl(\gp).desc.openFile
 
-MKtl(\nk, "*trol2");
+MKtl(\nk, "*trol2").desc.openFile;
 MKtl(\nk).gui;
 MKtl(\nk).elementGroup.dict.keys; // still wrong, should be the names
 MKtl(\nk).elAt(\kn);
-
-
-
 
 
 // done already - sharing properties down

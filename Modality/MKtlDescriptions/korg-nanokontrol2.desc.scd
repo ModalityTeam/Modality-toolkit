@@ -1,6 +1,6 @@
 /*	KORG nanoKONTROL2 specs:
 * all cc messages
-* transport buttons,
+* transport buttons - tr,
 * track buttons
 * 8x sliders, knobs, 3 buttons
 
@@ -63,18 +63,23 @@ elementsDesc: (
 	shared: (\midiMsgType: \cc, \midiChan: 0),
 	elements: [
 		(
-			key: \transport,
+			key: \tr,
 			shared: (\elementType: \button, \spec: \midiBut,
 				\mode: \push, \ioType: \inout),
 
 			elements: [
-				(key: \rew,  \midiNum: 43, \style: (row: 3, column: 0, showLabel: true)),
-				(key: \fwd,  \midiNum: 44, \style: (row: 3, column: 1, showLabel: true)),
-				(key: \stop, \midiNum: 42, \style: (row: 3, column: 2, showLabel: true)),
-				(key: \play, \midiNum: 41, \style: (row: 3, column: 3, showLabel: true)),
-				(key: \rec,  \midiNum: 45, \style: (row: 3, column: 4, showLabel: true)),
+				(key: \rew,  \midiNum: 43,  \label: \rew,
+					\style: (row: 3, column: 0, showLabel: true)),
+				(key: \fwd,  \midiNum: 44, \label: \fwd,
+					\style: (row: 3, column: 1, showLabel: true)),
+				(key: \stop, \midiNum: 42, \label: \stop,
+					\style: (row: 3, column: 2, showLabel: true)),
+				(key: \play, \midiNum: 41, \label: \play,
+					\style: (row: 3, column: 3, showLabel: true)),
+				(key: \rec,  \midiNum: 45, \label: \rec,
+					\style: (row: 3, column: 4, showLabel: true)),
 
-				(key: \cycle, \midiNum: 46,
+				(key: \cycle, \midiNum: 46, \label: \cycle,
 					\style: (row: 2.125, column: 0, height: 0.75, showLabel: true)),
 				(key: \mset, \midiNum: 60, \label: "set",
 					\style: (row: 2.125, column: 2, height: 0.75, showLabel: true)),

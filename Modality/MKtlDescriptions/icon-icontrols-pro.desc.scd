@@ -21,29 +21,44 @@ deviceInfo: (
 
 	// hasScribble: false
 ),
-description: (
-
-	bt: (
-		rec: 8.collect { |i|
-			(midiMsgType: \noteOnOff, elementType: \button, ioType: \inout, midiChan: 0, midiNum: i, spec: \midiVel, mode: \push )
-		},
-		solo: 8.collect { |i|
-			(midiMsgType: \noteOnOff, elementType: \button, ioType: \inout, midiChan: 0, midiNum: i+8, spec: \midiVel, mode: \push )
-		},
-		mute: 8.collect { |i|
-			(midiMsgType: \noteOnOff, elementType: \button, ioType: \inout, midiChan: 0, midiNum: i+16, spec: \midiVel, mode: \push )
-		},
-		select: 8.collect { |i|
-			(midiMsgType: \noteOnOff, elementType: \button, ioType: \inout, midiChan: 0, midiNum: i+16, spec: \midiVel, mode: \push )
-		},
-	),
-
-	kn: 8.collect{ |i|
-		(midiMsgType: \cc, elementType: \encoder, ioType: \inout, midiChan: 0, midiNum: i+16, spec: \midiVel, mode: \mackie )
-	},
-
-	sl: 9.collect { |i|
-		(midiMsgType: \bend, elementType: \slider, ioType: \inout, midiChan: i, spec: \midiBend)
-	}
+elementsDesc: (
+	elements: [
+		(
+			key: \bt,
+			shared: (midiMsgType: \noteOnOff, elementType: \button,
+				ioType: \inout, midiChan: 0, spec: \midiBut, mode: \push ),
+			elements: [
+				(
+					key: \rec,
+					elements: (0..7).collect { |num| (midiNum: num) }
+				),
+				(
+					key: \solo,
+					elements: (8..15).collect { |num| (midiNum: num) }
+				),
+				(
+					key: \mute,
+					elements: (16..23).collect { |num| (midiNum: num) }
+				),
+				(
+					key: \select,
+					// assuming this is 24-31? was 16-23, copy paste error?
+					elements: (24..31).collect { |num| (midiNum: num) }
+				)
+			]
+		),
+		(
+			key: \kn,
+			shared: (midiMsgType: \cc, elementType: \encoder,
+				ioType: \inout, midiChan: 0, spec: \midiCC, mode: \mackie ),
+			elements: (16..23).collect { |num, i| (midiNum: num) }
+		),
+		(
+			key: \sl,
+			shared: (midiMsgType: \bend, elementType: \slider,
+				ioType: \inout, spec: \midiBend),
+			elements: 9.collect { |i| (midiChan: i) }
+		)
+	]
 )
 )
