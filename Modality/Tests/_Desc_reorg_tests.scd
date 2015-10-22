@@ -1,7 +1,7 @@
+MKtlDesc.findFile.size;
 MKtlDesc.loadDescs.size;
 MKtlDesc.allDescs.size;
 MKtlDesc.openFolder;
-MKtlDesc.at('keith-mcmillen-qunexus_port1_AB').openFile;
 
 ~vm = MKtlDesc("*vmeter");
 ~vm.elementsDesc.elements[0];
@@ -62,12 +62,15 @@ MKtl(\gp).trace;
 MKtl(\gp).elementsDict.keys;
 MKtl(\gp).desc.openFile
 
-MKtl(\nk, "*trol2").desc.openFile;
+MKtl(\nk, "*trol2"); // .desc.openFile;
 MKtl(\nk).gui;
 MKtl(\nk).elementGroup.dict.keys; // still wrong, should be the names
 MKtl(\nk).elAt(\kn);
 
-
+MKtl(\qn, "*AB").trace;
+MKtl(\qn).elAt(0, 0).elemDesc
+MKtl(\qn).device.midiKeyToElemDict.size;
+postElements
 // done already - sharing properties down
 MKtlDesc.sharePropsToElements(~pf.elementsDesc);
 

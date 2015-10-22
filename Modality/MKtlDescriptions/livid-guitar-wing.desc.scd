@@ -21,53 +21,86 @@ deviceInfo: (
 	hasScribble: true
 ),
 
-'description': (
-	//	noteOn 127 for start, cc for val, noteOff 0
-	fader: (
-		left: (
-			noteOnOff: (type: \touchFader, midiNum: 1, spec: \midiCC, midiChan: 0, midiMsgType: \noteOnOff),
-			cc: (type: \touchFader, midiNum: 1, spec: \midiCC, midiChan: 0, midiMsgType: \control),
+'elementsDesc': (
+		//	noteOn 127 for start, cc for val, noteOff 0
+	elements: [
+		(
+			key: \fader,
+			shared: (type: \touchFader, spec: \midiCC, midiChan: 0),
+			elements: [
+				[\left, 1],
+				[\right, 2],
+				[\bottom, 3]
+			].collect { |pair, i|
+					var name, num; #name, num = pair;
+				(
+					key: name,
+					shared: (midiNum: num),
+					elements: [
+						(key: \touch, midiMsgType: \noteOnOff),
+						(key: \pos,   midiMsgType: \control)
+					]
+				)
+			}
 		),
-		right: (
-			noteOnOff: (type: \touchFader, midiNum: 2, spec: \midiCC, midiChan: 0, midiMsgType: \noteOnOff),
-			cc: (type: \touchFader, midiNum: 2, spec: \midiCC, midiChan: 0, midiMsgType: \control),
+		// noteOn 64 noteOff 0, toggle
+		(
+			key: \tipPad,
+			type: \pad, midiNum: 4, mode: \toggle,
+			\spec: \midiCC, midiMsgType: \noteOnOff
 		),
-		bottom: (
-			noteOnOff: (type: \touchFader, midiNum: 3, spec: \midiCC, midiChan: 0, midiMsgType: \noteOnOff),
-			cc: (type: \touchFader, midiNum: 3, spec: \midiCC, midiChan: 0, midiMsgType: \control),
-		)
-	),
-	// noteOn 64 noteOff 0, toggle
-	tipPad: (type: \pad, midiNum: 4, mode: \toggle, \spec: \midiCC, midiMsgType: \noteOnOff),
 
-	// noteOnOff, momentary
-	pad: (
-		index: (type: \pad, midiNum: 36, spec: \midiCC, midiChan: 0, midiMsgType: \noteOnOff),
-		middle: (type: \pad, midiNum: 37, spec: \midiCC, midiChan: 0, midiMsgType: \noteOnOff),
-		ring: (type: \pad, midiNum: 38, spec: \midiCC, midiChan: 0, midiMsgType: \noteOnOff),
-		pinky: (type: \pad, midiNum: 39, spec: \midiCC, midiChan: 0, midiMsgType: \noteOnOff),
-	),
-	switch: (
-		triDown: (type: \touchButton, midiNum: 40, spec: \midiCC, midiChan: 0, midiMsgType: \noteOnOff),
-		triUp: (type: \touchButton, midiNum: 41, spec: \midiCC, midiChan: 0, midiMsgType: \noteOnOff),
-		finger: (
-			index: (type: \touchButton, midiNum: 42, spec: \midiCC, midiChan: 0, midiMsgType: \noteOnOff),
-			middle: (type: \touchButton, midiNum: 43, spec: \midiCC, midiChan: 0, midiMsgType: \noteOnOff),
-			ring: (type: \touchButton, midiNum: 44, spec: \midiCC, midiChan: 0, midiMsgType: \noteOnOff),
-			pinky: (type: \touchButton, midiNum: 45, spec: \midiCC, midiChan: 0, midiMsgType: \noteOnOff)
+		// noteOnOff, momentary
+		(
+			key: \pad,
+			shared: (elementType: \touchButton, spec: \midiCC,
+				midiChan: 0, midiMsgType: \noteOnOff),
+			elements: [
+				(key: \index, midiNum: 36),
+				(key: \middle, midiNum: 37),
+				(key: \ring, midiNum: 38),
+				(key: \pinky, midiNum: 39),
+			]
 		),
-		cutaway: (
-			\1: (type: \switch, nmidiNum: 46, spec: \midiCC, midiChan: 0, midiMsgType: \noteOnOff),
-			\2: (type: \switch, midiNum: 47, spec: \midiCC, midiChan: 0, midiMsgType: \noteOnOff),
-			\3: (type: \switch, midiNum: 48, spec: \midiCC, midiChan: 0, midiMsgType: \noteOnOff),
-			\4: (type: \switch, midiNum: 49, spec: \midiCC, midiChan: 0, midiMsgType: \noteOnOff)
+		(
+			key: \switch,
+			shared: (type: \touchButton, spec: \midiCC, midiChan: 0,
+				midiMsgType: \noteOnOff),
+			elements: [
+				(key: \triDown,  midiNum: 40),
+				(key: \triUp,  midiNum: 41),
+				(
+					key: \finger,
+					elements: [
+						(key: \index,  midiNum: 42),
+						(key: \middle,  midiNum: 43),
+						(key: \ring,  midiNum: 44),
+						(key: \pinky,  midiNum: 45),
+					]
+				)
+			]
 		),
-		accel: (
-			x: (type: \accelAxis, midiNum: 5, spec: \midiCC, midiChan: 0, midiMsgType: \control),
-			y: (type: \accelAxis, midiNum: 6, spec: \midiCC, midiChan: 0, midiMsgType: \control),
-			z: (type: \accelAxis, midiNum: 7, spec: \midiCC, midiChan: 0, midiMsgType: \control)
+		(
+			key: \cutaway,
+			shared: (type: \switch, spec: \midiCC, midiChan: 0,
+				midiMsgType: \noteOnOff),
+			elements: [
+				(key: \1, midiNum: 46),
+				(key: \2, midiNum: 47),
+				(key: \3, midiNum: 48),
+				(key: \4, midiNum: 49)
+			]
+		),
+		(
+			key: \accel,
+			shared: (type: \accelAxis, spec: \midiCC, midiChan: 0, midiMsgType: \control),
+			elements: [
+				(key: \x, midiNum: 5),
+				(key: \y, midiNum: 6),
+				(key: \z, midiNum: 7)
+			]
 		)
-	)
+	]
 )
 )
 );
