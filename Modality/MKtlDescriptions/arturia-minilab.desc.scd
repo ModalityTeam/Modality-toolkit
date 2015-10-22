@@ -1,4 +1,7 @@
 /*
+
+/// pads (36..43) overlap with keys (36-72)?
+
 MKtl.find;
 
 k = MIDIMKtl('rtrm0');
@@ -38,34 +41,39 @@ deviceInfo: (
 	notes: "Desc file only for absolute knob mode.",
 	// hasScribble: false
 ),
-description: (
-// ------ noteOn -------------
-	keyOn: (36..72).collect { |i|
-		(midiMsgType: 'noteOn',  elementType: 'key', midiChan: 0, midiNum:  i, spec: 'midiNote');
-	},
-	keyOff: (36..72).collect { |i|
-		(midiMsgType: 'noteOff', elementType: 'key', midiChan: 0, midiNum:  i, spec: 'midiNote');
-	},
-	padOn: (36..43).collect { |i|
-		(midiMsgType: 'noteOn',  elementType: 'key', midiChan: 0, midiNum:  i, spec: 'midiNote');
-	},
-	padOff: (36..43).collect { |i|
-		(midiMsgType: 'noteOff', elementType: 'key', midiChan: 0, midiNum:  i, spec: 'midiNote');
-	},
-	// pads bank 2: (22..29)
-
-// ------ cc -------------
-	kn: [
-		[7, 74, 71, 76, 77, 93, 73, 75],
-		[114, 18, 19, 16, 17, 91, 79, 72]
-	].collect { |line|
-		line.collect { |ccnum|
-			(midiMsgType: 'cc', elementType: 'slider', midiChan: 0, midiNum:  ccnum, spec: 'midiCC')
-		}
-	},
-	mod: 	(midiMsgType: 'cc', elementType: 'slider', midiChan: 0, midiNum:      1, spec: 'midiCC'),
-
-// ------- bend ------------
-	bend: (midiMsgType: 'bend', elementType: 'bender', midiChan: 0, midiNum:      0, spec: 'midiBend'),
- )
+elementsDesc: (
+	shared: (midiChan: 0),
+	elements: [
+		(
+			key: \pkey,
+			shared: (midiMsgType: 'noteOnOff',  elementType: 'pianoKey',
+				spec: 'midiVel'),
+			elements: (36..72).collect ( (midiNum: _) ) ),
+		(
+			key: \pad,
+			shared: (midiMsgType: 'noteOnOff', elementType: 'pad',
+				spec: 'midiVel'),
+			/// pads overlap with keys???
+			elements: (36..43).collect ( (midiNum: _) ) ),
+	// ... pads bank 2: (22..29) ...
+		(
+			key: \kn,
+			shared: (midiMsgType: 'cc', elementType: 'knob', midiChan: 0,
+				spec: 'midiCC'),
+			elements: [
+				[7, 74, 71, 76, 77, 93, 73, 75],
+				[114, 18, 19, 16, 17, 91, 79, 72]
+			].collect { |line|
+				(elements: line.collect { |num| (midiNum:  num) })
+			}
+		),
+		(
+			key: \mod,
+			midiMsgType: 'cc', elementType: 'slider', midiChan: 0,
+			midiNum: 1, spec: 'midiCC'),
+		(
+			key: \bend, midiMsgType: 'bend', elementType: 'bender',
+			midiChan: 0, spec: 'midiBend')
+	]
+)
 )
