@@ -60,12 +60,11 @@ deviceInfo: (
 ),
 
 elementsDesc: (
-	sharedProperties: (\midiMsgType: \cc, \midiChan: 0),
+	shared: (\midiMsgType: \cc, \midiChan: 0),
 	elements: [
 		(
 			key: \transport,
-
-			sharedProperties: (\elementType: \button, \spec: \midiBut,
+			shared: (\elementType: \button, \spec: \midiBut,
 				\mode: \push, \ioType: \inout),
 
 			elements: [
@@ -91,21 +90,21 @@ elementsDesc: (
 		),
 		(
 			key: \sl,
-			sharedProperties: (\elementType: \slider, \spec: \midiCC),
+			shared: (\elementType: \slider, \spec: \midiCC),
 			elements: (1..8).collect { |num, i|
 				(key: (i + 1).asSymbol, \midiNum: num, \style: (row: 1, column: 7+(i*2)))
 			}
 		),
 		(
 			key: \kn,
-			sharedProperties: (\elementType: \knob, \spec: \midiCC),
+			shared: (\elementType: \knob, \spec: \midiCC),
 			elements: (16..23).collect { |num, i|
 				(key: (i + 1).asSymbol, \midiNum: num, \style: (row: 0, column: 7+(i*2)))
 			}
 		),
 		(
 			key: \bt,
-			sharedProperties: (\elementType: \button, \spec: \midiBut),
+			shared: (\elementType: \button, \spec: \midiBut),
 
 			elements: [\S, \M, \R].collect { |label, i|
 				var nums = [(32..39),(48..55),(64..71)][i];

@@ -30,13 +30,13 @@ portName: "Port 1",
 modeName: "Preset AB",
 
 elementsDesc: (
-	sharedProperties: ('midiChan': 0, preset: \B),
+	shared: ('midiChan': 0, preset: \B),
 
 	// Preset B has the same elements as Preset A, and single channel pressure.
 	elements: [
 		(
 			key: \pianoKey,
-			sharedProperties: ('midiMsgType': 'noteOnOff', 'elementType': 'pianoKey', 'spec': 'midiVel'),
+			shared: ('midiMsgType': 'noteOnOff', 'elementType': 'pianoKey', 'spec': 'midiVel'),
 			elements: (24..108).collect { |midinote|
 				('midiNum':  midinote)
 			}

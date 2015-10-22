@@ -45,25 +45,25 @@ elementsDesc: (
 	elements: [
 		(
 			key: \pad,
-			sharedProperties: (midiMsgType: 'noteOnOff', elementType: 'pad',
+			shared: (midiMsgType: 'noteOnOff', elementType: 'pad',
 				midiChan: 0, spec: 'midiNote', ioType: \inout),
 			elements: (0..63).collect { |midiNote| (midiNum: midiNote)  }
 		),
 		(
 			key: \navBut,
-			sharedProperties: (midiMsgType: 'noteOnOff', elementType: 'button',
+			shared: (midiMsgType: 'noteOnOff', elementType: 'button',
 				midiChan: 0, spec: 'midiBut', ioType: \inout),
 			elements: (64..67).collect { |midiNote| (midiNum: midiNote)  }
 		),
 		(
 			key: \ctrlBut,
-			sharedProperties: (midiMsgType: 'noteOnOff', elementType: 'button',
+			shared: (midiMsgType: 'noteOnOff', elementType: 'button',
 				midiChan: 0, spec: 'midiBut', ioType: \inout),
 			elements: (68..71).collect { |midiNote| (midiNum: midiNote)  }
 		),
 		(
 			key: \launchBut,
-			sharedProperties: (midiMsgType: 'noteOnOff', elementType: 'button',
+			shared: (midiMsgType: 'noteOnOff', elementType: 'button',
 				midiChan: 0, spec: 'midiBut', ioType: \inout),
 			elements: (82..89).collect { |midiNote| (midiNum: midiNote)  }
 		),
@@ -74,7 +74,7 @@ elementsDesc: (
 		),
 		(
 			key: \sl,
-			sharedProperties: (midiMsgType: 'cc', elementType: 'slider',
+			shared: (midiMsgType: 'cc', elementType: 'slider',
 				midiChan: 0, spec: 'midiBut', ioType: \in),
 			elements: (48..56).collect { |midinote|
 				(midiNum: midinote, spec: 'midiCC', ioType: \in)

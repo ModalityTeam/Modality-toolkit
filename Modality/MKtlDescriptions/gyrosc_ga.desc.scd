@@ -91,7 +91,7 @@ elementsDesc: (
 	elements: [
 		(
 			key: \accel,
-			sharedProperties: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' ),
+			shared: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' ),
 			elements: [
 				(key: \x),
 				(key: \y ),
@@ -100,7 +100,7 @@ elementsDesc: (
 		),
 		(
 			key: \gyro,
-			sharedProperties: (elementType: 'gyroAxis', ioType: \collectiveIn, \spec: 'gyroAxis' ),
+			shared: (elementType: 'gyroAxis', ioType: \collectiveIn, \spec: 'gyroAxis' ),
 			elements: [
 				(key: \pitch),
 				(key: \roll),

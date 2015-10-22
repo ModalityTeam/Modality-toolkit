@@ -22,11 +22,11 @@ deviceInfo: (
 	// hasScribble: false
 ),
 elementsDesc: (
-	sharedProperties: (\midiChan: 0, ioType: \in),
+	shared: (\midiChan: 0, ioType: \in),
 	elements: [
 		(
 			key: \pad,
-			sharedProperties: ( elementType: \pad, \midiMsgType: \note,
+			shared: ( elementType: \pad, \midiMsgType: \note,
 				spec: \midiVel),
 			elements: ((0..15) + 35).collect { |num, i|
 				(key: (i + 1).asSymbol, \midiNum: num)
@@ -34,7 +34,7 @@ elementsDesc: (
 		),
 		(
 			key: \sl,
-			sharedProperties: ( elementType: \slider, \midiMsgType: \cc,
+			shared: ( elementType: \slider, \midiMsgType: \cc,
 				spec: \midiCC),
 			elements: #[7, 1, 71, 74].collect { |num, i|
 				(key: (i + 1).asSymbol, \midiNum: num )
@@ -42,7 +42,7 @@ elementsDesc: (
 		),
 		(
 			key: \kn,
-			sharedProperties: ( elementType: \knob, \midiMsgType: \cc,
+			shared: ( elementType: \knob, \midiMsgType: \cc,
 				spec: \midiCC),
 			elements: ( #[10, 91, 12, 93, 5, 73, 84, 72].collect { |num, i|
 				(key: (i + 1).asSymbol, \midiNum: num )

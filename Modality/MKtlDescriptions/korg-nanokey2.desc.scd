@@ -19,7 +19,7 @@ deviceInfo: (
 
 ),
 elementsDesc: (
-	sharedProperties: (midiChan: 0),
+	shared: (midiChan: 0),
 	elements: [
 		(
 			key: \pkey,

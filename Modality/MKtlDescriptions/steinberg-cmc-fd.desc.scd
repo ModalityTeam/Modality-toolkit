@@ -22,7 +22,7 @@ deviceInfo: (
 
 ),
 description: (
-	sharedProperties: ('midiMsgType': 'noteOnOff', 'elementType': 'button',
+	shared: ('midiMsgType': 'noteOnOff', 'elementType': 'button',
 		'midiChan': 0, 'spec': 'midiBut'),
 	elements: [
 		// the buttons
@@ -42,7 +42,7 @@ description: (
 		// fader touched or not
 		(
 			key: 'faderTouch',
-			sharedProperties: ('midiMsgType': 'noteOnOff', 'elementType': 'button',
+			shared: ('midiMsgType': 'noteOnOff', 'elementType': 'button',
 				'midiChan': 0, 'spec': 'midiBut'),
 			elements: (104..107).collect { |note, i|
 				('midiNum': note)
@@ -51,7 +51,7 @@ description: (
 		// fader touched when shift is down sends channel mute
 		(
 			key: 'faderMute',
-			sharedProperties: ('midiMsgType': 'noteOnOff', 'elementType': 'key',
+			shared: ('midiMsgType': 'noteOnOff', 'elementType': 'key',
 				'midiChan': 0, 'spec': 'midiNote'),
 			elements: (8..11).collect { |noteNum|
 				('midiNum':  noteNum)
@@ -60,7 +60,7 @@ description: (
 		// bend : high res fader values (10 bit )
 		(
 			key: 'fader',
-			sharedProperties: ('midiMsgType': 'bend', 'elementType': 'fader',
+			shared: ('midiMsgType': 'bend', 'elementType': 'fader',
 				'midiChan': 0, 'spec': 'midiBend'),
 			elements: (0..3).collect { |chan|
 				('midiChan': chan,'spec': 'midiBend')

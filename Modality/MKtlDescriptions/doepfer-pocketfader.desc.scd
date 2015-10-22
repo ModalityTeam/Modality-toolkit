@@ -28,7 +28,7 @@ deviceInfo: (
 
 elementsDesc: (
 	key: \sl,
-	sharedProperties: (elementType: \slider, midiMsgType: \control,
+	shared: (elementType: \slider, midiMsgType: \control,
 		midiChan: 0, spec: \midiCC, \ioType: \inout),
 	elements: (
 		(1..16).collect { |num, i| (key: num.asSymbol, midiNum: i) }

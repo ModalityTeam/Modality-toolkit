@@ -31,7 +31,7 @@ elementsDesc: (
 		// --------- input elements ----------
 		(
 			key: 'bt',
-			sharedProperties: ('hidUsagePage': 9, 'elementType': 'button',
+			shared: ('hidUsagePage': 9, 'elementType': 'button',
 				'ioType': 'in', spec: \hidBut, mode: \push),
 
 			elements: [
@@ -59,7 +59,7 @@ elementsDesc: (
 
 		(
 			key: 'joy',
-			sharedProperties: ('hidUsagePage': 1, 'ioType': 'in'),
+			shared: ('hidUsagePage': 1, 'ioType': 'in'),
 			elements: [
 				(
 					key: \l,
@@ -95,7 +95,7 @@ elementsDesc: (
 		),
 		(
 			key: 'throt',
-			sharedProperties: ('hidUsagePage': 1, 'elementType': 'springFader',
+			shared: ('hidUsagePage': 1, 'elementType': 'springFader',
 				'ioType': 'in', mode: \minimum, spec: \lin1inv),
 			elements: [
 				(key: \l, 'hidUsage': 51, 'style': (row: 0, column: 0, showLabel: true)),
@@ -112,16 +112,18 @@ elementsDesc: (
 
 		(
 			key: 'rumble',
+			shared: ('elementType': 'rumble', 'ioType': 'out',
+				spec: \lin255, mode: \minimum),
 			elements: [
 				(
-					key: \l, 'hidUsage': 187, 'hidUsagePage': 1, hidElementID: 32,
-					'elementType': 'rumble', 'ioType': 'out', spec: \lin255,
-					mode: \minimum, 'style': (row: 4, column: 0, showLabel: true)
+					key: \l,
+					'hidUsage': 187, 'hidUsagePage': 1, hidElementID: 32,
+					'style': (row: 4, column: 0, showLabel: true)
 				),
 				(
-					key: \r, 'hidUsage': 0, 'hidUsagePage': 1, hidElementID: 32,
-					'elementType': 'rumble', 'ioType': 'out', spec: \lin255,
-					mode: \minimum, 'style': (row: 4, column: 5, showLabel: true)
+					key: \r,
+					'hidUsage': 0, 'hidUsagePage': 1, hidElementID: 32,
+					'style': (row: 4, column: 5, showLabel: true)
 				)
 			]
 		)

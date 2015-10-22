@@ -109,7 +109,7 @@ deviceIOGroups: (
 
 elementsDesc: (
 	\key: \accel,
-	sharedProperties: (elementType: 'accelAxis', elementType: \accelAxis, ioType: \collectiveIn, \spec: 'accelAxis' ),
+	shared: (elementType: 'accelAxis', elementType: \accelAxis, ioType: \collectiveIn, \spec: 'accelAxis' ),
 	elements: [\x, \y, \z ].collect { |key, i|
 		(key: key)
 	};

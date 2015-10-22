@@ -29,13 +29,12 @@ deviceInfo: (
 
 elementsDesc: (
 	key: \lpd8,
-	'sharedProperties': (\ioType: \inout, midiChan: 0),
-	// 'groups': ( ), deviceIOGroups: ( ),
+	'shared': (key: \shared, \ioType: \inout, midiChan: 0),
 
 	elements: [
 		(
 			key: \kn,
-			sharedProperties: (\elementType: \knob, \midiMsgType: \cc,
+			shared: (\elementType: \knob, \midiMsgType: \cc,
 				\spec: \midiCC),
 			elements: (1..8).collect { |num|
 				(key: num.asSymbol, \midiNum: num)
@@ -43,7 +42,7 @@ elementsDesc: (
 		),
 		(
 			key: \pad,
-			sharedProperties: (\elementType: \pad, midiMsgType: \noteOnOff,
+			shared: (\elementType: \pad, midiMsgType: \noteOnOff,
 				\spec: \midiVel),
 			elements: (36..43).collect { |num, i|
 				(key: (i+1).asSymbol, midiNum: num)

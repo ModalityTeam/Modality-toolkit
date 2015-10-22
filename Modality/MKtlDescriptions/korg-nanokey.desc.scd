@@ -22,7 +22,7 @@ deviceInfo: (
 	// hasScribble: false
 ),
 elementsDesc: (
-	sharedProperties: (midiChan: 0),
+	shared: (midiChan: 0),
 	elements: [
 		(
 			key: \pkey,
@@ -37,7 +37,7 @@ elementsDesc: (
 		// where do these come from? keys as cc?
 		(
 			key: \cc,
-			sharedProperties: ('midiMsgType': 'cc', 'elementType': 'slider', 'spec': 'midiCC'),
+			shared: ('midiMsgType': 'cc', 'elementType': 'slider', 'spec': 'midiCC'),
 			elements: ((14..31) ++ (80..87)).collect { |midinum, i|
 				('midiNum': midinum)
 			}

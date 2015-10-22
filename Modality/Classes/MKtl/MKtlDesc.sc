@@ -277,7 +277,7 @@ MKtlDesc {
 		}});
 		if (ok) { ^true };
 		// todo: more detailed info here
-		"% - dict not valid: %\n\n".postf(thisMethod, dict.deviceName);
+	//	"% - dict not valid: %\n\n".postf(thisMethod, dict.deviceName);
 		^false
 	}
 
@@ -289,7 +289,7 @@ MKtlDesc {
 			}
 		};
 		if (ok) { ^true };
-		"% - elemDesc not valid: %\n\n".postf(thisMethod, dict);
+	//	"% - elemDesc not valid: %\n\n".postf(thisMethod, dict);
 	}
 
 	// to be defined and tested
@@ -306,7 +306,7 @@ MKtlDesc {
 		true
 	}
 
-	// plug sharedProperties in as parents
+	// plug shared properties in as parents
 	*sharePropsToElements { |dict, toShare|
 		var shared, elements, subProps;
 		if (dict.isKindOf(Dictionary).not) {
@@ -314,7 +314,7 @@ MKtlDesc {
 			^this
 		};
 
-		shared = dict[\sharedProperties] ? ();
+		shared = dict[\shared] ? ();
 		elements = dict[\elements];
 		if (toShare.notNil) {
 		//	"shared: % parent: %\n\n".postf(shared, toShare);
@@ -361,8 +361,8 @@ MKtlDesc {
 		};
 
 		if (this.isValidDescDict(desc).not) {
-			warn("MktlDesc: desc loaded from path % is not valid.\n"
-				.format(path));
+			warn("desc not valid - %"
+				.format(path.basename.splitext[0]));
 			^nil
 		};
 		// got here, should work now
@@ -583,16 +583,18 @@ MKtlDesc {
 
 		this.elementsDesc.traverseDo ({ |elem, deepKeys|
 			var msgType;
-			MKtlDesc.fillMidiDefaults(elem);
-			msgType = elem[\midiMsgType];
+			if (deepKeys.last != \shared) {
+				MKtlDesc.fillMidiDefaults(elem);
+				msgType = elem[\midiMsgType];
 
-			if (msgType.notNil) {
-				msgTypesUsed.add(msgType.unbubble);
-			} {
-				//	"missing: ".post;
-				missing.add(elem.elemKey);
+				if (msgType.notNil) {
+					msgTypesUsed.add(msgType.unbubble);
+				} {
+					//	"missing: ".post;
+					missing.add(elem.elemKey);
+				};
+				// [elemKey, elem].postln;
 			};
-			// [elemKey, elem].postln;
 		}, MKtlDesc.isElemFunc);
 
 

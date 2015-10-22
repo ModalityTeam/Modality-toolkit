@@ -42,7 +42,7 @@ deviceInfo: (
 
 elementsDesc: (
 	key: \joy,
-	sharedProperties: (elementType: \joyAxis, midiMsgType: \control,
+	shared: (elementType: \joyAxis, midiMsgType: \control,
 			spec: \midiCC, midiChan: 0, ioType: \inout),
 	elements: (0..7).collect { |i|
 		(

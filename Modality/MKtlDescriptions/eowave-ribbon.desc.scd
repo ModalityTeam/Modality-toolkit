@@ -33,11 +33,11 @@ elementsDesc: (
 	// [ noteOff, val, 0, num, 78, chan, 0, src, -1477523613 ]
 		(
 			key: \ribbon,
-			sharedProperties: (midiChan: 0),
+			shared: (midiChan: 0),
 			elements: [
 				(
 					key: \touch,
-					sharedProperties: (elementType: \slider, midiMsgType: \noteOnOff,
+					shared: (elementType: \slider, midiMsgType: \noteOnOff,
 						spec: \midiBut),
 					elements: (36..82).collect {|num| (midiNum: num, spec: \midiBut) }
 				),

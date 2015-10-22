@@ -34,7 +34,7 @@ elementsDesc: (
 		),
 		(
 			key: \bt,
-			sharedProperties: ('hidUsagePage': 9, 'elementType': 'button',
+			shared: ('hidUsagePage': 9, 'elementType': 'button',
 				'ioType': 'in', 'spec': \hidBut ),
 			elements: [
 				// buttons on joyHead
@@ -58,7 +58,7 @@ elementsDesc: (
 		),
 		(
 			key: \scroll,
-			sharedProperties: ('hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in', 'spec': \hidBut),
+			shared: ('hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in', 'spec': \hidBut),
 			elements: [
 				(	key: \up, 'hidUsage': 12),
 				(	key: \down, 'hidUsage': 13),
@@ -66,7 +66,7 @@ elementsDesc: (
 		),
 		(
 			key: \joy,
-			sharedProperties: ('hidUsagePage': 1, 'elementType': 'joyAxis', 'ioType': 'in', 'spec': \cent1),
+			shared: ('hidUsagePage': 1, 'elementType': 'joyAxis', 'ioType': 'in', 'spec': \cent1),
 			elements: [
 				(key: \x, 'hidUsage': 48),
 				(key: \y, 'hidUsage': 49),
@@ -78,7 +78,7 @@ elementsDesc: (
 			'hidUsage': 57, 'hidUsagePage': 1, 'elementType': 'joyAxis', 'ioType': 'in', 'spec': \compass),
 		(
 			key: \lever,
-			sharedProperties: ('hidUsagePage': 1, 'elementType': 'lever', 'ioType': 'in', 'spec': \unipolar),
+			shared: ('hidUsagePage': 1, 'elementType': 'lever', 'ioType': 'in', 'spec': \unipolar),
 			elements: [
 				(key: \left,  'hidUsage': 50),
 				(key: \right,  'hidUsage': 54)

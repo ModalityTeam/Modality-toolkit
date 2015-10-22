@@ -54,31 +54,31 @@ description: (
 	],
 
 	//upper row of encoders when pressed, 4 pages, 8 rows
-	\tr:4.collect{ |j|
-		8.collect{ |i|
+	\tr: 4.collect { |j|
+		8.collect { |i|
 			// top knob push mode
 			(midiMsgType: \cc, elementType: \encoder, midiChan: 0, midiNum: 33+(8*j)+i, spec: \midiCC, ioType: \in, page: j + 1)
 		}
 	},
 
 	//upper row of encoders, 4 pages, 8 rows
-	\knUp:4.collect{ |j|
-		8.collect{ |i|
+	\knUp:4.collect { |j|
+		8.collect { |i|
 			// top knob push mode
 			(midiMsgType: \cc, elementType: \encoder, midiChan: 0, midiNum: 1+(8*j)+i, spec: \midiCC, ioType: \inout, page: j + 1)
 		}
 	},
 
 	//buttons
-	\bt:[65,73].collect{ |ccStart|
-		8.collect{ |i|
+	\bt:[65,73].collect { |ccStart|
+		8.collect { |i|
 			(midiMsgType: \cc, elementType: \midiBut, midiChan: 0, midiNum: ccStart+i, spec: \midiCC, ioType: \inout)
 		}
 	},
 
 	//other encoders
-	\kn:[81,89,97].collect{ |ccStart|
-		8.collect{ |i|
+	\kn:[81,89,97].collect { |ccStart|
+		8.collect { |i|
 			(midiMsgType: \cc, elementType: \encoder, midiChan: 0, midiNum: ccStart+i, spec: \midiCC, ioType: \inout)
 		}
 	}
