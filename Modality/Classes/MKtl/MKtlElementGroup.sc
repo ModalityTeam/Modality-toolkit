@@ -32,12 +32,23 @@ MKtlElementGroup : MKtlElement {
 				};
 				group = MKtlElementGroup(desc.key, srcMktl, elems);
 
-				group.do { |elem|
-					// group.dict.put(elem.elemDesc[\key], elem);
+				if (desc[\shared].notNil) {
+					group.shared = desc[\shared];
+				};
+
+				group.do { |elem, i|
+					var key = if (elem.isKindOf(MKtlElementGroup)) {
+						elem.name;
+					} {
+						elem.elemDesc[\key];
+					};
+					key = key ?? { (i+1).asSymbol };
+					group.dict.put(key, elem);
 					if (MKtlElementGroup.addGroupsAsParent) {
 						elem.parent_(group)
 					};
 				};
+				group;
 			};
 		} {
 			"%: should not get here! desc is likely malformed.\n".postf(thisMethod);
@@ -45,6 +56,11 @@ MKtlElementGroup : MKtlElement {
 		};
 	}
 
+	shared_ { |dict| elemDesc = dict }
+	shared { ^elemDesc }
+
+	// do we still need init?
+	// *  elements_ should do fromDesc a level lower!
 	init {
 		var array;
 		tags = Set[];
@@ -64,9 +80,12 @@ MKtlElementGroup : MKtlElement {
 					dict.put( item.key, item.value );
 					item.value;
 				} {
-					// a dict with an entry for key:
-					key = item.key ?? { (i+1).asSymbol };
-					dict.put( key, item );
+					if (item.isKindOf(Dictionary)) {
+						// a dict with an entry for key:
+						key = item[\key];
+						key = (item.key ?? { (i+1).asSymbol });
+						//	dict.put( key, item );
+					};
 					item;
 				};
 			});
@@ -114,13 +133,15 @@ MKtlElementGroup : MKtlElement {
 
 	// array / dict manipulation support
 
-	at { |index|
-		if( index.size > 0 ) {
-			^index.collect({ |item| this.at( item ) });
-		} {
-			^elements.detect({ |item| item.key === index })
-			?? { if (index.isKindOf(Integer)) { elements[ index ] }; }
+	at { |keyOrIndex|
+		if ( keyOrIndex.size > 0 ) {
+			^keyOrIndex.collect { |item| this.at( item ) }
 		};
+		^dict[keyOrIndex] ?? {
+			if (keyOrIndex.isKindOf(Integer)) {
+				elements[ keyOrIndex ]
+			}
+		}
 	}
 
 	elAt { |...args| ^this.deepAt2(*args) }
