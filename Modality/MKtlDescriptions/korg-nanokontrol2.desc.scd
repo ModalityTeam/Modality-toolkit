@@ -97,7 +97,7 @@ elementsDesc: (
 			key: \sl,
 			shared: (\elementType: \slider, \spec: \midiCC),
 			elements: (1..8).collect { |num, i|
-				(key: (i + 1).asSymbol, \midiNum: num, \style: (row: 1, column: 7+(i*2)))
+				(key: num.asSymbol, \midiNum: i, \style: (row: 1, column: 7+(i*2)))
 			}
 		),
 		(

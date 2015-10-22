@@ -96,77 +96,104 @@ deviceInfo: (
 	notes: "This device relies on mantaOSC which is part of [libmantassfr’s libmanta implementation](https://github.com/ssfrr/libmanta).",
 	hasScribble: true
 ),
-description: (
-	pad: (0..47).collect{ |id|
+elementsDesc: (
+	elements: [
 		(
-			con: (
-				oscPath: '/manta/continuous/pad',
-				argTemplate: [ id ],
+			key: \pad,
+			shared: (
 				elementType: 'pad',
 				spec: 'mantaTouch',
 				ioType: \in
 			),
-			vel: (
-				oscPath: '/manta/velocity/pad',
-				argTemplate: [ id ],
-				elementType: 'pad',
-				spec: 'mantaTouch',
-				ioType: \in
-			),
-			led: (
-				oscPath: '/manta/led/pad',
-				argTemplate: [ nil, id ],
-				elementType: 'led',
-				spec: 'mantaLed',
-				ioType: \out
-			);
-		);
-	},
-	bt: (0..3).collect{ |id|
-		(
-			con: (
-				oscPath: '/manta/continuous/button',
-				argTemplate: [ id ],
-				elementType: 'pad',
-				spec: 'mantaTouch',
-				ioType: \in
-			),
-			vel: (
-				oscPath: '/manta/velocity/button',
-				argTemplate: [ id ],
-				elementType: 'pad',
-				spec: 'mantaTouch',
-				ioType: \in
-			),
-			led: (
-				oscPath: '/manta/led/button',
-				argTemplate: [ nil, id ],
-				elementType: 'led',
-				spec: 'mantaLed',
-				ioType: \out
-			);
-
-		)
-	},
-	sl: (0..1).collect{ |id|
-		(
-			con: (
-				oscPath: '/manta/continuous/slider',
-				argTemplate: [ id ],
-				elementType: 'slider',
-				spec: 'mantaSlider',
-				ioType: \in
-			),
-			led: (0..7).collect{ |jd| // this need a fix still!
+			elements: (0..47).collect { |id|
 				(
-					oscPath: '/manta/led/slider',
-					argTemplate: [ nil, id, jd ],
-					elementType: 'led',
-					spec: 'mantaLed',
-					ioType: \out
-				);
+					key: id.asSymbol,
+					elements: [
+						(
+							key: \con,
+							oscPath: '/manta/continuous/pad',
+							argTemplate: [ id ]
+						),
+						(
+							key: \vel,
+							oscPath: '/manta/velocity/pad',
+							argTemplate: [ id ]
+						),
+						(
+							key: \led,
+							oscPath: '/manta/led/pad',
+							argTemplate: [ nil, id ],
+							elementType: 'led',
+							spec: 'mantaLed',
+							ioType: \out
+						)
+					]
+				)
+			};
+		),
+		(
+			key: \bt,
+			elements: (0..3).collect { |id|
+				(
+					key: id.asSymbol,
+					elements: [
+						(
+							key: \con,
+							oscPath: '/manta/continuous/button',
+							argTemplate: [ id ],
+							elementType: 'pad',
+							spec: 'mantaTouch',
+							ioType: \in
+						),
+						(
+							key: \vel,
+							oscPath: '/manta/velocity/button',
+							argTemplate: [ id ],
+							elementType: 'pad',
+							spec: 'mantaTouch',
+							ioType: \in
+						),
+						(
+							key: \led,
+							oscPath: '/manta/led/button',
+							argTemplate: [ nil, id ],
+							elementType: 'led',
+							spec: 'mantaLed',
+							ioType: \out
+						)
+					]
+				)
+			}
+		),
+		(
+			key: \sl,
+			elements: (0..1).collect { |id|
+				(key: i.asSymbol,
+					elements: [
+						(key: \con,
+							oscPath: '/manta/continuous/slider',
+							argTemplate: [ id ],
+							elementType: 'slider',
+							spec: 'mantaSlider',
+							ioType: \in
+						),
+						(
+							key: \led,
+							elements: (0..7).collect { |jd|
+								// this need a fix still!
+								(
+									oscPath: '/manta/led/slider',
+									argTemplate: [ nil, id, jd ],
+									elementType: 'led',
+									spec: 'mantaLed',
+									ioType: \out
+								);
+							}
+						)
+					]
+				)
 			}
 		)
-	};
+	];
 )
 );
