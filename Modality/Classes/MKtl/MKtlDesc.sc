@@ -475,16 +475,17 @@ MKtlDesc {
 	makeElemKeys { |dict, deepKeys|
 		var key = dict[\key];
 		var elemKey;
-		dict = dict ? this.elementsDesc;
 		deepKeys = (deepKeys.copy ?? {[]}).add(key);
-		elemKey = deepKeys.reject(_.isNil).join($_).asSymbol;
-		dict.put(\elemKey, elemKey);
 		if (dict.elements.isNil) {
+			elemKey = deepKeys.postcs.reject(_.isNil).join($_).asSymbol;
+			dict.put(\elemKey, elemKey);
 			elementsDict.put(elemKey, dict);
-		};
-		dict.elements.do { |elem|
-			this.makeElemKeys(elem, deepKeys);
-		};
+		} {
+			dict.elements.do { |elem, i|
+				elem[\key] ?? { elem[\key] = (i+1).asSymbol };
+				this.makeElemKeys(elem, deepKeys);
+			};
+		}
 	}
 
 	inferName { |inname, force = false|
