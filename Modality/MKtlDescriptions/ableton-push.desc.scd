@@ -144,7 +144,8 @@ elementsDesc: (
 		//------ ctl buttons
 		(
 			key: \btCtl,
-			shared: (),
+			shared: (midiMsgType: 'cc', elementType: 'button',
+				spec: 'midiCC', ioType: \inout),
 			elements: [
 				(key: \tapTempo, midiNum: 3),
 				(key: \metronome, midiNum: 9),

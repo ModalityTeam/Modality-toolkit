@@ -29,14 +29,79 @@ For example:
 
 code::
 (
-m = MKtl.new( \oneButton, (
-	idInfo: \oneBut,
-	protocol: \virtual,
-	description: ( \bt: ( type: \button, ioType: \in, \spec: \but ) );
-), false );
+m = MKtl.new(
+	\oneButton,
+	(
+		idInfo: \oneBut,
+		protocol: \virtual,
+		elementsDesc: (
+			elements: [
+				(key: \bt, type: \button, ioType: \in, \spec: \but )
+			]
+		)
+	),
+	false );
 );
-m.gui;
+
+m.gui;    //
+m.elAt;   // the elementGroup
+m.elAt(0); // the only element in it
+m.elAt(\bt); // the only element in it
 m.free; // free m's resources and remove it from MKtl.all
+::
+
+For an MKtl with 4 buttons, one can write the elementsDesc in multiple ways:
+
+code::
+// 1. write out every element fully:
+(
+// ...
+elementsDesc: (
+	elements: [
+		(key: \bt1, type: \button, ioType: \in, \spec: \but ),
+		(key: \bt2, type: \button, ioType: \in, \spec: \but ),
+		(key: \bt3, type: \button, ioType: \in, \spec: \but )
+		(key: \bt4, type: \button, ioType: \in, \spec: \but )
+	]
+)
+);
+
+// 2. put all shared properties in the entry 'shared':
+elementsDesc: (
+	shared: (elementType: \button, ioType: \in, \spec: \but ),
+	elements: [
+		(key: \bt_1),
+		(key: \bt_2),
+		(key: \bt_3),
+		(key: \bt_4)
+	]
+)
+
+// 3. generate the elements by code -
+// this may seem complicated for 3-4 elements, but useful for more
+(
+	key: \bt,
+	shared: (elementType: \button, ioType: \in, \spec: \but ),
+elements: (1..4).collect { |i| (key: ("bt_" ++i).asSymbol) }
+)
+
+
+(
+m = MKtl.new(
+	\threeButtons,
+	(
+		idInfo: \oneBut,
+		protocol: \virtual,
+		elementsDesc: (
+			key: \bt,
+			shared: (elementType: \button, ioType: \in, \spec: \but ),
+			elements: (1..4).collect { |i| (key: ("bt_" ++i).asSymbol) }
+		)
+	),
+	false );
+);
+m.postElements;
+
 ::
 
 See also: link::Reference/MKtl_description_files:: for the complete description of all possible keys.
@@ -59,7 +124,7 @@ Many common specs in SC are in Spec.specs, and some specs that many MKtls share 
 code::
 Spec.specs.keys;	// get the names
 MKtl.globalSpecs.keys;
-MKtl.specs.at( \hidHat ); // look up a specific one
+MKtl.getSpec( \hidHat ); // look up a specific one
 ::
 
 section:: Elements
@@ -72,33 +137,47 @@ code::MKtlElement.types::
 
 For multiple elements, one can make groups, which is helpful for semantic clarity.
 
-For example, an MKtl with 5 sliders and 4 buttons, and labeled buttons (play and stop) would look like this:
+For example, an MKtl with 5 sliders and 4 buttons, and two labeled buttons (play and stop) would look like this:
 
 code::
 (
 m = MKtl.new( \sliders_knobs, (
 	idInfo: \ex,
 	protocol: \virtual,
-	description: (
-		\sl: 5.collect { ( type: \slider, ioType: \in, \spec: \midiCC ) },
-		\bt: 5.collect { ( type: \button, ioType: \in, \spec: \but ) },
-		\play: ( type: \button, ioType: \in, \spec: \but ),
-		\stop: ( type: \button, ioType: \in, \spec: \but )
+	elementsDesc: (
+		elements: [
+			(
+				key: \sl,
+				shared: ( elementType: \slider, ioType: \in, \spec: \midiCC ),
+				elements: (1..5).collect { |i| (key: i.asSymbol) }),
+			(
+				key: \bt,
+				shared: ( elementType: \button, ioType: \in, \spec: \but ),
+				elements: (1..4).collect { |i| (key: i.asSymbol) }),
+			(
+				key: \play,
+				elementType: \button, ioType: \in, \spec: \but ),
+			(
+				key: \stop, elementType: \button, ioType: \in, \spec: \but )
+		]
 	)
 ), false );
 );
 m.gui;
+m.elAt(\sl, 0).elemDesc;
+m.elAt(\sl, \1);
 
 // you can access the elements by hierarchical names:
-m.elementAt(\play)
-m.elementAt(\stop).value_(1)
-m.elementAt(\bt)  // the group of 5 buttons
-m.elementAt(\bt, 2).value_(1)  // one of them
-m.elementAt(\sl).do(_.value_(1.0.rand))  // all sliders
+m.elAt(\play)
+m.elAt(\stop).value_(1)
+m.elAt(\bt)  // the group of 5 buttons
+m.elAt(\bt, 0).value_(1)  // one of them
+m.elAt(\sl).do(_.value_(1.0.rand))  // all sliders
 
 // one can als access them by direct names:
-m.elementsDict.at(\sl_1).action = { |sl| "yo slider: % > %\n".postf(sl.name, sl.value) };
-m.elementAt(\sl, 1).valueAction_(1.0.rand);
+
+m.dictAt(\sl_1).action = { |sl| "yo slider: % > %\n".postf(sl.name, sl.value) };
+m.elAt(\sl, 0).valueAction_(1.0.rand);
 
 m.free; // free m's resources and remove it from MKtl.all
 ::
