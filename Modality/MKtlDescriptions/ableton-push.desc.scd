@@ -23,123 +23,172 @@ deviceInfo: (
 		"24 LEDs for navigation",
 	],
 	notes:
-		"Currently only ```User-mode``` supported.\n"
-		"Usage:\n"
-		"\n"
-		"```\n"
-		"m = MKtl('push', \"ableton*\", multiIndex: 1);\n"
-		"```\n"
-		"\n"
-		"Helper class: ```MPushHelper```",
+	"Currently only ```User-mode``` supported.\n"
+	"Usage:\n"
+	"\n"
+	"```\n"
+	"m = MKtl('push', \"ableton*\", multiIndex: 1);\n"
+	"```\n"
+	"\n"
+	"Helper class: ```MPushHelper```",
 	hasScribble: true
 ),
 
-	// display still missing because SysEx and different MIDI port...
-description: (
-
-//------ pads -------------
-	\pad: (
-		\on: (36..99).collect { |num|
-			(midiMsgType: \noteOn,  elementType: \pad, midiChan: 0, midiNum: num, spec: \midiNote, ioType: \inout)
-		}.clump(8).reverse,
-		\off: (36..99).collect { |num|
-			(midiMsgType: \noteOff, elementType: \pad, midiChan: 0, midiNum: num, spec: \midiNote, ioType: \inout)
-		}.clump(8).reverse,
-		\poly: (36..99).collect { |num|
-			(midiMsgType: 'polyTouch', elementType: 'keytouch', midiChan: 0, midiNum: num,            spec: 'midiCC', ioType: \in)
-		}.clump(8).reverse
-	),
-
-
-	//------ ribbon -----------
-	ribbon: (
-		touch: (midiMsgType: 'noteOnOff', elementType: 'button', midiChan: 0, midiNum: 12,   spec: 'midiNote'),
-		bend:  (midiMsgType: 'bend',      elementType: 'ribbon', midiChan: 0,                spec: 'midiBend')
-	),
-
-
-//------ encoderTopRow
-	kn: (
-		touch: ( 0.. 8).collect { |num|
-			(midiMsgType: \noteOnOff, elementType: 'button', midiChan: 0, midiNum: num, spec: \midiVel)
-		},
-		turn:  (71..79).collect { |num|
-			(midiMsgType: \cc, elementType: \encoder, midiChan: 0, midiNum: num, spec: \midiCC)
-		}
-	),
-
-	//------ left encoders (not in a group because very different in experience)
-	knLeft: (
-		touch: (midiMsgType: \noteOnOff, elementType: \button,  midiChan: 0, midiNum: 10, spec: \midiVel),
-		turn:  (midiMsgType: \cc,        elementType: \encoder, midiChan: 0, midiNum: 14, spec: \midiBut)
-	),
-	knRight: (
-		touch: (midiMsgType: \noteOnOff, elementType: \button,  midiChan: 0, midiNum:  9, spec: \midiVel),
-		turn:  (midiMsgType: \cc,        elementType: \encoder, midiChan: 0, midiNum: 15, spec: \midiBut)
-	),
-
-	//------ color button rows
-	bt: [
-		(20..27).collect { |num|
-			(midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: num,  spec: 'midiCC', ioType: \inout)
-		},
-		(102..109).collect { |num|
-			(midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: num,  spec: 'midiCC', ioType: \inout)
-		}
-	],
-	btLen: [
+// display still missing because SysEx and different MIDI port...
+elementsDesc: (
+	shared: (midiChan: 0),
+	elements: [
+		//------ pads -------------
+		(
+			key: \pad,
+			elements: (36..99).clump(8).reverse.collect { |rownums, i|
+				(
+					elements: rownums.collect { |num, j|
+						(
+							elements: [
+								(
+									key: \note, midiNum: num,
+									midiMsgType: \noteOnOff, elementType: \pad,
+									spec: \midiNote, ioType: \inout),
+								(
+									key: \poly, midiNum: num,
+									midiMsgType: 'polyTouch', elementType: 'keytouch',
+									spec: 'midiCC', ioType: \in)
+							]
+						)
+					}
+				)
+			}
+		),
+		//------ ribbon -----------
+		(
+			key: \ribbon,
+			elements: [
+				(
+					key: \touch, midiMsgType: 'noteOnOff', elementType: 'button',
+					midiChan: 0, midiNum: 12,   spec: 'midiNote'),
+				(
+					key: \bend, midiMsgType: 'bend', elementType: 'ribbon',
+					spec: 'midiBend')
+			]
+		),
+		//------ encoderTopRow
+		(
+			key: \kn,
+			elements: [
+				(
+					key: \touch,
+					shared: (midiMsgType: \noteOnOff, elementType: 'button',
+						spec: \midiVel),
+					elements: ( 0.. 8).collect { |num| (midiNum: num) }
+				),
+				(
+					key: \turn,
+					shared: (midiMsgType: \cc, elementType: \encoder,spec: \midiCC),
+					elements: (71..79).collect { |num| (midiNum: num) }
+				)
+			]
+		),
+		//------ side encoders (not in a group because very different in experience)
+		(
+			key: \knLeft,
+			elements: [
+				(
+					key: \touch, midiMsgType: \noteOnOff, elementType: \button,
+					midiNum: 10, spec: \midiVel),
+				(
+					key: \turn, midiMsgType: \cc, elementType: \encoder,
+					midiNum: 14, spec: \midiBut)
+			]
+		),
+		(
+			key: \knRight,
+			elements: [
+				(
+					key: \touch, midiMsgType: \noteOnOff, elementType: \button,
+					midiNum: 9, spec: \midiVel),
+				(
+					key: \turn, midiMsgType: \cc, elementType: \encoder,
+					midiNum: 15, spec: \midiBut)
+			]
+		),
+		//------ color button rows
+		(
+			key: \bt,
+			shared: (midiMsgType: 'cc', elementType: 'button',
+				spec: 'midiCC', ioType: \inout),
+			elements: [(20..27), (102..109)].collect { |row, i|
+				(
+					elements: row.collect { |num, j|
+						(midiNum: num)
+				})
+			}
+		),
 		//------ note length buttons
-		'132t' ->			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum:    43, spec: 'midiCC', ioType: \inout),
-		'132'->			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum:    42, spec: 'midiCC', ioType: \inout),
-		'116t'->			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum:    41, spec: 'midiCC', ioType: \inout),
-		'116'->			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum:    40, spec: 'midiCC', ioType: \inout),
-		'18t'->			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum:    39, spec: 'midiCC', ioType: \inout),
-		'18'->			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum:    38, spec: 'midiCC', ioType: \inout),
-		'14t'->			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum:    37, spec: 'midiCC', ioType: \inout),
-		'14'->			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum:    36, spec: 'midiCC', ioType: \inout),
-	],
-	btCtl: (
+
+		(
+			key: \btLen,
+			shared: (midiMsgType: 'cc', elementType: 'button',
+				spec: 'midiCC', ioType: \inout),
+			elements: [
+				(key: '132t', midiNum: 43),
+				(key: '132',  midiNum: 42),
+				(key: '116t', midiNum: 41),
+				(key: '116',  midiNum: 40),
+				(key: '18t',  midiNum: 39),
+				(key: '18',   midiNum: 38),
+				(key: '14t',  midiNum: 37),
+				(key: '14',   midiNum: 36)
+			]
+		),
 		//------ ctl buttons
-		\tapTempo:		 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum:     3, spec: 'midiCC', ioType: \inout),
-		\metronome:		 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	  9, spec: 'midiCC', ioType: \inout),
-		\undo:			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	119, spec: 'midiCC', ioType: \inout),
-		\delete:		 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	118, spec: 'midiCC', ioType: \inout),
-		\double:		 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	117, spec: 'midiCC', ioType: \inout),
-		\quantize:		 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	116, spec: 'midiCC', ioType: \inout),
-		\fixedLength:	 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	 90, spec: 'midiCC', ioType: \inout),
-		\automation:	 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	 89, spec: 'midiCC', ioType: \inout),
-		\duplicate:		 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	 88, spec: 'midiCC', ioType: \inout),
-		\new:			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	 87, spec: 'midiCC', ioType: \inout),
-		\record:		 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	 86, spec: 'midiCC', ioType: \inout),
-		\play:			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	 85, spec: 'midiCC', ioType: \inout),
-		\master:		 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	 28, spec: 'midiCC', ioType: \inout),
-		\stop:			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	 29, spec: 'midiCC', ioType: \inout),
-		\volume:		 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	114, spec: 'midiCC', ioType: \inout),
-		\track:			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	112, spec: 'midiCC', ioType: \inout),
-		\device:		 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	110, spec: 'midiCC', ioType: \inout),
-		\in:			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	 62, spec: 'midiCC', ioType: \inout),
-		\mute:			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	 60, spec: 'midiCC', ioType: \inout),
-		\scales:		 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	 58, spec: 'midiCC', ioType: \inout),
-		\repeat:		 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	 56, spec: 'midiCC', ioType: \inout),
-		\octaveDown:	 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	 54, spec: 'midiCC', ioType: \inout),
-		\addEffect:		 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	 52, spec: 'midiCC', ioType: \inout),
-		\note:			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	 50, spec: 'midiCC', ioType: \inout),
-		\select:		 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	 48, spec: 'midiCC', ioType: \inout),
-		\panSend:		 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	115, spec: 'midiCC', ioType: \inout),
-		\clip:			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	113, spec: 'midiCC', ioType: \inout),
-		\browse:		 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	111, spec: 'midiCC', ioType: \inout),
-		\out:			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	 63, spec: 'midiCC', ioType: \inout),
-		\solo:			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	 61, spec: 'midiCC', ioType: \inout),
-		\user:			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	 59, spec: 'midiCC', ioType: \inout),
-		\accent:		 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	 57, spec: 'midiCC', ioType: \inout),
-		\octaveUp:		 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	 55, spec: 'midiCC', ioType: \inout),
-		\addTrack:		 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	 53, spec: 'midiCC', ioType: \inout),
-		\session:		 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	 51, spec: 'midiCC', ioType: \inout),
-		\shift:			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	 49, spec: 'midiCC', ioType: \inout),
-		\left:			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	 44, spec: 'midiCC', ioType: \inout),
-		\right:			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	 45, spec: 'midiCC', ioType: \inout),
-		\up:			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum: 	 46, spec: 'midiCC', ioType: \inout),
-		\down:			 (midiMsgType: 'cc', elementType: 'button', midiChan: 0, midiNum:	 47, spec: 'midiCC', ioType: \inout)
-	)
+		(
+			key: \btCtl,
+			shared: (),
+			elements: [
+				(key: \tapTempo, midiNum: 3),
+				(key: \metronome, midiNum: 9),
+				(key: \undo, midiNum: 119),
+				(key: \delete, midiNum: 118),
+				(key: \double, midiNum: 117),
+				(key: \quantize, midiNum: 116),
+				(key: \fixedLength, midiNum: 90),
+				(key: \automation, midiNum: 89),
+				(key: \new, midiNum: 87),
+				(key: \record, midiNum: 86),
+				(key: \play, midiNum: 85),
+				(key: \master, midiNum: 28),
+				(key: \volume, midiNum: 114),
+				(key: \track, midiNum: 112),
+
+				(key: \device, midiNum: 110),
+				(key: \in, midiNum: 62),
+				(key: \mute, midiNum: 60),
+				(key: \scales, midiNum: 58),
+				(key: \repeat, midiNum: 56),
+				(key: \octaveDown, midiNum: 54),
+				(key: \addEffect, midiNum: 52),
+				(key: \note, midiNum: 50),
+				(key: \select, midiNum: 48),
+
+				(key: \panSend, midiNum: 115),
+				(key: \clip, midiNum: 113),
+				(key: \browse, midiNum: 111),
+				(key: \out, midiNum: 63),
+				(key: \solo, midiNum: 61),
+				(key: \user, midiNum: 59),
+				(key: \accent, midiNum: 57),
+				(key: \octaveUp, midiNum: 55),
+
+				(key: \addTrack, midiNum: 53),
+				(key: \session, midiNum: 51),
+				(key: \shift, midiNum: 49),
+				(key: \left, midiNum: 44),
+				(key: \right, midiNum: 45),
+				(key: \up, midiNum: 46),
+				(key: \down, midiNum: 47)
+			]
+		)
+	]
 )
 )
