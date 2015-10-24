@@ -352,6 +352,7 @@ MKtlElement : MAbstractElement {
 		this.changed( \doAction, this );
 	}
 
+	flat { ^[this] }
 
 	// pattern support
 	embedInStream { |inval|

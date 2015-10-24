@@ -186,7 +186,9 @@ MKtl { // abstract class
 				if (lookupInfo.notNil) {
 					protocol = lookupInfo.protocol;
 					newMKtlDesc = lookupInfo.desc ?? {
-						MKtlDesc(lookupInfo.filename);
+						lookupInfo.filename !? {
+							MKtlDesc(lookupInfo.filename);
+						};
 					};
 				};
 			},
@@ -214,7 +216,7 @@ MKtl { // abstract class
 		// else try to make a desc from lookup info:
 
 		if (MKtl.descIsFaulty(newMKtlDesc)) {
-			inform("% %: could not find a valid desc - \n"
+			inform("% - %: could not find a valid desc: \n"
 				"desc is: %\n\n".format(thisMethod,
 					name.cs, newMKtlDesc));
 		};

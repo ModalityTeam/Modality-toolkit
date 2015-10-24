@@ -48,7 +48,7 @@ MIDI Destinations:
 // Available MIDIMKtls:
 // MKtl(name, filename);  // *[ midi device, portname, uid]
 
-MKtl('nameMe', 'midi_0_iac_driver');		// [ "IAC Driver", "IAC Bus 1", -476939297 ]
+MKtl('midi_0_iac_driver', 'midi_0_iac_driver');		// [ "IAC Driver", "IAC Bus 1", -476939297 ]
 
 -----------------------------------------------------
 
@@ -74,6 +74,14 @@ Platform.case(
 	}
 	*/
 );
+
+// and create proper idInfo for your platform
+~idInfo = Platform.case(
+	\linux, ( name: "SuperCollider", sourcePortIndex: 0 ),
+	\osx, "IAC Driver",
+	\windows, "no idea, please tell us what this should be!"
+).postcs;
+
 );
 ::
 
@@ -104,24 +112,21 @@ As a first example, here is how to create an element that responds to a code::no
 code::
 // midiMsgType: \noteOn, one note
 (
-~idInfo = Platform.case(
-	\linux, ( name: "SuperCollider", sourcePortIndex: 0 ),
-	\osx, "IAC Driver",
-	\windows, "no idea, please tell us what this should be!"
-).postcs;
-
 ~descInput = (
 	idInfo: ~idInfo,
 	protocol: \midi,
-	description: (
-		'key': (
-			type: 'pianoKey',
-			midiMsgType: \noteOn,
-			midiChan: 0,
-			midiNum: 64, // note number
-			spec: \midiVel,
-			ioType: \in
-		)
+	elementsDesc: (
+		elements: [
+			(
+				key: \pkey,
+				type: 'pianoKey',
+				midiMsgType: \noteOn,
+				midiChan: 0,
+				midiNum: 64, // note number
+				spec: \midiVel,
+				ioType: \in
+			)
+		]
 	)
 )
 );
@@ -130,7 +135,7 @@ code::
 MKtlLookup.all;
 m = MKtl( \testMIDI, ~descInput );
 m.rebuild( ~descInput ); // later, one can update it
-
+m.gui;
 m.trace;
 m.free;
 
@@ -151,15 +156,18 @@ code::
 ~descInput = (
 	idInfo: ~idInfo, // still around from above
 	protocol: \midi,
-	description: (
-		'key': (
-			type: 'pianoKey',
-			midiMsgType: \noteOff,
-			midiChan: 0,
-			midiNum: 64, // note number
-			spec: \midiVel,
-			ioType: \in
-		)
+	elementsDesc: (
+		elements: [
+			(
+				key: \pkey,
+				type: 'pianoKey',
+				midiMsgType: \noteOff,
+				midiChan: 0,
+				midiNum: 64, // note number
+				spec: \midiVel,
+				ioType: \in
+			)
+		]
 	)
 )
 );
@@ -173,6 +181,7 @@ m.trace;
 ~midiOut.noteOff(0, 64, 127 );
 ~midiOut.noteOff(0, 64, 24 );
 ~midiOut.noteOff(0, 64, 0 );
+~midiOut.noteOn(0, 64, 0 );
 ::
 
 In the case the velocity information is not so important or the code::noteOn:: message with velocity zero is automatically translated to zero, then you can also use the combined code::midiMsgType: \noteOnOff::, which will listen to either kind of message.
@@ -184,15 +193,18 @@ code::
 ~descInput = (
 	idInfo: ~idInfo, // still around from above
 	protocol: \midi,
-	description: (
-		'bt': (
-			type: 'button',
-			midiMsgType: \noteOnOff,
-			midiChan: 0,
-			midiNum: 64,
-			spec: \midiBut,
-			ioType: \in
-		)
+	elementsDesc: (
+		elements: [
+			(
+				key: \pkey,
+				type: 'button',
+				midiMsgType: \noteOnOff,
+				midiChan: 0,
+				midiNum: 64, // note number
+				spec: \midiBut,
+				ioType: \in
+			)
+		]
 	)
 )
 );
@@ -207,45 +219,44 @@ m.trace;
 ~midiOut.noteOn(0, 64, 0 ); // creates a noteOff message (see note)
 ~midiOut.noteOff(0, 64, 0 );
 
-// note that we can in the trace whether it was noteOn or noteOff,
+// note that we can see in the trace whether it was noteOn or noteOff;
 ~midiOut.noteOn(0, 64, 37 );
 ~midiOut.noteOff(0, 64, 37 );
 
 // but in the element action, we cannot distinguish between them:
 m.trace(false);
-m.elementAt(\bt).action = { |el| el.dump.postln };
+m.elAt(\bt).action = { |el| el.dump.postln };
 
-To get noteOn and noteOff separately, one can make separate elements:
+To get noteOn and noteOff separately, one can make separate elements,
+and this is where it makes sense to declare shared properties for both elements.
 
 (
 ~descInput = (
 	idInfo: ~idInfo, // still around from above
 	protocol: \midi,
-	description: (
-		'bt': (
-			\noteOn: (
-				type: 'button',
-				midiMsgType: \noteOn,
-				midiChan: 0,
-				midiNum: 64,
-				spec: \midiBut,
-				ioType: \in
-			),
-			\noteOff: (
-				type: 'button',
-				midiMsgType: \noteOff,
-				midiChan: 0,
-				midiNum: 64,
-				spec: \midiBut,
-				ioType: \in
+	elementsDesc: (
+		elements: [
+			(
+				key: \bt,
+				shared: (
+					type: 'button',
+					midiChan: 0,
+					midiNum: 64,
+					spec: \midiBut,
+					ioType: \in
+				),
+				elements: [
+					( key: \on, midiMsgType: \noteOn ),
+					( key: \off, midiMsgType: \noteOff )
+				]
 			)
-		)
+		]
 	)
 )
 );
 m.rebuild(~descInput);
-m.elementAt(\bt, \noteOn).action = { "ON".postln };
-m.elementAt(\bt, \noteOff).action = { "OFFFFF".postln };
+m.elAt(\bt, \on).action = { "ON".postln };
+m.elAt(\bt, \off).action = { "OFFFFF".postln };
 
 ~midiOut.noteOn(0, 64, 37 );
 ~midiOut.noteOff(0, 64, 37 );
@@ -263,15 +274,18 @@ code::
 ~descInput = (
 	idInfo: ~idInfo, // still around from above
 	protocol: \midi,
-	description: (
-		'kn': (
-			type: 'knob',
-			midiMsgType: \cc,
-			midiChan: 0,
-			midiNum: 8, // control number
-			spec: \midiCC,
-			ioType: \in
-		)
+	elementsDesc: (
+		elements: [
+			(
+				key: 'kn',
+				type: 'knob',
+				midiMsgType: \cc,
+				midiChan: 0,
+				midiNum: 8, // control number
+				spec: \midiCC,
+				ioType: \in
+			)
+		]
 	)
 )
 );
@@ -293,15 +307,18 @@ code::
 ~descInput = (
 	idInfo: ~idInfo, // still around from above
 	protocol: \midi,
-	description: (
-		'bt': (
-			type: 'button',
-			midiMsgType: \cc,
-			midiChan: 0,
-			midiNum: 8, // control number
-			spec: \midiBut,
-			ioType: \in
-		)
+	elementsDesc: (
+		elements: [
+			(
+				key: 'bt',
+				type: 'button',
+				midiMsgType: \cc,
+				midiChan: 0,
+				midiNum: 8, // control number
+				spec: \midiBut,
+				ioType: \in
+			)
+		]
 	)
 )
 );
@@ -328,14 +345,17 @@ code::
 ~descInput = (
 	idInfo: ~idInfo, // still around from above
 	protocol: \midi,
-	description: (
-		'bend': (
-			type: 'bender',
-			midiMsgType: \bend, // bend needs midiChan only
-			midiChan: 0,
-			spec: \midiBend,
-			ioType: \in
-		)
+	elementsDesc: (
+		elements: [
+			(
+				key: 'bend',
+				type: 'bender',
+				midiMsgType: \bend, // bend needs midiChan only
+				midiChan: 0,
+				spec: \midiBend,
+				ioType: \in
+			)
+		]
 	)
 )
 );
@@ -353,7 +373,11 @@ m.trace;
 subsection:: MIDI aftertouch messages
 
 
-Aftertouch is the pressure that is on a piano key after the initial pressing (which is translated to note velocity as explained above). The MIDI protocol implements after touch in two ways - as single aftertouch value - where you have to keep track of what the last note was and do something useful with the data - or on a per key basis. The latter is called code::\polyTouch::, short for polyphonic touch. The first one is called code::\touch:: - sometimes this is also called "channel pressure", and it has no code::\midiNum:: indication in the argument, just one single value for each channel.
+Aftertouch is the pressure that is on a piano key after the initial pressing (which is translated to note velocity as explained above). The MIDI protocol implements aftertouch in two ways:
+
+Aftertouch, also called channel pressure, has a single aftertouch value per midi channel, which is usually applied to all notes playing on that channel. Tis is the more common touch implementation in hardware controllers. In SC, this is called code::\touch::.
+
+PolyTouch, or polyphonic aftertouch,  allows an individual aftertouch value for every currently playing note. In SC, this is called code::\polyTouch::.
 
 code::
 // midiMsgType: \polyTouch,
@@ -361,22 +385,24 @@ code::
 ~descInput = (
 	idInfo: ~idInfo, // still around from above
 	protocol: \midi,
-	description: (
-		'touch': (
-			type: 'touch',
-			midiMsgType: \polyTouch,
-			midiChan: 0,
-			midiNum: 2,
-			spec: \midiTouch,
-			ioType: \in
-		)
+	elementsDesc: (
+		elements: [
+			(
+				key: 'polyTouch',
+				type: 'polyTouch',
+				midiMsgType: \polyTouch,
+				midiChan: 0,
+				midiNum: 2, // polyTouch has a note number it applies to
+				spec: \midiTouch,
+				ioType: \in
+			)
+		]
 	)
 )
 );
 
 m = MKtl( \testMIDI, ~descInput );
 m.rebuild( ~descInput ); // updating it
-
 m.trace;
 
 // make some messages:
@@ -391,21 +417,24 @@ code::
 ~descInput = (
 	idInfo: ~idInfo, // still around from above
 	protocol: \midi,
-	description: (
-		'touch': (
-			type: 'touch',
-			midiMsgType: \touch, // touch does not need \midiNum
-			midiChan: 0,
-			spec: \midiTouch,
-			ioType: \in
-		)
+	elementsDesc: (
+		elements: [
+			(
+				key: 'touch',
+				type: 'touch',
+				midiMsgType: \touch,
+				// touch only has \midiChan, no \midiNum
+				midiChan: 0,
+				spec: \midiTouch,
+				ioType: \in
+			)
+		]
 	)
 )
 );
 
 m = MKtl( \testMIDI, ~descInput );
 m.rebuild( ~descInput ); // updating it
-
 m.trace;
 
 // make some messages:
@@ -424,21 +453,23 @@ code::
 ~descInput = (
 	idInfo: ~idInfo, // still around from above
 	protocol: \midi,
-	description: (
-		'prog': (
-			type: 'knob',
-			midiMsgType: \program, // program does not need \midiNum
-			midiChan: 0,
-			spec: \midiProgram,
-			ioType: \in
-		)
+	elementsDesc: (
+		elements: [
+			(
+				key: 'prog',
+				type: 'knob',
+				midiMsgType: \program, // program does not need \midiNum
+				midiChan: 0,
+				spec: \midiProgram,
+				ioType: \in
+			)
+		]
 	)
 )
 );
 
 m = MKtl( \testMIDI, ~descInput );
 m.rebuild( ~descInput ); // updating it
-
 m.trace;
 
 // make some messages:
@@ -468,15 +499,18 @@ MIDIIn.connectAll; MIDIFunc.trace;
 ~descOutput = (
 	idInfo: ~idInfo, // still around from above
 	protocol: \midi,
-	description: (
-		'bt': (
-			type: 'button',
-			midiMsgType: \noteOn,
-			midiChan: 0,
-			midiNum: 2,
-			spec: \midiVel,
-			ioType: \out
-		)
+	elementsDesc: (
+		elements: [
+			(
+				key: 'bt',
+				type: 'button',
+				midiMsgType: \noteOn,
+				midiChan: 0,
+				midiNum: 2,
+				spec: \midiVel,
+				ioType: \out
+			)
+		]
 	)
 )
 );
@@ -487,8 +521,8 @@ m.rebuild( ~descOutput ); // updating it
 // turn on tracing of midi input, so we see incoming messages
 MIDIFunc.trace
 
-m.elementAt( \bt ).value_( 0 ); // see note above on noteOn message with velocity zero; may show up in the trace as a noteOff
-m.elementAt( \bt ).value_( 1 );
+m.elAt( \bt ).value_( 0 ); // see note above on noteOn message with velocity zero; may show up in the trace as a noteOff
+m.elAt( \bt ).value_( 1 );
 
 m.gui; // and press the button for it
 ::
@@ -501,15 +535,18 @@ MIDIIn.connectAll; MIDIFunc.trace;
 ~descOutput = (
 	idInfo: ~idInfo, // still around from above
 	protocol: \midi,
-	description: (
-		'bt': (
-			type: 'button',
-			midiMsgType: \noteOff,
-			midiChan: 0,
-			midiNum: 2,
-			spec: \midiVel,
-			ioType: \out
-		)
+	elementsDesc: (
+		elements: [
+			(
+				key: 'bt',
+				type: 'button',
+				midiMsgType: \noteOff,
+				midiChan: 0,
+				midiNum: 2,
+				spec: \midiVel,
+				ioType: \out
+			)
+		]
 	)
 )
 );
@@ -517,8 +554,8 @@ MIDIIn.connectAll; MIDIFunc.trace;
 m = MKtl( \testMIDI, ~descOutput );
 m.rebuild( ~descOutput ); // updating it
 
-m.elementAt( \bt ).value_( 0 );
-m.elementAt( \bt ).value_( 1 );
+m.elAt( \bt ).value_( 0 );
+m.elAt( \bt ).value_( 1 );
 
 m.gui; // and press the button
 ::
@@ -532,15 +569,18 @@ MIDIIn.connectAll; MIDIFunc.trace;
 ~descOutput = (
 	idInfo: ~idInfo, // still around from above
 	protocol: \midi,
-	description: (
-		'sl': (
-			type: 'slider',
-			midiMsgType: \cc,
-			midiChan: 0,
-			midiNum: 2,
-			spec: \midiCC,
-			ioType: \out
-		)
+	elementsDesc: (
+		elements: [
+			(
+				key: 'sl',
+				type: 'slider',
+				midiMsgType: \cc,
+				midiChan: 0,
+				midiNum: 2,
+				spec: \midiCC,
+				ioType: \out
+			)
+		]
 	)
 )
 );
@@ -548,9 +588,9 @@ MIDIIn.connectAll; MIDIFunc.trace;
 m = MKtl( \testMIDI, ~descOutput );
 m.rebuild( ~descOutput ); // updating it
 
-m.elementAt( \sl ).value_( 0 );
-m.elementAt( \sl ).value_( 0.4 );
-m.elementAt( \sl ).value_( 1 );
+m.elAt( \sl ).value_( 0 );
+m.elAt( \sl ).value_( 0.4 );
+m.elAt( \sl ).value_( 1 );
 
 m.gui; // and move the slider
 ::
@@ -562,15 +602,19 @@ MIDIIn.connectAll; MIDIFunc.trace;
 ~descOutput = (
 	idInfo: ~idInfo, // still around from above
 	protocol: \midi,
-	description: (
-		'bt': (
-			type: 'button',
-			midiMsgType: \cc,
-			midiChan: 0,
-			midiNum: 2,
-			spec: \midiBut,
-			ioType: \out
-		)
+	elementsDesc: (
+		elements: [
+			(
+				key: 'bt',
+
+				type: 'button',
+				midiMsgType: \cc,
+				midiChan: 0,
+				midiNum: 2,
+				spec: \midiBut,
+				ioType: \out
+			)
+		]
 	)
 )
 );
@@ -578,8 +622,8 @@ MIDIIn.connectAll; MIDIFunc.trace;
 m = MKtl( \testMIDI, ~descOutput );
 m.rebuild( ~descOutput ); // updating it
 
-m.elementAt( \bt ).value_( 0 );
-m.elementAt( \bt ).value_( 1 );
+m.elAt( \bt ).value_( 0 );
+m.elAt( \bt ).value_( 1 );
 
 m.gui; // and press the button
 ::
@@ -594,14 +638,17 @@ MIDIIn.connectAll; MIDIFunc.trace;
 ~descOutput = (
 	idInfo: ~idInfo, // still around from above
 	protocol: \midi,
-	description: (
-		'bend': (
-			type: 'slider',
-			midiMsgType: \bend, // bend has no midiNum
-			midiChan: 0,
-			spec: \midiBend,
-			ioType: \out
-		)
+	elementsDesc: (
+		elements: [
+			(
+				key: 'bend',
+				type: 'slider',
+				midiMsgType: \bend, // bend has no midiNum
+				midiChan: 0,
+				spec: \midiBend,
+				ioType: \out
+			)
+		]
 	)
 )
 );
@@ -609,10 +656,10 @@ MIDIIn.connectAll; MIDIFunc.trace;
 m = MKtl( \testMIDI, ~descOutput );
 m.rebuild( ~descOutput ); // updating it
 
-m.elementAt( \bend ).value_( 0 );
-m.elementAt( \bend ).value_( 0.4 );
-m.elementAt( \bend ).value_( 1 );
-m.elementAt( \bend ).value_( 0.5 ); // default
+m.elAt( \bend ).value_( 0 );
+m.elAt( \bend ).value_( 0.4 );
+m.elAt( \bend ).value_( 1 );
+m.elAt( \bend ).value_( 0.5 ); // default
 ::
 
 subsection:: MIDI after touch messages
@@ -624,15 +671,18 @@ MIDIIn.connectAll; MIDIFunc.trace;
 ~descOutput = (
 	idInfo: ~idInfo, // still around from above
 	protocol: \midi,
-	description: (
-		'touch': (
-			type: 'slider',
-			midiMsgType: \polyTouch,
-			midiChan: 0,
-			midiNum: 2,
-			spec: \midiTouch,
-			ioType: \out
-		)
+	elementsDesc: (
+		elements: [
+			(
+				key: 'touch',
+				type: 'slider',
+				midiMsgType: \polyTouch,
+				midiChan: 0,
+				midiNum: 2,
+				spec: \midiTouch,
+				ioType: \out
+			)
+		]
 	)
 )
 );
@@ -640,9 +690,9 @@ MIDIIn.connectAll; MIDIFunc.trace;
 m = MKtl( \testMIDI, ~descOutput );
 m.rebuild( ~descOutput ); // updating it
 
-m.elementAt( \touch ).value_( 0 );
-m.elementAt( \touch ).value_( 0.4 );
-m.elementAt( \touch ).value_( 1 );
+m.elAt( \touch ).value_( 0 );
+m.elAt( \touch ).value_( 0.4 );
+m.elAt( \touch ).value_( 1 );
 ::
 
 code::
@@ -652,14 +702,17 @@ MIDIIn.connectAll; MIDIFunc.trace;
 ~descOutput = (
 	idInfo: ~idInfo, // still around from above
 	protocol: \midi,
-	description: (
-		'touch': (
-			type: 'slider',
-			midiMsgType: \touch, // touch does not need \midiNum
-			midiChan: 0,
-			spec: \midiTouch,
-			ioType: \out
-		)
+	elementsDesc: (
+		elements: [
+			(
+				key: 'touch',
+				type: 'slider',
+				midiMsgType: \touch, // touch does not need \midiNum
+				midiChan: 0,
+				spec: \midiTouch,
+				ioType: \out
+			)
+		]
 	)
 )
 );
@@ -667,9 +720,9 @@ MIDIIn.connectAll; MIDIFunc.trace;
 m = MKtl( \testMIDI, ~descOutput );
 m.rebuild( ~descOutput ); // updating it
 
-m.elementAt( \touch ).value_( 0 );
-m.elementAt( \touch ).value_( 0.4 );
-m.elementAt( \touch ).value_( 1 );
+m.elAt( \touch ).value_( 0 );
+m.elAt( \touch ).value_( 0.4 );
+m.elAt( \touch ).value_( 1 );
 ::
 
 subsection:: MIDI program change messages
@@ -682,14 +735,17 @@ MIDIIn.connectAll; MIDIFunc.trace;
 ~descOutput = (
 	idInfo: ~idInfo, // still around from above
 	protocol: \midi,
-	description: (
-		'prog': (
-			type: 'slider',
-			midiMsgType: \program, // program does not need \midiNum
-			midiChan: 0,
-			spec: \midiProgram,
-			ioType: \out
-		)
+	elementsDesc: (
+		elements: [
+			(
+				key: 'prog',
+				type: 'slider',
+				midiMsgType: \program, // program does not need \midiNum
+				midiChan: 0,
+				spec: \midiProgram,
+				ioType: \out
+			)
+		]
 	)
 )
 );
@@ -697,31 +753,30 @@ MIDIIn.connectAll; MIDIFunc.trace;
 m = MKtl( \testMIDI, ~descOutput );
 m.rebuild( ~descOutput ); // updating it
 
-m.elementAt( \prog ).value_( 0 );
-m.elementAt( \prog ).value_( 0.4 );
-m.elementAt( \prog ).value_( 1 );
+m.elAt( \prog ).deviceValue_( 0 );
+m.elAt( \prog ).deviceValue_( 64 );
+m.elAt( \prog ).deviceValue_( 127 );
 ::
 
 subsection:: MIDI system exclusive messages
 
-
+... to be documented ...
 
 section:: Explore a MIDI device
 
-(This will be updated when the MIDIMonitor class is finished.)
+note:: To be updated using the MIDIMonitor class when finished! ::
 
 First, find your device in the list posted by the following code and assign the MKtl to a variable.
 code::
 MKtl.find;
-// copy and change 'pcr0' to the shortname of your device
-a = MKtl('pcr0');
+// copy and change '' to the shortname of your device, e.g.
+a = MKtl('iac', 'midi_0_iac_driver');
+
 ::
 
 Now, turn on the explore mode and move every element on your controller. Make sure to go through all of them and move them in all their degrees of freedom.
 
 code::
-a.explore;
-
 // MIDI: if you want more information on what is happening, turn on verbose mode:
 MIDIExplorer.verbose = true;
 MIDIExplorer.verbose = false; // turn it off again
@@ -870,7 +925,7 @@ MKtl.openDescriptionFolder;
 The filename should give a meaningful hint to the device it is made for. It further needs to end in code::".desc.scd"::.
 
 To test your description file, restart SuperCollider and follow instructions in link::Tutorials/ModalityTutorial::.
-
+/// ... To be updated using the MIDIMonitor class when finished ... ///
 
 
 
@@ -890,11 +945,11 @@ MKtl.find(\midi);
 // MKtl(name, filename);
 		// *[ midi device, portname, uid]
 
-MKtl('midi_0_iac_d', 'midi_0_iac_driver');
+MKtl('midi_0_iac_driver', 'midi_0_iac_driver');
 		// [ "IAC Driver", "IAC Bus 1", -476939297 ]
-MKtl('midi_1_nanok', 'midi_1_nanokontrol2_nr_1');
+MKtl('midi_1_nanokontrol2_nr_1', 'midi_1_nanokontrol2_nr_1');
 		// [ "nanoKONTROL2", "SLIDER/KNOB", 1111689538 ]
-MKtl('midi_2_nanok', 'midi_2_nanokontrol2_nr_2');
+MKtl('midi_2_nanokontrol2_nr_2', 'midi_2_nanokontrol2_nr_2');
 		// [ "nanoKONTROL2", "SLIDER/KNOB", 2129951315 ]
 ::
 
@@ -908,7 +963,7 @@ code::
 MKtlDesc.openFolder;
 MKtlDesc.loadDescs("*qunexus*").do(_.openFile);
 MKtlDesc.loadDescs("*cmc-pd*").do(_.openFile);
-MKtlLookup.all.keys
+MKtlLookup.all.keys;
 
 (
 deviceName: "QuNexus",
