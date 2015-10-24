@@ -33,7 +33,7 @@ k.elementAt(\sl, 0).action = { \yo.postln; };
 k.elementAt(\sl, 1).action = { 1.postcs; };
 
 3. when there are only a few elements, one can keep them in a flat dictionary, and give them clear element names; see
-'Modality_Naming_Conventions'.openHelpFile
+'Reference/Naming_conventions_in_element_descriptions'.openHelpFile
 
 4. when many elements of the same type are listed in an obvious order,
    such as 8 sliders sending cc numbers,

@@ -50,8 +50,9 @@ MIDIMonitor {
 		var src, sources;
 		this.checkIns;
 		sources = this.sources;
-		if (sources.isNil) { ^nil };
-		src = sources[index];
+		if (sources.notNil) {
+			src = sources[index];
+		};
 		if (src.isNil) {
 			inform("%: no src at index %.".format(this, index));
 			^nil
@@ -61,7 +62,7 @@ MIDIMonitor {
 
 	*treeAt { |...keys|
 		var res = msgTree, srcID;
-		keys.postln;
+		// keys.postln;
 		if (keys.notNil) {
 			srcID = this.sources[keys[0]].uid;
 			keys.put(0, srcID);
@@ -101,7 +102,7 @@ MIDIMonitor {
 	}
 
 
-	*midiNumsAt {|index = 0, type = \control|
+	*midiNumsAt { |index = 0, type = \control|
 		var src, srcID, typeDict;
 		src = this.atSrc(index);
 		if (src.isNil) {
@@ -208,7 +209,7 @@ MIDIMonitor {
 		this.checkIns;
 		if (monitorFuncs.isNil) { this.init };
 		(chanMsgTypes ++ chanNumMsgTypes).do { |type|
-			MIDIIn.addFuncTo(*[type.postln, monitorFuncs[type]]);
+			MIDIIn.addFuncTo(*[type, monitorFuncs[type]]);
 		};
 		monitoring = true;
 		CmdPeriod.add(this);
