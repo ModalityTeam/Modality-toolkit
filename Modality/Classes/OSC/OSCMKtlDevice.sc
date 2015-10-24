@@ -88,12 +88,13 @@ OSCMKtlDevice : MKtlDevice {
 	}
 
 	initOSCMKtl { |info|
-		var ipAddr = info.at( \ipAddress ) ? "127.0.0.1";
+		var ipAddr =  info !? { info.at( \ipAddress ) } ? "127.0.0.1";
+		var srcPort = info !? { info.at( \srcPort ) };
+		var dstPort = info !? { info.at( \destPort ) } ? srcPort ? NetAddr.langPort;
 
-		source = NetAddr.new( ipAddr, info.at( \srcPort ) );
-		destination = NetAddr( ipAddr,
-			info.at( \destPort ) ? info.at( \srcPort ));
-		recvPort = info.at( \recvPort );
+		source = NetAddr.new( ipAddr, srcPort );
+		destination = NetAddr( ipAddr, dstPort);
+		recvPort = dstPort;
 
 		this.initCollectives;
 
@@ -122,11 +123,16 @@ OSCMKtlDevice : MKtlDevice {
 	}
 
 	closeDevice {
+		var itemsToRemove;
 		this.cleanupElementsAndCollectives;
 		source = nil;
 		destination = nil;
 		recvPort = nil;
-		MKtlLookup.removeEvery { |info| info.mktl == this.mktl };
+		itemsToRemove = MKtlLookup.all.select { |info|
+			info.mktl == this.mktl };
+		itemsToRemove.keysValuesDo { |key|
+			MKtlLookup.all.removeAt(key);
+		};
 	}
 
 	postTrace { |el|
@@ -256,7 +262,7 @@ OSCMKtlDevice : MKtlDevice {
 	// this should work for the simple usecase (not the group yet)
 	// from the group: \output, val: [ 0, 0, 0, 0 ]
 	send { |key, val|
-		var el, oscPath, outvalues,valIndex;
+		var elDesc, oscPath, outvalues,valIndex;
 
 			// dont send if no destination
 		if ( destination.isNil ) {
@@ -265,16 +271,16 @@ OSCMKtlDevice : MKtlDevice {
 
 			// prepare outmessage value for a collective - array of values to send
 		if ( val.isKindOf( Array ) ){
-			el = mktl.collectiveDescriptionFor( key );
+			elDesc = mktl.collectiveDescriptionFor( key );
 			valIndex = 0;
-			if (el.isNil) {
+			if (elDesc.isNil) {
 				"%: no collective for % found.\n".postf(key, thisMethod);
 				^this
 			};
 
-			oscPath = el[\oscPath];
+			oscPath = elDesc[\oscPath];
 			outvalues = List.new;
-			el[\argTemplate].do { |it|
+			elDesc[\argTemplate].do { |it|
 				if ( it.isNil ) {
 					outvalues.add( val.at( valIndex ) ); valIndex = valIndex + 1;
 				}{
@@ -286,10 +292,10 @@ OSCMKtlDevice : MKtlDevice {
 			outvalues = outvalues.asArray;
 		} {
 			// prepare outmessage for value of a single element:
-			el = mktl.desc.elementsDesc.at( key );
-			oscPath = el[\oscPath];
+			elDesc = mktl.elAt( key ).elemDesc;
+			oscPath = elDesc[\oscPath];
 			// we may modify it, so copy
-			outvalues = el[\argTemplate].copy;
+			outvalues = elDesc[\argTemplate].copy;
 			if ( outvalues.includes( nil ) ){
 				outvalues.put( outvalues.indexOf( nil ), val );
 			}{

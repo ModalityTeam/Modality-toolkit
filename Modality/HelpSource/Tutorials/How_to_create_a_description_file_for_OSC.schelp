@@ -39,7 +39,8 @@ code::
 The description of this element then is:
 
 code::
-'bt': (
+(
+	key: 'bt',
 	oscPath: '/button',
 	type: 'button',
 	ioType: \in,
@@ -55,15 +56,19 @@ code::
 (
 ~desc1In = (
     idInfo: ( srcPort: NetAddr.langPort, ipAddress: "127.0.0.1" ),
+	netAddrInfo: ( srcPort: NetAddr.langPort, ipAddress: "127.0.0.1" ),
     protocol: \osc,
-    description: (
-        'bt': (
-            oscPath: '/bt',
-            type: 'button',
-            spec: \but,
-            ioType: \in
-        )
-    )
+    elementsDesc: (
+		elements: [
+			(
+				key: 'bt',
+				oscPath: '/button',
+				type: 'button',
+				ioType: \in,
+				spec: \but
+			)
+		]
+	)
 );
 )
 
@@ -80,11 +85,12 @@ m.elementAt(\bt).valueAction_(0);
 m.gui;
 // post incoming OSC data
 m.trace;
+m.device.oscFuncDictionary.do(_.enable)
 
 // and now simulate sending values from an OSC device by network:
 n = NetAddr("127.0.0.1", NetAddr.langPort); // fake device address
-n.sendMsg("/bt", 0);
-n.sendMsg("/bt", 1);
+n.sendMsg('/button', 0);
+n.sendMsg('/button', 1);
 ::
 
 
@@ -102,7 +108,8 @@ The description of the elements then contains an argTemplate :
 
 code::
 (
-'bt': [
+key: 'bt',
+elements: [
 	(
 	oscPath: '/button',
 	argTemplate: [ 0 ],
@@ -117,6 +124,21 @@ code::
 	)
 ]
 )
+
+// or shorter by defining shared properties
+(
+key: 'bt',
+shared: (
+	oscPath: '/button',
+	type: 'button',
+	ioType: \in
+),
+elements: [
+	( argTemplate: [ 0 ] ),
+	( argTemplate: [ 1 ] ),
+]
+)
+
 ::
 
 Here is how the argTemplate works:
@@ -144,52 +166,44 @@ Here the incoming message has 4 items: the name (which is dropped), the next two
 The description of the elements then is:
 
 code::
-	(
-		'bt': [
-			[
-				(
-					oscPath: '/button',
-					argTemplate: [ 0,0 ],
-					type: 'button',
-					ioType: \in
-				),
-				(
-					oscPath: '/button',
-					argTemplate: [ 0,1 ],
-					type: 'button',
-					ioType: \in
-				)
-			],
-			[
-				(
-					oscPath: '/button',
-					argTemplate: [ 1,0 ],
-					type: 'button',
-					ioType: \in
-				),
-				(
-					oscPath: '/button',
-					argTemplate: [ 1,1 ],
-					type: 'button',
-					ioType: \in
-				)
-			]
-		]
-	);
-
-// or write more concise code with .collect:
 (
-'bt': 2.collect { |row|
-	2.collect { |column|
+	key: 'bt',
+	shared: (
+		oscPath: '/button',
+		argTemplate: [ 0,0 ],
+		type: 'button',
+		ioType: \in
+	),
+	elements: [
 		(
-			oscPath: '/button',
-			argTemplate: [ row, column ],
-			type: 'button',
-			ioType: \in
-		)
-	}
-}
+			elements: [
+				(argTemplate: [ 0,0 ]),
+				(argTemplate: [ 0,1 ])
+		]),
+		(
+			elements: [
+				(argTemplate: [ 1,0 ]),
+				(argTemplate: [ 1,1 ])
+		])
+	]
 );
+
+// recommended with more than 2 list elements:
+// write more concise code with .collect.
+(
+key: 'bt',
+shared: (
+	oscPath: '/button',
+	type: 'button',
+	ioType: \in
+),
+elements: 2.collect { |row|
+	(elements: 2.collect { |column|
+		(argTemplate: [ row, column ])
+	})
+}
+)
+
 
 ::
 
@@ -207,7 +221,8 @@ code::
 The description becomes:
 
 code::
-'bt': (
+(
+	key: 'bt',
 	oscPath: '/button',
 	type: 'button',
 	valueAt: 1,
@@ -221,17 +236,21 @@ After all this explanation, here is a full example of an OSC device description 
 code::
 (
 ~descInput = (
-	idInfo: ( srcPort: NetAddr.langPort, ipAddress: "127.0.0.1" ),
+	idInfo: "exampleName",
+	netAddrInfo: ( srcPort: NetAddr.langPort, ipAddress: "127.0.0.1" ),
 	protocol: \osc,
-	description: (
-		'kn': (
-			oscPath: '/knob',
-			argTemplate: [ 1,2 ], // the knob at row 1 and column 2
-			valueAt: 3, // the index in the osc message where the value is
-			type: 'knob',
-			spec: \midiCC,
-			ioType: \in
-		)
+	elementsDesc: (
+		elements: [
+			(
+				key: 'kn',
+				oscPath: '/knob',
+				argTemplate: [ 1,2 ], // the knob at row 1 and column 2
+				valueAt: 3, // the index in the osc message where the value is
+				type: 'knob',
+				spec: \midiCC,
+				ioType: \in
+			)
+		]
 	)
 )
 )
@@ -265,17 +284,23 @@ So the oscPath you want to match is code::"/button/*":: - the code::*:: is the s
 code::
 (
 ~descInput = (
-	specs: ( onoffString: ItemsSpec.new( [ "off", "on" ] ); ),
-	    idInfo: ( srcPort: NetAddr.langPort, ipAddress: "127.0.0.1" ),
-	    protocol: \osc,
-	    description: (
-		        'bt': (
-			            oscPath: '/button/*',
-			            type: 'button',
-			            spec: \onoffString,
-			            ioType: \in
-		        )
-	    )
+	idInfo: "example",
+	netAddrInfo: ( srcPort: NetAddr.langPort, ipAddress: "127.0.0.1" ),
+	specs: (
+		onOffString: ItemsSpec.new( [ "off", "on" ] )
+	),
+	protocol: \osc,
+	elementsDesc: (
+		elements: [
+			(
+				key: 'bt',
+				oscPath: '/button/*',
+				type: 'button',
+				spec: \onOffString,
+				ioType: \in
+			)
+		]
+	)
 )
 );
 
@@ -306,15 +331,19 @@ In some cases, an OSC message has no relevant arguments and just functions as a 
 code::
 (
 ~descInput = (
-	idInfo: ( srcPort: NetAddr.langPort, ipAddress: "127.0.0.1" ),
+	idInfo: "example",
+	// netAddrInfo: ( srcPort: NetAddr.langPort, ipAddress: "127.0.0.1" ),
 	protocol: \osc,
-	description: (
-		'tr': (
-			oscPath: '/trigger',
-			type: 'trigger',
-			ioType: \in,
-			spec: \unipolar  // spec is needed, but value is ignored
-		)
+	elementsDesc: (
+		elements: [
+			(
+				key: 'tr',
+				oscPath: '/trigger',
+				type: 'trigger',
+				ioType: \in,
+				spec: \unipolar  // spec is needed, but value is ignored
+			)
+		]
 	)
 )
 );
@@ -355,7 +384,7 @@ With a description like:
 
 code::
 (
-'led': (
+	key: 'led',
 	oscPath: '/output',
 	type': 'led',
 	ioType: \out
@@ -376,13 +405,13 @@ With a description like:
 
 code::
 (
-'led': (
+	key: 'led',
 	oscPath: '/output',
 	argTemplate: [ 2, 3 ],
 	type: 'led',
 	ioType: \out
 );
-)
+
 ::
 
 If the value needs to be inserted in between identifiers for the message, you can use code::nil:: as a placeholder in the code::argTemplate::
@@ -398,7 +427,8 @@ With a description like:
 
 code::
 (
-'led': (
+(
+	key: 'led',
 	oscPath: '/output',
 	argTemplate: [ 2, nil, 3 ],
 	type: 'led',
@@ -413,23 +443,29 @@ An example of opening an OSC device from a description and sending output to it:
 code::
 (
 MKtl.addSpec(\pwm8bit, [0, 255, \linear, 1]);
+
 ~descOutput = (
 	// only for testing: send output values to SC itself
 	// (instead of a real osc device)
-	idInfo: ( ipAddress: "127.0.0.1", destPort: NetAddr.langPort ),
+	idInfo: "test",
+	netAddrInfo: ( ipAddress: "127.0.0.1", destPort: NetAddr.langPort ),
 	protocol: \osc,
-	description: (
-		'led': (
-			oscPath: '/output',
-			argTemplate: [ 2, 3 ], // message will be: "/output" 2 3 <val>
-			'type': 'led', spec: \pwm8bit,
-			\ioType: \out
-		);
-	);
+	elementsDesc: (
+		elements: [
+			(
+				key: 'led',
+				oscPath: '/output',
+				// message will be: "/output" 2 3 <val>
+				argTemplate: [ 2, 3 ],
+				'type': 'led', spec: \pwm8bit,
+				\ioType: \out
+			)
+		]
+	)
 );
 );
-
 m = MKtl( \exampleOSCoutput, ~descOutput );
+
 
 // an output element in an OSC MKtl sends its value out by network
 // when the value of the element in the MKtl is changed.
@@ -438,10 +474,10 @@ m = MKtl( \exampleOSCoutput, ~descOutput );
 // listen to all incoming osc, so we see the value setting message:
 OSCFunc.trace( true );
 // set a value:
-m.elementAt( \led ).value_( 0.6 );
-m.elementAt( \led ).value_( 1.0.rand );
+m.elAt( \led ).value_( 0.6 );
+m.elAt( \led ).value_( 1.0.rand );
 // set and send in original value range of the device:
-m.elementAt( \led ).deviceValue_( 256.rand.postln );
+m.elAt( \led ).deviceValue_( 256.rand.postln );
 
 // cleanup:
 m.free;
@@ -469,11 +505,15 @@ code::
 			ioType: \in
 		)
 	),
-	description: (
-		'bt': 5.collect {
-			( type: 'button', ioType: \collectiveIn, \spec: \but )
-		}
-	);
+	elementsDesc: (
+		elements: [
+			(
+				key: 'bt',
+				shared: ( type: 'button', ioType: \collectiveIn, \spec: \but ),
+				elements: 5.collect { () }
+			)
+		]
+	)
 );
 )
 m = MKtl( \exampleCollectiveIn, ~descCollectiveInput );
@@ -523,11 +563,15 @@ code::
 		)
 	),
 	// and the five button elements
-	description: (
-		'bt': 5.collect {
-			( type: 'button', ioType: \collectiveIn, \spec: \but )
-		}
-	);
+	elementsDesc: (
+		elements: [
+			(
+				key: 'bt',
+				shared: ( type: 'button', ioType: \collectiveIn, \spec: \but ),
+				elements: 5.collect { () }
+			)
+		]
+	)
 );
 )
 
@@ -537,7 +581,7 @@ m.trace;
 
 n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
 // means messages like this are received, because message body starts with 7:
-n.sendMsg( "/buttons", 7, 0, 1, 1, 0, 1 );
+n.sendMsg( "/buttons", 7, *[0, 1, 1, 0, 1].scramble );
 
 // while this message is ignored: (4 != 7)
 n.sendMsg( "/buttons", 4, 0, 1, 1, 0, 1 );
@@ -561,16 +605,21 @@ code::
 			ioType: \in
 		)
 	),
-	description: (
-		'bt': 5.collect {
-			( type: 'button', ioType: \collectiveIn, \spec: \but )
-		}
+	elementsDesc: (
+		elements: [
+			(
+				key: 'bt',
+				shared: ( type: 'button', ioType: \collectiveIn, \spec: \but ),
+				elements: 5.collect { () }
+			)
+		]
 	)
 );
 )
 
 m.rebuild( ~descCollectiveInput );
 m.trace;
+m.gui;
 
 // now messages _ending_ with 7 are accepted:
 n.sendMsg( "/buttons", 2.rand, 2.rand, 2.rand, 2.rand, 2.rand, 7 );
@@ -599,19 +648,25 @@ code::
 			ioType: \in
 		)
 	),
-	description: (
-		'bt': 5.collect {
-			( type: 'button', ioType: \collectiveIn, \spec: \but )
-		}
-	);
+	elementsDesc: (
+		elements: [
+			(
+				key: 'bt',
+				shared: ( type: 'button', ioType: \collectiveIn, \spec: \but ),
+				elements: 5.collect { () }
+			)
+		]
+	)
 );
 )
 
 m.rebuild( ~descCollectiveInput );
-
+m.trace;
+m.gui;
 
 // messages matching [nil, 7] are received:
 n.sendMsg( "/buttons", "blah".scramble, 7, 0, 1, 1, 0, 1 );
+n.sendMsg( "/buttons", "blah".scramble, 7, 1, 1, 1, 1, 1 );
 
 // others are ignored
 n.sendMsg( "/buttons", "blah".scramble, 4, 0, 1, 1, 0, 1 );
@@ -648,26 +703,20 @@ MKtl.addSpec(\pwm8bit, [0, 255, \linear, 1]);
 			ioType: \out
 		)
 	),
-	description: (
-		'led': [
+	elementsDesc: (
+		elements: [
 			(
-				// we need a default value to send out the first time any element changes
-				default: 0,
-				type: 'led', spec: \pwm8bit,
-				ioType: \collectiveOut // use a group method to create the output
-			),
-			(
-				default: 0,
-				type: 'led', spec: \pwm8bit,
-				ioType: \collectiveOut
-			),
-			(
-				default: 0,
-				type: 'led', spec: \pwm8bit,
-				ioType: \collectiveOut
+				key: 'led',
+				shared: (
+					default: 0,
+					type: 'led', spec: \pwm8bit,
+					// use a group method to create the output
+					ioType: \collectiveOut
+				),
+				elements: 3.collect { () }
 			)
 		]
-	);
+	)
 );
 )
 
@@ -680,13 +729,13 @@ OSCFunc.trace( true );
 
 // the collective sends an array of 3 led values via OSC
 // when setting value of a single element
-m.elementAt( \led, 1 ).value_( 0.5 );
-m.elementAt( \led, 2 ).value_( 0.8 );
-m.elementAt( \led, 0 ).value_( 0.1 );
+m.elAt( \led, 1 ).value_( 0.5 );
+m.elAt( \led, 2 ).value_( 0.8 );
+m.elAt( \led, 0 ).value_( 0.1 );
 
 // if you set the value(s) of the group, the send happens 3 times:
-m.elementAt(\led).value_([1, 2, 3] / 3);
-m.elementAt(\led).value;
+m.elAt(\led).value_([1, 2, 3] / 3);
+m.elAt(\led).value;
 m.collectivesDict[\leds].value_([0, 1, 2] / 2);
 m.elementAt(\led).value;
 
@@ -732,30 +781,27 @@ MKtl.addSpec(\pwm8bit, [0, 255, \linear, 1]);
 			ioType: \out
 		)
 	),
-	description: (
-		'led': [
+	elementsDesc: (
+		elements: [
 			(
-				default: 0, // we need a default value to send out the first time any element changes
-				type: 'led', spec: \pwm8bit,
-				ioType: \collectiveOut // use a group method to create the output
-			),
-			(
-				default: 0, // we need a default value to send out the first time any element changes
-				type: 'led', spec: \pwm8bit,
-				ioType: \collectiveOut // use a group method to create the output
-			),
-			(
-				default: 0, // we need a default value to send out the first time any element changes
-				type: 'led', spec: \pwm8bit,
-				ioType: \collectiveOut // use a group method to create the output
+				key: 'led',
+				shared: (
+					default: 0,
+					type: 'led', spec: \pwm8bit,
+					// use a group method to create the output
+					ioType: \collectiveOut
+				),
+				elements: 3.collect { () }
 			)
 		]
-	);
+	)
 );
-);
-
-m.rebuild( ~descCollectiveOut );
-
+)
+m.free;
+m = MKtl( \exampleCollectiveOut, ~descCollectiveOut );
+m.trace;
+m.gui;
+OSCFunc.trace;
 Tdef( \autoaction ).play;
 
 m.free;
@@ -822,20 +868,24 @@ code::
 	idInfo: ( srcPort: NetAddr.langPort, ipAddress: "127.0.0.1" ),
 	protocol: \osc,
 	// name: \descEx,
-	description: (
-		'pad': (
-			oscPath: '/pad',
-			argTemplate: [ 0,0 ], // at row 0 and column 0
-			type: 'pad',
-			spec: \midiCC,
-			ioType: \in
-		)
+	elementsDesc: (
+		elements: [
+			(
+				key: 'pad',
+
+				oscPath: '/pad',
+				argTemplate: [ 0,0 ], // at row 0 and column 0
+				type: 'pad',
+				spec: \midiCC,
+				ioType: \in
+			)
+		]
 	)
-)
 );
+)
 
 m = MKtl( \exampleOSCDesc, ~descExample );
-m.mktlDevice;
+m.device;
 MKtl.all;
 
 MKtlLookup.postInfo  // now also shows the opened 'osc device'
@@ -849,28 +899,32 @@ m.trace;
 m.free;
 ::
 
-So if this seems to work, we can expand the description to have a grid of 4 x 4 pads:
+So if this seems to work, we can expand the description to have a grid of 3 x 3 pads:
 
 code::
 (
 ~descExample = (
 	idInfo: ( srcPort: NetAddr.langPort, ipAddress: "127.0.0.1" ),
 	protocol: \osc,
-	description: (
-		'pad': 3.collect{ |id|
-			3.collect{ |jd|
-				(
+	elementsDesc: (
+		shared: (
 					oscPath: '/pad',
-					argTemplate: [ id,jd ],
 					type: 'pad',
 					spec: \midiCC,
 					ioType: \in
-				)
-			};
-		};
-		)
+				),
+		elements: [
+			(
+				key: 'pad',
+				elements: 3.collect { |id|
+					(elements: 3.collect { |jd|
+						(argTemplate: [ id,jd ])
+					})
+			})
+		]
 	)
 );
+)
 
 m.rebuild( ~descExample );
 m.gui
@@ -896,7 +950,6 @@ Tdef(\exosc).play;
 
 ::
 
-Now all 9 pads are in the description.
 
 section:: OSC output
 
@@ -916,8 +969,10 @@ From this we understand that we should make two types of output elements. For th
 
 code::
 (
-bt: 4.collect { |id|
-	led: (
+key: \bt,
+elements: 4.collect { |id|
+	(
+		key: \led,
 		oscPath: '/manta/led/button',
 		argTemplate: [ nil, id ],
 		type: 'led',
@@ -932,8 +987,10 @@ For the pad leds we need:
 
 code::
 (
-pad: 48.collect { |id|
-	led: (
+key: \pad,
+elements: 48.collect { |id|
+	(
+		key: \led,
 		oscPath: '/manta/led/pad',
 		argTemplate: [ nil, id ],
 		type: 'led',
@@ -975,8 +1032,8 @@ The code::ipAddress:: field in the OSC device info is the ipAddress of the OSC d
 If the OSC device is its own device that connects to a local network (via WIFI or wired), then the device will have its own IP address, and it will be something like code::"192.168.2.42"::.
 
 code::
-idInfo: ( ipAddress: "127.0.0.1" ); // localhost example
-idInfo: ( ipAddress: "192.168.2.42" );
+netAddrInfo: ( ipAddress: "127.0.0.1" ); // localhost example
+netAddrInfo: ( ipAddress: "192.168.2.42" );
 ::
 
 If the OSC device is only sending data, you may leave the code::ipAddress:: undefined. Defining it however provides for an additional filter on the data - only messages from the defined code::ipAddress:: will be used. If you have several of the same devices, you will need to define the code::ipAddress:: for each to distinguish between the devices.
@@ -991,7 +1048,7 @@ In case the OSC device uses a fixed port, you can use this to filter the data th
 
 code::
 // the Manta lib sends from 31417
-idInfo: ( srcPort: 31417 )
+netAddrInfo: ( srcPort: 31417 )
 ::
 
 subsection:: recvPort
@@ -1006,7 +1063,7 @@ If an OSC device wants to send OSC data to SuperCollider it needs to know the po
 
 code::
 // example of the port to which MantaOSC sends its data
-idInfo: ( recvPort: 31416 );
+netAddrInfo: ( recvPort: 31416 );
 ::
 
 If you leave the code::recvPort:: undefined then SuperCollider's default port (code::NetAddr.langPort::) is used, and you need to configure your OSC device to send to that port.
@@ -1016,24 +1073,33 @@ subsection:: destPort
 If the OSC device can also receive messages, you need to know on which port it listens. You can find this in the documentation of the device. For sending a message to an OSC device you need to know both the code::ipAddress:: and the code::destPort::. If the code::destPort:: is left undefined, then the OSCMKtlDevice will use the same port as the code::srcPort::. If the code::ipAddress:: is left undefined then the code::"127.0.0.1":: is used.
 
 code::
-( idInfo: ( srcPort: 31417, ipAddress: "127.0.0.1" ) );
-m.mktlDevice.source;
+( netAddrInfo: ( srcPort: 31417, ipAddress: "127.0.0.1" ) );
+m.device.source;
 // will be NetAddr( "127.0.0.1", 31417 );
-m.mktlDevice.destination;
+m.device.destination;
 // will be NetAddr( "127.0.0.1", 31417 );
 
-( idInfo: ( srcPort: 31417, ipAddress: "127.0.0.1", destPort: 31419 ) );
-m.mktlDevice.source;
+
+( netAddrInfo: ( srcPort: 31417, ipAddress: "127.0.0.1", destPort: 31419 ) );
+m.device.source;
 // will be NetAddr( "127.0.0.1", 31417 );
-m.mktlDevice.destination;
+m.device.destination;
 // will be NetAddr( "127.0.0.1", 31419 );
 
-( idInfo: ( destPort: 31419 ) );
-m.mktlDevice.source;
+( netAddrInfo: ( destPort: 31419 ) );
+m.device.source;
 // will be nil;
-m.mktlDevice.destination;
+m.device.destination;
 // will be NetAddr( "127.0.0.1", 31419 );
+
+// As the ipAddresses and ports may change in the network,
+// one can update them dynamically:
+m.device.updateSrcAddr("127.0.0.1", 12345);
+m.device.updateDestAddr("127.0.0.1", 12345);
+
 ::
+
+
 
 
 section:: OSC special messages
