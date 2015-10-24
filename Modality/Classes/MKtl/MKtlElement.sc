@@ -21,7 +21,7 @@ MAbstractElement {
 
 	// keep current and previous value here
 	var <deviceValue;
-	var <prevValue;
+	var <prevDeviceValue;
 
 	var <lastUpdateTime;
 
@@ -72,7 +72,7 @@ MAbstractElement {
 		// for speed and reading clarity
 	value_ { | newval |
 		if (newval.isNil) { ^this };
-		prevValue = deviceValue;
+		prevDeviceValue = deviceValue;
 		deviceValue = newval;
 
 		this.trySend;
@@ -82,7 +82,7 @@ MAbstractElement {
 	}
 	valueNoSend_ { | newval |
 		if (newval.isNil) { ^this };
-		prevValue = deviceValue;
+		prevDeviceValue = deviceValue;
 		deviceValue = newval;
 		this.updateBus;
 		lastUpdateTime = Process.elapsedTime;
@@ -90,7 +90,7 @@ MAbstractElement {
 	}
 	valueAction_ { | newval |
 		if (newval.isNil) { ^this };
-		prevValue = deviceValue;
+		prevDeviceValue = deviceValue;
 		deviceValue = newval;
 		this.updateBus;
 		lastUpdateTime = Process.elapsedTime;
@@ -104,6 +104,7 @@ MAbstractElement {
 	deviceValueNoSend_ { | newval | ^this.valueNoSend_(newval) }
 
 	value { ^deviceValue }
+	prevValue { ^prevDeviceValue }
 
 	timeSinceLast { ^Process.elapsedTime - lastUpdateTime }
 
@@ -238,7 +239,7 @@ MKtlElement : MAbstractElement {
 
 		// keep old values if there.
 		if (deviceValue.isNil) {
-			deviceValue = prevValue = this.defaultValue;
+			deviceValue = prevDeviceValue = this.defaultValue;
 		};
 
 	}
@@ -290,12 +291,13 @@ MKtlElement : MAbstractElement {
 
 	// numbers as they come from device
 	value { ^deviceSpec.unmap(deviceValue) }
+	prevValue { ^deviceSpec.unmap(prevDeviceValue) }
 
 	// the methods are flattened out for speed and reading clarity
 	// set value in unipolar, so:
 	value_ { | newval |
 		if (newval.isNil) { ^this };
-		prevValue = deviceValue;
+		prevDeviceValue = deviceValue;
 		deviceValue = deviceSpec.map(newval);
 		// [newval, deviceSpec, deviceValue].postln;
 
@@ -307,7 +309,7 @@ MKtlElement : MAbstractElement {
 	}
 	valueNoSend_ { | newval |
 		if (newval.isNil) { ^this };
-		prevValue = deviceValue;
+		prevDeviceValue = deviceValue;
 		deviceValue = deviceSpec.map(newval);
 		this.updateBus;
 		lastUpdateTime = Process.elapsedTime;
@@ -315,7 +317,7 @@ MKtlElement : MAbstractElement {
 	}
 	valueAction_ { | newval |
 		if (newval.isNil) { ^this };
-		prevValue = deviceValue;
+		prevDeviceValue = deviceValue;
 		deviceValue = deviceSpec.map(newval);
 
 		this.trySend;
