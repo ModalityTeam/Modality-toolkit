@@ -158,7 +158,7 @@ MKtl { // abstract class
 		if (res.isNil and: { lookupNameOrDesc.isNil }) {
 			"%(%): not instantiated yet.\n"
 			"Please specify lookupName or desc filename."
-				.format(this, name).inform;
+				.format(this, name.cs).inform;
 			^nil;
 		};
 

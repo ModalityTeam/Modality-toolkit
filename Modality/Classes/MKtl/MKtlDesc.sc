@@ -477,7 +477,7 @@ MKtlDesc {
 		var elemKey;
 		deepKeys = (deepKeys.copy ?? {[]}).add(key);
 		if (dict.elements.isNil) {
-			elemKey = deepKeys.postcs.reject(_.isNil).join($_).asSymbol;
+			elemKey = deepKeys.reject(_.isNil).join($_).asSymbol;
 			dict.put(\elemKey, elemKey);
 			elementsDict.put(elemKey, dict);
 		} {

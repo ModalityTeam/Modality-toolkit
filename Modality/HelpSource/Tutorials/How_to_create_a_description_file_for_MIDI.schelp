@@ -196,7 +196,7 @@ code::
 	elementsDesc: (
 		elements: [
 			(
-				key: \pkey,
+				key: \bt,
 				type: 'button',
 				midiMsgType: \noteOnOff,
 				midiChan: 0,
@@ -206,12 +206,12 @@ code::
 			)
 		]
 	)
-)
 );
+)
 
 m = MKtl( \testMIDI, ~descInput );
 m.rebuild( ~descInput ); // updating it
-
+m.gui;
 m.trace;
 
 // make some messages:
@@ -219,16 +219,31 @@ m.trace;
 ~midiOut.noteOn(0, 64, 0 ); // creates a noteOff message (see note)
 ~midiOut.noteOff(0, 64, 0 );
 
-// note that we can see in the trace whether it was noteOn or noteOff;
+// note that we can see in the trace whether it was noteOn or noteOff:
 ~midiOut.noteOn(0, 64, 37 );
 ~midiOut.noteOff(0, 64, 37 );
 
-// but in the element action, we cannot distinguish between them:
+// in the single element action, we cannot distinguish
+// between the two message types:
 m.trace(false);
-m.elAt(\bt).action = { |el| el.dump.postln };
+m.elAt(\bt).action = { |el| el.postln };
 
-To get noteOn and noteOff separately, one can make separate elements,
-and this is where it makes sense to declare shared properties for both elements.
+// when we are not using the velocity as release velocity,
+// (as is the case with buttons), we can distinguish them by value:
+m.elAt(\bt).action = { |el|
+	if(el.value > 0) {
+		"on".postln;
+	} {
+		"off".postln;
+	}
+};
+
+~midiOut.noteOn(0, 64, 127 );
+~midiOut.noteOn(0, 64, 0 ); // creates a noteOff message (see note)
+~midiOut.noteOff(0, 64, 0 );
+
+
+To get noteOn and noteOff actions separately, one can make separate elements, and here one can declare shared properties for both elements.
 
 (
 ~descInput = (
@@ -760,7 +775,7 @@ m.elAt( \prog ).deviceValue_( 127 );
 
 subsection:: MIDI system exclusive messages
 
-... to be documented ...
+note:: To be documented when fully implemented and tested.::
 
 section:: Explore a MIDI device
 
