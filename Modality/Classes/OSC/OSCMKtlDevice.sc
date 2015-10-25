@@ -94,7 +94,7 @@ OSCMKtlDevice : MKtlDevice {
 
 		source = NetAddr.new( ipAddr, srcPort );
 		destination = NetAddr( ipAddr, dstPort);
-		recvPort = dstPort;
+		recvPort = srcPort;
 
 		this.initCollectives;
 
@@ -292,11 +292,11 @@ OSCMKtlDevice : MKtlDevice {
 			outvalues = outvalues.asArray;
 		} {
 			// prepare outmessage for value of a single element:
-			elDesc = mktl.elAt( key ).elemDesc;
+			elDesc = mktl.dictAt( key ).elemDesc;
 			oscPath = elDesc[\oscPath];
 			// we may modify it, so copy
 			outvalues = elDesc[\argTemplate].copy;
-			if ( outvalues.includes( nil ) ){
+			if ( outvalues.notNil and: { outvalues.includes( nil ) } ){
 				outvalues.put( outvalues.indexOf( nil ), val );
 			}{
 				outvalues = outvalues ++ val;
