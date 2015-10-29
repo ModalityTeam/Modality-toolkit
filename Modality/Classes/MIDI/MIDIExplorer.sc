@@ -132,7 +132,7 @@ More information can be found here:
 		Document( name ++ ".desc.scd", this.compile );
 	}
 
-	*devName {
+	*deviceName {
 		var string, device;
 		device = MIDIClient.sources.detect { |src| src.uid === observedSrcID };
 		if (device.notNil) { ^device.device };
@@ -149,7 +149,7 @@ More information can be found here:
 		"\n(\nvar dict = (idInfo: %, \nprotocol: 'midi');\n\n"
 		"dict.put('description', %\n);";
 
-		^string.format(this.devName.asCompileString, this.compileDesc);
+		^string.format(this.deviceName.asCompileString, this.compileDesc);
 	}
 
 	*compileDesc { |includeSpecs = false|

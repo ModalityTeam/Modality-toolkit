@@ -223,5 +223,7 @@ MIDIMonitor {
 		monitoring = false;
 		CmdPeriod.remove(this);
 	}
+
+	*cmdPeriod { this.stop }
 }
 

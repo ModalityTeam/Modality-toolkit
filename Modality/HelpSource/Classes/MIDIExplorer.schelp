@@ -15,7 +15,7 @@ MKtl.find(\midi);
 MIDIExplorer.postSrcInfo;
 
 // and enter its uid here
-MIDIExplorer.start( paste_uid_here );
+MIDIExplorer.start( -476939297  );
 
 // or to get the uid of e.g. the first connected HID:
 MIDIClient.sources[0].uid.postln;
@@ -26,7 +26,7 @@ MIDIExplorer.start;
 
 // check we are listening to the intended device only:
 MIDIExplorer.observedSrcID;
-MIDIExplorer.devName;
+MIDIExplorer.deviceName;
 
 
 // now play with all elements to generate info for the device.
@@ -40,11 +40,7 @@ MIDIExplorer.openDoc;
 MIDIExplorer.compile;
 
 // and save here:
-MKtl.deviceDescriptionFolder.openOS;
-
-MKtl.openDescFolder;
-
-(\name
+MKtlDesc.openFolder;
 ::
 
 CLASSMETHODS::
@@ -64,6 +60,14 @@ post info on the current state of observation
 METHOD:: stop
 stop exploration.
 
+METHOD:: deviceName
+find the devicename for the observed srcID
+
+METHOD:: instructions
+return instructions string to put on top of desc file.
+
+MIDIExplorer.instructions
+
 METHOD:: compile
 compile the discovered elements as an evaluable string, which can be saved as a description file, and then read as a description dict.
 
@@ -74,6 +78,8 @@ returns:: a String containing a a dict which works as a description, and contain
 METHOD:: openDoc
 opens a new document containing a description string made with MIDIExplorer.compile.
 
+METHOD:: compileDesc
+compile the elementsDesc from MIDIExplorer  data.
 
 METHOD:: verbose
 flag whether to print values when collecting.
