@@ -1,0 +1,18 @@
+TITLE:: MIDIAnalysis
+summary:: analyse MIDI input for making MKtls
+categories:: Libraries>Modality
+related:: Classes/MIDIExplorer, Classes/MKtl, Overviews/Modality
+
+DESCRIPTION::
+MIDIAnalysis is an unfinished sketch for more detailed analysis of MIDI events as collected by MIDIExplorer or MIDIMonitor. May be moved to MIDIMonitor eventually.
+
+CLASSMETHODS::
+
+METHOD:: analyse
+analyse a captured list of midi events.
+
+METHOD:: analyseNoteEls
+analyse the noteOn/off events in the list of midi events.
+
+METHOD:: compressInfo, checkForMultiple
+internal helper functions
