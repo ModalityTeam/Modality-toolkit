@@ -76,10 +76,6 @@ results = results ++ [
 	*compressInfo { |dict, key|
 		^dict.collectAs(_[key], Array).asSet.asArray.sort.unbubble;
 	}
-	// // too tired to figure this out now.. later
-	// reduceToConsecutive {|array|
-	//
-	// }
 
 	*checkForMultiple { |devDesc, typeToFilterBy, dictKeyToCompress|
 		var touchEls = devDesc.select { |el, i| (i.odd and: { el[\midiMsgType] == typeToFilterBy }) };
