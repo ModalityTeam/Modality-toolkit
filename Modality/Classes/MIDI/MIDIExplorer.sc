@@ -186,9 +186,12 @@ elementsDesc: %
 		^string
 	}
 
-	*compileDesc { |includeSpecs = false|
+	// could be refactored for two methods, chanNum and chanOnly messages
+	// could get a flag whether to wrap each type into a group
+	// could sort groupables, like noteOn noteOff, polytouch for same
+	// chan-num combinations ...
 
-		var num, chan;
+	*compileDesc { |includeSpecs = false|
 
 		var str = "( \n\t elements: ["; // ])
 
@@ -211,7 +214,7 @@ elementsDesc: %
 		};
 
 		if (observeDict[\noteOff].notEmpty) {
-			str = str + "\n\n\t\t// ------ noteOn -------------";
+			str = str + "\n\n\t\t// ------ noteOff -------------";
 			observeDict[\noteOff].sortedKeysValuesDo { |key, val|
 				#chan, num = key.split($_).collect(_.asInteger);
 				str = str + "\n\t\t( key: 'nOff_%', 'midiNum':  %, 'midiChan': %, 'midiMsgType': 'noteOff', 'elementType': 'pad', 'spec': 'midiVel'),"
@@ -219,51 +222,43 @@ elementsDesc: %
 			};
 		};
 
-		// if (observeDict[\polytouch].notEmpty) {
-		// 	str = str + "\n\n// ------ polytouch -------------";
-		// 	observeDict[\polytouch].sortedKeysValuesDo { |key, val|
-		// 		#chan, num = key.split($_).collect(_.asInteger);
-		// 		str = str + "\n'_polytouch_%_': ('midiMsgType': 'polyTouch', 'type': 'keytouch', 'midiChan': %, 'midiNum':  %,'spec': 'midiCC'),"
-		// 		.format(key, chan, num);
-		// 	};
-		// };
-		//
-		// if (observeDict[\touch].notEmpty) {
-		// 	str = str + "\n\n// ------- touch ------------";
-		// 	observeDict[\touch].sortedKeysValuesDo { |key, val|
-		// 		#chan, num = key.split($_).collect(_.asInteger);
-		// 		str = str + "\n'_touch_%_': ('midiMsgType': 'touch', 'type': 'chantouch', 'midiChan': %, 'midiNum':  %,'spec': 'midiTouch'),".format(key, chan, num);
-		// 	};
-		// };
-		//
-		// if (observeDict[\bend].notEmpty) {
-		// 	str = str + "\n\n// ------- bend ------------";
-		// 	observeDict[\bend].sortedKeysValuesDo { |key, val|
-		// 		#chan, num = key.split($_).collect(_.asInteger);
-		// 		str = str + "\n'_bend_%_': ('midiMsgType': 'bend', 'type': 'bender', 'midiChan': %, 'midiNum':  %,'spec': 'midiBend'),".format(key, chan, num);
-		// 	};
-		// };
+		if (observeDict[\polytouch].notEmpty) {
+			str = str + "\n\n\t\t// ------ polytouch -------------";
+			observeDict[\polytouch].sortedKeysValuesDo { |key, val|
+				#chan, num = key.split($_).collect(_.asInteger);
+				str = str + "\n\t\t( key: 'polytouch_%', 'midiNum':  %, 'midiChan': %, 'midiMsgType': 'polytouch', 'elementType': 'polytouch', 'spec': 'midiCC'),"
+					.format(key, num, chan);
+			};
+		};
+
+		// channel-only controls:
+
+		if (observeDict[\touch].notEmpty) {
+			str = str + "\n\n\t\t// ------- touch ------------";
+			observeDict[\touch].sortedKeysValuesDo { |key, val|
+				#chan, num = key.split($_).collect(_.asInteger);
+				str = str + "\n\t\t( key: 'touch_%', 'midiChan': %, 'midiMsgType': 'touch', 'elementType': 'touch', 'spec': 'midiCC'),"
+				.format(key, chan);
+			};
+		};
+		if (observeDict[\bend].notEmpty) {
+			str = str + "\n\n\t\t// ------- touch ------------";
+			observeDict[\bend].sortedKeysValuesDo { |key, val|
+				#chan, num = key.split($_).collect(_.asInteger);
+				str = str + "\n\t\t( key: 'bend_%', 'midiChan': %, 'midiMsgType': 'bend', 'elementType': 'bender', 'spec': 'midiBend'),"
+				.format(key, chan);
+			};
+		};
+		if (observeDict[\program].notEmpty) {
+			str = str + "\n\n\t\t// ------- program ------------";
+			observeDict[\program].sortedKeysValuesDo { |key, val|
+				#chan, num = key.split($_).collect(_.asInteger);
+				str = str + "\n\t\t( key: 'program_%', 'midiChan': %, 'midiMsgType': 'program', 'elementType': 'button', 'spec': 'midiCC'),"
+				.format(key, chan);
+			};
+		};
 
 		str = str + "\n\t]\n)\n";
-
-		// if (includeSpecs) {
-		// 	str = str + "\n\n// ----- noteOn Specs ----------";
-		// 	observeDict[\noteOn].sortedKeysValuesDo { |key, val|
-		// 		str = str + "\nMKtl.addSpec( _elName_%_, [%, %, \linear, 0, 0]);".format(key, val[0], val[1]);
-		// 	};
-		// 	str = str + "\n\n// ----- noteOff Specs ----------";
-		// 	observeDict[\noteOn].sortedKeysValuesDo { |key, val|
-		// 		str = str + "\nMKtl.addSpec( _elName_%_, [%, %, \linear, 0, 0]);".format(key, val[0], val[1]);
-		// 	};
-		// 	str = str + "\n\n// ----- CC Specs ----------";
-		// 	observeDict[\noteOn].sortedKeysValuesDo { |key, val|
-		// 		str = str + "\nMKtl.addSpec( _elName_%_, [%, %, \linear, 0, 0]);".format(key, val[0], val[1]);
-		// 	};
-		// 	str = str + "\n\n// ----- bend Specs ----------";
-		// 	observeDict[\noteOn].sortedKeysValuesDo { |key, val|
-		// 		str = str + "\nMKtl.addSpec( _elName_%_, [%, %, \linear, 0, 0]);".format(key, val[0], val[1]);
-		// 	};
-		// };
 
 		^str;
 	}
