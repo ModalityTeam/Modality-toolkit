@@ -193,6 +193,7 @@ elementsDesc: %
 
 	*compileDesc { |includeSpecs = false|
 
+		var chan, num;
 		var str = "( \n\t elements: ["; // ])
 
 		if (observeDict[\cc].notEmpty) {
