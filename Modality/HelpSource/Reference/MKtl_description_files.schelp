@@ -36,13 +36,14 @@ list::
 ## code::<vendor>:: is lower-case name of vendor with spaces replaced by code::-::
 ## code::<device_name>:: is lower-case name of the device with spaces replaced by code::-::
 This is both unique enough to identify devices, and allows linking to the modality website entry on each device.
-## code::<optional_setup_naming>:: can be used to create multiple desc files for the same device, e.g. to support multiple ports (as e.g. the QuNexus keyboard), or for special presets, such as making separate desc files for switchable hardware pages.
+## code::<optional_setup_naming>:: can be used to create multiple desc files for the same device, e.g. to support multiple ports (as e.g. the QuNexus keyboard), for special presets, such as making separate desc files for switchable hardware pages, or for personalized versions of desc files.
 ::
 
 section:: Semantic and technical information
 
 NOTE::
-A description file is bound to a single protocol - currently one of \midi, \hid, and \osc. If there is a device that communicates on multiple protocols (e.g. the EMPHASIS::icon iCONTROLS::), its components have to be built from separate desc files and merged later on.
+A description file is bound to a single protocol - currently one of \midi, \hid, and \osc. If there is a device that communicates on multiple protocols (e.g. the EMPHASIS::icon iCONTROLS::), its components have to be built from separate desc files and merged later on,
+e.g. with CompMKtl.
 ::
 
 subsection:: Top level
@@ -57,7 +58,7 @@ DEFINITIONLIST::
 || Semantic description of what kind of device it is. This will make it easier to find another device that might easily replace it. For examples, do:
 code::
 MKtlDevice.deviceTypes;
-MKtlDesc.loadDescs.collectAs ({ |desc| desc.fullDesc.deviceType }, Set).asArray.sort.postcs;
+MKtlDesc.loadDescs; MKtlDesc.deviceTypesUsed;
 
 -> [ 'controller', 'djController', 'drumPad', 'drumpad', 'fader', 'faderbox', 'filterbank', 'gamepad', 'joystick', 'keyboard', 'launchpad', 'manta', 'mixer', 'mouse', 'multiController', 'phoneApp', 'push', 'ribbon' ]
 ::
@@ -73,10 +74,10 @@ For multi-port MIDI devices, this should be a dictionary with entries for
 (deviceName: <deviceName>,
 sourcePortIndex: <index in MIDIClient.sources>,
 destPortIndex: <index in MIDIClient.destinations>);
-For OSC devices, this is a dictionary with information on the ipAdresses and ports used. (As NetAddresses may change, this often requires updating by hand).
+For OSC devices, this is a dictionary with information on the ipAdresses and ports used. (As NetAddresses may change, this often requires updating by hand. )
 
-## description [required]
-|| A dictionary describing the controls on the device. These controls are called elements within the Modality toolkit.
+## elementsDesc [required]
+|| A (usually hierarchical) dictionary describing the control elements of the device. These controls are called elements within the Modality toolkit.
 
 ## deviceInfo [optional]
 || A dictionary giving additional information on the device.
@@ -119,22 +120,48 @@ DEFINITIONLIST::
 || Needed, if code::\midiType:: is part of the config string. The identifiers code::\bend, \touch, \program:: only need code::\midiChan:: to be specified.
 ::
 
-	The 'description' field contains a dictionary that can contain other dictionaries or arrays. At the leaves of this data structure must be a dictionary describing an element. An example:
-
+	The 'elementsDesc' field is a dictionary that can contain other dictionaries or arrays, which will be used to build hierarchical groups of elements in the MKtl to be built from the description. At the leaves of this data structure must be a dictionary describing an element. Its most important keys are code:: \key, \shared, \elements::; \key defines a local lookup name for the element or group; shared defines properties shared between elements in this group, and \elements is an array of elements which again contain dictionaries describing elemnts or groups.
+A typical structure would be:
 	code::
-\key: [
-	[
-		(\infoKey1: infoVal1, \infoKey2: infoVal2, ...),
-		(\infoKey1: infoVal1, \infoKey2: infoVal2, ...),
-	],[
-		(\infoKey1: infoVal1, \infoKey2: infoVal2, ...),
-		(\infoKey1: infoVal1, \infoKey2: infoVal2, ...),
-	]
+(
+// ...
+elementsDesc: [ // the elementsDesc of the whole device
+	(
+		key: \top,  // name of this group,
+					// all elements use cc and midichan 0
+		shared: (midiChan: 0, midiMsgType: \control),
+
+					// the elements descriptions:
+		elements: [
+					// a group of 2 sliders
+			(
+				key: \sl,   // group name
+					// they share elementType and spec
+				shared: (elementType: \slider, spec: \midiCC ),
+				elements: [
+
+					( key: \1, midiNum: 1 ),
+					( key: \2, midiNum: 2 )
+				]
+			),
+					// a group of 2 buttons
+			(
+				key: \bt,
+					// they share elementType and spec
+				shared: (elementType: \button, spec: \midiBut),
+				elements: [
+					( key: \1, midiNum: 1 ),
+					( key: \2, midiNum: 2 )
+				]
+			)
+		]
+	)
 ]
+)
 ::
 
 
-	The 'specs' field contains a dictionary of specifications of controller ranges. An example:
+	The 'specs' field contains a dictionary of specifications of controller ranges which the MKtl will use. An example:
 
 code::
 (
@@ -211,23 +238,29 @@ korg-nanokontrol2.desc.scd
 is a good example for element naming. All naming examples are taken from there.
 ::
 
-
 Generally, element names should be as clear as possible, and reasonably short to allow for compact code. The main advantage of following the conventions is that similar elements across devices will have identical or at least simlar names, and thus allow substituting one device for a similar one with minimal code changes.
 
 	Unnamed buttons should be called \bt, sliders \sl, knobs \kn, pads \pad, etc., and when they are physically in arrays, they should be given as, e.g.
 code::
- \kn: (16..23).collect{ |i|
-		(\midiMsgType: \cc, \type: \knob, \midiChan: 0, \midiNum: i, \spec: \midiCC)
-	}.
+(
+	key: \kn,
+	shared: (\midiMsgType: \cc, \type: \knob, \midiChan: 0, \spec: \midiCC),
+	elements: (16..23).collect { |i| (\midiNum: i) }
+)
 ::
 	When in rows and columns, these can be nested:
 code::
-	\bt: [(32..39),(48..55),(64..71)].collect{ |xs|
-		xs.collect{ |i|
-			(\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum:  i, \spec: \midiCC)
-		}
+(
+	key: \bt,
+	shared: (\midiMsgType: \cc, \type: \button, \midiChan: 0, \spec: \midiCC),
+	elements: [(32..39),(48..55),(64..71)].collect { |xs|
+		(
+			elements: xs.collect { |i| (\midiNum: i) }
+		)
 	}
+)
 ::
+
 	Elements with names or symbols on them should be given that name,
 	e.g.  a button name "play" or with a > sign on it  should be
 	called \play or \playBt. in the nanoKontrol 2 file, such button names include transport buttons \rew, \fwd, \stop, \play, \rec,
@@ -235,8 +268,89 @@ code::
 
 	When in doubt, consult files of devices with similar elements, and follow the naming schemes there.
 
+section:: Grouping conventions:
+
+Multiple elements of the same type, such as a bank of sliders, should be put in a single group, which can also be nested, as shown above.
+
+Groups of elements which belong to a single physical control element (or otherwise belong together semantically) should be put in a single group. E.g. a gamepad thumbstick typically has an x-axis, a y-axis, and sometimes a hat switch, which should be in one group:
+
+code::
+	(key: \l,
+		elements: [
+			(key: \x, 'hidUsage': 48),
+			(key: \y, 'hidUsage': 49)
+		]
+	)
+
+// A group of two thumbsticks would be:
+
+(
+key: \joy,
+shared: ('hidUsagePage': 1, 'elementType': 'joyAxis', 'ioType': 'in',
+	spec: \cent1, mode: \center ),
+elements: [
+	(key: \l,
+		elements: [
+			(key: \x, 'hidUsage': 48),
+			(key: \y, 'hidUsage': 49)
+		]
+	),
+	(key: \r,
+		elements: [
+			(key: \x, 'hidUsage': 50),
+			(key: \y, 'hidUsage': 53)
+		]
+	)
+]
+);
+::
+
+For MIDI noteOn and noteOff, two different patterns are possible, and there is a shortcut noteOnOff. E.g. for a button which sends noteOn and noteOff, the simplest use is :
+
+code::
+// the element description
+d = ( key: \bt1, elementType: \button, midiMsgType: \noteOnOff, spec: \midiBut, midiNum: 12);
+
+// for demonstration, make an MKtlElement from it, and give it an action
+e = MKtlElement(\bt1, d);
+e.action = { |el| el.value.postln; };
+e.valueAction_(1); // noteOn
+e.valueAction_(0); // noteOff
+
+// determine inside the action whether it is on or off,
+// as one does with gui buttons
+e.action = { |el| if (el.value > 0) { "on" } { "off" }.postln };
+
+e.valueAction_(1); // noteOn
+e.valueAction_(0); // noteOff
+::
+
+While this is fine for simple buttons and pianokeys or pads, one loses use noteOff velocity information (which some keyboards send), and has the inconvenience of the if statement in the action.
+
+So when independent on and off actions make sense, and when other elements should go into this group, one can make them separately:
+
+code::
+// description of a pad with noteOn, noteOff and poly touch:
+d = (
+	\pad1,
+	shared: (midiChan: 0, midiNum: 45),
+	elements: [
+		(key: \on, \midiMsgType: \noteOn, spec: \midiVel),
+		(key: \off, \midiMsgType: \noteOff, spec: \midiVel),
+		(key: \touch, \midiMsgType: \polyTouch, spec: \midiCC)
+	]
+);
+::
+This creates a semantically clear group, and generates separate elements
+with independent actions for each message type.
+the noteOn action could be used to start a synth,
+touch to update one of its parameters while alive,
+and noteOff (using noteOff velocity) to end this synth.
+
+
 section:: Syntax
 
+NOTE:: ABNF notation needs update.::
 The syntax for the description file as agreed on by the modalityTeam on April, 7th 2014
 described in Augmented Backus–Naur Form (with code::/:: switched to code::|:: ) (see link::https://en.wikipedia.org/wiki/ABNF::).
 
