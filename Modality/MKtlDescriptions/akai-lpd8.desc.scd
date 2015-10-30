@@ -40,12 +40,26 @@ elementsDesc: (
 				(key: num.asSymbol, \midiNum: num)
 			}
 		),
+		// noteOnOff not working properly because noteOff vel is 127
+		// (
+		// 	key: \pad,
+		// 	shared: (\elementType: \pad, midiMsgType: \noteOnOff,
+		// 	\spec: \midiVel),
+		// 	elements: (36..43).collect { |num, i|
+		// 		(key: (i+1).asSymbol, midiNum: num)
+		// 	}
+		// )
 		(
 			key: \pad,
-			shared: (\elementType: \pad, midiMsgType: \noteOnOff,
-				\spec: \midiVel),
+			shared: (\elementType: \pad, \spec: \midiVel),
 			elements: (36..43).collect { |num, i|
-				(key: (i+1).asSymbol, midiNum: num)
+				(
+					shared: (key: (i+1).asSymbol, midiNum: num),
+					elements: [
+						(key: \on,  midiMsgType: \noteOn ),
+						(key: \off, midiMsgType: \noteOff)
+					]
+				)
 			}
 		)
 	]
@@ -66,16 +80,16 @@ MKtl('lpd').gui;
 // a synthdef
 (
 SynthDef(\test, {
-	var sound = (SinOsc.ar( \freq.kr(400) ) * \amp.kr(1) ).clip;
+	var sound = (SinOsc.ar( \freq.kr(400) ) * \amp.kr(1) ).softclip;
 	var env = EnvGen.ar(Env.adsr,\gate.kr(1));
-	Out.ar(0, sound * env * 0.5)
+	Out.ar(0, sound * env * 0.25)
 }).add
 )
 
 // a little voicer that keeps running synths
 (
 ~lpdSynths = ();
-MKtl('lpd').elementAt(\pad, \on).do { |el, i|
+MKtl('lpd').elAt(\pad, \all, \on).do { |el, i|
 	el.action_({ |v|
 		~lpdSynths.at(i).release;
 		~lpdSynths[i] =
@@ -83,15 +97,17 @@ MKtl('lpd').elementAt(\pad, \on).do { |el, i|
 	})
 };
 
-MKtl('lpd').elementAt(\pad, \off).do { |el,i|
+MKtl('lpd').elAt(\pad, \all, \off).do { |el,i|
 	el.action_({ |v|
 		~lpdSynths.removeAt(i).release;
 	});
 };
 
-MKtl('lpd').elementAt(\kn).do { |knob, i|
+MKtl('lpd').elAt(\kn).do { |knob, i|
 	knob.action = { [knob.name, knob.value].postln };
 };
 )
+
+MKtl('lpd').trace(false);
 
 */
