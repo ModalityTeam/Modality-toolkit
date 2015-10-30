@@ -32,4 +32,22 @@
 		};
 		^nil
 	}
+
+	// get this dict's keys and those of all parents
+	allKeys { |species|
+		var dict = this, ancestry = [];
+		while { dict.notNil } {
+			ancestry = ancestry.add(dict);
+			dict = dict.parent;
+		};
+		^ancestry.collect { |dict| dict.keys(species) }
+	}
+
+	fillFromParents {
+		this.allKeys.do { |keys|
+			keys.do { |key|
+				this.put(key, this.at(key))
+			};
+		}
+	}
 }
