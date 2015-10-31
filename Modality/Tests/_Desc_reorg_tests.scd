@@ -23,7 +23,8 @@ MKtlDesc.openFolder;
 ~mb.elAt(\x).elementType;
 ~mb.elAt(\x);
 ~mb.elementsDesc.keys;
-~mb.fullDesc.deviceIOGroups;
+~mb.fullDesc.collectives;
+~mb.openFile;
 
 ~trig = MKtlDesc("*finger");
 ~trig.fullDesc.elementsDesc.elements[0]
@@ -73,6 +74,13 @@ MKtl(\qn).device.midiKeyToElemDict.size;
 postElements
 // done already - sharing properties down
 MKtlDesc.sharePropsToElements(~pf.elementsDesc);
+
+MKtl(\mb, "sensestage-minibee1");
+MKtl(\mb).elAt(\x);
+
+MKtl(\mbx, "sensestage-minibee1-xpee");
+MKtl(\mbx).elAt(\accel, \x);
+MKtl(\mbx).collAt(\data).value_({ 1.0.rand.round(0.01) } ! 7)
 
 MKtlDesc.postLoadable;
 MKtlDesc.postLoaded;

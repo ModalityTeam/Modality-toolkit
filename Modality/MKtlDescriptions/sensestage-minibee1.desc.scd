@@ -95,12 +95,12 @@ deviceInfo: (
 	// notes: "",
 	// hasScribble: false
 ),
-
-deviceIOGroups: (
+// maybe rename to deviceIOGroups?
+collectives: (
 	data: (
 		oscPath: '/minibee/data',
 		argTemplate: [ 1 ],
-		elements: [ [\accel, \x], [\accel, \y], [\accel, \z]],
+		elements: [ \x, \y, \z],
 
 		// why ioType in? really needed, and does it do something?
 		ioType: \in
@@ -108,7 +108,7 @@ deviceIOGroups: (
 ),
 
 elementsDesc: (
-	\key: \accel,
+//	\key: \accel,
 	shared: (elementType: 'accelAxis', elementType: \accelAxis, ioType: \collectiveIn, \spec: 'accelAxis' ),
 	elements: [\x, \y, \z ].collect { |key, i|
 		(key: key)

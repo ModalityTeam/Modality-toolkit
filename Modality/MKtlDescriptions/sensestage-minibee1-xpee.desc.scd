@@ -42,7 +42,7 @@ elementsDesc: (
 	elements: [
 		(
 			key: \accel,
-			shared: (elementType: 'accelAxis', elementType: \accelerationAxis, ioType: \collectiveIn, \spec: 'accelAxis' )
+			shared: (elementType: 'accelAxis', elementType: \accelerationAxis, ioType: \collectiveIn, \spec: 'accelAxis' ),
 			elements: [
 				(key: \x),
 				(key: \y),
