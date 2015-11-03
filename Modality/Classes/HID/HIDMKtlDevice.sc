@@ -152,8 +152,13 @@ HIDMKtlDevice : MKtlDevice {
 		source = argSource.open;
 		srcID = source.id;
 
-		this.initElements;
-		this.initCollectives;
+		if (mktl.desc.isNil) {
+			"// % : opened without desc file. Maybe you want to explore this device?\n".postf(mktl);
+			"%.explore;\n\n".post(mktl);
+		} {
+			this.initElements;
+			this.initCollectives;
+		};
 	}
 
 	// // how best to do that?

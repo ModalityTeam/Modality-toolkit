@@ -221,8 +221,11 @@ MKtl { // abstract class
 					name.cs, newMKtlDesc));
 		};
 
-		// assume that now we have a name and a good enough desc
-		^super.newCopyArgs(name).init(newMKtlDesc, lookupName, lookupInfo, lookForNew, multiIndex );
+		// assume that now we have a name
+		// and hopefully a good enough desc
+		^super.newCopyArgs(name)
+		.init(newMKtlDesc, lookupName, lookupInfo,
+			lookForNew, multiIndex );
 	}
 
 	checkIdentical { |lookupNameOrDesc|
@@ -230,7 +233,9 @@ MKtl { // abstract class
 		if (lookupNameOrDesc.isNil) { ^true };
 		if (lookupNameOrDesc.isKindOf(String)
 			and: { this.desc.notNil
-				and: { this.desc.fullDesc.filename == lookupNameOrDesc } }) {
+				and: { this.desc.fullDesc.filename
+					== lookupNameOrDesc }
+		}) {
 			^true
 		} {
 			inform("%: To change my desc,"
@@ -299,20 +304,20 @@ MKtl { // abstract class
 			specs.parent_(globalSpecs);
 		};
 
-		if (desc.isNil) {
-			"%: no desc given, cannot open device or create elements."
-				.format(thisMethod).inform;
-			^this
-		};
-
-		this.finishInit(lookForNew, multiIndex); // and finalise init
 		// only put in all if everything worked
 		all.put(name, this);
+
+		this.finishInit(lookForNew, multiIndex); // and finalise init
 	}
 
 	finishInit { |lookForNew, multiIndex|
-		this.makeElements;
-		this.makeCollectives;
+		if (desc.isNil) {
+			"%: no desc given, cannot create elements."
+				.format(thisMethod).inform;
+		} {
+			this.makeElements;
+			this.makeCollectives;
+		};
 		this.openDevice( lookForNew, multiIndex );
 	}
 
