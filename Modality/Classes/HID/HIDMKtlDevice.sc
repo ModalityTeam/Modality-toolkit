@@ -100,21 +100,21 @@ HIDMKtlDevice : MKtlDevice {
 
 	// create with a uid, or access by name
 	*new { |name, path, parentMKtl, multiIndex|
-		var foundSource;
+		var foundSourceInfo, foundInfo;
 
 		if (path.isNil) {
-			foundSource = MKtlLookup.all.at(name);
-			if (foundSource.notNil) {
-				foundSource = foundSource.deviceInfo;
+			foundInfo = MKtlLookup.all.at(name);
+			if (foundInfo.notNil) {
+				foundSourceInfo = foundInfo.deviceInfo;
 			}
 		} {
 			// // FIXME: is this a USB path?
 			// // and what about multiple matches (e.g. Apple Keyboard)?
-			// foundSource = HID.findBy( path: path ).asArray.first;
+			// foundSourceInfo = HID.findBy( path: path ).asArray.first;
 		};
 
 		// make a new one
-		if (foundSource.isNil) {
+		if (foundSourceInfo.isNil) {
 			warn("HIDMKtl:"
 				"	No HID source with USB port ID % exists! please check again.".format(path));
 			// ^MKtl.prMakeVirtual(name);
@@ -122,13 +122,13 @@ HIDMKtlDevice : MKtlDevice {
 		};
 
 		^super.basicNew( name,
-			this.makeDeviceName( foundSource ),
+			this.makeDeviceName( foundSourceInfo ),
 			parentMKtl )
-		.initHIDMKtl( foundSource );
+		.initHIDMKtl( foundSourceInfo );
 	}
 
 
-	initHIDMKtl { |argSource|
+	initHIDMKtl { |sourceInfo|
 		// HID is only ever one source, hopefully
 		var foundOpenHID;
 		// To make HID polyphonic:
@@ -138,18 +138,18 @@ HIDMKtlDevice : MKtlDevice {
 		// and keep the as they are actions somewhere for removeFunc
 
 		foundOpenHID = HID.openDevices.detect { |hid|
-			hid.info.path == argSource.path };
+			hid.info.path == sourceInfo.path };
 		if (foundOpenHID.notNil) {
 			warn("%: HID already open for: \n%!"
 				"\nHID polyphony not supported yet, so not opening again."
-				.format(thisMethod, argSource));
+				.format(thisMethod, sourceInfo));
 			^this
 		};
 
 		hidElemDict = ();
 		hidElemFuncDict = ();
 
-		source = argSource.open;
+		source = sourceInfo.open;
 		srcID = source.id;
 
 		if (mktl.desc.isNil) {
