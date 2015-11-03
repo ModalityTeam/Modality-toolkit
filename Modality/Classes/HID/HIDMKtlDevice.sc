@@ -139,7 +139,8 @@ HIDMKtlDevice : MKtlDevice {
 
 		foundOpenHID = HID.openDevices.detect { |hid|
 			hid.info.path == sourceInfo.path };
-		if (foundOpenHID.notNil) {
+		// maybe still listed as open, but already closed
+		if (foundOpenHID.notNil and: { foundOpenHID.isOpen }) {
 			warn("%: HID already open for: \n%!"
 				"\nHID polyphony not supported yet, so not opening again."
 				.format(thisMethod, sourceInfo));
@@ -170,7 +171,8 @@ HIDMKtlDevice : MKtlDevice {
 	closeDevice {
 		this.cleanupElementsAndCollectives;
 		srcID = nil;
-		if (source.isOpen) { source.close };
+		if (source.notNil and: { source.isOpen }) { source.close };
+		HID.openDevices
 	}
 
 	*makeDeviceName { |hidinfo|

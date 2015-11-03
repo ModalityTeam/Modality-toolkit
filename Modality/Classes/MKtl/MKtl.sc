@@ -547,12 +547,8 @@ MKtl { // abstract class
 			};
 		};
 
-		// close old device
-		if (device.notNil) {
-			device.closeDevice;
-			device.cleanupElementsAndCollectives;
-			device = nil;
-		};
+		this.closeDevice;
+
 		desc = newDesc;
 		this.init(desc);
 		this.changed( \elementGroup );
