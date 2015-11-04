@@ -170,9 +170,9 @@ MIDIMKtlDevice : MKtlDevice {
 			"Using MIDIExplorer. (see its Helpfile for Details)\n"
 			"\n"
 			"MIDIExplorer started. Wiggle all elements of your controller then\n"
-			"\tMKtl(%).explore(false);\n"
-			"\tMKtl(%).createDescriptionFile;\n"
-			.format(name, name).inform;
+			"\t%.explore('false');\n"
+			"\t%.createDescriptionFile;\n"
+			.format(mktl, mktl).inform;
 
 			MIDIExplorer.start(this.srcID);
 		} {

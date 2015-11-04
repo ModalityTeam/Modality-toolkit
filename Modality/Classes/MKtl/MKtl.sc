@@ -314,6 +314,8 @@ MKtl { // abstract class
 		if (desc.isNil) {
 			"%: no desc given, cannot create elements."
 				.format(thisMethod).inform;
+			"// Maybe you want to explore this device with:\n"
+			"%.explore;\n".postf(this);
 		} {
 			this.makeElements;
 			this.makeCollectives;
