@@ -190,8 +190,8 @@ HIDMKtlDevice : MKtlDevice {
 			"Using HIDExplorer. (see its Helpfile for Details)\n\n".post;
 			"HIDExplorer started. Wiggle all elements of your controller,"
 			" then do:".postln;
-			"\tMKtl(%).explore(false);\n".postf( name );
-			"\tMKtl(%).createDescriptionFile;\n".postf( name );
+			"%.explore(false);\n".postf( mktl );
+			"%.createDescriptionFile;\n".postf( mktl );
 			HIDExplorer.start( this.source );
 		}{
 			HIDExplorer.stop;

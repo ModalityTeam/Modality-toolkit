@@ -531,8 +531,6 @@ MKtl { // abstract class
 	// remake elements from new desc,
 	// close mktldevice if there,
 	// and try to open a new one
-
-
 	rebuild { |descNameOrDict| // could be a string/symbol or dictionary
 		var newDesc;
 		// always replace desc,
