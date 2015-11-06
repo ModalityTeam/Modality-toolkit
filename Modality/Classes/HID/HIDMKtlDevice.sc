@@ -6,7 +6,7 @@ HIDMKtlDevice : MKtlDevice {
 
 	var <srcID, <source;
 	var <enabled = true;
-	var <hidElemDict, <hidElemFuncDict;
+	var <hidElemDict, <hidElemFuncDict, <hidElemLookupDict;
 
 	*initClass {
 		Platform.case(\osx, {
@@ -141,17 +141,19 @@ HIDMKtlDevice : MKtlDevice {
 			hid.info.path == sourceInfo.path };
 		// maybe still listed as open, but already closed
 		if (foundOpenHID.notNil and: { foundOpenHID.isOpen }) {
-			warn("%: HID already open for: \n%!"
-				"\nHID polyphony not supported yet, so not opening again."
+
+			("%: HID already open for: \n%. "
+				"\n - reusing this open HID for polyphony."
 				.format(thisMethod, sourceInfo));
-			^this
+			source = foundOpenHID;
+		} {
+			source = sourceInfo.open;
 		};
+		srcID = source.id;
 
 		hidElemDict = ();
 		hidElemFuncDict = ();
-
-		source = sourceInfo.open;
-		srcID = source.id;
+		hidElemLookupDict = ();
 
 		if (mktl.desc.isNil) {
 			"// % : opened device without desc file. \n"
@@ -247,15 +249,16 @@ HIDMKtlDevice : MKtlDevice {
 				if (enabled) { elem.deviceValueAction_( val ); };
 				if(traceRunning) { traceFunc.value(elem) }
 			};
+
 			var hidElem, hidElems;
 
 			// device specs should primarily use usage and usagePage,
 			// only in specific instances - where the device has bad firmware
 			// use elementIDs which will possibly be operating system dependent
 
-			if ( elid.notNil ){ // filter by element id
+			if ( elid.notNil ) { // filter by element id
 				hidElem = source.elements.at( elid );
-			}{  // filter by usage and usagePage
+			} {  // filter by usage and usagePage
 				// HIDFunc.usage( { |v| el.deviceValueAction_( v ) },
 				// usage, page, \devid, devid );
 				hidElems = source.findElementWithUsage( usage, page );
@@ -270,11 +273,13 @@ HIDMKtlDevice : MKtlDevice {
 			if (hidElem.isNil) {
 				"%: in % no hidElem was found for elemKey % !\n"
 					.postf(mktl, thisMethod, elemKey.cs);
-			} {
-				hidElemDict.put(elemKey, hidElem);
-				hidElemFuncDict.put(elemKey, hidElemFunc);
-				hidElem.action = hidElem.action.addFunc(hidElemFunc);
+				^this
 			};
+
+			// we have a valid element, so use it
+			hidElemDict.put(elemKey, hidElem);
+			hidElemFuncDict.put(elemKey, hidElemFunc);
+			hidElem.action = hidElem.action.addFunc(hidElemFunc);
 		};
 	}
 
