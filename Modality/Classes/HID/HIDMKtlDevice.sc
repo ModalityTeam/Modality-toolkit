@@ -172,7 +172,6 @@ HIDMKtlDevice : MKtlDevice {
 		this.cleanupElementsAndCollectives;
 		srcID = nil;
 		if (source.notNil and: { source.isOpen }) { source.close };
-		HID.openDevices
 	}
 
 	*makeDeviceName { |hidinfo|
@@ -203,8 +202,8 @@ HIDMKtlDevice : MKtlDevice {
 		if(source.notNil) {
 			HIDExplorer.openDocFromDevice(source)
 		} {
-			Error("MKtl#createDescriptionFile - source is nil.\n"
-				"HID probably could not open device").throw
+			"%.createDescriptionFile - source is nil.\n"
+			"HID probably could not open device.\n".postf(mktl);
 		}
 	}
 
