@@ -1,8 +1,8 @@
 + HIDElement {
-		printOn { | stream |
+	printOn { | stream |
 		super.printOn(stream);
 		stream << "(id: " << id << ", type: " << type
-		<< ", usage: " << usage << ", uPage: " << usagePage
+		<< ", usage: " << usage << ", usagePage: " << usagePage
 		<< ")";
 	}
 }
