@@ -1,18 +1,16 @@
 // Behringer BCR2000 specs:
 /*
 
-pr_u_l
-pr_u_r
-pr_d_l
-pr_d_r
-tr[page][row][column]
-knUp[page][row][column]
+pr[row][column]
+tr[page][column]
+knUp[page][column]
 bt[row][column]
 kn[row][column]
-MIDIMKtl('bcr20000').explore
-MIDIMKtl('bcr20000').verbose = true
-MIDIMKtl('bcr20000').verbose = false
-MIDIMKtl('bcr20000').elements.kn[0][0].value_(0.5)
+
+MKtl('bcr', "behringer-bcr2000",multiIndex:0);
+MKtl('bcr').gui
+
+MKtl('bcr').elAt(\kn,0,0).value_(0.5)
 
 */
 
@@ -23,7 +21,7 @@ protocol: \midi,
 deviceType: \mixer,
 elementTypes: [\encoder, \button],
 status: (
-	linux: "unknown",
+	linux: "tested and working",
 	osx: "unknown",
 	win: "unknown"),
 
@@ -32,8 +30,8 @@ idInfo: "BCR2000",
 hardwarePages: [1,2,3,4],
 
 deviceInfo: (
-	vendorURI: "http://www.behringer.com/EN/Products/BCR2000.aspx",
-	manualURI: "http://www.behringer.com/assets/BCF2000_BCR2000_M_EN.pdf",
+	vendorURI: "http://www.music-group.com/Categories/Behringer/Computer-Audio/Desktop-Controllers/BCR2000/p/P0245",
+	manualURI: "https://media.music-group.com/media/PLM/data/docs/P0245/BCF2000_BCR2000_M_EN.pdf",
 	// description: "",
 	// features: [],
 	// notes: "",
@@ -48,21 +46,19 @@ elementsDesc: (
 			key: \pr,
 			shared: (elementType: \button, spec: \midiBut, mode: \toggle),
 			elements: [
-				(midiNum: 105),
-				(midiNum: 106),
-				(midiNum: 107),
-				(midiNum: 108)
+				(elements: [ (\style: (row:5, column: 8), midiNum: 105), (\style: (row:5, column: 9), midiNum: 106) ] ),
+				(elements: [ (\style: (row:6, column: 8), midiNum: 107), (\style: (row:6, column: 9), midiNum: 108) ] )
 			]
 		),
 	//upper row of encoders when pressed, 4 pages, 8 rows
 		(
 			key: \tr,
-			shared: (elementType: \encoder, spec: \midiCC),
+			shared: (elementType: \button, spec: \midiCC),
 			elements: 4.collect { |j|
 				(
 					elements: 8.collect { |i|
 						// top knob push mode
-						(midiNum: 33+(8*j)+i, page: j + 1)
+						(midiNum: 33+(8*j)+i, page: j, \style: (row:0, column: i))
 					}
 				)
 			}
@@ -76,7 +72,7 @@ elementsDesc: (
 				(
 					elements: 8.collect { |i|
 						// top knob push mode
-						(midiNum: 1+(8*j)+i, page: j + 1)
+						(midiNum: 1+(8*j)+i, page: j, \style: (row:1, column: i))
 					}
 				)
 			}
@@ -85,9 +81,9 @@ elementsDesc: (
 		(
 			key: \bt,
 			shared: (elementType: \midiBut, spec: \midiCC),
-			elements: [65,73].collect { |ccStart|
+			elements: [65,73].collect { |ccStart, j|
 				(elements: 8.collect { |i|
-					(midiNum: ccStart+i)
+					(midiNum: ccStart+i, \style: (row:2+j, column: i))
 				})
 			}
 		),
@@ -95,10 +91,10 @@ elementsDesc: (
 		(
 			key: \kn,
 			shared: (elementType: \encoder, spec: \midiCC),
-			elements: [81,89,97].collect { |ccStart|
+			elements: [81,89,97].collect { |ccStart, j|
 				(
 					elements: 8.collect { |i|
-						(midiNum: ccStart+i)
+						(midiNum: ccStart+i, \style: (row:4+j, column: i))
 					}
 				)
 			}

@@ -15,7 +15,7 @@ protocol: \midi,
 deviceType: \faderbox,
 elementTypes: [\fader, \knob, \button],
 status: (
-	linux: "unknown",
+	linux: "tested and working",
 	osx: "tested and working",
 	win: "unknown"),
 
@@ -43,10 +43,9 @@ elementsDesc: (
 				(key: \rew, \midiNum: 47, style: (\row: 1.5, \showLabel: true )),
 				(key: \play, \midiNum: 45, style: (\showLabel: true )),
 				(key: \fwd, \midiNum: 48, style: (\showLabel: true )),
-				(key: \loop, \midiNum: 49, style: (\row: 2.5, \showLabel: true )),
+				(key: \loop, \midiNum: 49, style: (\row: 2.5, column:0, \showLabel: true )),
 				(key: \stop, \midiNum: 46, style: ( \showLabel: true )),
-				(key: \rec, \midiNum: 44, style: ( \showLabel: true )),
-				(key: \rew, \midiNum: 47, style: ( \showLabel: true )),
+				(key: \rec, \midiNum: 44, style: ( \showLabel: true ))
 			]
 		),
 		(
