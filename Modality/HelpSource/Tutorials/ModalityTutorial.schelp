@@ -87,7 +87,7 @@ k.elementAt(\bt).asArray.flop[4]
 )
 
 //note: this does not work with the nanoKONTROL, which has four hardware scenes. There, e.g. in scene 4, the button on row 2 and column 5 would be at:
-code:: k.elements[\bt][3][1][4] ::
+k.elements[\bt][3][1][4]
 ::
 
 section:: Assigning actions
