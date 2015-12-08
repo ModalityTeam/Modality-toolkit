@@ -5,8 +5,9 @@ related:: Overviews/Modality, Classes/MKtl
 
 section:: Discovering and initializing devices
 
-NOTE::If you have a  code::NANOkontrol2:: at hand, you should now plug it in.
-Otherwise you can still follow the rest of the tutorial by using a gui representation which will be explained below.::
+NOTE::If you have a  code::Korg nanoKontrol2:: at hand, you should now plug it in.
+Otherwise you can still do this tutorial by using the gui which can replace the device.
+::
 
 The first step is to discover which devices are available for use:
 
@@ -23,9 +24,9 @@ If you try to create an code::MKtl():: but the device is not connected, you can 
 
 code::
 // open the MKtl
-k = MKtl('mynk2', "korg-nanokontrol2");
+k = MKtl('nk2', "korg-nanokontrol2");
 
-// create a gui if the devive is not connected
+// create a gui for it - this can replace the device
 k.gui;
 ::
 
@@ -41,76 +42,79 @@ k.trace(false);
 
 section:: Identifying elements
 
-Each control (i.e. knob, slider, button, etc) on the device is mapped to an link::Classes/MKtlElement:: . To discover the elements that are available, we look at code::MKtl:elements::.
+Each control (i.e. knob, slider, button, etc) on the device is mapped to an link::Classes/MKtlElement::. To discover the elements that are available, we look at code::MKtl:elementGroup::.
 
 code::
+k.elementGroup;
 // print all elements in the top level group:
-k.elements.printAll;
+k.elementGroup.printAll;
+k.elementGroup.do(_.printAll); "";
+// post the tree of all elements and groups in hierachical order:
+k.postElements;
 ::
 
 This structure is an (link::Classes/MKtlElementGroup::) which can contain nested groups, where the final node is an link::Classes/MKtlElement::. The structure of the groups mimics the spatial and/or logical organization of the controls on the device according to rows, columns and pages.
 
+This structure is defined in the MKtlDesc file for the device:
+code::
+k.desc.openFile;
 
 code::
 //all the base keys
 //some are individual elements others are arrays of elements (or arrays of arrays, etc).
-k.elements.keys;
+k.elementGroup.keys;
 
 //the play button
-k.elementAt(\play);
+k.elAt(\tr, \play);
 
 //the first slider
-k.elements(\sl, 0)
+k.elAt(\sl, 0)
+k.elAt(\sl, \1)
 
 //all sliders in an array
-k.elementAt(\sl)
+k.elAt(\sl)
 
 //the third knob
-k.elementAt(\kn, 2);
+k.elAt(\kn, 2);
+k.elAt(\kn, \3);
 
 //the button on row 2 and column 5
 //buttons are organized first by rows and then columns.
-k.elementAt(\bt, 1, 4)
+k.elAt(\bt, 1, 4)
+k.elAt(\bt, \M, \5)
 
 //all buttons on row 2
-k.elementAt(\bt, 1)
+k.elAt(\bt, 1);
 
 //all buttons on column 5
-k.elementAt(\bt).asArray.flop[4]
+k.elAt(\bt, nil, 4);
 
-// .flop switches rows and columns
-(
-[
-	[1,2],
-	[3,4]
-].flop.postln
-)
-
-//note: this does not work with the nanoKONTROL, which has four hardware scenes. There, e.g. in scene 4, the button on row 2 and column 5 would be at:
-k.elements[\bt][3][1][4]
+//note: this does not work with the nanoKONTROL, which has four hardware scenes.
+// There, e.g. in scene 4, the button on row 2 and column 5 would be at:
+k.elAt(\bt, 3, 1, 4);
 ::
 
 section:: Assigning actions
 
-Actions are assigned using either the "action_" or the "addAction" and "reset" methods of link::Classes/MKtlElement::. These methods take a function as argument which receives one argument, the link::Classes/MKtlElement::. To extract the current value of the element, one should call ".value". The value returned by an link::Classes/MKtlElement:: is between 0 and 1.
+Actions are assigned using either the "action_" or the "addAction" and "resetAction" methods of link::Classes/MKtlElement::. These methods take a function as argument which receives one argument, the link::Classes/MKtlElement::. To extract the current value of the element, one should call ".value". The value returned by an link::Classes/MKtlElement:: is between 0 and 1.
 
 code::
 
 //Assign an action to the third knob
-k.elementAt(\kn, 2).action_({ |el| el.value.postln });
+k.elAt(\kn, 2).action_({ |el| el.value.postln });
 
 //To remove all actions
-k.elementAt(\kn, 2).reset;
+k.elAt(\kn, 2).resetAction;
 
 //Add an action to all knobs
 (
-k.elementAt(\kn).action_({ |el|
+k.elAt(\kn).action_({ |el|
 	"knob % value: %\n".postf(el.parent.indexOf(el), el.value)
 });
 )
 
 //to remove the actions
-k.elementAt(\kn).reset;
+k.elAt(\kn).resetAction;
 ::
 
 An example with a SynthDef:
@@ -119,154 +123,93 @@ NOTE::
 For link::Classes/SynthDef:: building see its helpfile.
 ::
 
-code::
 s.boot;
 
 (
 SynthDef(\blippy, {
-	var sound = Blip.ar(
-		\freq.kr(440).lag(0.1),
-		\numHarmonics.kr(100),
-		\amp.kr(1.0).lag(0.1)
-	) * 0.5;
-
-	sound = RLPF.ar(sound, 5000);
-	Out.ar(0, Pan2.ar(sound, \pan.kr(0).lag(0.1) ) )
+    var out = Blip.ar(\freq.kr(440).lag(0.1), \numHarmonics.kr(100), \amp.kr(1.0).lag(0.1) ) * 0.5;
+    Out.ar(0, Pan2.ar(out, \pan.kr(0).lag(0.1) ) )
 }).add
-)
+);
 
-(
 //start it
 x = Synth(\blippy, [\freq, 440, \numHarmonics, 100, \amp, 0.5, \pan, 0]);
 
+(
 //clear all actions first
-k.reset;
+k.resetAction;
 
-//knob 1 -> amplitude
-k.elementAt(\kn, 0).action_({ |el| x.set(\amp, el.value) });
+//slider 0 -> amplitude
+k.elAt(\sl, 0).action_({ |elem| x !? _.set(\amp, \amp.asSpec.map(elem.value)) });
 
-//knob 2 -> pan
-k.elementAt(\kn, 1).action_({ |el| x.set(\pan, el.value.linlin(0.0, 1.0, -1.0, 1.0) ) });
+//knob 0 -> pan
+k.elAt(\kn, 0).action_({ |elem| x !? _.set(\pan, \pan.asSpec.map(elem.value)) });
 
-//slider 1 -> frequency
-k.elementAt(\sl, 0).action_({ |el| x.set(\freq, el.value.linlin(0.0, 1.0, 100, 400) ) });
+//slider 1
+k.elAt(\sl, 1).action_({ |elem| x !? _.set(\freq, elem.value.linlin(0.0, 1.0, 50, 2000) ) });
 
-//slider 2 -> number of harmonics
-k.elementAt(\sl, 1).action_({ |el| x.set(\numHarmonics, el.value.linexp(0.0, 1.0, 5, 200) ) });
-
+//knob 1 -> number of harmonics
+k.elAt(\kn, 1).action_({ |elem| x !? _.set(\numHarmonics, elem.value.linexp(0.0, 1.0, 1, 50) ) });
 )
-::
 
-To clear all actions assigned to the whole controller, use
+(
+// play button -> start and stop synth
+k.elAt(\tr, \play).action_({  |elem|
+    if(elem.value > 0) {
+        x !? _.free;
+        x = Synth(\blippy, [\freq, 440, \numHarmonics, 100, \amp, 0.5, \pan, 0])
+    } {
+        x !? _.free;
+        x = nil;
+    }
+});
+);
 
-code::
-k.reset;
-::
-
-To stop the synth, use
-code::
+// clear all functions
+k.resetAction;
+// stop the synth:
 x.free;
-::
 
-Starting and stopping the synth from the controller:
-code::
+
+// assigning multiple actions can be done with .addAction;
 (
-
-//clear all actions first
-k.reset;
-
-//knob 1 -> amplitude
-k.elements[\kn][0].action_({ |el| x !? _.set(\amp, el.value) });
-
-//knob 2 -> pan
-k.elements[\kn][1].action_({ |el| x !? _.set(\pan, el.value.linlin(0.0, 1.0, -1.0, 1.0) ) });
-
-//slider 1 -> frequency
-k.elements[\sl][0].action_({ |el| x !? _.set(\freq, el.value.linlin(0.0, 1.0, 200, 2000) ) });
-
-//slider 2 -> number of harmonics
-k.elements[\sl][1].action_({ |el| x !? _.set(\numHarmonics, el.value.linexp(0.0, 1.0, 1, 200) ) });
-
-//play button -> start and stop synth
-k.elements[\play].action_({  |el|
-	if(el.value.booleanValue) {
-		x !? _.free;
-		x = Synth(\blippy, [\freq, 440, \numHarmonics, 100, \amp, 0.5, \pan, 0])
-	} {
-		x !? _.free;
-		x = nil;
-	}
-})
-)
-::
-
-NOTE::
-If code::x == nil::, then code::x !? f:: doesn't do anything,
-
-while if code::x != nil::,  code::x !? fcode:: will execute code::f.(x)::.
-::
-
-To assign multiple actions to the same element, use link::Classes/MKtlElement#addAction:: and link::Classes/MKtlElement#removeAction:: :
-
-
-code::
-(
-k.elementAt(\kn, 0).addAction({ |el| ("action 1 :"++ el.value).postln });
-k.elementAt(\kn, 0).addAction({ |el| ("action 2 :"++ el.value).postln });
+k.elAt(\sl, 0).addAction({ |elem| ("1 :"++elem.value).postln });
+k.elAt(\sl, 0).addAction({ |elem| ("2 :"++elem.value).postln });
 )
 //clear all
-k.elementAt(\kn, 0).reset;
-::
+k.elAt(\sl, 0).resetAction;
 
-To remove individual actions, the functions should be first assigned to a variable:
-code::
+/// to remove them you need to have a reference to the function
 (
-f = { |el| ("action 1 :"++ el.value).postln };
-g = { |el| ("action 2 :"++ el.value).postln };
-k.elementAt(\kn, 0).addAction(f);
-k.elementAt(\kn, 0).addAction(g);
+f = { |elem| ("1 :"++elem.value).postln };
+g = { |elem| ("2 :"++elem.value).postln };
+k.elAt(\sl, 0).addAction(f);
+k.elAt(\sl, 0).addAction(g);
 )
 
 //remove first action
-k.elementAt(\kn, 0).removeAction(f);
+k.elAt(\sl, 0).removeAction(f);
+// just 2 is left
 
 //clear all
-k.elementAt(\kn, 0).reset
-::
+k.elAt(\sl, 0).action = nil;
 
-code::
 
-//Assigning multiple synth controls to the same physical control:
-(
-//start it
-x = Synth(\blippy);
+/// =========== output to elements (if you have any on your midi device) =============
 
-//clear all actions first
-k.reset;
+// check which inputs are there:
+k.inputElements;
 
-//knob 1 -> amplitude and pan
-~action1 = { |el| x.set(\amp, el.value) };
-~action2 = { |el| x.set(\pan, el.value.linlin(0.0, 1.0, -1.0, 1.0) ) };
+// check which outputs are there:
+k.outputElements;
 
-k.elementAt(\kn, 0).addAction(~action1);
-k.elementAt(\kn, 0).addAction(~action2);
+// sending data to the output elements
+// value range between 0 and 1, will be mapped according to the
+// deviceSpec given in the description file
+// should set LEDs on all S buttons
+/*
+k.elAt(\bt, \S).do { |elem| elem.value_(1.0) };
+k.elAt(\bt, \S).do { |elem| elem.value_(0.0) };
+*/
 
-//slider 1 -> frequency and number of harmonics
-~action3 = { |el| x.set(\freq, el.value.linlin(0.0, 1.0, 200, 2000) ) };
-~action4 = { |el| x.set(\numHarmonics, el.value.linlin(0.0, 1.0, 10, 300) ) };
-k.elementAt(\sl, 0).addAction(~action3);
-k.elementAt(\sl, 0).addAction(~action4);
-)
-
-//remove amp action, frequency action and free synth
-(
-k.elementAt(\kn, 0).removeAction(~action1);
-k.elementAt(\sl, 0).removeAction(~action3);
-x.free;
-)
-
-// clean up controller
-
-k.reset;
-::
-
+k.free;

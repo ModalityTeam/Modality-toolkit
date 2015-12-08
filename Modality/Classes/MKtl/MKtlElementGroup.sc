@@ -327,7 +327,7 @@ MKtlElementGroup : MKtlElement {
 		this.action = action.removeFunc(argAction);
 	}
 
-	reset {
+	resetAction {
 		this.action = nil
 	}
 

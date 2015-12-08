@@ -343,6 +343,11 @@ MKtlElement : MAbstractElement {
 		action = action.removeFunc(argAction);
 	}
 
+	reset {
+		this.deprecated(thisMethod, this.class.findMethod(\resetAction));
+		this.resetAction;
+	}
+
 	resetAction {
 		action = nil
 	}

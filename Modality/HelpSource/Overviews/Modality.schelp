@@ -65,7 +65,7 @@ k.trace(false);
 k.gui;
 
 // make sure there are no current assigned actions
-k.reset;
+k.resetAction;
 
 // boot the server
 s.boot;
@@ -121,7 +121,7 @@ k.trace(false);
 k.gui;
 
 // make sure there are no current assigned actions
-k.reset;
+k.resetAction;
 
 // dictionary of controls keys to MKtlElements
 k.elements;
@@ -161,7 +161,7 @@ x.free;
 k.elementAt(\kn,0,0).value_(0.5);
 
 // remove all assigned actions
-k.reset;
+k.resetAction;
 ::
 
 
