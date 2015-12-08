@@ -8,7 +8,7 @@ MIDIClient.init;
 
 Section:: Introduction
 
-The functionality of link::Classes/MKtl:: relies on descriptions of the used devices. For some Controllers, there are already descriptions available, chances are that your device is not among them.
+The functionality of link::Classes/MKtl:: relies on descriptions of the used devices. For some Controllers, there are already descriptions available. However, it might be the case that your device is not among them.
 
 This Tutorial first shows simple examples of MIDI interfaces, by emulating them within SuperCollider, and then describes how to create a description file for your interface.
 
@@ -25,25 +25,35 @@ list::
 
 section:: Simple input
 
-In this section we will go through all the different types of MIDI messages that may come in and show how to write a description for that element.
+In this section we will go through the different types of MIDI messages for communicating element states  EMPHASIS::
+from a MIDI-device to SuperCollider:: and show how to write a description for them.
 
-There are a number of different types of MIDI messages: code::noteOn:: and code::noteOff:: for midi note messages - typically connected to a MIDI keyboard, pitch bend messages, after touch messages, MIDI control messages (e.g. volume control) and MIDI program change messages (e.g. to switch to a different bank of sounds).
+There are a number of different types of MIDI messages:
 
-Note::
-So you can test the examples below even without a physical device, we will use SuperCollider's own input and output. In order to do that, you will need to do different things depending on which platform you are using.
-
-On linux, midi ins and outs are created automatically.
-
-On OSX, please go to Audio MIDI Setup, and create an IAC Bus you can use.
+list::
+## noteOn and noteOff for midi note messages — typically connected to a MIDI keyboard,
+## pitch bend messages,
+## after touch messages,
+## MIDI control messages ("CC" e.g., volume control) and
+## MIDI program change messages (e.g. to switch to a different bank of sounds).
 ::
 
-Some startup code for our next examples:
+To try out the examples below even without a physical device at hand, we will use SuperColliders own MIDI input and output.
+
+NOTE::
+Depending on your operating system, you might need to set up a helper tool for MIDI loopback. For OSX, you have to create an IAC Bus in the system tool "Audio MIDI Setup". For other platforms, please refer to a search engine of your choice.
+::
+
+
+Find all MIDI devices and do the MIDI initialisation (implicitely within the MKtl implementation):
 
 code::
-// find all MIDI devices (and do MIDI initialisation)
 MKtl.find(\midi);
+::
 
-// On OSX, this should now show something like this:
+On OSX, this should now show something like this in the post window:
+
+code::
 MIDI Sources:
 	MIDIEndPoint("IAC Driver", "IAC Bus 1", -476939297)
 MIDI Destinations:
@@ -57,10 +67,9 @@ MIDI Destinations:
 MKtl('midi_0_iac_driver', 'midi_0_iac_driver');		// [ "IAC Driver", "IAC Bus 1", -476939297 ]
 
 -----------------------------------------------------
-
 ::
 
-Then you can continue here:
+The followig code creates a (virtual) MIDI loopback connection between code::~midiOut:: and code::~midiIn:: and stores information on your setup in code::~idInfo:::
 
 code::
 (
@@ -91,29 +100,34 @@ Platform.case(
 );
 ::
 
-For information on MIDIOut see also:
-
-link::Classes/MIDIOut#Linux specific: Connecting and disconnecting ports::
-
-link::Classes/MIDIOut#OS X specific: Sending MIDI to other applications::
-
+NOTE::
+For more information on MIDIOut see:
+list::
+##link::Classes/MIDIOut#Linux specific: Connecting and disconnecting ports::
+##link::Classes/MIDIOut#OS X specific: Sending MIDI to other applications::
+::
+::
 
 subsection:: MIDI note messages
 
-MIDI note messages were originally designed for piano keys on a MIDI keyboard. But in many MIDI controllers they can also be connected to other buttons or drum pads. MIDI code::noteOn:: messages have a note number defining which key was pressed, and a velocity value defining the speed or intensity with which it was pressed (a typical mapping for this would be to make a sound louder when the key is pressed with a higher speed). When the note is released, a code::noteOff:: message is sent, again with a note number and a velocity (the speed of release, this could e.g. be mapped to the release time of an envelope). However, some MIDI devices also just sent a MIDI code::noteOn:: message with velocity zero when a note is released.
+MIDI note messages were originally designed for piano keys on a MIDI keyboard. However, in many MIDI controllers they are used to report on states of elements like buttons or drum pads.
+
+MIDI code::noteOn:: messages have a EMPHASIS::note number:: defining which key was pressed, and a EMPHASIS::velocity:: value defining the speed or intensity with which it was pressed. A typical mapping for velocity would be the amplitude of a sound such that it gets louder with the amount of energy applied to press the corresponding key.
+
+When the key is lifted again (i.e. the note is released), a code::noteOff:: message is sent. It again features a note number and a velocity value. By interpreting this velocity as the release speed, a resonable mapping would be stretching the release time of sound's envelope). Instead of a code::noteOff::, most MIDI devices send a code::noteOn:: message with velocity code::0:: (an officially supported method).
 
 NOTE::
-In SuperCollider MIDI noteOn messages with velocity 0 are always parsed as noteOff messages.
-There is a pull request to SuperCollider for this, which makes this an option rather than a default:
+MIDI noteOn messages with velocity 0 are always parsed as noteOff messages (in SuperCollider).
+There is a pull request to the SuperCollider development which would make this an option rather than a default. The syntax then would be
 code::
-MIDIIn.noteOnZeroAsNoteOff = false;
+MIDIIn.noteOnZeroAsNoteOff = false; // send noteOn with velocity 0 as noteOn 0
+MIDIIn.noteOnZeroAsNoteOff = true; // send noteOn with velocity 0 as noteOff 0
 ::
-See: link::https://github.com/supercollider/supercollider/issues/1483::
-and: link::https://github.com/supercollider/supercollider/pull/1488::
+For more details, see link::https://github.com/supercollider/supercollider/issues/1483:: and link::https://github.com/supercollider/supercollider/pull/1488::
 ::
 
 
-As a first example, here is how to create an element that responds to a code::noteOn:: event. For the velocity we use the code::spec: \midiVel::, which maps the range of 0 to 127 to the range between 0 and 1.
+As a first example, we now create an link::Classes/MKtl:: containing exactly one link::Classes/MKtlElement:: that responds to a code::noteOn:: event. For mapping its velocity we use the code::spec: \midiVel:: identifier, which tells the system to normalise the raw value range of velocity values (code::0:: to code::127::) to values between code::0:: and code::1::.
 
 code::
 // midiMsgType: \noteOn, one note
