@@ -46,10 +46,25 @@ deviceInfo: (
 elementsDesc: (
 	elements: [
 		(
+
 			key: \key,
-			shared: (\midiMsgType: \noteOnOff, \elementType: \key,
+			shared:  (\elementType: \key,
 				\midiChan: 0, \spec: \midiVel, \ioType: \in),
-			elements: (5..124).collect { |num| (midiNum: num) }
+			elements: (0..124).collect { |num, i| (
+				shared: (midiNum: num),
+				elements: [
+						(key: \on,  midiMsgType: \noteOn ),
+						(key: \off, midiMsgType: \noteOff)
+				]
+			)}
+
+			// // shared noteOnOff implementation, not working 'cause velocity of noteOff != 0
+			// key: \key,
+			// shared: (\midiMsgType: \noteOnOff, \elementType: \key,
+			// \midiChan: 0, \spec: \midiVel, \ioType: \in),
+			// elements: (5..124).collect { |num| (midiNum: num) }
+
+
 		),
 		(
 			key: \kn,
@@ -115,7 +130,7 @@ elementsDesc: (
 			key: \btMix, \midiNum: 10, \midiMsgType: \cc, \type: \button,
 			\midiChan: 0, \spec: \midiBut, \mode: \push, \ioType: \in),
 
-	// upper right
+		// upper right
 		(
 			key: \btSeq,
 			\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 26,
@@ -128,7 +143,7 @@ elementsDesc: (
 			key: \btMic,
 			\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 48,
 			\spec: \midiBut, \mode: \push, \ioType: \in),
-	// red labels
+		// red labels
 		(
 			key: \btLift,
 			\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 15,
