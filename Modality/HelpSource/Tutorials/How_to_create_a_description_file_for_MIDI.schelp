@@ -29,7 +29,13 @@ In this section we will go through all the different types of MIDI messages that
 
 There are a number of different types of MIDI messages: code::noteOn:: and code::noteOff:: for midi note messages - typically connected to a MIDI keyboard, pitch bend messages, after touch messages, MIDI control messages (e.g. volume control) and MIDI program change messages (e.g. to switch to a different bank of sounds).
 
-So you can test the examples below even without a physical device, we will use SuperCollider own input and output. In order to do that, you will need to do different things depending on which platform you are using. On OSX, please go to Audio MIDI Setup, and create an IAC Bus you can use.
+Note::
+So you can test the examples below even without a physical device, we will use SuperCollider's own input and output. In order to do that, you will need to do different things depending on which platform you are using.
+
+On linux, midi ins and outs are created automatically.
+
+On OSX, please go to Audio MIDI Setup, and create an IAC Bus you can use.
+::
 
 Some startup code for our next examples:
 
