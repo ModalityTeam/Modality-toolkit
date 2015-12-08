@@ -41,7 +41,12 @@ list::
 To try out the examples below even without a physical device at hand, we will use SuperColliders own MIDI input and output.
 
 NOTE::
-Depending on your operating system, you might need to set up a helper tool for MIDI loopback. For OSX, you have to create an IAC Bus in the system tool "Audio MIDI Setup". For other platforms, please refer to a search engine of your choice.
+Depending on your operating system, you might need to set up a helper tool for MIDI loopback.
+
+list::
+##On linux, midi ins and outs are created automatically.
+##For OSX, you have to create an IAC Bus in the system tool "Audio MIDI Setup".
+##For other platforms, please refer to a search engine of your choice.
 ::
 
 
