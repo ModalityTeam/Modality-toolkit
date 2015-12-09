@@ -3,11 +3,13 @@ summary:: How to name entries in the single element descriptions in MKtl desc fi
 categories:: Libraries>Modality
 related:: Overviews/Modality, Classes/MKtl, Tutorials/How_to_create_a_description_file
 
-A description file contains detailed information about a controller, so it can be used to full advantage in Modality. Especially, precise information about each of its interaction elements (sliders, knobs, imus, and what-have-yous) help to create good performance setups very efficiently.
+A description file contains detailed information about a controller, so it can be used to full advantage within the link::Overviews/Modality:: context. To ensure a smooth workflow precise information about each interaction elements (sliders, knobs, imus, and what-have-yous) of a controller is crucial and will help to efficiently create performance setups.
 
-This file describes the conventions to follow in the individual element descriptions.
+note::
+This file describes conventions used for the individual element descriptions. For a general introduction and overview on description files, see the tutorial on link::Tutorials/How_to_create_a_description_file::.
+::
 
-A single element desc is a dictionary or event, and it (or the shared properties of its group) should contain these keys:
+A single element description is a dictionary or link::Classes/Event::. It (or the shared properties of its group) should contain the these keys:
 
 code::
 (
