@@ -492,4 +492,6 @@ k.elAt(\mix, \1)
 k.elAt(\mix, 0)
 k.elAt(\mix, \1, \kn)
 k.elAt(\mix, \1, 1)
+
+// TODO: example with button groups included in mixer channels ...
 ::
