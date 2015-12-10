@@ -278,7 +278,8 @@ MKtlElementGroup : MKtlElement {
 
 	shape { ^elements.shape }
 
-	flop { ^elements.flopTogether } /// a bit dirty but it works
+	// this can break nested elementGroups
+//	flop { ^elements.flopTogether } /// a bit dirty but it works
 
 	attachChildren {
 		elements.do(_.prAddGroup(this));

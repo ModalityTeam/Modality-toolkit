@@ -30,6 +30,7 @@ MKtl { // abstract class
 
 	var <elementGroup;			// all elements in ElementGroup in hierarchical order
 	var <elementsDict; 		// all elements in a single dict for fast access
+	var <namedDict;
 
 	var <collectivesDict; 	// has the collectives (combined elements and groups)
 	// from the device description
@@ -317,10 +318,15 @@ MKtl { // abstract class
 			"// Maybe you want to explore this device with:\n"
 			"%.explore;\n".postf(this);
 		} {
+			namedDict = ();
 			this.makeElements;
 			this.makeCollectives;
 		};
 		this.openDevice( lookForNew, multiIndex );
+	}
+
+	addNamed { |name, group|
+		namedDict.put(name, group);
 	}
 
 	updateLookupInfo { |newInfo|
@@ -386,7 +392,7 @@ MKtl { // abstract class
 	}
 
 	elementAt { |...args|
-		^elementGroup.deepAt(*args)
+		^this.elAt(*args)
 	}
 
 	collAt { |...args|
@@ -397,7 +403,7 @@ MKtl { // abstract class
 
 	elAt { |...args|
 		^elementGroup.deepAt2(*args)
-		?? { collectivesDict.deepAt2(*args) }
+		?? { namedDict.deepAt2(*args) }
 	}
 
 	at { |index|
