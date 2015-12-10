@@ -464,5 +464,32 @@ k.elAt(\tr).do { |el| k.addNamed(el.elemDesc.key, el); };
 k.namedDict.keys;
 k.elAt(\stop);
 
-// TODO: examples of making new groups and adding them
+
+// An example for making a new group and adding it -
+// a mixer with 8 channels each consisting of one slider and one knob:
+
+k = MKtl(\nk2, "*trol2");
+
+// the elements as flopped array
+k.elAt([\sl, \kn], (0..7)).flop.choose;
+
+// make nested element groups from them:
+// assocs are needed so that lookup by name is generated
+// (maybe add elAtAsAssoc method that returns assocs?
+(
+m = MKtlElementGroup(\mix, k,
+	k.elAt([\sl, \kn], (0..7)).flop.collect { |pair, i|
+		var name = (i+1).asSymbol;
+		name -> MKtlElementGroup(name, k,
+			pair.collect { |el, i| [\sl, \kn][i] -> el }
+		);
+});
+k.addNamed(\mix, m);
+)
+k.elAt(\mix);
+k.elAt(\mix, 0)
+k.elAt(\mix, \1)
+k.elAt(\mix, 0)
+k.elAt(\mix, \1, \kn)
+k.elAt(\mix, \1, 1)
 ::
