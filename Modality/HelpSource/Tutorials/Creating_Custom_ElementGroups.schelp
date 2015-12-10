@@ -4,8 +4,8 @@ categories:: Libraries>Modality, Tutorials
 related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files
 
 section:: Background
-MKtl objects contain a hierarchical organisation of their interaction elements
-in MKtl.elementsGroup. This group contains and defines every element once, and one can access every element directly by its element key, or by its hierarchical address. At times there are multiple possibilities for thinking of ways to group these elements, and MKtl supports multiple such orders.
+MKtl objects contain a hierarchical organisation of their interaction elements in MKtl.elementsGroup. This group contains and defines every element once, and one can access every element directly by its element key, or by its hierarchical address. At times multiple ways of grouping and naming these elements make sense, and MKtl supports multiple such orders.
+
 The examples below show that for two simple cases.
 
 section:: Examples
@@ -19,98 +19,83 @@ n.trace;
 n.postElements;
 
 
-// it has five transport buttons which are flat in the top level of
-n.elementsGroup;
+// it contains five transport buttons in a group called \tr:
+n.elementGroup;
+n.elAt(\tr);
 
-(
-// put those buttons in a new group:
-x = MKtlElementGroup(\transport, n, n.elementAt([\rew, \fwd, \stop, \play, \rec]));
-// and add that group to collectives
-n.collectivesDict.put(\transport, x);
-)
-
-// access directly
-n.elementAt(\rew);
-// or access from new group
-x[\rew];
-
-// access in collectivesDict
-n.collAt(\transport);
-n.collAt(\transport, 4); // by index
-n.collAt(\transport, \stop); // or name/key
-
-// elAt looks first in elementsGroup, then in collectives
-n.elAt(\rew);
-n.elAt(\transport, \rew);
-n.elAt(\transport, \nopey); // returns nil for not found, no error
+// as these buttons are unique and have names,
+//they could also be accessible by that name:
+n.elAt(\tr, \play);
+// not there yet -
+n.elAt(\play);
+// add them to namedDict
+n.elAt(\tr, [\play, \stop, \rew, \fwd, \rec]).do { |el| n.addNamed(el.elemDesc.key, el); };
+n.namedDict.keys;
+// and now this access works:
+n.elAt(\stop);
 ::
-
 
 The nanokontrol is actually structured like a mixer, so rather than grouping sliders, knobs and buttons in separate groups, one could also make a group of each of the 8 mixer channels, with each containing a knob, a slider and 3 buttons.
 
 code::
 
 (
-// needed for lookup by name
-MKtlElementGroup.addGroupsAsParent = true;
-
-// nested - the top group is mixchan,
-y = MKtlElementGroup(\mixchan, n,
+// nested - the top group is \mix,
+y = MKtlElementGroup(\mix, n,
 	8.collect { |i|
 		// inner group is a list of 8 channels, index 0-7
 		MKtlElementGroup(i, n,
 			// note the assocs which are needed for access by name later!
-			[ 	\kn -> n.elementAt(\kn, i),
-				\sl -> n.elementAt(\sl, i),
-				\bt_S -> n.elementAt(\bt, 0, i),
-				\bt_M -> n.elementAt(\bt, 1, i),
-				\bt_R -> n.elementAt(\bt, 2, i)
+			[ 	\kn -> n.elAt(\kn, i),
+				\sl -> n.elAt(\sl, i),
+				\bt_S -> n.elAt(\bt, 0, i),
+				\bt_M -> n.elAt(\bt, 1, i),
+				\bt_R -> n.elAt(\bt, 2, i)
 			]
 		)
 	};
 );
-MKtlElementGroup.addGroupsAsParent = false;
-
-n.collectivesDict.put(\mixchan, y);
+n.addNamed(\mix, y);
 )
 
 // access variants
-n.collectivesDict[\mixchan];
-n.collAt(\mixchan);
+n.elAt(\mix);
 // index 0 is channel 1...
-n.collAt(\mixchan, 0, 0);
-n.collAt(\mixchan, 0, \bt_R);
+n.elAt(\mix, 0, 0);
+n.elAt(\mix, 0, \bt_R);
+n.elAt(\mix, 0, \bt_R);
 
-
-
-// same example, but make symbolic names for the channels as well
+// same example, but make symbolic names for the channels as well,
+// and put the buttons in a nested group
 (
-MKtlElementGroup.addGroupsAsParent = true;
-// bigger example - make a group of 8 mixerChan groups:
-y = MKtlElementGroup(\mixchan, n,
+y = MKtlElementGroup(\mix, n,
 	8.collect { |i|
 		var chanName = ("ch_" ++ (i + 1)).asSymbol;
 		chanName -> MKtlElementGroup(chanName, n,
-			[ 	\kn -> n.elementAt(\kn, i),
-				\sl -> n.elementAt(\sl, i),
-				\bt_S -> n.elementAt(\bt, 0, i),
-				\bt_M -> n.elementAt(\bt, 1, i),
-				\bt_R -> n.elementAt(\bt, 2, i)
+			[ 	\kn -> n.elAt(\kn, i),
+				\sl -> n.elAt(\sl, i),
+
+				\bt -> MKtlElementGroup(\bt, n,
+					[\S, \M, \R].collect { |key|
+						key -> n.elAt(\bt, key, i)
+					}
+				)
 			]
 		)
 	};
 );
-MKtlElementGroup.addGroupsAsParent = false;
-
-n.collectivesDict.put(\mixchan, y);
+n.addNamed(\mix, y);
 )
 
 // access variants
-n.collectivesDict[\mixchan];
-n.collAt(\mixchan);
+n.namedDict[\mix];
+n.elAt(\mix);
 
-n.elAt(\mixchan, 'ch_1');
-n.elAt(\mixchan, 0);
-n.elAt(\mixchan, 'ch_1', \bt_R);
+// and now access by name and index works at every level
+n.elAt(\mix, 'ch_1');
+n.elAt(\mix, 0);
+n.elAt(\mix, 'ch_1', \bt);
+n.elAt(\mix, 'ch_1', \bt, \S);
+n.elAt(\mix, 'ch_1', \bt, 0);
 n.elAt(\bt, 0, 0);
 ::
