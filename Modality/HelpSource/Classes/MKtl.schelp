@@ -91,7 +91,7 @@ MKtl.getSpec(\bipolar);
 ::
 
 
-SUBSECTION:: Using description files, interfacing to MKtlDesc
+SUBSECTION:: Description files and MKtlDesc
 
 METHOD:: postLoadableDescs
 post the filenames of all loadable device descriptions.
@@ -291,7 +291,7 @@ o.elementsLabeled(\white);
 
 subsection:: Accessing elements and groups
 
-METHOD:: elAt, elAt
+METHOD:: elAt, elementAt
 Access an element or group in the elementGroup or in groups by
 hierarchical indices or names.
 Supports nil and \all as wildcards, and multi-expands correctly.
@@ -317,19 +317,15 @@ k.elAt(\bt, \M, \1); // the first  button
 
 k.elAt(\all, 0); // the first element in every group
 k.elAt(nil, 0); // the first element in every group
-
-
-METHOD:: collAt
-Access an element in the collectivesDict by hierarchical name.
-See link::Tutorials/Creating_Custom_ElementGroups::
-
-code:: MKtl(\mynano2).collAt(\mixchan, \1, \sl); ::
+::
 
 METHOD:: dictAt
 Access an element in the elementsDict directly by its full name.
 This is a very fast lookup.
 code:: MKtl(\mynano2).dictAt(\sl_1); ::
 
+METHOD:: collAt
+Access an element in the collectivesDict by hierarchical name.
 
 METHOD:: at
 Access an element in the top elementGroup by index.
@@ -379,7 +375,6 @@ m.setKeysValues( [[\compass, 0.125], [\wheel, 1.0]] ); // two elements
 m.gui;
 ::
 
-
 METHOD:: setKVAction
 same as setKeysValues, but with doAction of the elements being set
 
@@ -415,11 +410,26 @@ a dict of special messages for this device, typically to change setup on a MIDI 
 METHOD:: sendSpecialMessage
 send specialMessage with that name to the device
 
+Subsection:: Adding named groups and elements
 
-Subsection:: Collectives and Composite MKtl
+One can add named elements to an MKtl and access them by name.
+For a full discussion, see link::Tutorials/Creating_Custom_ElementGroups::.
 
-... create collectives in new mktl - to be written.
+code::
+k = MKtl(\nk2, "*trol2");
+// in a nanoKontrol2, put all transport buttons (in group \tr)
+// in k.namedDict, so they can be accessed without the \tr prefix:
+k = MKtl(\nk2, "*trol2");
+k.elAt(\tr).do { |el| k.addNamed(el.elemDesc.key, el); };
+k.namedDict.keys;
+k.elAt(\play);
+k.elAt(\stop);
+
+
+Subsection:: Collectives
+
 METHOD:: collectivesDict, collectiveDescriptionFor
+
 
 Methods for finding info on available devices in MKtlLookup.
 METHOD:: lookupInfo, lookupName, updateLookupInfo
@@ -448,48 +458,5 @@ k.addNamed(\play, k.elAt(\tr, \play));
 k.elAt(\play);
 k.elAt(\play) === k.elAt(\tr, \play);
 
-For longer examples of adding custom groups, see examples section.
+For longer examples of adding custom groups, see link::Tutorials/Creating_Custom_ElementGroups::.
 
-EXAMPLES::
-
-code::
-// giving elements custom access names:
-
-// in a nanoKontrol2, put all transport buttons (in group \tr)
-// in k.namedDict, so they can be accessed without the \tr prefix:
-k = MKtl(\nk2, "*trol2");
-k.elAt(\tr).do { |el| k.addNamed(el.elemDesc.key, el); };
-k.namedDict.keys;
-k.elAt(\stop);
-
-
-// An example for making a new group and adding it -
-// a mixer with 8 channels each consisting of one slider and one knob:
-
-k = MKtl(\nk2, "*trol2");
-
-// the elements as flopped array
-k.elAt([\sl, \kn], (0..7)).flop.choose;
-
-// make nested element groups from them:
-// assocs are needed so that lookup by name is generated
-// (maybe add elAtAsAssoc method that returns assocs?
-(
-m = MKtlElementGroup(\mix, k,
-	k.elAt([\sl, \kn], (0..7)).flop.collect { |pair, i|
-		var name = (i+1).asSymbol;
-		name -> MKtlElementGroup(name, k,
-			pair.collect { |el, i| [\sl, \kn][i] -> el }
-		);
-});
-k.addNamed(\mix, m);
-)
-k.elAt(\mix);
-k.elAt(\mix, 0)
-k.elAt(\mix, \1)
-k.elAt(\mix, 0)
-k.elAt(\mix, \1, \kn)
-k.elAt(\mix, \1, 1)
-
-// TODO: example with button groups included in mixer channels ...
-::
