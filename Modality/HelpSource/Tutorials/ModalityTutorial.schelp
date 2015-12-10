@@ -91,7 +91,6 @@ k.elAt(\bt, 1);
 
 //all buttons on column 5
 k.elAt(\bt, nil, 4);
-
 ::
 
 Note:: when using devices with hardware pages (like the nanoKONTROL 1), there may be separate desc files for each page, or a single desc with all pages. When using such a single desc, the page name or index will be used in the access code, e.g. the button on page 4 row 2 and column 5 would be at:
@@ -100,30 +99,30 @@ code::
 ::
 ::
 
-section:: Assigning actions
+section:: Using actions
 
-Actions are assigned using either the "action_" or the "addAction" and "resetAction" methods of link::Classes/MKtlElement::. These methods take a function as argument which receives one argument, the link::Classes/MKtlElement::. To extract the current value of the element, one should call ".value". The value returned by an link::Classes/MKtlElement:: is between 0 and 1.
+Actions for an element are defined using "action_" or the "addAction" methods of link::Classes/MKtlElement::. These methods take a function as argument which receives a single argument, the link::Classes/MKtlElement:: it belongs to. One can To extract the current value of the element, one should call ".value". The value returned by an link::Classes/MKtlElement:: is between 0 and 1.
 
 code::
 
 //Assign an action to the third knob
-k.elAt(\kn, 2).action_({ |el| el.value.postln });
+k.elAt(\kn, 2).action_({ |el| [el.name, el.value.round(0.0001)].postcs });
 
-// remove all actions from this knob
+// reset the of this knob to nothing (nil)
 k.elAt(\kn, 2).resetAction;
 
-//Add an action to all knobs
+//Add an action to the group of all knobs
 (
 k.elAt(\kn).action_({ |el|
 	"knob % value: %\n".postf(el.parent.indexOf(el), el.value)
 });
 )
 
-//remove all actions from the \kn group
+//reset the \kn group's action to nil
 k.elAt(\kn).resetAction;
 ::
 
-section:: Control a sound process
+section:: Control a simple sound process
 
 code::
 s.boot;
@@ -141,7 +140,7 @@ SynthDef(\blippy, {
 }).add
 );
 
-//start a synth by hand first
+//start the synth by hand first
 ~syn1 = Synth(\blippy, [\freq, 440, \numHarmonics, 100, \amp, 0.5, \pan, 0]);
 
 
@@ -200,8 +199,7 @@ k.elAt(\stop1).action_({  |elem|
 
 section:: Control the same process from a different device
 
-// prepare a different controller for playing the same process:
-
+code::
 // give the elements of the new controller the same function names:
 (
 k = MKtl(\gp); // k is now the gamepad we prepared
@@ -238,9 +236,9 @@ k.elAt(\stop1).action_({  |elem|
 )
 ::
 
+section:: Using multiple actions
 
-
-section:: Multiple actions
+For very flexible use of multiple actions, see link::Classes/MFunc:: in the "adclib" Quark.
 
 code::
 // Assigning multiple actions to an element can be done with .addAction:
@@ -261,28 +259,31 @@ k.elAt(\sl, 0).addAction(g);
 
 //remove first action
 k.elAt(\sl, 0).removeAction(f);
-// just 2 is left
+// just action 2 is left
 
 //clear all
 k.elAt(\sl, 0).action = nil;
+
 ::
 
 section:: Output elements
 
+Some devices can be set to specific values, e.g. setting motorfaders or LED rings around encoder knobs to the corresponding values.
+
 code::
-// check which inputs are there:
+// input elements of the device :
 k.inputElements;
 
-// check which outputs are there:
+// output elements
 k.outputElements;
 
 // sending data to the output elements
 // value range between 0 and 1, will be mapped according to the
 // deviceSpec given in the description file
-// should set LEDs on all S buttons
+// here, should set LEDs on all S buttons
 /*
-k.elAt(\bt, \S).do { |elem| elem.value_(1.0) };
-k.elAt(\bt, \S).do { |elem| elem.value_(0.0) };
+MKtl(\nk2).elAt(\bt, \S).do { |elem| elem.value_(1.0) };
+MKtl(\nk2).elAt(\bt, \S).do { |elem| elem.value_(0.0) };
 */
 
 k.free;
