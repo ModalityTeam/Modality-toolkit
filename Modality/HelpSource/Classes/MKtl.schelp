@@ -37,8 +37,6 @@ MKtl.find;
 ::
 
 
-
-
 METHOD:: new
 Accesses an existing instance of MKtl with the given name, or creates a new instance with that name. As with e.g. JITLib proxies like Ndef, Tdef, Pdef, or OSCdef, MIDIdef etc.
 

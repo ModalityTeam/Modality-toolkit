@@ -3,10 +3,9 @@ summary:: Learning how to use Modality
 categories:: Libraries>Modality, External Control
 related:: Overviews/Modality, Classes/MKtl
 
-section:: Discovering and initializing devices
+section:: Finding present devices
 
-NOTE::If you have a  code::Korg nanoKontrol2:: at hand, you should now plug it in.
-Otherwise you can still do this tutorial by using the gui which can replace the device.
+NOTE:: If you have one of the example devices (a Korg nanoKontrol2 MIDI faderbox or a Thrustmaster RunNDrive HID gamepad) at hand, you can plug it in to use a real interface device. If not, you can substitute them with a device you have, or use the MKtl's gui to step through this tutorial.
 ::
 
 The first step is to discover which devices are available for use:
@@ -15,17 +14,15 @@ code::
 MKtl.find;
 ::
 
-This will find all currently available devices, info on them,
-and example lines of code that can generate an MKtl for the device. Each line is code::MKtl('a_shortname', "a_desc_filename")::.
+This will find all currently available devices, all the known info on them,
+and will post example lines of code that can generate an MKtl for the device(s) found.
+The recommended line to use is code::MKtl('a_shortname', "a_desc_filename")::.
 
-Copy the code::MKtl(...)::-line of the device you want to use from the post window to your document and assign it to a variable.
-
-If you try to create an code::MKtl():: but the device is not connected, you can still create a virtual MKtl and open a GUI for it.
+Copy the code line for the device you want to use from the post window to a text document and assign it to a variable. If you have none, you can also just make a virtual code::MKtl():: and open a GUI for it .
 
 code::
 // open the MKtl
 k = MKtl('nk2', "korg-nanokontrol2");
-
 // create a gui for it - this can replace the device
 k.gui;
 ::
@@ -34,45 +31,51 @@ You can see the output from all elements by doing
 
 code::
 //turn it on
-k.trace(true);
-
+k.trace;
 //turn it off
 k.trace(false);
 ::
 
-section:: Identifying elements
+The same for a Thrustmaster RunNDrive gamepad:
 
-Each control (i.e. knob, slider, button, etc) on the device is mapped to an link::Classes/MKtlElement::. To discover the elements that are available, we look at code::MKtl:elementGroup::.
+code::
+g = MKtl(\gp, "*drive");
+g.gui;
+g.trace;
+g.trace(false);
+::
+
+section:: Elements and Groups
+
+Each control (i.e. knob, slider, button, etc) on the device is mapped to an link::Classes/MKtlElement::. All elements are contained in the elementGroup, usually in a hierarchical order:
 
 code::
 k.elementGroup;
-// print all elements in the top level group:
-k.elementGroup.printAll;
-k.elementGroup.do(_.printAll); "";
-// post the tree of all elements and groups in hierachical order:
+// you can access elements in each group by index or name:
+k.elementGroup[0];
+k.elementGroup[\tr];
+// post the tree of all groups and elements in hierachical order:
 k.postElements;
 ::
 
-This structure is an (link::Classes/MKtlElementGroup::) which can contain nested groups, where the final node is an link::Classes/MKtlElement::. The structure of the groups mimics the spatial and/or logical organization of the controls on the device according to rows, columns and pages.
+This is an (link::Classes/MKtlElementGroup::) and usualy contains nested groups, where the final node is always an link::Classes/MKtlElement::. The structure of the groups mimics the spatial order on the device (rows, columns, areas) or logical order (pages, function groups, etc).
 
-This structure is defined in the MKtlDesc file for the device:
+This organization is defined in an link::Classes/MKtlDesc:: file for the device, which are provided for many devices already.
 code::
 k.desc.openFile;
 
-code::
-//all the base keys
-//some are individual elements others are arrays of elements (or arrays of arrays, etc).
+// the top level keys - some may be individual elements, others groups of elements:
 k.elementGroup.keys;
 
 //the play button
 k.elAt(\tr, \play);
 
 //the first slider
-k.elAt(\sl, 0)
-k.elAt(\sl, \1)
+k.elAt(\sl, 0);
+k.elAt(\sl, \1);
 
-//all sliders in an array
-k.elAt(\sl)
+//all sliders as a group
+k.elAt(\sl);
 
 //the third knob
 k.elAt(\kn, 2);
@@ -89,9 +92,12 @@ k.elAt(\bt, 1);
 //all buttons on column 5
 k.elAt(\bt, nil, 4);
 
-//note: this does not work with the nanoKONTROL, which has four hardware scenes.
-// There, e.g. in scene 4, the button on row 2 and column 5 would be at:
-k.elAt(\bt, 3, 1, 4);
+::
+
+Note:: when using devices with hardware pages (like the nanoKONTROL 1), there may be separate desc files for each page, or a single desc with all pages. When using such a single desc, the page name or index will be used in the access code, e.g. the button on page 4 row 2 and column 5 would be at:
+code::
+// MKtl(\nk1).elAt(\bt, 3, 1, 4);
+::
 ::
 
 section:: Assigning actions
@@ -103,7 +109,7 @@ code::
 //Assign an action to the third knob
 k.elAt(\kn, 2).action_({ |el| el.value.postln });
 
-//To remove all actions
+// remove all actions from this knob
 k.elAt(\kn, 2).resetAction;
 
 //Add an action to all knobs
@@ -113,68 +119,134 @@ k.elAt(\kn).action_({ |el|
 });
 )
 
-//to remove the actions
+//remove all actions from the \kn group
 k.elAt(\kn).resetAction;
 ::
 
-An example with a SynthDef:
+section:: Control a sound process
 
-NOTE::
-For link::Classes/SynthDef:: building see its helpfile.
-::
-
+code::
 s.boot;
 
+// using a very simple SynthDef and Synth:
 (
 SynthDef(\blippy, {
-    var out = Blip.ar(\freq.kr(440).lag(0.1), \numHarmonics.kr(100), \amp.kr(1.0).lag(0.1) ) * 0.5;
-    Out.ar(0, Pan2.ar(out, \pan.kr(0).lag(0.1) ) )
+    var snd = Blip.ar(
+		\freq.kr(440).lag(0.1),
+		\numHarmonics.kr(100),
+		\amp.kr(1.0).lag(0.1) ) * 0.5;
+    Out.ar(0,
+		Pan2.ar(snd, \pan.kr(0).lag(0.1) )
+	)
 }).add
 );
 
-//start it
-x = Synth(\blippy, [\freq, 440, \numHarmonics, 100, \amp, 0.5, \pan, 0]);
+//start a synth by hand first
+~syn1 = Synth(\blippy, [\freq, 440, \numHarmonics, 100, \amp, 0.5, \pan, 0]);
 
+
+// create 4 control elements for it:
 (
 //clear all actions first
-k.resetAction;
+k.reset;
 
 //slider 0 -> amplitude
-k.elAt(\sl, 0).action_({ |elem| x !? _.set(\amp, \amp.asSpec.map(elem.value)) });
+k.elAt(\sl, 0).action_({ |elem| ~syn !? _.set(\amp, \amp.asSpec.map(elem.value)) });
 
 //knob 0 -> pan
-k.elAt(\kn, 0).action_({ |elem| x !? _.set(\pan, \pan.asSpec.map(elem.value)) });
+k.elAt(\kn, 0).action_({ |elem| ~syn !? _.set(\pan, \pan.asSpec.map(elem.value)) });
 
 //slider 1
-k.elAt(\sl, 1).action_({ |elem| x !? _.set(\freq, elem.value.linlin(0.0, 1.0, 50, 2000) ) });
+k.elAt(\sl, 1).action_({ |elem| ~syn !? _.set(\freq, elem.value.linlin(0.0, 1.0, 50, 2000) ) });
 
 //knob 1 -> number of harmonics
-k.elAt(\kn, 1).action_({ |elem| x !? _.set(\numHarmonics, elem.value.linexp(0.0, 1.0, 1, 50) ) });
+k.elAt(\kn, 1).action_({ |elem| ~syn !? _.set(\numHarmonics, elem.value.linexp(0.0, 1.0, 1, 50) ) });
 )
 
+// and here a more flexible way to do this:
+// give the elements names for their functions, and use those
 (
-// play button -> start and stop synth
-k.elAt(\tr, \play).action_({  |elem|
-    if(elem.value > 0) {
-        x !? _.free;
-        x = Synth(\blippy, [\freq, 440, \numHarmonics, 100, \amp, 0.5, \pan, 0])
-    } {
-        x !? _.free;
-        x = nil;
-    }
+k.addNamed(\amp1, k.elAt(\sl, 0));
+k.addNamed(\pan1, k.elAt(\kn, 0));
+k.addNamed(\param1, k.elAt(\sl, 1));
+k.addNamed(\param2, k.elAt(\kn, 2));
+
+// while at it, prapare buttons for start and stop
+k.addNamed(\start1, k.elAt(\bt, \S, 0));
+k.addNamed(\stop1, k.elAt(\bt, \R, 0));
+)
+
+// give them the same actions as above:
+(
+k.elAt(\amp1).action_({ |elem| ~syn1 !? _.set(\amp, \amp.asSpec.map(elem.value)) });
+k.elAt(\pan1).action_({ |elem| ~syn1 !? _.set(\pan, \pan.asSpec.map(elem.value)) });
+k.elAt(\param1).action_({ |elem| ~syn1 !? _.set(\freq, elem.value.linlin(0.0, 1.0, 50, 2000) ) });
+k.elAt(\param2).action_({ |elem| ~syn1 !? _.set(\numHarmonics, elem.value.linexp(0.0, 1.0, 1, 50) ) });
+
+// and new functions  for start and stop:
+k.elAt(\start1).action_({  |elem|
+    if(elem.value > 0) { // only start on button down
+        ~syn1 !? _.free;
+        ~syn1 = Synth(\blippy, [\freq, 440, \numHarmonics, 100, \amp, 0.5, \pan, 0])
+	}
 });
-);
+k.elAt(\stop1).action_({  |elem|
+    if(elem.value > 0) { // only stop on button down
+		~syn1 !? _.free; ~syn1 = nil;
+	}
+});
+)
+::
 
-// clear all functions
-k.resetAction;
-// stop the synth:
-x.free;
+section:: Control the same process from a different device
 
+// prepare a different controller for playing the same process:
 
-// assigning multiple actions can be done with .addAction;
+// give the elements of the new controller the same function names:
 (
-k.elAt(\sl, 0).addAction({ |elem| ("1 :"++elem.value).postln });
-k.elAt(\sl, 0).addAction({ |elem| ("2 :"++elem.value).postln });
+k = MKtl(\gp); // k is now the gamepad we prepared
+k.addNamed(\amp1, k.elAt(\joy, \r, \y));
+k.elAt;
+k.addNamed(\pan1, k.elAt(\joy, \r, \x));
+k.addNamed(\param1, k.elAt(\joy, \l, \x));
+k.addNamed(\param2, k.elAt(\joy, \l, \y));
+
+// while at it, prapare buttons for start and stop
+k.addNamed(\start1, k.elAt(\bt, \5));
+k.addNamed(\stop1, k.elAt(\bt, \7));
+)
+
+// and now run the same function setting code as above for the gamepad controller:
+(
+k.elAt(\amp1).action_({ |elem| ~syn1 !? _.set(\amp, \amp.asSpec.map(elem.value)) });
+k.elAt(\pan1).action_({ |elem| ~syn1 !? _.set(\pan, \pan.asSpec.map(elem.value)) });
+k.elAt(\param1).action_({ |elem| ~syn1 !? _.set(\freq, elem.value.linlin(0.0, 1.0, 50, 2000) ) });
+k.elAt(\param2).action_({ |elem| ~syn1 !? _.set(\numHarmonics, elem.value.linexp(0.0, 1.0, 1, 50) ) });
+
+// and new functions  for start and stop:
+k.elAt(\start1).action_({  |elem|
+    if(elem.value > 0) { // only start on button down
+        ~syn1 !? _.free;
+        ~syn1 = Synth(\blippy, [\freq, 440, \numHarmonics, 100, \amp, 0.5, \pan, 0])
+	}
+});
+k.elAt(\stop1).action_({  |elem|
+    if(elem.value > 0) { // only stop on button down
+		~syn1 !? _.free; ~syn1 = nil;
+	}
+});
+)
+::
+
+
+
+section:: Multiple actions
+
+code::
+// Assigning multiple actions to an element can be done with .addAction:
+(
+k.elAt(\amp1).addAction({ |elem| ("1 :"++elem.value).postln });
+k.elAt(\amp1).addAction({ |elem| ("2 :"++elem.value).postln });
 )
 //clear all
 k.elAt(\sl, 0).resetAction;
@@ -193,10 +265,11 @@ k.elAt(\sl, 0).removeAction(f);
 
 //clear all
 k.elAt(\sl, 0).action = nil;
+::
 
+section:: Output elements
 
-/// =========== output to elements (if you have any on your midi device) =============
-
+code::
 // check which inputs are there:
 k.inputElements;
 
@@ -213,3 +286,4 @@ k.elAt(\bt, \S).do { |elem| elem.value_(0.0) };
 */
 
 k.free;
+::
