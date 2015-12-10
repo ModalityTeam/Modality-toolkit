@@ -213,28 +213,10 @@ k.addNamed(\param2, k.elAt(\joy, \l, \y));
 k.addNamed(\start1, k.elAt(\bt, \5));
 k.addNamed(\stop1, k.elAt(\bt, \7));
 )
-
-// and now run the same function setting code as above for the gamepad controller:
-(
-k.elAt(\amp1).action_({ |elem| ~syn1 !? _.set(\amp, \amp.asSpec.map(elem.value)) });
-k.elAt(\pan1).action_({ |elem| ~syn1 !? _.set(\pan, \pan.asSpec.map(elem.value)) });
-k.elAt(\param1).action_({ |elem| ~syn1 !? _.set(\freq, elem.value.linlin(0.0, 1.0, 50, 2000) ) });
-k.elAt(\param2).action_({ |elem| ~syn1 !? _.set(\numHarmonics, elem.value.linexp(0.0, 1.0, 1, 50) ) });
-
-// and new functions  for start and stop:
-k.elAt(\start1).action_({  |elem|
-    if(elem.value > 0) { // only start on button down
-        ~syn1 !? _.free;
-        ~syn1 = Synth(\blippy, [\freq, 440, \numHarmonics, 100, \amp, 0.5, \pan, 0])
-	}
-});
-k.elAt(\stop1).action_({  |elem|
-    if(elem.value > 0) { // only stop on button down
-		~syn1 !? _.free; ~syn1 = nil;
-	}
-});
-)
 ::
+
+And now run the same function setting code as above for the gamepad controller!
+For full example, see link::Tutorials/Substituting_MKtls::.
 
 section:: Using multiple actions
 

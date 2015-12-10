@@ -1,0 +1,91 @@
+title:: Substituting MKtls
+summary:: One process played from multiple interfaces
+categories:: Libraries>Modality, External Control
+related:: Overviews/Modality, Classes/MKtl
+
+Modality makes it easy to play the same process with different interfaces, which can be useful for many reasons: Playing may feel different, broken or lost interfaces can be substituted very quickly, etc etc.
+
+This example show how to write your performance code so you can substitute very quickly when needed or desired.
+
+code::
+s.boot;
+(
+// a simple sound
+Ndef(\blippy, {
+	var snd = Blip.ar(
+		\freq.kr(440).lag(0.1),
+		\numharm.kr(100)
+	);
+	Pan2.ar(snd, \pan.kr(0).lag(0.1), \amp.kr(0.5).lag(0.1))
+}).play(vol: 0.25);
+
+// add a global spec for numharm param (the others exist as defaults)
+Spec.add(\numharm, [1, 50, \exp]);
+Ndef(\blippy).gui.parent.alwaysOnTop_(true);
+)
+
+// make two MKtls:
+(
+// a gamepad
+MKtl(\gp, "*drive");
+MKtl(\gp).gui.parent.alwaysOnTop_(true);
+
+// and a nanokontrol2
+MKtl('nk2', "korg-nanokontrol2");
+MKtl(\nk2).gui.parent.alwaysOnTop_(true);
+)
+
+// prepare the gamepad:
+// joystick axes for param control,
+// two buttons for start/stopping sound
+(
+var k = MKtl(\gp);
+k.addNamed(\amp1, k.elAt(\joy, \r, \y));
+k.addNamed(\pan1, k.elAt(\joy, \r, \x));
+k.addNamed(\param1, k.elAt(\joy, \l, \x));
+k.addNamed(\param2, k.elAt(\joy, \l, \y));
+
+// while at it, prapare buttons for start and stop
+k.addNamed(\start1, k.elAt(\bt, \5));
+k.addNamed(\stop1, k.elAt(\bt, \7));
+)
+
+// prepare the nanokontrol2:
+// 2 sliders and 2 knobs for param control,
+// and two buttons for start/stopping sound
+(
+var k = MKtl(\nk2);
+k.addNamed(\amp1, k.elAt(\sl, 0));
+k.addNamed(\pan1, k.elAt(\kn, 0));
+k.addNamed(\param1, k.elAt(\sl, 1));
+k.addNamed(\param2, k.elAt(\kn, 1));
+
+// prepare buttons for start and stop
+k.addNamed(\start1, k.elAt(\bt, \S, 0));
+k.addNamed(\stop1, k.elAt(\bt, \R, 0));
+)
+
+Ndef(\blippy).setUni(\numharm, 0.25)
+
+// now choose one of them, and set its actions
+// the same code can now be used for two very different MKtls!
+(
+k = MKtl(\gp); // this one?
+k = MKtl(\nk2); // or run same code with that one!
+k.trace;
+
+k.elAt(\amp1).action_({ |el| Ndef(\blippy).setUni(\amp, el.value) });
+k.elAt(\pan1).action_({ |el| Ndef(\blippy).setUni(\pan, el.value) });
+k.elAt(\param1).action_({ |el| Ndef(\blippy).setUni(\freq, el.value) });
+k.elAt(\param2).action_({ |el| Ndef(\blippy).setUni(\numharm, el.value) });
+
+// and for start and stop:
+k.elAt(\start1).action_({  |elem|
+	// only start on button down
+	if(elem.value > 0) { Ndef(\blippy).play };
+});
+k.elAt(\stop1).action_({  |elem|
+	if(elem.value > 0) { Ndef(\blippy).stop };
+});
+)
+::
