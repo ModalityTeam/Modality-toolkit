@@ -478,9 +478,18 @@ MKtl { // abstract class
 	}
 
 
-	reset {
+	resetActions {
 		elementsDict.do( _.resetAction )
 	}
+	resetAction {
+		"% - please use resetActions.\n".postf(thisMethod);
+		this.resetActions;
+	}
+	reset {
+		"% - please use resetActions.\n".postf(thisMethod);
+		this.resetActions;
+	}
+
 
 	// get subsets of elements ---------
 

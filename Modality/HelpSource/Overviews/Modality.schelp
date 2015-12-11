@@ -1,5 +1,5 @@
 title:: Modality
-summary:: Toolkit to simplify the creation of personal electronic instruments utilising hardware and software controllers of any kind.
+summary:: A toolkit for creating flexible personal electronic instruments using a variety of  controllers.
 categories:: Libraries>Modality, External Control
 related:: Overviews/Modality, Classes/MKtl, Tutorials/ModalityTutorial
 
@@ -7,14 +7,16 @@ Section:: Introduction
 
 Modality is a toolkit created by a team of developers and users of SuperCollider.
 
-One of its basic ideas is to simplify the creation of your very personal instruments with SuperCollider, using controllers of many different kinds. To this end, a common code interface, MKtl, is used for connecting  controllers from different sources (and protocols) like HID and MIDI and OSC.
+Its first aim is to simplify the creation of very personal instruments with SuperCollider, using a wide variety of controllers. To this end, a common code interface, link::Classes/MKtl::, is used to set up controllers from different sources, and protocols like HID, MIDI and OSC.
 
-A second starting point is that the same physical interfaces (sets of sliders, buttons, motion sensors etc etc) can be used for many different purposes, and a highly modal approach to mapping and on-the-fly remapping can help to make a setup much more flexible, powerful, and interesting to play. For example, when improvising with acoustic musicians, highly modal interfaces allow much faster changes of overall (performing) direction.
+A second aim is using the same limited set of physical interfaces (sliders, buttons, motion sensors etc etc) to control potentially many processes in flexible ways. Such a highly modal approach to mapping and on-the-fly remapping can make a setup much more flexible, powerful, and interesting to play. For example, when improvising with acoustic musicians, highly modal interfaces allow much faster changes of overall musical direction.
+
+A third aim is to allow quick substitution of controllers for others, whether for experiment (how do the  sounds in my setup feel when played with a gaming joystick?) or in emergencies (faderbox breaks 30 minutes before the show).
 
 http://modality.bek.no/
 
 
-section:: Tutorials and further reads
+section:: Tutorials and further reading
 
 LIST::
 ##link::Tutorials/ModalityTutorial::
@@ -39,11 +41,11 @@ code::
 MKtl.find;
 ::
 
-NOTE:: You may have to install drivers before code::MKtl.find:: is able to find your device. Some devices may show up as multiple protocols. Example: the code::ICON IControls:: show up as both code::MIDI:: and code::HID::.::
+NOTE:: You may have to install drivers before code::MKtl.find:: is able to find your device. Some devices may show up in multiple protocols. Example: the code::ICON IControls:: show up as both code::MIDI:: and code::HID::.::
 
 Each code::MKtl:: has elements such as sliders or knobs. It is possible to assign an action to such an element that is evaluated every time the value of that element gets updated.
 
-Below two examples of what you can do with this toolkit. For further explanation, refer to link::Tutorials/ModalityTutorial::.
+Below are two examples of what you can do with this toolkit. For further explanation, refer to link::Tutorials/ModalityTutorial::.
 
 subsection:: Example NanoKontrol2
 
@@ -56,16 +58,27 @@ MKtl.find(\midi);
 // and change the name:
 k = MKtl('myNK2', "korg-nanokontrol2");
 
-// turn on trace, then move some elements to see that the nano works
+// turn on trace, then move some elements to see that it works
 k.trace;
 k.trace(false);
 
-// If no such controller is connected, you can still open
-// a gui controller instead that has the same elements:
+// If no such controller is connected, use its gui instead:
 k.gui;
 
+// the elements (knobs, sliders, buttons) are in hierarchical groups
+k.elementGroup;
+k.postElements;
+
+// elements can be accessed by hierarchical names or indices:
+k.elAt(\kn, 0);
+k.elAt(\kn, \1);
+k.elAt(\tr, \play);
+k.elAt(\bt, 1, 4);
+k.elAt(\bt, \M, \5);
+
+
 // make sure there are no current assigned actions
-k.resetAction;
+k.resetActions;
 
 // boot the server
 s.boot;
@@ -81,23 +94,16 @@ x = {
 	]))/3
 }.play;
 
-// add specs for the controls
+// add a spec for the controls
 Spec.add(\freq1, [100, 1000, \exp]);
-Spec.add(\freq2, \freq1);
-Spec.add(\freq3, \freq1);
 )
 
 // set actions to the first three sliders
-k.elementAt(\sl, 0).action = {arg el;
-	x.set(\freq1, \freq1.asSpec.map(el.value))
-};
-k.elementAt(\sl, 1).action = {arg el;
-	x.set(\freq2, \freq2.asSpec.map(el.value))
-};
-k.elementAt(\sl, 2).action = {arg el;
-	x.set(\freq3, \freq3.asSpec.map(el.value))
-};
-
+(
+k.elAt(\sl, 0).action = {arg el; x.set(\freq1, \freq1.asSpec.map(el.value)) };
+k.elAt(\sl, 1).action = {arg el; x.set(\freq2, \freq1.asSpec.map(el.value)) };
+k.elAt(\sl, 2).action = {arg el; x.set(\freq3, \freq1.asSpec.map(el.value)) };
+)
 
 // after testing, free sound
 x.free;
@@ -112,34 +118,35 @@ code::
 // plug in your BCR2000 and evaluate this line.
 k = MKtl('myBCR', "behringer-bcr2000");
 
-// turn on trace, then move some elements to see that the nano works
+// turn on trace, then move some elements to see that it works
 k.trace;
 k.trace(false);
 
-// If no such controller is connected, you can still open
-// a gui controller instead that has the same elements:
+// If no such controller is connected, use its gui instead:
 k.gui;
 
 // make sure there are no current assigned actions
-k.resetAction;
+k.resetActions;
 
-// dictionary of controls keys to MKtlElements
-k.elements;
+// the elements (knobs, sliders, buttons) are in hierarchical groups
+k.elementGroup;
+k.postElements;
 
-// elements can be accessed through a hierarchy:
-k.elementAt(\kn, 0, 0);
+// elements can be accessed by hierarchical names or indices:
+k.elAt(\kn, 0);
+k.elAt(\kn, 0, 0);
 
 // all knobs of the first row
-k.elementAt(\kn, 0); // -> MKtlElementGroup
+k.elAt(\kn, 0); // -> MKtlElementGroup
 
 // elements have a type:
-k.elementAt(\kn, 0, 0).type;
+k.elAt(\kn, 0, 0).type;
 
 // select elements by their type:
 k.elementsDict.select { |x| x.type == \encoder };
 
 // perform an action on turning knob [0,0] (upper left)
-k.elementAt(\kn, 0, 0).action = { |el| el.value.postln };
+k.elAt(\kn, 0, 0).action = { |el| [el.name, el.value.round(0.001)].postln };
 
 // boot the server
 s.boot;
@@ -149,7 +156,7 @@ x = { Splay.ar(RLPF.ar(Saw.ar(\freq.kr(440, 0.1), mul: 0.1), 1000))}.play;
 
 // .action overrides previously set actions
 (
-k.elementAt(\kn, 0, 0).action_({ |el|
+k.elAt(\kn, 0, 0).action_({ |el|
 	x.set(\freq, el.value.linlin(0.0, 1, 300.0, 600));
 });
 )
@@ -158,10 +165,10 @@ k.elementAt(\kn, 0, 0).action_({ |el|
 x.free;
 
 // send data back to the device
-k.elementAt(\kn,0,0).value_(0.5);
+k.elAt(\kn,0,0).value_(0.5);
 
 // remove all assigned actions
-k.resetAction;
+k.resetActions;
 ::
 
 
@@ -174,7 +181,7 @@ d = 0;
 		0.05.wait;
 		d = d + 0.01;
 		8.do { |i|
-			k.elementAt(\kn, 0, i).value_(
+			k.elAt(\kn, 0, i).value_(
 				(d + (i/7)).mod(1.0);
 			);
 		};
@@ -183,11 +190,11 @@ d = 0;
 )
 ::
 
-SECTION:: Controllers not yet recognised
+SECTION:: Adding unknown Controllers
 
-Have a controller that is not yet known to the system? You can fix this by yourself!
-To do so, look at link::Tutorials/How_to_create_a_description_file::.
+Have a controller that is not yet known to the Modality? You can add it by yourself!
+See link::Tutorials/How_to_create_a_description_file::.
 
 section:: Acknowledgements
 Modality and its research meetings have kindly been supported by BEK in Bergen, Norway, and STEIM, Amsterdam.
-The ModalityTeam is, in no obvious order: Jeff Carey, Bjørnar Habbestad, Marije Baalman, Alberto de Campo, Tijs Ham, Wouter Snoei, Till Bovermann, Miguel Negrao, Robert van Heumen, Hannes Hoelzl, Tim Blechmann, Amelie Hinrichsen, and Dominik Hildebrand Marques Lopes.
+The ModalityTeam is, in no particular order: Jeff Carey, Bjørnar Habbestad, Marije Baalman, Alberto de Campo, Tijs Ham, Wouter Snoei, Till Bovermann, Miguel Negrao, Robert van Heumen, Hannes Hoelzl, Tim Blechmann, Amelie Hinrichsen, and Dominik Hildebrand Marques Lopes.
