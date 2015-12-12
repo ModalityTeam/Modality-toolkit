@@ -11,7 +11,7 @@
 // for using gyrosc nametag ID concept, see note below.
 
 /*
-o = OSCMonitor.new;
+o = OSCMon.new;
 o.enable;
 // which sending addresses?
 o.anaDict.msgNamesByAddr.keys.postcs
@@ -27,7 +27,7 @@ OSCFunc.trace(false);
 
 
 g = MKtl(\gyr, "gyrosc*");
-// update with the address seen in OSCMonitor or OSCFunc.trace:
+// update with the address seen in OSCMon or OSCFunc.trace:
 g.device.updateSrcAddr("192.168.178.53", 60329);
 
 g.trace;

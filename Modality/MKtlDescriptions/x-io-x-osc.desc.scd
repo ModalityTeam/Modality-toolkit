@@ -10,7 +10,7 @@ NOT DONE YET:
 -> use PassSpec for not touching raw values
 
 
-o = OSCMonitor.new;
+o = OSCMon.new;
 o.enable;
 // which sending addresses?
 o.anaDict.msgNamesByAddr.keys.postcs
@@ -25,7 +25,7 @@ OSCFunc.trace;
 OSCFunc.trace(false);
 
 g = MKtl(\xosc, "*x-osc");
-// update with the address seen in OSCMonitor or OSCFunc.trace:
+// update with the address seen in OSCMon or OSCFunc.trace:
 g.device.updateSrcAddr("169.254.1.1", 9000);
 
 g.trace

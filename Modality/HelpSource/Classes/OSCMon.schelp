@@ -1,15 +1,15 @@
-TITLE:: OSCMonitor
+TITLE:: OSCMon
 summary:: A Monitor for OSC traffic
 categories:: Modality, OSC
 related:: Classes/OSCFunc, Classes/OSCdef
 
 DESCRIPTION::
-OSCMonitor monitors captures incoming OSC messages, keeping recent ones around for analyis and display. It can show the  message sizes, relative arrival times for multiple sources.
+OSCMon monitors captures incoming OSC messages, keeping recent ones around for analyis and display. It can show the  message sizes, relative arrival times for multiple sources.
 
 code::
 
 
-o = OSCMonitor.new; 	// make one
+o = OSCMon.new; 	// make one
 o.enable;			// turn it on
 o.show;				// show them on gui, no po
 o.watchStatus = true; s.boot;
@@ -92,7 +92,7 @@ some colors to use in the visualisation
 private:: prepColors
 
 METHOD:: new
-make a new OSCMonitor
+make a new OSCMon
 argument:: bufsize
  with a buffersize of how many messages to keep,
 argument:: timeWindow

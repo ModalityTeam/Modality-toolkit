@@ -1,7 +1,7 @@
 // sensestage minibee
 
 /*
-o = OSCMonitor.new;
+o = OSCMon.new;
 o.enable;
 // which sending addresses?
 o.anaDict.msgNamesByAddr.keys.postcs
@@ -20,11 +20,11 @@ o.disable:
 // port nil will listen to messages from all sending ports.
 ~beeAddr = NetAddr("192.168.100.105", nil);
 ~bee1 = MKtl(\bee1, "*minibee1");
-// update with the address as seen in OSCMonitor or OSCFunc.trace:
+// update with the address as seen in OSCMon or OSCFunc.trace:
 ~bee1.device.updateSrcAddr(~beeAddr.hostname);
 
 ~bee2 = MKtl(\bee2, "*minibee1", false);
-// update with the address as seen in OSCMonitor or OSCFunc.trace:
+// update with the address as seen in OSCMon or OSCFunc.trace:
 ~bee2.device.updateSrcAddr(~beeAddr.hostname);
 ~bee2.device.source;
 

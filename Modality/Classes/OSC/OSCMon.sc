@@ -4,7 +4,7 @@
 auto-refresh every 0.5 sec?
 */
 
-OSCMonitor {
+OSCMon {
 	classvar <colors;
 	var <>bufsize, <>timeWindow, <listenFunc, <>action, <addresses, <msgNames;
 	var <list, <w, <u;
@@ -241,7 +241,7 @@ OSCMonitor {
 			u.animate_(true).frameRate_(10);
 
 			u.keyDownAction = { |u, char|
-				"OSCMonitor keyDown: %\n".postf(char);
+				"OSCMon keyDown: %\n".postf(char);
 				if (char.isDecDigit) {
 					this.postMessagesFrom(char.asString.interpret);
 				};

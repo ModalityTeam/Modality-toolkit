@@ -1,7 +1,7 @@
 title:: How to create a description file for an OSC device
 summary:: How to create a description file to use with the Modality toolkit for an OSC device
 categories:: Libraries>Modality
-related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Classes/OSCMonitor, Tutorials/How_to_create_a_description_file
+related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Classes/OSCMon, Tutorials/How_to_create_a_description_file
 
 Section:: Introduction
 
@@ -810,7 +810,7 @@ m.free;
 
 section:: Explore an OSC device
 
-To find out what an OSC device can do, the first thing you can do is read the documentation for the device and see what it tells about the OSC interface. Usually the documentation lists a number of messages that the device sends out, and a number of messages that it reacts upon. For OSC output to the device you have to rely on the documentation about the device to find out what you need to send to it. For the OSC input from the device, there is a tool (link::Classes/OSCMonitor::) to find out what messages it sends.
+To find out what an OSC device can do, the first thing you can do is read the documentation for the device and see what it tells about the OSC interface. Usually the documentation lists a number of messages that the device sends out, and a number of messages that it reacts upon. For OSC output to the device you have to rely on the documentation about the device to find out what you need to send to it. For the OSC input from the device, there is a tool (link::Classes/OSCMon::) to find out what messages it sends.
 
 code::
 // create a fake OSC device that sends some messages:
@@ -827,9 +827,9 @@ Tdef( \fakeOSCdevice, {
 Tdef( \fakeOSCdevice ).play;
 );
 
-// start an OSCMonitor:
+// start an OSCMon:
 
-o = OSCMonitor.new;
+o = OSCMon.new;
 o.enable; // enable it
 o.show; // show a gui to view the data
 o.verbose = true; // post the messages
@@ -841,7 +841,7 @@ o.addresses;
 o.msgNames;
 o.verbose = false;
 
-// In OSCMonitor, tracked sources can have nicknames
+// In OSCMon, tracked sources can have nicknames
 // - some are already here by default:
 o.anaDict.nicknames;
 // you can ask which message names come from which addresses:
