@@ -2,6 +2,7 @@ MKtl.find(\midi);
 
 k.free; MKtlDesc.allDescs.clear;
 k = MKtl('linn', "linnstrument_8chan");
+
 k.trace;
 k.trace(false);
 // access elements
@@ -66,10 +67,17 @@ k.elAt(\row, \all, \touch).do(_.action = { |el|
 	"chan press: ".post; [el.name, el.value.round(0.001)].postcs;
 });
 
+// turn debug posting on and off
+~trace = false;
+~trace = true;
+
+// run all at once
+(
+// or individually in 3 steps:
 (
 Ndef(\str8).clear;
 Ndef(\str8).play;
-
+Ndef(\str8).gui;
 // make a post function
 ~trace = true;
 ~postel = { |el ... vals|
@@ -84,16 +92,17 @@ Ndef(\str8).play;
 };
 
 (1..8).do { |i| Ndef(\str8).put(i, ~sndfunc) };
-)
+);
 
 // add controls for pitch, velocity and channel pressure to amp
 (
 k.elAt(\row).do { |rowgroup, rowi|
 		// note number sets pitch, velocity sets amp
 	rowgroup.elAt(\pad, \all, \on).do { |el, coli|
+		el.name.postcs;
 		el.action = { |el|
 			var note = el.elemDesc.at(\midiNum);
-			~postel.(el, note);
+			~postel.(el, note, rowi + 1);
 			Ndef(\str8).setAt(rowi + 1,
 				\freq, (note).midicps,
 				\amp, \amp.asSpec.map(el.value)
@@ -106,7 +115,7 @@ k.elAt(\row).do { |rowgroup, rowi|
 		Ndef(\str8).setAt(rowi + 1, \amp, \amp.asSpec.map(el.value));
 	};
 };
-)
+);
 
 
 // bend controls pitch, per row
@@ -115,20 +124,17 @@ k.elAt(\row, \all, \bend).do { |el, rowi|
 	el.action = { |el|
 		var bendval = el.value.linlin(0, 1, -2, 2);
 		~postel.(el);
-		Ndef(\str8).setAt(rowi + 1, \bend, bendval);
+	//	Ndef(\str8).setAt(rowi + 1, \bend, bendval);
 	};
 };
-)
 
 // y-axis changes filterfreq, per
-(
 k.elAt(\row, \all, \padY).do { |el, rowi|
 	el.action = { |el|
 		var filtval = el.value.linexp(0, 1, 300, 3000);
 		~postel.(el, filtval);
-		Ndef(\str8).setAt(rowi + 1, \ffreq, filtval);
+	//	Ndef(\str8).setAt(rowi + 1, \ffreq, filtval);
 	};
 };
+);
 )
-// turn off debug posting
-~trace = false;
