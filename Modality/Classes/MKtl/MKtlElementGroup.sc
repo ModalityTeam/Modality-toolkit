@@ -227,6 +227,14 @@ MKtlElementGroup : MKtlElement {
 		pairs.do { |assoc| assoc[0].deviceValue = assoc[1] }
 	}
 
+	// special method for separate elements \on, \off
+	isOn {
+		var onEl, offEl, onTime, offTime;
+		onEl = this.dict[\on]; onEl ?? { ^false };
+		offEl = this.dict[\off]; onEl ?? { ^false };
+		^onEl.lastUpdateTime > offEl.lastUpdateTime
+	}
+
 	prettyValues {
 		^elements.collect { |el|
 			if (el.isKindOf(this)) {

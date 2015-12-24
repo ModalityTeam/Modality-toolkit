@@ -23,7 +23,7 @@ MIDIMKtlDevice : MKtlDevice {
 
 	*initClass {
 		allMsgTypes = #[
-			\noteOn, \noteOff, \noteOnOff, \cc, \control, \polyTouch, \polytouch,
+			\noteOn, \noteOff, \cc, \control, \polyTouch, \polytouch,
 			\touch, \bend, \program,
 			\midiClock, \start, \stop, \continue, \reset,
 			\allNotesOff

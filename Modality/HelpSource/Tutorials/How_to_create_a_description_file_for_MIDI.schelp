@@ -112,6 +112,7 @@ list::
 ##link::Classes/MIDIOut#OS X specific: Sending MIDI to other applications::
 ::
 ::
+::
 
 subsection:: MIDI note messages
 
@@ -223,7 +224,7 @@ code::
 			(
 				key: \bt,
 				type: 'button',
-				midiMsgType: \noteOnOff,
+				midiMsgType: \noteOn,
 				midiChan: 0,
 				midiNum: 64, // note number
 				spec: \midiBut,
@@ -295,12 +296,17 @@ To get noteOn and noteOff actions separately, one can make separate elements, an
 )
 );
 m.rebuild(~descInput);
+
+// This makes it easy to set separ ate actions for on and off:
 m.elAt(\bt, \on).action = { "ON".postln };
 m.elAt(\bt, \off).action = { "OFFFFF".postln };
 
 ~midiOut.noteOn(0, 64, 37 );
 ~midiOut.noteOff(0, 64, 37 );
 
+// but there is single element to ask whether the button is on or off!
+// To find out, one can use code::isOn:: to check whether on or off was active last:
+m.elAt(\bt).isOn;
 ::
 
 

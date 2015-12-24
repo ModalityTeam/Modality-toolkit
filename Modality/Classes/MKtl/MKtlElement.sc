@@ -23,7 +23,7 @@ MAbstractElement {
 	var <deviceValue;
 	var <prevDeviceValue;
 
-	var <lastUpdateTime;
+	var <lastUpdateTime = 0;
 
 	// server support, currently only one server per element supported.
 	var <bus;
