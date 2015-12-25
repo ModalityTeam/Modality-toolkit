@@ -41,27 +41,31 @@ deviceInfo: (
 	hasScribble: true
 ),
 elementsDesc: (
+	shared: (midiMsgType: \cc, midiChan: 0),
 	elements: [
 	//buttons at bottom right
 		(
 			key: \pr,
 			shared: (elementType: \button, spec: \midiBut, mode: \toggle),
 			elements: [
-				(elements: [ (\style: (row:4, column: 8), midiNum: 89), (\style: (row:4, column: 9), midiNum: 90) ] ),
-				(elements: [ (\style: (row:5, column: 8), midiNum: 91), (\style: (row:5, column: 9), midiNum: 92) ] )
+				(elements: [
+					( midiNum: 89, \style: (row:4, column: 8)),
+					( midiNum: 90, \style: (row:4, column: 9)) ] ),
+				(elements: [
+					( midiNum: 91, \style: (row:5, column: 8)),
+					( midiNum: 92, \style: (row:5, column: 9)) ] )
 			]
 		),
 
 		//upper row of encoders when pressed, 4 pages, 8 rows
 		(
 			key: \tr,
-			shared: (\midiMsgType: \cc, elementType: \button, midiChan: 0,
-				spec: \midiCC, ioType: \in),
+			shared: (elementType: \button, spec: \midiBut, ioType: \in),
 			elements: 4.collect { |j|
 				(
 					elements: 8.collect { |i|
 						// top knob push mode
-						(midiNum: 33+(8*j)+i, page: j, \style: (row:0, column: i))
+						( midiNum: 33+(8*j)+i, page: j, \style: (row:0, column: i))
 					}
 				)
 			}
@@ -69,8 +73,7 @@ elementsDesc: (
 		//upper row of encoders, 4 pages, 8 rows
 		(
 			key: \kn,
-			shared: (\midiMsgType: \cc, elementType: \encoder, midiChan: 0,
-				spec: \midiCC, ioType: \in),
+			shared: (elementType: \encoder, spec: \midiCC, ioType: \in),
 			elements: 4.collect { |j|
 				(
 					elements: 8.collect { |i|
@@ -83,8 +86,7 @@ elementsDesc: (
 	//buttons
 		(
 			key: \bt,
-			shared: (\midiMsgType: \cc, elementType: \midiBut, midiChan: 0,
-				spec: \midiCC, ioType: \inout),
+			shared: (elementType: \midiBut, spec: \midiCC, ioType: \inout),
 			elements: [65,73].collect { |ccStart,j|
 				(
 					elements: 8.collect { |i|
@@ -96,8 +98,7 @@ elementsDesc: (
 	//sliders
 		(
 			key: \sl,
-			shared: (\midiMsgType: \cc, elementType: \slider, midiChan: 0,
-				spec: \midiCC, ioType: \inout),
+			shared: (elementType: \slider, spec: \midiCC, ioType: \inout),
 			elements: 8.collect { |i| (midiNum: 81+i, \style: (row:4, column: i)) }
 		)
 	]
