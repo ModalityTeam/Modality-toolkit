@@ -227,7 +227,8 @@ MKtlElementGroup : MKtlElement {
 		pairs.do { |assoc| assoc[0].deviceValue = assoc[1] }
 	}
 
-	// special method for separate elements \on, \off
+	// special method for a group of separate elements [\on, \off]
+	// if onElement was changed last, assume this group is on
 	isOn {
 		var onEl, offEl, onTime, offTime;
 		onEl = this.dict[\on]; onEl ?? { ^false };

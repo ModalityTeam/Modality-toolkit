@@ -49,10 +49,11 @@ MAbstractElement {
 		^if (source.notNil) {
 			source.getSpec(specName)
 		} {
-			MKtl.globalSpecs[specName] ?? { [0,1].asSpec };
+			MKtl.globalSpecs[specName] ?? { \unipolar.asSpec };
 		};
 	}
 
+	// overwrite when using osc timetags?
 	updateTime { lastUpdateTime = Process.elapsedTime }
 
 	hasOut { ^elemDesc.notNil and: { [\out, \inout].includes( elemDesc[\ioType] ) } }
@@ -80,6 +81,7 @@ MAbstractElement {
 		lastUpdateTime = Process.elapsedTime;
 		this.changed( \value, deviceValue );
 	}
+
 	valueNoSend_ { | newval |
 		if (newval.isNil) { ^this };
 		prevDeviceValue = deviceValue;
@@ -88,6 +90,7 @@ MAbstractElement {
 		lastUpdateTime = Process.elapsedTime;
 		this.changed( \value, deviceValue );
 	}
+
 	valueAction_ { | newval |
 		if (newval.isNil) { ^this };
 		prevDeviceValue = deviceValue;
@@ -105,6 +108,8 @@ MAbstractElement {
 
 	value { ^deviceValue }
 	prevValue { ^prevDeviceValue }
+	// shortcut for switches, like MKtlElementGroup().isOn
+	isOn { ^this.value > 0 }
 
 	timeSinceLast { ^Process.elapsedTime - lastUpdateTime }
 
@@ -115,6 +120,35 @@ MAbstractElement {
 		if (enabled) { action.value( this ) };
 		parent !? _.doAction( this );
 		groups.do( _.doAction( this ) );
+		this.changed( \doAction, this );
+	}
+
+	// where the action is:
+	addAction { |argAction|
+		action = action.addFunc(argAction);
+	}
+
+	removeAction { |argAction|
+		action = action.removeFunc(argAction);
+	}
+
+	reset {
+		this.deprecated(thisMethod, this.class.findMethod(\resetAction));
+		this.resetAction;
+	}
+
+	resetAction { action = nil }
+
+	flat { ^[this] }
+
+	// pattern support
+	embedInStream { |inval|
+		this.value.embedInStream(inval);
+		^inval
+	}
+
+	asStream {
+		^Pfunc({ |inval| this.value }).asStream
 	}
 
 	// UGen support
@@ -253,10 +287,11 @@ MKtlElement : MAbstractElement {
 
 		if (mySpecOrName.isNil) {
 			warn("% : deviceSpec for '%' is missing!".format(this, mySpecOrName));
-			"using [0, 1].asSpec instead".postln;
-		} {
-		mySpecOrName = mySpecOrName.asSpec;
+			"using [0, 1].asSpec instead.".postln;
+			mySpecOrName = [0,1];
 		};
+		mySpecOrName = mySpecOrName.asSpec;
+
 			// and now we will have a spec.
 		this.deviceSpec_(mySpecOrName);
 	}
@@ -327,47 +362,10 @@ MKtlElement : MAbstractElement {
 		this.doAction;
 		this.changed( \value, newval );
 	}
+
 	// no spec here, so we can redirect to superclass
 	deviceValue_ { | newval | ^super.value_(newval) }
 	deviceValueAction_ { | newval | ^super.valueAction_(newval) }
 	deviceValueNoSend_ { | newval | ^super.valueNoSend_(newval) }
 
-
-
-	// where the action is:
-	addAction { |argAction|
-		action = action.addFunc(argAction);
-	}
-
-	removeAction { |argAction|
-		action = action.removeFunc(argAction);
-	}
-
-	reset {
-		this.deprecated(thisMethod, this.class.findMethod(\resetAction));
-		this.resetAction;
-	}
-
-	resetAction {
-		action = nil
-	}
-
-	// assuming that something setting the element's value will
-	// first set the value and then call doAction (like in Dispatch)
-	doAction {
-		super.doAction;
-		this.changed( \doAction, this );
-	}
-
-	flat { ^[this] }
-
-	// pattern support
-	embedInStream { |inval|
-		this.value.embedInStream(inval);
-		^inval
-	}
-
-	asStream {
-		^Pfunc({ |inval| this.value }).asStream
-	}
 }
