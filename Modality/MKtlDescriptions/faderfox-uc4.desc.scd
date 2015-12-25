@@ -13,17 +13,15 @@ and fader groups 5-8 all use the same ccnum range (104-111).
 Can be fixed by reprogramming these groups in the device.
 
 
-
 // Basic examples:
 
-MKtlDesc.loadDescs; k.free;
-k = MKtl('uc4', "faderfox-uc4"); k.gui;
+MKtlDesc.loadDescs; k.free; k = MKtl('uc4', "faderfox-uc4"); k.gui;
 
 k.elAt.action = { |el| [el.name, el.value.round(0.001), el.deviceValue].postcs };
 
 k.elAt(\kn).action = { |el| "knob: ".post; [el.name, el.deviceValue].postln };
 k.elAt(\xfader).action = { |el| "xfade ".post; [el.name, el.deviceValue].postln };
-
+k.elAt(\bt, 0, 0).isOn;
 
 ****/
 
@@ -71,6 +69,7 @@ deviceInfo: (
 
 
 elementsDesc: (
+	shared: (ioType: \inout),
 
 	elements: [
 		// ------ cc -------------
@@ -88,6 +87,30 @@ elementsDesc: (
 						\page: gr_i
 					)
 				} )
+			}
+		),
+		// note-buttons
+		(
+			key: \pbt,
+			shared: ('midiChan': 0, 'elementType': 'button', 'spec': 'midiCC'),
+			elements: (0..63).clump(8).collect { |list, gr_i|
+				(
+					elements: list.collect { |num, i|
+						(
+							shared:  (midiNum: num, page: gr_i),
+							elements: [
+								(
+									key: \on, 'midiMsgType':  'noteOn',
+									\style: ( \row: i div: 4 * 2 + 1, \column: i % 4 * 2 + 0.5, height: 0.5)
+								),
+								(
+									key: \off, 'midiMsgType': 'noteOff',
+									\style: ( \row: i div: 4 * 2 + 1.4, \column: i % 4 * 2 + 0.5, height: 0.5)
+								)
+							]
+						)
+					}
+				)
 			}
 		),
 		(
@@ -109,30 +132,6 @@ elementsDesc: (
 			'elementType': 'slider', 'spec': 'midiCC',
 			\style: ( \row: 6, \column: 2.5, height: 1, width: 3)
 		),
-		// note-buttons
-		(
-			key: \pbt,
-			shared: ('midiChan': 0, 'elementType': 'button', 'spec': 'midiCC'),
-			elements: (0..63).clump(8).collect { |list, gr_i|
-				(
-					elements: list.collect { |num, i|
-						(
-							shared:  (midiNum: num, page: gr_i),
-							elements: [
-								(
-									key: \on, 'midiMsgType':  'noteOn',
-									\style: ( \row: i div: 4 * 2 + 1, \column: i % 4 * 2)
-								),
-								(
-									key: \off, 'midiMsgType': 'noteOff',
-									\style: ( \row: i div: 4 * 2 + 1, \column: i % 4 * 2 + 1)
-								)
-							]
-						)
-					}
-				)
-			}
-		),
 		(
 			key: \bt,
 			shared: ('midiChan': 0, 'elementType': 'button', 'spec': 'midiCC'),
@@ -143,10 +142,10 @@ elementsDesc: (
 							shared:  (midiNum: num, page: gr_i),
 							elements: [
 								(key: \on, 'midiMsgType':  'noteOn',
-									\style: ( \row: 7, \column: i)
+									\style: ( \row: 7, \column: i, height: 0.5)
 								),
 								(key: \off, 'midiMsgType': 'noteOff',
-									\style: ( \row: 8, \column: i)
+									\style: ( \row: 7.4, \column: i, height: 0.5)
 								)
 							]
 						)
