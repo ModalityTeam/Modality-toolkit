@@ -56,7 +56,23 @@ k.elAt(\bigKnob).action = { |el|
 	Ndef(\test).vol_(spec.map(newUnmappedVol))
 };
 
-// both should eventually be done with SmartSetter
+// both should eventually be done with SmartSetter.
+
+
+
+// some example actions for the pads and buttons:
+k.elAt(\pad).action = { |el| [el.name, el.value.round(0.001)].postln };
+k.elAt(\pad).action = nil;
+
+k.elAt(\pad, 0, \on).do(_.action = { |el| "1 ON vel: %\n".postf(el.value.round(0.001)) });
+k.elAt(\pad, 0, \off).do(_.action = { |el| "1 Off vel: %\n".postf(el.value.round(0.001)) });
+k.elAt(\pad, 0, \touch).do(_.action = { |el| "1 touch: %\n".postf(el.value.round(0.001)) });
+
+// stop and play on press only,
+k.elAt(\stop, \on).action = { |el| "STOP!".postln };
+k.elAt(\play, \on).action = { |el| "PLAY!".postln };
+
+k.elAt(\stop, \off).action = { |el| "stop button released.".postln };
 
 */
 
