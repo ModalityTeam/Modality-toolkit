@@ -2,7 +2,8 @@
 // factory: channel 8
 
 /**** to do:
-check  overlap of midiNum with device/down, mute/left,
+* fix commented-out section with nav buttons
+* check  overlap of midiNum with device/down, mute/left
 ****/
 
 (
@@ -38,132 +39,97 @@ deviceInfo: (
 ),
 elementsDesc: (
 
-	elements: [
+	elements: 16.collect { |chan|
 		(
-			key: 'knSndA',
-			shared: ('midiMsgType': 'cc', 'type': 'knob',
-				'spec': 'midiCC', \ioType: \inout),
-			elements: 16.collect { |chan|
+			key: ("pg" ++ chan).asSymbol,
+			shared: ('midiChan': chan, \page: chan),
+			elements: [
 				(
-					elements: (13..20).collect { |num|
-						('midiChan': chan, 'midiNum':  num, \page: chan)
-				})
-		}),
-		(
-			key: 'knSndB',
-			shared: ('midiMsgType': 'cc', 'type': 'knob',
-				'spec': 'midiCC', \ioType: \inout),
-			elements: 16.collect { |chan|
+					key: \kn,
+					shared: ('midiMsgType': 'cc', 'type': 'knob',
+						'spec': 'midiCC', \ioType: \inout),
+					elements: [
+						(
+							key: 'sndA',
+							elements: (13..20).collect { |num| ('midiNum':  num) }
+						),
+						(
+							key: 'sndB',
+							elements: (29..36).collect { |num| ('midiNum':  num) }
+						),
+						(
+							key: 'knPan',
+							elements: (49..56).collect { |num| ('midiNum':  num) }
+						)
+					]
+				),
 				(
-					elements: (29..36).collect { |num|
-						('midiChan': chan, 'midiNum':  num, \page: chan)
-				})
-		}),
-		(
-			key: 'knPan',
-			shared: ('midiMsgType': 'cc', 'type': 'knob',
-				'spec': 'midiCC', \ioType: \inout),
-			elements: 16.collect { |chan|
+					key: 'sl',
+					shared: (elementType: \slider, midiMsgType: \cc,
+						spec: \midiCC, \style: ( height: 4 )),
+					elements: (49..56).collect { |num, i|
+						('midiNum':  num, \style: ( column: i, height: 4 ))
+					}
+				),
 				(
-					elements: (49..56).collect { |num|
-						('midiChan': chan, 'midiNum':  num, \page: chan)
-				})
-		}),
-		(
-			key: 'sl',
-			shared: ('midiMsgType': 'cc', 'type': 'slider',
-				'spec': 'midiCC', \ioType: \inout),
-			elements: 16.collect { |chan|
-				(
-					elements: (49..56).collect { |num|
-						('midiChan': chan, 'midiNum':  num,
-							\page: chan, \style: ( height: 4 ))
-				})
-		}),
-		(
-			key: 'btFcs',
-			shared: ('midiMsgType': 'cc', 'type': 'button',
-				'spec': 'midiBut', \ioType: \inout),
-			elements: 16.collect { |chan|
-				(
-					elements: ((41..44) ++ (57..60)).collect { |num|
-						('midiChan': chan, 'midiNum':  num,
-							\page: chan)
-				})
-		}),
-		(
-			key: 'btCtl',
-			shared: ('midiMsgType': 'cc', 'type': 'button',
-				'spec': 'midiBut', \ioType: \inout),
-			elements: 16.collect { |chan|
-				(
-					elements: ((73..76) ++ (89..92)).collect { |num|
-						('midiChan': chan, 'midiNum':  num,
-							\page: chan)
-				})
-		}),
+					key: \bt,
+					shared: ('elementType': 'button', 'spec': 'midiBut', \ioType: \inout),
+					elements: [
+						(
+							key: 'fcs',
+							shared: ('midiMsgType': 'cc'),
+							elements: ((41..44) ++ (57..60)).collect { |num| ('midiNum':  num) }
+						),
+						(
+							key: 'ctl',
+							shared: ('midiMsgType': 'cc'),
+							elements: ((73..76) ++ (89..92)).collect { |num| ('midiNum':  num) }
+						)
+					]
+				),
 
-		// single buttons 16 pages
-		(
-			key: 'device',
-			shared: ('midiMsgType': 'noteOnOff', 'type': 'button',
-				'midiNum':  105,'spec': 'midiNote', \ioType: \inout,
-				\style: (row: 3, column: 8.5, showLabel: true)),
-			elements: 16.collect { |chan| ('midiChan': chan, \page: chan) }
-		),
-		(
-			key: 'mute',
-			shared: ('midiMsgType': 'noteOnOff', 'type': 'button',
-				'midiNum':  106,'spec': 'midiNote', \ioType: \inout,
-				\style: (row: 4, column: 8.5, showLabel: true)),
-			elements: 16.collect { |chan| ('midiChan': chan, \page: chan) }
-		),
-		(
-			key: 'solo',
-			shared: ('midiMsgType': 'noteOnOff', 'type': 'button',
-				'midiNum':  107,'spec': 'midiNote', \ioType: \inout,
-				\style: (row: 5, column: 8.5, showLabel: true)),
-			elements: 16.collect { |chan| ('midiChan': chan, \page: chan) }
-		),
-		(
-			key: 'arm',
-			shared: ('midiMsgType': 'noteOnOff', 'type': 'button',
-				'midiNum':  108,'spec': 'midiNote', \ioType: \inout,
-				\style: (row: 6, column: 8.5, showLabel: true)),
-			elements: 16.collect { |chan| ('midiChan': chan, \page: chan) }
-		),
+				/*(
+					key: \nav,
+					shared: ('type': 'button', 'spec': 'midiNote', \ioType: \inout),
+					elements: [
+						[	// key, midinum, row, col
+							[ \up,     104, 1, 8 ],
+							[ \down,   105, 1, 9 ],
+							[ \left,   106, 2, 8 ],
+							[ \right,  107, 2, 9 ],
 
+							[ \device, 105, 3, 8.5 ],
+							[ \mute,   106, 4, 8.5 ],
+							[ \solo,   107, 5, 8.5 ],
+							[ \arm,    108, 6, 8.5 ]
 
-		(
-			key: 'up',
-			shared: ('midiMsgType': 'noteOnOff', 'type': 'button',
-				'midiNum':  104,'spec': 'midiNote', \ioType: \inout,
-				\style: (row: 1, column: 8, showLabel: true)),
-			elements: 16.collect { |chan| ('midiChan': chan, \page: chan) }
-		),
-		(
-			key: 'down',
-			shared: ('midiMsgType': 'noteOnOff', 'type': 'button',
-				'midiNum':  105,'spec': 'midiNote', \ioType: \inout,
-				\style: (row: 1, column: 9, showLabel: true)),
-			elements: 16.collect { |chan| ('midiChan': chan, \page: chan) }
-		),
+						].collect { |triple|
+							var name, shared, style;
+							#name, shared, style = triple;
 
-		(
-			key: 'left',
-			shared: ('midiMsgType': 'noteOnOff', 'type': 'button',
-				'midiNum':  106,'spec': 'midiNote', \ioType: \inout,
-				\style: (row: 2, column: 8, showLabel: true)),
-			elements: 16.collect { |chan| ('midiChan': chan, \page: chan) }
-		),
-		(
-			key: 'right',
-			shared: ('midiMsgType': 'noteOnOff', 'type': 'button',
-				'midiNum':  107,'spec': 'midiNote', \ioType: \inout,
-				\style: (row: 2, column: 9, showLabel: true)),
-			elements: 16.collect { |chan| ('midiChan': chan, \page: chan) }
-		),
-	]
+							(
+								key: name,
+								shared: shared,
+								elements: [
+									(
+										key: \on, midiMsgType: \noteOn,
+										style: style.copy
+										// .put(\row, style.row + 0.5)
+										.put(\showLabel, true),
+									),
+									(
+										key: \off, midiMsgType: \noteOff,
+										style: style.copy
+										// .put(\row, style.row + 0.5)
+										.put(\showLabel, true)
+									)
+								],
+							)
+						}
+					]
+				)*/
+			]
+		)
+	}
 )
 );
-
