@@ -26,8 +26,22 @@ elementsDesc: (
 	elements: [
 		(
 			key: \pkey,
-			elements: (0..120).collect { |midinum|
-				('midiMsgType': 'noteOnOff', 'elementType': 'key', 'midiNum': midinum, 'spec': 'midiVel')
+			elements: (0..120).collect { |midinum, i|
+				var row = midinum div: 24;
+				var column = midinum % 24;
+				(
+					key: midinum.asSymbol, // start with '0'!
+
+					shared: ('midiNum': midinum, 'elementType': 'key', 'spec': 'midiVel'),
+					elements: [
+						(key: \on, 'midiMsgType': 'noteOn',
+							style: (row: row, column: column)),
+						(key: \off, 'midiMsgType': 'noteOff',
+							style: (row: row + 0.5, column: column))
+
+
+					]
+				)
 			}
 		),
 		(
