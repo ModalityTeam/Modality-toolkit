@@ -178,6 +178,7 @@ MAbstractElement {
 	}
 
 	// support for navigation inside ordered element hierarchy
+	// adc - this is really confusing. suggestion below
 	index {
 		^this.parent !? _.indexOf( this );
 	}
@@ -186,6 +187,15 @@ MAbstractElement {
 
 	indices {
 		^this.parent !? { parent.indices ++ [ this.index ] };
+	}
+
+	// get index or key specifically
+	indexInGroup {
+		^this.parent !? _.elemIndexOf(this)
+	}
+
+	keyInGroup {
+		^this.parent !? _.elemKeyOf(this)
 	}
 
 	// for printOn only, this will not remake it properly from code.

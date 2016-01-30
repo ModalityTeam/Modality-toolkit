@@ -185,6 +185,12 @@ MKtlElementGroup : MKtlElement {
 	}
 
 	indexOf { |item| ^dict.findKeyForValue( item ) ?? { this.elements.indexOf( item ); } }
+	// proposal for clarity:
+	// indexOf should be called keyOrIndexOf,
+	// and these two allow asking for index and for key:
+	elemIndexOf { |item| ^this.elements.indexOf( item ) }
+	elemKeyOf { |item| ^dict.findKeyForValue( item ) }
+
 
 	do { |function| elements.do( function ); }
 
