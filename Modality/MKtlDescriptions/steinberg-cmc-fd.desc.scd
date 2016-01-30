@@ -1,6 +1,3 @@
-/*
-todo: write little example here
-*/
 (
 deviceName: "Steinberg CMC-FD",
 protocol: \midi,
@@ -22,39 +19,35 @@ deviceInfo: (
 
 ),
 elementsDesc: (
-	shared: ('midiMsgType': 'noteOnOff', 'elementType': 'button',
+	shared: ('elementType': 'button',
 		'midiChan': 0, 'spec': 'midiBut'),
 	elements: [
 		// the buttons
 		(
 			key: \bt,
-			elements: [
-				(key: 'bankLeft',  'midiNum':  46),
-				(key: 'bankRight', 'midiNum':  47),
-				(key: 'chanLeft',  'midiNum':  48),
-				(key: 'chanRight', 'midiNum':  49)
-			]
+			elements: MKtlDesc.notePairs([
+				['bankL', 46],
+				['bankR', 47],
+				['chanL', 48],
+				['chanR', 49]
+			])
 		),
-		(
-			key: 'shift',
-			'midiMsgType': 'noteOnOff', 'elementType': 'button', 'midiNum':  70, 'spec': 'midiBut'
-		),
+		MKtlDesc.notePair(\shift, 70),
 		// fader touched or not
 		(
 			key: 'faderTouch',
-			shared: ('midiMsgType': 'noteOnOff', 'elementType': 'button',
-				'midiChan': 0, 'spec': 'midiBut'),
-			elements: (104..107).collect { |note, i|
-				('midiNum': note)
-			};
+			shared: ('elementType': 'button', 'spec': 'midiBut'),
+			elements: MKtlDesc.notePairs(
+				(104..107).collect { |num, i| [(i+1).asSymbol, num] }
+			)
 		),
 		// fader touched when shift is down sends channel mute
 		(
 			key: 'faderMute',
 			shared: ('midiMsgType': 'noteOnOff', 'elementType': 'key',
-				'midiChan': 0, 'spec': 'midiNote'),
-			elements: (8..11).collect { |noteNum|
-				('midiNum':  noteNum)
+			'midiChan': 0, 'spec': 'midiNote'),
+			elements: (8..11).collect { |note, i|
+				MKtlDesc.notePair((i+1).asSymbol, note)
 			}
 		),
 		// bend : high res fader values (10 bit )
