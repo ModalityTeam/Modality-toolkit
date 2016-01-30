@@ -578,6 +578,22 @@ MKtlDesc {
 		stream << this.class.name << ".at(%)".format(name.cs);
 	}
 
+	*notePairs { |pairs|
+		var
+		^pairs.collect { this.notePair(*_) )
+	}
+
+	*notePair { |key, midiNum|
+		^(
+			key: key,
+			shared: (midiNum: midiNum),
+			elements: [
+				(key: \on, midiMsgType: \noteOn),
+				(key: \off, midiMsgType: \noteOff)
+			]
+		)
+	}
+
 	getMidiMsgTypes {
 		var msgTypesUsed = Set.new;
 		var type, missing = List[];
