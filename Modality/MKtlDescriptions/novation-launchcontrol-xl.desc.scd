@@ -2,8 +2,16 @@
 // factory: channel 8
 
 /**** to do:
-* fix commented-out section with nav buttons
-* check  overlap of midiNum with device/down, mute/left
+* check  overlap of midiNum with device/down, mute/left!
+* fix missing right-side buttons
+
+// micro example:
+m = MKtl('myXL', "novation-launchcontrol-xl");
+g = MKtl('myXL').gui;
+MKtl('myXL').trace;
+MKtl('myXL').elAt(\pg0, \sl).action = { "YO, sl!".postln };
+
+
 ****/
 
 (
@@ -88,46 +96,38 @@ elementsDesc: (
 					]
 				),
 
-				/*(
+				(
 					key: \nav,
 					shared: ('type': 'button', 'spec': 'midiNote', \ioType: \inout),
-					elements: [
-						[	// key, midinum, row, col
-							[ \up,     104, 1, 8 ],
-							[ \down,   105, 1, 9 ],
-							[ \left,   106, 2, 8 ],
-							[ \right,  107, 2, 9 ],
-
-							[ \device, 105, 3, 8.5 ],
-							[ \mute,   106, 4, 8.5 ],
-							[ \solo,   107, 5, 8.5 ],
-							[ \arm,    108, 6, 8.5 ]
-
-						].collect { |triple|
-							var name, shared, style;
-							#name, shared, style = triple;
-
-							(
-								key: name,
-								shared: shared,
-								elements: [
-									(
-										key: \on, midiMsgType: \noteOn,
-										style: style.copy
-										// .put(\row, style.row + 0.5)
-										.put(\showLabel, true),
-									),
-									(
-										key: \off, midiMsgType: \noteOff,
-										style: style.copy
-										// .put(\row, style.row + 0.5)
-										.put(\showLabel, true)
-									)
-								],
-							)
-						}
-					]
-				)*/
+					elements: [ MKtlDesc.notePair(\up, 123) ]
+				)
+				//
+				// 	[	// key, midinum, row, col
+				// 		[ \up,     104, 1, 8 ],
+				// 		[ \down,   105, 1, 9 ],
+				// 		[ \left,   106, 2, 8 ],
+				// 		[ \right,  107, 2, 9 ],
+				//
+				// 		[ \device, 105, 3, 8.5 ],
+				// 		[ \mute,   106, 4, 8.5 ],
+				// 		[ \solo,   107, 5, 8.5 ],
+				// 		[ \arm,    108, 6, 8.5 ]
+				//
+				// 	].collect { |list|
+				// 		var onOffGroup, style;
+				// 		var key, num, row, col;
+				//
+				// 		#key, num, row, col = list;
+				// 		style = (row: row, column: col, \showLabel: true);
+				//
+				// 		onOffGroup = MKtlDesc.notePair(key, num).postcs;
+				// 		// onOffGroup.elements[0].put(\style, style);
+				// 		// onOffGroup.elements[0].put(\style,
+				// 		// 	style.copy.put(\row, style.row + 0.8)
+				// 		// );
+				// 		onOffGroup
+				// 	}
+				// )
 			]
 		)
 	}
