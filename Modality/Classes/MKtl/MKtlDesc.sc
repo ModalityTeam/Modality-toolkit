@@ -579,8 +579,7 @@ MKtlDesc {
 	}
 
 	*notePairs { |pairs|
-		var
-		^pairs.collect { this.notePair(*_) )
+		^pairs.collect  (this.notePair(*_))
 	}
 
 	*notePair { |key, midiNum|
