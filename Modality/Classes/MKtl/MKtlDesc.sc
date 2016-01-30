@@ -277,7 +277,7 @@ MKtlDesc {
 		}});
 		if (ok) { ^true };
 		// todo: more detailed info here
-	//	"% - dict not valid: %\n\n".postf(thisMethod, dict.deviceName);
+		//	"% - dict not valid: %\n\n".postf(thisMethod, dict.deviceName);
 		^false
 	}
 
@@ -289,7 +289,7 @@ MKtlDesc {
 			}
 		};
 		if (ok) { ^true };
-	//	"% - elemDesc not valid: %\n\n".postf(thisMethod, dict);
+		//	"% - elemDesc not valid: %\n\n".postf(thisMethod, dict);
 	}
 
 	// to be defined and tested
@@ -310,21 +310,21 @@ MKtlDesc {
 	*sharePropsToElements { |dict, toShare|
 		var shared, elements, subProps;
 		if (dict.isKindOf(Dictionary).not) {
-		//	"cant share in %\n".postf(dict);
+			//	"cant share in %\n".postf(dict);
 			^this
 		};
 
 		shared = dict[\shared] ? ();
 		elements = dict[\elements];
 		if (toShare.notNil) {
-		//	"shared: % parent: %\n\n".postf(shared, toShare);
+			//	"shared: % parent: %\n\n".postf(shared, toShare);
 			shared.parent = toShare;
 		};
 		elements.do { |elemDict|
 			if (elemDict[\elements].notNil) {
 				this.sharePropsToElements(elemDict, shared);
 			} {
-			//	"elem: % shared: %\n\n".postf(elemDict, shared);
+				//	"elem: % shared: %\n\n".postf(elemDict, shared);
 				elemDict.parent = shared
 			};
 		};
