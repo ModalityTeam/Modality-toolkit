@@ -75,7 +75,7 @@ elementsDesc: (
 					key: 'sl',
 					shared: (elementType: \slider, midiMsgType: \cc,
 						spec: \midiCC, \style: ( height: 4 )),
-					elements: (49..56).collect { |num, i|
+					elements: (77..84).collect { |num, i|
 						('midiNum':  num, \style: ( column: i, height: 4 ))
 					}
 				),
