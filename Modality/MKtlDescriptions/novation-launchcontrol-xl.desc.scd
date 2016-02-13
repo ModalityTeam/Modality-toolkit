@@ -66,7 +66,7 @@ elementsDesc: (
 							elements: (29..36).collect { |num| ('midiNum':  num) }
 						),
 						(
-							key: 'knPan',
+							key: 'pan',
 							elements: (49..56).collect { |num| ('midiNum':  num) }
 						)
 					]
