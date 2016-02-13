@@ -97,10 +97,39 @@ elementsDesc: (
 				),
 
 				(
-					key: \nav,
+					key: \slct,
 					shared: ('type': 'button', 'spec': 'midiNote', \ioType: \inout),
-					elements: [ MKtlDesc.notePair(\up, 123) ]
+					elements: [
+						MKtlDesc.notePair(\device, 105),
+						MKtlDesc.notePair(\mute, 106),
+						MKtlDesc.notePair(\solo, 107),
+						MKtlDesc.notePair(\arm, 108)
+					]
+				),
+
+				(
+					key: \nav,
+					shared: ('type': 'button', 'spec': 'midiCC', midiMsgType: \cc, \ioType: \inout),
+					elements: [
+						[ \up,     104, 1, 8 ],
+						[ \down,   105, 1, 9 ],
+						[ \left,   106, 2, 8 ],
+						[ \right,  107, 2, 9 ],
+					].collect{|list|
+						var key, num, row, col;
+						#key, num, row, col = list;
+
+						(
+							'key': key,
+							'midiNum': num,
+							'style':  (row: row, column: col, \showLabel: true)
+						)
+
+					}
+
 				)
+
+
 				//
 				// 	[	// key, midinum, row, col
 				// 		[ \up,     104, 1, 8 ],
