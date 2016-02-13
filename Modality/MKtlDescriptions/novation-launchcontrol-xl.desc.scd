@@ -2,8 +2,6 @@
 // factory: channel 8
 
 /**** to do:
-* check  overlap of midiNum with device/down, mute/left!
-* fix missing right-side buttons
 
 // micro example:
 m = MKtl('myXL', "novation-launchcontrol-xl");
@@ -81,17 +79,23 @@ elementsDesc: (
 				),
 				(
 					key: \bt,
-					shared: ('elementType': 'button', 'spec': 'midiBut', \ioType: \inout),
+					shared: ('elementType': 'button', 'spec': 'midiNote', \ioType: \inout),
 					elements: [
 						(
 							key: 'fcs',
-							shared: ('midiMsgType': 'cc'),
-							elements: ((41..44) ++ (57..60)).collect { |num| ('midiNum':  num) }
+							shared: ('type': 'button', 'spec': 'midiNote', \ioType: \inout),
+							elements: ((41..44) ++ (57..60)).collect{|num, i|
+								MKtlDesc.notePair((i+1).asSymbol, num)
+							}
+
 						),
 						(
 							key: 'ctl',
-							shared: ('midiMsgType': 'cc'),
-							elements: ((73..76) ++ (89..92)).collect { |num| ('midiNum':  num) }
+							shared: ('type': 'button', 'spec': 'midiNote', \ioType: \inout),
+							elements:  ((73..76) ++ (89..92)).collect { |num, i|
+								MKtlDesc.notePair((i+1).asSymbol, num)
+							}
+
 						)
 					]
 				),
