@@ -36,6 +36,7 @@ Dictionary[
 	("logitech-extreme-3d-pro" -> "Logitech Extreme 3D_Logitech"),
 	("m-audio-triggerfinger" -> "USB Trigger Finger"),
 	("native-instruments-traktor-kontrol-z2" -> "Traktor Kontrol Z2 Input"),
+	("novation-launchcontrol" -> "Launch Control"),
 	("novation-launchcontrol-xl" -> "Launch Control XL"),
 	("novation-launchpad" -> "Launchpad"),
 	("numark-orbit" -> "Numark ORBIT"),
