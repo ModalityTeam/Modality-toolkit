@@ -1,3 +1,6 @@
+/*
+m = MKtl(\nky2, "*key2"); m.gui;
+*/
 (
 deviceName: "nanoKEY2",
 protocol: 'midi',
@@ -23,8 +26,9 @@ elementsDesc: (
 	elements: [
 		(
 			key: \pkey,
-			elements: (0..120).collect { |midinum|
-				('midiMsgType': 'noteOnOff', 'elementType': 'key', 'midiNum': midinum, 'spec': 'midiVel')
+			shared: ('elementType': 'pad', 'spec': 'midiVel'),
+			elements: (0..120).collect { |midinum, i|
+				MKtlDesc.notePair(i, midinum, style: (row: i div: 24, column: i % 24));
 			}
 		),
 		(
