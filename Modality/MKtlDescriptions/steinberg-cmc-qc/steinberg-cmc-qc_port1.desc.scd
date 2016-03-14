@@ -3,7 +3,7 @@ parentDesc: "steinberg-cmc-qc",
 
 status: (
 	linux: "unknown",
-	osx: "test device not working, not sure whether old dat still valid.",
+	osx: "test device not working, not sure whether old data are still valid.",
 	win: "unknown"),
 
 idInfo: (deviceName: "Steinberg CMC-QC", sourcePortIndex: 0, destPortIndex: 0),
@@ -11,7 +11,7 @@ idInfo: (deviceName: "Steinberg CMC-QC", sourcePortIndex: 0, destPortIndex: 0),
 description:
 (
 
-// ------ noteOnOff -------------
+// ------ noteOn, noteOff -------------
 
 // buttons by labels on them:
 
