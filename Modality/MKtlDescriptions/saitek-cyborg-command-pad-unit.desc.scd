@@ -18,6 +18,10 @@ MKtl('cc').createDescriptionFile;
 (
 idInfo: "Saitek Cyborg Command Pad Unit_",
 protocol: 'hid',
+status: (
+	linux: "unknown",
+	osx: "tested and working, 14.3.2016, lfsaw/AdC",
+	win: "unknown"),
 
 elementsDesc: (
 	elements: [
