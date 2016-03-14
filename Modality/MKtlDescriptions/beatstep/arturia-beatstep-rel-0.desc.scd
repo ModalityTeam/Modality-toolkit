@@ -105,7 +105,7 @@ deviceInfo: (
 - only for Relative mode: sends CCvalues 63/65 for dec/inc, a maximum of 42, 86 with Fast Acceleration
 - 16 glob. MIDI channels can be easily switched on HW (CHAN Button plus 1 of 16 Pads), so use that as 16 pages w' identical cc/midi nr's.
 - alternatively/additionally, 16 layout 'templates' with different CC assignments could be created and easily switched on HW (RECALL Button plus 1 of 16 Pads), but that's a lot of work to edit, and 256 pages are a bit too much anyways?
-- can MMC be read? For now, the 2 transport buttons are remapped to NoteOnOffs.
+- can MMC be read? For now, the 2 transport buttons are remapped to NoteOn/Offs.
 ToDo:
 -add paging via 16 MIDI Chans
 "
