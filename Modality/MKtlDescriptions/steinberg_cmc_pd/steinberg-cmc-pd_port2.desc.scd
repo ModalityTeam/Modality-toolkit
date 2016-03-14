@@ -12,10 +12,11 @@ pads and 4velmode also send sysex on port 2;
 
 // a little example:
 
-m = MKtl('pd_ctls', "steinberg-cmc-pd_port2").trace;
-
+m = MKtl('pd_ctls', "*cmc-pd_port2");
+m.trace;
+m.gui;
 // example for use of relative knob:
-m.elementAt(\kn).action = { |el|
+m.elAt(\kn).action = { |el|
 	var delta = el.deviceValue.fold(0, 64).wrap(-31, 32);
 	[el.deviceValue, delta].postln;
 };
@@ -63,19 +64,29 @@ deviceInfo: (
 // hm
 specs: (midiRel: [0, 127, \lin, 1]),
 
-description:
+elementsDesc:
 
 (
-// ------ noteOnOff -------------
-
-'shift': ('midiMsgType': 'noteOnOff', 'elementType': 'key', 'midiChan': 0, 'midiNum':  70, 'spec': 'midiBut'),
-'curveSetup': ('midiMsgType': 'noteOnOff', 'elementType': 'key', 'midiChan': 0, 'midiNum':  114, 'spec': 'midiNote'),
-'4velMode': ('midiMsgType': 'noteOnOff', 'elementType': 'key', 'midiChan': 0, 'midiNum':  115, 'spec': 'midiNote'),
-'browse': ('midiMsgType': 'noteOnOff', 'elementType': 'key', 'midiChan': 0, 'midiNum':  58, 'spec': 'midiNote'),
-
+// ------ noteOn, noteOff -------------
+shared: ('midiChan': 0),
+elements: [
+	(
+		key: \bt,
+		shared: ('elementType': 'button', 'midiNum':  70, 'spec': 'midiBut'),
+		elements: [
+			MKtlDesc.notePair('shift', 70, style: (row: 0, column: 1.5)),
+			MKtlDesc.notePair('curveSetup', 114, style: (row: 1, column: 0)),
+			MKtlDesc.notePair('4velMode', 115, style: (row: 1, column: 1)),
+			MKtlDesc.notePair('browse', 58, style: (row: 1, column: 2))
+		]
+	),
 // ------ cc -------------
 // relative: clockwise = 1, faster is 2, 3, 4; ccw is 65 .. 66, 67, 68..72
-
-'kn': ('midiMsgType': 'cc', 'elementType': 'slider', 'midiChan': 0, 'midiNum':  60,'spec': 'midiRel'),
+	(
+		key: 'kn', 'midiMsgType': 'cc', 'elementType': 'knob',
+		'midiChan': 0, 'midiNum':  60,'spec': 'midiRel',
+		style: (row: 1, column: 3)
+	)
+]
 )
 );
