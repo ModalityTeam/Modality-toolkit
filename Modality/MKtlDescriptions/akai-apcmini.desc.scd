@@ -44,46 +44,77 @@ elementsDesc: (
 	elements: [
 		(
 			key: \pad,
-			shared: (midiMsgType: 'noteOnOff', elementType: 'pad',
+			shared: (elementType: 'pad',
 				midiChan: 0, spec: 'midiNote', ioType: \inout),
 			elements: (0..63).collect { |midiNote, i|
-				(midiNum: midiNote,
-					\style: (row: 7 - (i div: 8), column: i % 8, showLabel: true))
+				MKtlDesc.notePair(
+					(i+1).asSymbol, midiNote,
+					style: (
+						row: 7 - (i div: 8),
+						column: i % 8,
+						showLabel: true
+					)
+				)
 			}
 		),
 		(
 			key: \navBut,
-			shared: (midiMsgType: 'noteOnOff', elementType: 'button',
+			shared: (elementType: 'button',
 				midiChan: 0, spec: 'midiBut', ioType: \inout),
 			elements: (64..67).collect { |midiNote, i|
-				(midiNum: midiNote,
-				\style: (row: 8, column: i, showLabel: true))
+				MKtlDesc.notePair(
+					(i+1).asSymbol, midiNote,
+					style: (
+						row: 8,
+						column: i,
+						showLabel: true
+					)
+				)
 			}
 		),
 		(
 			key: \ctrlBut,
-			shared: (midiMsgType: 'noteOnOff', elementType: 'button',
+			shared: (elementType: 'button',
 				midiChan: 0, spec: 'midiBut', ioType: \inout),
 			elements: (68..71).collect { |midiNote, i|
-				(midiNum: midiNote,
-					\style: (row: 8, column: i + 4, showLabel: true))
+				MKtlDesc.notePair(
+					(i+1).asSymbol, midiNote,
+					style: (
+						row: 8,
+						column: i + 4,
+						showLabel: true
+					)
+				)
 			}
 		),
 		(
 			key: \launchBut,
-			shared: (midiMsgType: 'noteOnOff', elementType: 'button',
+			shared: (elementType: 'button',
 				midiChan: 0, spec: 'midiBut', ioType: \inout),
 			elements: (82..89).collect { |midiNote, i|
-				(midiNum: midiNote,
-					\style: (row: i, column: 8, showLabel: true))
+				MKtlDesc.notePair(
+					(i+1).asSymbol, midiNote,
+					style: (
+						row: i,
+						column: 8,
+						showLabel: true
+					)
+				)
 			}
 		),
-		(
-			key: \shift,
-			midiMsgType: 'noteOnOff', elementType: 'button',
-			midiChan: 0, midiNum:  98, spec: 'midiBut', ioType: \inout,
-			\style: (row: 8, column: 8, showLabel: true)
-		),
+		MKtlDesc.notePair(
+			\shift, 98,
+			style: (
+				row: 8,
+				column: 8,
+				showLabel: true
+			)
+		).shared
+			.put(\elementType, 'button')
+			.put(\midiChan, 0)
+			.put(\spec, 'midiBut')
+			.put(\ioType, \inout),
+
 		(
 			key: \sl,
 			shared: (midiMsgType: 'cc', elementType: 'slider',
