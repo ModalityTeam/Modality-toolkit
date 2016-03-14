@@ -83,11 +83,6 @@ type (\src or \dest) tells MKtlLookup whether it is in sources or .destinations.
 METHOD:: addAllMIDI
 add all MIDIEndpoints currently found in MIDIClient sources or destinations. Happens automatically in MIDIMktlDevice.find.
 
-METHOD:: midiAt
-find a MIDIEndpoint by type and index
-
-METHOD:: midiAt
-
 METHOD:: addOSC
 add an OSC source or dest. as these are not globally represented, make them by hand,
 with sendAddr, replyAddr, and (given) name.
