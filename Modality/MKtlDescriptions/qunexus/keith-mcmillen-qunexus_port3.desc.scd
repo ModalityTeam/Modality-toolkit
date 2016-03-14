@@ -33,13 +33,15 @@ status: (
 idInfo: (deviceName: "QuNexus", sourcePortIndex: 2, destPortIndex: 2),
 portName: "Port 3",
 
-description: (
-
-	// ins are any 2 CVs from 0 to 5V
-	cvIn: [112, 113].collect { |ccnum|
-		(type: \cvIn, 'midiMsgType': 'cc', 'midiChan': 1, ioType: \in,
-			'midiNum':  ccnum,'spec': 'midiCC')
-	},
+elementsDesc: (
+	shared: ('midiChan': 1),
+	elements: [
+		(
+			// ins are any 2 CVs from 0 to 5V
+			key: \cvIn,
+			shared: (type: \cvIn, 'midiMsgType': 'cc', ioType: \in, 'spec': 'midiCC'),
+			elements: [112, 113].collect { |ccnum| ('midiNum':  ccnum) }
+		),
 
 	// cvOut assumes a mono hardware synth with noteOn:
 	// 1. noteOn opens gate CV to 5V
@@ -50,20 +52,34 @@ description: (
 	// noteOff - when last held note is released, turn gate CV to 0V
 	// when doing that thru SC, may need a mono voicer model ...
 
-	cvOut: (
-		// how to make a single note responder for all notes?
-		// monophonic noteNumber of last new key pressed
-		// so make one MKtlElement for all notes,
-		// noteNum is held as value, held notes must be kept,
-		// released notes are released, only send
-
-		note: (type: \cvOut, 'midiMsgType': 'noteOnOff', 'midiChan': 1, ioType: \out,
-			midiNum: \all, 'spec': 'midiCC'),
-		mod: (type: \cvOut, 'midiMsgType': 'cc', 'midiChan': 1, ioType: \out,
-			'midiNum':  1,'spec': 'midiCC'),
-		bend: (type: \cvOut, 'midiMsgType': 'bend', 'midiChan': 1, ioType: \out,
-			'spec': 'midiBend')
-	)
+		(
+			key: \cvOut,
+			shared: (ioType: \out, type: \cvOut),
+			elements: [
+				// how to make a single note responder for all notes?
+				// monophonic noteNumber of last new key pressed
+				// so make one MKtlElement for all notes,
+				// noteNum is held as value, held notes must be kept,
+				// released notes are released, only send
+				(
+					key: \note,
+					shared: (midiNum: \all, 'spec': 'midiVel'),
+					elements: [
+						(midiMsgType: \noteOn),
+						(midiMsgType: \noteOff)
+					]
+				),
+				(
+					key: \mod,
+					'midiMsgType': 'cc', 'midiNum':  1,'spec': 'midiCC'
+				),
+				(
+					key: \bend, 'midiMsgType': 'bend', 'spec': 'midiBend'
+				)
+			]
+		)
+	]
 )
 
 );
+

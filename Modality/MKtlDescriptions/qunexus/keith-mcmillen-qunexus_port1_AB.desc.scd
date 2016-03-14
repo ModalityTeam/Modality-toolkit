@@ -36,9 +36,9 @@ elementsDesc: (
 	elements: [
 		(
 			key: \pianoKey,
-			shared: ('midiMsgType': 'noteOnOff', 'elementType': 'pianoKey', 'spec': 'midiVel'),
-			elements: (24..108).collect { |midinote|
-				('midiNum':  midinote)
+			shared: ('elementType': 'pianoKey', 'spec': 'midiVel'),
+			elements: (24..108).collect { |midinote, i|
+				MKtlDesc.notePair(i, midinote)
 			}
 		),
 		(
@@ -48,7 +48,8 @@ elementsDesc: (
 		// Preset B mode only adds single channel pressure from all keys
 		(
 			key: 'monotouch',
-			'midiMsgType': 'cc', 'elementType': 'keyTouch', 'midiNum':  1,'spec': 'midiCC')
+			'midiMsgType': 'cc', 'elementType': 'keyTouch', 'midiNum':  1,'spec': 'midiCC'
+		)
 	]
 )
 )

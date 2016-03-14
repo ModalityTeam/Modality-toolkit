@@ -31,6 +31,7 @@ pads and 4velmode also send sysex on port 2;
 // 15: (100..115),
 // 16: all sysex messages // no idea what they are for
 
+m = MKtl(\pd, "*cmc-pd");
 */
 (
 parentDesc: "steinberg-cmc-pd",
@@ -55,20 +56,26 @@ deviceInfo: (
 	// notes: "",
 ),
 elementsDesc: (
-	shared: ('midiMsgType': 'noteOnOff', 'elementType': 'pad',
-		'midiChan': 0, 'spec': 'midiVel')
+	shared: ('elementType': 'pad', 'midiChan': 0, 'spec': 'midiVel'),
 	elements: [
 		(key: 'pad',
+			// just a sketch,not working yet:
 			elements: [
-				\1: [35, 36, 38, 40,   39,44,42,46,   41,45,47,48,  51,55,49,56]
-					.collect { |num| ('midiNum': num) },
-				\2: (4..19)   .collect { |num| ('midiNum': num) },
-				\3: (20..35)  .collect { |num| ('midiNum': num) },
-				\4: (36..51)  .collect { |num| ('midiNum': num) },
-				\5: (52..67)  .collect { |num| ('midiNum': num) },
-				\6: (68..83)  .collect { |num| ('midiNum': num) },
-				\7: (84..99)  .collect { |num| ('midiNum': num) },
-				\8: (100..115).collect { |num| ('midiNum': num) }
+				(
+					key: \1,
+					elements: [35, 36, 38, 40,   39,44,42,46,   41,45,47,48,  51,55,49,56]
+					.collect { |num, i|
+						MKtlDesc.notePair(i, num, style: (row: i div: 4, column: i % 4))
+						.put(\page, 0)
+					}
+				),
+				// \2: (4..19)   .collect { |num, i| MKtlDesc.notePair(i, num) },
+				// \3: (20..35)  .collect { |num, i| MKtlDesc.notePair(i, num) },
+				// \4: (36..51)  .collect { |num, i| MKtlDesc.notePair(i, num) },
+				// \5: (52..67)  .collect { |num, i| MKtlDesc.notePair(i, num) },
+				// \6: (68..83)  .collect { |num, i| MKtlDesc.notePair(i, num) },
+				// \7: (84..99)  .collect { |num, i| MKtlDesc.notePair(i, num) },
+				// \8: (100..115).collect { |num, i| MKtlDesc.notePair(i, num) }
 			]
 		)
 	]
