@@ -1,6 +1,9 @@
 /* AKAI LPD8 Laptop Pad controller */
-// no support for pad cc mode because it use
+// no support for pad cc mode because it uses
 // the same cc numbers then as the knobs...
+// so just use pads as note on/offs.
+
+// todo: gui layout of pads ... how?
 
 (
 deviceName: "LPD8",
@@ -28,7 +31,7 @@ deviceInfo: (
 ),
 
 elementsDesc: (
-	key: \lpd8,
+	// key: \lpd8,
 	'shared': (key: \shared, \ioType: \inout, midiChan: 0),
 
 	elements: [
@@ -36,30 +39,25 @@ elementsDesc: (
 			key: \kn,
 			shared: (\elementType: \knob, \midiMsgType: \cc,
 				\spec: \midiCC),
-			elements: (1..8).collect { |num|
-				(key: num.asSymbol, \midiNum: num)
+			elements: (1..8).collect { |num, i|
+				(key: num.asSymbol, \midiNum: num,
+					style: (row: i div: 4, column: i % 4 + 4)
+				)
 			}
 		),
-		// noteOnOff not working properly because noteOff vel is 127
-		// (
-		// 	key: \pad,
-		// 	shared: (\elementType: \pad, midiMsgType: \noteOnOff,
-		// 	\spec: \midiVel),
-		// 	elements: (36..43).collect { |num, i|
-		// 		(key: (i+1).asSymbol, midiNum: num)
-		// 	}
-		// )
 		(
 			key: \pad,
 			shared: (\elementType: \pad, \spec: \midiVel),
-			elements: (36..43).collect { |num, i|
-				(
-					shared: (key: (i+1).asSymbol, midiNum: num),
-					elements: [
-						(key: \on,  midiMsgType: \noteOn ),
-						(key: \off, midiMsgType: \noteOff)
-					]
-				)
+		 	elements: (36..43).collect { |num, i|
+				var dict = MKtlDesc.notePair((i+1).asSymbol, num);
+				dict.elements.do { |el, j|
+					el.put(\style, (
+						row: i div: 4 + (j * 0.45),
+						column: i % 4,
+						height: 0.6
+					));
+				};
+				dict;
 			}
 		)
 	]
@@ -71,6 +69,7 @@ elementsDesc: (
 // and how to play something with it.
 
 MKtl.find; // find all MDIDI devices and list them
+MKtl('lpd').clear;
 MKtl('lpd', "*lpd8"); // make an MKtl for LPD8.
 MKtl('lpd').trace;
 
@@ -109,5 +108,4 @@ MKtl('lpd').elAt(\kn).do { |knob, i|
 )
 
 MKtl('lpd').trace(false);
-
 */
