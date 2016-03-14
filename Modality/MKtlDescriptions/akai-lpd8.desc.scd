@@ -3,7 +3,7 @@
 // the same cc numbers then as the knobs...
 // so just use pads as note on/offs.
 
-// todo: gui layout of pads ... how?
+
 
 (
 deviceName: "LPD8",
@@ -49,15 +49,13 @@ elementsDesc: (
 			key: \pad,
 			shared: (\elementType: \pad, \spec: \midiVel),
 		 	elements: (36..43).collect { |num, i|
-				var dict = MKtlDesc.notePair((i+1).asSymbol, num);
-				dict.elements.do { |el, j|
-					el.put(\style, (
-						row: i div: 4 + (j * 0.45),
-						column: i % 4,
-						height: 0.6
-					));
-				};
-				dict;
+				MKtlDesc.notePair(
+					(i+1).asSymbol, num,
+					style: (
+						row: i div: 4,
+						column: i % 4
+					)
+				);
 			}
 		)
 	]
