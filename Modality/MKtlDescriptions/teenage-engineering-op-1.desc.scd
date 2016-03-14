@@ -57,14 +57,6 @@ elementsDesc: (
 						(key: \off, midiMsgType: \noteOff)
 				]
 			)}
-
-			// // shared noteOnOff implementation, not working 'cause velocity of noteOff != 0
-			// key: \key,
-			// shared: (\midiMsgType: \noteOnOff, \elementType: \key,
-			// \midiChan: 0, \spec: \midiVel, \ioType: \in),
-			// elements: (5..124).collect { |num| (midiNum: num) }
-
-
 		),
 		(
 			key: \kn,
