@@ -1,3 +1,6 @@
+/*
+m = MKtl(\nky2, "*microkey"); m.gui;
+*/
 (
 deviceName: "microKEY",
 protocol: 'midi',
@@ -27,7 +30,9 @@ elementsDesc: (
 			key: \pkey,
 			shared: ('midiMsgType': 'noteOnOff', 'elementType': 'pianoKey',
 				spec: \midiVel),
-			elements: (0..120).collect { arg i; ('midiNum':  i) }
+			elements: (0..120).collect { |midinum, i|
+				MKtlDesc.notePair(i, midinum, style: (row: i div: 24, column: i % 24));
+			}
 		),
 		(
 			key: 'mod',
