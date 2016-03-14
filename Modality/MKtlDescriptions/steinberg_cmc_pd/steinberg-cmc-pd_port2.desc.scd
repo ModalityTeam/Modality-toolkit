@@ -27,7 +27,7 @@ Ndef(\test, { |freq = 600| VarSaw.ar(freq) * 0.1 }).play;
 Ndef(\test).gui.skipjack.dt = 0.05;
 
 ~resolution = 1;
-m.elementAt(\kn).action = { |el|
+m.elAt(\kn).action = { |el|
 	var delta = el.deviceValue.fold(0, 64).wrap(-31, 32);
 	// set knob relative resolution
 	var uniDelta = delta / 64 * ~resolution;
