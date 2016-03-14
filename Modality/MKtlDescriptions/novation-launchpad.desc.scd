@@ -48,9 +48,14 @@ elementsDesc: (
 		),
 		(
 			key: \pad,
-			shared: (\midiMsgType: \noteOnOff, \type: \pad, \spec: \midiVel),
+			shared: (\type: \pad, \spec: \midiVel),
 			elements: ((0, 16 .. 112) +.t (0..7)).flat.collect {|num, i|
-				(\midiNum: num)
+				(
+					elements: [
+						(key: \on, \midiMsgType: \noteOn, \midiNum: num),
+						(key: \off, \midiMsgType: \noteOff, \midiNum: num)
+					]
+				)
 			}
 		),
 		(

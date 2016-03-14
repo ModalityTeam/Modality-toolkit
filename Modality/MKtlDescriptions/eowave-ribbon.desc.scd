@@ -37,9 +37,9 @@ elementsDesc: (
 			elements: [
 				(
 					key: \touch,
-					shared: (elementType: \slider, midiMsgType: \noteOnOff,
-						spec: \midiBut),
-					elements: (36..82).collect {|num| (midiNum: num, spec: \midiBut) }
+					shared: (elementType: \slider, spec: \midiBut),
+					elements: (36..82).collect {|num|
+						MKtlDesc.notePair(i, midiNum: num, style: (row: 0, column: i)) }
 				),
 				(
 					key: \bend,
