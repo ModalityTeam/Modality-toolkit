@@ -582,13 +582,40 @@ MKtlDesc {
 		^pairs.collect  (this.notePair(*_))
 	}
 
-	*notePair { |key, midiNum|
+	*notePair { |key, midiNum, style|
+		style = style ?? {()};
 		^(
 			key: key,
-			shared: (midiNum: midiNum),
+			shared: (
+				midiNum: midiNum,
+				// this is the future solution:
+				// style will be used when gui knows
+				// how to a create single gui for the onOff pair
+				style: style
+				.put(\guiType, \notePair)
+				.put(\height, 1)
+			),
+				// temp solution: make separate half-size pads
+				// for each on and off element
 			elements: [
-				(key: \on, midiMsgType: \noteOn),
-				(key: \off, midiMsgType: \noteOff)
+				(
+					key: \on, midiMsgType: \noteOn,
+					style: (
+						row: style.row,
+						column: style.column,
+						height: 0.6
+					)
+				),
+				(
+					key: \off, midiMsgType: \noteOff,
+					style: (
+						row: style.row + 0.45,
+							// off is below on
+						column: style.column,
+						height: 0.6
+					)
+
+				)
 			]
 		)
 	}
