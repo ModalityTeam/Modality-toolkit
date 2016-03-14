@@ -2,7 +2,8 @@
 
 /*
 MIDIMKtl.find;
-k = MIDIMKtl('np', "nanoPAD2");
+k = MKtl('np', "*nanopad2");
+k.gui;
 */
 
 (
@@ -30,15 +31,19 @@ elementsDesc: (
 	elements: [
 		(
 			key: \pad,
-			shared: (\midiMsgType: \noteOnOff, \type: \key,
-				\spec: \midiNote, \ioType: \in),
-			elements: (36..99).collect { |num|
-				(midiNum: num)
+			shared: ( elementType: \pad, \spec: \midiVel, \ioType: \in),
+			elements: (36..99).clump(16).collect { |padbank, page|
+				(
+					shared: (page: page),
+					elements: padbank.collect { |num, j|
+						MKtlDesc.notePair(i, num, style: (row: j div: 8, column: j % 8 + 3))
+					}
+				)
 			}
 		),
 		(
 			key: 'touch',
-			shared: ('midiMsgType': 'cc', 'type': 'slider', 'spec': 'midiCC'),
+			shared: ('midiMsgType': 'cc', 'elementType': 'slider', 'spec': 'midiCC'),
 			elements: [
 				(key: \x, 'midiNum':  1),
 				(key: \y, 'midiNum':  2),
