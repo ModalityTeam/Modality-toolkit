@@ -1,4 +1,11 @@
+/*
+* todo: enter gui positions of elements!
+
+m = MKtl(\orb, "*orbit");
+m.gui;
 MKtl.addSpec(\selectNumark, [0, 4]);
+
+*/
 
 (
 deviceName: "Numark ORBIT",
@@ -30,22 +37,31 @@ elementsDesc: (
 	elements: [
 		(
 			key: 'pad',
-			shared: ('midiMsgType': 'noteOnOff', 'elementType': 'pad',  'spec': 'midiVel'),
+			shared: ('elementType': 'pad',  'spec': 'midiVel'),
 			elements: 4.collect { arg chan;
 				(
-					elements: (36..51).collect { arg num;
-						('midiChan': chan, 'midiNum':  num)
+					shared: ('midiChan': chan),
+					elements: (36..51).collect { arg num, i;
+						MKtlDesc.notePair(
+							(i+1).asSymbol, num,
+							// add style for pad layout..
+							style: (row: i, column: 0)
+						)
+
 					}
 				)
 			}
 		),
 		(
 			key: 'sh',
-			shared: ('midiMsgType': 'noteOnOff', 'type': 'key',
-				'midiChan': 15,'spec': 'midiVel'),
+			shared: ('type': 'key', 'midiChan': 15,'spec': 'midiVel'),
 			elements: [
-				( key: 'l', 'midiNum': 3 ),
-				( key: 'r', 'midiNum': 4 )
+				MKtlDesc.notePair('l', 3,
+					style: (row: 3, column: 0)
+				),
+				MKtlDesc.notePair('r', 4,
+					style: (row: 4, column: 0)
+				),
 			]
 		),
 		// ------ cc -------------
