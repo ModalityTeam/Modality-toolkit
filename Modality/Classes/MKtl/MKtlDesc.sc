@@ -600,21 +600,13 @@ MKtlDesc {
 			elements: [
 				(
 					key: \on, midiMsgType: \noteOn,
-					style: (
-						row: style.row,
-						column: style.column,
-						height: 0.6
-					)
+					style: style.copy.put(\height, 0.6)
 				),
+						// off element is below on
 				(
 					key: \off, midiMsgType: \noteOff,
-					style: (
-						row: style.row + 0.45,
-							// off is below on
-						column: style.column,
-						height: 0.6
-					)
-
+					style: style.copy.put(\height, 0.6)
+					.put(\row, style.row + 0.45)
 				)
 			]
 		)
