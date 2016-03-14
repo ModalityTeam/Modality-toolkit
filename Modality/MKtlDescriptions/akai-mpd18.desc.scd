@@ -1,8 +1,6 @@
 /* MPD18 drumpad
 
 - TODO:
-* gui layout
-* re-test
 
 
 one slider, sends on chan 1, ccnum, 1, [0, 127, \lin, 1, 0]
@@ -13,21 +11,18 @@ channel aftertouch,sends on chan 0, [0, 127, \lin, 1, 0]
 
 /****** TESTING ******/
 
-MIDIMKtl.find;
-m = MIDIMKtl('kmpd180');  // Akai MPD18
+MKtl.find;
+m = MKtl('mpd', "*mpd18");  // Akai MPD18
+m.gui;
 // slider
-m.elements[\sl].addAction({ |...args| args.post; " slider YO!".postln; });
+m.elAt(\sl).addAction({ " slider YO!".postln; });
 // touch on any pad
-m.elements[\touch_0].addAction({ |...args| args.post; " touch YO !".postln; });
+m.elAt(\touch).addAction({ |el| [el.name, el.value.round(0.001)].postln });
 
 // pad1 noteOn direct indexing
-m.elements[\pad][0][0].addAction({ |...args| args.post; "pad1 sc1 on YO !".postln; });
-// pad16 scene B noteOff
-m.elements[\pad][1][15].addAction({ |...args| args.post; "pad16 sc2 off YO !".postln; });
+m.elAt(\pad,0, 0).addAction({ |...args| "pad1 sc1 on YO !".postln; });
 
-// use nicer lookup
-m.elementAt(\pad, 1, 2).addAction({ |...args| args.post; "pad2 sc1 on YO !".postln; });
-m.elementAt(\pad, 1, 2).addAction({ |...args| args.post; "pad2 sc1 off YO !".postln; });
+m.elAt.action = { |el| [el.name, el.value.round(0.001)].postln };
 
 
 /****** END TESTs ******/
@@ -39,7 +34,7 @@ deviceType: \drumpad,
 elementTypes: [\pad, \slider],
 status: (
 	linux: "unknown",
-	osx: "unknown",
+	osx: "tested and working, 2016_03_13, adc",
 	win: "unknown"),
 
 idInfo: "Akai MPD18",
@@ -56,21 +51,33 @@ elementsDesc: (
 	elements: [
 		(
 			key: \sl,
-			midiMsgType: \cc, elementType: \slider, midiChan: 0, midiNum: 1, spec: \midiCC
+			midiMsgType: \cc, elementType: \slider, midiChan: 0, midiNum: 1, spec: \midiCC,
+			style: (row: 1, column: 4, height: 3)
 		),
 		(
 			key: \touch,
-			midiMsgType: 'touch', elementType: 'chantouch', midiChan: 0, midiNum:  0, spec: 'midiTouch'
+			midiMsgType: 'touch',
+			elementType: 'slider', // for better display only
+			midiChan: 0, midiNum:  0,
+			spec: 'midiTouch',
+			style: (row: 0, column: 4, height: 1)
 		),
 		(
 			key: \pad,
-			elements: (36..83).clump(16).collect { |padNums|
+			shared: (elementType: \pad, midiChan: 0, spec: \midiVel),
+			elements: (36..83).clump(16).collect { |padNums, page|
 				(
-					elements: padNums.collect { |padNum|
-						(midiMsgType: \noteOnOff, elementType: \pad,
-							midiChan: 0, midiNum: padNum, spec: \midiVel)
+					shared: (page: page),
+					elements: padNums.collect { |num, i|
+						MKtlDesc.notePair(
+							(i+1).asSymbol, num,
+							style: (
+								row: 3 - (i div: 4),
+								column: (i % 4)
+							)
+						)
 					}
-				)
+				);
 			}
 		)
 	]
