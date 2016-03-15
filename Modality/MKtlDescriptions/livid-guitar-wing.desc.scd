@@ -57,7 +57,7 @@ deviceInfo: (
 				( type: \pad, mode: \toggle, \spec: \midiCC )
 		),
 
-		// noteOnOff, momentary
+		// noteOn/Off, momentary
 		(
 			key: \pad,
 			shared: (elementType: \touchButton, spec: \midiCC, midiChan: 0),
