@@ -1,3 +1,11 @@
+/*
+MKtlDesc.loadDescs("*wing");
+m.free; m = MKtl(\gw, "*wing"); m.gui;
+
+m.elementsDict.size;
+m.postElements;
+*/
+//
 (
 (
 deviceName: "Livid Guitar Wing",
@@ -28,67 +36,59 @@ deviceInfo: (
 			key: \fader,
 			shared: (type: \touchFader, spec: \midiCC, midiChan: 0),
 			elements: [
-				[\left, 1],
-				[\right, 2],
-				[\bottom, 3]
+				[\l, 1],
+				[\r, 2],
+				[\bot, 3]
 			].collect { |pair, i|
 					var name, num; #name, num = pair;
 				(
 					key: name,
 					shared: (midiNum: num),
 					elements: [
-						(key: \touch, midiMsgType: \noteOnOff),
+						MKtlDesc.notePair(\touch, num),
 						(key: \pos,   midiMsgType: \control)
 					]
 				)
 			}
 		),
 		// noteOn 64 noteOff 0, toggle
-		(
-			key: \tipPad,
-			type: \pad, midiNum: 4, mode: \toggle,
-			\spec: \midiCC, midiMsgType: \noteOnOff
+		MKtlDesc.notePair(\tipPad, 4)
+			.putAll(
+				( type: \pad, mode: \toggle, \spec: \midiCC )
 		),
 
 		// noteOnOff, momentary
 		(
 			key: \pad,
-			shared: (elementType: \touchButton, spec: \midiCC,
-				midiChan: 0, midiMsgType: \noteOnOff),
+			shared: (elementType: \touchButton, spec: \midiCC, midiChan: 0),
 			elements: [
-				(key: \index, midiNum: 36),
-				(key: \middle, midiNum: 37),
-				(key: \ring, midiNum: 38),
-				(key: \pinky, midiNum: 39),
+				MKtlDesc.notePair(\idx, 36),
+				MKtlDesc.notePair(\mid, 37),
+				MKtlDesc.notePair(\rng, 38),
+				MKtlDesc.notePair(\pnk, 39),
 			]
 		),
 		(
-			key: \switch,
-			shared: (type: \touchButton, spec: \midiCC, midiChan: 0,
-				midiMsgType: \noteOnOff),
+			key: \sw,
+			shared: (type: \touchButton, spec: \midiCC, midiChan: 0),
 			elements: [
-				(key: \triDown,  midiNum: 40),
-				(key: \triUp,  midiNum: 41),
-				(
-					key: \finger,
-					elements: [
-						(key: \index,  midiNum: 42),
-						(key: \middle,  midiNum: 43),
-						(key: \ring,  midiNum: 44),
-						(key: \pinky,  midiNum: 45),
-					]
-				)
+				MKtlDesc.notePair( \triDn,  40),
+				MKtlDesc.notePair( \triUp,  41),
+
+				MKtlDesc.notePair( \idx,  42),
+				MKtlDesc.notePair( \mid,  43),
+				MKtlDesc.notePair( \rng,  44),
+				MKtlDesc.notePair( \pnk,  45),
 			]
 		),
 		(
-			key: \cutaway,
-			shared: (type: \switch, spec: \midiCC, midiChan: 0,
-				midiMsgType: \noteOnOff),
+			key: \cutsw,
+			shared: (type: \switch, spec: \midiCC, midiChan: 0),
 			elements: [
-				(key: \1, midiNum: 46),
-				(key: \2, midiNum: 47),
-				(key: \3, midiNum: 48),
-				(key: \4, midiNum: 49)
+				MKtlDesc.notePair( \1, 46),
+				MKtlDesc.notePair( \2, 47),
+				MKtlDesc.notePair( \3, 48),
+				MKtlDesc.notePair( \4, 49)
 			]
 		),
 		(
