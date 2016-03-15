@@ -1,5 +1,13 @@
+/*
+thisProcess.nowExecutingPath.basename.split($.).first.postcs;
+d = MKtlDesc.loadDescs("*icontrols").first;
+d.web;
 
-//MIDIMKtl('cncn2000').elements.do { |el| el.action_{ el.name.postln} }
+m.free; m = MKtl(\ic, "*icontrols"); m.gui;
+m.trace;
+m.elementsDict.size;
+m.postElements;
+*/
 
 (
 deviceName: "iCON iControls V2.00",
@@ -26,13 +34,16 @@ elementsDesc: (
 	elements: [
 		(
 			key: \bt,
-			shared: (midiMsgType: \noteOnOff, elementType: \button,
-				midiChan: 0, spec: \midiVel),
+			shared: (elementType: \button, midiChan: 0, spec: \midiBut),
 			elements: #[
 				[ 16, 17, 18, 19, 20, 21, 22, 23, 48 ],
 				[  8,  9, 10, 11, 12, 13, 14, 15, 49 ]
 			].collect { |xs, row|
-				(elements: xs.collect { |note, col| (midiNum: note) })
+				(
+					elements: xs.collect { |note, col|
+						MKtlDesc.notePair(col, note)
+					}
+				)
 			}
 		),
 		(
@@ -49,15 +60,14 @@ elementsDesc: (
 		),
 		(
 			key: \tr,
-			shared: (midiMsgType: \noteOnOff, elementType: \button,
-				midiChan: 0, spec: \midiBut),
+			shared: (elementType: \button, midiChan: 0, spec: \midiBut),
 			elements: [
-				(key: \rew, 	midiNum:  91),
-				(key: \play, 	midiNum:  94),
-				(key: \fwd, 	midiNum:  92),
-				(key: \cycle, 	midiNum:  86),
-				(key: \stop, 	midiNum:  93),
-				(key: \rec, 	midiNum:  95)
+				MKtlDesc.notePair( \rew, 	91),
+				MKtlDesc.notePair( \play, 	94),
+				MKtlDesc.notePair( \fwd, 	92),
+				MKtlDesc.notePair( \cycle, 	86),
+				MKtlDesc.notePair( \stop, 	93),
+				MKtlDesc.notePair( \rec, 	95)
 			]
 		)
 	]
