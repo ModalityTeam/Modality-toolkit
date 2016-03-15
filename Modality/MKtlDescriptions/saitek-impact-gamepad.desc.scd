@@ -1,10 +1,32 @@
 /*
+Known problems:
+* compass is dodgy - on the HID side already?
+- see little conversion example
+
 ToDO:
 * check output elements - LEDs?
-* make little example.
-* copy gui layout from Ferrari
+* include rumble outputs in elements, test
 
-MKtlDesc.openFolder;
+* make little example.
+
+// test this desc:
+~thisdesc = thisProcess.nowExecutingPath.basename.split($.).first.postcs;
+d = MKtlDesc.loadDescs(~thisdesc).first;
+
+// close old m, open new one, make gui:
+m.free; m = MKtl(\gp, "*impact-gamepad"); m.gui;
+
+m.trace;
+m.elementsDict.size;
+m.postElements;
+
+// compass has 8 directions + rest value:
+m.elAt(\compass).action = { |el|
+	var intVal = (el.deviceValue * 7 + 1).round.asInteger;
+	var dirs = [\rest, \N, \NE, \E, \SE, \S, \SW, \W, \NW];
+	[\compass, intVal, dirs[intVal]].postln;
+};
+
 
 */
 
@@ -17,12 +39,12 @@ deviceType: \gamepad,
 elementTypes: [\joystick, \button, \compass],
 status: (
 	linux: "unknown",
-	osx: "tested and working",
+	osx: "tested and working. 2015-03-16, adc",
 	win: "unknown"),
 
 idInfo: "USB Game Controllers_Mega World",
 
-specs: (compassImpact: [0, 7, \lin, 1].asSpec),
+// specs: (compassImpact: [-1, 6, \lin, 1].asSpec),
 
 deviceInfo: (
 	// vendorURI: "",
@@ -39,39 +61,71 @@ elementsDesc: (
 			key: \bt,
 			shared: ('hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in',spec: \hidBut ),
 			elements: [
-				(key: \1, 'hidUsage': 1),
-				(key: \2, 'hidUsage': 2),
-				(key: \3, 'hidUsage': 3),
-				(key: \4, 'hidUsage': 4),
-				(key: \5, 'hidUsage': 5),
-				(key: \6, 'hidUsage': 6),
-				(key: \7, 'hidUsage': 7),
-				(key: \8, 'hidUsage': 8),
-				(key: \9, 'hidUsage': 9),
-				(key: \10, 'hidUsage': 10),
-				(key: \11, 'hidUsage': 11),
-				(key: \12, 'hidUsage': 12)
+				// right side buttons
+				(key: '1', 'hidUsage': 1,
+					'style': (row: 1.8, column: 4.4, height: 0.5, showLabel: true)),
+				(key: '2', 'hidUsage': 2,
+					'style': (row: 1.0, column: 5.2, height: 0.5, showLabel: true)),
+				(key: '3', 'hidUsage': 3,
+					'style': (row: 2.6, column: 5.2, height: 0.5, showLabel: true)),
+				(key: '4', 'hidUsage': 4,
+					'style': (row: 1.8, column: 6.0, height: 0.5, showLabel: true)),
+
+				// shoulders
+				(key: '5', 'hidUsage': 5,
+					'style': (row: 0.5, column: 1, height: 0.5, showLabel: true)),
+				(key: '6', 'hidUsage': 6,
+					'style': (row: 0.0, column: 1, height: 0.5, showLabel: true)),
+				// underside
+				(key: '7', 'hidUsage': 7,
+					'style': (row: 0.5, column: 5, height: 0.5, showLabel: true)),
+				(key: '8', 'hidUsage': 8,
+					'style': (row: 0.0, column: 5, height: 0.5, showLabel: true)),
+				// top center
+				(key: '9', 'hidUsage': 9,
+					'style': (row: 1.6, column: 2.5, height: 0.5, showLabel: true)),
+				(key: '10', 'hidUsage': 10,
+					'style': (row: 1.6, column: 3.5, height: 0.5, showLabel: true)),
 			]
 		),
 		(
-			key: 'compass',
-			'hidUsage': 57, 'hidUsagePage': 1, 'elementType': 'compass', 'ioType': 'in', spec: \compassImpact
+			key: 'compass', 'hidUsage': 57, 'hidUsagePage': 1,
+			'elementType': 'compass', 'ioType': 'in', spec: \compassImpact,
+			'style': (row: 1.8, column: 1.3, showLabel: true)
 		),
 		(
 			key: \joy,
 			shared: ('hidUsagePage': 1, 'elementType': 'joyAxis', 'ioType': 'in',
 				spec: \cent1, mode: \center ),
 			elements: [
-				(key: \l,
+				(
+					key: \l,
 					elements: [
-						(key: \x, 'hidUsage': 48),
-						(key: \y, 'hidUsage': 49)
+						(key: \x, 'hidUsage': 48, 'elementType': 'joyAxis', spec: \cent1,
+							mode: \center, 'style': (row: 3.5, column: 1, height: 2, showLabel: true)
+						),
+						(key: \y, 'hidUsage': 49, 'elementType': 'joyAxis', spec: \cent1,
+							mode: \center, 'style': (row: 3.5, column: 1.9, height: 2, showLabel: true)
+						),
+						(key: \hat, 'hidUsage': 11, 'elementType': 'button', 'hidUsagePage': 9,
+							spec: \hidBut, mode: \push,
+							'style': (row: 3.2, column: 1.5, height: 0.5, showLabel: true)
+						)
 					]
 				),
-				(key: \r,
+				(
+					key: \r,
 					elements: [
-						(key: \x, 'hidUsage': 50),
-						(key: \y, 'hidUsage': 53)
+						(key: \x, 'hidUsage': 53, 'elementType': 'joyAxis', spec: \cent1,
+							mode: \center, 'style': (row: 3.5, column: 3, height: 2, showLabel: true)
+						),
+						(key: \y, 'hidUsage': 50, 'elementType': 'joyAxis', spec: \cent1,
+							mode: 'center', 'style': (row: 3.5, column: 3.9, height: 2, showLabel: true)
+						),
+						(key: \hat, 'hidUsage': 12, 'hidUsagePage': 9, 'elementType': 'button',
+							spec: \hidBut, mode: \push,
+							'style': (row: 3.2, column: 3.5, height: 0.5, showLabel: true)
+						)
 					]
 				)
 			]
