@@ -606,7 +606,7 @@ MKtlDesc {
 				(
 					key: \off, midiMsgType: \noteOff,
 					style: style.copy.put(\height, 0.6)
-					.put(\row, style.row + 0.45)
+					.put(\row, style.row ? 0 + 0.45)
 				)
 			]
 		)
