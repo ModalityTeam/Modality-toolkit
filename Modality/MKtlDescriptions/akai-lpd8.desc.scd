@@ -4,7 +4,7 @@
 // -> so just use pads as note on/offs.
 
 /*
-// load this desc:
+// test this desc:
 ~thisdesc = thisProcess.nowExecutingPath.basename.split($.).first.postcs;
 d = MKtlDesc.loadDescs(~thisdesc).first;
 d.web;
