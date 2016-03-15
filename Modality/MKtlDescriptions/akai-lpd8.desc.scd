@@ -1,8 +1,69 @@
 /* AKAI LPD8 Laptop Pad controller */
 // no support for pad cc mode because it uses
-// the same cc numbers then as the knobs...
-// so just use pads as note on/offs.
+// the same cc numbers then as the knobs, which makes no sense.
+// -> so just use pads as note on/offs.
 
+/*
+// load this desc:
+~thisdesc = thisProcess.nowExecutingPath.basename.split($.).first.postcs;
+d = MKtlDesc.loadDescs(~thisdesc).first;
+d.web;
+
+// close old m, open new one, make gui:
+m.free; m = MKtl(\lpd8, "*lpd8"); m.gui;
+m.trace;
+m.elementsDict.size;
+m.postElements;
+*/
+
+
+/*
+// A small example how to make this MKtl,
+// and how to play something with it.
+
+MKtl.find; // find all MDIDI devices and list them
+MKtl('lpd').clear;
+MKtl('lpd', "*lpd8"); // make an MKtl for LPD8.
+MKtl('lpd').trace;
+
+// make a gui for it
+MKtl('lpd').gui;
+
+// a synthdef
+(
+SynthDef(\test, {
+	var sound = (SinOsc.ar( \freq.kr(400) ) * 5 * \amp.kr(1) ).tanh;
+	var env = EnvGen.ar(Env.adsr,\gate.kr(1));
+	Out.ar(0, sound * env * 0.25)
+}).add
+)
+
+// a little voicer that keeps running synths
+(
+~lpdSynths = ();
+MKtl('lpd').elAt(\pad, \all, \on).do { |el, i|
+	el.action_({ |v|
+		~lpdSynths.at(i).release;
+		~lpdSynths[i] =
+			Synth(\test, [\amp, v.value.squared, \freq, 400+(100*i)].postln)
+	})
+};
+
+MKtl('lpd').elAt(\pad, \all, \off).do { |el,i|
+	el.action_({ |v|
+		~lpdSynths.removeAt(i).release;
+	});
+};
+
+MKtl('lpd').elAt(\kn).do { |knob, i|
+	knob.action = { [knob.name, knob.value].postln };
+};
+)
+
+MKtl('lpd').trace(false);
+
+MKtl('lpd').free;
+*/
 
 
 (
@@ -11,7 +72,7 @@ protocol: \midi,
 deviceType: \drumpad,
 elementTypes: [\pad, \knob],
 status: (
-	osx: "tested and working",
+	osx: "tested and working, 2016_03_15, adc",
 	linux: "unkown",
 	win: "unknown"
 ),
@@ -51,9 +112,9 @@ elementsDesc: (
 		 	elements: (36..43).collect { |num, i|
 				MKtlDesc.notePair(
 					(i+1).asSymbol, num,
-					style: (
+					shared: (style: (
 						row: i div: 4,
-						column: i % 4
+						column: i % 4)
 					)
 				);
 			}
@@ -62,48 +123,3 @@ elementsDesc: (
 )
 );
 
-/*
-// A small example how to make this MKtl,
-// and how to play something with it.
-
-MKtl.find; // find all MDIDI devices and list them
-MKtl('lpd').clear;
-MKtl('lpd', "*lpd8"); // make an MKtl for LPD8.
-MKtl('lpd').trace;
-
-// make a gui for it
-MKtl('lpd').gui;
-
-// a synthdef
-(
-SynthDef(\test, {
-	var sound = (SinOsc.ar( \freq.kr(400) ) * \amp.kr(1) ).softclip;
-	var env = EnvGen.ar(Env.adsr,\gate.kr(1));
-	Out.ar(0, sound * env * 0.25)
-}).add
-)
-
-// a little voicer that keeps running synths
-(
-~lpdSynths = ();
-MKtl('lpd').elAt(\pad, \all, \on).do { |el, i|
-	el.action_({ |v|
-		~lpdSynths.at(i).release;
-		~lpdSynths[i] =
-			Synth(\test, [\amp, v.value*30, \freq, 400+(100*i)].postln)
-	})
-};
-
-MKtl('lpd').elAt(\pad, \all, \off).do { |el,i|
-	el.action_({ |v|
-		~lpdSynths.removeAt(i).release;
-	});
-};
-
-MKtl('lpd').elAt(\kn).do { |knob, i|
-	knob.action = { [knob.name, knob.value].postln };
-};
-)
-
-MKtl('lpd').trace(false);
-*/
