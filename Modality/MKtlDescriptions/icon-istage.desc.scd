@@ -52,7 +52,6 @@ elementsDesc: (
 		(
 			key: \cf, \midiMsgType: \cc, \type: \xfade,
 			\midiChan: 0, \midiNum: 7, \spec: \midiCC,
-			style:
 		),
 		(
 			key: \bt,
