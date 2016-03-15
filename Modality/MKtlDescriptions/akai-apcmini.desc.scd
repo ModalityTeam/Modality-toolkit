@@ -1,13 +1,13 @@
 /*
 
-	/* todo:
-	* proper indexing of 8x8 pads,
-	* labels for buttons:
-	- up, down left right buttons,
-	- fader ctrl: volume, pan, send, device
-	- sceneLaunch: ...
-	- gui layout of all of them
-	*/
+/* todo:
+* proper indexing of 8x8 pads,
+* labels for buttons:
+- up, down left right buttons,
+- fader ctrl: volume, pan, send, device
+- sceneLaunch: ...
+- gui layout of all of them
+*/
 
 a = MKtl('apc1', "akai-apcmini"); a.gui;
 a.elementAt(\sl).action_({ |elem| [elem.name, elem.value].postln; });
@@ -49,10 +49,12 @@ elementsDesc: (
 			elements: (0..63).collect { |midiNote, i|
 				MKtlDesc.notePair(
 					(i+1).asSymbol, midiNote,
-					style: (
-						row: 7 - (i div: 8),
-						column: i % 8,
-						showLabel: true
+					shared: (
+						style: (
+							row: 7 - (i div: 8),
+							column: i % 8,
+							showLabel: true
+						)
 					)
 				)
 			}
@@ -64,10 +66,12 @@ elementsDesc: (
 			elements: (64..67).collect { |midiNote, i|
 				MKtlDesc.notePair(
 					(i+1).asSymbol, midiNote,
-					style: (
-						row: 8,
-						column: i,
-						showLabel: true
+					shared: (
+						style: (
+							row: 8,
+							column: i,
+							showLabel: true
+						)
 					)
 				)
 			}
@@ -79,10 +83,12 @@ elementsDesc: (
 			elements: (68..71).collect { |midiNote, i|
 				MKtlDesc.notePair(
 					(i+1).asSymbol, midiNote,
-					style: (
-						row: 8,
-						column: i + 4,
-						showLabel: true
+					shared: (
+						style: (
+							row: 8,
+							column: i + 4,
+							showLabel: true
+						)
 					)
 				)
 			}
@@ -94,27 +100,29 @@ elementsDesc: (
 			elements: (82..89).collect { |midiNote, i|
 				MKtlDesc.notePair(
 					(i+1).asSymbol, midiNote,
-					style: (
-						row: i,
-						column: 8,
-						showLabel: true
-					)
+					shared: (
+						style: (
+							row: i,
+							column: 8,
+							showLabel: true
+					))
 				)
 			}
 		),
 		MKtlDesc.notePair(
 			\shift, 98,
-			style: (
-				row: 8,
-				column: 8,
-				showLabel: true
+			shared: (
+				\elementType: 'button',
+				\midiChan: 0,
+				\spec: 'midiBut',
+				\ioType: \inout,
+				style: (
+					row: 8,
+					column: 8,
+					showLabel: true
+				)
 			)
-		).shared
-			.put(\elementType, 'button')
-			.put(\midiChan, 0)
-			.put(\spec, 'midiBut')
-			.put(\ioType, \inout),
-
+		),
 		(
 			key: \sl,
 			shared: (midiMsgType: 'cc', elementType: 'slider',
