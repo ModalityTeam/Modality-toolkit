@@ -1,5 +1,4 @@
 Dictionary[
-	("VMeter" -> "VMeter 1.30 A"),
 	("ableton-push" -> "Ableton Push"),
 	("akai-apcmini" -> "APC MINI"),
 	("akai-lpd8" -> "LPD8"),
@@ -11,6 +10,7 @@ Dictionary[
 	("arturia-minilab" -> "Arturia MINILAB"),
 	("behringer-bcf2000" -> "BCF2000"),
 	("behringer-bcr2000" -> "BCR2000"),
+	("cthrumusic-axis49" -> "AXIS-49 USB Keyboard"),
 	("decampo-joybox" -> "EXTERNAL"),
 	("doepfer-pocketfader" -> "EXTERNAL"),
 	("eowave-ribbon" -> "The Ribbon"),
@@ -60,5 +60,6 @@ Dictionary[
 	("thrustmaster-run-n-drive" -> "Run'N' Drive_Thrustmaster"),
 	("thrustmaster-run-n-drive-wireless" -> "Run'N' Drive Wireless_Thrustmaster"),
 	("touchosc-simple1" -> "touchOSC"),
+	("vmeter-vmeter" -> "VMeter 1.30 A"),
 	("x-io-x-osc" -> "x-osc"),
 ]
