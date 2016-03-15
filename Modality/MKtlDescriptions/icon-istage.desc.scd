@@ -2,6 +2,24 @@
 // Mostly NoteOn / NoteOff, some cc messages,
 // hardware scenes: DJ, Effector and Drummer seems to work, flattened out with underscores.
 
+/*
+
+TODO:
+* has 611 elements ATM .. is this correct?
+* will need GUI layout
+* use some kind of paging for gui with 600+ elements.
+***
+
+thisProcess.nowExecutingPath.basename.split($.).first.postcs;
+d = MKtlDesc.loadDescs("*istage").first;
+d.web;
+
+m.free; m = MKtl(\ic, "*istage"); m.gui;
+m.trace;
+m.elementsDict.size;
+m.postElements;
+*/
+
 (
 deviceName: "iCON iStage V1.00",
 protocol: \midi,
@@ -33,49 +51,54 @@ elementsDesc: (
 	elements: [
 		(
 			key: \cf, \midiMsgType: \cc, \type: \xfade,
-			\midiChan: 0, \midiNum: 7, \spec: \midiCC),
+			\midiChan: 0, \midiNum: 7, \spec: \midiCC,
+			style:
+		),
 		(
 			key: \bt,
-			shared: (\midiMsgType: \noteOnOff, \type: \button,
+			shared: (\type: \button,
 				spec: \midiBut, \mode: \push),
 			elements: (0..19).collect { |num|
 				(
 					elements: (0..11).collect { |chan|
-						(midiChan: chan, \midiNum: num)
+						MKtlDesc.notePair(midiNum: num, shared: (midiChan: chan))
 					}
 				)
 			}),
 		(
 			key: \play,
-			shared: (\midiMsgType: \noteOnOff, \type: \button, \midiChan: 12,
+			shared: (\type: \button, \midiChan: 12,
 				spec: \midiBut, \mode: \push),
-			elements: (0..19).collect { |num| (\midiNum: num) }),
+			elements: (0..19).collect { |num| MKtlDesc.notePair(midiNum: num) }),
 		(
 			key: \stop,
-			shared: (\midiMsgType: \noteOnOff, \type: \button, \midiNum: 103,
+			shared: (\type: \button, \midiNum: 103,
 				spec: \midiBut, \mode: \push),
-			elements: (0..12).collect { |chan| (\midiChan: chan) }),
+			elements: (0..12).collect { |chan|
+				MKtlDesc.notePair(midiNum: 103, shared: (midiChan: chan))
+			}
+		),
 
 	// drummer
 		(
 			key: \bluL,
-			shared: (\midiMsgType: \noteOnOff, \type: \button, \midiChan: 9,
+			shared: (\type: \button, \midiChan: 9,
 				spec: \midiVel, \mode: \push),
-			elements: (60..75).collect { |num| (\midiNum: num) }),
+			elements: (60..75).collect { |num| MKtlDesc.notePair(midiNum: num) }),
 
 		// duplication in here (42)!
 		(
 			key: \red,
-			shared: (\midiMsgType: \noteOnOff, \type: \button, \midiChan: 9,
+			shared: (\type: \button, \midiChan: 9,
 				spec: \midiVel, \mode: \push),
 			elements: #[35,48,37,36, 49,47,40,38, 50,45,42,42, 51,43,46,44]
-			.collect { |num, i| ( \midiNum: num) })
+			.collect { |num, i| MKtlDesc.notePair(midiNum: num) })
 	]
 
 /*++
 // left blue is duplicate of red
 #[35, 48, 37, 36, 49, 47, 40, 38, 50, 45, 42, 42, 51, 43, 46, 44].collect{|num, i|
-	[("red" ++ i.asStringToBase(10, 2)).asSymbol, (\midiMsgType: \noteOnOff, \type: \button, \midiChan: 9, \midiNum: num, spec: \midiBut, \mode: \push)]
+	[("red" ++ i.asStringToBase(10, 2)).asSymbol, (\type: \button, \midiChan: 9, \midiNum: num, spec: \midiBut, \mode: \push)]
 }.flat
 */
 
