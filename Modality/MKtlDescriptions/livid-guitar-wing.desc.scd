@@ -1,7 +1,9 @@
 /*
-MKtlDesc.loadDescs("*wing");
-m.free; m = MKtl(\gw, "*wing"); m.gui;
+thisProcess.nowExecutingPath.basename.split($.).first.postcs;
+d = MKtlDesc.loadDescs("*wing").first;
+d.web;
 
+m.free; m = MKtl(\gw, "*wing"); m.gui;
 m.elementsDict.size;
 m.postElements;
 */
