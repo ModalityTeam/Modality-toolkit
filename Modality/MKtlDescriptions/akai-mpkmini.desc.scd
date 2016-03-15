@@ -3,6 +3,21 @@
 // downloadable from "http://www.akaipro.com/product/mpkmini#downloads"
 // made by Joost van Dalen
 
+/*
+TODO:
+* add gui layout
+
+
+thisProcess.nowExecutingPath.basename.split($.).first.postcs;
+d = MKtlDesc.loadDescs("*mpkmini").first;
+d.web;
+
+m.free; m = MKtl(\mpk, "*mpkmini"); m.gui;
+m.trace;
+m.elementsDict.size;
+m.postElements;
+*/
+
 (
 deviceName: "MPK mini",
 protocol: \midi,
@@ -41,28 +56,30 @@ elementsDesc: (
 		),
 		(
 			key: \pkey,
-			shared: (midiMsgType: \noteOnOff, elementType: \pianoKey,
-				midiChan: 0, spec: \midiVel),
-			elements: (0..120).collect { |note| (midiNum: note) }
+			shared: (elementType: \pianoKey, midiChan: 0, spec: \midiVel),
+			elements: (0..120).collect { |note|
+				MKtlDesc.notePair(midiNum: note) }
 		),
 		(
 			key: \pad,
-			shared: (midiMsgType: \noteOnOff, elementType: \pad,
-				midiChan: 9, spec: \midiVel),
+			shared: (elementType: \pad, midiChan: 9, spec: \midiVel),
 			elements: #[
 				[37,36,42,82,40,38,46,44],
 				[48,47,45,43,49,55,51,53]
 			].collect { |bank|
-				(elements: bank.collect { |note| (midiNum:  note) })
+				(elements: bank.collect { |note|
+					MKtlDesc.notePair(midiNum:  note)
+				})
 			}
 		),
 		(
 			key: \padCC,
-			shared: (midiMsgType: \noteOnOff, elementType: \pad,
-				midiChan: 9, spec: \midiVel),
+			shared: (elementType: \pad, midiChan: 9, spec: \midiVel),
 			elements: [(1..9),(10..17)]
 			.collect { |bank|
-				( elements: bank.collect{ |cc| (midiNum: cc) })
+				( elements: bank.collect{ |cc|
+					MKtlDesc.notePair(midiNum: cc)
+				})
 			}
 		)
 	]
