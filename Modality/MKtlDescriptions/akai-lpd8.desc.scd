@@ -113,7 +113,7 @@ elementsDesc: (
 				MKtlDesc.notePair(
 					(i+1).asSymbol, num,
 					shared: (style: (
-						row: i div: 4,
+						row: 1 - (i div: 4), // lower row has pad 1-4
 						column: i % 4)
 					)
 				);
