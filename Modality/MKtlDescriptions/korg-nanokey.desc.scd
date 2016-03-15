@@ -1,4 +1,5 @@
 /*
+MKtl.find;
 m = MKtl(\nky, "*nanokey"); m.gui;
 */
 
@@ -10,7 +11,7 @@ deviceType: \midiKeyboard,
 elementTypes: [\pianoKey],
 status: (
 	linux: "unknown",
-	osx: "tested and working",
+	osx: "tested and working. 2015-03-15, adc",
 	win: "unknown"),
 
 idInfo: "nanoKEY",
@@ -29,6 +30,7 @@ elementsDesc: (
 	elements: [
 		(
 			key: \pkey,
+			shared: (elementType: \pad, spec: \midiVel),
 			elements: (0..120).collect { |midinum, i|
 				MKtlDesc.notePair(i, midinum,
 					(style: (row: i div: 24, column: i % 24))
