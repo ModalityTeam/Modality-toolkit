@@ -582,34 +582,57 @@ MKtlDesc {
 		^pairs.collect  (this.notePair(*_))
 	}
 
-	*notePair { |key, midiNum, style|
-		style = style ?? {()};
-		^(
+	*notePair { |key, midiNum, shared|
+
+		// make the notePair first:
+		var style, notePair;
+		var halfHeight;
+
+		shared = shared ?? {()};
+		shared.put(\midiNum, midiNum);
+		style = shared[\style] ?? {()};
+		shared.put(\style, style);
+
+		// notePair be returned, no gui info
+		notePair = (
 			key: key,
-			shared: (
-				midiNum: midiNum,
-				// this is the future solution:
-				// style will be used when gui knows
-				// how to a create single gui for the onOff pair
-				style: style
-				.put(\guiType, \notePair)
-				.put(\height, 1)
-			),
-				// temp solution: make separate half-size pads
-				// for each on and off element
+			shared: shared,
 			elements: [
-				(
-					key: \on, midiMsgType: \noteOn,
-					style: style.copy.put(\height, 0.6)
-				),
-						// off element is below on
-				(
-					key: \off, midiMsgType: \noteOff,
-					style: style.copy.put(\height, 0.6)
-					.put(\row, style.row ? 0 + 0.45)
-				)
+				( key: \on, midiMsgType: \noteOn ),
+				( key: \off, midiMsgType: \noteOff )
 			]
-		)
+		);
+
+		// GUI creation:
+		// the future solution is that style.guiType == \notePair
+		// tells .gui when to create a single gui for an onOff pair;
+		// shape of the gui will be determined by elementType.
+		// style info on row, column etc is passed thru here to shared.
+		style.put(\guiType, \notePair);
+
+
+		// quick hack for now:
+		// assume an elementType \pad,
+		// and split pad area of 1x1 into
+		// an upper half for noteOn,
+		// and a lower half pad for noteOff.
+
+		halfHeight = style.height ? 1 * 0.6;
+
+		// upper half for noteOn:
+		notePair.elements[0].put(
+			\style, style.copy.put(\height, halfHeight)
+		);
+
+		// lower half pad for noteOff:
+		notePair.elements[1].put(
+			\style, style.copy.put(\height, halfHeight)
+				// push down only if row is given,
+				// else leave row nil for crude auto-positioning
+			.put(\row, style.row !? { style.row + 0.45 })
+		);
+
+		^notePair
 	}
 
 	getMidiMsgTypes {
