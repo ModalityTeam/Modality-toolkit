@@ -21,7 +21,7 @@ protocol: \midi,
 deviceType: \mixer,
 elementTypes: [\encoder, \button],
 status: (
-	linux: "tested and working",
+	linux: "tested and working, 2016-03-15, Miguel Negrão",
 	osx: "unknown",
 	win: "unknown"),
 
