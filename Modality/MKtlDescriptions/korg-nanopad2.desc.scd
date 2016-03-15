@@ -36,7 +36,9 @@ elementsDesc: (
 				(
 					shared: (page: page),
 					elements: padbank.collect { |num, j|
-						MKtlDesc.notePair(i, num, style: (row: j div: 8, column: j % 8 + 3))
+						MKtlDesc.notePair(i, num,
+							(style: (row: j div: 8, column: j % 8 + 3))
+							)
 					}
 				)
 			}

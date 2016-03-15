@@ -45,7 +45,7 @@ elementsDesc: (
 						MKtlDesc.notePair(
 							(i+1).asSymbol, num,
 							// add style for pad layout..
-							style: (row: i, column: 0)
+							(style: (row: i, column: 0))
 						)
 
 					}
@@ -56,11 +56,9 @@ elementsDesc: (
 			key: 'sh',
 			shared: ('type': 'key', 'midiChan': 15,'spec': 'midiVel'),
 			elements: [
-				MKtlDesc.notePair('l', 3,
-					style: (row: 3, column: 0)
+				MKtlDesc.notePair('l', 3, (style: (row: 3, column: 0))
 				),
-				MKtlDesc.notePair('r', 4,
-					style: (row: 4, column: 0)
+				MKtlDesc.notePair('r', 4, (style: (row: 4, column: 0))
 				),
 			]
 		),

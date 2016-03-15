@@ -2,6 +2,7 @@
 needs initialisation messages for different configs,
 see github/modality #24
 */
+
 (
 deviceName: "The Ribbon",
 protocol: \midi,
@@ -38,8 +39,9 @@ elementsDesc: (
 				(
 					key: \touch,
 					shared: (elementType: \slider, spec: \midiBut),
-					elements: (36..82).collect {|num|
-						MKtlDesc.notePair(i, midiNum: num, style: (row: 0, column: i)) }
+					elements: (36..82).collect {|num, i|
+						MKtlDesc.notePair(i, num, (style: (row: 0, column: i)))
+					}
 				),
 				(
 					key: \bend,

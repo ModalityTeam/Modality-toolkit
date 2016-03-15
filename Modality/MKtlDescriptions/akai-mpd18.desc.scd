@@ -71,10 +71,10 @@ elementsDesc: (
 					elements: padNums.collect { |num, i|
 						MKtlDesc.notePair(
 							(i+1).asSymbol, num,
-							style: (
+							(style: (
 								row: 3 - (i div: 4),
 								column: (i % 4)
-							)
+							))
 						)
 					}
 				);

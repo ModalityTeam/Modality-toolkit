@@ -30,7 +30,9 @@ elementsDesc: (
 			key: \pkey,
 			shared: ('elementType': 'pianoKey', spec: \midiVel),
 			elements: (0..120).collect { |midinum, i|
-				MKtlDesc.notePair(i, midinum, style: (row: i div: 24, column: i % 24));
+				MKtlDesc.notePair(i, midinum,
+					(style: (row: i div: 24, column: i % 24))
+				);
 			}
 		),
 		(
