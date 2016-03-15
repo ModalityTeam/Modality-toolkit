@@ -74,10 +74,10 @@ elements: [
 		key: \bt,
 		shared: ('elementType': 'button', 'midiNum':  70, 'spec': 'midiBut'),
 		elements: [
-			MKtlDesc.notePair('shift', 70, style: (row: 0, column: 1.5)),
-			MKtlDesc.notePair('curveSetup', 114, style: (row: 1, column: 0)),
-			MKtlDesc.notePair('4velMode', 115, style: (row: 1, column: 1)),
-			MKtlDesc.notePair('browse', 58, style: (row: 1, column: 2))
+			MKtlDesc.notePair('shift', 70, (style: (row: 0, column: 1.5))),
+			MKtlDesc.notePair('curveSetup', 114, (style: (row: 1, column: 0))),
+			MKtlDesc.notePair('4velMode', 115, (style: (row: 1, column: 1))),
+			MKtlDesc.notePair('browse', 58, (style: (row: 1, column: 2)))
 		]
 	),
 // ------ cc -------------

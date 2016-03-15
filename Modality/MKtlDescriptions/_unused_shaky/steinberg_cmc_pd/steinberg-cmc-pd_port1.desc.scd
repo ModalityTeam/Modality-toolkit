@@ -1,4 +1,8 @@
 /*
+* Known Problems:
+* device is not found on OSX 10.11
+
+
 According to Manual,
 Port 1 is for pd->comp, comp->pd: pads do noteOn/off, noteNum, velocity.
 Port 2 is for pd>comp, buttons (shift, curveSetup, 4velmode, browse)
@@ -31,7 +35,9 @@ pads and 4velmode also send sysex on port 2;
 // 15: (100..115),
 // 16: all sysex messages // no idea what they are for
 
-m = MKtl(\pd, "*cmc-pd");
+m = MKtl(\pd, "*cmc-pd_port1");
+m = MKtl('pd_ctls', "*cmc-pd_port2");
+
 */
 (
 parentDesc: "steinberg-cmc-pd",
@@ -65,8 +71,9 @@ elementsDesc: (
 					key: \1,
 					elements: [35, 36, 38, 40,   39,44,42,46,   41,45,47,48,  51,55,49,56]
 					.collect { |num, i|
-						MKtlDesc.notePair(i, num, style: (row: i div: 4, column: i % 4))
-						.put(\page, 0)
+						MKtlDesc.notePair(i, num,
+							(style: (row: i div: 4, column: i % 4))
+						).put(\page, 0)
 					}
 				),
 				// \2: (4..19)   .collect { |num, i| MKtlDesc.notePair(i, num) },
