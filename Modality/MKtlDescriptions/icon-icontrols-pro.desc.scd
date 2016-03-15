@@ -1,5 +1,16 @@
 // incomplete, but what is there works
 
+/*
+thisProcess.nowExecutingPath.basename.split($.).first.postcs;
+d = MKtlDesc.loadDescs("*icontrols-pro").first;
+d.web;
+
+m.free; m = MKtl(\ic, "*icontrols-pro"); m.gui;
+m.trace;
+m.elementsDict.size;
+m.postElements;
+*/
+
 (
 deviceName: "iCON iControls_Pro V1.02",
 protocol: \midi,
@@ -25,25 +36,33 @@ elementsDesc: (
 	elements: [
 		(
 			key: \bt,
-			shared: (midiMsgType: \noteOnOff, elementType: \button,
-				ioType: \inout, midiChan: 0, spec: \midiBut, mode: \push ),
+			shared: (elementType: \button, ioType: \inout,
+				midiChan: 0, spec: \midiBut, mode: \push ),
 			elements: [
 				(
 					key: \rec,
-					elements: (0..7).collect { |num| (midiNum: num) }
+					elements: (0..7).collect { |num, i|
+						MKtlDesc.notePair(midiNum: num, shared: (style: (row: 0, column: i)))
+					}
 				),
 				(
 					key: \solo,
-					elements: (8..15).collect { |num| (midiNum: num) }
+					elements: (8..15).collect { |num, i|
+						MKtlDesc.notePair(midiNum: num, shared: (style: (row: 1, column: i)))
+					}
 				),
 				(
 					key: \mute,
-					elements: (16..23).collect { |num| (midiNum: num) }
+					elements: (16..23).collect { |num, i|
+						MKtlDesc.notePair(midiNum: num, shared: (style: (row: 2, column: i)))
+					}
 				),
 				(
 					key: \select,
 					// assuming this is 24-31? was 16-23, copy paste error?
-					elements: (24..31).collect { |num| (midiNum: num) }
+					elements: (24..31).collect { |num, i|
+						MKtlDesc.notePair(midiNum: num, shared: (style: (row: 3, column: i)))
+					}
 				)
 			]
 		),
