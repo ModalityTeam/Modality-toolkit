@@ -19,7 +19,7 @@ deviceType: \mixer,
 elementTypes: [\fader, \button, \knob],
 status: (
 	linux: "unknown",
-	osx: "unknown",
+	osx: "tested and working, 15.3.2016 by LFSaw.de",
 	win: "unknown"),
 
 idInfo: "Launch Control XL",
@@ -85,7 +85,13 @@ elementsDesc: (
 							key: 'fcs',
 							shared: ('type': 'button', 'spec': 'midiNote', \ioType: \inout),
 							elements: ((41..44) ++ (57..60)).collect{|num, i|
-								MKtlDesc.notePair((i+1).asSymbol, num)
+								MKtlDesc.notePair((i+1).asSymbol, num,
+									shared:(
+										style: (
+											row: 7,
+											column: i
+										)
+								))
 							}
 
 						),
@@ -93,7 +99,14 @@ elementsDesc: (
 							key: 'ctl',
 							shared: ('type': 'button', 'spec': 'midiNote', \ioType: \inout),
 							elements:  ((73..76) ++ (89..92)).collect { |num, i|
-								MKtlDesc.notePair((i+1).asSymbol, num)
+								MKtlDesc.notePair((i+1).asSymbol, num,
+									shared:(
+										style: (
+											row: 8,
+											column: i
+										)
+									)
+								)
 							}
 
 						)
@@ -104,11 +117,18 @@ elementsDesc: (
 					key: \slct,
 					shared: ('type': 'button', 'spec': 'midiNote', \ioType: \inout),
 					elements: [
-						MKtlDesc.notePair(\device, 105),
-						MKtlDesc.notePair(\mute, 106),
-						MKtlDesc.notePair(\solo, 107),
-						MKtlDesc.notePair(\arm, 108)
-					]
+						[ \device, 105, 3, 8.5 ],
+						[ \mute,   106, 4, 8.5 ],
+						[ \solo,   107, 5, 8.5 ],
+						[ \arm,    108, 6, 8.5 ]
+					].collect{|list|
+						var key, num, row, col;
+						#key, num, row, col = list;
+
+						MKtlDesc.notePair(key, num,
+							shared: (style: (row: row, column: col, \showLabel: true))
+						)
+					}
 				),
 
 				(

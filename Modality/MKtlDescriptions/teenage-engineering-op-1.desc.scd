@@ -24,7 +24,7 @@ deviceType: \midiKeyboard,
 elementTypes: [\pianoKey, \knob, \button],
 status: (
 	linux: "unknown",
-	osx: "unknown",
+	osx: "tested and working, gui not built. 15.3.2016 by LFSaw.de",
 	win: "unknown"),
 
 idInfo: "OP-1 Midi Device",

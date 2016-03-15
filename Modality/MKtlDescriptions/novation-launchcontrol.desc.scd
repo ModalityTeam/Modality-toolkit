@@ -20,7 +20,7 @@ deviceType: \mixer,
 elementTypes: [\button, \knob],
 status: (
 	linux: "unknown",
-	osx: "unknown",
+	osx: "tested and working, 15.3.2016 by LFSaw.de",
 	win: "unknown"),
 
 idInfo: "Launch Control",
@@ -68,8 +68,15 @@ elementsDesc: (
 					key: \bt,
 					shared: ('elementType': 'button', 'spec': 'midiNote', \ioType: \inout),
 					elements: ((9..12) ++ (25..28)).collect{|num, i|
-								MKtlDesc.notePair((i+1).asSymbol, num)
-							}
+						MKtlDesc.notePair((i+1).asSymbol, num,
+							shared: (
+								style: (
+									row: 2,
+									column: i
+								)
+							)
+						)
+					}
 
 				),
 				(
