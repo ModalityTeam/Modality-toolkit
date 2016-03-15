@@ -44,7 +44,7 @@ elementsDesc: (
 		// fader touched when shift is down sends channel mute
 		(
 			key: 'faderMute',
-			shared: ('midiMsgType': 'noteOnOff', 'elementType': 'key',
+			shared: ('elementType': 'key',
 			'midiChan': 0, 'spec': 'midiNote'),
 			elements: (8..11).collect { |note, i|
 				MKtlDesc.notePair((i+1).asSymbol, note)
