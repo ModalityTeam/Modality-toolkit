@@ -36,6 +36,7 @@ k.elAt(\curr);
 
 // or all elements of say page 0 group to namedDict:
 k.elAt(0).do { |grp| k.addNamed(grp.name, grp) };
+k.addNamed(\bigKnob, k.elAt(0, \bigKnob));
 k.namedDict.keys
 
 // now group '1' is in front, and one can access its pads directly:
@@ -48,7 +49,7 @@ k.elAt(\pad);
 s.boot;
 
 Ndef(\test, { |amp = 0.2, cutoff = 1000, reso = 5|
-RLPF.ar(Saw.ar(50, amp ! 2), cutoff, 1/reso);
+	RLPF.ar(Saw.ar(50, amp ! 2), cutoff, 1/reso);
 }).play;
 
 Ndef(\test).addSpec(\cutoff, [800, 10000, \exp]);
@@ -63,19 +64,19 @@ k.elAt(\kn, 2).action = { |el| RelSet(Ndef(\test), \reso, el.value - 0.5) };
 
 // do relative volume of ndef step by step
 k.elAt(\bigKnob).action = { |el|
-var ampspec = \amp.asSpec;
-var currvol = Ndef(\test).vol;
-var delta = el.value - 0.5;
-var newvol = ampspec.unmap(currvol) + delta;
-newvol = ampspec.map(newvol);
-Ndef(\test).vol_(newvol)
+	var ampspec = \amp.asSpec;
+	var currvol = Ndef(\test).vol;
+	var delta = el.value - 0.5;
+	var newvol = ampspec.unmap(currvol) + delta;
+	newvol = ampspec.map(newvol);
+	Ndef(\test).vol_(newvol)
 };
 
 // or more compact:
 k.elAt(\bigKnob).action = { |el|
-var spec = \amp.asSpec;
-var newUnmappedVol = spec.unmap(Ndef(\test).vol) + (el.value - 0.5);
-Ndef(\test).vol_(spec.map(newUnmappedVol))
+	var spec = \amp.asSpec;
+	var newUnmappedVol = spec.unmap(Ndef(\test).vol) + (el.value - 0.5);
+	Ndef(\test).vol_(spec.map(newUnmappedVol))
 };
 
 // both should eventually be done with SmartSetter.
@@ -104,7 +105,7 @@ deviceType: \multiController,
 elementTypes: [\encoder, \button],
 status: (
 	linux: "unknown",
-	osx: "unknown",
+	osx: "tested and working. 2015-03-15, adc",
 	win: "unknown"),
 
 idInfo: "Arturia BeatStep",

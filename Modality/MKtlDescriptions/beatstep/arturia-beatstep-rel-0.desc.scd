@@ -83,7 +83,7 @@ deviceType: \multiController,
 elementTypes: [\encoder, \button],
 status: (
 	linux: "unknown",
-	osx: "unknown",
+	osx: "tested and working. 2015-03-15, adc",
 	win: "unknown"),
 
 idInfo: "Arturia BeatStep",
