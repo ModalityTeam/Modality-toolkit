@@ -597,7 +597,8 @@ MKtl { // abstract class
 		if (idInfo.notNil) {
 			"%: replacing idInfo: % with: % to openDevice.\n"
 			.postf(this, desc.idInfo.cs, idInfo.cs);
-			this.desc.fullDesc.put(idInfo);
+			this.desc.fullDesc.put(\idInfo, idInfo);
+			this.rebuild;
 		};
 	}
 
