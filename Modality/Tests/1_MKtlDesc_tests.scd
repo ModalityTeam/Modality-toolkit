@@ -7,21 +7,7 @@ TODO TODO TODO - cleanup pact items
 
 m = MKtlDesc("korg-nanokontrol2");	// only single file
 
-// QUESTION: making this the first time posts a list which seems to be the collected midiMsgTypes of the buttons.
-
-m = MKtlDesc("korg-nanokontrol"); // does not do that
-
-// where does that happen?
-
-[ Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ] ]
-[ Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ] ]
-[ Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ], Set[ 'cc' ] ]
-
-
 // * fully test support for new format of assocArrays in desc files
-
-// * this osc controller creates a weird name:
-MKtlDesc.at(\srcp3141731416127001).idInfo;
 
 ******************************************/
 
