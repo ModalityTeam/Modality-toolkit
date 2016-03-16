@@ -31,8 +31,8 @@ elementsDesc: (
 			key: 'tr',
 			shared: ('elementType': 'button', 'spec': 'midiBut'),
 			elements: [
-				MKtlDesc.notePair(0, 78, style: (row: 0, column: 0) ),
-				MKtlDesc.notePair(1, 82, style: (row: 0, column: 1) )
+				MKtlDesc.notePair(0, 78, (style: (row: 0, column: 0)) ),
+				MKtlDesc.notePair(1, 82, (style: (row: 0, column: 1)) )
 			]
 		),
 		// MIDI being sent to the Sherman Filterbank:
