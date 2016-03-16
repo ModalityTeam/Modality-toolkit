@@ -1,6 +1,18 @@
 /*
 -- elementsDesc copied over from plain run_n_drive
+-- only differences:
+	deviceName: "Run'N' Drive Wireless_Thrustmaster",
+	idInfo: "Run'N' Drive Wireless_Thrustmaster",
+-- could be unified by loading dict from "runndrive-dict.scd",
+-- and then modifiying deviceName and idInfo only
+
 -- for examples, see also plain run-n-drive
+
+f = MKtl('f', "*drive-wireless");
+f.gui;
+f.postElements;
+f.trace;
+
 */
 
 (
@@ -10,7 +22,7 @@ deviceType: \gamepad,
 elementTypes: [\joystick, \button, \wheel, \throttle, \compass, \rumble],
 status: (
 	linux: "unknown",
-	osx: "tested and working",
+	osx: "tested and working. 2016-03-16, adc",
 	win: "unknown"),
 
 idInfo: "Run'N' Drive Wireless_Thrustmaster",
