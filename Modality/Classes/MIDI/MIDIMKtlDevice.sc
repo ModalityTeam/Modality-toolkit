@@ -482,8 +482,14 @@ MIDIMKtlDevice : MKtlDevice {
 	send { |key, val|
 		var elem, elemDesc, msgType, chan, num;
 
-		// only called by MKtl when it has a midiout,
-		// so we do not check for a midiout here
+		// check that midiout needed for sending exists,
+		// complain and exit if it is missing
+
+		if (midiOut.isNil) {
+			"%: midiOut is nil, cannot send val % to elem %."
+			.postf(mktl, key, val);
+			^this
+		};
 
 		elem = mktl.elementsDict[key];
 		if (elem.isNil) {
