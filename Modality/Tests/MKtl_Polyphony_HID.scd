@@ -1,10 +1,7 @@
 In Modality, one can have several MKtls for the same device,
 and switch between them, as controller pages.
-One can also use them polyphically if desired,
+One can also activate them polyphically if desired,
 e.g. to control multiple analogous processes from the same gestures.
-
-
-Test for HID polyphony, which solves #236:
 
 
 MKtl.find;
@@ -29,6 +26,7 @@ i.elAt.action = { |el ... groups| [el.source, el.name, el.value.round(0.001)].po
 g.elAt(\bt, \1).action = { "ONE!".postln };
 i.elAt(\bt, \1).action = { "ENO?".postln };
 
+// switch between the two
 g.enable; i.disable;
 i.enable; g.disable;
 
