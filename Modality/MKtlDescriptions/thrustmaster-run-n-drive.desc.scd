@@ -16,6 +16,7 @@ the directions are:
 // find gp and trace it:
 MKtl.find(\hid);
 f = MKtl('f', "thrustmaster-run-n-drive");
+f.gui;
 f.postElements;
 f.trace;
 
@@ -45,14 +46,13 @@ f.elementAt(\joy, \r, \hat).action = { |el| [el.name, el.value].postln };
 
 
 // test for rumble outputs:
-k = MKtl(\k, "*drive");
-k.elementAt( \rumble, \l ).value_(1);
-k.elementAt( \rumble, \l ).value_(0.5);
-k.elementAt( \rumble, \l ).value_(0);
+f.elAt( \rumble, \l ).value_(1);
+f.elAt( \rumble, \l ).value_(0.5);
+f.elAt( \rumble, \l ).value_(0);
 
-k.elementAt( \rumble, \r ).value_(1);
-k.elementAt( \rumble, \r ).value_(0.5);
-k.elementAt( \rumble, \r ).value_(0);
+f.elAt( \rumble, \r ).value_(1);
+f.elAt( \rumble, \r ).value_(0.5);
+f.elAt( \rumble, \r ).value_(0);
 
 
 
@@ -65,7 +65,7 @@ deviceType: \gamepad,
 elementTypes: [\joystick, \button, \wheel, \throttle, \compass, \rumble],
 status: (
 	linux: "unknown",
-	osx: "tested and working",
+	osx: "tested and working. 2016-03-16, adc",
 	win: "unknown"),
 
 idInfo: "Run'N' Drive_Thrustmaster",
