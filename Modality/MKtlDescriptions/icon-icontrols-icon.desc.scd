@@ -20,11 +20,10 @@ deviceInfo: (
 	// hasScribble: false
 ),
 elementsDesc: (
+	shared: ( hidUsagePage: 1, type: 'joyAxis', ioType: 'in', spec: 'mouseAxis' ),
 	elements: [
-		'x': (hidUsage: 48, hidUsagePage: 1, type: 'joyAxis',
-			ioType: 'in', spec: 'mouseAxis' ),
-		'y': (hidUsage: 56, hidUsagePage: 1,
-			type: 'joyAxis', ioType: 'in', spec: 'mouseAxis' ),
+		(key: 'x', hidUsage: 48),
+		(key: 'y', hidUsage: 56)
 	]
 )
 )
