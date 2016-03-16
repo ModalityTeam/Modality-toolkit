@@ -8,7 +8,10 @@ with each key having noteOn, noteOff and polyTouch.
 it y-position on the pad can be sent per channel,
 and touch can be switched from poly to channel pressure.
 
-For an example, see DeviceExamples/linnstrument_8chan.scd
+For some examples, see "DeviceExamples/linnstrument_8chan.scd":
+
+~here = thisProcess.nowExecutingPath;
+(~here.dirname.dirname.dirname +/+ "DeviceExamples/linnstrument_8chan.scd").openOS;
 
 ****/
 (
@@ -18,7 +21,7 @@ deviceType: '___',
 elementTypes: [  ],
 status: (
 	linux: "unknown",
-	osx: "tested and working",
+	osx: "tested and working, 2016-03-16, adc",
 	win: "unknown"),
 
 idInfo: "LinnStrument MIDI",

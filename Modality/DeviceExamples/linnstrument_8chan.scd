@@ -2,7 +2,7 @@ MKtl.find(\midi);
 
 k.free; MKtlDesc.allDescs.clear;
 k = MKtl('linn', "linnstrument_8chan");
-
+k.gui;
 k.trace;
 k.trace(false);
 // access elements
@@ -124,7 +124,7 @@ k.elAt(\row, \all, \bend).do { |el, rowi|
 	el.action = { |el|
 		var bendval = el.value.linlin(0, 1, -2, 2);
 		~postel.(el);
-	//	Ndef(\str8).setAt(rowi + 1, \bend, bendval);
+		Ndef(\str8).setAt(rowi + 1, \bend, bendval);
 	};
 };
 
