@@ -22,16 +22,16 @@ f.trace;
 
 // example for fixing this and using compass directions:
 f.dictAt(\compass).action = { |el|
-// calc integer value for indexing:
-var intVal = (el.deviceValue * 7).round.asInteger;
-var dir;
-[el.value, intVal, el.deviceValue].round(0.001).postln;
-if (intVal == 15) {
-"rnd compass released.".postln
-} {
-dir = [\N, \NE, \E, \SE, \S, \SW, \W, \NW][intVal];
-"rnd compass direction: %\n".postf(dir);
-};
+	// calc integer value for indexing:
+	var intVal = (el.deviceValue * 7).round.asInteger;
+	var dir;
+	[el.value, intVal, el.deviceValue].round(0.001).postln;
+	if (intVal == 15) {
+		"rnd compass released.".postln
+	} {
+		dir = [\N, \NE, \E, \SE, \S, \SW, \W, \NW][intVal];
+		"rnd compass direction: %\n".postf(dir);
+	};
 };
 
 // test that joy hat accessing works:
