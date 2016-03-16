@@ -11,7 +11,7 @@ The Modality toolkit simplifies using controllers in your SuperCollider patchers
 link::http://modality.bek.no/::
 
 
-section::Features::
+section::Features
 list::
 ##Modality allows the creation of highly personal instruments by using a wide variety of controllers. To this end, a common code interface, MKtl, is used to set up controllers from various sources and protocols like HID, MIDI and OSC.
 ##With the Modality toolkit, the same set of physical interfaces (sliders, buttons, motion sensors etc etc) can be easily adapted to control many different processes. Modality was build to allow a highly modal approach to mapping and on-the-fly remapping to make a setup much more flexible, powerful, and interesting to play. For example, when improvising with acoustic musicians, highly modal interfaces allow much faster changes of overall musical direction.
@@ -22,9 +22,13 @@ list::
 section:: Tutorials and further reading
 
 LIST::
-##Begin here: link::Tutorials/ModalityTutorial::
+##Begin here:
 
-##SupportedDevices: link::https://modalityteam.github.io/controllers/::
+link::Tutorials/ModalityTutorial::
+
+##Supported Devices are:
+
+link::https://modalityteam.github.io/controllers/::
 code::
 // or in SC:
 MKtlDesc.web;
@@ -38,7 +42,12 @@ link::Tutorials/Substituting_MKtls::
 
 link::Tutorials/Composing_MKtls::
 
-link::Tutorials/Connecting_external_MIDI::
+link::Tutorials/Connecting_external_MIDI_devices::
+
+link::Tutorials/Using_multiple_identical_devices::
+
+link::Tutorials/One_device_many_MKtls:: convert Tests/MKtlPolyphony_HID.scd
+
 
 Find many tutorial files and examples of common use cases of MKtl here:
 link::https://github.com/ModalityTeam/ModalityWorkshop::
