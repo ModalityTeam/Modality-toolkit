@@ -1,4 +1,10 @@
 /*
+
+ToDo:
+* knob and buttons not built correctly?
+- MIDIFunc.trace shows them, m.trace does not.
+
+
 According to Manual,
 Port 1 is for pd->comp, comp->pd: pads do noteOn/off, noteNum, velocity.
 Port 2 is for pd>comp, buttons (shift, curveSetup, 4velmode, browse)
@@ -12,9 +18,12 @@ pads and 4velmode also send sysex on port 2;
 
 // a little example:
 
+MIDIFunc.trace
 m = MKtl('pd_ctls', "*cmc-pd_port2");
 m.trace;
+m.postElements;
 m.gui;
+
 // example for use of relative knob:
 m.elAt(\kn).action = { |el|
 	var delta = el.deviceValue.fold(0, 64).wrap(-31, 32);
@@ -48,7 +57,7 @@ elementTypes: [\pad, \button],
 
 status: (
 	linux: "unknown",
-	osx: "tested and working, minus out and sysex",
+	osx: "tested, knob and buttos not coming thru MKtl. 2016-04-16, adc",
 	win: "unknown"),
 
 idInfo: (deviceName: "Steinberg CMC-PD", sourcePortIndex: 1, destPortIndex: 1),

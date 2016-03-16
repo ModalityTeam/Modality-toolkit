@@ -1,6 +1,8 @@
 /*
-* Known Problems:
-* device is not found on OSX 10.11
+
+* TODO:
+* implement and test out to device and sysex.
+* make special mode or example for 4vel mode
 
 
 According to Manual,
@@ -11,7 +13,7 @@ Port 3 is apparently unused (i.e. reserved for company-only uses).
 
 pads and 4velmode also send sysex on port 2;
 4velmode button toggles light, but sends noteOn/off on touch/release.
-(state liekly sent in sysex.
+- state is likely sent in sysex?
 
 --- velocity value is always 16!
 --- 4velmode is same note on buts 1,5,9,13 etc; vel 31, 63, 95, 127.
@@ -35,7 +37,10 @@ pads and 4velmode also send sysex on port 2;
 // 15: (100..115),
 // 16: all sysex messages // no idea what they are for
 
-m = MKtl(\pd, "*cmc-pd_port1");
+m.free; m = MKtl(\pd, "*cmc-pd_port1");
+m.gui;
+m.postElements;
+
 m = MKtl('pd_ctls', "*cmc-pd_port2");
 
 */
@@ -44,7 +49,7 @@ parentDesc: "steinberg-cmc-pd",
 
 status: (
 	linux: "unknown",
-	osx: "tested and working, minus out and sysex",
+	osx: "tested and working. 2016-03-16, adc",
 	win: "unknown"),
 
 idInfo: (deviceName: "Steinberg CMC-PD", sourcePortIndex: 0, destPortIndex: 0),
@@ -61,8 +66,10 @@ deviceInfo: (
 	// features: "",
 	// notes: "",
 ),
+specs: (midiVel16: [0, 16, \lin, 16]),
+
 elementsDesc: (
-	shared: ('elementType': 'pad', 'midiChan': 0, 'spec': 'midiVel'),
+	shared: ('elementType': 'pad', 'midiChan': 0, 'spec': 'midiVel16'),
 	elements: [
 		(key: 'pad',
 			// just a sketch,not working yet:
@@ -72,7 +79,7 @@ elementsDesc: (
 					elements: [35, 36, 38, 40,   39,44,42,46,   41,45,47,48,  51,55,49,56]
 					.collect { |num, i|
 						MKtlDesc.notePair(i, num,
-							(style: (row: i div: 4, column: i % 4))
+							(style: (row: 4 - (i div: 4), column: i % 4))
 						).put(\page, 0)
 					}
 				),
