@@ -1,4 +1,4 @@
-/**** Faderfox UC4 desc file. adc 2015_12_24
+/**** Faderfox UC4 desc file. adc 2015_12_24 (merry xmas)
 
 // General Info:
 
@@ -7,15 +7,19 @@ It has 9 sliders, 8 knobs with 8 pushbuttons and 8 normal buttons;
 by switching between 8 groups one has 264 controls in one setup,
 and 16 presets of 8 groups each allow very flexible uses.
 
-This desc file only addresses Setup 01 setup, and does not have faders and knobs in every group:
+This desc file only addresses Setup 01 setup,
+and does not have faders and knobs in every group!
+
 This is because the default cc numbers of encoder group 4 and fader group 1 overlap,
 and fader groups 5-8 all use the same ccnum range (104-111).
-Can be fixed by reprogramming these groups in the device.
+This can be fixed by reprogramming these groups in the device.
 
 
 // Basic examples:
 
 MKtlDesc.loadDescs; k.free; k = MKtl('uc4', "faderfox-uc4"); k.gui;
+k.elementsDict.size;
+k.postElements
 
 k.elAt.action = { |el| [el.name, el.value.round(0.001), el.deviceValue].postcs };
 
@@ -32,7 +36,7 @@ deviceType: 'faderbox',
 elementTypes: [ \slider, \knob, \button, \pushbutton ],
 status: (
 	linux: "unknown",
-	osx: "tested and working",
+	osx: "tested and working. 2016-03-16, adc",
 	win: "unknown"),
 
 idInfo: "Faderfox UC4",
@@ -117,7 +121,8 @@ elementsDesc: (
 			key: \sl,
 			shared: ('midiChan': 0, 'midiMsgType': 'cc', 'elementType': 'slider', 'spec': 'midiCC'),
 			// these 8 groups are available: [32, 40, 48, 56,  104, 104, 104, 104].collect(_ + (0..7));
-			// only make the first 5, 6-8 are same as 5, fix in custom groups
+			// only make the first 5 groups are really different,
+			// 6-8 are same as 5 -> fix in custom groups if needed
 			elements: [32, 40, 48, 56, 104].collect { |num1, gr_i|
 				( elements: 8.collect { |i|
 					(
