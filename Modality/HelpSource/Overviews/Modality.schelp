@@ -3,17 +3,20 @@ summary:: A toolkit for creating flexible personal electronic instruments using 
 categories:: Libraries>Modality, External Control
 related:: Overviews/Modality, Classes/MKtl, Tutorials/ModalityTutorial
 
-Section:: Introduction
 
-Modality is a toolkit created by a team of developers and users of SuperCollider.
 
-Its first aim is to simplify the creation of very personal instruments with SuperCollider, using a wide variety of controllers. To this end, a common code interface, link::Classes/MKtl::, is used to set up controllers from different sources, and protocols like HID, MIDI and OSC.
 
-A second aim is using the same limited set of physical interfaces (sliders, buttons, motion sensors etc etc) to control potentially many processes in flexible ways. Such a highly modal approach to mapping and on-the-fly remapping can make a setup much more flexible, powerful, and interesting to play. For example, when improvising with acoustic musicians, highly modal interfaces allow much faster changes of overall musical direction.
+The Modality toolkit simplifies using controllers in your SuperCollider patchers. It was created by a team of developers and users of SuperCollider.
 
-A third aim is to allow quick substitution of controllers for others, whether for experiment (how do the  sounds in my setup feel when played with a gaming joystick?) or in emergencies (faderbox breaks 30 minutes before the show).
+link::http://modality.bek.no/::
 
-http://modality.bek.no/
+
+section::Features::
+list::
+##Modality allows the creation of highly personal instruments by using a wide variety of controllers. To this end, a common code interface, MKtl, is used to set up controllers from various sources and protocols like HID, MIDI and OSC.
+##With the Modality toolkit, the same set of physical interfaces (sliders, buttons, motion sensors etc etc) can be easily adapted to control many different processes. Modality was build to allow a highly modal approach to mapping and on-the-fly remapping to make a setup much more flexible, powerful, and interesting to play. For example, when improvising with acoustic musicians, highly modal interfaces allow much faster changes of overall musical direction.
+## The toolkit allows quick substitution of controllers for others, whether for experiment (how do the sounds in my setup feel when played with a gaming joystick instead of this faderbox?) or in emergencies (My faderbox broke and I have 30 minutes until the show starts!).
+::
 
 
 section:: Tutorials and further reading
@@ -63,31 +66,35 @@ link::Tutorials/How_to_create_a_description_file::
 ::
 
 
-SECTION:: Overview
+SECTION:: First steps
 
-With code::MKtl:: it is possible to assign functionality to controller elements.
+This section is intended as a rough and quick overview. For more detailed information, see link::Tutorials/ModalityTutorial::.
 
-To find your device, evaluate
+Use code::MKtl:: to assign functionality to hardware controller elements. To find your device, evaluate
 code::
 MKtl.find;
 ::
 
 NOTE:: You may have to install drivers before code::MKtl.find:: is able to find your device. Some devices may show up in multiple protocols. Example: the code::ICON IControls:: show up as both code::MIDI:: and code::HID::.::
 
-Each code::MKtl:: has elements such as sliders or knobs. It is possible to assign an action to such an element that is evaluated every time the value of that element gets updated.
 
-Below are two examples of what you can do with this toolkit. For further explanation, refer to link::Tutorials/ModalityTutorial::.
+Each code::MKtl:: comprises of code::MKtlElement::s, representing part of your controller such as sliders or knobs. You can assign custom actions to such elements. They will get evaluated every time the value of that element is updated.
 
 subsection:: Example NanoKontrol2
 
 code::
-// plug in your NanoKontrol2 and evaluate this line.
+// plug in a NanoKontrol2 and evaluate this line.
+// ( if you don't have one at hand, do it anyhow :)
 k = MKtl('nk2', "korg-nanokontrol2");
 
-// or do this first, grab the last line pasted,
+// alternatively, you can evaluate
 MKtl.find(\midi);
-// and change the name:
-k = MKtl('myNK2', "korg-nanokontrol2");
+// grab the last line pasted, and change its name:
+k = MKtl('nk2', "korg-nanokontrol2");
+
+// If no controller is connected, use its gui instead:
+k.gui;
+
 
 // turn on trace, then move some elements to see that it works
 k.trace;
