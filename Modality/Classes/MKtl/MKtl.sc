@@ -197,6 +197,11 @@ MKtl { // abstract class
 			String, {
 				descName = lookupNameOrDesc;
 				newMKtlDesc = MKtlDesc(descName);
+				if (newMKtlDesc.isKindOf(MKtlDesc).not) {
+					"% : newMKtlDesc is nil, cannot make MKtl named %.\n"
+					.postf(thisMethod, name.cs);
+					^nil
+				};
 				protocol = newMKtlDesc.protocol;
 				MKtlDevice.initHardwareDevices(false, protocol);
 			},
