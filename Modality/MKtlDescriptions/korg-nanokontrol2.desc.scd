@@ -5,6 +5,18 @@
 * 8x sliders, knobs, 3 buttons
 
 
+// test this desc:
+~thisdesc = thisProcess.nowExecutingPath.basename.split($.).first.postcs;
+d = MKtlDesc.loadDescs(~thisdesc).first;
+d.web;
+
+// close old m, open new one, make gui:
+m.free; m = MKtl(\test, "*nanokontrol2"); m.gui;
+m.trace;
+m.elementsDict.size;
+m.postElements;
+
+
 // simple tests
 n.free;
 n = MKtl(\nk2, "*trol2");
