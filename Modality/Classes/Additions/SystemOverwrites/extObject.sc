@@ -1,7 +1,7 @@
 + Object {
 
     collectOrApply { |f|
-    	^if( this.isKindOf(Collection) ) {
+    	^if( this.isCollection ) {
     		this.collect(f)
     	} {
     		f.(this)
