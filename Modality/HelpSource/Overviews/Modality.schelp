@@ -46,11 +46,20 @@ MKtlDesc.openFolder;
 MKtlDesc.loadDescs.choose.openFile;
 ::
 
+And longer examples for specific devices are here:
+code::
+(MKtlDesc.defaultFolder.dirname +/+ "DeviceExamples").openOS;
+::
+
 ::
 
 section:: Advanced Tutorials and further reading
 LIST::
-##link::Tutorials/How_to_create_a_description_file::
+## Adding your own controller(s) to Modality:
+
+link::Tutorials/How_to_adapt_a_description_file::
+
+link::Tutorials/How_to_create_a_description_file::
 ::
 
 
@@ -218,5 +227,6 @@ Have a controller that is not yet known to the Modality? You can add it by yours
 See link::Tutorials/How_to_create_a_description_file::.
 
 section:: Acknowledgements
+
 Modality and its research meetings have kindly been supported by BEK in Bergen, Norway, and STEIM, Amsterdam.
 The ModalityTeam is, in no particular order: Jeff Carey, Bjørnar Habbestad, Marije Baalman, Alberto de Campo, Tijs Ham, Wouter Snoei, Till Bovermann, Miguel Negrao, Robert van Heumen, Hannes Hoelzl, Tim Blechmann, Amelie Hinrichsen, and Dominik Hildebrand Marques Lopes.
