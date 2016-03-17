@@ -42,11 +42,16 @@ link::Tutorials/Substituting_MKtls::
 
 link::Tutorials/Composing_MKtls::
 
-link::Tutorials/Connecting_external_MIDI_devices::
+link::Tutorials/Paging_MKtls::
+
+link::Tutorials/Using_multiple_MKtls_for_one_device:: convert Tests/MKtlPolyphony_HID.scd
 
 link::Tutorials/Using_multiple_identical_devices::
 
-link::Tutorials/One_device_many_MKtls:: convert Tests/MKtlPolyphony_HID.scd
+link::Tutorials/Connecting_external_MIDI_devices::
+
+link::Tutorials/Connecting_multi-port_MIDI_devices::
+
 
 
 Find many tutorial files and examples of common use cases of MKtl here:
