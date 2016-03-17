@@ -68,25 +68,61 @@ open folder(s) in descFolders by index.
 METHOD:: loadDescs
 load matching descriptions in descFolders.
 
+METHOD:: allDescs
+dict of all currently loaded descs
+
+METHOD:: postStatus
+post status and name of all loaded descs
+code::
+MKtlDesc.postStatus;
+::
+
 METHOD:: postLoadable
 post the filenames of descs that can be loaded
+code::
+MKtlDesc.postLoadable;
+::
 
 METHOD:: postLoaded
 post currently loaded descs
+code::
+MKtlDesc.postLoaded;
+::
 
-METHOD:: postDescKeysUsed
-post all element keys used in loaded descs
+METHOD:: descKeysUsed
+collect all element keys used in loaded descs
+code::
+MKtlDesc.descKeysUsed;
+::
 
-METHOD:: allDescs
-all currently loaded descs
+METHOD:: deviceTypesUsed
+collect all device types used in loaded descs
+code::
+MKtlDesc.deviceTypesUsed;
+::
+
+METHOD:: elementTypesUsed
+collect all element types used in loaded descs
+code::
+MKtlDesc.elementTypesUsed;
+::
+
+METHOD:: notePair
+make a pair of noteOn, noteOff elements
+code::
+MKtlDesc.notePair(\padL, 13);
+::
+METHOD:: notePairs
+make pairs for a list of key, note pairs
+code::
+MKtlDesc.notePairs([[\padL, 13], [\padL, 21]]).printAll;
+::
+
 
 METHOD:: isValidDescDict
 check whether dict is a valid description dict.
 
-PRIVATE:: isValidElemDesc, isValidHIDDesc, isValidMidiDesc, isValidOSCDesc
-
-METHOD:: postStatus
-post status and name of all loaded descs
+PRIVATE:: isValidElemDesc, isValidHIDDesc, isValidMIDIDesc, isValidOSCDesc, isElemFunc, sharePropsToElements
 
 
 METHOD:: new
@@ -130,8 +166,11 @@ legal extensions for filenames
 Method:: fileToIDDict
 a dictionary that contains the idInfos for every desc file
 
-Method:: idInfoForFilename, filenamesForIDInfo
-find filenames and device idInfos for each other
+Method:: idInfoForFilename
+find device idInfo for given filename
+
+Method:: filenamesForIDInfo
+find filenames for a given device idInfo
 
 Method:: writeCache, cacheName, loadCache, updateCache
 support methods for cache of filenames and idInfos
@@ -141,16 +180,36 @@ private:: fillMidiDefaults, resolveForPlatform, isElementTestFunc, findParent, p
 
 INSTANCEMETHODS::
 
+METHOD:: idInfo
+get the string by which the hardware device registers to the OS.
+
+METHOD:: protocol
+get and set the hardware protocol of the device.
+
+METHOD:: deviceFilename
+get the filename of the desc file
+
 METHOD:: fullDesc
 get MKtlDesc's properties, or set them from a dict
 fullDesc.elementsDesc contains the description of all elements
 
-METHOD:: path
-the path where file was read (if so)
+METHOD:: elementsDesc
+the hierarchical dict that contains the description of all elements
 
-METHOD:: writeFile
-not done yet - should eventually write a well-formed description file
-at path based on its current data.
+METHOD:: elAt
+access element descriptions hierarchically
+
+METHOD:: elementsDict
+the flat dict that contains descriptions of all elements by compound lookup name
+
+METHOD:: dictAt
+access element descriptions by compound hierarchic lookup name
+
+METHOD::  web
+open a webview on the device's info page at Modality website.
+
+METHOD:: openFile
+open the desc file from which the MKtlDesc was generated
 
 METHOD:: postInfo
 post info on the device, if postElements = true, also info on the elements
@@ -158,23 +217,12 @@ post info on the device, if postElements = true, also info on the elements
 METHOD:: postElements
 post info on the elements
 
-METHOD:: deviceFilename
-get the filename of the desc file
+METHOD:: path
+the path where file was read (if so)
 
-METHOD:: idInfo
-get the string by which the hardware device registers to the OS.
-
-METHOD:: protocol
-get and set the hardware protocol of the device.
-
-METHOD:: openFile
-open the desc file from which the MKtlDesc was generated
-
-METHOD::  web
-open a webview on the device's info page at Modality website.
-
-METHOD:: elementsAssocArray
-contains all elements in an assocArray, for internal use.
+METHOD:: writeFile
+not done yet - should eventually write a well-formed description file
+at path based on its current data.
 
 PRIVATE:: init, storeArgs, printOn, writeCache, loadCache
 
