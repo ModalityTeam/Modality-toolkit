@@ -1,23 +1,28 @@
 /*
 
 // HID reports all buttons and joystick as in and out elements,
-// but sending to them does nothing ... keeping them as
+// but sending to them does nothing ... keeping them anyway
 
 MKtl.find;
 m = MKtl('cc', "saitek-cyborg-command-pad-unit");
 m.trace;
-
+m.trace(false)
+x.free
 m.elementsDict.do { |el| el.valueAction_(0) };
 
-// see the reported elements:
-MKtl('cc').explore(false);
-MKtl('cc').createDescriptionFile;
+// HID reports all buttons and joystick as in and out elements,
+// but sending to them does nothing ... keeping them anyway
+
+m.elAt(\bt).do(_.valueAction_(0));
+m.elAt(\bt).do(_.valueAction_(1));
 
 */
 
 (
 idInfo: "Saitek Cyborg Command Pad Unit_",
 protocol: 'hid',
+
+// specs: (uni1023: [1, 1023, \lin, 1/1023]),
 
 elementsDesc: (
 	elements: [
@@ -49,7 +54,9 @@ elementsDesc: (
 		),
 		(
 			key: \joy,
-			shared: ( 'hidUsagePage': 1, 'elementType': 'thumbAxis', 'ioType': 'inout', 'spec': \cent1023 ),
+			shared: ( 'hidUsagePage': 1, 'elementType': 'thumbAxis', 'ioType': 'inout',
+				\spec: \unipolar
+			),
 			elements: [
 				(key: 'x', 'hidUsage': 48),
 				(key: 'y', 'hidUsage': 49)
