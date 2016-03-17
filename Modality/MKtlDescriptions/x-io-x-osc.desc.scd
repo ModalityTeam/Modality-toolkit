@@ -41,7 +41,7 @@ deviceType: \multiController,
 elementTypes: [\accelerometer, \sensor, \serial],
 status: (
 	linux: "unknown",
-	osx: "incomplete",
+	osx: "unknown after refactor, incomplete",
 	win: "unknown"
 ),
 

@@ -14,6 +14,12 @@ parentDesc: "rme-audio-fireface-400_midi",
 elementTypes: [],
 deviceType: \externalMidiPort,
 
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"
+),
+
 idInfo: (deviceName: "Fireface 400*", sourcePortIndex: 0, destPortIndex: 0),
 portName: "Port 1",
 

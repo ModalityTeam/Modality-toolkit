@@ -21,6 +21,8 @@ OSCFunc.trace(false);
 // * if nothing, check that touchosc sends to proper port:
 NetAddr.langPort
 
+OSCdef('/1/fader5', { |msg| msg.postln });
+
 ////// the protocol for scene 1 is
 // // a horiz. crossfader
 // '/1/fader5'
@@ -38,7 +40,9 @@ MKtl.all.do(_.free).clear;
 t = MKtl(\tosca, "touchosc-simple1");
 
 // update the touchOSC send address to the one you see in OSCFunc.trace:
-MKtl(\tosca).device.updateSrcAddr("192.168.178.53", 62523);
+MKtl(\tosca).device.updateSrcAddr("192.168.178.74", 54054);
+m = MKtl(\tosca);
+m.trace;
 // and give it an action for all its elements
 MKtl(\tosca).elements.action = { |el|
 "tOsc %: %\n".postf(el.name, el.value.round(0.001))

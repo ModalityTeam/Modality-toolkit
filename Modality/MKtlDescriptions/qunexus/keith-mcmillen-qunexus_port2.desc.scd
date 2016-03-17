@@ -25,7 +25,7 @@ deviceType: \externalMidiPort,
 
 status: (
 	linux: "unknown",
-	osx: "tested as desc, without ext. device, looks ok. 2016-03-17, adc",
+	osx: "tested desc only, without ext. device, looks ok. 2016-03-17, adc",
 	win: "unknown"),
 
 idInfo: (deviceName: "QuNexus", sourcePortIndex: 1, destPortIndex: 1),

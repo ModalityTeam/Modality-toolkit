@@ -18,6 +18,12 @@ m.elAt(\invol).choose.value_(1.0.rand);
 deviceName: "TotalMix",
 idInfo: "TotalMix",
 protocol: \osc,
+status: (
+	linux: "unknown",
+	osx: "unknown",
+	win: "unknown"
+),
+
 netAddrInfo: (srcPort: 9001, destPort: 7001, ipAddress: "localhost"),
 
 elementsDesc: (

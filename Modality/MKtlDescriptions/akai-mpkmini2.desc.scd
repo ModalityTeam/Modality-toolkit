@@ -16,7 +16,7 @@ deviceType: 'keyboard',
 elementTypes: [\knob, \key, \pad, \bend],
 status: (
 	linux: "tested and working",
-	osx: "tested as desc, looks ok, no gui info yet. 2016-03-17, adc",
+	osx: "tested desc only, looks ok, no gui info yet. 2016-03-17, adc",
 	win: "tested and working"),
 
 idInfo: "MPKmini2",

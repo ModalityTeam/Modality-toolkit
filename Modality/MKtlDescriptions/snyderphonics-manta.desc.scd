@@ -64,7 +64,7 @@ elementTypes: [\pad, \slider],
 deviceType: \manta,
 status: (
 	linux: "unknown",
-	osx: "tested and broken atm. 2016-03-15, lfsaw.de",
+	osx: "tested, broken atm. 2016-03-15, lfsaw.de",
 	win: "unknown"),
 
 idInfo: "manta",

@@ -37,10 +37,5 @@ deviceInfo: (
 	],
 	notes: "",
 	hasScribble: false
-),
-
-status: (
-	linux: "unknown",
-	osx: "unknown",
-	win: "unknown")
+)
 );
