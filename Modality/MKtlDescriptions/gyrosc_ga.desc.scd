@@ -5,34 +5,58 @@
 // others can be added later as needed.
 
 /* todo:
-  add others movement sensors
+  * add others movement sensors
+  *
 */
 
 // for using gyrosc nametag ID concept, see note below.
 
 /*
-o = OSCMon.new;
-o.enable;
-// which sending addresses?
-o.anaDict.msgNamesByAddr.keys.postcs
-// which msgNames from where?
-o.anaDict.msgNamesByAddr
-// the last n messages from all addresses
-o.anaDict.messagesByAddr.postcs
-o.disable;
+************* In gyrosc app: ************
 
-// or rawer:
+// * enter your wifi address, and SC port:
+NetAddr.langPort;
+
+// * set nametag to blank!
+// -> nametags require renaming the oscpaths
+// - example to be made.
+
+// * turn on the controls you want to use.
+(only accel and gyro supported here so far)
+
+
+// * now in SC, check whether OSC messages arrive:
 OSCFunc.trace;
 OSCFunc.trace(false);
 
 
+// * analyse incoming date with OSCMon for convenience:
+o = OSCMon.new;
+o.enable;
+
+// which sending addresses?
+o.anaDict.msgNamesByAddr.keys.postcs
+// which msgNames from where?
+o.anaDict.msgNamesByAddr
+
+// the last n messages from all addresses
+o.anaDict.messagesByAddr.postcs
+o.disable;
+
+
+// when you are sure you get proper osc data, make an MKtl:
+
 g = MKtl(\gyr, "gyrosc*");
+g.gui;
+g.trace;
 // update with the address seen in OSCMon or OSCFunc.trace:
 g.device.updateSrcAddr("192.168.178.53", 60329);
 
 g.trace;
 g.trace(false);
 [ /gyrosc/ipport, 192.168.178.53, 6449 ]
+
+g.elAt.collect(_.collectives)
 */
 
 (
@@ -42,7 +66,7 @@ deviceType: \phoneApp,
 elementTypes: [\imu, \accelerometer],
 status: (
 	linux: "unknown",
-	osx: "tested and working, subset of sensors only.",
+	osx: "tested, not working. 2016-03-17, adc : subset of sensors only, not receiving OSC from app",
 	win: "unknown"),
 
 idInfo: "gyrosc",

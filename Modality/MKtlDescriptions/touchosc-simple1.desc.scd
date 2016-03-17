@@ -54,7 +54,7 @@ deviceType: \phoneApp,
 elementTypes: [\accelerometer, \fader, \button],
 status: (
 	linux: "unknown",
-	osx: "tested and working",
+	osx: "unknown",
 	win: "unknown"),
 
 idInfo: "touchOSC",
