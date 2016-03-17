@@ -1,5 +1,14 @@
 // contributed by gil fuser
 
+/*
+* todo:
+* test on osx
+* add gui layout
+
+MKtl(\x, "*mpk*2").gui;
+MKtl(\x).trace;
+*/
+
 (
 deviceName: "MPKmini2",
 protocol: 'midi',
@@ -7,7 +16,7 @@ deviceType: 'keyboard',
 elementTypes: [\knob, \key, \pad, \bend],
 status: (
 	linux: "tested and working",
-	osx: "unknown",
+	osx: "tested as desc, looks ok, no gui info yet. 2016-03-17, adc",
 	win: "tested and working"),
 
 idInfo: "MPKmini2",

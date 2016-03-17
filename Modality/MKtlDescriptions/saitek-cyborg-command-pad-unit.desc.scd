@@ -20,6 +20,12 @@ m.elAt(\bt).do(_.valueAction_(1));
 
 (
 idInfo: "Saitek Cyborg Command Pad Unit_",
+status: (
+	linux: "unknown",
+	osx: "tested and working. 2016-03-17, adc",
+	win: "unknown"
+),
+
 protocol: 'hid',
 
 // specs: (uni1023: [1, 1023, \lin, 1/1023]),

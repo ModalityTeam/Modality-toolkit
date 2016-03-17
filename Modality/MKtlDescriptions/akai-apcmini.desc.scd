@@ -21,7 +21,7 @@ deviceType: \launchpad,
 elementTypes: [\fader, \pad, \button],
 status: (
 	linux: "unknown",
-	osx: "unknown",
+	osx: "tested as desc only, looks ok. 2016-03-17, adc",
 	win: "unknown"),
 
 idInfo: "APC MINI",

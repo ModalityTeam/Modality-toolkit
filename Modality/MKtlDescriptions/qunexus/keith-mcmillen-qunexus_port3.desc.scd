@@ -45,7 +45,7 @@ parentDesc: "keith-mcmillen-qunexus",
 elementTypes: [\voltage],
 status: (
 	linux: "unknown",
-	osx: "partially tested, seems OK, cvIn, cvOut not checked yet",
+	osx: "tested, without checking voltages, looks OK. 2016-03-17, adc",
 	win: "unknown"),
 
 idInfo: (deviceName: "QuNexus", sourcePortIndex: 2, destPortIndex: 2),

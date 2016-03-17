@@ -25,7 +25,7 @@ deviceType: \midiKeyboard,
 elementTypes: [\pianoKey, \pads, \slider],
 status: (
 	linux: "unknown",
-	osx: "unknown",
+	osx: "tested as desc only, gui missing, else ok. 2016-03-17",
 	win: "unknown"),
 
 idInfo: "MPK mini",

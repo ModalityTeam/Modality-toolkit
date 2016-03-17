@@ -16,7 +16,7 @@ idInfo: "Cyborg X_Saitek",
 protocol: 'hid',
 status: (
 	linux: "unknown",
-	osx: "tested and working",
+	osx: "tested and working. 2016-03-17, adc",
 	win: "unknown"),
 
 

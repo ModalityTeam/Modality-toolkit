@@ -33,7 +33,7 @@ deviceType: \midiKeyboard,
 elementTypes: [\pianoKey, \encoder, \button],
 status: (
 	linux: "unknown",
-	osx: "unknown",
+	osx: "tested as desc, looks ok, no gui info yet. 2016-03-17, adc",
 	win: "unknown"),
 
 idInfo: "Arturia MINILAB",
