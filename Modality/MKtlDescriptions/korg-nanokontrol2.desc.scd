@@ -11,11 +11,15 @@ d = MKtlDesc.loadDescs(~thisdesc).first;
 d.web;
 
 // close old m, open new one, make gui:
-m.free; m = MKtl(\test, "*nanokontrol2"); m.gui;
+m.free; m = MKtl(\test, "*nanokontrol2"); m.gui.parent.alwaysOnTop_(true);
 m.trace;
 m.elementsDict.size;
 m.postElements;
 
+MKtl(\n).elementsDict.do(_.valueAction_(1.0.rand));
+
+MKtl(\n).outputElements.do(_.value_(1));
+MKtl(\n).outputElements.do(_.value_(0));
 
 // simple tests
 n.free;
@@ -121,7 +125,7 @@ elementsDesc: (
 		),
 		(
 			key: \bt,
-			shared: (\elementType: \button, \spec: \midiBut),
+			shared: (\elementType: \button, \spec: \midiBut, ioType: \inout),
 
 			elements: [\S, \M, \R].collect { |label, i|
 				var nums = [(32..39),(48..55),(64..71)][i];
