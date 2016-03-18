@@ -206,6 +206,25 @@ MKtlDesc {
 		// and if so, make a new cache file.
 	}
 
+	*defaultTestCode { |descfilename = "descNameHere"|
+		var file = File(defaultFolder +/+ "_descFile_testCode.scd", "r");
+		var testCode = file.readAllString;
+		testCode.replace("descNameHere",descfilename);
+		file.close;
+		^testCode
+	}
+
+	testCode {
+		var descfilename = fullDesc.filename;
+		var testCode = fullDesc[\testCode];
+		if (testCode.notNil) {
+			testCode = testCode.cs.drop(1).drop(-1);
+		} {
+			testCode = this.class.defaultTestCode(descfilename);
+		};
+
+		Document("testCode_" ++ descfilename, testCode);
+	}
 
 	// ANALYSIS of loaded descs:
 	*descKeysUsed {

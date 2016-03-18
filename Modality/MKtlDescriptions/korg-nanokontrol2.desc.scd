@@ -1,79 +1,9 @@
 /*	KORG nanoKONTROL2 specs:
 
-MKtlDesc.testCode
 * all cc messages
 * transport buttons - tr,
 * track buttons
 * 8x sliders, knobs, 3 buttons
-
-/****************************/
-// test this desc file:
-// get name from file when code is within a desc file
-~thisdescname = thisProcess.nowExecutingPath.basename.split($.).first.postcs;
-// or set desc full or partial file name by hand,
-// like ~thisdescname = "*nanokontrol2";
-
-~descs = MKtlDesc.loadDescs(~thisdescname); ~descs.size.postln; ~thisdesc = ~descs.first;
-// check web info for it
-~thisdesc.web;
-
-// close old m, open new one, make gui:
-~mktl.free; ~mktl = MKtl(\test, ~thisdescname);
-try { ~mgui.close }; ~mgui = ~mktl.gui.parent.alwaysOnTop_(true);
-
-~mktl.trace;
-// now wiggle elements on gui or device
-
-// is numer of elements and hierarchy plausible?
-~mktl.elementsDict.size;
-~mktl.postElements;
-
-// test that all elements can be set to random values
-// (should post and appear on gui):
-~mktl.elAt.action = { |el|
-	"TEST: % has val %.\n".postf(el.name.cs, el.value.round(0.0001));
-};
-
-~mktl.elementsDict.do(_.valueAction_(1.0.rand)); "";
-
-// test that all outputElelements change on device and gui
-~mktl.outputElements.size; // how many are there?
-~mktl.outputElements.do(_.valueAction_(1)); ""; // all on
-~mktl.outputElements.do(_.valueAction_(0)); ""; // all off
-/****************************/
-
-
-// simple tests
-n.free;
-n = MKtl(\nk2, "*trol2");
-n.gui;
-n.trace;
-// an action for all buttons
-n.elAt(\bt).action = { |el ... groups|
-	[el.name, el.value, "groups:", groups.collect(_.name)].postln;
-};
-// just for slider 1
-n.elAt(\sl, \1).action = { |el| [el.name, el.value].postln };
-
-
-// test for enabling LED control:
-// make an MKtl for it
-n = MKtl(\nk2, "korg-nanokontrol2");
-// check if you already have LEDs enabled -
-// if they all go on and off, they are enabled:
-n.outputElements.do(_.value_(1));
-n.outputElements.do(_.value_(0));
-
-// if not, enable them:
-n.sendSpecialMessage('makeButtonLEDsWriteable');
-// now they should go on and off:
-n.outputElements.do(_.value_(1));
-n.outputElements.do(_.value_(0));
-
-// To restore the nanoK to factory settings:
-* power it down
-* hold down track buttons "<" and ">" and "cycle"
-* power up and wait for ca. 5 seconds
 
 */
 (
@@ -96,6 +26,75 @@ deviceInfo: (
 	// notes: "",
 
 ),
+
+// testCode - packed into function to allow readable code here (no escape chars)
+testCode: {
+	/****************************/
+	// test this desc file:
+	// get name from file when code is within a desc file
+	// ~thisdescname = thisProcess.nowExecutingPath.basename.split($.).first.postcs;
+	// or set desc full or partial file name by hand:
+	~thisdescname = "*nanokontrol2";
+
+	~descs = MKtlDesc.loadDescs(~thisdescname); ~descs.size.postln; ~thisdesc = ~descs.first;
+	// check web info for it
+	~thisdesc.web;
+
+	// close old ~mktl, open new one, make gui:
+	~mktl.free; ~mktl = MKtl(\test, ~thisdescname);
+	try { ~mgui.close }; ~mgui = ~mktl.gui.parent.alwaysOnTop_(true);
+
+	~mktl.trace;
+	// -> wiggle all elements now on gui and/or device
+
+	// give all elements an action:
+	~mktl.trace(false);
+	~mktl.elAt.action = { |el|
+		"TEST: % has val %.\n".postf(el.name.cs, el.value.round(0.0001));
+	};
+	// -> AGAIN, now wiggle all elements now on gui and/or device
+
+
+	// is the number of elements and hierarchy plausible?
+	~mktl.elementsDict.size;
+	~mktl.postElements;
+
+	// can all elements can be set to random values?
+	// (should post and appear on gui):
+	~mktl.elementsDict.do(_.valueAction_(1.0.rand)); "";
+
+	// do all outputElelements change on device and gui?
+	~mktl.outputElements.size; // how many are there?
+	~mktl.outputElements.do(_.valueAction_(1)); ""; // all on
+	~mktl.outputElements.do(_.valueAction_(0)); ""; // all off
+
+
+	/*********** more specific tests for the nk2 ***************/
+	// an action for all buttons
+	~mktl.elAt(\bt).action = { |el ... groups|
+		[el.name, el.value, "groups:", groups.collect(_.name)].postln;
+	};
+	// just for slider 1
+	~mktl.elAt(\sl, \1).action = { |el| [el.name, el.value].postln };
+
+	// test for enabling LED control:
+	// check if you already have LEDs enabled -
+	// if they all go on and off, they are enabled:
+	n.outputElements.do(_.value_(1));
+	n.outputElements.do(_.value_(0));
+
+	// if not, enable them:
+	n.sendSpecialMessage('makeButtonLEDsWriteable');
+	// now they should go on and off:
+	n.outputElements.do(_.value_(1));
+	n.outputElements.do(_.value_(0));
+
+	// To restore the nanoK to factory settings:
+	// * power it down
+	// * hold down track buttons "<" and ">" and "cycle"
+	// * power up and wait for ca. 5 seconds
+	/*************** end of test code *****************/
+},
 
 elementsDesc: (
 	shared: (\midiMsgType: \cc, \midiChan: 0),

@@ -44,6 +44,15 @@ x.postInfo;			// post overview info
 x.postInfo(postElements: true); // and the elements too
 	// not working properly
 x.postElements;
+
+// generate default test code for a desc name:
+MKtlDesc.defaultTestCode("korg-nanokontrol");
+MKtlDesc("*nanokontrol").testCode;
+
+// nanokontrol2 has specific testCode in the desc itself
+d = MKtlDesc("*nanokontrol2");
+d.fullDesc[\testCode];
+d.testCode;
 ::
 
 CLASSMETHODS::
