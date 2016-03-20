@@ -452,11 +452,13 @@ This can be used to name single elements by the same function name
 across different devices - e.g. call one button \play, another \stop,
 no matter what its name in the device description may be:
 
+code::
 k = MKtl(\nk2, "*trol2");
 k.elAt(\tr, \play);
 k.addNamed(\play, k.elAt(\tr, \play));
 k.elAt(\play);
 k.elAt(\play) === k.elAt(\tr, \play);
+::
 
 For longer examples of adding custom groups, see link::Tutorials/Creating_Custom_ElementGroups::.
 
