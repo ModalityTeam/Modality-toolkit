@@ -73,7 +73,7 @@ deviceType: \drumpad,
 elementTypes: [\pad, \knob],
 status: (
 	osx: "tested and working, 2016_03_15, adc",
-	linux: "unkown",
+	linux: "tested and working 2016_03_20, nescivi",
 	win: "unknown"
 ),
 
@@ -86,9 +86,9 @@ deviceInfo: (
 	features: [
 		"8 velocity-sensitive pads",
 		"8 knobs",
-		"4 mode-switching buttons"
+		"4 mode-switching buttons" // these do not actually send any data, but change modes
 	],
-	notes: "use only recommended hardware mode PAD.",
+	notes: "uses only recommended hardware mode PAD at program 1",
 ),
 
 elementsDesc: (
