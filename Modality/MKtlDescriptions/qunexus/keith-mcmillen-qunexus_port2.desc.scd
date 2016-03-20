@@ -1,18 +1,16 @@
 /*
 
 General QuNexus info:
-The QuNexus has 3 input ports, which require three separate desc files.
+The QuNexus has 3 input ports, which have three separate desc files.
 Its general info in is "keith-mcmillen-qunexus.parentDesc.scd".
 
 This file is for Port 2 = portIndex 1.
-This port is for the MIDI Expander in/output,
-so one can connect any external MIDI hardware device;
-the elements would then represent this connected device.
+This port is for the MIDI Expander in/output for connecting external MIDI hardware.
+NOTE: One never needs to make an MKtl from this desc,
+it is only for information purposes.
 
-// See example in:
-MKtlDesc("*pocketfader").openFile;
-
-*/
+// For an example how to connect an external device thru a MIDI port, see:
+"Connecting external MIDI devices".openHelpFile;
 
 (
 ///////// GENERIC INFORMATION COPIED TO ALL QUNEXUS DESC FILES: ///////
@@ -31,9 +29,7 @@ status: (
 idInfo: (deviceName: "QuNexus", sourcePortIndex: 1, destPortIndex: 1),
 portName: "Port 2",
 
-// port is for connecting a MIDI device by midi plugs,
-// so you can put the info of your device in copies of this file,
-// or plug it in from the desc file of a MIDI-only device.
+// port is for connecting external MIDI, so elementsDesc is empty.
 elementsDesc: (
 
 )
