@@ -184,7 +184,12 @@ find filenames for a given device idInfo
 Method:: writeCache, cacheName, loadCache, updateCache
 support methods for cache of filenames and idInfos
 
-private:: fillMidiDefaults, resolveForPlatform, isElementTestFunc, findParent, prMakeElemColls, makeElemKeys
+
+Method:: platformSpecific
+Set code::false:: to disable platform specific replacements.
+This will break standard code::MKtl:: functionality and is only needed for rendering documentation.
+
+private:: fillMidiDefaults, resolveForPlatform, isElementTestFunc, findParent, prMakeElemColls, makeElemKeys, defaultTestCode
 
 
 INSTANCEMETHODS::
@@ -197,6 +202,12 @@ get and set the hardware protocol of the device.
 
 METHOD:: deviceFilename
 get the filename of the desc file
+
+METHOD:: testCode
+returns code to test a controller with this description.
+
+METHOD:: openTestCode
+Opens a Document with code to test a controller with this description.
 
 METHOD:: fullDesc
 get MKtlDesc's properties, or set them from a dict
