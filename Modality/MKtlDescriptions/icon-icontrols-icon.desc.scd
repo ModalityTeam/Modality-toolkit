@@ -3,7 +3,7 @@ deviceName: "iCON iControls V2.00_iCON",
 protocol: 'hid',
 deviceType: \joystick,
 status: (
-	linux: "unknown",
+	linux: "tested and working, 2016_03_20 by nescivi",
 	osx: "unknown",
 	win: "unknown"),
 elementTypes: [\joyAxis],
