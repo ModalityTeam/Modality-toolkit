@@ -38,7 +38,7 @@ protocol: 'hid',
 deviceType: \gamepad,
 elementTypes: [\joystick, \button, \compass],
 status: (
-	linux: "unknown",
+	linux: "not working. backend issue in hid. 2016-03-20, nescivi",
 	osx: "tested and working. 2015-03-16, adc",
 	win: "unknown"),
 
