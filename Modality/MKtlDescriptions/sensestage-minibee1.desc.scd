@@ -126,7 +126,7 @@ collectives: (
 		oscPath: '/minibee/data',
 		argTemplate: [ 1 ],
 		// elements: [ [\accel, \x], [\accel,\y], [\accel,\z] ],
-		elements: [ \x, \y, \z ],
+		elements: [ \x, \y, \z],
 		// why ioType in? really needed, and does it do something?
 		// nescivi: it is an input - there could be outputs as well
 		ioType: \in

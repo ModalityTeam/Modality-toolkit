@@ -29,7 +29,7 @@ deviceInfo: (
 	// description: "",
 	// features: [],
 	// notes: "",
-
+	longName: "iCON iControls Pro",
 	// hasScribble: false
 ),
 elementsDesc: (

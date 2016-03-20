@@ -5,7 +5,7 @@ deviceType: \push,
 elementTypes: [\pad, \button, \encoder, \display, \bend],
 status: (
 	linux: "unknown",
-	osx: "tested on 15.3.2016 by LFSaw.de. GUI layout is missing.",
+	osx: "tested and working, 15.3.2016 by LFSaw.de. GUI layout is missing.",
 	win: "unknown"),
 
 idInfo: "Ableton Push",
@@ -13,7 +13,7 @@ idInfo: "Ableton Push",
 deviceInfo: (
 	vendorURI: "https://www.ableton.com/en/push/",
 	manualURI: "https://www.ableton.com/en/manual/using-push/",
-	description: "Official Ableton Live controller.",
+	description: "Official Ableton Live controller (version 1).",
 	features: [
 		"64 velocity and pressure-sensitive pads",
 		"RGB backlighting",
@@ -24,14 +24,12 @@ deviceInfo: (
 	],
 	notes:
 	"Currently only ```User-mode``` supported.\n"
-	"Usage:\n"
-	"\n"
+	"Usage:\n\n"
 	"```\n"
 	"m = MKtl('push', \"ableton*\", multiIndex: 1);\n"
-	"```\n"
-	"\n"
+	"```\n\n"
 	"Helper class: ```MPushHelper```",
-	hasScribble: true
+	longName: "Ableton Push",
 ),
 
 // display still missing because SysEx and different MIDI port...

@@ -26,12 +26,13 @@ idInfo: "MPKmini2",
 deviceInfo: (
 	vendorURI: 'http://www.akaipro.com/product/mpk-mini-mkii',
 	manualURI: 'http://6be54c364949b623a3c0-4409a68c214f3a9eeca8d0265e9266c0.r0.cf2.rackcdn.com/988/documents/MPK%20mini%20-%20User%20Guide%20-%20v1.0.pdf',
-	description: "mini midi-keyboard with pressure-sensitive pads, knobs and a bender. Have four programs",
 	features: [\pianoKey, \pad, \knob, \bender],
-	notes: "this description is made for the default presets. Every key was mapped, with the exception of Prog Change.
-Whenever use Prog Change in the device, one must click Bank A/B. Otherwise the pads won't be found and a rather random midiNum will be assined to each of them.
-For grater flexibility use the MPK MiniMKII - Editor, which can be found here: http://www.akaipro.com/product/mpk-mini-mkii#downloads",
-	// hasScribble: false
+	notes: 
+	"Uses default presets.\n"
+	"Every key was mapped, with the exception of ```Prog Change```.\n"
+	"Accidental ```Prog-Change``` activation on the device needs to be reverted by ```Bank A/B```.\n"
+	"For more flexibility use the [MPK MiniMKII editor](http://www.akaipro.com/product/mpk-mini-mkii#downloads).",
+	longName: "AKAI MPKmini mk2"
 ),
 elementsDesc: (
 	elements: [

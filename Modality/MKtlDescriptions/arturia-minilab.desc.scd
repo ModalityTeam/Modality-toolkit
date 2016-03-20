@@ -47,7 +47,8 @@ deviceInfo: (
 		"9 assignable faders",
 		"buttons and directional arrows",
 	],
-	notes: "Desc file only for absolute knob mode.",
+	notes: "only absolute knob mode supported.",
+	longName: "Arturia MINILAB"
 	// hasScribble: false
 ),
 elementsDesc: (

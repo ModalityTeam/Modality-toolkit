@@ -30,8 +30,7 @@ deviceInfo: (
 	// description: "",
 	// features: [],
 	// notes: "",
-
-	// hasScribble: false
+	longName: "Native Instruments Traktor Kontrol Z2"
 ),
 elementsDesc: (
 // ------ cc NORMAL ------

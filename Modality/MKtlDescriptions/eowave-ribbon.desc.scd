@@ -23,8 +23,9 @@ deviceInfo: (
 		"pressure and postition sensitive ribbon",
 		"capacitive sensing touch field",
 	],
+	longName: "EOWave Ribbon (v.1)"
 	// notes: "",
-	// hasScribble: false
+
 ),
 
 elementsDesc: (

@@ -21,6 +21,7 @@ deviceInfo: (
 		"Velocity-sensitive mini-midiKeyboard",
 		"three models: 25-key / 37-key / 61-key"
 	],
+	longName: "KORG microKEY"
 	// notes: "",
 ),
 elementsDesc: (

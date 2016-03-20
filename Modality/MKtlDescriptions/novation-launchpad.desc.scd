@@ -26,7 +26,7 @@ deviceInfo: (
 	],
 	// notes: "",
 
-	hasScribble: true
+	longName: "novation launchpad"
 ),
 elementsDesc: (
 	shared: (\midiChan: 0),

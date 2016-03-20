@@ -24,6 +24,7 @@ deviceInfo: (
 	// description: "",
 	// features: [],
 	// notes: "",
+	longName: "KORG nanoPAD 2"
 
 ),
 elementsDesc: (

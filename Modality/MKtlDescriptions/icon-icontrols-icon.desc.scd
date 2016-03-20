@@ -15,9 +15,8 @@ deviceInfo: (
 	manualURI: "http://www.icon-global.com/download%5Cuser%20manual%5CIC%20PD3V1.00-E.zip",
 	// description: "",
 	// features: [],
-	notes: "This device also has a MIDI interface. Hat-switch is not sending any data.",
-
-	// hasScribble: false
+	notes: "This only implements the joystick of the device.",
+	longName: "iCON iControls (HID)"
 ),
 //nescivi: spec is a bit tricky to get right, but this comes close
 specs: ( \mouseAxisIcon: [ 0.46062994003296, 0.53937005996704, \lin, 0, 0.5].asSpec ),

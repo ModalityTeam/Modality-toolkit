@@ -47,13 +47,12 @@ idInfo: "USB Game Controllers_Mega World",
 // specs: (compassImpact: [-1, 6, \lin, 1].asSpec),
 
 deviceInfo: (
-	// vendorURI: "",
-	// manualURI: "",
+	// vendorURI: "http://",
+	// manualURI: "http://",
 	// description: "",
-	// features: [],
-	// notes: "",
-
-	// hasScribble: false
+	// features: [
+	// ],
+	longName: "Saitek Cyborg Mega World"
 ),
 elementsDesc: (
 	elements: [

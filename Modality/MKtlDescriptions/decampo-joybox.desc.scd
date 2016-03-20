@@ -38,10 +38,9 @@ idInfo: "EXTERNAL",
 deviceInfo: (
 	vendorURI: "http://www.doepfer.de/pe.htm",
 	manualURI: "http://www.doepfer.de/pdf/PE_manual.pdf",
-	description: "Box with 8 XY joysticks, made w doepfer pocket-electronics kit.",
-	features: [],
-	notes: "",
-
+	description: "Controller box with 8 XY joysticks, made w doepfer pocket-electronics kit.",
+	features: ["8 XY joysticks"],
+	longName: "de Campo's JoyBox"
 ),
 
 elementsDesc: (

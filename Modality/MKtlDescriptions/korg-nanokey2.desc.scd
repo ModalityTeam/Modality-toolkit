@@ -19,6 +19,7 @@ deviceInfo: (
 	// description: "",
 	// features: [],
 	// notes: "",
+	longName: "KORG nanoKEY2"
 
 ),
 elementsDesc: (

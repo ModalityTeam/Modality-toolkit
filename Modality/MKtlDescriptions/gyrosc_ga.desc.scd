@@ -119,7 +119,7 @@ deviceInfo: (
 	// description: "",
 	// features: [],
 	// notes: "",
-	// hasScribble: false
+	longName: "Bit Shape GyrOSC"	
 ),
 
 collectives: (

@@ -16,7 +16,7 @@ deviceInfo: (
 	// description:
 	// features:
 	// notes:
-
+	longName: "Jess Tech Dual Analog Rumble Pad"
 ),
 elementsDesc: (
 	elements: [

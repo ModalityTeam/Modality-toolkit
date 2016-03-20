@@ -27,6 +27,7 @@ deviceInfo: (
 	// manualURI: "",
 	// description: "",
 	// features: ["4 touch faders" ],
+	longName: "Steinberg CMC-FD",
 	notes: "discontinued.",
 
 ),

@@ -88,7 +88,8 @@ deviceInfo: (
 		"8 knobs",
 		"4 mode-switching buttons" // these do not actually send any data, but change modes
 	],
-	notes: "uses only recommended hardware mode PAD at program 1",
+	notes: "use only recommended hardware mode PAD.",
+	longName: "AKAI LPD8"
 ),
 
 elementsDesc: (

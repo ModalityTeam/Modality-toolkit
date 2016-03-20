@@ -94,7 +94,7 @@ deviceInfo: (
 		"68 user-controllable LEDs",
 	],
 	notes: "This device relies on mantaOSC which is part of [libmantassfr’s libmanta implementation](https://github.com/ssfrr/libmanta).",
-	hasScribble: true
+	longName: "Snyderphonics Manta"
 ),
 elementsDesc: (
 	elements: [

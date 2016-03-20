@@ -64,7 +64,9 @@ status: (
 idInfo: "touchOSC",
 netAddrInfo: (srcPort: 9000, recvPort: 57120, ipAddress: "192.168.178.51"),
 
-deviceInfo: (),
+deviceInfo: (
+	longName: "touchOSC"
+),
 
 // seem to be the max accel values on iphone
 specs: (accx: [-3.0, 3.0, \lin]),

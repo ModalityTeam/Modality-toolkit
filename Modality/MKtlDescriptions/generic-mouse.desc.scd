@@ -13,11 +13,11 @@ deviceName: "Generic Mouse",
 deviceInfo: (
 	// vendorURI: "",
 	// manualURI: "",
-	description: "Interface to a generic mouse",
 	features: [
 		"3 buttons",
 		"scroll wheel",
 	],
+	longName: "Generic Mouse"
 	// notes: "",
 	// hasScribble: false
 ),

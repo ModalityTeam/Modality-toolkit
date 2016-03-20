@@ -51,7 +51,7 @@ netAddrInfo: ( ipAddress: "169.254.1.1", recvPort: 57120 ), // ip for adhoc mode
 deviceInfo: (
 	vendorURI: "http://www.x-io.co.uk/products/x-osc/",
 	manualURI: "http://www.x-io.co.uk/downloads/x-OSC-User-Manual-v0.4.pdf",
-	description: "x-OSC is a wireless I/O board that provides just about any software with access to 32 high-performance analogue/digital channels and on-board sensors (gyroscope, accelerometer, magnetometer) via OSC messages over WiFi. There is no user programmable firmware and no software or drivers to install making x-OSC immediately compatible with any WiFi-enabled platform. All internal settings can be adjusted using any web browser.",
+	description: "WLan OSC I/O board",
 	features: [
 		"16× analogue/digital inputs",
 		"16× digital/PWM outputs (up to 50 mA per channel)",
@@ -60,6 +60,7 @@ deviceInfo: (
 		"Control up to 400 RGB LEDs (NeoPixel)",
 		"4× serial communication channels"
 	],
+	longName: "XIO x-OSC",
 	notes: "",
 ),
 

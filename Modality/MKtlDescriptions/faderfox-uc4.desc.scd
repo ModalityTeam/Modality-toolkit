@@ -46,31 +46,21 @@ hardwarePages: (1..8),
 deviceInfo: (
 	vendorURI: "http://faderfox.de/uc4.html",
 	manualURI: "http://www.faderfox.de/PDF/UC4%20Manual%20V01.PDF",
-	description: "",
 	features: [
-		"Universal controller for all kinds of midi controllable hard- and software",
-		"Very compact design in a black casing with metal faceplate"
-
+		"Compact design with metal faceplate"
 		"8 push encoders without detents (resolution about 36 pulses)",
-		"9 faders with 30mm length and programmable snap function",
+		"9 30mm faders, programmable snap function",
 		"8 Buttons with LED for switchable parameters",
-		"4-digit-display to show control values and programming data",
-		"All controls (incl. push buttons) fully programmable in the device by channel, type, number",
-
 		"8 independent groups for encoders and faders/buttons",
 		"About 264 commands per setup (33 controls x  8 groups)",
 		"18 setups with backup/restore function contain all controller settings",
-
-		"absolute and relative controller modes are available",
-		"14 bit high resolution encoder mode for sensitive parameters",
-		"Programmable value ranges with min/max values",
-		"Data feedback for encoders and faders avoid value jumps",
-		"MIDI in and out ports with routing and merge functionality"
 	],
-	notes: "",
-	hasScribble: false
+	longName: "FaderFox UC4",
+	notes: "All controls (incl. push buttons) fully programmable in the device by channel, type, number.\n"
+	"Absolute and relative controller modes, and 14 bit high resolution encoder mode for sensitive parameters.\n"
+	"Programmable value ranges with min/max values, and data feedback for encoders and faders avoid value jumps.\n"
+	"MIDI in and out ports feature routing and merge functionality."
 ),
-
 
 elementsDesc: (
 	shared: (ioType: \inout),

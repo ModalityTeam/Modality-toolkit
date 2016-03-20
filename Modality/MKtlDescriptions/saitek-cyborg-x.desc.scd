@@ -21,7 +21,12 @@ status: (
 
 
 deviceInfo: (
-
+	// vendorURI: "http://",
+	// manualURI: "http://",
+	// description: "",
+	// features: [
+	// ],
+	longName: "Saitek Cyborg X"
 ),
 
 specs: (compass: [0, 15, \lin, 1]),

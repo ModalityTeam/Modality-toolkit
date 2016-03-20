@@ -32,10 +32,14 @@ hardwarePages: [1,2,3,4],
 deviceInfo: (
 	vendorURI: "http://www.music-group.com/Categories/Behringer/Computer-Audio/Desktop-Controllers/BCR2000/p/P0245",
 	manualURI: "https://media.music-group.com/media/PLM/data/docs/P0245/BCF2000_BCR2000_M_EN.pdf",
-	// description: "",
-	// features: [],
+	description: "A midi device with many rotary encoders.",
+	features: [
+		"32 rotary encoders",
+		"30 Buttons"
+	],
 	// notes: "",
-	hasScribble: false
+	longName: "Behringer BCF2000"
+
 ),
 
 elementsDesc: (

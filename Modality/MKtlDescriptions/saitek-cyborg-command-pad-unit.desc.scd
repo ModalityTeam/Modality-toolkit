@@ -25,8 +25,16 @@ status: (
 	osx: "tested and working. 2016-03-17, adc",
 	win: "unknown"
 ),
-
+deviceType: \gamepad,
 protocol: 'hid',
+deviceInfo: (
+	// vendorURI: "http://",
+	// manualURI: "http://",
+	// description: "",
+	// features: [
+	// ],
+	longName: "Saitek Cyborg Command Pad"
+),
 
 // specs: (uni1023: [1, 1023, \lin, 1/1023]),
 

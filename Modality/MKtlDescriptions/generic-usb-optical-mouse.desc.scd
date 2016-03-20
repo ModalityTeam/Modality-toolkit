@@ -18,9 +18,9 @@ deviceInfo: (
 		"3 buttons",
 		"scroll wheel"
 	],
-	// notes: "",
+	longName: "Generic Optical Mouse",
+	notes: "See also [Generic Mouse](generic-mouse.html)"
 
-	// hasScribble: false
 ),
 elementsDesc: (
 // --------- input elements ----------

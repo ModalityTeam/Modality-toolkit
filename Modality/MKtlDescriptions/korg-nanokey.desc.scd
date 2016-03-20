@@ -23,7 +23,7 @@ deviceInfo: (
 	// features: [],
 	// notes: "",
 
-	// hasScribble: false
+	longName: "KORG nanoKEY"
 ),
 elementsDesc: (
 	shared: (midiChan: 0),

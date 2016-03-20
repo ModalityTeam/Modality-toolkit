@@ -15,7 +15,7 @@ deviceInfo: (
 	// manualURI: "",
 	// description: "",
 	// features: [],
-	// notes: "",
+	longName: "Jess Tech Dual Analog Pad"
 
 ),
 

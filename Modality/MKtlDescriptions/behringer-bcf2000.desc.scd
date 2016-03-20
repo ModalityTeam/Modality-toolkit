@@ -36,9 +36,13 @@ deviceInfo: (
 	vendorURI: "http://www.music-group.com/Categories/Behringer/Computer-Audio/Desktop-Controllers/BCF2000/p/P0246",
 	manualURI: "https://media.music-group.com/media/PLM/data/docs/P0246/BCF2000_BCR2000_M_EN.pdf",
 	// description: "",
-	// features: [],
+	features: [
+		"8 motor-faders",
+		"8 rotary-encoder",
+		"30 Buttons"
+	],
 	// notes: "",
-	hasScribble: true
+	longName: "Behringer BCF2000"
 ),
 elementsDesc: (
 	shared: (midiMsgType: \cc, midiChan: 0),

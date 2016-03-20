@@ -13,13 +13,12 @@ status: (
 idInfo: "USB WirelessGamepad _ShanWan",
 
 deviceInfo: (
-	// vendorURI: "",
-	// manualURI: "",
+	// vendorURI: "http://",
+	// manualURI: "http://",
 	// description: "",
-	// features: [],
-	// notes: "",
-
-	// hasScribble: false
+	// features: [
+	// ],
+	longName: "ShanWan Wireless GamePad"
 ),
 elementsDesc: (
 // --------- input elements ----------

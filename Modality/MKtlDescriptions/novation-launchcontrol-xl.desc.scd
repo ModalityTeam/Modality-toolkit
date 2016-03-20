@@ -41,7 +41,7 @@ deviceInfo: (
 		"8 “user”-pages + 8 “factory”-pages",
 	],
 	// notes: "",
-	// hasScribble: false
+	longName: "novation launchcontrol XL"
 ),
 elementsDesc: (
 

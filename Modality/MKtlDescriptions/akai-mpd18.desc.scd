@@ -43,9 +43,12 @@ deviceInfo: (
 	vendorURI: "http://www.akaipro.com/product/mpd18",
 	// manualURI: "",
 	// description: "",
-	features: ["16 velocity and pressure-sensitive MPC pads"],
-	// notes: "",
-	// hasScribble: false
+	features: [
+		"16 velocity and pressure-sensitive MPC pads",
+		"1 fader"
+	],
+	longName: "AKAI MPD18"
+
 ),
 elementsDesc: (
 	elements: [

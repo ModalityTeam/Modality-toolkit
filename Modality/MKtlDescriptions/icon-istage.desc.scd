@@ -44,8 +44,7 @@ deviceInfo: (
 		"1 assignable fader",
 	],
 	// notes: "",
-
-	// hasScribble: false
+	longName: "iCON iStage"
 ),
 elementsDesc: (
 	elements: [

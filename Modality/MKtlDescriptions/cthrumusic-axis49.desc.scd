@@ -16,7 +16,7 @@ deviceInfo: (
 	description:  "Velocity sensitive MIDI keyboard with Harmonic Table note arrangement.",
 	// features: [],
 	// notes: ,
-	// hasScribble: false
+	longName: "C-THRU MUSIC AXiS-49"
 	),
 status: (
 	win: "unknown",

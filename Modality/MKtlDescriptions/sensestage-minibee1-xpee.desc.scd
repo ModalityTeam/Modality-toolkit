@@ -60,14 +60,12 @@ status: (
 idInfo: "minibee1-xpee",
 netAddrInfo: ( srcPort: nil, ipAddress: "127.0.0.1", recvPort: 57120 ),
 
-
 specs: (
 	minibeeButton: [0, 1, \linear, 1, 0 ].asSpec,
 	minibeePWM: [0, 255, \linear, 1, 0 ].asSpec,
 	minibeeAnalog: [0, 1, \linear, 0, 0 ].asSpec,
 	minibeeAccelAxis: [0, 1, \linear, 0, 0.5].asSpec
 ),
-
 
 deviceInfo: (
 	vendorURI: "https://shop.sensestage.eu/product.php?id_product=11",

@@ -39,8 +39,8 @@ deviceInfo: (
 		"8 backlit MPC-style pads",
 		"8 Q-link knobs",
 	],
-	notes: "Desc file is made for the Factory Preset ```Preset3-MPC```, downloadable from http://www.akaipro.com/product/mpkmini#downloads",
-	// hasScribble: false
+	notes: "Uses factory preset [```Preset3-MPC```](http://www.akaipro.com/product/mpkmini#downloads)",
+	longName: "AKAI MPKmini"
 ),
 elementsDesc: (
 

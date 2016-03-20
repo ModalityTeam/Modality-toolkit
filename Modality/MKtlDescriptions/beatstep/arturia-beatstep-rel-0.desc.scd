@@ -7,6 +7,17 @@ Use relative control scheme on the knobs:
 * no need for softSet or other special synching solution.
 
 
+"-Desc file for use with HH's custom hardware template `Relatively#1Global`,
+   - all knobs send Relative mode #1 with fast Acceleration
+   - all controllers send on Global Chan
+- only for Relative mode: sends CCvalues 63/65 for dec/inc, a maximum of 42, 86 with Fast Acceleration
+- 16 glob. MIDI channels can be easily switched on HW (CHAN Button plus 1 of 16 Pads), so use that as 16 pages w' identical cc/midi nr's.
+- alternatively/additionally, 16 layout 'templates' with different CC assignments could be created and easily switched on HW (RECALL Button plus 1 of 16 Pads), but that's a lot of work to edit, and 256 pages are a bit too much anyways?
+- can MMC be read? For now, the 2 transport buttons are remapped to NoteOn/Offs.
+ToDo:
+-add paging via 16 MIDI Chans
+"
+
 Instructions:
 
 1. get Arturia MIDI control center app
@@ -98,17 +109,9 @@ deviceInfo: (
 		"1  BIG rotary encoder; supporting absolute and dec/inc mode",
 		"2  Buttons: play, pause, that send MMC by default",
 	],
-	notes:
-"- Desc file for use with HH's custom HW Template \"Relatively#1Global\":
-   - all knobs send Relative mode #1 with fast Acceleration
-   - all controllers send on Global Chan
-- only for Relative mode: sends CCvalues 63/65 for dec/inc, a maximum of 42, 86 with Fast Acceleration
-- 16 glob. MIDI channels can be easily switched on HW (CHAN Button plus 1 of 16 Pads), so use that as 16 pages w' identical cc/midi nr's.
-- alternatively/additionally, 16 layout 'templates' with different CC assignments could be created and easily switched on HW (RECALL Button plus 1 of 16 Pads), but that's a lot of work to edit, and 256 pages are a bit too much anyways?
-- can MMC be read? For now, the 2 transport buttons are remapped to NoteOn/Offs.
-ToDo:
--add paging via 16 MIDI Chans
-"
+	// description: "A controller",
+	notes: "Desc file for use with HH's custom hardware template \`Relatively#1Global\`",
+	longName: "Arturia Beatstep (Rel0 custom)."
 ),
 
 specs: (midiCCrel_64_22: [42, 86, \lin, 1].asSpec), // absolute maxima with fast accel.

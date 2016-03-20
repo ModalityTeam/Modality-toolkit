@@ -16,6 +16,7 @@ m.elAt(\invol).choose.value_(1.0.rand);
 
 (
 deviceName: "TotalMix",
+deviceType: \mixer,
 idInfo: "TotalMix",
 protocol: \osc,
 status: (
@@ -23,7 +24,14 @@ status: (
 	osx: "unknown",
 	win: "unknown"
 ),
-
+deviceInfo: (
+	// vendorURI: "http://",
+	// manualURI: "http://",
+	// description: "",
+	// features: [
+	// ],
+	longName: "RME Audio TotalMix"
+),
 netAddrInfo: (srcPort: 9001, destPort: 7001, ipAddress: "localhost"),
 
 elementsDesc: (

@@ -32,7 +32,7 @@ idInfo: "OP-1 Midi Device",
 deviceInfo: (
 	vendorURI: "https://www.teenageengineering.com/products/op-1",
 	// manualURI: "",
-	description: "Full-featured synth which can also be used as a general-purpose controller.",
+	description: "Full-featured synth (here used as controller).",
 	features: [
 		"2-octave midiKeyboard witch transpose buttons",
 		"4 encoders with hat-switch",
@@ -40,8 +40,7 @@ deviceInfo: (
 		"20 buttons (1-4, 1-8 and special-purpose)",
 	],
 	notes: "Put the OP-1 into control-mode (<shift>-<COM>, then 2)",
-
-	hasScribble: true
+	longName: "Teenage Engineering OP-1"
 ),
 elementsDesc: (
 	elements: [

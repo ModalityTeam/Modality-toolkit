@@ -29,8 +29,7 @@ deviceInfo: (
 	// description: "",
 	// features: [],
 	// notes: "",
-
-	hasScribble: true
+	longName: "KORG nanoKONTROL"
 ),
 elementsDesc: (
 	elements: [

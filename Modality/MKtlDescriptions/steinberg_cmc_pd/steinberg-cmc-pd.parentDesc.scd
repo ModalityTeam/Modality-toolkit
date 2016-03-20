@@ -45,6 +45,6 @@ deviceInfo: (
 	// manualURI: "",
 	// description: "",
 	// features: "",
-	// notes: "",
-)
+	longName: "Steinberg CMC-PD"
+	)
 );

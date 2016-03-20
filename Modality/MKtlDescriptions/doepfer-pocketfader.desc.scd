@@ -48,12 +48,12 @@ idInfo: "EXTERNAL",
 deviceInfo: (
 	vendorURI: "http://www.doepfer.de/pe.htm",
 	manualURI: "http://www.doepfer.de/pdf/PE_manual.pdf",
-	description: "Originally a 16 chan MIDI faderbox (now discontinued);"
-	"\nnow a kit for making 16 chan midi controllers.",
+	description: "MIDI faderbox (discontinued)",
 	features: [
 		"hardware midi plugs (no USB)",
 		"MIDI configurable by DIP switches."],
-	notes: "",
+	notes: "Available as a kit to build a customised 16 chan midi controller.",
+	longName: "Doepfer Pocketfader",
 
 ),
 

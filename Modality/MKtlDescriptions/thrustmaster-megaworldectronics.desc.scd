@@ -17,7 +17,7 @@ deviceInfo: (
 	// features: [],
 	// notes: "",
 
-	// hasScribble: false
+	longName: "ThrustMaster joystick"
 ),
 elementsDesc: (
 	elements: [

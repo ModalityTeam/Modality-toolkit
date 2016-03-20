@@ -67,6 +67,7 @@ deviceInfo: (
 	],
 	// notes: "",
 	type: [\button, \pianoKey, \bend],
+	longName: "Keith McMillen QuNexus"
 	// hasScribble: false
 ),
 

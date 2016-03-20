@@ -13,7 +13,8 @@ idInfo: "Logitech Extreme 3D_Logitech",
 deviceInfo: (
 	vendorURI: "http://gaming.logitech.com/en-us/product/extreme-3d-pro-joystick",
 	manualURI: "http://support.logitech.com/product/extreme-3d-pro",
-	description: "",
+	longName: "Logitech Extreme 3D",
+	// description: "",
 	// features: [],
 	// notes: "",
 

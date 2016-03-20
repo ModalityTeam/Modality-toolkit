@@ -16,8 +16,7 @@ deviceInfo: (
 	// description: "",
 	// features: (),
 	// notes: ""
-
-	hasScribble: false
+	longName: "Evolution U-Control UC33"
 ),
 
 // preset 3 only:

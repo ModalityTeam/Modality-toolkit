@@ -32,7 +32,7 @@ deviceInfo: (
 	description: "controller for guitar",
 	features: [],
 	notes: "_none_",
-	hasScribble: true
+	longName: "Livid Guitar Wing"
 ),
 
 specs: (midiBut64: [0, 64, \lin, 64]),

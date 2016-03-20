@@ -35,9 +35,7 @@ deviceInfo: (
 		"9 faders",
 		"17 buttons",
 	],
-
-	// notes: "",
-	// hasScribble: false
+	longName: "AKAI APCmini",
 ),
 elementsDesc: (
 

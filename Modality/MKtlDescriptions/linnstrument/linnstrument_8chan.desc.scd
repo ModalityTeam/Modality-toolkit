@@ -17,7 +17,7 @@ For some examples, see "DeviceExamples/linnstrument_8chan.scd":
 (
 deviceName: "LinnStrument MIDI",
 protocol: 'midi',
-deviceType: '___',
+deviceType: 'surface',
 elementTypes: [  ],
 status: (
 	linux: "unknown",
@@ -29,12 +29,11 @@ idInfo: "LinnStrument MIDI",
 deviceInfo: (
 	vendorURI: 'http://www.rogerlinndesign.com/linnstrument.html',
 	manualURI: 'http://www.rogerlinndesign.com/linnstrument-support.html',
-	description: "",
 	features: [],
-	notes: "For this setup, go to Per-split settings,\n"
-	"turn MIDI MODE to ChPerRow,\n"
-	"and LOUDNESS/Z TO CHAN PRES.",
-	hasScribble: false
+	notes: "In ```Per-split``` settings,\n"
+	"turn ```MIDI MODE``` to ```ChPerRow```,\n"
+	"and ```LOUDNESS/Z``` to ```CHAN PRES```.",
+	longName: "LinnStrument"
 ),
 
 elementsDesc: (

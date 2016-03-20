@@ -18,8 +18,7 @@ deviceInfo: (
 	// description: "",
 	features: [\pad, \slider, \knob],
 	// notes: "",
-
-	// hasScribble: false
+	longName: "M-AUDIO Trigger Finger"
 ),
 elementsDesc: (
 	shared: (\midiChan: 0, ioType: \in),
