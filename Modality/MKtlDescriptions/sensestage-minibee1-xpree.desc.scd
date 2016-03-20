@@ -51,7 +51,7 @@ protocol: \osc,
 deviceType: \minibee,
 elementTypes: [\accelerometer, \analogSensor, \button],
 status: (
-	linux: "unknown",
+	linux: "tested (fake device only); 2016_03_20 by nescivi",
 	osx: "tested and working, subset of sensors only.",
 	win: "unknown"),
 
