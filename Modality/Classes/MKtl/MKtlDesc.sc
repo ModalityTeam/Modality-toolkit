@@ -19,6 +19,7 @@ MKtlDesc {
 	classvar <docURI = "http://modalityteam.github.io/controllers/";
 
 	classvar <>isElemFunc;
+	classvar <>platformSpecific = false;
 
 	var <name, <fullDesc, <path;
 	var <elementsDict;
@@ -214,17 +215,37 @@ MKtlDesc {
 		^testCode
 	}
 
-	testCode {
+	testCode {|includeDefault = true|
 		var descfilename = fullDesc.filename;
 		var testCode = fullDesc[\testCode];
+		var globalTestCode;
+
+
 		if (testCode.notNil) {
 			testCode = testCode.cs.drop(1).drop(-1);
 		} {
-			testCode = this.class.defaultTestCode(descfilename);
+			testCode = "// no specific testcode for %.".format(descfilename);
 		};
 
-		Document("testCode_" ++ descfilename, testCode);
+		if (includeDefault) {
+			testCode = this.class.defaultTestCode(descfilename)
+			++ "\n"
+			++ "/*********** %: specific tests ***************/".format(descfilename)
+			++ testCode;
+		};
+
+
+
+		^testCode;
 	}
+
+	openTestCode {|includeDefault = true|
+		var descfilename = fullDesc.filename;
+
+		^Document("testCode_" ++ descfilename, this.testCode(includeDefault));
+	}
+
+
 
 	// ANALYSIS of loaded descs:
 	*descKeysUsed {
@@ -445,7 +466,9 @@ MKtlDesc {
 			};
 		};
 
-		this.resolveDescEntriesForPlatform;
+		if (this.class.platformSpecific){
+			this.resolveDescEntriesForPlatform;
+		}
 	}
 
 	dictAt { |key| ^elementsDict[key] }
