@@ -13,9 +13,9 @@ m.postElements;
 deviceName: "iCON iControls V2.00",
 protocol: \midi,
 deviceType: \faderbox,
-elementTypes: [\fader],
+elementTypes: [\fader, \knob, \button],
 status: (
-	linux: "unknown",
+	linux: "tested and working, 2016_03_20 by nescivi",
 	osx: "unknown",
 	win: "unknown"),
 
@@ -26,7 +26,7 @@ deviceInfo: (
 	manualURI: "http://www.icon-global.com/download%5Cuser%20manual%5CIC%20PD3V1.00-E.zip",
 	// description: "",
 	// features: [],
-	// notes: "",
+	notes: "layer buttons have no effect; the first MIDI port gives the data",
 
 	// hasScribble: false
 ),
@@ -41,33 +41,42 @@ elementsDesc: (
 			].collect { |xs, row|
 				(
 					elements: xs.collect { |note, col|
-						MKtlDesc.notePair(col, note)
+						MKtlDesc.notePair(col, note,
+							shared: ( \style: (row: row+2, column: 3 + (col*2), showLabel: false))
+						);
 					}
 				)
 			}
 		),
 		(
 			key: \sl,
-			shared: (midiMsgType: \cc, elementType: \slider,
+			shared: (
+				midiMsgType: \cc, elementType: \slider,
 				midiNum:  13, spec: \midiCC),
-			elements: (0..8).collect { |i, n| (midiChan: i) }
+			elements: (0..8).collect { |i, n| (
+				midiChan: i,
+				\style: (row: 1, column: 4+(i*2))
+			) }
 		),
 		(
 			key: \kn,
-			shared: (midiMsgType: \cc, elementType: \slider,
+			shared: (midiMsgType: \cc, elementType: \knob,
 				midiChan: 0, spec: \midiCC),
-			elements: ((16..23)++[12]).collect { |i, n| (midiNum: i) }
+			elements: ((16..23)++[12]).collect { |i, n| (
+				midiNum: i,
+				\style: (row: 0, column: 4+(n*2))
+			) }
 		),
 		(
 			key: \tr,
 			shared: (elementType: \button, midiChan: 0, spec: \midiBut),
 			elements: [
-				MKtlDesc.notePair( \rew, 	91),
-				MKtlDesc.notePair( \play, 	94),
-				MKtlDesc.notePair( \fwd, 	92),
-				MKtlDesc.notePair( \cycle, 	86),
-				MKtlDesc.notePair( \stop, 	93),
-				MKtlDesc.notePair( \rec, 	95)
+				MKtlDesc.notePair( \rew, 	91, shared: ( \style: (row: 0, column: 0, showLabel: true) ) ),
+				MKtlDesc.notePair( \play, 	94, shared: ( \style: (row: 0, column: 1, showLabel: true) ) ),
+				MKtlDesc.notePair( \fwd, 	92, shared: ( \style: (row: 0, column: 2, showLabel: true) ) ),
+				MKtlDesc.notePair( \cycle, 	86, shared: ( \style: (row: 1, column: 0, showLabel: true) ) ),
+				MKtlDesc.notePair( \stop, 	93, shared: ( \style: (row: 1, column: 1, showLabel: true) ) ),
+				MKtlDesc.notePair( \rec, 	95, shared: ( \style: (row: 1, column: 2, showLabel: true) ) )
 			]
 		)
 	]
