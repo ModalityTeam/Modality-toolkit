@@ -26,7 +26,7 @@ deviceInfo: (
 	manualURI: "http://www.icon-global.com/download%5Cuser%20manual%5CIC%20PD3V1.00-E.zip",
 	// description: "",
 	// features: [],
-	notes: "layer buttons have no effect; the first MIDI port gives the data",
+	notes: "This device also has an HID interface. Layer buttons have no effect; the first MIDI port gives the data",
 
 	// hasScribble: false
 ),
