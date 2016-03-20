@@ -11,6 +11,7 @@ it is only for information purposes.
 
 // For an example how to connect an external device thru a MIDI port, see:
 "Connecting external MIDI devices".openHelpFile;
+*/
 
 (
 ///////// GENERIC INFORMATION COPIED TO ALL QUNEXUS DESC FILES: ///////
