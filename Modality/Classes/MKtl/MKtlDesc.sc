@@ -699,7 +699,7 @@ MKtlDesc {
 	// (meaning: (osx: 23, linux: 42, win: 4711));
 	// these are resolved for the platform used,
 	// e.g. for linux: (meaning: 42)
-	*resolveForPlatform { |dict|
+	*resolveForPlatform { |dict, recursive=false|
 		var platForms = [\osx, \linux, \win];
 		var myPlatform = thisProcess.platform.name;
 
@@ -710,6 +710,7 @@ MKtlDesc {
 			if (entry.isKindOf(Dictionary) and:
 				{ entry.keys.sect(platForms).notEmpty }) {
 				foundval = entry[myPlatform];
+				if (recursive) { this.resolveForPlatform(entry, recursive); };
 				// "MKtlDesc:resolveForPlatform - replacing: ".post;
 				^key -> foundval;
 		} };
@@ -722,6 +723,7 @@ MKtlDesc {
 				};
 				if (foundPlatformDep) {
 					foundval = entry[myPlatform];
+					if (recursive) { this.resolveForPlatform(entry, recursive); };
 					// "MKtlDesc:resolveForPlatform - replacing: ".post;
 					dict.put(dictkey, foundval);
 				};
@@ -734,10 +736,13 @@ MKtlDesc {
 
 	resolveDescEntriesForPlatform {
 		if (fullDesc.isNil) { ^this };
-		this.class.resolveForPlatform(fullDesc);
-		this.elementsDesc.keysValuesDo { |key, elemDesc|
-			MKtlDesc.resolveForPlatform(elemDesc);
+		if (fullDesc[\parentDesc].notNil) {
+			MKtlDesc.resolveForPlatform(fullDesc[\parentDesc], true);
 		};
-		this.class.resolveForPlatform(this.elementsDesc);
+		MKtlDesc.resolveForPlatform(fullDesc, true);
+		// MKtlDesc.resolveForPlatform(this.elementsDesc);
+		// this.elementsDesc.keysValuesDo { |key, elemDesc|
+		// 	MKtlDesc.resolveForPlatform(elemDesc, true);
+		// };
 	}
 }
