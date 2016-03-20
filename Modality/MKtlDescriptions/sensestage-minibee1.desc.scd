@@ -1,4 +1,28 @@
-// sensestage minibee
+// sensestage minibee with configuration 1
+/*
+  <configuration id="1" name="accelero" message_interval="50" samples_per_message="1">
+    <pin config="TWIData" id="A4" />
+    <pin config="TWIClock" id="A5" />
+    <twi id="1" device="ADXL345" name="accelero" />
+  </configuration>
+
+*/
+
+/*
+~bee1 = MKtl(\bee1, "*minibee1");
+
+~bee1.gui;
+~bee1.trace(true);
+
+// fake sending data
+n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
+n.sendMsg( '/minibee/data', 1, 1.0.rand, 1.0.rand, 1.0.rand );
+
+
+~bee1.trace(false);
+
+*/
+
 
 /*
 o = OSCMon.new;
@@ -36,12 +60,12 @@ o.disable:
 )
 
 OSCFunc.trace;
-~fakeSendFrom.(~beeAddr, ['/minibee/data', 1, 1, 2, 3]);
+~fakeSendFrom.(~beeAddr, ['/minibee/data', 1, 1.0, 2.0, 3.0]);
 OSCFunc.trace(false);
 
 ~bee1.trace; ~bee2.trace;
 // now both bees match
-~fakeSendFrom.(~beeAddr, ['/minibee/data', 1, 1, 2, 3]);
+~fakeSendFrom.(~beeAddr, ['/minibee/data', 1, 1.0, 2.0, 3.0]);
 
 // lookup argTemplate ...
 ~bee1.device.oscFuncDictionary[\data].argTemplate;
@@ -67,7 +91,6 @@ OSCFunc.trace(false);
 ~datagrp.doGroupAction;
 ~datagrp.deviceValueAction_([3,2,1]);
 ~fakeSendFrom.(~beeAddr, ['/minibee/data', 1, -2, 0, 2]);
-
 */
 
 (
@@ -76,7 +99,7 @@ protocol: \osc,
 deviceType: \minibee,
 elementTypes: [\accelerometer],
 status: (
-	linux: "unknown",
+	linux: "tested (fake device only); 2016_03_20 by nescivi",
 	osx: "tested and working, subset of sensors only.",
 	win: "unknown"),
 
@@ -84,35 +107,40 @@ netAddrInfo: ( srcPort: nil, ipAddress: "127.0.0.1", recvPort: 57120 ),
 idInfo: "minibee1",
 
 specs: (
-	gyroAxis: [-3, 3],
-	accelAxis: [-3, 3]),
+	minibeeAccelAxis: [0, 1, \linear, 0, 0.5].asSpec
+),
+
 
 deviceInfo: (
-	// vendorURI: "",
+	vendorURI: "https://shop.sensestage.eu/product.php?id_product=11",
 	// manualURI: "",
 	// description: "",
 	// features: [],
-	// notes: "",
+	notes: "This is the Sense/Stage MiniBee with the default configuration (1) of just the accelerometer",
 	// hasScribble: false
 ),
+
 // maybe rename to deviceIOGroups?
 collectives: (
 	data: (
 		oscPath: '/minibee/data',
 		argTemplate: [ 1 ],
-		elements: [ \x, \y, \z],
-
+		// elements: [ [\accel, \x], [\accel,\y], [\accel,\z] ],
+		elements: [ \x, \y, \z ],
 		// why ioType in? really needed, and does it do something?
+		// nescivi: it is an input - there could be outputs as well
 		ioType: \in
 	)
 ),
 
 elementsDesc: (
-//	\key: \accel,
-	shared: (elementType: 'accelAxis', elementType: \accelAxis, ioType: \collectiveIn, \spec: 'accelAxis' ),
-	elements: [\x, \y, \z ].collect { |key, i|
-		(key: key)
-	};
+//	key: \accel, // keep extra level for compatibility with other versions
+	shared: (elementType: 'accelAxis', elementType: \accelerationAxis, ioType: \collectiveIn, \spec: 'minibeeAccelAxis' ),
+	elements: [
+		(key: \x),
+		(key: \y),
+		(key: \z)
+	]
 )
 )
 
