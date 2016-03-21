@@ -1,12 +1,12 @@
 /*
-Known problems:
-* compass is dodgy - on the HID side already?
-- see little conversion example
 
-ToDO:
-* check output elements - LEDs?
-* include rumble outputs in elements, test
+Notes:
+* no leds to set, no rumble.
+* HID reports all elements as output as well,
+  but they dont do anything when you set their value,
+  so it seems best to make them all ioType \in only.
 
+ToDo:
 * make little example.
 
 // test this desc:
@@ -26,7 +26,6 @@ m.elAt(\compass).action = { |el|
 	var dirs = [\rest, \N, \NE, \E, \SE, \S, \SW, \W, \NW];
 	[\compass, intVal, dirs[intVal]].postln;
 };
-
 
 */
 
@@ -52,7 +51,7 @@ deviceInfo: (
 	// description: "",
 	// features: [
 	// ],
-	longName: "Saitek Cyborg Mega World"
+	longName: "Saitek Impact Gamepad"
 ),
 elementsDesc: (
 	elements: [
@@ -128,13 +127,8 @@ elementsDesc: (
 					]
 				)
 			]
-		),
+		)
+		// no outputs for led or rumble
 	]
-
-// --------- output elements ----------
-	// '<element name undefined>': ('hidUsage': 67, 'hidUsagePage': 8, 'elementType': '<type Led>', 'ioType': 'out' ),
-	// '<element name undefined>': ('hidUsage': 68, 'hidUsagePage': 8, 'type': '<type Led>', 'ioType': 'out' ),
-	// '<element name undefined>': ('hidUsage': 69, 'hidUsagePage': 8, 'type': '<type Led>', 'ioType': 'out' ),
-	// '<element name undefined>': ('hidUsage': 70, 'hidUsagePage': 8, 'type': '<type Led>', 'ioType': 'out' ),
 )
 );

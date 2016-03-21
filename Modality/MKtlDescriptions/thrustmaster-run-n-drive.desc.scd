@@ -2,10 +2,15 @@
 /*
 desc file for Thrustmater ferrari gamepad.
 
-In \compass, id 57, the reported range is wrong:
-instead of [0, 7], it it is [0, 15] when including
-the value 15, which is sent when compass but is released.
-the directions are:
+Notes:
+
+* rumble is only on a single motor, no left and right ( see test below)
+
+* \compass, id 57, reports a wrong range to HID:
+  instead of [0, 7], it is actually [0, 15] when including the value 15,
+  which is sent when compass but is released.
+
+The directions are (el.deviceValue * 7):
 
 //     0
 //   7    1
@@ -14,6 +19,7 @@ the directions are:
 //     4
 
 // find gp and trace it:
+MKtlDesc.loadDescs;
 MKtl.find(\hid);
 f = MKtl('f', "thrustmaster-run-n-drive");
 f.gui;
@@ -45,7 +51,7 @@ f.dictAt(\joy_l_hat).action = { |el| [el.name, el.value].postln };
 f.elementAt(\joy, \r, \hat).action = { |el| [el.name, el.value].postln };
 
 
-// test for rumble outputs:
+// test for rumble outputs
 f.elAt( \rumble, \l ).value_(1);
 f.elAt( \rumble, \l ).value_(0.5);
 f.elAt( \rumble, \l ).value_(0);
@@ -54,6 +60,8 @@ f.elAt( \rumble, \r ).value_(1);
 f.elAt( \rumble, \r ).value_(0.5);
 f.elAt( \rumble, \r ).value_(0);
 
+// - both rumble outs address the same motor,
+// - seems that hidUSage 187 is irrelevant - arbitrary change to 123 does the same thing.
 
 
 */
@@ -79,7 +87,8 @@ deviceInfo: (
 	// type: [],
 	// hasScribble: false
 ),
-specs: (\compassRND: [0, 8, \lin, 1, 1].asSpec),
+// specs: (\compassRND: [0, 8, \lin, 1, 1].asSpec),
+
 elementsDesc: (
 	elements: [
 
@@ -177,7 +186,7 @@ elementsDesc: (
 				),
 				(
 					key: \r,
-					'hidUsage': 0, 'hidUsagePage': 1, hidElementID: 32,
+					'hidUsage': 123, 'hidUsagePage': 1, hidElementID: 32,
 					'style': (row: 4, column: 5, showLabel: true)
 				)
 			]

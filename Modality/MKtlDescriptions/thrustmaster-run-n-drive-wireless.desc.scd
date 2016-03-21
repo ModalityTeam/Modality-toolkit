@@ -1,4 +1,8 @@
 /*
+
+Notes:
+* rumble does nothing on wireless, works on wired.
+
 -- elementsDesc copied over from plain run_n_drive
 -- only differences:
 	deviceName: "Run'N' Drive Wireless_Thrustmaster",
@@ -12,6 +16,7 @@ f = MKtl('f', "*drive-wireless");
 f.gui;
 f.postElements;
 f.trace;
+f.device.source.elements[32].value_(255)
 
 */
 
@@ -121,6 +126,7 @@ elementsDesc: (
 		),
 
 		// --------- output elements ----------
+		// only working on wired version
 
 		(
 			key: 'rumble',
