@@ -73,7 +73,8 @@ elementTypes: [\accelerometer, \fader, \button],
 status: (
 	linux: "unknown after refactor",
 	osx: "tested with SC, looks ok. 2016-03-21, adc. receiving from iphone not working.",
-	win: "unknown after refactor"),
+	win: "unknown after refactor"
+),
 
 idInfo: "touchOSC",
 netAddrInfo: (srcPort: 9000, recvPort: 57120, ipAddress: "192.168.178.51"),
