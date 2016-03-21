@@ -52,11 +52,32 @@ g.trace;
 // update with the address seen in OSCMon or OSCFunc.trace:
 g.device.updateSrcAddr("192.168.178.53", 60329);
 
-g.trace;
-g.trace(false);
-[ /gyrosc/ipport, 192.168.178.53, 6449 ]
 
-g.elAt.collect(_.collectives)
+
+
+// without a device, fake gyrosc sending from SC itself:
+OSCFunc.trace;
+
+n = NetAddr("192.168.178.51", 57120);
+n.sendMsg('/gyrosc/gyro', 0.1, 0.2, 0.3);
+
+Tdef(\gyrtest, {
+	inf.do {
+		n.sendMsg('/gyrosc/gyro', 1.0.rand2, 1.0.rand2, 1.0.rand2);
+		n.sendMsg('/gyrosc/accel', 1.0.rand2, 1.0.rand2, 1.0.rand2);
+		0.1.wait;
+	};
+}).play;
+
+OSCFunc.trace(false);
+
+
+// now see if MKtl listens:
+g = MKtl(\gyr, "gyrosc*");
+g.gui.parent.alwaysOnTop_(true); g.trace;
+// set to this computer's ip address and SC's langPort
+g.device.updateSrcAddr("192.168.178.51", NetAddr.langPort);
+g.device.updateDestAddr("192.168.178.51", 57120);
 */
 
 (

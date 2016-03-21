@@ -113,6 +113,9 @@ OSCMKtlDevice : MKtlDevice {
 	updateSrcAddr { |hostname, port|
 		if (hostname.notNil) { source.hostname = hostname };
 		if (port.notNil) { source.port = port };
+		recvPort = port;
+		oscFuncDictionary.do(_.free);
+		this.initCollectives;
 		this.addToLookup;
 	}
 
