@@ -1,61 +1,3 @@
-// for Manta controller made by Jeff Snyder,
-// control names as they come from libmanta
-// based USB to OSC bridge unixCmd program.
-/*
-(
-q = q ? ();
-q.manta = ();
-// download and build libmanta, MantaOSC first, e.g. here:
-q.manta.path = "~/scgit/libmanta/MantaOSC/build/";
-q.manta.binaryName = "MantaOSC";
-
-// only a single copy of mantaOSC can run,
-// so make sure you end any existing ones before running it
-q.manta.end = { |d| unixCmd("killall" + d.binaryName) };
-q.manta.run = { |d|
-	q.manta.end;
-	(d.path +/+ d.binaryName).runInTerminal;
-};
-)
-q.manta.run;
-q.manta.end;
-q.manta.run;
-
-q.manta.desc = MKtlDesc("*manta*");
-
-MKtl(\manta, q.manta.desc);
-MKtl(\manta).trace;
-
-
-/// test with dumb sound
-s.boot;
-Ndef(\test, { |freq = 300| Saw.ar(freq) }).play(vol: 0.1);
-
-// single pad action - bottom left
-MKtl(\manta).trace(false);
-MKtl(\manta).elementAt(\pad, 0, \con).action = { |el|
-	[el.name, el.value, el.deviceValue].postln;
-	Ndef(\test).set(\freq, el.value.linexp(0, 1, 20, 2000));
-};
-
-// all pads, all pad controls
-MKtl(\manta).elementAt(\pad).action = { |el| [el.name, el.value.round(0.001)].postln };
-
-// make a custom group
-q.manta.padBot8 = MKtlElementGroup( 'padBot8', MKtl(\manta),
-	MKtl(\manta).elementAt( \pad, (0..7)).collect(_.at(\vel))
-);
-q.manta.padBot8.elements;
-q.manta.padBot8.action = { |el| \padBot8_vel.postln };
-
-// add this group to collectives
-// or other collection of extra groups, e.g. in
-MKtl(\manta).collectivesDict.put(\padBot8, q.manta.padBot8);
-MKtl(\manta).collectivesDict;
-
-q.manta.end;
-s.quit;
-*/
 
 (
 deviceName: "manta",
@@ -101,7 +43,6 @@ elementsDesc: (
 		(
 			key: \pad,
 			shared: (
-				elementType: 'pad',
 				spec: 'mantaTouch',
 				ioType: \in
 			),
@@ -112,12 +53,21 @@ elementsDesc: (
 						(
 							key: \con,
 							oscPath: '/manta/continuous/pad',
-							argTemplate: [ id ]
+							argTemplate: [ id ],
+							elementType: 'slider',
+							style: (
+								row: 2.0 + (id div: 8) + 0.5,
+								column: id % 8,
+								width: 0.6, height: 1)
 						),
 						(
 							key: \vel,
 							oscPath: '/manta/velocity/pad',
-							argTemplate: [ id ]
+							argTemplate: [ id ],
+							elementType: 'pad',
+							style: (row: 2.3 +  (id div: 8) + 0.5,
+								column: id % 8 + 0.45,
+								width: 0.6, height: 0.7)
 						),
 						(
 							key: \led,
@@ -125,7 +75,11 @@ elementsDesc: (
 							argTemplate: [ nil, id ],
 							elementType: 'led',
 							spec: 'mantaLed',
-							ioType: \out
+							ioType: \out,
+							style: (row: 2.0 + (id div: 8) + 0.5,
+								column: id % 8 + 0.45,
+								width: 0.6, height: 0.5
+							)
 						)
 					]
 				)
@@ -141,9 +95,13 @@ elementsDesc: (
 							key: \con,
 							oscPath: '/manta/continuous/button',
 							argTemplate: [ id ],
-							elementType: 'pad',
+							elementType: 'slider', // 'pad'
 							spec: 'mantaTouch',
-							ioType: \in
+							ioType: \in,
+							style: (row: 0.0 + (id div: 2),
+								column: 5.5 + (id % 2) + (id div: 2 * 0.5),
+								width: 0.6, height: 1
+							)
 						),
 						(
 							key: \vel,
@@ -151,7 +109,12 @@ elementsDesc: (
 							argTemplate: [ id ],
 							elementType: 'pad',
 							spec: 'mantaTouch',
-							ioType: \in
+							ioType: \in,
+							style: (
+								row: 0.3 + (id div: 2),
+								column: 5.5 + (id % 2) + (id div: 2 * 0.5) + 0.45,
+								width: 0.6, height: 0.7
+							)
 						),
 						(
 							key: \led,
@@ -159,7 +122,11 @@ elementsDesc: (
 							argTemplate: [ nil, id ],
 							elementType: 'led',
 							spec: 'mantaLed',
-							ioType: \out
+							ioType: \out,
+							style: (row: 0 + (id div: 2),
+							column: 5.5 + (id % 2) + (id div: 2 * 0.5) + 0.45,
+								width: 0.6, height: 0.5
+							)
 						)
 					]
 				)
@@ -168,14 +135,16 @@ elementsDesc: (
 		(
 			key: \sl,
 			elements: (0..1).collect { |id|
-				(key: i.asSymbol,
+				(key: id.asSymbol,
 					elements: [
 						(key: \con,
 							oscPath: '/manta/continuous/slider',
 							argTemplate: [ id ],
 							elementType: 'slider',
 							spec: 'mantaSlider',
-							ioType: \in
+							ioType: \in,
+							style: (row: id + 0.5, column: 1 - id,
+								width: 4, height: 0.6),
 						),
 						(
 							key: \led,
@@ -184,9 +153,13 @@ elementsDesc: (
 								(
 									oscPath: '/manta/led/slider',
 									argTemplate: [ nil, id, jd ],
-									elementType: 'led',
+									elementType: 'button', // 'led',
 									spec: 'mantaLed',
-									ioType: \out
+									ioType: \out,
+									style: (
+										row: id,
+										column: (1 - id) + (jd * 0.5),
+										width: 0.6, height: 0.6),
 								);
 							}
 						)
