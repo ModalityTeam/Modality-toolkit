@@ -19,7 +19,7 @@ MKtlDesc {
 	classvar <docURI = "http://modalityteam.github.io/controllers/";
 
 	classvar <>isElemFunc;
-	classvar <>platformSpecific = false;
+	classvar <>platformSpecific = true;
 
 	var <name, <fullDesc, <path;
 	var <elementsDict;
