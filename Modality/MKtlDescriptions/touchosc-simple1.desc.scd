@@ -19,7 +19,7 @@
 OSCFunc.trace(true);
 OSCFunc.trace(false);
 // * if nothing, check that touchosc sends to proper port:
-NetAddr.langPort
+NetAddr.langPort;
 
 OSCdef('/1/fader5', { |msg| msg.postln });
 
@@ -40,15 +40,29 @@ MKtl.all.do(_.free).clear;
 t = MKtl(\tosca, "touchosc-simple1");
 
 // update the touchOSC send address to the one you see in OSCFunc.trace:
-MKtl(\tosca).device.updateSrcAddr("192.168.178.74", 54054);
-m = MKtl(\tosca);
-m.trace;
+t.device.updateSrcAddr("192.168.178.74", 54054);
+t.trace;
 // and give it an action for all its elements
-MKtl(\tosca).elements.action = { |el|
-"tOsc %: %\n".postf(el.name, el.value.round(0.001))
+t.elAt.action = { |el|
+	"tOsc %: %\n".postf(el.name, el.value.round(0.001))
 };
 
 t.gui;
+
+// or if you test by simulation from SC:
+n = NetAddr("192.168.178.51", 57120);
+MKtl(\tosca).device.updateSrcAddr("192.168.178.51", 57120);
+
+
+Tdef(\toscTest, {
+	inf.do {
+		n.sendMsg('/accxyz', 1.0.rand2, 1.0.rand2, 1.0.rand2);
+		if (0.1.coin) { n.sendMsg('/xfader'.postln, 1.0.rand); };
+		if (0.1.coin) { n.sendMsg("/1/fader4".postln, 1.0.rand); };
+		0.1.wait;
+	};
+}).play;
+
 *******************************/
 (
 (
@@ -58,7 +72,7 @@ deviceType: \phoneApp,
 elementTypes: [\accelerometer, \fader, \button],
 status: (
 	linux: "unknown after refactor",
-	osx: "unknown after refactor",
+	osx: "tested with SC, looks ok. 2016-03-21, adc. receiving from iphone not working.",
 	win: "unknown after refactor"),
 
 idInfo: "touchOSC",
