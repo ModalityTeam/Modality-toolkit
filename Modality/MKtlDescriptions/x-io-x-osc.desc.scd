@@ -40,9 +40,9 @@ protocol: \osc,
 deviceType: \multiController,
 elementTypes: [\accelerometer, \sensor, \serial],
 status: (
-	linux: "unknown",
+	linux: "unknown after refactor, incomplete",
 	osx: "unknown after refactor, incomplete",
-	win: "unknown"
+	win: "unknown after refactor, incomplete"
 ),
 
 idInfo: "x-osc",

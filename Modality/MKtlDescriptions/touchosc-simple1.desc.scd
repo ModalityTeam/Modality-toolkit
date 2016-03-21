@@ -57,9 +57,9 @@ protocol: \osc,
 deviceType: \phoneApp,
 elementTypes: [\accelerometer, \fader, \button],
 status: (
-	linux: "unknown",
-	osx: "unknown",
-	win: "unknown"),
+	linux: "unknown after refactor",
+	osx: "unknown after refactor",
+	win: "unknown after refactor"),
 
 idInfo: "touchOSC",
 netAddrInfo: (srcPort: 9000, recvPort: 57120, ipAddress: "192.168.178.51"),

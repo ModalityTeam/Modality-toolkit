@@ -54,7 +54,7 @@ deviceType: \minibee,
 elementTypes: [\accelerometer, \analogSensor],
 status: (
 	linux: "tested (fake device only); 2016_03_20 by nescivi", // need to check whether outputs are integers!
-	osx: "tested and working, subset of sensors only.",
+	osx: "tested and working, subset of sensors only. no date?",
 	win: "unknown"),
 
 idInfo: "minibee1-xpee",
