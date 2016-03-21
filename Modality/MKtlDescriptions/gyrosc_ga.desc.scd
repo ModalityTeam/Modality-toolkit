@@ -5,8 +5,8 @@
 // others can be added later as needed.
 
 /* todo:
-  * add others movement sensors
-  *
+* add others movement sensors
+*
 */
 
 // for using gyrosc nametag ID concept, see note below.
@@ -33,6 +33,7 @@ OSCFunc.trace(false);
 // * analyse incoming date with OSCMon for convenience:
 o = OSCMon.new;
 o.enable;
+o.show;
 
 // which sending addresses?
 o.anaDict.msgNamesByAddr.keys.postcs
@@ -60,11 +61,13 @@ OSCFunc.trace;
 
 n = NetAddr("192.168.178.51", 57120);
 n.sendMsg('/gyrosc/gyro', 0.1, 0.2, 0.3);
+n.sendMsg('/gyrosc/button', 1, 2.rand, 0.3);
 
 Tdef(\gyrtest, {
 	inf.do {
-		n.sendMsg('/gyrosc/gyro', 1.0.rand2, 1.0.rand2, 1.0.rand2);
-		n.sendMsg('/gyrosc/accel', 1.0.rand2, 1.0.rand2, 1.0.rand2);
+// n.sendMsg('/gyrosc/gyro', 1.0.rand2, 1.0.rand2, 1.0.rand2);
+// n.sendMsg('/gyrosc/accel', 1.0.rand2, 1.0.rand2, 1.0.rand2);
+		if (0.05.coin) { n.sendMsg('/gyrosc/button', 9.rand, 2.rand); };
 		0.1.wait;
 	};
 }).play;
@@ -73,11 +76,12 @@ OSCFunc.trace(false);
 
 
 // now see if MKtl listens:
-g = MKtl(\gyr, "gyrosc*");
+g.free; g = MKtl(\gyr, "gyrosc*");
 g.gui.parent.alwaysOnTop_(true); g.trace;
 // set to this computer's ip address and SC's langPort
-g.device.updateSrcAddr("192.168.178.51", NetAddr.langPort);
-g.device.updateDestAddr("192.168.178.51", 57120);
+g.device.updateSrcAddr("192.168.178.51", 57120);
+
+g.trace(false);
 */
 
 (
@@ -87,7 +91,8 @@ deviceType: \phoneApp,
 elementTypes: [\imu, \accelerometer],
 status: (
 	linux: "unknown",
-	osx: "tested, not working. 2016-03-17, adc : subset of sensors only, not receiving OSC from app",
+	osx: "tested from SC only, working. 2016-03-20, adc."
+	" subset of sensors only, not receiving OSC from app",
 	win: "unknown"),
 
 idInfo: "gyrosc",
@@ -127,7 +132,7 @@ collectives: (
 		oscPath: '/gyrosc/accel',
 		elements: [ [\accel, \x], [\accel, \y], [\accel, \z]],
 		ioType: \in
-	)
+	),
 	// similar for comp, matrix, rrate, quat, grav, mag, gps
 ),
 	// actually about 7 more messages possible.
@@ -151,8 +156,31 @@ elementsDesc: (
 				(key: \roll),
 				(key: \yaw),
 			]
-		)
+		),
 		// similar for comp, matrix, rrate, quat, grav, mag, gps
+
+		// buttons (not working yet)
+		(
+			key: 'bt',
+			shared: (
+				oscPath: '/gyrosc/button',
+				type: 'button',
+				ioType: \in,
+				spec: \hidBut
+			),
+			elements: [
+				( argTemplate: [ 0 ] ),
+				( argTemplate: [ 1 ] ),
+				( argTemplate: [ 2 ] ),
+				( argTemplate: [ 3 ], mode: \toggle ),
+				( argTemplate: [ 4 ], mode: \toggle ),
+				( argTemplate: [ 5 ], mode: \toggle ),
+				( argTemplate: [ 6 ] ),
+				( argTemplate: [ 7 ] ),
+				( argTemplate: [ 8 ] )
+			]
+		)
+
 	]
 )
 )
