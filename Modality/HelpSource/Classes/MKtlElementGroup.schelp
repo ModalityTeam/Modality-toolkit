@@ -9,7 +9,7 @@ MKtlElementGroup is used in the hierarchical tree structure of link::Classes/MKt
 CLASSMETHODS::
 
 method::new
-create a new MKtlElementGroup
+create a new MKtlElementGroup with a name, a source MKtl, and a list of elements
 
 method::newFrom
 create an MKtlElementGroup from a list of elements
@@ -21,16 +21,22 @@ as contained in a desc file.
 INSTANCEMETHODS::
 
 METHOD:: elements
-gets and sets the code::Array:: of enclosed elements
+gets and sets the code::Array:: of elements contained
 
-METHOD:: at
-get an element inside the group via an index. The index can always be a number, and if the group has keys per item it can also be a code::Symbol::.
+METHOD:: dict
+gets and sets the code::Event:: containing all elements of the group
+
+METHOD:: elAt
+get an element inside the group via a list of indices or keys.
 
 code::
 m = MKtl( 'nk2', "*nanokontrol2" ); // create a NanoKONTROL2 MKtl
+g = m.elementGroup;
 
-m.elements.at( \bt ); // returns the buttons
-m.elements.at( 0 ); // returns the first object
+g.elAt( \bt ); // returns the buttons
+g.elAt( \bt, 0 ); // returns the first group of buttons
+g.elAt( \bt, 0, 4 ); // returns the first group of buttons
+g.elAt( 0, \play ); // returns the first group \tr, and the \play button.
 ::
 
 METHOD:: action
@@ -58,8 +64,25 @@ the desired bounds of the window
 
 returns:: an code::MKtlElementGroupGUI::
 
+Method:: value
+get and set the value of all elements in the group (nested if group is nested)
+m.gui;
+g.value;
+g.elAt(\tr).size; // 11 buttons in tr
+g.elAt(\tr).value = 11.collect { 2.rand }; // 11 buttons in tr
+
+Method:: deviceValue
+get and set the deviceValue of all elements in the group
+
+Method:: prevValue, prevDeviceValue
+get the previous value or deviceValue of all elements in the group
+
+Method:: valueAction, deviceValueAction
+set the value or deviceValue of all elements in the group,
+and do the action of the group only (i.e. not of each element contained)
+
 method::isOn
-for groups of MIDI [\noteOn, \noteOff], return true if on element was activated last.
+for groups of MIDI [\noteOn, \noteOff], return true if the \on element was activated last.
 see link::Tutorials/How_to_create_a_description_file_for_MIDI::
 
 EXAMPLES::

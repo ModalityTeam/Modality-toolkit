@@ -233,6 +233,9 @@ MKtlElementGroup : MKtlElement {
 		pairs.do { |assoc| assoc[0].deviceValue = assoc[1] }
 	}
 
+	prevValue { ^elements.collect(_.prevValue) }
+	prevDeviceValue { ^elements.collect(_.prevDeviceValue) }
+
 	// special method for a group of separate elements [\on, \off]
 	// if onElement was changed last, assume this group is on
 	isOn {
