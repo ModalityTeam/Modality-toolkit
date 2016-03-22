@@ -13,10 +13,14 @@ First code examples:
 
 code::
 // make some component MKtls, then combine them
-MKtl(\nk2a, "*nanokontrol2");
-MKtl(\nk2b, "*nanokontrol2");
-MKtl(\gpd, "*impact*");  // a gamepad
-MKtl(\gyro, "gyrosc_ga");  // phone app with gyro and accel
+
+MKtl(\nk2a, "*nanokontrol2").gui;
+
+MKtl(\nk2b, "*nanokontrol2").gui;
+
+MKtl(\gpd, "*impact*").gui;  // a gamepad
+
+MKtl(\gyro, "gyrosc_ga").gui;  // phone app with gyro and accel
 
 // combine two identical devices into one:
 a = CompMKtl(\combi, [\nk2a, \nk2b]);
@@ -28,16 +32,26 @@ a.elementGroup;
 a.elAt(0, \sl, 5);
 a.elAt(1, \sl, 6);
 
+// array of all sliders of both nk2s
+a.elAt(\all, \sl);
+
 // lookup by mktl name :
 a.elAt(\nk2b, \sl, 7);
 
+// add some actions:
+a.elAt(0, \sl).action = { \yoA_slider.postln };
+a.elAt(1, \sl).action = { \yoB_slider.postln };
+
+
+
+
 // combine two different devices:
 b = CompMKtl(\ng, [\nk2a, \gpd]);
-b.elAt(0, \play);
-b.elAt(1, \joy);
+b.elAt(0);
+b.elAt(1, \joy).action = { |el| [el, el.value.round(0.001)].postln; };
 
-b.elAt(\nk2a, \play);
-b.elAt(\gpd, \joy);
+b.elAt(\nk2a, \tr, \play).action = { \but_kik.postln };
+b.elAt(\gpd, \joy).value;
 
 
 // two different ones
@@ -47,7 +61,6 @@ c.elAt(1);
 c.elAt(0);
 
 c.elAt(\gyro, \accel, \x);
-
 
 // and make one with 3 devices
 d = CompMKtl(\ngg, [\nk2a, \gpd, \gyro]);
