@@ -3,16 +3,27 @@ summary:: Using hardware with MIDI plugs in Modality.
 categories:: Libraries>Modality
 related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Classes/MIDIExplorer
 
-Many people have MIDI controllers they like which have only MIDI plugs, and must be connected to computers via a MIDI interface (which is often available onboard with audio interfaces or midi controllers). 
+Many people have MIDI controllers they like which have only MIDI plugs, and must be connected to computers via a MIDI interface (which is often available onboard with audio interfaces or midi controllers).
 
-This example uses an Doepfer pocketfader box (very sturdy metal box, 16 faders), 
+This example uses an Doepfer pocketfader box (very sturdy metal box, 16 faders),
 and connects it via a Fireface 400, which has 2 MIDI ins and outs on a breakout cable.
 
 code::
-// 1. find out which midi interfaces are there:
+// 1. make an Mktl for the pocketfader
+MKtl(\pf, "*pocketfader"); MKtl(\pf).gui;
+
+// This will say that it is virtual only, because this desc
+// has an idInfo : "EXTERNAL", which is not an existing port name.
+MKtl(\pf).desc.fullDesc.at(\idInfo);
+
+// So we need to tell it which midi hardware interface we connect it to.
+
+
+// 2. find out which midi interfaces are there:
 MKtl.find(\midi);
 
-// this posts the 2 ports of the Fireface: 
+// this posts the 2 ports of the Fireface:
+
 // Available MIDIMKtls:
 // MKtl('myNickName', 'lookupName');
 		// [ midi device, portname, uid]
@@ -26,7 +37,11 @@ MKtl('midi_3_fireface_400__297__port_2', 'midi_3_fireface_400__297__port_2');
 		// [ "Fireface 400 (297)", "Port 2", -1112414548 ]
 		// no matching desc files found!
 
-// 2. look at their idInfo entries as copiable code:
+// Some controllers have MIDI plugs onboard which show up as extra ports;
+// these may also have desc files (with zero elements) - e.g. the qunexus_port2
+
+
+// 3. look at their idInfo entries as copiable code:
 MKtlLookup.allFor(\midi).collect(_.idInfo).printcsAll; "";
 
 // which posts:
@@ -35,23 +50,19 @@ MKtlLookup.allFor(\midi).collect(_.idInfo).printcsAll; "";
 ( 'destPortIndex': 1, 'sourcePortIndex': 1, 'deviceName': "Fireface 400 (297)" )
 
 
-// 3. make an MKtl for the pocketfader box:
-// (this will be virtual at first)
-k = MKtl(\pf, "*pocketfader");
-k.gui;
-
-// 4. now, tell MKtl(\pf) to create a mididevice by giving it the proper idInfo;
+// 4. now connect them:
+// tell MKtl(\pf) to create a mididevice by giving it the proper idInfo;
 // e.g. here, we take MIDI input 1 of the fireface
  z = ( 'destPortIndex': 0, 'sourcePortIndex': 0, 'deviceName': "Fireface 400 (297)" );
 k.openDeviceVia( z );
 k.device;  // -> now it has a MIDIMKtlDevice
-k.trace;   // -> should post incoming midi messages!
+k.trace;   // -> and this should post incoming midi messages!
 ::
 
-If your MIDI hardware device has no desc file yet, you can make one by coyping the desc file of a device with similar features and adapting it, or by creating one using link::Classes/MIDIExplorer::.
+If your MIDI hardware device has no desc file yet, you can make one by copying the desc file of a device with similar features and adapting it, or by creating one using link::Classes/MIDIExplorer::.
 
 
-Bonus track: 
+Bonus track:
 code::
 // The Doepfer pocket electronics kit is available for making custom devices;
 // e.g. adc made one with 8 joysticks called the joybox, which has a desc file:

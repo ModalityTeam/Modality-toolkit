@@ -49,11 +49,11 @@ link::Classes/PagedMKtl:: - Paging by using multiple MKtls for the same device
 
 ##Practical issues:
 
-link::Tutorials/Using_multiple_identical_devices::
+link::Tutorials/Using_multiple_identical_devices:: - to be written
 
 link::Tutorials/Connecting_external_MIDI_devices::
 
-link::Tutorials/Connecting_multi-port_MIDI_devices::
+link::Tutorials/Connecting_multi-port_MIDI_devices:: - to be written
 
 
 
@@ -77,7 +77,7 @@ section:: Advanced Tutorials and further reading
 LIST::
 ## Adding your own controller(s) to Modality:
 
-link::Tutorials/How_to_adapt_a_description_file::
+link::Tutorials/How_to_adapt_a_description_file:: - to be written
 
 link::Tutorials/How_to_create_a_description_file::
 ::
