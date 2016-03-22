@@ -1,11 +1,5 @@
 ///// nanoPAD2 desc file
 
-/*
-MIDIMKtl.find;
-k = MKtl('np', "*nanopad2");
-k.gui;
-*/
-
 (
 deviceName: "nanoPAD2",
 protocol: \midi,
@@ -13,10 +7,17 @@ deviceType: \drumpad,
 elementTypes: [\pad, \touchpad, \button],
 status: (
 	linux: "unknown",
-	osx: "unknown",
+	osx: "tested and working. 2016-03-22, dhml & adc",
 	win: "unknown"),
 
 idInfo: "nanoPAD2",
+
+testCode: {
+	MKtl.find(\midi);
+	k = MKtl('np', "*nanopad2");
+	k.gui;
+	k.trace;
+},
 
 deviceInfo: (
 	vendorURI: "http://www.korg.com/us/products/controllers/nanopad2/",
