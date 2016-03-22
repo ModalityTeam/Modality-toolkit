@@ -12,7 +12,6 @@ MKtl('bcf').gui
 
 MKtl('bcf').elAt(\sl,0,0).value_(0.5)
 
-
 */
 
 
@@ -24,7 +23,7 @@ deviceType: \faderbox,
 elementTypes: [\fader, \button, \encoder],
 status: (
 	linux: "unknown",
-	osx: "unknown",
+	osx: "tested and working, except midiOut has no port number. 2016-03-22, dhml&adc.",
 	win: "unknown"),
 
 idInfo: "BCF2000",
