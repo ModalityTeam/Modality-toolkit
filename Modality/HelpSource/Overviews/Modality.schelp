@@ -4,8 +4,6 @@ categories:: Libraries>Modality, External Control
 related:: Overviews/Modality, Classes/MKtl, Tutorials/ModalityTutorial
 
 
-
-
 The Modality toolkit simplifies using controllers in your SuperCollider patchers. It was created by a team of developers and users of SuperCollider.
 
 link::http://modality.bek.no/::
@@ -36,15 +34,20 @@ MKtlDesc.web;
 
 ##Tutorials for special modality features:
 
-link::Tutorials/Creating_Custom_ElementGroups::
+link::Tutorials/Creating_Named_Groups::
+
+link::Tutorials/Creating_Custom_Elements_and_Groups::
 
 link::Tutorials/Substituting_MKtls::
 
-link::Tutorials/Composing_MKtls::
+link::Tutorials/Coding_for_Modal_Flexibility::
 
-link::Tutorials/Paging_MKtls::
 
-link::Tutorials/Using_multiple_MKtls_for_one_device:: convert Tests/MKtlPolyphony_HID.scd
+link::Classes/CompMKtl:: - Composing an MKtl from several MKtls
+
+link::Classes/PagedMKtl:: - Paging by using multiple MKtls for the same device
+
+##Practical issues:
 
 link::Tutorials/Using_multiple_identical_devices::
 
@@ -63,7 +66,7 @@ MKtlDesc.openFolder;
 MKtlDesc.loadDescs.choose.openFile;
 ::
 
-And longer examples for specific devices are here:
+Longer examples for specific devices are here:
 code::
 (MKtlDesc.defaultFolder.dirname +/+ "DeviceExamples").openOS;
 ::

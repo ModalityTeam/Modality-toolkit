@@ -1,4 +1,4 @@
-title:: Creating Custom ElementGroups
+title:: Creating Named Groups
 summary:: Organize alternative groups of elements in an MKtl for particular purposes
 categories:: Libraries>Modality, Tutorials
 related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files
@@ -24,7 +24,7 @@ n.elementGroup;
 n.elAt(\tr);
 
 // as these buttons are unique and have names,
-//they could also be accessible by that name:
+//they could also be accessible by that name directly:
 n.elAt(\tr, \play);
 // not there yet -
 n.elAt(\play);
@@ -91,7 +91,7 @@ n.addNamed(\mix, y);
 n.namedDict[\mix];
 n.elAt(\mix);
 
-// and now access by name and index works at every level
+// and now access by name and index works at every level:
 n.elAt(\mix, 'ch_1');
 n.elAt(\mix, 0);
 n.elAt(\mix, 'ch_1', \bt);
