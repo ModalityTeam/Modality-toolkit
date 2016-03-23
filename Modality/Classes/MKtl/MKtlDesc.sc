@@ -152,12 +152,23 @@ MKtlDesc {
 
 	*idInfoForFilename { |filename| ^fileToIDDict.at(filename) }
 
-	*filenamesForIDInfo { |idInfo|
-		^fileToIDDict.select { |info, filename|
-			// may need better matching
-			info == idInfo
-		}.keys(Array).sort
+	*filenamesForIDInfo { |idInfoFromDev|
+		^fileToIDDict.select { |idInfoInFile, filename|
+			// "matchInfo: %, %\n".postf(idInfoFromDev, idInfoInFile);
+			this.matchInfo(idInfoFromDev, idInfoInFile)
+		}
 	}
+
+	*matchInfo { |infoFromDev, infoInFile|
+		if (infoFromDev == infoInFile) { ^true };
+
+		if (infoFromDev.isKindOf(Dictionary).not) { infoFromDev = (deviceName: infoFromDev) };
+		if (infoInFile.isKindOf(Dictionary).not) { infoInFile = (deviceName: infoInFile) };
+
+		^(infoFromDev.deviceName == infoInFile.deviceName)
+		and: { infoFromDev.sourcePortIndex == infoInFile.sourcePortIndex }
+	}
+
 
 	*writeCache {
 		var dictForFolder = Dictionary.new, file;

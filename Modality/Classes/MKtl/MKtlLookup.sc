@@ -65,7 +65,7 @@ MKtlLookup {
 	*addFilenamesAndDescs { |dict, idInfo|
 		var filenames = MKtlDesc.filenamesForIDInfo(idInfo);
 		var descs = MKtlDesc.loadDescs(filenames);
-		// "filenames: %\n".postf(filenames);
+	//	"idInfo: %\n".postf(idInfo); "filenames: %\n".postf(filenames);
 
 		dict.put(\filenames, filenames);
 		dict.put(\descs, descs);
@@ -148,7 +148,7 @@ MKtlLookup {
 		if (endPointType == \src) { dict.put(\srcDevice, endPoint) };
 		if (endPointType == \dest) { dict.put(\destDevice, endPoint) };
 
-		this.addFilenamesAndDescs(dict, deviceName);
+		this.addFilenamesAndDescs(dict, dict.idInfo);
 
 		(where ? all).put(lookupName, dict);
 
@@ -199,6 +199,7 @@ MKtlLookup {
 			.format(count + index1, info.idInfo.toLower, postfix)
 			.collect { |char| if (char.isAlphaNum, char, $_) }
 			.asSymbol;
+
 			this.addMIDI(srcdev, count + index1, \src,
 				lookupName: deviceLookupName, idInfo: idInfo);
 			if (insOutsMatch) {
