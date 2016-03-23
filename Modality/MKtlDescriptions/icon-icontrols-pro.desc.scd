@@ -18,7 +18,7 @@ deviceType: \faderbox,
 elementTypes: [\fader, \button],
 status: (
 	linux: "unknown",
-	osx: "unknown",
+	osx: "tested desc, looks good. 2016_03_23, adc",
 	win: "unknown"),
 
 idInfo: "iCON iControls_Pro V1.02",

@@ -5,7 +5,7 @@ deviceType: \gamepad,
 elementTypes: [\button, \joyAxis, \hat],
 status: (
 	linux: "unknown",
-	osx: "unknown",
+	osx: "tested desc, looks good. 2016_03_23, adc",
 	win: "unknown"),
 
 idInfo: "Dual Analog Pad_Jess Tech",

@@ -9,7 +9,7 @@ deviceType: \launchpad,
 elementTypes: [\button],
 status: (
 	linux: "unknown",
-	osx: "unknown",
+	osx: "tested desc, looks good. needs gui layout. 2016_03_23, adc",
 	win: "unknown"),
 
 idInfo: "Launchpad",

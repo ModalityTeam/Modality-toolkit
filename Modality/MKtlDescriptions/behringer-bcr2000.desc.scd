@@ -22,7 +22,7 @@ deviceType: \mixer,
 elementTypes: [\encoder, \button],
 status: (
 	linux: "tested and working, 2016-03-15, Miguel Negrão",
-	osx: "unknown",
+	osx: "tested desc, looks good. 2016-03-23, adc",
 	win: "unknown"),
 
 idInfo: "BCR2000",
