@@ -220,7 +220,7 @@ MKtlDesc {
 	*defaultTestCode { |descfilename = "descNameHere"|
 		var file = File(defaultFolder +/+ "_descFile_testCode.scd", "r");
 		var testCode = file.readAllString;
-		testCode.replace("descNameHere",descfilename);
+		testCode = testCode.replace("descNameHere", descfilename);
 		file.close;
 		^testCode
 	}
