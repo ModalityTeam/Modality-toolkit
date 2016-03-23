@@ -19,7 +19,7 @@ deviceType: \mixer,
 elementTypes: [\fader, \button],
 status: (
 	linux: "unknown",
-	osx: "unknown",
+	osx: "tested desc only - incomplete ATM for entering gui info. 2016-03-23, adc",
 	win: "unknown"),
 
 idInfo: "Traktor Kontrol Z2 Input",

@@ -5,7 +5,7 @@ deviceType: \joystick,
 elementTypes:  [\joystick, \button],
 status: (
 	linux: "unknown",
-	osx: "unknown",
+	osx: "tested desc, looks good. 2016_03_23, adc",
 	win: "unknown"),
 
 idInfo: "Logitech Extreme 3D_Logitech",

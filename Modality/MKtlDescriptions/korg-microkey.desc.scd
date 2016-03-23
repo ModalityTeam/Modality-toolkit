@@ -8,7 +8,7 @@ deviceType: \midiKeyboard,
 elementTypes: [\pianoKey],
 status: (
 	linux: "unknown",
-	osx: "unknown",
+	osx: "tested desc, looks good. gui needs info. 2016_03_23, adc",
 	win: "unknown"),
 
 idInfo: "microKEY",
