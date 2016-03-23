@@ -1,0 +1,55 @@
+title:: Connecting multiple identical devices
+summary:: Using several controllers of the same make in Modality.
+categories:: Libraries>Modality
+related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Classes/MIDIExplorer
+
+Modality supports using multiple controllers of the exact same make; one can make an MKtl for each one of them. In the following example, two saitek impact gamepads are connected to the computer.
+
+code::
+// find the 2 HID gamepads
+MKtl.find(\hid);
+
+// this is posted:
+MKtl('hid_5_usb_ga', 'hid_5_usb_game_controllers');
+		// [ "USB Game Controllers", "Mega World" ]
+		// create from desc file:
+MKtl('hid_5_usb_ga', "saitek-impact-gamepad");
+
+MKtl('hid_6_usb_ga', 'hid_6_usb_game_controllers');
+		// [ "USB Game Controllers", "Mega World" ]
+		// create from desc file:
+MKtl('hid_6_usb_ga', "saitek-impact-gamepad");
+
+// the posted code shows both options how to create the two MKtls:
+
+// 1. use the symbol which is a unique key for that device
+// - this key will be the same when the same set of controllers is connected again.
+MKtl('mygp1', 'hid_5_usb_game_controllers');
+MKtl('mygp2', 'hid_6_usb_game_controllers');
+
+MKtl('mygp1').trace.gui;
+MKtl('mygp2').trace.gui;
+
+// - FIXME - non-existent keys will create an empty MKtl
+MKtl('mygp4', 'hid_12_usb_game_controllers');
+MKtl('mygp4').dump
+
+// 2. use the line under // create from desc file:
+MKtl('gpL', "saitek-impact-gamepad");
+
+// this will post information and instructions how to proceed:
+Meta_MKtlDevice:open: multiple device candidates found, please disambiguate by providing a multiIndex!
+The candidates are:
+ 'idInfo': "USB Game Controllers_Mega World", 'protocol': 'hid', 'multiIndex': 0, 'filenames': [ "saitek-impact-gamepad" ],
+  'descs': [  ], 'lookupName': 'hid_5_usb_game_controllers', 'filename': "saitek-impact-gamepad", 'deviceInfo': HIDInfo.new )
+( 'idInfo': "USB Game Controllers_Mega World", 'protocol': 'hid', 'multiIndex': 1, 'filenames': [ "saitek-impact-gamepad" ],
+  'descs': [  ], 'lookupName': 'hid_6_usb_game_controllers', 'filename': "saitek-impact-gamepad", 'deviceInfo': HIDInfo.new )
+
+// You can continue by opening the device now with a multiIndex
+MKtl('gpL').openDevice(true, 0);
+
+// if you know the device index beforehand,
+// you can set the multiIndex on creation:
+MKtl('gpR', "saitek-impact-gamepad", multiIndex: 1);
+MKtl('gpR').trace;
+::

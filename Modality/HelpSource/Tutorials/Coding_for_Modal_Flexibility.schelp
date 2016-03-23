@@ -1,0 +1,192 @@
+title:: Coding for Modal Flexibility
+summary:: Create the actions first, then put the same actions into different sets of elements of one controller, or into multiple controllers
+categories:: Libraries>Modality, External Control
+related:: Overviews/Modality, Classes/MKtl
+
+The core idea of Modality is playing highly modal interfaces: What each slider, knob, button etc does can be changed in the flow of performance. To make this easy, some coding strategies are better than others, and here is the one we recommend:
+
+LIST::
+## create a process to play with
+## create a dictionary of some control actions for that process
+## pick a controller and make an MKtl for it
+## rename the control elements to use for clarity
+## make a map of which actions go into the control elements
+## then put the actions into the control elements by that map
+::
+And here are some exercises to dive into the modal world:
+LIST::
+## modal exercise  1: write a second map for the same controller, and use that
+## modal exercise  2: include one control to switch between the two maps
+## modal exercise  3: pick a second controller, make a map for it, and use that
+## modal exercise  4: make a second map for the second controller, and use that
+::
+
+The same interface allowing many makes it easy to play the same process with different interfaces, which can be useful for many reasons: One's playing may turn out differently because the interface feels different; broken or lost interfaces can be substituted with others very quickly, etc etc.
+
+This example show how to write your performance code so you can substitute very quickly when needed or desired.
+
+code::
+s.boot;
+(
+// 1. create a process to play with - a very simple sound
+Ndef(\blippy, {
+	var snd = Blip.ar(
+		(\freq.kr(440)  * LFNoise0.kr(8, 0.02, 1)).lag(0.1),
+		\numharm.kr(100)
+	);
+	Pan2.ar(snd, \pan.kr(0).lag(0.1), \amp.kr(0.5).lag(0.1))
+}).play(vol: 0.25);
+
+// add a global spec for numharm param (the others exist as defaults)
+Spec.add(\numharm, [1, 50, \exp]);
+Ndef(\blippy).gui.parent.alwaysOnTop_(true);
+)
+
+// 2. create a dict with some control actions for it:
+~blip = (
+	actions: (
+		play: { Ndef(\blippy).play },
+		stop: { Ndef(\blippy).stop },
+		setFreq: { |el| Ndef(\blippy).setUni(\freq, el.value) },
+		setHarm: { |el| Ndef(\blippy).setUni(\numharm, el.value) },
+		setAmp: { |el| Ndef(\blippy).setUni(\amp, el.value) },
+		setPan: { |el| Ndef(\blippy).setUni(\pan, el.value) }
+	)
+);
+
+// test them
+~blip.actions[\stop].value;
+~blip.actions[\play].value;
+~blip.actions[\setFreq].value(0.5);
+~blip.actions[\setHarm].value(1.0.rand);
+~blip.actions[\setAmp].value(1.0.rand);
+~blip.actions[\setPan].value(1.0.rand);
+
+
+// 3. make an MKtl
+MKtl(\gp, "*impact-gamepad");
+MKtl(\gp).gui.parent.alwaysOnTop_(true);
+
+// 4. rename its elements for clarity,
+// e.g. bt 5 and 6 are on left and right shoulder top
+MKtl(\gp).addNamed(\lTopBt, MKtl(\gp).elAt(\bt, \5));
+MKtl(\gp).addNamed(\rTopBt, MKtl(\gp).elAt(\bt, \7));
+MKtl(\gp).addNamed(\joyLX, MKtl(\gp).elAt(\joy, \l, \x));
+MKtl(\gp).addNamed(\joyLY, MKtl(\gp).elAt(\joy, \l, \y));
+MKtl(\gp).addNamed(\joyRX, MKtl(\gp).elAt(\joy, \r, \x));
+MKtl(\gp).addNamed(\joyRY, MKtl(\gp).elAt(\joy, \r, \y));
+
+
+// 5. make a mapping of the names:
+~blip.put(
+	\gp, (
+		\ctlMap1: (
+			\lTopBt: \stop,
+			\rTopBt: \play,
+			\joyLX: \setPan,
+			\joyLY: \setHarm,
+			\joyRX: \setFreq,
+			\joyRY: \setAmp
+		)
+	)
+);
+
+// and now map them:
+~blip.gp.ctlMap1.keysValuesDo { |elName, actName|
+	MKtl(\gp).elAt(elName).postln.action = ~blip.actions[actName.postln].postln;
+};
+
+// MODAL EXERCISES:
+
+// 1. make a second map and  use that
+
+// more named switches - the hats on the joysticks
+MKtl(\gp).addNamed(\joyLHat, MKtl(\gp).elAt(\joy, \l, \hat));
+MKtl(\gp).addNamed(\joyRHat, MKtl(\gp).elAt(\joy, \r, \hat));
+
+~blip.gp.put(
+	\ctlMap2, (
+		\joyLHat: \stop,
+		\joyRHat: \play,
+		\joyLX: \setFreq,
+		\joyLY: \setHarm,
+		\joyRX: \setAmp,
+		\joyRY: \setPan
+	)
+);
+
+~blip.gp.ctlMap2.keysValuesDo { |elName, actName|
+	MKtl(\gp).elAt(elName).post.action = ~blip.actions[actName.postln].postln;
+};
+
+// add better doc to play and stop actions, and rerun :
+~blip.actions.put(\play, { Ndef(\blippy).play; "Ndef(\blippy).play".postln; });
+~blip.actions.put(\stop, { Ndef(\blippy).stop; "Ndef(\blippy).stop".postln; });
+
+// EX2. make an action to switch maps, and assign controls for the two mappings:
+
+~blip.actions.switchTo = { |mktl, mapname|
+	~blip[mktl.name.postln][mapname.postln].keysValuesDo { |elName, actName|
+		mktl.elAt(elName).post.action = ~blip.actions[actName.postln].postln;
+	};
+};
+
+MKtl(\gp).elAt(\bt, \1).action = { ~blip.actions[\switchTo].(MKtl(\gp), \ctlMap1) };
+MKtl(\gp).elAt(\bt, \2).action = { ~blip.actions[\switchTo].(MKtl(\gp), \ctlMap2) };
+
+
+// EX3. make a second MKtl, and give some elements names
+
+// a nanokontrol2
+MKtl('nk2', "korg-nanokontrol2");
+MKtl(\nk2).gui.parent.alwaysOnTop_(true);
+
+(
+MKtl(\nk2).addNamed(\sl1, MKtl(\nk2).elAt(\sl, 0));
+MKtl(\nk2).addNamed(\kn1, MKtl(\nk2).elAt(\kn, 0));
+MKtl(\nk2).addNamed(\sl2, MKtl(\nk2).elAt(\sl, 1));
+MKtl(\nk2).addNamed(\kn2, MKtl(\nk2).elAt(\kn, 1));
+MKtl(\nk2).addNamed(\sl3, MKtl(\nk2).elAt(\sl, 2));
+MKtl(\nk2).addNamed(\sl4, MKtl(\nk2).elAt(\sl, 3));
+
+
+// prepare buttons for start and stop
+MKtl(\nk2).addNamed(\btS1, MKtl(\nk2).elAt(\bt, \S, 0));
+MKtl(\nk2).addNamed(\btR1, MKtl(\nk2).elAt(\bt, \R, 0));
+
+MKtl(\nk2).addNamed(\play, MKtl(\nk2).elAt(\tr, \play));
+MKtl(\nk2).addNamed(\stop, MKtl(\nk2).elAt(\tr, \stop));
+MKtl(\nk2).trace;
+)
+
+~blip.nk2 = ();
+
+~blip.nk2.put(
+	\ctlMap1, (
+		\btS1: \stop,
+		\btR1: \play,
+		\sl1: \setFreq,
+		\kn1: \setHarm,
+		\sl2: \setAmp,
+		\kn2: \setPan
+	)
+);
+
+~blip.actions[\switchTo].(MKtl(\nk2), \ctlMap1)
+
+~blip.nk2.put(
+	\ctlMap2, (
+		\stop: \stop,
+		\play: \play,
+		\sl1: \setHarm,
+		\sl2: \setFreq,
+		\sl3: \setPan,
+		\sl4: \setAmp
+	)
+);
+
+
+MKtl(\nk2).elAt(\tr, \rew).action = { ~blip.actions[\switchTo].(MKtl(\nk2), \ctlMap1) };
+MKtl(\nk2).elAt(\tr, \fwd).action = { ~blip.actions[\switchTo].(MKtl(\nk2), \ctlMap2) };
+
+::
