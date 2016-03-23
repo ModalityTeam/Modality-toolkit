@@ -14,5 +14,5 @@ analyse a captured list of midi events.
 METHOD:: analyseNoteEls
 analyse the noteOn/off events in the list of midi events.
 
-METHOD:: compressInfo, checkForMultiple
-internal helper functions
+private:: compressInfo, checkForMultiple
+

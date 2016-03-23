@@ -3,6 +3,7 @@ summary:: A class for creating and accessing external controllers
 categories:: Libraries>Modality, External Control
 related:: Overviews/Modality, Classes/MKtlDesc, Classes/MKtlDevice, Classes/MKtlElementGroup, Classes/MKtlElement
 
+
 DESCRIPTION::
 
 NOTE::
@@ -16,7 +17,7 @@ MKtl searches for controllers connected to your machine, and gives you a list of
 For most devices, this requires that someone has made a description file for the device; if there is none, it is easy to make one following the instructions here:
 link::Tutorials/How_to_create_a_description_file::
 
-MKtls can also be nested by composing several MKtls; for instance, the iControl ... creates both MIDI and HID devices for communication. For an example and background, see link::Tutorials/Composing_MKtls::
+MKtls can also be nested by composing several MKtls; for instance, the iControl ... creates both MIDI and HID devices for communication. For an example and background, see link::Classes/CompMKtl::.
 
 
 CLASSMETHODS::
@@ -413,7 +414,7 @@ send specialMessage with that name to the device
 Subsection:: Adding named groups and elements
 
 One can add named elements to an MKtl and access them by name.
-For a full discussion, see link::Tutorials/Creating_Custom_ElementGroups::.
+For a full discussion, see link::Tutorials/Creating_Named_Groups ::.
 
 code::
 k = MKtl(\nk2, "*trol2");
@@ -424,20 +425,23 @@ k.elAt(\tr).do { |el| k.addNamed(el.elemDesc.key, el); };
 k.namedDict.keys;
 k.elAt(\play);
 k.elAt(\stop);
-
+::
 
 Subsection:: Collectives
 
 METHOD:: collectivesDict, collectiveDescriptionFor
 
+These are mainly used internally in OSCMKtlDevice, see
+link::Tutorials/How_to_create_a_description_file_for_OSC::
 
-Methods for finding info on available devices in MKtlLookup.
+Subsection:: Methods for finding info on available devices in MKtlLookup.
 METHOD:: lookupInfo, lookupName, updateLookupInfo
 
 Method:: midiPortNameIndex
 needed for identifying multiple midi devices
 
-Various tests
+Subsection:: Various tests
+
 METHOD:: checkAllCtls, checkIdentical, hasDevice
 
 private:: wrapCollElemsInGroups, specialMessageNames, sendSpecialMessage, prMatchedElements
@@ -459,6 +463,4 @@ k.addNamed(\play, k.elAt(\tr, \play));
 k.elAt(\play);
 k.elAt(\play) === k.elAt(\tr, \play);
 ::
-
-For longer examples of adding custom groups, see link::Tutorials/Creating_Custom_ElementGroups::.
 

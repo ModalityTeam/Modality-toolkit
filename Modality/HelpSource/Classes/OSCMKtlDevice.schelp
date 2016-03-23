@@ -49,6 +49,8 @@ The device code::idInfo:: to use to make the OSC connections.
 argument:: parentMKtl
 The instance of link::Classes/MKtl:: that this MKtlDevice will belong to.
 
+argument:: multiIndex
+if multiple instances are present, indicate which one. (not really used with OSC, mainly for method compatibility with other variants of MKtlDevices.
 
 
 INSTANCEMETHODS::
