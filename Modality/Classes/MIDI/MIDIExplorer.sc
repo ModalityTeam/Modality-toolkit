@@ -17,7 +17,7 @@ MIDIExplorer {
 	classvar <observedSrcID;
 	classvar <totalSum = 0;
 
-	*shutUp { verbose = false }
+	*trace { |flag = true| verbose = flag }
 
 	// this could be in MKtlDesc
 	*instructions {

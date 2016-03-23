@@ -24,8 +24,8 @@ MIDIMonitor {
 
 	classvar <monitorFuncs, <msgTree, <monitoring = false;
 
-	*talk { verbose = true }
-	*shutUp { verbose = false }
+	*trace { |flag = true| verbose = flag }
+
 	*postTree {
 		"\n\n// -----------// MIDIMonitor.msgTree: ".postln;
 		msgTree.deepPost;

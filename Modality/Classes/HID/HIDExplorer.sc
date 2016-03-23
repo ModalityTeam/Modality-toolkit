@@ -12,7 +12,7 @@ HIDExplorer {
 
 	classvar <specMap;
 
-	*shutUp { verbose = false }
+	*trace { |flag = true| verbose = flag }
 
 	*initClass {
 		specMap = (

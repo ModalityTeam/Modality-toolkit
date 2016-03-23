@@ -82,10 +82,9 @@ METHOD:: compileDesc
 compile the elementsDesc from MIDIExplorer  data.
 
 METHOD:: verbose
-flag whether to print values when collecting.
-
-METHOD:: shutUp
-set verbose to false
+get and set flag whether to post info
+METHOD:: trace
+get and set flag whether to post tracing info, default flag is true
 
 METHOD:: allMsgTypes
 list of midi message types to catch
