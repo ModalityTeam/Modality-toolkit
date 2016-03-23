@@ -607,6 +607,24 @@ MKtl { // abstract class
 		};
 	}
 
+	// we have the device already, but no desc;
+	// we assume we can use a desc like "generic-mouse"
+	adaptDesc { |descName|
+		var idInfo, genericDesc, newDesc;
+		if (device.isNil) {
+			warn("% : adaptDesc: no device yet, so cannot adapt desc.".format(this));
+			^this
+		};
+		idInfo = this.device.deviceName;
+		genericDesc = MKtlDesc(descName);
+		if (genericDesc.isNil) {
+			warn("% : adaptDesc: no desc found for %.".format(this, genericDesc));
+			^this
+		};
+		newDesc = genericDesc.deepCopy.idInfo_(idInfo);
+		this.rebuild(newDesc);
+	}
+
 	hasDevice {
 		^device.notNil
 	}

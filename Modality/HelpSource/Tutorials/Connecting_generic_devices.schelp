@@ -1,0 +1,29 @@
+title:: Connecting generic devices
+summary:: Using standard devices like mouses, which can use generic description files multiple ports
+categories:: Libraries>Modality
+related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Classes/MIDIExplorer
+
+Many HID devices are quite generic; e.g. most computer mouses (or mice) have the same elements, so that one or two generic descriptions are sufficient. Here, we use some mouse:
+
+code::
+// find all HID devices
+MKtl.find(\hid);
+// and post their idInfos:
+MKtlLookup.allFor(\hid).collect(_.idInfo).cs;
+
+// in the posted text, this is the only mouse
+-> MKtl('hid_5_usb_op', 'hid_5_usb_optical_mouse');
+		// [ "USB Optical Mouse", "PixArt"
+
+// so make an MKtl for that mouse with its lookup symbol:
+m = MKtl('m', 'hid_5_usb_optical_mouse');
+
+// this will tell you there is no matching desc file,
+// and suggest you explore the device.
+// instead, you can adapt a generic desc for it:
+m.adaptDesc('generic-mouse');
+
+// and you should be ready to go:
+m.trace;
+m.gui;
+::
