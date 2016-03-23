@@ -13,8 +13,8 @@ MIDIMonitor.start;
 // now hit all keys from soft to hard,
 // move all sliders and knobs from min to max,
 // .....
-MIDIMonitor.shutUp; // turn off posting (verbose)
-MIDIMonitor.talk; // or maybe back on
+MIDIMonitor.trace(false); // turn off posting (verbose)
+MIDIMonitor.trace; // or maybe back on
 
 /// then:
 MIDIMonitor.postTree;
@@ -51,7 +51,7 @@ Stop monitoring
 METHOD:: monitoring
 ask flag whether monitoring is on
 
-METHOD:: verbose, talk, shutUp
+METHOD:: verbose, trace
 turn verbose on and off
 
 METHOD:: msgTree, postTree

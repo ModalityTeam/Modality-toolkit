@@ -102,7 +102,7 @@ SUBSECTION:: Tagging
 
 
 Tagging allows you to add your own tags to controller elements.
-The tagging system is flat, i.e. only elements have tags, link::Classes/MKtlAbstractElementGroup:: (and its derivatites) do not. link::Classes/MKtlAbstractElementGroup:: forwards tagging requests to its child elements.
+The tagging system is flat, i.e. only elements have tags, link::Classes/MKtlElementGroup:: (and its derivatites) do not - it forwards tagging requests to its children.
 
 code::
 m = MKtl(\nnkn20)

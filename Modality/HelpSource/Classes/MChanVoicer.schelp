@@ -111,8 +111,10 @@ the MKtlElements for note, amp, bend, press, velOff values
 METHOD:: noteOn, noteOff
 pass in noteOn and noteOff messages
 
-METHOD:: bend, press
-pass in bend and press messages
+METHOD:: bend
+pass in bend values
+METHOD:: press
+pass in press messages
 
 METHOD:: startFunc
 get and set the function that happens when a new note starts
