@@ -22,12 +22,12 @@ status: (
 idInfo: "iCON iControls V2.00",
 
 deviceInfo: (
-	vendorURI: "http://www.icon-global.com/Controllers_MIDI+recording+controllers_iControls+.htm",
-	manualURI: "http://www.icon-global.com/download%5Cuser%20manual%5CIC%20PD3V1.00-E.zip",
+	vendorURI: "http://icon-global.com/product/icontrols/",
+	manualURI: "http://support.icon-global.com/hc/en-us/articles/216201337-iControls",
 	// description: "",
 	// features: [],
-	notes: "This device also has an HID interface. Layer buttons have no effect; the first MIDI port gives the data",
-
+	notes: "This is the main desc for this device in MIDI; it also has an HID interface.\n"
+	"Layer buttons have no effect; the first MIDI port gives the data.",
 	// hasScribble: false
 ),
 elementsDesc: (
