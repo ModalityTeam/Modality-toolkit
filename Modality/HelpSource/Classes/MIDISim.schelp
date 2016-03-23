@@ -1,7 +1,7 @@
 TITLE:: MIDISim
 summary:: a class to simulate input from MIDI controllers
 categories:: Modality
-related:: Classes/MIDIIn, Classes/MIDIClient, Classes/MKtl, Classes/MIDIMKtlDevice Reference/Modality
+related:: Classes/MIDIIn, Classes/MIDIClient, Classes/MKtl, Classes/MIDIMKtlDevice, Overviews/Modality
 
 DESCRIPTION::
 MIDISim is intended for testing controller setups without requiring the device to be there. It can create any kind of midi message,
@@ -29,8 +29,10 @@ code::
 (midiMsgType: \touch, numbers: [midiChan, midiValue]);
 ::
 
-METHOD:: control, noteOn, noteOff, polytouch, touch, bend, program
-These methods are called to redirect to MIDIIn
+METHOD:: noteOn, noteOff
+METHOD:: control, polytouch
+METHOD:: touch, bend, program
+These methods are redirected to MIDIIn methods.
 
 EXAMPLES::
 code::
