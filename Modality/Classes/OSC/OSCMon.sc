@@ -24,6 +24,8 @@ OSCMon {
 		^super.newCopyArgs(bufsize, timeWindow, action).init(action);
 	}
 
+	trace { |flag = true| verbose = flag }
+
 	addAddr { |addr|
 		if (addresses.includesEqual(addr).not) { addresses = addresses.add(addr) }
 	}
@@ -50,8 +52,9 @@ OSCMon {
 	addNickname { |name, addr|
 		anaDict[\nicknames].put(addr, name);
 	}
-	removeNickname { |name, addr|
-		anaDict[\nicknames].removeAt(addr, name);
+	removeNickname { |name|
+		var addr = anaDict[\nicknames].findKeyForValue(name);
+		anaDict[\nicknames].removeAt( addr);
 	}
 	nameOrAddr { |addr| ^anaDict[\nicknames][addr] ? addr }
 

@@ -103,30 +103,58 @@ and an action to do when a new message comes in
 INSTANCEMETHODS::
 
 METHOD:: bufsize
+the maximum number of messages to store
 METHOD:: timeWindow
-METHOD:: func
+the maximum time window in which to store messages
+METHOD:: listenFunc
+internal: the function with which OSCMon listen to osc traffic.
 
-METHOD:: w
-METHOD:: u
+METHOD:: enable, disable
+enable and disable listening
+
+METHOD:: verbose
+get or set a flag whether to post info on incoming traffic
+METHOD:: trace
+get and set flag whether to post tracing info, default flag is true
 
 METHOD:: anaDict
+the dict containing analyses
+
+METHOD:: addresses
+the addresses from which messages have been sent
 
 METHOD:: refreshAddrsAndNames
+refresh analysis of present addresses and names
 
-METHOD:: removeAddr
-argument:: addr
 
-METHOD:: disable
+
+METHOD:: action
+an action to perform on all incoming messages
+
+METHOD:: postInfo
+post info on current recorded messages
+
+METHOD:: free
+free the resources of this oscmon
+
+METHOD:: w, u
+display window and userview
 
 METHOD:: clearMsgNames
 
 METHOD:: refresh
 
-METHOD:: removeNickname
+METHOD:: addNickname
 argument:: name
 argument:: addr
+add a nickname for an address
 
-METHOD:: addresses
+METHOD:: removeNickname
+argument:: name
+remove a nickname
+
+METHOD:: removeAddr
+argument:: addr
 
 METHOD:: removeMsgName
 argument:: name
@@ -142,25 +170,18 @@ METHOD:: msgNames
 
 METHOD:: trackMsgs
 
-METHOD:: enable
-
 METHOD:: trackAddrs
 
 METHOD:: clearAddrs
 
 METHOD:: addDefaultNicknames
 
-METHOD:: addNickname
-argument:: name
-argument:: addr
 
 METHOD:: analyse
 argument:: arr
 
-METHOD:: postInfo
 
 
-METHOD:: free
 
 METHOD:: postMessagesFrom
 argument:: index
@@ -183,9 +204,6 @@ argument:: bounds
 METHOD:: addAddr
 argument:: addr
 
-METHOD:: verbose
-
-METHOD:: action
 
 METHOD:: watchStatus
 
