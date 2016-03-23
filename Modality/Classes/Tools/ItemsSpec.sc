@@ -1,28 +1,6 @@
-/*
-
-~itspec = ItemsSpec.new( ["off","amber","red"] );
-// check that ranges are equal size: 21 values, 7 each
-~itspec.map( (0, 0.05..1) );
-// check unmapping
-["off","amber","red"].collect { |it| ~itspec.unmap(it) };
-
-// anything in [0, 0.3333] -> "off", [0.3334, 0.6666] -> amber, [0.6667, 1] -> red
-
-// unmapping returns the center of the ranges, not the borders:
-x.unmap([0, 1, 2]); // [ 0.1667, 0.5, 0.8333 ]
-
-// change warp to bend ranges
-~itspec.warp = 4;
-~itspec.map( (0, 0.05..1) ); // off has wider part of the range now
-~itspec.unmap( "off" );
-~itspec.unmap( "amber" );
-~itspec.unmap( "red" );
-
-
-*/
 
 ItemsSpec {
-	var <items, <warp, <default, spec;
+	var <items, <warp, <default, <spec;
 
 	*new { |items, warp = 0, default|
 		^super.newCopyArgs( items, warp, default ).init;
