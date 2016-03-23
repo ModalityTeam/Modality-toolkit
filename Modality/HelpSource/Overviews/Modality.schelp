@@ -49,11 +49,11 @@ link::Classes/PagedMKtl:: - Paging by using multiple MKtls for the same device
 
 ##Practical issues:
 
-link::Tutorials/Connecting_multiple_identical_devices:: - to be written
+link::Tutorials/Connecting_multiple_identical_devices::
 
 link::Tutorials/Connecting_external_MIDI_devices::
 
-link::Tutorials/Connecting_multi-port_MIDI_devices:: - to be written
+link::Tutorials/Connecting_multiport_MIDI_devices::
 
 
 

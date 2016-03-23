@@ -32,7 +32,7 @@ portName: "Port 2",
 
 // port is for connecting external MIDI, so elementsDesc is empty.
 elementsDesc: (
-
+	elements: []
 )
 
 );

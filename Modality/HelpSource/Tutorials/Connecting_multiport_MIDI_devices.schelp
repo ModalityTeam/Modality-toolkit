@@ -1,0 +1,43 @@
+title:: Connecting multiport MIDI devices
+summary:: Using midi devices with multiple ports
+categories:: Libraries>Modality
+related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Classes/MIDIExplorer
+
+Modality can handle MIDI devices with multiple ports.
+Most USB-connected MIDI devices have a single in and out port, which in Modality becomes a single MKtl,
+as in
+code::
+MKtl(\nk2, "*nanokontrol2");
+::
+
+Most MIDI devices with multiple ports have the same number of in and out ports;
+Modality groups that into one MKtl for in 0, out 0, one for in 1, out 1, etc.,
+each of which has a separate desc file, describing its elements.
+
+code::
+// 3 desc files for 3 ports of qunexus keyboard:
+MKtlDesc.loadDescs("*qunexus*");
+// and you make them by matching the desc name:
+MKtl(\qun1, "*qunexus_port1_AB");
+MKtl(\qun2, "*qunexus_port2");
+MKtl(\qun3, "*qunexus_port3");
+::
+
+When you have that device, code::MKtl.find:: will posts all 3 ports,
+and their matching desc files:
+
+code::
+MKtl.find(\midi);
+
+// will post directly usable code for each port:
+
+
+::
+
+You can combine these separate MKtls into a single link::Classes/CompMKtl:: if you like,
+or just use them separately.
+
+To a descriptions for a new device to Modality, simply create a desc file for each port,
+by following the instructions in link::Tutorials/How_to_adapt_a_description_file:: or in
+link::Tutorials/How_to_create_a_description_file_for_MIDI::.
+

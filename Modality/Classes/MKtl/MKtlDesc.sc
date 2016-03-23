@@ -1,6 +1,6 @@
 /*
 Questions:
-* update only when files newer than cache were added
+* update cache only when files newer than cache were added
 - it is really fast anyway, so just do on every startup? -
 */
 
@@ -156,7 +156,7 @@ MKtlDesc {
 		^fileToIDDict.select { |idInfoInFile, filename|
 			// "matchInfo: %, %\n".postf(idInfoFromDev, idInfoInFile);
 			this.matchInfo(idInfoFromDev, idInfoInFile)
-		}
+		}.keys(Array).sort;
 	}
 
 	*matchInfo { |infoFromDev, infoInFile|
@@ -178,7 +178,6 @@ MKtlDesc {
 			var path = folder +/+ cacheName;
 
 			descs.collect { |desc|
-
 				var filename = desc.fullDesc.filename;
 				var idInfo = desc.fullDesc.idInfo;
 				dictForFolder.put(filename, idInfo);
@@ -191,7 +190,7 @@ MKtlDesc {
 				};
 				file.write("]\n");
 				file.close;
-				"MKtlDesc cache written at %.\n".postf(path);
+				"MKtlDesc cache written with % entries at %.\n".postf(dictForFolder.size, path);
 			} {
 				warn("MKtlDesc: could not write cache at %.\n".format(path));
 			}
@@ -393,9 +392,11 @@ MKtlDesc {
 		};
 		if (multi.not) {
 			if (paths.size > 1) {
-				warn("MktlDesc: found multiple files!\n"
-					"loading only first of %: %.\n"
-					.format(paths.size, paths[0].basename));
+				warn("MktlDesc: found multiple matching files!");
+					paths.do { |path|
+						"\t".post; path.basename.postcs;
+					};
+					warn("loading first of %\n:\t%.\n".format(paths.size, paths[0].basename.cs));
 				^this.fromPath(paths[0]);
 			};
 		};
@@ -423,11 +424,6 @@ MKtlDesc {
 	}
 
 	*fromDict { |dict|
-		if (this.isValidDescDict(dict).not) {
-			warn("MKtlDesc - dict is not a valid description: %"
-				.format(dict));
-			^nil
-		};
 		^super.new.fullDesc_(dict);
 	}
 

@@ -68,8 +68,7 @@ MKtlDevice {
 		str = str ++ "MKtl(%, %);\n".format(
 			nameKey.cs,
 			filename.cs,
-				if (multiIndex.notNil, "," + multiIndex, ""
-				)
+				if (multiIndex.notNil, ", multiIndex:" + multiIndex, "")
 			);
 		};
 		^str ++ "\n";
