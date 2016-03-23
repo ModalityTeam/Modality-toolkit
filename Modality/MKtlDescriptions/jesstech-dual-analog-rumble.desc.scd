@@ -5,7 +5,7 @@ deviceType: \gamepad,
 elementTypes: [\joyAxis, \button, \hat],
 status: (
 	linux: "unknown",
-	osx: "unknown",
+	osx: "tested desc only, seems ok. needs gui layout. 2016-03-23, adc",
 	win: "unknown"),
 
 idInfo: "Dual Analog Rumble Pad_Jess Tech",

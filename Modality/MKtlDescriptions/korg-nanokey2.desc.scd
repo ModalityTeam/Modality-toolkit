@@ -8,7 +8,7 @@ deviceType: \midiKeyboard,
 elementTypes: [\pianoKey, \button],
 status: (
 	linux: "unknown",
-	osx: "unknown",
+	osx: "tested desc only, seems ok. 2016-03-23, adc",
 	win: "unknown"),
 
 idInfo: "nanoKEY2",

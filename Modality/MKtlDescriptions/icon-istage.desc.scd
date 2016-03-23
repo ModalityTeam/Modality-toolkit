@@ -27,7 +27,7 @@ deviceType: \drumpad,
 elementTypes: [\pad, \button, \fader, \display, \led],
 status: (
 	linux: "unknown",
-	osx: "unknown",
+	osx: "tested desc only, seems to work. needs gui layout! 2016-03-23, adc.",
 	win: "unknown"),
 
 idInfo: "iCON iStage V1.00",
