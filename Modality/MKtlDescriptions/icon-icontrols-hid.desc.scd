@@ -4,7 +4,7 @@ protocol: 'hid',
 deviceType: \joystick,
 status: (
 	linux: "tested and working, 2016_03_20 by nescivi",
-	osx: "unknown",
+	osx: "tested desc, looks good. 2016_03_23, adc",
 	win: "unknown"),
 elementTypes: [\joyAxis],
 

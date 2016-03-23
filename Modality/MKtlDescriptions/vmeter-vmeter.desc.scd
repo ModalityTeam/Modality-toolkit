@@ -1,10 +1,3 @@
-//VMeter desc file
-
-/*
-MIDIMKtl.find;
-k = MIDIMKtl('vmtr', "vmeter");
-k.verbose_(true);
-*/
 
 (
 deviceName: "VMeter 1.30 A",
@@ -13,7 +6,7 @@ deviceType: \fader,
 elementTypes: [\fader],
 status: (
 	linux: "unknown",
-	osx: "unknown",
+	osx: "tested desc, looks good. 2016-03-23, adc",
 	win: "unknown"),
 
 idInfo: "VMeter 1.30 A",
