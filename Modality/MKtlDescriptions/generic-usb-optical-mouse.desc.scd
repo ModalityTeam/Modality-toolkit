@@ -5,7 +5,7 @@ deviceType: \mouse,
 elementTypes: [\button, \mouseAxis, \mouseWheel],
 status: (
 	linux: "unknown",
-	osx: "unknown",
+	osx: "tested and working. 2016-03-24, adc",
 	win: "unknown"),
 
 idInfo: "USB Optical Mouse_",

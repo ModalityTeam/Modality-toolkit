@@ -20,8 +20,12 @@ m = MKtl('m', 'hid_5_usb_optical_mouse');
 
 // this will tell you there is no matching desc file,
 // and suggest you explore the device.
+
 // instead, you can adapt a generic desc for it:
-m.adaptDesc('generic-mouse');
+m.adaptDesc('generic-mouse')
+;
+// or this one works as well
+m.adaptDesc('generic-usb-optical-mouse');
 
 // and you should be ready to go:
 m.trace;
