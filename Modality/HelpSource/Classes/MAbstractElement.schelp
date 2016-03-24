@@ -1,16 +1,14 @@
 CLASS:: MAbstractElement
-summary:: Base class for MKtl controller elements elements.
+summary:: Base class for MKtl controller elements.
 categories:: Libraries>Modality, Control
 related:: Overviews/Modality, Classes/MKtl, Classes/MKtlElement
 
 
 DESCRIPTION::
-Abstract class for MKtl controller elements.
+Abstract class for MKtl controller elements and groups. It provides the common interface that individual MKtlElements (which represent single sliders, buttons, etc) and MKtlElementGroups share.
 
-note:: Does MAbstractElement need a big help file? Its only subclass is MKtlElement,
-so why not put eerything there just once?::
-
-note::this is an and abstract class that should usually not be accessed directly.::
+note::This is an abstract class that should usually not be used directly. ::
+(Theoretically, one could use MAbstractElement like an MKtlElement without specs.)
 
 CLASSMETHODS::
 
@@ -22,10 +20,10 @@ private:: addGroupsAsParent
 INSTANCEMETHODS::
 
 method:: source
-the MKtl it belongs to.
+the MKtl the element belongs to.
 
 METHOD:: name
-its name
+the element's name
 
 METHOD:: type
 the type of the element, e.g. code:: \button, \slider, \knob::.
@@ -34,18 +32,13 @@ See link::Reference/MKtl_description_files:: for a more detailed list.
 
 private:: init
 
-METHOD:: reset
-reset element to neutral state, without any functionality.
-
 SUBSECTION:: setting and getting values
 
 METHOD:: value
-Setting does not evaluate any action
+Get and set the element's value. with MKtlElementGroup, value is the collected values of its element. Note that value_ does not evaluate any action.
 
 argument:: newval
 the new value
-
-returns:: the current value
 
 METHOD:: prevValue
 the previous value
@@ -57,22 +50,28 @@ argument:: newval
 the new value
 
 METHOD:: doAction
-Evaluate the associated action
+Evaluate the associated action (without changing the value)
 
 
 SUBSECTION:: Adding and removing functionality
 
 METHOD:: action
-
-argument:: action
-a function
-
 Get and set the action to evaluate when element is activated.
+
+METHOD:: addAction
+add an action to potentially already present actions
+
+METHOD:: removeAction
+remove an action the present list of actions
+
+METHOD:: resetAction, reset
+reset element action to nil, i.e. without any actions.
+
 
 SUBSECTION:: UGen support
 
 METHOD:: kr
-Use the value directly on the server.
+Use the value directly on the server (on a bus).
 
 argument:: server
 optional argument that you only have to set once, and only if the server for the bus is not link::Classes/Server#-default::.
@@ -101,46 +100,47 @@ Normally, you should just reference to this bus via the link::#-kr:: which will 
 SUBSECTION:: Tagging
 
 
-Tagging allows you to add your own tags to controller elements.
-The tagging system is flat, i.e. only elements have tags, link::Classes/MKtlElementGroup:: (and its derivatites) do not - it forwards tagging requests to its children.
+Tagging allows adding tags to controller elements.
+The tagging system is flat, i.e. only elements have tags, link::Classes/MKtlElementGroup:: (and its derivatives) do not - it forwards tagging requests to its children.
 
 code::
-m = MKtl(\nnkn20)
+m = MKtl(\nk, "*nanokontrol2")
 
 // add a tag
-m.elementAt(\sl, 0).addTag(\a);
-m.elementAt(\sl, 0).tags; // retrieve it
+m.elAt(\sl, 0).addTag(\a);
+m.elAt(\sl, 0).tags
+m.elAt(\sl, 0).tags; // retrieve it
 
 // add several tags at once
-m.elementAt(\sl, 0).addTag([\freq, \amp]);
-m.elementAt(\sl, 0).tags; // retrieve it
+m.elAt(\sl, 0).addTag([\freq, \amp]);
+m.elAt(\sl, 0).tags; // retrieve it
 
 // remove a tag
-m.elementAt(\sl, 0).removeTag(\a);
-m.elementAt(\sl, 0).tags; // retrieve it
+m.elAt(\sl, 0).removeTag(\a);
+m.elAt(\sl, 0).tags; // retrieve it
 
 // add tags to specific elements
-m.elementAt(\sl, [0, 1, 2, 4]).do(_.addTag(\vol));
-m.elementAt(\kn, [0, 1, 2, 4]).do(_.addTag(\vol));
+m.elAt(\sl, [0, 1, 2, 4]).do(_.addTag(\vol));
+m.elAt(\kn, [0, 1, 2, 4]).do(_.addTag(\vol));
 
 // add tag to all elements of a group
-m.elementAt(\sl).addTag(\allSliders);
+m.elAt(\sl).addTag(\allSliders);
 
 
 // return tags used in a group, hierarchically
-m.elements.flat.collect(_.tags).select(_.notEmpty).printAll; ""
+m.elementGroup.flat.collect(_.tags).select(_.notEmpty).printAll; ""
 
 // return all tags used in that group
-m.elementAt(\sl).tags;
+m.elAt(\sl).tags;
 
 
 // all elements containing the tag \vol
-a = m.elements.elementsForTag(\vol);
+a = m.elementGroup.elementsForTag(\vol);
 
 // their indices
-a.collect{|el| el.indices};
+a.collect {|el| el.indices};
 
-// create an MKtlElementArray containing a
+// create an MKtlElementGroup containing all vol elements
 MKtlElementGroup(
 	m,
 	\myVolumes,
@@ -150,11 +150,11 @@ MKtlElementGroup(
 
 
 // remove a tag from all elements in a group
-m.elementAt(\sl).removeTag(\vol)
-m.elementAt(\sl).collect(_.tags)
+m.elAt(\sl).removeTag(\vol);
+m.elAt(\sl).collect(_.tags);
 
 // clear all tags
-m.elementAt(\sl, 0).clearTags
+m.elAt(\sl, 0).clearTags
 ::
 
 
@@ -174,6 +174,7 @@ list of Symbols
 
 discussion::
 If code::this:: is an link::Classes/MKtlElementGroup::, it forwards this call to its child elements.
+
 
 METHOD:: removeTag
 remove tags from the element
@@ -212,8 +213,8 @@ METHOD:: index
 returns the index (Number) or key (Symbol) of code::this:: inside its parent group
 
 METHOD:: indices
-returns an array of indices that points to code::this:: from the top level of the code::MKtl:: elements hierarchy. These values correspond with link::Classes/MKtl#elementAt::
+returns an array of indices that points to code::this:: from the top level of the code::MKtl:: elements hierarchy. These values correspond with link::Classes/MKtl#elAt::
 
 
-private:: addAction, asBaseClass, asStream, collectives, deviceValue, deviceValueAction, deviceValueNoSend, disable, elemDesc, embedInStream, enable, enabled, flat, getSpec, hasOut, indexInGroup, ioType, isOn, key, keyInGroup, lastUpdateTime
+private:: asBaseClass, asStream, collectives, deviceValue, deviceValueAction, deviceValueNoSend, disable, elemDesc, embedInStream, enable, enabled, flat, getSpec, hasOut, indexInGroup, ioType, isOn, key, keyInGroup, lastUpdateTime
 private:: prAddCollective, prAddGroup, prRemoveCollective, prRemoveGroup, prevDeviceValue, removeAction, resetAction, timeSinceLast, trySend, updateBus, updateTime, valueNoSend

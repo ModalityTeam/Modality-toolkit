@@ -360,13 +360,13 @@ MKtlElementGroup : MKtlElement {
 
 	// tagging support
 	addTag {|... newTags|
-		this.collect{|elem|
+		this.do {|elem|
 			elem.addTag(*newTags);
 		}
 	}
 
 	removeTag {|... newTags|
-		this.collect{|elem|
+		this.do {|elem|
 			elem.removeTag(*newTags);
 		}
 	}
@@ -378,7 +378,7 @@ MKtlElementGroup : MKtlElement {
 	}
 
 	elementsForTag {|... tag|
-		^this.flat.select{|el|
+		^this.flat.select {|el|
 			el.tags.includes(*tag)
 		};
 	}

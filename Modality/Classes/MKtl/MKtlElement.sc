@@ -265,7 +265,7 @@ MKtlElement : MAbstractElement {
 	// source is used for sending back to the device.
 	*new { |name, desc, source|
 		^super.newCopyArgs(name, source)
-		.elemDesc_(desc);
+		.elemDesc_(desc).init;
 	}
 
 	elemDesc_ { |dict|
