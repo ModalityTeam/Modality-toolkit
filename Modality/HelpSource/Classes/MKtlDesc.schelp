@@ -248,3 +248,24 @@ PRIVATE:: init, storeArgs, printOn, writeCache, loadCache
 
 private:: docURI, elementsDesc, elementsDesc = type, getMidiMsgTypes, inferName, name, resolveDescEntriesForPlatform, specialMessage, specialMessageNames, findParent, makeElemKeys, prMakeElemColls
 
+Examples::
+
+code::
+// example for matching with a generic desc:
+d = MKtlDesc.loadDescs("generic-mouse").first;
+m = MKtl.find(\hid);
+// we found an optical mouse with an hid ID, so make an MKtl,
+m = MKtl('m', 'hid_5_usb_optical_mouse');
+
+// generic-mouse desc matches, no extra elements on either side
+d.matchWithHID(m.device.source);
+
+// -> this should happen automatically when no desc is found.
+// to test matching:
+// remove middle button in desc -> now elements remain onlyInDesc
+d.elementsDict.removeAt(\bt_middle);
+d.matchWithHID(m.device.source);
+// remove hid elem 5 in HID -> now elements remain onlyInHID as well
+m.device.source.elements.removeAt(5);
+d.matchWithHID(m.device.source);
+::

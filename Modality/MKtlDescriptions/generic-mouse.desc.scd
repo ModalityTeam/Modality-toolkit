@@ -18,7 +18,7 @@ deviceInfo: (
 		"3 buttons",
 		"scroll wheel",
 	],
-	longName: "Generic Mouse"
+	longName: "Generic Mouse",
 	notes: "",
 	// hasScribble: false
 ),

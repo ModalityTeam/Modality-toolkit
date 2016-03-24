@@ -169,6 +169,24 @@ MKtlDesc {
 		and: { infoFromDev.sourcePortIndex == infoInFile.sourcePortIndex }
 	}
 
+	// compare a generic desc with a HID as found,
+	// and return non-matching elements for each side:
+	matchWithHID { |hid|
+		var hidElems = hid.elements;
+		var onlyInDesc = elementsDict.copy;
+		var onlyInHid = hidElems.copy;
+		elementsDict.keysValuesDo { |desckey, descelem|
+			onlyInHid.keysValuesDo { |hidkey, hidelem|
+				if ((descelem.hidUsage == hidelem.usage)
+					and: (descelem.hidUsagePage == hidelem.usagePage)) {
+					onlyInDesc.removeAt(desckey);
+					onlyInHid.removeAt(hidkey);
+				}
+			}
+		};
+		^(onlyInDesc: onlyInDesc, onlyInHid: onlyInHid);
+	}
+
 
 	*writeCache {
 		var dictForFolder = Dictionary.new, file;
