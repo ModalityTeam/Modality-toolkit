@@ -11,14 +11,15 @@ status: (
 deviceName: "Generic Mouse",
 
 deviceInfo: (
-	// vendorURI: "",
+	vendorURI: "too many to list",
 	// manualURI: "",
 	features: [
+		"2 mouse axes",
 		"3 buttons",
 		"scroll wheel",
 	],
 	longName: "Generic Mouse"
-	// notes: "",
+	notes: "",
 	// hasScribble: false
 ),
 elementsDesc: (
