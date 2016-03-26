@@ -111,8 +111,8 @@ MKtlDevice {
 		desc = parentMKtl.desc;
 		if (desc.isNil) {
 			if (verbose) {
-				"MKtldevice.open: parentMktl.desc.isNil"
-				" - should not happen!".postln;
+				"MKtlDevice:open: cannot open - no matching device found and no desc given."
+				.postln;
 			};
 			^nil
 		};
@@ -125,9 +125,9 @@ MKtlDevice {
 		if (deviceCandidates.size == 0) {
 			if (protocol != \osc) {
 				if (verbose) {
-					inform("%: could not open device -"
-						" no device candidates found."
-						.format(thisMethod));
+					inform("%: can not open - no device candidates found."
+						.format(thisMethod)
+					);
 				};
 				^nil
 			};
