@@ -209,7 +209,9 @@ MIDIMKtlDevice : MKtlDevice {
 		this.makeRespFuncs;
 	}
 
-	// nothing here yet, but needed
+	// nothing here yet, but needed as stub.
+	// could be used for monophonic voicer with
+	// note, vel pair as values.
 	initCollectives {
 
 	}
