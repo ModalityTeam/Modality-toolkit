@@ -65,7 +65,7 @@ MKtlDevice {
 		});
 
 		filenames.do { |filename|
-		str = str ++ "MKtl(%, %);\n".format(
+		str = str ++ "MKtl(%, %%);\n".format(
 			nameKey.cs,
 			filename.cs,
 				if (multiIndex.notNil, ", multiIndex:" + multiIndex, "")

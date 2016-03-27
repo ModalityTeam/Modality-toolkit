@@ -42,6 +42,27 @@ MKtlLookup {
 		HIDMKtlDevice.devicesToShow.sortedKeysValuesDo { |index, info|
 			MKtlLookup.addHID(info, index);
 		};
+		this.checkHIDForMultiples;
+	}
+
+	*checkHIDForMultiples {
+
+		var multiIndexDict = ();
+		MKtlLookup.allFor(\hid).sortedKeysValuesDo { |key, descinfo|
+			var idKey = descinfo.idInfo.asSymbol.postcs;
+			multiIndexDict.put (idKey,
+				multiIndexDict.at(idKey).asArray.add(descinfo)
+			)
+		};
+		multiIndexDict.postcs;
+		multiIndexDict.sortedKeysValuesDo { |idkey, descsarray|
+			if (descsarray.size > 1) {
+				"multiple devices found for %\n".postf(idkey);
+				descsarray.do { |desc, i|
+					desc.put(\multiIndex, i);
+				};
+			};
+		}
 	}
 
 	*addHID { | hidinfo, index |
@@ -65,7 +86,7 @@ MKtlLookup {
 	*addFilenamesAndDescs { |dict, idInfo|
 		var filenames = MKtlDesc.filenamesForIDInfo(idInfo);
 		var descs = MKtlDesc.loadDescs(filenames);
-	//	"idInfo: %\n".postf(idInfo); "filenames: %\n".postf(filenames);
+		//	"idInfo: %\n".postf(idInfo); "filenames: %\n".postf(filenames);
 
 		dict.put(\filenames, filenames);
 		dict.put(\descs, descs);
@@ -167,7 +188,7 @@ MKtlLookup {
 
 		// if single device, exit here!
 		if ((numSources < 2) and: { numDests < 2 }) {
-		//	"\n%: single midi device -> to all: %\n\n".postf(thisMethod, info);
+			//	"\n%: single midi device -> to all: %\n\n".postf(thisMethod, info);
 			all.put(info.lookupName, info);
 			^this
 		};
@@ -205,7 +226,7 @@ MKtlLookup {
 			if (insOutsMatch) {
 				all[deviceLookupName].destDevice = info.destDevice.asArray[index];
 				idInfo.destPortIndex = index;
-			//	info.postcs;
+				//	info.postcs;
 			};
 		};
 
