@@ -71,6 +71,9 @@ OSCMKtlDevice : MKtlDevice {
 		};
 	}
 
+	// anything meaningful to do with multiIndex here?
+	// as there is no real registration of sources in OSC,
+	// it seems there will never be multiple matches.
 	*new { |name, devInfo, parentMKtl, multiIndex|
 
 		devInfo = devInfo ?? { parentMKtl.desc; };
