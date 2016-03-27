@@ -165,11 +165,6 @@ HIDMKtlDevice : MKtlDevice {
 		};
 	}
 
-	// // how best to do that?
-	// enable { enabled = true }
-	// disable { enabled = false }
-
-
 	closeDevice {
 		this.cleanupElementsAndCollectives;
 		srcID = nil;
@@ -301,6 +296,8 @@ HIDMKtlDevice : MKtlDevice {
 		hidElem.action = hidElemAction.removeFunc(funcToRemove);
 	}
 
+	// not elegant to write global enabling into each element.
+	// there should be a simpler global way.
 	enable { |elemKeys|
 		(elemKeys ? mktl.elementsDict.keys).do { |elem|
 			this.enableElement(elem);
