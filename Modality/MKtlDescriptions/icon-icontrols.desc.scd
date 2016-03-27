@@ -1,8 +1,24 @@
 /*
+The iCon iControls registers on two midi ports (in and out),
+and the joystick on it registers as an HID device.
+
+This desc file is for port 1, assuming that the main body
+of midi messages will come thru port 1. For port 2, a second
+desc file might be necessary, and can be made by copying this
+file, changing the entry for idInfo to:
+
+idInfo: (deviceName: "iCON iControls V2.00", srcPortIndex: 0, destPortIndex: 0),
+
+removing the elements that do not communicate via port 2,
+and adding any others that do.
+
+
+// tests:
 thisProcess.nowExecutingPath.basename.split($.).first.postcs;
 d = MKtlDesc.loadDescs("*icontrols").first;
 d.web;
 
+MKtlDesc.loadDescs;
 m.free; m = MKtl(\ic, "*icontrols"); m.gui;
 m.trace;
 m.elementsDict.size;
@@ -19,14 +35,16 @@ status: (
 	osx: "tested desc, looks ok.",
 	win: "unknown"),
 
-idInfo: "iCON iControls V2.00",
+idInfo: (deviceName: "iCON iControls V2.00", srcPortIndex: 0, destPortIndex: 0),
 
 deviceInfo: (
 	vendorURI: "http://icon-global.com/product/icontrols/",
 	manualURI: "http://support.icon-global.com/hc/en-us/articles/216201337-iControls",
 	// description: "",
 	// features: [],
-	notes: "This is the main desc for this device in MIDI; it also has an HID interface.\n"
+	notes: "This is the main desc for MIDI port 1 of this device.\n"
+	"It has a second midi port, which needs a desc file,\n"
+	"and it also has an HID interface (..-hid).\n"
 	"Layer buttons have no effect; the first MIDI port gives the data.",
 	// hasScribble: false
 ),
