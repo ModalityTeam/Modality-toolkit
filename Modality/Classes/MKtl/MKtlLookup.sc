@@ -49,15 +49,15 @@ MKtlLookup {
 
 		var multiIndexDict = ();
 		MKtlLookup.allFor(\hid).sortedKeysValuesDo { |key, descinfo|
-			var idKey = descinfo.idInfo.asSymbol.postcs;
+			var idKey = descinfo.idInfo.asSymbol;
 			multiIndexDict.put (idKey,
 				multiIndexDict.at(idKey).asArray.add(descinfo)
 			)
 		};
-		multiIndexDict.postcs;
+
 		multiIndexDict.sortedKeysValuesDo { |idkey, descsarray|
 			if (descsarray.size > 1) {
-				"multiple devices found for %\n".postf(idkey);
+				"multiple devices found for %.\n".postf(idkey.cs);
 				descsarray.do { |desc, i|
 					desc.put(\multiIndex, i);
 				};
