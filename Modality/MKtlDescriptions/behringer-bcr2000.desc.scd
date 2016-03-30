@@ -25,7 +25,8 @@ status: (
 	osx: "tested desc, looks good. 2016-03-23, adc",
 	win: "unknown"),
 
-idInfo: "BCR2000",
+// assuming IO is on port 1, port 2 is ext in/out, port 3 is out only
+idInfo: (deviceName: "BCR2000", srcPortIndex: 0, destPortIndex: 0),
 
 hardwarePages: [1,2,3,4],
 
