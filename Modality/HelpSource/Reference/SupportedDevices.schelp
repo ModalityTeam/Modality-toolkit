@@ -7,19 +7,26 @@ related:: Overviews/Modality, Classes/MKtl
 section::Browse, look up, check devices
 
 code::
-// browse the info website
+// browse the info website in SC
 MKtlDesc.web;
+// or in the default browser app
+MKtlDesc.docURI.openOS;
 
 // see the file names for all currently supported devices:
 MKtlDesc.postLoadable;
 
 // load them all, and post their current status:
-MKtlDesc.loadDescs; MKtlDesc.postStatus;
+MKtlDesc.loadDescs;
+// see how well tested they are:
+MKtlDesc.postStatus;
 ::
 
-Have a controller that is not known to the system? See link::Tutorials/How_to_create_a_description_file:: on how to set it up.
+Have a controller that is not known to the system? See link::Tutorials/How_to_create_a_description_file:: on how to add it.
 
 section:: Supported devices by categories (incomplete)
+
+FIXME: this section should be rendered from MKtlDesc.allDescs;
+and should provide links to their web info pages.
 
 subsection:: Pad controllers
 list::
