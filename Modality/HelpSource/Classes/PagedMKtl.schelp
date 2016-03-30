@@ -10,12 +10,14 @@ In Modality, one can have several MKtls for the same device, and switch between 
 A PagedMKtl lets one make such pages for a single physical controller.
 It has a dict of several MKtls, which are all controlled from the same physical interface. Paging to one contained MKtl enables it, and disables all other pages/mktls.
 
-Note:: Due to the current implementation of HIDMKtlDevice, all MKtls will  point to the same instance of HIDMKtlDevice.
+Note::
+Due to the current implementation of HIDMKtlDevice, all MKtls will  point to the same instance of HIDMKtlDevice.
+::
 
 First code examples:
 
 code::
-// Attach a single nanoKontrol2 first if you have one, then find it:
+// MIDI - Attach a single nanoKontrol2 first if you have one, then find it:
 MKtl.find(\midi);
 
 // Make some MKtls which point to the same device
@@ -40,12 +42,12 @@ p.up.currPage;  //
 p.down.currPage;  //
 p.down.currIndex;  //
 
-// The same example for HID:
+// HID - create two MKtls for a gamepad:
 
 MKtl.find(\hid);
 // make two Mktls for a saitek gamepad
-g = MKtl('g', "*impact*gamepad", multIndex: 0);
-i = MKtl('i', "*impact*gamepad", multIndex: 1);
+g = MKtl('g', "*impact*gamepad");
+i = MKtl('i', "*impact*gamepad");
 
 // they will point to the same HID device!
 g.device.source === i.device.source;
