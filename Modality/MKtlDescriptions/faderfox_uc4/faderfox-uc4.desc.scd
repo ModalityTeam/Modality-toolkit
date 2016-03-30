@@ -1,4 +1,4 @@
-/**** Faderfox UC4 desc file. adc 2015_12_24 (merry xmas)
+/**** Faderfox UC4 desc file.
 
 // General Info:
 
@@ -10,9 +10,13 @@ and 16 presets of 8 groups each allow very flexible uses.
 This desc file only addresses Setup 01 setup,
 and does not have faders and knobs in every group!
 
-This is because the default cc numbers of encoder group 4 and fader group 1 overlap,
-and fader groups 5-8 all use the same ccnum range (104-111).
-This can be fixed by reprogramming these groups in the device.
+It has this element order - faderfox_uc4:
+\sl [slpage][column]
+\bt [slpage][column]
+// and on a different page
+\kn [knpage][index],
+\pbt [knpage][index]
+\xfader
 
 
 // Basic examples:
@@ -30,37 +34,12 @@ k.elAt(\bt, 0, 0).isOn;
 ****/
 
 (
-deviceName: "Faderfox UC4",
-protocol: 'midi',
-deviceType: 'faderbox',
-elementTypes: [ \slider, \knob, \button, \pushbutton ],
+parentDesc: "faderfox-uc4",
+
 status: (
 	linux: "unknown",
 	osx: "tested and working. 2016-03-16, adc",
 	win: "unknown"),
-
-idInfo: "Faderfox UC4",
-
-hardwarePages: (1..8),
-
-deviceInfo: (
-	vendorURI: "http://faderfox.de/uc4.html",
-	manualURI: "http://www.faderfox.de/PDF/UC4%20Manual%20V01.PDF",
-	features: [
-		"Compact design with metal faceplate"
-		"8 push encoders without detents (resolution about 36 pulses)",
-		"9 30mm faders, programmable snap function",
-		"8 Buttons with LED for switchable parameters",
-		"8 independent groups for encoders and faders/buttons",
-		"About 264 commands per setup (33 controls x  8 groups)",
-		"18 setups with backup/restore function contain all controller settings",
-	],
-	longName: "FaderFox UC4",
-	notes: "All controls (incl. push buttons) fully programmable in the device by channel, type, number.\n"
-	"Absolute and relative controller modes, and 14 bit high resolution encoder mode for sensitive parameters.\n"
-	"Programmable value ranges with min/max values, and data feedback for encoders and faders avoid value jumps.\n"
-	"MIDI in and out ports feature routing and merge functionality."
-),
 
 elementsDesc: (
 	shared: (ioType: \inout),
