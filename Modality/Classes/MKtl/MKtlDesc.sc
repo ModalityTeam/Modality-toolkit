@@ -624,16 +624,20 @@ MKtlDesc {
 		if (postElements) { this.postElements };
 	}
 
-	// FIXME
 	postElements {
-		this.elementsDesc.traverseDo({ |el, deepKeys|
-			deepKeys.size.do { $\t.post };
-			el.name.post; deepKeys.postcs;
-		}, (_.isKindOf(Dictionary)),
-		{ |node, deepKeys|
-			deepKeys.size.do { $\t.post };
-			node.postln
-		});
+		var postOne = { |elemOrGroup, index, depth = 0|
+			depth.do { $\t.post; };
+			index.post; $\t.post;
+			if (elemOrGroup[\elements].notNil) {
+				"Group: ".post; elemOrGroup.key.postcs;
+				elemOrGroup[\elements].do({ |item, i|
+					postOne.value(item, i, depth + 1)
+				});
+			} {
+				elemOrGroup.key.postcs;
+			};
+		};
+		postOne.value(this.elementsDesc, "-");
 	}
 
 	writeFile { |path|
