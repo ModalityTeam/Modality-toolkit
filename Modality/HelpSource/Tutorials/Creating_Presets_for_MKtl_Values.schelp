@@ -1,5 +1,12 @@
-// simple preset states of MKtl element values
+title:: Creating Presets for MKtl Element Values
+summary:: store sets of element values as state, and reuse them later
+categories:: Libraries>Modality, External Control
+related:: Overviews/Modality, Classes/MKtl
 
+MKtl has simple ways to get and set multiple element values at once.
+This functionality can be use to create simple presets of sets of MKtl element values to set them to desired states.
+
+code::
 // make an MKtl
 g = MKtl(\gp, "*run*drive");
 g.gui;
@@ -14,13 +21,13 @@ g.getKeysValues([\joy_l_x, \joy_l_y]);
 ~butKeys = g.elementAt(\bt).collect(_.name);
 
 
-// create random settings:
+// create some random settings:
 g.elementsDict.do(_.value_(1.0.rand));
 ~rnd1 = g.getKeysValues;
 g.elementsDict.do(_.value_(1.0.rand));
 ~rnd2 = g.getKeysValues;
 
-// make random sttings for some keys only
+// make random settings for smaller sets of keys only
 ~joyKeys.do { |key| g.dictAt(key).value_(1.0.rand) };
 ~rndJoy1 = g.getKeysValues(~joyKeys);
 
@@ -34,8 +41,6 @@ g.setKeysValues(~pre0);
 // then set states with doAction
 g.elementGroup.action_ { |el| "YO: % %\n".postf(el.name, el.value) };
 
-// one of them
+// set to one of them
 g.setKVAction([~pre0, ~rnd1, ~rnd2, ~rndBut1, ~rndJoy1].choose);
-
-
-
+::
