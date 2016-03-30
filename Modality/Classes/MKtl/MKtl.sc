@@ -415,6 +415,14 @@ MKtl { // abstract class
 		^elementGroup.at( index );
 	}
 
+	// this is intended to overwrite other pages
+	// with the same names in namedDict.
+	toFront { |...pageNames|
+		elementGroup.elAt(*pageNames).do { |grp|
+			this.addNamed (grp.name, grp);
+		}
+	}
+
 	//////////////// interface to elementGroup:
 	deviceValueAt { |elName|
 		if (elName.isKindOf(Collection).not) {
