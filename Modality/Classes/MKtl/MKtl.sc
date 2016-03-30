@@ -183,6 +183,12 @@ MKtl { // abstract class
 				if (lookupInfo.isNil) {
 					MKtlDevice.initHardwareDevices;
 					lookupInfo = MKtlLookup.all[lookupName];
+					if (lookupInfo.isNil) {
+						"%: could not find device for key %,"
+						" cannot create MKtl(%)!\n"
+						.postf(thisMethod, lookupNameOrDesc, name);
+						^nil
+					}
 				};
 				if (lookupInfo.notNil) {
 					protocol = lookupInfo.protocol;

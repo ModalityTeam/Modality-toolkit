@@ -140,11 +140,13 @@ MKtlDevice {
 					lookupName = lookupInfo.lookupName;
 				};
 			} {
-				inform("%: multiple device candidates found,"
+				inform("//---\n%: multiple device candidates found,"
 					" please disambiguate by providing a multiIndex!"
-					"\nThe candidates are:"
+					"\nThe candidates are:\n"
 				.format(thisMethod));
-				deviceCandidates.printcsAll;
+				deviceCandidates.do { |info, i|
+					"multiIndex %: %\n".format(i, info.cs).postln;
+				};
 				^nil
 			};
 		} {
