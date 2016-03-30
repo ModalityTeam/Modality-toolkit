@@ -1,11 +1,16 @@
 TITLE:: PagedMKtl
-summary:: paged control for MKtls
+summary:: polyphonic control and paging for MKtls
 categories:: Undocumented classes
 related:: Classes/MKtl, Overviews/Modality
 
 
 DESCRIPTION::
-A PagedMKtl has a dict of several MKtls, which are all controlled from the same physical interface. Paging to one of them enables this one, and disables all other pages/mktls.
+In Modality, one can have several MKtls for the same device, and switch between them, like hardware controller pages. One can also activate them polyphically if desired, e.g. to control multiple similar processes from the same gestures.
+
+A PagedMKtl lets one make such pages for a single physical controller.
+It has a dict of several MKtls, which are all controlled from the same physical interface. Paging to one contained MKtl enables it, and disables all other pages/mktls.
+
+Note:: Due to the current implementation of HIDMKtlDevice, all MKtls will  point to the same instance of HIDMKtlDevice.
 
 First code examples:
 
@@ -35,9 +40,49 @@ p.up.currPage;  //
 p.down.currPage;  //
 p.down.currIndex;  //
 
-Note: The current implementation of HIDMKtlDevice does not allow
-making multiple MKtls that point to the same device. This could
-be fixed by redoing HIDMKtlDevice with HIDFuncs.
+// The same example for HID:
+
+MKtl.find(\hid);
+// make two Mktls for a saitek gamepad
+g = MKtl('g', "*impact*gamepad", multIndex: 0);
+i = MKtl('i', "*impact*gamepad", multIndex: 1);
+
+// they will point to the same HID device!
+g.device.source === i.device.source;
+g.device.source.id;
+
+// set an action for all elements of g
+g.elAt.action = { |el ... groups| [el.source, el.name, el.value.round(0.001)].postln };
+i.elAt.action = { |el ... groups| [el.source, el.name, el.value.round(0.001)].postln };
+g.gui; i.gui;
+
+// press some buttons - actions of both MKtls will run and post:
+[ MKtl('g'), joy_r_y, 0.506 ]
+[ MKtl('i'), joy_r_y, 0.506 ]
+
+// add an action for button 1
+g.elAt(\bt, \1).action = { "ONE!".postln };
+i.elAt(\bt, \1).action = { "ENO?".postln };
+
+// switch between the two
+g.enable; i.disable;
+i.enable; g.disable;
+
+// make a third one, then turn the three into a PagedMKtl
+MKtl('h', "*impact*gamepad");
+MKtl('h').elAt.action = g.elAt.action;
+MKtl('h').elAt(\bt, \1).action = { "T W O".postln };
+p = PagedMKtl(\impact, ['g', 'h', 'i']);
+
+// activate one at a time
+p.page(\g);
+p.page(\h);
+p.page(\i);
+
+// all 3 at the same time:
+p.mktlDict.do(_.enable);
+// all off
+p.mktlDict.do(_.disable);
 
 ::
 
