@@ -87,7 +87,6 @@ deviceInfo: (
 	// type: [],
 	// hasScribble: false
 ),
-// specs: (\compassRND: [0, 8, \lin, 1, 1].asSpec),
 
 elementsDesc: (
 	elements: [
@@ -117,7 +116,7 @@ elementsDesc: (
 
 		(
 			key: 'compass', 'hidUsage': 57, 'hidUsagePage': 1, 'elementType': 'compass',
-			'ioType': 'in', spec: \compassRND, mode: \center,
+			'ioType': 'in', mode: \center, spec: \unipolar,
 			'style': (row: 1.8, column: 1.3, showLabel: true)
 		),
 

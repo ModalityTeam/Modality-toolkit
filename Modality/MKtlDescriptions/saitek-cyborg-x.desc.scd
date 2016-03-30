@@ -29,18 +29,16 @@ deviceInfo: (
 	longName: "Saitek Cyborg X"
 ),
 
-specs: (compass: [0, 15, \lin, 1]),
-
 elementsDesc: (
+	shared: ('ioType': 'in'),
 	elements: [
 		(
 			key: \trig,
-			'hidUsage': 1, 'hidUsagePage': 9, 'elementType': 'trigger', 'ioType': 'in', 'spec': \hidBut
+			'hidUsage': 1, 'hidUsagePage': 9, 'elementType': 'trigger', 'spec': \hidBut
 		),
 		(
 			key: \bt,
-			shared: ('hidUsagePage': 9, 'elementType': 'button',
-				'ioType': 'in', 'spec': \hidBut ),
+			shared: ('hidUsagePage': 9, 'elementType': 'button', 'spec': \hidBut ),
 			elements: [
 				// buttons on joyHead
 				(key: '2', 'hidUsage': 2),
@@ -63,7 +61,7 @@ elementsDesc: (
 		),
 		(
 			key: \scroll,
-			shared: ('hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in', 'spec': \hidBut),
+			shared: ('hidUsagePage': 9, 'elementType': 'scroller', 'spec': \hidBut),
 			elements: [
 				(	key: \up, 'hidUsage': 12),
 				(	key: \down, 'hidUsage': 13),
@@ -71,19 +69,20 @@ elementsDesc: (
 		),
 		(
 			key: \joy,
-			shared: ('hidUsagePage': 1, 'elementType': 'joyAxis', 'ioType': 'in', 'spec': \cent1),
+			shared: ('hidUsagePage': 1, 'elementType': 'joyAxis', 'spec': \cent1),
 			elements: [
 				(key: \x, 'hidUsage': 48),
 				(key: \y, 'hidUsage': 49),
-				(key: \z, 'hidUsage': 53)
+				(key: \rot, 'hidUsage': 53)
 			]
 		),
 		(
-			key: \compass,
-			'hidUsage': 57, 'hidUsagePage': 1, 'elementType': 'joyAxis', 'ioType': 'in', 'spec': \compass),
+			key: \compass, 'hidUsage': 57, 'hidUsagePage': 1, 'elementType': 'compass',
+			spec: \unipolar
+		),
 		(
 			key: \lever,
-			shared: ('hidUsagePage': 1, 'elementType': 'lever', 'ioType': 'in', 'spec': \unipolar),
+			shared: ('hidUsagePage': 1, 'elementType': 'lever', 'spec': \unipolar),
 			elements: [
 				(key: \left,  'hidUsage': 50),
 				(key: \right,  'hidUsage': 54)

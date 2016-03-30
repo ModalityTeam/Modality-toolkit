@@ -1,4 +1,3 @@
-MKtl.addSpec(\compassShanWan, [0, 7]);
 
 (
 deviceName: "USB WirelessGamepad _ShanWan",
@@ -100,7 +99,7 @@ elementsDesc: (
 		(
 			key: 'compass',
 			'hidUsage': 57, 'hidUsagePage': 1, 'type': 'compass', 'ioType': 'in',
-			spec: \compassShanWan, mode: \center),
+			spec: \unipolar, mode: \center),
 
 		// --------- output elements ----------
 		(

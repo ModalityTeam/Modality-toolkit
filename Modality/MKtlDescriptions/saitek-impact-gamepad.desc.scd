@@ -29,8 +29,6 @@ m.elAt(\compass).action = { |el|
 
 */
 
-MKtl.addSpec(\compassImpact, [0, 1.0]);
-
 (
 deviceName: "USB Game Controllers_Mega World",
 protocol: 'hid',
@@ -43,8 +41,6 @@ status: (
 
 idInfo: "USB Game Controllers_Mega World",
 
-// specs: (compassImpact: [-1, 6, \lin, 1].asSpec),
-
 deviceInfo: (
 	// vendorURI: "http://",
 	// manualURI: "http://",
@@ -54,10 +50,12 @@ deviceInfo: (
 	longName: "Saitek Impact Gamepad"
 ),
 elementsDesc: (
+	shared: ('ioType': 'in'),
+
 	elements: [
 		(
 			key: \bt,
-			shared: ('hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in',spec: \hidBut ),
+			shared: ('hidUsagePage': 9, 'elementType': 'button', spec: \hidBut ),
 			elements: [
 				// right side buttons
 				(key: '1', 'hidUsage': 1,
@@ -88,13 +86,12 @@ elementsDesc: (
 		),
 		(
 			key: 'compass', 'hidUsage': 57, 'hidUsagePage': 1,
-			'elementType': 'compass', 'ioType': 'in', spec: \compassImpact,
+			'elementType': 'compass', spec: \unipolar,
 			'style': (row: 1.8, column: 1.3, showLabel: true)
 		),
 		(
 			key: \joy,
-			shared: ('hidUsagePage': 1, 'elementType': 'joyAxis', 'ioType': 'in',
-				spec: \cent1, mode: \center ),
+			shared: ('hidUsagePage': 1, 'elementType': 'joyAxis', spec: \cent1, mode: \center ),
 			elements: [
 				(
 					key: \l,
