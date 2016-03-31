@@ -1,7 +1,7 @@
 title:: Supported Devices in Modality
 summary:: Devices currently known by the Modality toolkit.
 categories:: Libraries>Modality, External Control
-related:: Overviews/Modality, Classes/MKtl
+related:: Overviews/Modality, Classes/MKtl, Classes/MKtlDesc
 
 
 section::Browse, look up, check devices
@@ -20,8 +20,11 @@ MKtlDesc.loadDescs;
 // see how well tested they are:
 MKtlDesc.postStatus;
 ::
-MKtlDesc('steinberg-cmc-fd').openFile
-Have a controller that is not known to the system? See link::Tutorials/How_to_create_a_description_file:: on how to add it.
+
+Have a controller that is not known in Modality yet?
+
+See link::Tutorials/How_to_adapt_a_description_file:: or
+link::Tutorials/How_to_create_a_description_file:: on how to add it.
 
 section:: Supported devices by categories
 

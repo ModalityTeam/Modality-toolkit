@@ -1,4 +1,4 @@
-title:: How to adapt a description file for a similar device
+title:: How to adapt a description file
 summary:: For similar devices, description files can be copied and adapted.
 categories:: Libraries>Modality
 related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Classes/MIDIExplorer
@@ -7,9 +7,7 @@ When one wants to add a new controller to Modality, it is often similar to one t
 So it makes to check whether there is a similar desc file already, and copy and modify that for the new device.
 
 Some good templates to copy are:
-for faderboxes, the korg-nanokontrol2,
-for gamepads, the saitek impact (simple) and the thrustmaster run-n-drive (luxury),
-for launchpads, the novation-launchpad
+for faderboxes, the korg-nanokontrol2;
+for gamepads, the saitek-impact-gamepad (simple) and the thrustmaster-run-n-drive (luxury); for launchpads, the novation-launchpad, etc.
 
 (-: Till, an example please? :-)
-
