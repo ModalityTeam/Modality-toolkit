@@ -6,56 +6,52 @@
 // Preset D is for drums (uses chan 10) and clips
 
 
-// mini code example for global note resp + voicer:
+// code example for global note responder + voicer:
 MKtl.find(\midi);
-z =  MKtl('qnxs0', "keith-mcmillen-qunexus", );
+z = MKtl('qnxs0', "*qunexus*AB");
 
-// fix the srcID - take the first one
-x = MIDIClient.sources.collect(_.uid);
-z.device.prSetSrcID(x[0]); //
-
-// then free the responders and remake them
-z.device.responders.do(_.free);
-z.device.makeRespFuncs;
 // a debug post for all elements:
-z.elements.action = { |el| [el.name, el.value].postln };
+z.elAt.action = { |el| [el.name, el.value].postln };
+z.elAt.action = nil;
 
 // make an NPVoicer, use with \default synthdef:
 s.boot; s.latency = nil;
 v = NPVoicer(Ndef(\piano)).play;
 v.prime(\default);
 
-// add a noteOn function
-z.elementAt(\keyOn).action = MFunc(
-	[ \debug, { |el, grp| [el.name, grp.name].postln } ]
-);
+// make a global noteOn function,
+MFdef(\qn_on).add(\debug, { |el| el.postln });
 
-z.elementAt(\keyOn).action.add(\note1, { |el, grp|
-	var note = el.elementDescription[\midiNum];
+// and add it to all on elements
+z.elAt(\pk, \all, \on).do(_.action_( MFdef(\qn_on)));
+
+// add a noteOn
+MFdef(\qn_on).add(\note1, { |el, grp|
+	var note = el.elemDesc[\midiNum];
 	var vel = el.value;
 	v.put(note, [\freq, note.midicps, \amp, vel.squared ].postln);
 });
 
-z.elementAt(\keyOff).action = MFunc([
-	\debug, { |el, grp| [el.name, grp.name].postln },
-	\note1, { |el, grp| v.release(el.elementDescription[\midiNum]) }
-]);
+MFdef(\qn_off).add(\debug, { |el| el.postln });
+MFdef(\qn_off).add(\note1, { |el| v.release(el.elemDesc[\midiNum].postln) });
 
-z.elementAt(\bend).action = nil;
+z.elAt(\pk, \all, \off).do(_.action_( MFdef(\qn_off)));
 
-z.elementAt(\bend).action = { |el|
+z.elAt(\bend).action = nil;
+
+z.elAt(\bend).action = { |el|
 	// bend only covers part of the 14bit range,
 	// so scale observed min/max to +- semitones:
 	var bendVal = el.deviceValue.linlin(6784 + 128, 9472, -2, 2);
 //	[\bend, el.deviceValue, bendVal].postcs;
 	v.proxy.objects.do { |obj, noteKey|
 	//	[obj, noteKey].post;
-		obj.set(*[\freq, (noteKey + bendVal)].postln.midicps);
+		obj.set(*[\freq, (noteKey + bendVal)].midicps);
 	}
 };
 
-z.elementAt(\touch).action = { |el|
-	var touchVal = el.value;
+z.elAt(\monotouch).action = { |el|
+	var touchVal = el.value.postln;
 	v.proxy.objects.do { |obj, noteKey|
 		[\touch, noteKey].post;
 		obj.set(*[\amp, touchVal.squared].postln);
@@ -63,39 +59,19 @@ z.elementAt(\touch).action = { |el|
 };
 
 
-MIDIFunc.trace(true);
+MIDIFunc.trace;
+MIDIFunc.trace(false);
 
 /*********  not working yet:
-/////// Preset B, use channel \touch
 
-// Preset C, poly bend and pressure:
-// Rather than using multiple bend and cc elements for each channel,
-// use global responders, and use channel as info for an NPVoicer.
+* Preset B is almost identical, except that it uses channel \touch
 
-// same as above, switch to Preset C
-// works in principle,
-// but better write a synthdef that has nice responses.
+* Preset C, poly bend and pressure with channel-based polyphony:
 
-q = q ? (); q.chanNotes =  q.chanNotes ? ();
+MChanVoicer // <- see help file
 
-z.global[\noteOn].add(\note1, { |chan, note, vel|
-	q.chanNotes.put(chan, note);
-	v.put(chan, [\freq, note.midicps, \amp, (vel/127) ].postln);
-});
-z.global[\noteOff].add(\note1, { |chan, note|
-	v.release(chan);
-	q.chanNotes.removeAt(chan);
-});
-
-z.global[\cc] = MFunc();
-z.global[\cc].add(\mod, { |chan, ccnum, val|
-	if (ccnum == 1) { v.setAt(chan, \amp, val/127) };
-});
-z.global[\bend] = MFunc();
-z.global[\bend].add(\pitch, { |chan, val|
-	var bend = (val - 8192).linlin(-1500, 1500, -2, 2).postln;
-	v.setAt(chan, \freq, (q.chanNotes[chan] + bend).postln.midicps.postln);
-});
+* Preset D is for drums (uses chan 10) and clips,
+  to be done when someone wants to use it.
 
 */
 
