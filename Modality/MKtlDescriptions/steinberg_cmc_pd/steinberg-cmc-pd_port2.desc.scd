@@ -49,10 +49,6 @@ m.elAt(\kn).action = { |el|
 */
 (
 parentDesc: "steinberg-cmc-pd",
-
-deviceName: "Steinberg CMC-PD",
-protocol: \midi,
-deviceType: \drumPad,
 elementTypes: [\pad, \button],
 
 status: (

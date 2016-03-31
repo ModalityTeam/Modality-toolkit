@@ -36,7 +36,7 @@ pads and 4velmode also send sysex on port 2;
 (
 deviceName: "Steinberg CMC-PD",
 protocol: \midi,
-deviceType: \drumPad,
+deviceType: \drumpad,
 elementTypes: [\pad, \button],
 numPorts: 3,
 

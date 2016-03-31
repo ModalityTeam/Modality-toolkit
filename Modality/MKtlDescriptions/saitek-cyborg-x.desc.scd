@@ -11,7 +11,7 @@ how to map that in a spec? see saitek-impact-gamepad.desc
 */
 (
 deviceName: "Cyborg X_Saitek",
-deviceType: \joyStick,
+deviceType: \joystick,
 idInfo: "Cyborg X_Saitek",
 protocol: 'hid',
 status: (

@@ -12,7 +12,7 @@ MKtl(\x).trace;
 (
 deviceName: "MPKmini2",
 protocol: 'midi',
-deviceType: 'keyboard',
+deviceType: 'midiKeyboard',
 elementTypes: [\knob, \key, \pad, \bend],
 status: (
 	linux: "tested and working",
@@ -27,7 +27,7 @@ deviceInfo: (
 	vendorURI: 'http://www.akaipro.com/product/mpk-mini-mkii',
 	manualURI: 'http://6be54c364949b623a3c0-4409a68c214f3a9eeca8d0265e9266c0.r0.cf2.rackcdn.com/988/documents/MPK%20mini%20-%20User%20Guide%20-%20v1.0.pdf',
 	features: [\pianoKey, \pad, \knob, \bender],
-	notes: 
+	notes:
 	"Uses default presets.\n"
 	"Every key was mapped, with the exception of ```Prog Change```.\n"
 	"Accidental ```Prog-Change``` activation on the device needs to be reverted by ```Bank A/B```.\n"

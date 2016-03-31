@@ -1,7 +1,7 @@
 (
 deviceName: "AXIS-49 USB Keyboard",
 protocol: 'midi',
-deviceType: 'keyboard',
+deviceType: 'midiKeyboard',
 elementTypes: [ \keys ],
 status: (
 	linux: "unknown",

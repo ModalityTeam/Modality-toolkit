@@ -20,77 +20,157 @@ MKtlDesc.loadDescs;
 // see how well tested they are:
 MKtlDesc.postStatus;
 ::
-
+MKtlDesc('steinberg-cmc-fd').openFile
 Have a controller that is not known to the system? See link::Tutorials/How_to_create_a_description_file:: on how to add it.
 
-section:: Supported devices by categories (incomplete)
+section:: Supported devices by categories
 
-FIXME: this section should be rendered from MKtlDesc.allDescs;
-and should provide links to their web info pages.
-
-subsection:: Pad controllers
+subsection:: controller
 list::
-## LaunchControlXL
-## Launchpad
-## nanoPAD2
-## triggerfinger
-## LPD8
-## MPD18
-## MPKmini
-## QuNexus
-## AbletonPush
-## Numark Orbit
+## MKtlDesc('steinberg-cmc-fd')
+## MKtlDesc('steinberg-cmc-qc_port1')
 ::
 
-subsection:: Joysticks
+subsection:: drumpad
 list::
-## Extreme3DJoystick
-## Thrustmaster
+## MKtlDesc('akai-mpd18')
+## MKtlDesc('steinberg-cmc-pd_port1')
+## MKtlDesc('korg-nanopad2')
+## MKtlDesc('akai-lpd8')
+## MKtlDesc('m-audio-triggerfinger')
+## MKtlDesc('icon-istage')
+## MKtlDesc('steinberg-cmc-pd_port2')
 ::
 
-subsection:: Keyboards
+subsection:: externalMidiPort
 list::
-## microKEY
-## nanoKEY2
-## Teenage_OP1
-## ArturiaMINILAB
-## Keith McMillen QuNexus
+## MKtlDesc('keith-mcmillen-qunexus_port2')
 ::
 
-subsection:: Gamepads
+subsection:: fader
 list::
-## impact gamepad
-## RunNDrive
-## RunNDrive Wireless
-## ShanWan Wireless Gamepad
-## JessTech Dual Analog
+## MKtlDesc('vmeter-vmeter')
 ::
 
-subsection:: DAW, Faders, Knobs
+subsection:: faderbox
 list::
-## UC-33
-## BCF2000
-## BCR2000
-## Steinberg CMC FD
-## Steinberg CMC PD
-## Steinberg CMC QC
-## iCONIControls iCon
-## nanoKONTROL
-## nanoKONTROL2
-## ICONIControls
-## ICONIStage
+## MKtlDesc('faderfox-uc4_pg')
+## MKtlDesc('icon-icontrols-pro')
+## MKtlDesc('evolution-ucontrol-uc33')
+## MKtlDesc('icon-icontrols')
+## MKtlDesc('doepfer-pocketfader')
+## MKtlDesc('faderfox-uc4')
+## MKtlDesc('behringer-bcf2000')
+## MKtlDesc('korg-nanokontrol2')
+## MKtlDesc('korg-nanokontrol')
+## MKtlDesc('decampo-joybox')
 ::
 
-subsection:: Smartphone/Pad apps
+subsection:: gamepad
 list::
-## gyrosc
-## touchOSC
+## MKtlDesc('saitek-impact-gamepad')
+## MKtlDesc('thrustmaster-run-n-drive-wireless')
+## MKtlDesc('thrustmaster-run-n-drive')
+## MKtlDesc('jesstech-dual-analog')
+## MKtlDesc('saitek-cyborg-command-pad-unit')
+## MKtlDesc('jesstech-dual-analog-rumble')
+## MKtlDesc('shanwan-wirelessgamepad')
 ::
 
-subsection:: Exotic
+subsection:: joystick
 list::
-## Snyderphonics Manta
-## EOWave Ribbon
-## x-io X-Osc
-## Livid Instruments Guitar Wing
+## MKtlDesc('saitek-cyborg-x')
+## MKtlDesc('thrustmaster-megaworldectronics')
+## MKtlDesc('logitech-extreme-3d-pro')
+## MKtlDesc('icon-icontrols-hid')
+::
+
+subsection:: launchpad
+list::
+## MKtlDesc('akai-apcmini')
+## MKtlDesc('novation-launchpad')
+::
+
+subsection:: manta
+list::
+## MKtlDesc('snyderphonics-manta')
+::
+
+subsection:: midiKeyboard
+list::
+## MKtlDesc('akai-mpkmini')
+## MKtlDesc('akai-mpkmini2')
+## MKtlDesc('korg-nanokey')
+## MKtlDesc('korg-microkey')
+## MKtlDesc('keith-mcmillen-qunexus_port3')
+## MKtlDesc('cthrumusic-axis49')
+## MKtlDesc('teenage-engineering-op-1')
+## MKtlDesc('korg-nanokey2')
+## MKtlDesc('arturia-minilab')
+## MKtlDesc('keith-mcmillen-qunexus_port1_AB')
+::
+
+subsection:: minibee
+list::
+## MKtlDesc('sensestage-minibee1-xpree')
+## MKtlDesc('sensestage-minibee1')
+## MKtlDesc('sensestage-minibee1-xpee')
+::
+
+subsection:: mixer
+list::
+## MKtlDesc('novation-launchcontrol')
+## MKtlDesc('novation-launchcontrol-xl')
+## MKtlDesc('rme-audio-totalmix')
+## MKtlDesc('behringer-bcr2000')
+## MKtlDesc('native-instruments-traktor-kontrol-z2')
+::
+
+subsection:: mouse
+list::
+## MKtlDesc('generic-mouse')
+::
+
+subsection:: multiController
+list::
+## MKtlDesc('arturia-beatstep-rel-0')
+## MKtlDesc('arturia-beatstep-rel-16')
+## MKtlDesc('livid-guitar-wing')
+## MKtlDesc('x-io-x-osc')
+::
+
+subsection:: phoneApp
+list::
+## MKtlDesc('touchosc-simple1')
+## MKtlDesc('gyrosc_ga')
+::
+
+subsection:: push
+list::
+## MKtlDesc('ableton-push')
+::
+
+subsection:: ribbon
+list::
+## MKtlDesc('eowave-ribbon')
+::
+
+subsection:: surface
+list::
+## MKtlDesc('linnstrument_8chan')
+::
+
+section:: Generate a current listing of supported devices
+
+code::
+(
+MKtlDesc.loadDescs;
+
+MKtlDesc.deviceTypesUsed.sort.collect { |type|
+	var str = "subsection:: %\nlist::\n".format(type);
+	MKtlDesc.allDescs.select { |d| d.fullDesc.deviceType == type }
+	.do { |dev| str = str ++ "## %\n".format(dev.cs); };
+	str = str ++ "::\n\n";
+}.join;
+)
 ::
