@@ -1,0 +1,35 @@
+title:: Fix Missing hutDirectory on OSX
+summary:: Instructions for adding a missing HID info directory to SC - OSX
+categories:: Libraries>Modality, Control
+related:: Overviews/Modality, Classes/MKtl, Classes/HID, Classes/HIDFunc
+
+In the OSX version of SC up to release 3.7.0, the directory containing
+semantic information on HID devices is missing. This glitch makes HID
+harder to use; semantic HIDFunc and HIDdef methods will not work properly:
+code::
+HIDdef.usage(\x, { }, \X); // X-axis of mouse
+::
+So it is worth repairing until newer SC releases fix this.
+
+code::
+// * check if hutDirectory is missing:
+~hutDirMissing = HIDUsage.hutDirectory.pathMatch.postcs.isEmpty;
+
+// if ~hutDirMissing is true, goto the sensestage/hidapi project page
+	"https://github.com/sensestage/hidapi".openOS;
+	// * download hidapi master from there
+	// * then open the directory where the missing dir should go:
+	HIDUsage.hutDirectory.dirname.dirname.openOS;
+	// * make a new folder there called "HID_Support",
+	// * and copy the folder /hidapi-master/hut/ there.
+
+	// * now check that hutDirectory is in place and you see it here:
+HIDUsage.hutDirectory.pathMatch.cs;
+// you should see
+-> [ "/Applications/SuperCollider3.7/SuperCollider3.7.app/Contents/Resources/SCClassLibrary/Common/Control/HID_support/hut/" ]
+
+// you should get other lookup values than 'undefined' now:
+HIDUsage.getUsageDescription(9, 6).cs;
+	// -> [ 'Button', 'b6' ]
+
+::
