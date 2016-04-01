@@ -228,9 +228,9 @@ MKtl { // abstract class
 		// else try to make a desc from lookup info:
 
 		if (MKtl.descIsFaulty(newMKtlDesc)) {
-			inform("% - %: could not find a valid desc: \n"
-				"desc is: %\n\n".format(thisMethod,
-					name.cs, newMKtlDesc));
+			inform("MKtl( % ) - desc not valid: %."
+				.format(name.cs, newMKtlDesc)
+			);
 		};
 
 		// assume that now we have a name
@@ -324,10 +324,10 @@ MKtl { // abstract class
 
 	finishInit { |lookForNew, multiIndex|
 		if (desc.isNil) {
-			"%: no desc given, cannot create elements."
+			"%: no desc given, cannot create elements..."
 				.format(thisMethod).inform;
-			"// Maybe you want to explore this device with:\n"
-			"%.explore;\n".postf(this);
+			// "// Maybe you want to explore this device with:\n"
+			// "%.explore;\n".postf(this);
 		} {
 			namedDict = ();
 			this.makeElements;
@@ -593,8 +593,8 @@ MKtl { // abstract class
 	// ------ make MKtlDevice and interface with it
 
 	openDevice { |lookAgain=true, multiIndex|
-		var protocol;
-		if ( this.device.notNil ) {
+		var protocol, foundMatchingDesc;
+		if ( this.hasDevice ) {
 			"%: Device already opened.\n"
 			"Please close it first with %.closeDevice;\n"
 			.format(this, this).warn;
@@ -607,8 +607,24 @@ MKtl { // abstract class
 		MKtlDevice.initHardwareDevices( lookAgain, protocol);
 
 		device = MKtlDevice.open( this.name, this, multiIndex );
+
 		if(this.hasDevice.not) {
 			inform("%.openDevice: remaining virtual.".format(this));
+		} {
+			// if no desc file, try to match with generic
+			if (this.desc.isNil) {
+				foundMatchingDesc = MKtlDesc.findGenericFor(device.source);
+				if (foundMatchingDesc.notNil) {
+					"\nNow adapting desc % : \n\n".postf(foundMatchingDesc.name.cs);
+					this.adaptDesc(foundMatchingDesc.name);
+				}
+			};
+			// and if we still have no desc:
+			if (this.desc.isNil) {
+				"// % : opened device without desc file. \n"
+				"// Maybe you want to explore this device?\n".postf(this);
+				"%.explore;\n\n".postf(this);
+			};
 		}
 	}
 

@@ -155,11 +155,7 @@ HIDMKtlDevice : MKtlDevice {
 		hidElemFuncDict = ();
 		hidElemLookupDict = ();
 
-		if (mktl.desc.isNil) {
-			"// % : opened device without desc file. \n"
-			"// Maybe you want to explore this device?\n".postf(mktl);
-			"%.explore;\n\n".postf(mktl);
-		} {
+		if (mktl.desc.notNil) {
 			this.initElements;
 			this.initCollectives;
 		};

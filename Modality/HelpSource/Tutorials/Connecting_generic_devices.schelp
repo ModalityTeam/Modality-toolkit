@@ -1,33 +1,90 @@
 title:: Connecting generic devices
-summary:: Using standard devices like mouses, which can use generic description files multiple ports
+summary:: Using standard devices like mouses, which can use generic description files
 categories:: Libraries>Modality
 related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Classes/MIDIExplorer
 
-Many HID devices are quite generic; e.g. most computer mouses (or mice) have the same elements, so that one or two generic descriptions are sufficient. Here, we use some mouse:
+Many HID devices are quite generic; e.g. most computer mouses (or mice) have the same elements, so that one or two generic descriptions are sufficient. MKtl will automagically find matching descs. Here, we use some mouse:
 
 code::
 // find all HID devices
 MKtl.find(\hid);
+
 // and post their idInfos:
 MKtlLookup.allFor(\hid).collect(_.idInfo).cs;
 
-// in the posted text, this is the only mouse
--> MKtl('hid_5_usb_op', 'hid_5_usb_optical_mouse');
-		// [ "USB Optical Mouse", "PixArt"
+// in the posted text, there are two mouses, which have no desc files:
+MKtl('hid_5_apple_', 'hid_5_apple_optical_usb_mouse');
+		// [ "Apple Optical USB Mouse", "Primax Electronics" ]
+		// no matching desc files found!
 
-// so make an MKtl for that mouse with its lookup symbol:
-m = MKtl('m', 'hid_5_usb_optical_mouse');
+MKtl('hid_6_usb_op', 'hid_6_usb_optical_mouse');
+		// [ "USB Optical Mouse", "PixArt" ]
+		// no matching desc files found!
 
-// this will tell you there is no matching desc file,
-// and suggest you explore the device.
 
-// instead, you can adapt a generic desc for it:
-m.adaptDesc('generic-mouse')
-;
-// or this one works as well
-m.adaptDesc('generic-usb-optical-mouse');
+// try to make an MKtl for that mouse with its lookup symbol:
+m = MKtl('m', 'hid_6_usb_optical_mouse');
 
-// and you should be ready to go:
+// this will post info on finding a generic desc:
+
+// making the MKtl without a desc first produces some info:
+MKtl( 'm' ) - desc not valid: nil.
+MKtl:finishInit: no desc given, cannot create elements...
+
+// then the device (which is found by key) is opened:
+open device 0x7fd4e63005c0
+start polling thread for -433060416
+HID: Opened device: a HIDInfo(PixArt, USB Optical Mouse, IDs:2362, 9488, USB_093a_2510_14200000, , 256, -1)
+
+// we found the exactly matching desc, and adapt it:
+MKtlDesc: found exact generic desc matching a HIDInfo(PixArt, USB Optical Mouse, IDs:2362, 9488, USB_093a_2510_14200000, , 256, -1).
+
+Now adapting desc 'generic-mouse' :
+
+// closing and reopening device:
+HID: closing device 2
+device thread interrupted
+close device: interrupted
+open device 0x7fd4e2d88750
+start polling thread for -489126064
+HID: Opened device: a HIDInfo(PixArt, USB Optical Mouse, IDs:2362, 9488, USB_093a_2510_14200000, , 256, -1)
+
+// and here we are!
+-> MKtl('m')
 m.trace;
 m.gui;
+
+// now the apple mouse - which has some extra elements:
+a = MKtl('a', 'hid_5_apple_optical_usb_mouse');
+
+// this posts some more info:
+...
+MKtlDesc: found partially matching desc: a HIDInfo(Primax Electronics, Apple Optical USB Mouse, IDs:1452, 772, USB_05ac_0304_14100000, , 272, -1).
+Some HID elements are not in the desc and cannot be used:
+(2 -> a HIDElement(id: 2, type: 6, usage: 50, usagePage: 1))
+(7 -> a HIDElement(id: 7, type: 2, usage: 4, usagePage: 9))
+(8 -> a HIDElement(id: 8, type: 2, usage: 192, usagePage: 255))
+Please adapt MKtlDesc.at('generic-mouse') as new desc file and add entries for these.
+...
+
+So for the Apple Mouse it would make sense to adapt its elements:
+
+~missing = MKtl('a').device.source.elements.select { |elem| [2, 7, 8].includes(elem.id) };
+// find out what they probably are:
+~missing.sortedKeysValuesDo { |key, elem|
+	[key, elem.usageName, elem.usage, elem.pageName, elem.usagePage].postcs;
+};
+
+b4 is likely a button, Z is a mouse axis, undefined is, well, undefined.
+
+// posting the elements in question :
+HIDdef.usage(\test, { |val, rawVal, usage, page, elid, elem|
+	if ([2, 7, 8].includes(elem.id.postln)) {
+		[elem.id, elem.usageName, elem.usage, elem.pageName, elem.usagePage].postcs;
+	};
+});
+
+// now play around with the mouse in every possible way...
+// -> Z is scrolling sideways on the little scrollwheel, the other two never occur
+
 ::

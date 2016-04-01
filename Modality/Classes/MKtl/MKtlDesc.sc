@@ -187,6 +187,64 @@ MKtlDesc {
 		^(onlyInDesc: onlyInDesc, onlyInHid: onlyInHid);
 	}
 
+	*findGenericFor { |hid, rateForMatch = 0.5|
+		var numHidElems = hid.elements.size;
+		var candList = [], candidate;
+		MKtlDesc.loadDescs("*generic*").do { |desc|
+			var onlyDict = desc.matchWithHID(hid);
+			var hidOnlySize = onlyDict[\onlyInHid].size;
+			var descOnlySize = onlyDict[\onlyInDesc].size;
+
+			// jump out if perfect match
+			if (hidOnlySize + descOnlySize == 0) {
+				"MKtlDesc: found exact generic desc matching %.\n"
+				.postf(hid.info);
+				^desc
+			};
+
+			// some degree of mismatch
+			if ( hidOnlySize < (numHidElems * rateForMatch)) {
+				onlyDict.put(\desc, desc);
+				candList.add(onlyDict);
+			}
+		};
+
+		candList;
+
+		if (candList.isEmpty) { ^nil };
+
+		if (candList.size > 1) {
+			// more than one - sort candidates by fullest match of onlyInHid
+			candList.sort { |a, b| a.onlyInHid.size < b.onlyInHid.size };
+			"%: found multiple candidate descs: \n".postf(hid.info);
+			candList.do (_.postcs);
+			"-> taking best matching first desc.".postln;
+		};
+
+		candidate = candList[0];
+
+		"\nMKtlDesc: found partially matching desc: %.\n".postf(hid.info);
+		if (candidate.onlyInHid.size > 0) {
+			"Some HID elements are not in the desc and cannot be used:".postln;
+			candidate[\onlyInHid].sortedKeysValuesDo { |key, val|
+				(key -> val).postln;
+			};
+			"Please adapt % as new desc file and add entries for these.\n"
+			.postf(candidate.desc)
+		};
+
+		if ( candidate.onlyInDesc.size > 0) {
+			"Some desc elements are not in the HID and cannot be used:".postln;
+			candidate[\onlyInDesc].sortedKeysValuesDo { |key, val|
+				(key -> val).postln;
+			};
+			"Please adapt % as new desc file and remove the entries for these.\n"
+			.postf(candidate.desc)
+		};
+		"".postln;
+
+		^candidate.desc
+	}
 
 	*writeCache {
 		var dictForFolder = Dictionary.new, file;
