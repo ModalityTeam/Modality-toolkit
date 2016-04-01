@@ -1,7 +1,7 @@
 title:: Creating Presets for MKtl Element Values
 summary:: store sets of element values as state, and reuse them later
 categories:: Libraries>Modality, External Control
-related:: Overviews/Modality, Classes/MKtl
+related:: Overviews/Modality, Classes/MKtl, Classes/MKtlElement
 
 MKtl has simple ways to get and set multiple element values at once.
 This functionality can be use to create simple presets of sets of MKtl element values to set them to desired states.

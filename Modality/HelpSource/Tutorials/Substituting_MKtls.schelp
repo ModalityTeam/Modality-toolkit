@@ -1,7 +1,7 @@
 title:: Substituting MKtls
 summary:: One process played from multiple interfaces
 categories:: Libraries>Modality, External Control
-related:: Overviews/Modality, Classes/MKtl
+related:: Overviews/Modality, Classes/MKtl, Tutorials/Coding_for_Modal_Flexibility
 
 Modality makes it easy to play the same process with different interfaces, which can be useful for many reasons: Playing may feel different, broken or lost interfaces can be substituted very quickly, etc etc.
 

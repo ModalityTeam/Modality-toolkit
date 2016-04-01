@@ -52,6 +52,8 @@ link::Classes/PagedMKtl:: - Paging by using multiple MKtls for the same device
 
 ##Practical issues:
 
+link::Tutorials/Fix_Missing_hutDirectory_osx::
+
 link::Tutorials/Connecting_generic_devices::
 
 link::Tutorials/Connecting_multiple_identical_devices::
@@ -59,6 +61,7 @@ link::Tutorials/Connecting_multiple_identical_devices::
 link::Tutorials/Connecting_external_MIDI_devices::
 
 link::Tutorials/Connecting_multiport_MIDI_devices::
+
 
 
 

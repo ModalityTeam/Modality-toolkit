@@ -1,7 +1,7 @@
 title:: Connecting generic devices
 summary:: Using standard devices like mouses, which can use generic description files
 categories:: Libraries>Modality
-related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Classes/MIDIExplorer
+related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Classes/HID, Classes/HIDExplorer
 
 Many HID devices are quite generic; e.g. most computer mouses (or mice) have the same elements, so that one or two generic descriptions are sufficient. MKtl will automagically find matching descs. Here, we use some mouse:
 

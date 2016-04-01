@@ -1,7 +1,7 @@
 title:: Creating Named Groups
 summary:: Organize alternative groups of elements in an MKtl for particular purposes
 categories:: Libraries>Modality, Tutorials
-related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files
+related:: Overviews/Modality, Classes/MKtl, Classes/MKtlElement, Classes/MKtlElementGroup, Reference/MKtl_description_files
 
 section:: Background
 MKtl objects contain a hierarchical organisation of their interaction elements in MKtl.elementsGroup. This group contains and defines every element once, and one can access every element directly by its element key, or by its hierarchical address. At times multiple ways of grouping and naming these elements make sense, and MKtl supports multiple such orders.
