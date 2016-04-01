@@ -9,7 +9,7 @@ This functionality can be use to create simple presets of sets of MKtl element v
 code::
 // make an MKtl
 g = MKtl(\gp, "*run*drive");
-g.gui;
+g.gui.parent.alwaysOnTop_(true);
 // get current settings of all controllers:
 ~pre0 = g.getKeysValues;
 
@@ -43,4 +43,55 @@ g.elementGroup.action_ { |el| "YO: % %\n".postf(el.name, el.value) };
 
 // set to one of them
 g.setKVAction([~pre0, ~rnd1, ~rnd2, ~rndBut1, ~rndJoy1].choose);
+
+::
+
+
+// Example 2
+// Using addHalo/getHalo (in JITLibExtensions) allows
+// a very self-contained way of working with presets:
+
+g.addHalo(\allKeys, g.getKeysValues.flop[0]);
+g.getHalo(\allKeys);
+g.addHalo(\presets, ());
+g.getHalo(\presets);
+
+g.addHalo(\storeAll, { g.getHalo.postcs });
+
+g.addHalo(\storeAll, { |halo, name| halo.presets.put(name, g.getKeysValues) });
+
+g.getHalo.storeAll(\base);
+
+// create sets of names to use in preset
+g.addHalo(\joyKeys, g.elementAt(\joy).flat.collect(_.name));
+g.addHalo(\butKeys, g.elementAt(\bt).collect(_.name));
+
+
+// create some random settings:
+g.elementsDict.do(_.value_(1.0.rand));
+
+g.elementsDict.do(_.value_(1.0.rand)); g.getHalo.storeAll(\rnd1);
+g.elementsDict.do(_.value_(1.0.rand)); g.getHalo.storeAll(\rnd2);
+
+
+// make random settings for smaller sets of keys only
+g.getHalo.joyKeys.do { |key| g.dictAt(key).value_(1.0.rand) };
+g.getHalo.storeAll(\rndJoy1);
+
+
+g.getHalo.butKeys.do { |key| g.dictAt(key).value_(1.0.rand) };
+g.getHalo.storeAll(\rndBut1);
+
+g.addHalo(\recall, { |halo, name| g.setKeysValues(halo.presets[name].postln) });
+
+// restore to initial setting
+g.getHalo.recall(\base);
+
+// give all elements an action,
+// then set states with doAction
+g.elementGroup.action_ { |el| "YO: % %\n".postf(el.name, el.value.round(0.001)) };
+
+// randomly set to one of them
+g.setKVAction(g.getHalo.presets.choose);
+
 ::
