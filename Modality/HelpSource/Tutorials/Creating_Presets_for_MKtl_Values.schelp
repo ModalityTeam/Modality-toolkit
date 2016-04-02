@@ -51,6 +51,8 @@ g.setKVAction([~pre0, ~rnd1, ~rnd2, ~rndBut1, ~rndJoy1].choose);
 // Using addHalo/getHalo (in JITLibExtensions) allows
 // a very self-contained way of working with presets:
 
+code::
+
 g.addHalo(\allKeys, g.getKeysValues.flop[0]);
 g.getHalo(\allKeys);
 g.addHalo(\presets, ());
