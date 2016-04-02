@@ -3,10 +3,12 @@ summary:: store sets of element values as state, and reuse them later
 categories:: Libraries>Modality, External Control
 related:: Overviews/Modality, Classes/MKtl, Classes/MKtlElement
 
+
+
 MKtl has simple ways to get and set multiple element values at once.
 This functionality can be use to create simple presets of sets of MKtl element values to set them to desired states.
 
-subsection:: Example 1
+Section:: Example 1
 Making simple preset functions and saving them by hand.
 
 code::
@@ -50,7 +52,7 @@ g.setKVAction([~pre0, ~rnd1, ~rnd2, ~rndBut1, ~rndJoy1].choose);
 ::
 
 
-subsection:: Example 2
+Section:: Example 2
 Using addHalo/getHalo (in JITLibExtensions) allows
 a very self-contained way of working with presets:
 
