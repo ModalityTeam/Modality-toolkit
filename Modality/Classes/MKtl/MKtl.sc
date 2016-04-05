@@ -613,7 +613,9 @@ MKtl { // abstract class
 		} {
 			// if no desc file, try to match with generic
 			if (this.desc.isNil) {
-				foundMatchingDesc = MKtlDesc.findGenericFor(device.source);
+				if (device.source.notNil) {
+					foundMatchingDesc = MKtlDesc.findGenericFor(device.source);
+				};
 				if (foundMatchingDesc.notNil) {
 					"\nNow adapting desc % : \n\n".postf(foundMatchingDesc.name.cs);
 					this.adaptDesc(foundMatchingDesc.name);
