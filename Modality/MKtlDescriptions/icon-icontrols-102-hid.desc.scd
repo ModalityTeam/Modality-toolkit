@@ -22,7 +22,7 @@ m.postElements;
 
 */
 
-[0.47244095802307, 0.52755904197693].asFraction(300)
+// [0.47244095802307, 0.52755904197693].asFraction(300)
 
 (
 deviceName: "iCON iControl V1.02_iCON",
