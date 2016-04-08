@@ -19,38 +19,8 @@ knpg1 [\kn, \pbt][index]
 ...
 knpg8 [\kn, \pbt][index]
 
-
-// Basic examples:
-
-MKtlDesc.loadDescs("*uc4*");
-
-k.free; k = MKtl('uc4', "faderfox-uc4_pg"); k.gui.parent.alwaysOnTop_(true);
-k.elementsDict.size;
-k.postElements;
-k.trace;
-k.elAt.action = { |el| [el.name, el.value.round(0.001), el.deviceValue].postcs };
-k.elAt(\kn).action = { |el| "knob: ".post; [el.name, el.deviceValue].postln };
-k.elAt(\xfader).action = { |el| [el.name, el.deviceValue].postln };
-
-// to get to first knob, you give the page name first
-// (which is clumsy, but unequivocal):
-k.elAt(\pgKn1, \kn, 0);
-
-// or you can bring the first page of knobs to front:
-k.toFront(\pgKn1);
-
-// ... in longhand, this does:
-k.elAt(\pgKn1).do { |grp| k.addNamed(grp.name, grp) };
-
-// and now we can access knobs and pushbuttons directly
-k.elAt(\kn, 0);
-k.elAt(\pbt, 0, \on);
-
-// and the same for sliders and bottom buttons
-k.toFront(\pgSl1);
-k.elAt(\sl, 0);
-k.elAt(\bt, 0, \on);
-
+// see example and explanation here:
+"Tutorials/Hardware_paging".openHelpFile;
 ****/
 
 (
