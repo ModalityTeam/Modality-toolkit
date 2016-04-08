@@ -502,7 +502,7 @@ MIDIMKtlDevice : MKtlDevice {
 		elemDesc = elem.elemDesc;
 
 		if (traceRunning) {
-			inform("MIDIMKtl will send: " + elem.asCompileString);
+			inform("% will send value % to elem %.".format(this, val, elem.cs) );
 		};
 
 		msgType = elemDesc[\midiMsgType];
@@ -544,8 +544,8 @@ MIDIMKtlDevice : MKtlDevice {
 			// \smpte, { midiOut.smpte }
 
 			{
-				warn("MIDIMKtlDevice: message type % not recognised"
-				.format(msgType))
+				warn("%: message type % not recognised"
+				.format(thisMethod, msgType))
 			}
 		)
 
