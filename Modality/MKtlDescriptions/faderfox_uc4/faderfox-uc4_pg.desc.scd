@@ -22,9 +22,9 @@ knpg8 [\kn, \pbt][index]
 
 // Basic examples:
 
-MKtlDesc.loadDescs("*uc4");
+MKtlDesc.loadDescs("*uc4*");
 
-k.free; k = MKtl('uc4', "faderfox-uc4"); k.gui.parent.alwaysOnTop_(true);
+k.free; k = MKtl('uc4', "faderfox-uc4_pg"); k.gui.parent.alwaysOnTop_(true);
 k.elementsDict.size;
 k.postElements;
 k.trace;

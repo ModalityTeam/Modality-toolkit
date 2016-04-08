@@ -1,0 +1,121 @@
+title:: Using Hardware Pages
+summary:: Different ways to handle devices with hardware pages in Modality
+categories:: Libraries>Modality, External Control
+related:: Overviews/Modality, Classes/MKtl, Tutorials/ModalityTutorial
+
+Some devices have multiple hardware pages, sometimes also called scenes or layers, between which one can swtch on the hardware itself.
+E.g. the korg nanokontrol has a switch for 4 scenes, which change the midicontrol numbers sent from sliders, knobs and channel buttons; the transport buttons stay the same in all scenes. This allows accessing many more actions than the number of hardware control elements on the device ( it is Modality in hardware ;-).
+
+section:: Simple hardware paging: the Korg nanoKontrol.
+
+code::
+k = MKtl(\n, "*nanokontrol").trace;
+g = k.gui; g.parent.alwaysOnTop_(true);
+
+// has lots of elements, not as many as shown on gui
+k.elementsDict.size;
+
+// test switching gui between pages:
+// turn all knobs in group 0 to random value
+k.elAt(\kn, 0).do(_.value_(1.0.rand));
+// now switch to scene 1 - all knobs are at 0
+g.pagesSwitch.valueAction_(1);
+// turn all knobs in group 1 to random value
+k.elAt(\sl, 1).do(_.value_(1.0.rand));
+
+g.pagesSwitch.valueAction_(0);
+// now switch to scene 3 on faderbox,
+// move some elements ... then see if the gui shows them:
+g.pagesSwitch.valueAction_(2);
+::
+
+
+section:: Bringing hardware Pages to the Front
+
+Note:: It is convenient to bring one page to the front for easier code access. This is possible very nicely when the element hierarchy has the pages in the top layer, therefor it is generally better to put pages in the top element layer.
+::
+
+The Faderfox UC-4 is a nice example where one can show this support of hardware paging in code.
+
+The Faderfox UC4 has a more complex notion of paging.
+For its 8 knobs with hat switches, 8 sliders, 8 buttons,
+and single crossfader, there are two paging groups:
+list::
+##knobs and hat switches have 8 pages, paging is by holding "shift" and clicking a hat switch
+##sliders and buttons are paged by holding "shift" and clicking a button from the bottom row
+##crossfader remains the same no matter which pages are selected.
+::
+For demonstration purposes, it has desc files for both kinds of hierarchical orders: element types on top and pages on top.
+code::
+// Look for devices
+MKtl.find;
+
+// When a UC4 is connected, MKtl finds two descs:
+// [ [ "Faderfox UC4", "Faderfox UC4", 1937953817 ] ]
+	// Supported by 2 desc files.
+	// Best create MKtl from one of the desc files:
+MKtl('midi_1_faderf', "faderfox-uc4");
+MKtl('midi_1_faderf', "faderfox-uc4_pg");
+
+// the first one has pages like the korg above
+MKtl('ff1', "faderfox-uc4");
+MKtl('ff1').elAt;  // controller names on top
+MKtl('ff1').elAt(\kn); // 8 pages within knob group
+MKtl('ff1').elAt(\kn, 0); // 8 knobs in page 0
+
+// the second has pages on top:
+MKtl('ff2', "faderfox-uc4_pg");
+MKtl('ff2').elAt;  // 8 knob+hat pages + 8 sl+but pages + xfade
+MKtl('ff2').elAt(\pgKn1);  // knobs and pushbuttons
+MKtl('ff2').elAt(\pgKn1, \kn);  // 8 knobs in that page
+::
+
+Here, one can show how to bring pages to the front for coding convenience:
+
+code::
+// with the page-on-top format, one can easily "bring a page to the front":
+k.free; k = MKtl('uc4pg', "faderfox-uc4_pg"); k.gui.parent.alwaysOnTop_(true);
+k.elementsDict.size; // 361 elements!
+k.postElements; // post hierarchical order
+k.trace;
+k.trace(false);
+
+// add an action to all elements
+k.elAt.action = { |el| ["UC4-all", el.name, el.value.round(0.001), el.deviceValue].postcs };
+// an action to xfader always stays active
+k.elAt(\xfader).action = { |el| [el.name, el.deviceValue].postln };
+
+// an action for all knobs&hats in pgKn1:
+k.elAt(\pgKn1).action = { |el| "knobs&hats in pg1: ".post; [el.name, el.deviceValue].postln };
+
+// to get to the first knob, you must give the page name first
+// (which is clumsy, but clear):
+k.elAt(\pgKn1, \kn, 0);
+
+// Or you can bring the first page of knobs to front:
+k.toFront(\pgKn1);
+
+// this adds all groups in \pgKn1 to namedDict,
+// so they can be reached with their direct name:
+k.elAt(\kn); // pgKn1 is is front, so this is all knobs in pgKn1
+k.elAt(\kn, 0); // first knob of current knobpage
+k.elAt(\pbt, 0, \on);
+k.elAt(\pbt, 0, \on);
+
+// ... in longhand, this adding can also be done with:
+k.elAt(\pgKn1).do { |grp| k.addNamed(grp.name, grp) };
+
+
+// and add first sliderbutton page as well
+k.toFront(\pgSl1);
+k.elAt(\sl, 0);
+k.elAt(\bt, 0, \on);
+
+k.toFront(\pgSl4); // switch to page 4
+k.elAt(\sl, 0);    // now sl 0 is from page 4
+::
+
+note:: This paging to the front is not easily possible with descriptions where the element type in on top (like "faderfox-uc4" and
+"korg-nanokontrol"): An addNamed group called \kn will not be reached when a group \kn is already present in the top elementGroup.
+Therefor, it is generally better to put pages in the top element layer.
+::
