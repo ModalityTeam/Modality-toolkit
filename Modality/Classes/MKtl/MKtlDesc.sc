@@ -166,7 +166,8 @@ MKtlDesc {
 		if (infoInFile.isKindOf(Dictionary).not) { infoInFile = (deviceName: infoInFile) };
 
 		^(infoFromDev.deviceName == infoInFile.deviceName)
-		and: { infoFromDev.sourcePortIndex == infoInFile.sourcePortIndex }
+		and: { infoFromDev.srcPortIndex == infoInFile.srcPortIndex }
+		// destPortIndex matches if srcPortIndex does
 	}
 
 	// compare a generic desc with a HID as found,

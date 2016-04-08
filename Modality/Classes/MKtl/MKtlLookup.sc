@@ -1,4 +1,3 @@
-// TODO: check that we never add identical infos a second time
 
 MKtlLookup {
 	classvar <all, <midiAll;
@@ -144,6 +143,7 @@ MKtlLookup {
 		if (arr.includesEqual(newItem).not) {
 			// no array for single ports
 			arr = arr.add(newItem).unbubble;
+			// "\n\nmerge: % into dict: %\n\n".postf(arr, dict);
 			dict[key] = arr;
 		};
 	}
@@ -188,7 +188,7 @@ MKtlLookup {
 
 		// if single device, exit here!
 		if ((numSources < 2) and: { numDests < 2 }) {
-			//	"\n%: single midi device -> to all: %\n\n".postf(thisMethod, info);
+		//	"\n%: single midi device -> to all: %\n\n".postf(thisMethod, info.idInfo.cs);
 			all.put(info.lookupName, info);
 			^this
 		};
@@ -211,7 +211,8 @@ MKtlLookup {
 		info.srcDevice.do { |srcdev, index|
 			var index1 = index + 1;
 			var idInfo = (deviceName: info.deviceName);
-			idInfo.sourcePortIndex = index;
+			var matchingOut;
+			idInfo.srcPortIndex = index;
 			deviceLookupName = "midi_%_%%"; postfix = "";
 			if (numInDevices > 1) { postfix = postfix ++ "_nr_%".format(index1) };
 			if (numInPorts > 1) { postfix = postfix ++ "_port_%".format(index1) };
@@ -223,15 +224,22 @@ MKtlLookup {
 
 			this.addMIDI(srcdev, count + index1, \src,
 				lookupName: deviceLookupName, idInfo: idInfo);
-			if (insOutsMatch) {
-				all[deviceLookupName].destDevice = info.destDevice.asArray[index];
+
+			// always match 0 to 0, 1 to 1, etc
+			matchingOut = info.destDevice.asArray[index].postln;
+			if (matchingOut.notNil) {
+				all[deviceLookupName].destDevice = matchingOut;
 				idInfo.destPortIndex = index;
-				//	info.postcs;
 			};
+
+			// "\n%: added from multiport midi device : %, idInfo: %.\n\n"
+			// .postf(thisMethod, deviceLookupName, idInfo);
 		};
 
-		// we have some independent outs left over
-		if (insOutsMatch.not) {
+		// just in case this ever happens:
+		// more outs than ins, so independent outs left over
+		// was: if (insOutsMatch.not) { ... }
+		if (numOutPorts > numInPorts) {
 			info.destDevice.do { |destdev, index|
 				var index1 = index + 1;
 				var idInfo = (
@@ -239,13 +247,15 @@ MKtlLookup {
 					destPortIndex: index
 				);
 				deviceLookupName = "midi_%_%%"; postfix = "";
-				if (numInDevices > 1) { postfix = postfix ++ "_devc_%".format(index1) };
-				if (numInPorts > 1) { postfix = postfix ++ "_port_%".format(index1) };
+				if (numOutDevices > 1) { postfix = postfix ++ "_devc_%".format(index1) };
+				if (numOutPorts > 1) { postfix = postfix ++ "_port_%".format(index1) };
 				// [destdev, index1, postfix].postln;
 				deviceLookupName = deviceLookupName.copy
 				.format(count + index1, info.idInfo.toLower, postfix)
 				.collect { |char| if (char.isAlphaNum, char, $_) }
 				.asSymbol;
+				"destdev: %, count: %, lookupName: %, idInfo: %\n"
+				.postf(destdev, count + index1, deviceLookupName, idInfo);
 				this.addMIDI(destdev, count + index1, \dest,
 					lookupName: deviceLookupName, idInfo: idInfo);
 			};
