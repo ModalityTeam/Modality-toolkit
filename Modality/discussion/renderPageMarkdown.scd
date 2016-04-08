@@ -26,10 +26,17 @@ q.makeDict = {|q, desc|
 		outDict.type      = fullDesc.deviceType.asString;
 		outDict.status = fullDesc.status;
 		outDict.testCode= desc.testCode;
+
 		outDict.hasScribble = File.exists("%/%.scribble.pdf".format(
 			q.scribblePath, outDict.fileName)
 		);
+		outDict.hasScribble.if{
+			outDict.scribbleFilename = "%.scribble.pdf".format(
+			outDict.fileName);
+		};
+
 		outDict.hasScribble.not.if{outDict.hasScribble = nil};
+
 
 		outDict.imageType = [\png, \jpg].detect{|type|
 			File.exists("%/%.%".format(q.imgPath, outDict.fileName, type))
@@ -100,10 +107,10 @@ q.makeMarkdownDoc = {|q, dict, path|
 		\vendorURI,
 		\manual,
 		\type,
-		\hasScribble,
 		\imageFilename,
-		\hasScribble,
-		\descEditPath
+		// \hasScribble,
+		\descEditPath,
+		\scribbleFilename
 	].inject("", {|last, key|
 		var val = dict[key];
 		val.notNil.if({
