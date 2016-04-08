@@ -18,8 +18,6 @@ m.elAt.action = { |el| [el.name, el.deviceValue].postln };
 m.elementsDict.size;
 m.postElements;
 
-[0.47244095802307, 0.52755904197693].f
-
 [0.47244095802307, 0.52755904197693].asFraction(300)
 
 */
