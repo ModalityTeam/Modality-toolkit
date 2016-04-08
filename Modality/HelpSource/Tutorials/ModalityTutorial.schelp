@@ -1,11 +1,11 @@
 title:: Modality Tutorial
 summary:: Learning how to use Modality
 categories:: Libraries>Modality, External Control
-related:: Overviews/Modality, Classes/MKtl
+related:: Overviews/Modality, Classes/MKtl, Classes/MKtlElement, Classes/MKtlElementGroup
 
 section:: Finding present devices
 
-NOTE:: If you have one of the example devices (a Korg nanoKontrol2 MIDI faderbox or a Thrustmaster RunNDrive HID gamepad) at hand, you can plug it in to use a real interface device. If not, you can substitute them with a device you have, or use the MKtl's gui to step through this tutorial.
+NOTE:: If you have one of the example devices used here (a Korg nanoKontrol2  faderbox or a Thrustmaster RunNDrive gamepad) at hand, plug it in now and use a real interface device. If not, you can substitute with their guis to step through this tutorial.
 ::
 
 The first step is to discover which devices are available for use:
@@ -15,15 +15,53 @@ MKtl.find;
 ::
 
 This will find all currently available devices, all the known info on them,
-and will post example lines of code that can generate an MKtl for the device(s) found.
-The recommended line to use is code::MKtl('a_shortname', "a_desc_filename")::.
-
-Copy the code line for the device you want to use from the post window to a text document and assign it to a variable. If you have none, you can also just make a virtual code::MKtl():: and open a GUI for it .
-
+and post instructions with example lines of code for several possible cases:
+list::
+## Often - Device is supported (many devices are):
 code::
-// open the MKtl
-k = MKtl('nk2', "korg-nanokontrol2");
-// create a gui for it - this can replace the device
+// [ [ "iCON iControl V1.02", "Port 1", 74435252 ] ]
+	// Supported. Create by lookupName only if necessary:
+// MKtl('midi_1_icon_i', 'midi_1_icon_icontrol_v1_02_port_1');
+	// Best create MKtl from desc file:
+MKtl('midi_1_icon_i', "icon-icontrols-102");
+::
+##Less often - Device is not supported in modality yet:
+code::
+// [ [ "IAC Driver", "IAC Bus 1", -476939297 ] ]
+	// Unknown - Create from lookupName and explore:
+MKtl('midi_0_iac_dr', 'midi_0_iac_driver');
+::
+##Sometimes - Device has multiple matching desc files:
+code::
+// [ [ "Arturia BeatStep", "Arturia BeatStep", -512494375 ] ]
+	// Supported by 2 desc files.
+// Create MKtl from lookupName only if necessary:
+// MKtl('midi_1_arturi', 'midi_1_arturia_beatstep');
+	// Best create MKtl from one of the desc files:
+MKtl('midi_1_arturi', "arturia-beatstep-rel-0");
+MKtl('midi_1_arturi', "arturia-beatstep-rel-16");
+::
+##Rarely - Multiples identical devices are found, code includes a multiIndex:
+code::
+// [ "USB Game Controllers", "Mega World" ]
+	// Best create MKtl from desc file:
+MKtl('hid_5_usb_ga', "saitek-impact-gamepad", multiIndex: 0);
+
+// [ "USB Game Controllers", "Mega World" ]
+	// Best create MKtl from desc file:
+MKtl('hid_6_usb_ga', "saitek-impact-gamepad", multiIndex: 1);
+::
+::
+
+Copy the code line for the device you want to use from the post window to a text document and change its nickname to one you like:
+code::
+// create a MKtl with the desired name and desc file
+MKtl('nk2', "korg-nanokontrol2");
+// access it by its MKtl lookup name
+MKtl('nk2');
+// or assign it to a global variable for less typing:
+k = MKtl('nk2');
+// if you do not have that device, create a gui to replace it:
 k.gui;
 ::
 
@@ -39,7 +77,7 @@ k.trace(false);
 The same for a Thrustmaster RunNDrive gamepad:
 
 code::
-g = MKtl(\gp, "*drive");
+g = MKtl(\gp, "*impact-gamepad");
 g.gui;
 g.trace;
 g.trace(false);
@@ -47,18 +85,20 @@ g.trace(false);
 
 section:: Elements and Groups
 
-Each control (i.e. knob, slider, button, etc) on the device is mapped to an link::Classes/MKtlElement::. All elements are contained in the elementGroup, usually in a hierarchical order:
+Each control (i.e. knob, slider, button, etc) on the device is represented by an link::Classes/MKtlElement::. All elements are contained in the elementGroup in a hierarchical order:
 
 code::
 k.elementGroup;
 // you can access elements in each group by index or name:
 k.elementGroup[0];
 k.elementGroup[\tr];
-// post the tree of all groups and elements in hierachical order:
+// post the tree of all groups and elements to see the hierachical order:
 k.postElements;
 ::
 
-This is an (link::Classes/MKtlElementGroup::) and usualy contains nested groups, where the final node is always an link::Classes/MKtlElement::. The structure of the groups mimics the spatial order on the device (rows, columns, areas) or logical order (pages, function groups, etc).
+The elementGroup is an (link::Classes/MKtlElementGroup::) and usually contains some nested groups, where the final node is always an link::Classes/MKtlElement::. The structure of the groups follows a meaningful order, e.g. the spatial arrangement on the device (rows, columns, areas) or a logical order (pages, function groups, etc).
+(One can create custom orders of elements as well, see
+link::Tutorials/Creating_Custom_Elements_and_Groups::.
 
 This organization is defined in an link::Classes/MKtlDesc:: file for the device, which are provided for many devices already.
 code::
@@ -95,13 +135,25 @@ k.elAt(\bt, nil, 4);
 
 Note:: when using devices with hardware pages (like the nanoKONTROL 1), there may be separate desc files for each page, or a single desc with all pages. When using such a single desc, the page name or index will be used in the access code, e.g. the button on page 4 row 2 and column 5 would be at:
 code::
-// MKtl(\nk1).elAt(\bt, 3, 1, 4);
+MKtl(\nk1, "*nanokontrol");
+MKtl(\nk1).elAt; // the top layer - element groups
+MKtl(\nk1).elAt(\bt); // the buttons
+MKtl(\nk1).elAt(\bt, 2); // the buttons in scene 3
+MKtl(\nk1).elAt(\bt, 2, 0); // upper buttons scene 3
+MKtl(\nk1).elAt(\bt, 2, 0, 8); // last upper buttons scene 3
+::
+The pages can also be in the top layer, and element names below them:
+code::
+~lc = MKtl(\x, "*launchcontrol");
+~lc.elAt;  // the pages
+~lc.elAt(\pg5); // page 5
+~lc.elAt(\pg5, \kn); // the knobs there
 ::
 ::
 
 section:: Using actions
 
-Actions for an element are defined using "action_" or the "addAction" methods of link::Classes/MKtlElement::. These methods take a function as argument which receives a single argument, the link::Classes/MKtlElement:: it belongs to. One can To extract the current value of the element, one should call ".value". The value returned by an link::Classes/MKtlElement:: is between 0 and 1.
+Actions for an element (or group) are defined using the "action_" or the "addAction" methods of link::Classes/MKtlElement::. These methods take a function as argument which receives a single argument, the link::Classes/MKtlElement:: it belongs to. One can get the current value of the element by ".value". The value returned by an link::Classes/MKtlElement:: is always between 0 and 1.
 
 code::
 
@@ -122,7 +174,8 @@ k.elAt(\kn).action_({ |el|
 k.elAt(\kn).resetAction;
 ::
 
-section:: Control a simple sound process
+
+subsection:: Controlling a very simple sound process
 
 code::
 s.boot;
@@ -141,63 +194,67 @@ SynthDef(\blippy, {
 );
 
 //start the synth by hand first
-~syn1 = Synth(\blippy, [\freq, 440, \numHarmonics, 100, \amp, 0.5, \pan, 0]);
+z = Synth(\blippy, [\freq, 440, \numHarmonics, 100, \amp, 0.5, \pan, 0]);
 
 
 // create 4 control elements for it:
 (
 //clear all actions first
-k.reset;
+k.resetActions;
 
 //slider 0 -> amplitude
-k.elAt(\sl, 0).action_({ |elem| ~syn !? _.set(\amp, \amp.asSpec.map(elem.value)) });
+k.elAt(\sl, 0).action_({ |elem| z !? _.set(\amp, \amp.asSpec.map(elem.value)) });
 
 //knob 0 -> pan
-k.elAt(\kn, 0).action_({ |elem| ~syn !? _.set(\pan, \pan.asSpec.map(elem.value)) });
+k.elAt(\kn, 0).action_({ |elem| z !? _.set(\pan, \pan.asSpec.map(elem.value)) });
 
 //slider 1
-k.elAt(\sl, 1).action_({ |elem| ~syn !? _.set(\freq, elem.value.linlin(0.0, 1.0, 50, 2000) ) });
+k.elAt(\sl, 1).action_({ |elem| z !? _.set(\freq, elem.value.linlin(0.0, 1.0, 50, 2000) ) });
 
 //knob 1 -> number of harmonics
-k.elAt(\kn, 1).action_({ |elem| ~syn !? _.set(\numHarmonics, elem.value.linexp(0.0, 1.0, 1, 50) ) });
+k.elAt(\kn, 1).action_({ |elem| z !? _.set(\numHarmonics, elem.value.linexp(0.0, 1.0, 1, 50) ) });
 )
+::
+... Now you can control four parameters of synth z.
 
-// and here a more flexible way to do this:
-// give the elements names for their functions, and use those
+subsection:: Using named elements for actions
+
+For more flexibility and clarity, one can give the elements names for their functions, and use those:
+code::
 (
 k.addNamed(\amp1, k.elAt(\sl, 0));
 k.addNamed(\pan1, k.elAt(\kn, 0));
 k.addNamed(\param1, k.elAt(\sl, 1));
 k.addNamed(\param2, k.elAt(\kn, 2));
 
-// while at it, prapare buttons for start and stop
+// why not prepare buttons for start and stop
 k.addNamed(\start1, k.elAt(\bt, \S, 0));
 k.addNamed(\stop1, k.elAt(\bt, \R, 0));
 )
 
 // give them the same actions as above:
 (
-k.elAt(\amp1).action_({ |elem| ~syn1 !? _.set(\amp, \amp.asSpec.map(elem.value)) });
-k.elAt(\pan1).action_({ |elem| ~syn1 !? _.set(\pan, \pan.asSpec.map(elem.value)) });
-k.elAt(\param1).action_({ |elem| ~syn1 !? _.set(\freq, elem.value.linlin(0.0, 1.0, 50, 2000) ) });
-k.elAt(\param2).action_({ |elem| ~syn1 !? _.set(\numHarmonics, elem.value.linexp(0.0, 1.0, 1, 50) ) });
+k.elAt(\amp1).action_({ |elem| z !? _.set(\amp, \amp.asSpec.map(elem.value)) });
+k.elAt(\pan1).action_({ |elem| z !? _.set(\pan, \pan.asSpec.map(elem.value)) });
+k.elAt(\param1).action_({ |elem| z !? _.set(\freq, elem.value.linlin(0.0, 1.0, 50, 2000) ) });
+k.elAt(\param2).action_({ |elem| z !? _.set(\numHarmonics, elem.value.linexp(0.0, 1.0, 1, 50) ) });
 
 // and new functions  for start and stop:
 k.elAt(\start1).action_({  |elem|
     if(elem.value > 0) { // only start on button down
-        ~syn1 !? _.free;
-        ~syn1 = Synth(\blippy, [\freq, 440, \numHarmonics, 100, \amp, 0.5, \pan, 0])
+        z !? _.free;
+        z = Synth(\blippy, [\freq, 440, \numHarmonics, 100, \amp, 0.5, \pan, 0])
 	}
 });
 k.elAt(\stop1).action_({  |elem|
     if(elem.value > 0) { // only stop on button down
-		~syn1 !? _.free; ~syn1 = nil;
+		z !? _.free; ~syn1 = nil;
 	}
 });
 )
 ::
 
-section:: Control the same process from a different device
+subsection:: Controlling the same process from a different device
 
 code::
 // give the elements of the new controller the same function names:
@@ -216,11 +273,13 @@ k.addNamed(\stop1, k.elAt(\bt, \7));
 ::
 
 And now run the same function setting code as above for the gamepad controller!
-For full example, see link::Tutorials/Substituting_MKtls::.
+For a full example of this approach, see link::Tutorials/Substituting_MKtls::.
 
-section:: Using multiple actions
 
-For very flexible use of multiple actions, see link::Classes/MFunc:: in the "adclib" Quark.
+
+subsection:: Using multiple actions
+
+For very flexible use of multiple actions, see also link::Classes/MFunc:: in the "adclib" Quark.
 
 code::
 // Assigning multiple actions to an element can be done with .addAction:
