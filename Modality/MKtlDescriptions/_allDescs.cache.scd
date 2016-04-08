@@ -5,6 +5,7 @@ Dictionary[
 	("akai-mpd18" -> "Akai MPD18"),
 	("akai-mpkmini" -> "MPK mini"),
 	("akai-mpkmini2" -> "MPKmini2"),
+	("arturia-beatstep" -> "Arturia BeatStep"),
 	("arturia-beatstep-rel-0" -> "Arturia BeatStep"),
 	("arturia-beatstep-rel-16" -> "Arturia BeatStep"),
 	("arturia-minilab" -> "Arturia MINILAB"),

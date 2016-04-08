@@ -1,5 +1,26 @@
-// basic desc file for Beatstep default setup
-// see also rel0, rel-16 descs for relative control with examples.
+/* basic desc file for Beatstep default setup
+
+See also rel0, rel-16 descs for relative control with examples.
+
+MKtl('bs', "arturia-beatstep");
+MKtl('bs').trace;
+
+
+// TODO:
+* setting an encoder to a value from SC,
+    so encoder continues moving from there
+
+MKtl('bs').elAt(\pg0, \kn, 0).value;
+// set to a different value by program
+MKtl('bs').elAt(\pg0, \kn, 0).value_(0.2);
+// -> now moving knob 1 should continue from 25, and it does not yet.
+// try sending directly - also no luck
+MKtl('bs').device.midiOut.control(0, 10, 64);
+// -> is out protocol  different?
+// -> ask arturia about which ccnums to send back.
+
+*/
+
 (
 deviceName: "Arturia BeatStep",
 protocol: \midi,
@@ -93,7 +114,7 @@ elementsDesc: (
 			// default - absolute values
 			key: \kn,
 			shared: (midiMsgType: 'cc', elementType: 'encoder',
-				spec: 'midiCC'),
+				spec: 'midiCC', ioType: \inout),
 			elements: [
 				[ 10, 74, 71, 76, 77, 93, 73, 75],
 				[114, 18, 19, 16, 17, 91, 79, 72]
