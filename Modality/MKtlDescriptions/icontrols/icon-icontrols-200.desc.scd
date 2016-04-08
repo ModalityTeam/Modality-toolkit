@@ -23,8 +23,7 @@ the linux-based desc file "icon-icontrols" (V2.00).
 
 // tests:
 MKtlDesc.loadDescs;
-m.free; m = MKtl(\ic, "*icontrols-200");
-k.trace; k.gui;
+m.free; m = MKtl(\ic, "*icontrols-200"); m.trace; m.gui;
 
 m.elAt.action = { |el| el.name.postln };
 m.elementsDict.size;
