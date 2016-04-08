@@ -425,7 +425,7 @@ MKtl { // abstract class
 	// with the same names in namedDict.
 	toFront { |...pageNames|
 		elementGroup.elAt(*pageNames).do { |grp|
-			this.addNamed (grp.name, grp);
+			this.addNamed (grp.keyInGroup, grp);
 		}
 	}
 
