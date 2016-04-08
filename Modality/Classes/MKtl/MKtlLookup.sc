@@ -226,7 +226,7 @@ MKtlLookup {
 				lookupName: deviceLookupName, idInfo: idInfo);
 
 			// always match 0 to 0, 1 to 1, etc
-			matchingOut = info.destDevice.asArray[index].postln;
+			matchingOut = info.destDevice.asArray[index];
 			if (matchingOut.notNil) {
 				all[deviceLookupName].destDevice = matchingOut;
 				idInfo.destPortIndex = index;

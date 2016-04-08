@@ -55,14 +55,27 @@ MKtlDevice {
 		};
 	}
 
-	*descFileStrFor { |nameKey, filenames, multiIndex|
+	*descFileStrFor { |nameKey, lookupKey, filenames, multiIndex|
+		var str, numDescs = filenames.size;
+		var lookupStr = "MKtl('%', %);\n".format(nameKey, lookupKey.cs);
 
-		var str = filenames.size.switch(
-			0, 	{ "\t\t// no matching desc files found!\n"; },
-			1, 	{ "\t\t// create from desc file:\n"; },
-			{ 	"\t\t// multiple desc files found!\n"
-				"\t\t//choose one for the MKtl:\n";
-		});
+		numDescs.switch(
+			0, 	{
+				str = "\t// Unknown - Create from lookupName and explore:\n" ++ lookupStr;
+			},
+			1, 	{
+				str = "\t// Supported. Create by lookupName only if necessary:\n// "
+				++ lookupStr
+				++ "\t// Best create MKtl from desc file:\n";
+
+			},
+			{ 	str = "\t// Supported by % desc files.\n".format(numDescs)
+				++ "// Create MKtl from lookupName only if necessary:\n// "
+				++ lookupStr
+				++ "\t// Best create MKtl from one of the desc files:\n";
+
+			}
+		);
 
 		filenames.do { |filename|
 		str = str ++ "MKtl(%, %%);\n".format(

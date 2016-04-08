@@ -98,21 +98,19 @@ MIDIMKtlDevice : MKtlDevice {
 			^this;
 		};
 
-		"\n// Available MIDIMKtls: ".postln;
-		"// MKtl('myNickName', 'lookupName');  \n\t\t// [ midi device, portname, uid]\n".postln;
+		"\n/*** Possible MKtls for MIDI devices: ***/".postln;
+		"\t// [ midi device, portname, uid]\n".postln;
 		postables.sortedKeysValuesDo { |lookupKey, infodict|
 			var endPoint = infodict.deviceInfo;
 			var nameKey = lookupKey.asString.keep(13).asSymbol;
 			var postList = endPoint.bubble.flatten.collect({ |ep|
-				[ep.device.cs, ep.name.cs, ep.uid]
+				[ep.device, ep.name, ep.uid]
 			});
 			var filenames = infodict.filenames;
+			postList.cs.postcln;
 
-			"MKtl(%, %);\n\t\t// %\n"
-			.postf(nameKey.cs, lookupKey.cs, postList.unbubble);
-
-			// post with desc file names:
-			this.descFileStrFor(nameKey, filenames,
+			// post with desc file names if any:
+			this.descFileStrFor(nameKey, lookupKey, filenames,
 				infodict.multiIndex).post;
 		};
 	}

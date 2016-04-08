@@ -65,9 +65,8 @@ HIDMKtlDevice : MKtlDevice {
 			^this
 		};
 
-		"\n// Available HIDMKtlDevices:".postln;
-		"// MKtl('myNickName', 'lookupName');"
-		"\n\t\t// [ product, vendor, (serial#) ]\n".postln;
+		"\n/*** Possible MKtls for HID devices: ***/".postln;
+		"\t// [ product, vendor, (serial#) ]\n".postln;
 		postables.sortedKeysValuesDo { |lookupKey, infodict|
 			var info = infodict.deviceInfo;
 			var product = info.productName;
@@ -75,19 +74,14 @@ HIDMKtlDevice : MKtlDevice {
 			var serial = info.serialNumber;
 			var postList = [product, vendor];
 			var filenames = MKtlDesc.filenamesForIDInfo(infodict.idInfo);
-
 			var nameKey = lookupKey.asString.keep(12).asSymbol;
 
 			if (serial.notEmpty) {
 				postList = postList.add(serial);
 			};
+			postList.cs.postcln;
 
-			// post with lookupKey
-			"MKtl('%', %);\n\t\t// %\n"
-			.postf(nameKey, lookupKey.cs, postList.cs);
-
-			// post with desc file names:
-			this.descFileStrFor(nameKey, filenames,
+			this.descFileStrFor(nameKey, lookupKey, filenames,
 				infodict.multiIndex).post;
 		};
 	}

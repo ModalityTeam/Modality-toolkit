@@ -43,16 +43,12 @@ OSCMKtlDevice : MKtlDevice {
 		*/
 	}
 
-	*initDevices { |force=false| // force has no real meaning here
-		var postables = MKtlLookup.allFor(\osc);
+	// osc devices are not registered in any way,
+	// so initDevices and force flag have no real meaning here
+	*initDevices { |force=false|
 		if (force or: initialized.not) {
 			initialized = true;
-			if (verbose and: { postables.size == 0 }) {
-				"\n\n// OSCMKtlDevice: No known sending addresses so far.\n"
-				"// To detect OSC devices by hand, use OSCMon: ".postln;
-				"o = OSCMon.new.enable.show;".postln;
-				^this
-			};
+			if (verbose) { this.postPossible };
 		};
 	}
 
@@ -62,12 +58,12 @@ OSCMKtlDevice : MKtlDevice {
 	*deinitDevices { } // doesn't do anything, but needs to be there
 
 	*postPossible {
-		var postables = MKtlLookup.allFor(\osc);
-		"\n// Available OSCMKtlDevices:".postln;
-		"// MKtl(name);  // [ host, port ]".postln;
-		postables.sortedKeysValuesDo { |key, addr|
-			"    MKtl('%'); // [ %, % ]\n"
-			.postf(key, addr.hostname.cs, addr.port.cs )
+		var oscmktls = MKtl.all.select(_.protocol == \osc);
+		"\n/* OSC devices not found automagically yet. Use OSCMon: */\n"
+		"o = OSCMon.new.enable.show;\n".postf(thisMethod);
+		if (oscmktls.size > 0) {
+			"// Existing MKtls for OSC devices:".postln;
+			oscmktls.sortedKeysValuesDo (_.postcs);
 		};
 	}
 
