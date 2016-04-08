@@ -46,14 +46,14 @@ MKtlLookup.allFor(\midi).collect(_.idInfo).printcsAll; "";
 
 // which posts:
 "IAC Driver"
-( 'destPortIndex': 0, 'sourcePortIndex': 0, 'deviceName': "Fireface 400 (297)" )
-( 'destPortIndex': 1, 'sourcePortIndex': 1, 'deviceName': "Fireface 400 (297)" )
+( 'destPortIndex': 0, 'srcPortIndex': 0, 'deviceName': "Fireface 400 (297)" )
+( 'destPortIndex': 1, 'srcPortIndex': 1, 'deviceName': "Fireface 400 (297)" )
 
 
 // 4. now connect them:
 // tell MKtl(\pf) to create a mididevice by giving it the proper idInfo;
 // e.g. here, we take MIDI input 1 of the fireface
- z = ( 'destPortIndex': 0, 'sourcePortIndex': 0, 'deviceName': "Fireface 400 (297)" );
+ z = ( 'destPortIndex': 0, 'srcPortIndex': 0, 'deviceName': "Fireface 400 (297)" );
 k.openDeviceVia( z );
 k.device;  // -> now it has a MIDIMKtlDevice
 k.trace;   // -> and this should post incoming midi messages!
@@ -68,5 +68,5 @@ code::
 // e.g. adc made one with 8 joysticks called the joybox, which has a desc file:
 
 j = MKtl(\jb, "*joybox"); j.gui;
-j.openDeviceVia( ( 'destPortIndex': 0, 'sourcePortIndex': 0, 'deviceName': "Fireface 400 (297)" ));
+j.openDeviceVia( ( 'destPortIndex': 0, 'srcPortIndex': 0, 'deviceName': "Fireface 400 (297)" ));
 ::

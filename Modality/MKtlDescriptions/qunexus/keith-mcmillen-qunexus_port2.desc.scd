@@ -27,7 +27,7 @@ status: (
 	osx: "tested desc only, without ext. device, looks ok. 2016-03-17, adc",
 	win: "unknown"),
 
-idInfo: (deviceName: "QuNexus", sourcePortIndex: 1, destPortIndex: 1),
+idInfo: (deviceName: "QuNexus", srcPortIndex: 1, destPortIndex: 1),
 portName: "Port 2",
 
 // port is for connecting external MIDI, so elementsDesc is empty.

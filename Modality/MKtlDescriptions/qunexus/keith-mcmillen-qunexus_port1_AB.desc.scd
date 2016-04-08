@@ -38,7 +38,7 @@ status: (
 	win: "unknown"),
 
 
-idInfo: (deviceName: "QuNexus", sourcePortIndex: 0, destPortIndex: 0),
+idInfo: (deviceName: "QuNexus", srcPortIndex: 0, destPortIndex: 0),
 portName: "Port 1",
 modeName: "Preset AB",
 

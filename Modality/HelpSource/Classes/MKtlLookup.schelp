@@ -96,9 +96,9 @@ MKtl.find(\midi);
 MKtlLookup.findByIDInfo("IAC Driver");
 // also when given in a dict:
 MKtlLookup.findByIDInfo((deviceName: "IAC Driver"));
-// and even when the dict says sourcePortIndex 0,
-// and the lookup info has no sourcePortIndex (i.e. it is a single port
-MKtlLookup.findByIDInfo((deviceName: "IAC Driver", sourcePortIndex: 0 ));
+// and even when the dict says srcPortIndex 0,
+// and the lookup info has no srcPortIndex (i.e. it is a single port
+MKtlLookup.findByIDInfo((deviceName: "IAC Driver", srcPortIndex: 0 ));
 ::
 
 INSTANCEMETHODS::

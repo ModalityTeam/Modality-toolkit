@@ -26,7 +26,7 @@ status: (
 	osx: "tested, elements. 2016-03-16, adc",
 	win: "unknown"),
 
-idInfo: (deviceName: "Steinberg CMC-QC", sourcePortIndex: 0, destPortIndex: 0),
+idInfo: (deviceName: "Steinberg CMC-QC", srcPortIndex: 0, destPortIndex: 0),
 
 elementsDesc: (
 	elements: [

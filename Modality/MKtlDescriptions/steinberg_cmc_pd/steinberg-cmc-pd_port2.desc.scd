@@ -56,7 +56,7 @@ status: (
 	osx: "tested, knob and buttos not coming thru MKtl. 2016-04-16, adc",
 	win: "unknown"),
 
-idInfo: (deviceName: "Steinberg CMC-PD", sourcePortIndex: 1, destPortIndex: 1),
+idInfo: (deviceName: "Steinberg CMC-PD", srcPortIndex: 1, destPortIndex: 1),
 
 deviceInfo: (
 	vendorURI: "http://www.steinberg.net/en/products/controllers/cmc_series/models/cmc_pd.html",

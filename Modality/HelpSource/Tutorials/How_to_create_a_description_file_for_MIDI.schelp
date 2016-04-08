@@ -97,7 +97,7 @@ Platform.case(
 
 // and create proper idInfo for your platform
 ~idInfo = Platform.case(
-	\linux, ( name: "SuperCollider", sourcePortIndex: 0 ),
+	\linux, ( name: "SuperCollider", srcPortIndex: 0 ),
 	\osx, "IAC Driver",
 	\windows, "no idea, please tell us what this should be!"
 ).postcs;
@@ -1001,7 +1001,7 @@ MKtl('midi_2_nanokontrol2_nr_2', 'midi_2_nanokontrol2_nr_2');
 
 
 Some MIDI devices use multiple MIDI ports, and MKtl treats these as separate devices for which you can make independent MKtls. E.g. the Steinberg CMC-PD or the QuNexus do this. For such devices, you can make separate descriptions for each port number, and you specify the port number in the description:
-You then make a Dictionary of the code::idInfo:: with the field code::name:: with the name of the device (as it shows up after code::MKtl.find::), and then define the code::sourcePortIndex:: and/or the code::destinationPortIndex::; if either one is not specified, it takes the first one.
+You then make a Dictionary of the code::idInfo:: with the field code::name:: with the name of the device (as it shows up after code::MKtl.find::), and then define the code::srcPortIndex:: and/or the code::destPortIndex::; if either one is not specified, it takes the first one.
 
 code::
 // Steinberg CMC-PD or the QuNexus have 3 ports each,
@@ -1019,7 +1019,7 @@ deviceName: "QuNexus",
 (
 idInfo: (
 	deviceName: "QuNexus",
-	sourcePortIndex: 0,
+	srcPortIndex: 0,
 	destPortIndex: 0
 ),
 ...

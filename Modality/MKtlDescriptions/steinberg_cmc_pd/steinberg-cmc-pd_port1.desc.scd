@@ -52,7 +52,7 @@ status: (
 	osx: "tested and working. 2016-03-16, adc",
 	win: "unknown"),
 
-idInfo: (deviceName: "Steinberg CMC-PD", sourcePortIndex: 0, destPortIndex: 0),
+idInfo: (deviceName: "Steinberg CMC-PD", srcPortIndex: 0, destPortIndex: 0),
 
 // by default, all pads have vel of 16
 // in 4vel mode, they are 0, 31, 63, 95, 127,

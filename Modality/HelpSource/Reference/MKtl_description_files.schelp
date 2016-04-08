@@ -72,7 +72,7 @@ For HID devices, this is <productname>_<vendorname>.
 For MIDI devices with single src and/or dest port, this is the same as the deviceName.
 For multi-port MIDI devices, this should be a dictionary with entries for
 (deviceName: <deviceName>,
-sourcePortIndex: <index in MIDIClient.sources>,
+srcPortIndex: <index in MIDIClient.sources>,
 destPortIndex: <index in MIDIClient.destinations>);
 For OSC devices, this is a dictionary with information on the ipAdresses and ports used. (As NetAddresses may change, this often requires updating by hand. )
 
