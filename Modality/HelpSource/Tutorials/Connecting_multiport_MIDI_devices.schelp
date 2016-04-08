@@ -37,7 +37,6 @@ MKtl.find(\midi);
 You can combine these separate MKtls into a single link::Classes/CompMKtl:: if you like,
 or just use them separately.
 
-To a descriptions for a new device to Modality, simply create a desc file for each port,
-by following the instructions in link::Tutorials/How_to_adapt_a_description_file:: or in
+To add descriptions for a new device to Modality, simply create a desc file for each port, by following the instructions in link::Tutorials/How_to_adapt_a_description_file:: or in
 link::Tutorials/How_to_create_a_description_file_for_MIDI::.
 

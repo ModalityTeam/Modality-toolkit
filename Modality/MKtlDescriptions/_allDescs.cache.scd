@@ -22,6 +22,8 @@ Dictionary[
 	("icon-icontrols" -> ( 'srcPortIndex': 0, 'destPortIndex': 0, 'deviceName': "iCON iControls V2.00" )),
 	("icon-icontrols-102" -> ( 'srcPortIndex': 0, 'destPortIndex': 0, 'deviceName': "iCON iControl V1.02" )),
 	("icon-icontrols-102-hid" -> "iCON iControl V1.02_iCON"),
+	("icon-icontrols-200" -> ( 'srcPortIndex': 0, 'destPortIndex': 0, 'deviceName': "iCON iControl V2.00" )),
+	("icon-icontrols-200-hid" -> "iCON iControls V2.00_iCON"),
 	("icon-icontrols-hid" -> "iCON iControls V2.00_iCON"),
 	("icon-icontrols-pro" -> "iCON iControls_Pro V1.02"),
 	("icon-istage" -> "iCON iStage V1.00"),
