@@ -141,9 +141,20 @@ MKtlDesc {
 
 	// info
 	*postStatus {
-		MKtlDesc.loadDescs
-		.sort { |a, b| a.fullDesc.status < b.fullDesc.status; }
-		.do { |a| [a.fullDesc.status, a.name].postcs; };
+		var maxNameLen = 0, numOK = 0;
+		var descs = MKtlDesc.loadDescs;
+		descs.do { |desc|
+			maxNameLen = max(maxNameLen, desc.name.cs.size);
+			if (desc.fullDesc.status.beginsWith("tested and working")) {
+				numOK = numOK + 1
+			};
+		};
+
+		"\n% - descs: % tested and working : %.\n\n"
+		.postf(thisMethod, descs.size, numOK);
+
+		descs.sort { |a, b| a.fullDesc.status < b.fullDesc.status; }
+		.do { |a| (a.name.cs.padRight(maxNameLen) + a.fullDesc.status).postln };
 	}
 
 
