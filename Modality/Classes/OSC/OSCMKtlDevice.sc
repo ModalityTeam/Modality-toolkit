@@ -5,7 +5,7 @@ OSCMKtlDevice : MKtlDevice {
 	classvar messageSizeDispatcher;
 
 	var <source;  // receiving OSC from this NetAddr
-	var <destination; // sending OSC to this NetAddr
+	var <destination; // sending OSC to this NetAddr - usually the same
 	var <recvPort; // port on which we need to listen
 
 	var <oscFuncDictionary;
@@ -83,20 +83,20 @@ OSCMKtlDevice : MKtlDevice {
 
 	init { |desc|
 		desc = desc ?? { mktl.desc };
-		this.initOSCMKtl( desc.fullDesc[\netAddrInfo] ).initElements;
+		this.initAddresses(desc.fullDesc[\netAddrInfo]);
+		this.initOSC;
 	}
 
-	initOSCMKtl { |info|
+	// for clarity:
+	// recvPort is the port on which the source sends and SC receives.
+	// srcPort is the port the source LISTENS TO and SC sends on.
+	initAddresses { |info|
 		var ipAddr =  info !? { info.at( \ipAddress ) } ? "127.0.0.1";
 		var srcPort = info !? { info.at( \srcPort ) };
-		var dstPort = info !? { info.at( \destPort ) } ? srcPort ? NetAddr.langPort;
+		recvPort = info !? { info.at( \recvPort ) } ? srcPort ? NetAddr.langPort;
 
 		source = NetAddr.new( ipAddr, srcPort );
-		destination = NetAddr( ipAddr, dstPort);
-		recvPort = srcPort;
-
-		this.initCollectives;
-
+		destination = NetAddr.new( ipAddr, srcPort ); // usually same as source
 		// must do by hand for OSC
 		this.addToLookup;
 	}
@@ -107,21 +107,23 @@ OSCMKtlDevice : MKtlDevice {
 		MKtlLookup.addOSC(source, mktl.desc.idInfo, destination, this.mktl);
 	}
 
+	initOSC {
+		oscFuncDictionary.do(_.free);
+		this.initCollectives;
+		this.initOSCDict;
+	}
+
+
 	// source is used in all OSCFuncs, so sticking in new ip/port
 	// values will redirect OSCfuncs to the new address data
 	updateSrcAddr { |hostname, port|
 		if (hostname.notNil) { source.hostname = hostname };
 		if (port.notNil) { source.port = port };
-		recvPort = port;
-		oscFuncDictionary.do(_.free);
-		this.initCollectives;
-		this.addToLookup;
+		this.initOSC;
 	}
-
-	updateDestAddr { |hostname, port|
-		if (hostname.notNil) { destination.hostname = hostname };
-		if (port.notNil) { destination.port = port };
-		this.addToLookup;
+	updateRecvPort { |port|
+		recvPort = port ? recvPort;
+		this.initOSC;
 	}
 
 	closeDevice {
@@ -142,7 +144,7 @@ OSCMKtlDevice : MKtlDevice {
 			el.value.round(0.001), el.type).postln;
 	}
 
-	initElements {
+	initOSCDict {
 
 		if ( oscFuncDictionary.isNil ){
 			oscFuncDictionary = IdentityDictionary.new;
