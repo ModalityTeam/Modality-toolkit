@@ -1,0 +1,252 @@
+title:: Connecting OSC devices
+summary:: Handling changing addresses and ports in MKtls
+categories:: Libraries>Modality
+related:: Guides/OSC_communication, Overviews/Modality, Classes/MKtl, Classes/OSCMon
+
+section:: OSC communication and Modality
+
+OSC communication is very flexible and widely supported.
+While there are networking hitches that can be frustrating, there are ways to test systematically why an OSC device that worked earlier may not work now.
+This tutorial walks through the details of how OSC works in Modality,
+so troubleshooting becomes straightforward.
+
+For a detailed discussion, see link::Guides/OSC_communication::.
+
+subsection:: OSC Basics - sending
+
+First, how does an external OSC device technically communicate with SC?
+
+It sends a message to an strong::ipAddress:: - that of the computer SC runs on
+through a strong::port:: - which is 16bit number that sender and receiver agree on.
+
+code::
+// When sender and receiver are apps on the same computer, ipAddress is "127.0.0.1", loopback to this computer.
+// With separate devices, this is the ipnumber of this computer in the network.
+~ipAddressToSC = "127.0.0.1";
+
+// next, we need a port on which the external source sends to SC
+// very often, this is the default port that SC always listens to:
+~portToSC = NetAddr.langPort;   // typically 57120, sometimes 57121, ..22, etc
+
+// now we make an address to talk to SC
+~addrToSC = NetAddr(~ipAddressToSC, ~portToSC);
+
+// and send to SC:
+~addrToSC.sendMsg(\test, \yo, \world);
+
+// SC did not listen yet, so nothing happened.
+// To listen to all incoming messages, we use:
+OSCFunc.trace;
+
+~addrToSC.sendMsg(\test, \yo, \world);
+// and this should now post:
+OSC Message Received:
+	time: 5141.891048276
+	address: a NetAddr(127.0.0.1, 57120)
+	recvPort: 57120
+	msg: [ /test, yo, world ]
+::
+
+This tells us what the message itself is,
+which port is came in on - there could be multiple listening ports,
+and which address sent it - so we can send back.
+
+subsection:: Sending on special ports
+
+Some devices send on fixed port numbers. For this case, SC can open more ports:
+code::
+// open a port
+thisProcess.openUDPPort(12345);
+// -> returns true when port did open, or was already open
+
+// ask which ports are open now
+thisProcess.openPorts;  // -> 12345 shows up as open
+
+// same as above, only
+OSCFunc.trace;
+~portToSC = 12345;
+~ipAddressToSC = "127.0.0.1";
+~addrToSC = NetAddr(~ipAddressToSC, ~portToSC);
+
+// and send to SC:
+~addrToSC.sendMsg(\test, \yo, \world);
+
+// and SC receives on a different recvPort now!
+OSC Message Received:
+	time: 969.823055779
+	address: a NetAddr(127.0.0.1, 57120)
+	recvPort: 12345
+	msg: [ /test, yo, world ]
+
+::
+
+subsection:: Listening to messages by address and port
+
+code::
+// Make an OSCdef to listen to this kind of message:
+OSCFunc.trace(false);
+OSCdef(\test, { |msg, time, sender, recvport|
+	[msg, sender, recvport].postln },
+'/test');
+
+~addrToSC.sendMsg(\test, \yo, \world);
+// should now post:
+[ [ /test, yo, world ], a NetAddr(127.0.0.1, 57120), 12345 ]
+
+
+// note that sending from standard address is also received:
+~localAddr = NetAddr.localAddr;
+~localAddr.sendMsg(\test, \yo, \world);
+
+// change OSCdef to listen only to port 12345
+OSCdef(\test, recvPort: 12345);
+~addrToSC.sendMsg(\test, \yo, \world); 		// received
+~localAddr.sendMsg(\test, \yo, \world);		// not received, different port
+
+
+// to really fake an external source, make a special sender address
+~senderAddr = NetAddr("168.192.0.64", 54321);
+
+// now act as if message had come thru network: this is also received
+thisProcess.recvOSCmessage(0, ~senderAddr, 12345, ['/test', \yo, \fake]);
+
+// remake OSCdef to be specific about srcID (senderAddress) and recvPort
+OSCdef(\test).clear;
+OSCdef(\test, { |msg, time, sender, recvport|
+	[msg, sender, recvport].postln },
+'/test', srcID: ~senderAddr, recvPort: 12345);
+
+//
+~addrToSC.sendMsg(\test, \yo, \world); 		// ignored
+~localAddr.sendMsg(\test, \yo, \world);		// ignored
+											// but this matches:
+thisProcess.recvOSCmessage(0, ~senderAddr, 12345, ['/test', \yo, \fake]);
+
+::
+
+
+section:: Making an OSCMKtlDevice
+
+This example expands on a basic example from link::Tutorials/How_to_create_a_description_file_for_OSC::.
+We make a description for an OSC device which has a single button,
+and which uses special port numbers.
+Then we create an MKtl from it, send messages from SC to simulate
+messages as they would come from an external source, and see that the
+MKtl correctly receives them.
+
+code::
+(
+// make an OSC desc for a device with one button that uses custom ports
+(
+~desc1but = (
+	idInfo: "osc1button",
+    netAddrInfo: (
+			// ipAddress is the ipAddress from which source sends to SC
+			// ipAddress nil means any ipAddress will work
+		ipAddress: "127.0.0.1",
+			// recvPort: the port the source sends on and SC receives on.
+			// if none is given, this is NetAddr.langPort.
+			// If needed, a UDP port will be opened for it.
+		recvPort: 6666,
+			// srcPort: the port the source sends as return address, and that SC sends to.
+			// if not given, this can be inferred from imcoming messages.
+		srcPort: 3333
+	),
+    protocol: \osc,
+    elementsDesc: (
+		elements: [
+			(
+				key: 'bt',
+				oscPath: '/button',
+				type: 'button',
+				ioType: \in,
+				spec: \but
+			)
+		]
+	)
+);
+);
+
+// make an MKtl from this description
+m.free; m = MKtl( \osc1but, ~desc1but );
+
+m.device.oscFuncDictionary; // this contains its OSCFunc
+
+// give the single button an action
+m.elementAt(\bt).action = { |el| ["yo", el.value].postln };
+
+// test that the action works
+m.elementAt(\bt).doAction;    // [ yo, 0 ]
+m.elementAt(\bt).valueAction_(1); // [ yo, 1 ]
+m.elementAt(\bt).valueAction_(0); // [ yo, 0 ]
+
+// should include 6666 now:
+thisProcess.openPorts;
+
+// post when data are received in the MKtl
+m.trace;
+// create a gui for it - try its button
+m.gui;
+)
+::
+
+
+subsection:: Simulate sending OSC messages
+
+// now simulate sending values from an OSC device by network -
+// make the address the fake device is sending to - SC with special port
+~addrToSC = NetAddr(~desc1but.netAddrInfo.ipAddress, ~desc1but.netAddrInfo.recvPort);
+
+~addrToSC.sendMsg('/button', 0);
+~addrToSC.sendMsg('/button', 1);
+// -> does nothing so far because the OSCFunc are listening only for
+// messages from NetAddr("127.0.0.1", (srcPort:) 3333) !
+
+// make the proper returnAddress
+~returnAddr = NetAddr(~desc1but.netAddrInfo.ipAddress, ~desc1but.netAddrInfo.srcPort);
+
+// now fake sending a message from the proper return address via recvPort:
+thisProcess.recvOSCmessage(0, ~returnAddr, 6666, ['/button', 0]);
+// -> should post:
+MKtl('osc1but') osc bt > 0 | type: button
+
+subsection:: Adapting to changing ports and addresses
+
+When devices connect and reconnect to a network, they may get different ipAddresses;
+also devices and apps may get different port numbers when disconnected and reconnected.
+
+To handle such situations, one can change both addresses and ports in existing MKtls.
+For example, make code::MKtl(\osc1but):: listen to messages from within SC:
+code::
+~localAddr = NetAddr.localAddr;
+~addrTo1But = NetAddr("127.0.0.1", 6666);
+m.device.updateSrcAddr(port: NetAddr.langPort);
+m.device.oscFuncDictionary;
+~addrTo1But.sendMsg('/button', 0);
+~addrTo1But.sendMsg('/button', 1);
+::
+m.device.recvPort;
+
+Similarly, we can update the ip number as well:
+code::
+m.device.updateSrcAddr("10.0.0.1");
+
+// and then this faked message from that source arrives:
+thisProcess.recvOSCmessage(0, NetAddr("10.0.0.1", 57120), 6666, ['/button', 1]);
+::
+
+Finally, we can also change the receiving port after the fact:
+code::
+// external device now sends to port 7777
+m.device.updateRecvPort(7777);
+
+m.device.oscFuncDictionary;
+// this is ignored now:
+thisProcess.recvOSCmessage(0, NetAddr("127.0.0.1", 3333), 6666, ['/button', 1]);
+//and this is received:
+thisProcess.recvOSCmessage(0, NetAddr("127.0.0.1", 3333), 7777, ['/button', 1]);
+::
+
+This hopefully covers most complications that may occur when using OSC devices.
+For more information, see also link::Guides/OSC_communication::.
+
