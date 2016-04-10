@@ -128,7 +128,7 @@ testCode: {
 	// - example to be made.
 
 	// * turn on the controls you want to use.
-	(only accel and gyro supported here so far)
+	// (only accel and gyro supported here so far)
 
 
 	// * now in SC, check whether OSC messages arrive:
