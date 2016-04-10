@@ -35,12 +35,18 @@ OSCdef('/1/fader5', { |msg| msg.postln });
 OSCMKtlDevice.verbose = false;
 // maybe clear MKtls first
 MKtl.all.do(_.free).clear;
-
 // make our tosc
 t = MKtl(\tosca, "touchosc-simple1");
 
-// update the touchOSC send address to the one you see in OSCFunc.trace:
-t.device.updateSrcAddr("192.168.178.74", 54054);
+// trace to look what address the touchOSC app sends from:
+OSCFunc.trace;
+
+// set the address to the one you see in the trace:
+t.device.updateSrcAddr("192.168.178.65", 63008);
+// and turn off tracing.
+OSCFunc.trace(false);
+
+// now trace the MKtl itself
 t.trace;
 // and give it an action for all its elements
 t.elAt.action = { |el|
@@ -72,7 +78,7 @@ deviceType: \phoneApp,
 elementTypes: [\accelerometer, \fader, \button],
 status: (
 	linux: "unknown after refactor",
-	osx: "tested with SC, looks ok. 2016-03-21, adc. receiving from iphone not working.",
+	osx: "tested and working. 2016-04-10, adc.",
 	win: "unknown after refactor"
 ),
 

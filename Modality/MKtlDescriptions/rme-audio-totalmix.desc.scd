@@ -17,8 +17,11 @@ m.elAt(\invol).choose.value_(1.0.rand);
 (
 deviceName: "TotalMix",
 deviceType: \mixer,
-idInfo: "TotalMix",
 protocol: \osc,
+
+idInfo: "TotalMix",
+netAddrInfo: (srcPort: 9001, destPort: 7001, ipAddress: "localhost"),
+
 status: (
 	linux: "unknown",
 	osx: "unknown",
@@ -32,7 +35,6 @@ deviceInfo: (
 	// ],
 	longName: "RME Audio TotalMix"
 ),
-netAddrInfo: (srcPort: 9001, destPort: 7001, ipAddress: "localhost"),
 
 elementsDesc: (
 	elements: [

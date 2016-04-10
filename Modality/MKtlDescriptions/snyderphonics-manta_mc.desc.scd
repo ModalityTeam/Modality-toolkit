@@ -40,7 +40,7 @@ elementTypes: [\pad, \slider],
 deviceType: \manta,
 status: (
 	linux: "unknown",
-	osx: "tested and working. gui needs fixing. 2016-04-10, adc",
+	osx: "tested and working. gui needs fixes. 2016-04-10, adc",
 	win: "unknown"),
 
 idInfo: "manta",

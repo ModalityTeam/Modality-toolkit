@@ -100,7 +100,7 @@ deviceType: \minibee,
 elementTypes: [\accelerometer],
 status: (
 	linux: "tested (fake device only); 2016_03_20 by nescivi",
-	osx: "tested and working, subset of sensors only. no date",
+	osx: "unknown",
 	win: "unknown"),
 
 netAddrInfo: ( srcPort: nil, ipAddress: "127.0.0.1", recvPort: 57120 ),
