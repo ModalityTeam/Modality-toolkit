@@ -178,15 +178,36 @@ MAbstractElement {
 	}
 
 	// support for navigation inside ordered element hierarchy
-	// adc - this is really confusing. suggestion below
+	// adc - index, key, and MEGroup.indexOf is really confusing.
+	// MKtlElements now always have an index and a key,
+	// so we can always ask for the one we want:
+	// .index and .indices return integers,
+	// .key and .keys return dict keys,
+	// MKtlElementGroup:
+	// elemIndexOf == indexOf,  returns index of an element in group
+	// elemKeyOf returns key of an element in group
+
+	// adding posts to see how much use the method even gets
 	index {
-		^this.parent !? _.indexOf( this );
+		"// using %\n".postf(thisMethod);
+		// ^this.parent !? _.indexOf( this );
+		^this.indexInGroup
 	}
 
-	key { ^this.index }
+	key {
+		"// using %\n".postf(thisMethod);
+		// ^this.index
+		this.keyInGroup
+	}
 
 	indices {
+		"// using %\n".postf(thisMethod);
 		^this.parent !? { parent.indices ++ [ this.index ] };
+	}
+
+	keys {
+		"// using %\n".postf(thisMethod);
+		^this.parent !? { parent.keys ++ [ this.key ] };
 	}
 
 	// get index or key specifically
