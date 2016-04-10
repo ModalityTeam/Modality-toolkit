@@ -6,10 +6,12 @@ elementTypes: [\pad, \slider],
 deviceType: \manta,
 status: (
 	linux: "unknown",
-	osx: "tested, broken atm. 2016-03-15, lfsaw.de",
+	osx: "tested and working. 2016-04-10, adc",
 	win: "unknown"),
 
 idInfo: "manta",
+// srcPort is the port external source is listening to, and SC should send to;
+// recvPort is the port SC should listen to for messages from the external source.
 netAddrInfo: ( srcPort: 31417, ipAddress: "127.0.0.1", recvPort: 31416 ),
 
 specialMessages: (
@@ -18,6 +20,15 @@ specialMessages: (
 		[ "/manta/ledcontrol", "slider", 1 ],
 		[ "/manta/ledcontrol", "button", 1 ]
 ]),
+testCode: {
+	// start MantaOSC terminal program. this sends on port
+	"/Users/adc/scgit/libmanta/MantaOSC/build/MantaOSC".runInTerminal;
+
+	// make a manta mktl
+	m = MKtl(\mt, "*manta");
+	m.trace.gui;
+	m.elAt.action = { |el| [el.name, el.value.round(0.0001)].postln };
+},
 
 specs: (
 	mantaTouch: [ 0, 227 ].asSpec, // this seems to be the spec, looking at the github source code
