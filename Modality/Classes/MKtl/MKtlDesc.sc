@@ -140,12 +140,13 @@ MKtlDesc {
 	}
 
 	// info
-	*postStatus {
+	*postStatus { |showWorking = false|
 		var maxNameLen = 0, numOK = 0;
 		var descs = MKtlDesc.loadDescs;
+		var test = { |desc| desc.fullDesc.status.beginsWith("tested and working") };
 		descs.do { |desc|
 			maxNameLen = max(maxNameLen, desc.name.cs.size);
-			if (desc.fullDesc.status.beginsWith("tested and working")) {
+			if (test.value(desc)) {
 				numOK = numOK + 1
 			};
 		};
@@ -153,8 +154,14 @@ MKtlDesc {
 		"\n% - descs: % tested and working : %.\n\n"
 		.postf(thisMethod, descs.size, numOK);
 
-		descs.sort { |a, b| a.fullDesc.status < b.fullDesc.status; }
-		.do { |a| (a.name.cs.padRight(maxNameLen) + a.fullDesc.status).postln };
+		if (showWorking) { "All descs:\n" } { "Not fully working yet:\n" }.postln;
+
+		descs.sort { |a, b| a.fullDesc.status < b.fullDesc.status; };
+		descs.do { |desc|
+			if (showWorking or: { test.value(desc).not })  {
+				(desc.name.cs.padRight(maxNameLen) + desc.fullDesc.status).postln
+			};
+		};
 	}
 
 
