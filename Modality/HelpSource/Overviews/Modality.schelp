@@ -66,7 +66,7 @@ link::Tutorials/Connecting_external_MIDI_devices::
 
 link::Tutorials/Connecting_multiport_MIDI_devices::
 
-
+link::Tutorials/Connecting_OSC_devices::
 
 
 Find many tutorial files and examples of common use cases of MKtl here:
@@ -96,7 +96,11 @@ LIST::
 
 link::Tutorials/How_to_adapt_a_description_file:: - to be written
 
-link::Tutorials/How_to_create_a_description_file::
+link::Tutorials/How_to_create_a_description_file_for_MIDI::
+
+link::Tutorials/How_to_create_a_description_file_for_HID::
+
+link::Tutorials/How_to_create_a_description_file_for_OSC::
 ::
 
 
