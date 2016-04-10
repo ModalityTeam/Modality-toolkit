@@ -20,7 +20,7 @@ protocol: 'hid',
 deviceType: \joystick,
 status: (
 	linux: "unknown",
-	osx: "tested desc, looks good. 2016_04_08, adc",
+	osx: "tested desc, looks good. needs test with current icontrols V2.00. 2016_04_08, adc",
 	win: "unknown"),
 elementTypes: [\joyAxis],
 

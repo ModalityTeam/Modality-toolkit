@@ -33,10 +33,6 @@ deviceName: "Faderfox UC4",
 protocol: 'midi',
 deviceType: 'faderbox',
 elementTypes: [ \slider, \knob, \button, \pushbutton ],
-status: (
-	linux: "unknown",
-	osx: "tested and working. 2016-03-16, adc",
-	win: "unknown"),
 
 idInfo: "Faderfox UC4",
 

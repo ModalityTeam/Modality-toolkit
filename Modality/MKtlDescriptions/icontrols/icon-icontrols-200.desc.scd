@@ -37,7 +37,7 @@ deviceType: \faderbox,
 elementTypes: [\fader, \knob, \button],
 status: (
 	linux: "unknown",
-	osx: "tested and working, adc, 2016-05-05.",
+	osx: "tested desc, looks good. needs test with current icontrols V2.00. 2016_04_08, adc",
 	win: "unknown"),
 
 idInfo: (deviceName: "iCON iControl V2.00", srcPortIndex: 0, destPortIndex: 0),

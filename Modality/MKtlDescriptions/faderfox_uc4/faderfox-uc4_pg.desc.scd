@@ -27,6 +27,11 @@ knpg8 [\kn, \pbt][index]
 (
 parentDesc: "faderfox-uc4",
 
+status: (
+	linux: "unknown",
+	osx: "tested and working. 2016-04-10, adc",
+	win: "unknown"),
+
 elementsDesc: (
 	shared: ('midiChan': 0, ioType: \inout),
 
