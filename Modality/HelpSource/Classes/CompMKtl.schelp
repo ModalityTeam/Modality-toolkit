@@ -14,11 +14,11 @@ First code examples:
 code::
 // make some component MKtls, then combine them
 
+MKtl(\gpd, "*impact*").gui;  // a gamepad
+
 MKtl(\nk2a, "*nanokontrol2").gui;
 
 MKtl(\nk2b, "*nanokontrol2").gui;
-
-MKtl(\gpd, "*impact*").gui;  // a gamepad
 
 MKtl(\gyro, "gyrosc_ga").gui;  // phone app with gyro and accel
 
@@ -59,8 +59,8 @@ c = CompMKtl(\gpgy, [\gpd, \gyro]);
 c.elementGroup;
 c.elAt(1);
 c.elAt(0);
-
 c.elAt(\gyro, \accel, \x);
+
 
 // and make one with 3 devices
 d = CompMKtl(\ngg, [\nk2a, \gpd, \gyro]);
@@ -111,8 +111,6 @@ private:: initClass
 
 METHOD:: new
 make a new MKtl with a name, and the names of existing MKtls
-argument:: name
-argument:: mktlNames
 
 
 INSTANCEMETHODS::
