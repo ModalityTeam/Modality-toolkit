@@ -133,7 +133,16 @@ MKtlElementGroup : MKtlElement {
 
 	// array / dict manipulation support
 
-	at { |...args| ^this.deepAt2(*args) }
+	at { |keyOrIndex|
+		if ( keyOrIndex.size > 0 ) {
+			^keyOrIndex.collect { |item| this.at( item ) }
+		};
+		^dict[keyOrIndex] ?? {
+			if (keyOrIndex.isKindOf(Integer)) {
+				elements[ keyOrIndex ]
+			}
+		}
+	}
 
 	elAt { |...args| ^this.deepAt2(*args) }
 

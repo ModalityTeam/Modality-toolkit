@@ -402,11 +402,7 @@ MKtl { // abstract class
 		elementGroup.postElements;
 	}
 
-	// alias .at to elAt as well
-	at { |...args| ^this.elAt(*args) }
-
 	elementAt { |...args|
-		this.deprecated(thisMethod, Document.findMethod(\elAt));
 		^this.elAt(*args)
 	}
 
@@ -419,6 +415,10 @@ MKtl { // abstract class
 	elAt { |...args|
 		^elementGroup.deepAt2(*args)
 		?? { namedDict.deepAt2(*args) }
+	}
+
+	at { |index|
+		^elementGroup.at( index );
 	}
 
 	// this is intended to overwrite other pages
