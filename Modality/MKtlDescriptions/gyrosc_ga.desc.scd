@@ -77,18 +77,18 @@ elementsDesc: (
 			key: \accel,
 			shared: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' ),
 			elements: [
-				(key: \x),
-				(key: \y ),
-				(key: \z )
+				(key: \x, style: (row: 0, column: 3, showLabel: true) ),
+				(key: \y, style: (row: 0, column: 4, showLabel: true) ),
+				(key: \z, style: (row: 0, column: 5, showLabel: true) )
 			],
 		),
 		(
 			key: \gyro,
 			shared: (elementType: 'gyroAxis', ioType: \collectiveIn, \spec: 'gyroAxis' ),
 			elements: [
-				(key: \pitch),
-				(key: \roll),
-				(key: \yaw),
+				(key: \pitch, style: (row: 1, column: 3, showLabel: true)),
+				(key: \roll, style: (row: 1, column: 4, showLabel: true)),
+				(key: \yaw, style: (row: 1, column: 5, showLabel: true)),
 			]
 		),
 		// similar for comp, matrix, rrate, quat, grav, mag, gps
@@ -103,15 +103,24 @@ elementsDesc: (
 				spec: \hidBut
 			),
 			elements: [
-				( argTemplate: [ 1 ] ),
-				( argTemplate: [ 2 ] ),
-				( argTemplate: [ 3 ] ),
-				( argTemplate: [ 4 ], mode: \toggle ),
-				( argTemplate: [ 5 ], mode: \toggle ),
-				( argTemplate: [ 6 ], mode: \toggle ),
-				( argTemplate: [ 7 ] ),
-				( argTemplate: [ 8 ] ),
-				( argTemplate: [ 9 ] )
+				( argTemplate: [ 1 ],
+					style: (row: 0.5, column: 0, showLabel: true) ),
+				( argTemplate: [ 2 ],
+					style: (row: 1.5, column: 0, showLabel: true) ),
+				( argTemplate: [ 3 ],
+					style: (row: 2.5, column: 0, showLabel: true) ),
+				( argTemplate: [ 4 ], mode: \toggle,
+					style: (row: 0, column: 1, showLabel: true) ),
+				( argTemplate: [ 5 ], mode: \toggle,
+					style: (row: 1, column: 1, showLabel: true) ),
+				( argTemplate: [ 6 ], mode: \toggle,
+					style: (row: 2, column: 1, showLabel: true) ),
+				( argTemplate: [ 7 ],
+					style: (row: 0.5, column: 2, showLabel: true) ),
+				( argTemplate: [ 8 ],
+					style: (row: 1.5, column: 2, showLabel: true) ),
+				( argTemplate: [ 9 ],
+					style: (row: 2.5, column: 2, showLabel: true) )
 			]
 		)
 
