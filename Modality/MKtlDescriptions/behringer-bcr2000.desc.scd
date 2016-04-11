@@ -39,7 +39,7 @@ deviceInfo: (
 		"30 Buttons"
 	],
 	// notes: "",
-	longName: "Behringer BCF2000"
+	longName: "Behringer BCR2000"
 
 ),
 
