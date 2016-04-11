@@ -12,6 +12,10 @@ CompMKtl {
 		^super.newCopyArgs(name, mktlNames).init;
 	}
 
+	storeArgs { ^[name] }
+
+	printOn { |stream| this.storeOn(stream) }
+
 	init {
 		all.put(name, this);
 		mktlDict = ();

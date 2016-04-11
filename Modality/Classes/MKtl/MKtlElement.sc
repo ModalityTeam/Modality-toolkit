@@ -220,7 +220,7 @@ MAbstractElement {
 	}
 
 	// for printOn only, this will not remake it properly from code.
-	storeArgs { ^[name, type, this.index] }
+	storeArgs { ^[name, type] }
 
 	printOn { | stream | this.storeOn(stream) }
 
