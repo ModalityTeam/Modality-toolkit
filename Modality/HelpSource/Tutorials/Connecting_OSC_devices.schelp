@@ -211,6 +211,7 @@ m.gui;
 
 subsection:: Simulate sending OSC messages
 
+code::
 // now simulate sending values from an OSC device by network -
 // make the address the fake device is sending to - SC with special port
 ~receiverAddr = NetAddr(~desc1but.netAddrInfo.ipAddress, ~desc1but.netAddrInfo.recvPort);
@@ -227,6 +228,7 @@ subsection:: Simulate sending OSC messages
 thisProcess.recvOSCmessage(0, ~returnAddr, 6666, ['/button', 0]);
 // -> should post:
 MKtl('osc1but') osc bt > 0 | type: button
+::
 
 subsection:: Adapting to changing ports and addresses
 
@@ -246,7 +248,6 @@ m.device.oscFuncDictionary;
 ~addrTo1But.sendMsg('/button', 0);
 ~addrTo1But.sendMsg('/button', 1);
 ::
-m.device.recvPort;
 
 Similarly, we can update the ip number as well:
 code::
@@ -261,11 +262,14 @@ code::
 // external device now sends to port 7777
 m.device.updateRecvPort(7777);
 
+// send from NetAddr(10.0.0.1, 57120)
+m.device.updateSrcAddr("10.0.0.1", 57120);
+
 m.device.oscFuncDictionary;
 // this is ignored now:
-thisProcess.recvOSCmessage(0, NetAddr("127.0.0.1", 3333), 6666, ['/button', 1]);
+thisProcess.recvOSCmessage(0, NetAddr("10.0.0.1", 57120), 6666, ['/button', 1]);
 //and this is received:
-thisProcess.recvOSCmessage(0, NetAddr("127.0.0.1", 3333), 7777, ['/button', 1]);
+thisProcess.recvOSCmessage(0, NetAddr("10.0.0.1", 57120), 7777, ['/button', 1]);
 ::
 
 This hopefully covers most complications that may occur when using OSC devices.
