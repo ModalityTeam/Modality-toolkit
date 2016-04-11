@@ -26,7 +26,17 @@ testCode: {
 
 	// make a manta mktl
 	m = MKtl(\mt, "*manta");
-	m.trace.gui;
+	m.trace;
+
+	// not working? have a look at where data is coming from...
+	OSCFunc.trace(true);
+
+	// update accordingly
+	m.device.updateSrcAddr("127.0.0.1", 31417);
+	m.device.updateRecvPort(57120);
+
+	OSCFunc.trace(false);
+
 	m.elAt.action = { |el| [el.name, el.value.round(0.0001)].postln };
 },
 
