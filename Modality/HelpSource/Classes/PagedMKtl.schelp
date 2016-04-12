@@ -1,7 +1,7 @@
 TITLE:: PagedMKtl
 summary:: polyphonic control and paging for MKtls
 categories:: Undocumented classes
-related:: Classes/MKtl, Overviews/Modality
+related:: Overviews/Modality, Classes/MKtl
 
 
 DESCRIPTION::
@@ -28,9 +28,9 @@ MKtl('cyc', "korg-nanokontrol2");
 p = PagedMKtl(\nk2, [\ada, \bob, \cyc]);
 
 // now give each one a different action for the rew button
-MKtl('\ada').elementAt(\rew).action_({ "rew page ada".postln });
-MKtl('\bob').elementAt(\rew).action_({ "rew page bob".reverse.postln });
-MKtl('\cyc').elementAt(\rew).action_({ "rew page cyc".scramble.postln });
+MKtl('\ada').elAt(\tr, \rew).action_({ "rew page ada".postln });
+MKtl('\bob').elAt(\tr, \rew).action_({ "rew page bob".reverse.postln });
+MKtl('\cyc').elAt(\tr, \rew).action_({ "rew page cyc".scramble.postln });
 
 // now hit the rew button - all three are active!
 
@@ -66,7 +66,7 @@ g.gui; i.gui;
 g.elAt(\bt, \1).action = { "ONE!".postln };
 i.elAt(\bt, \1).action = { "ENO?".postln };
 
-// switch between the two
+// switch between the two by hand
 g.enable; i.disable;
 i.enable; g.disable;
 
@@ -76,12 +76,12 @@ MKtl('h').elAt.action = g.elAt.action;
 MKtl('h').elAt(\bt, \1).action = { "T W O".postln };
 p = PagedMKtl(\impact, ['g', 'h', 'i']);
 
-// activate one at a time
+// activate one at a time, add try using it after each one
 p.page(\g);
 p.page(\h);
 p.page(\i);
 
-// all 3 at the same time:
+// enable/disable all 3 at the same time:
 p.mktlDict.do(_.enable);
 // all off
 p.mktlDict.do(_.disable);

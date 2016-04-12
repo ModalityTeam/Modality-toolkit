@@ -1,10 +1,11 @@
 TITLE:: MKtlElementGroup
-summary:: A named Array of MKtlElements, MKtlElementDicts or MKtlElementGroups
+summary:: A group of MKtlElements or MKtlElementGroups
 categories:: Libraries>Modality
 related:: Overviews/Modality, Classes/MAbstractElement, Classes/MKtl
 
 DESCRIPTION::
-MKtlElementGroup is used in the hierarchical tree structure of link::Classes/MKtl#elements::. It can fire an action when any of the enclosed elements is touched. MKtlElementGroup can also be used to make custom groups of MKtlElements and other MKtlElementGroups. The elements are stored in a fixed order, and can be accessed via either a number or a key (code::Symbol::).
+MKtlElementGroup is used in the hierarchical tree structure of link::Classes/MKtl#elements::. It can do an action when any of the elements it contains is touched. MKtlElementGroup can also be used to make custom groups of MKtlElements and other MKtlElementGroups. The elements are stored in a fixed order, and can be accessed equally via either an index (a number) or a key (a symbol).
+See also link::Tutorials/Creating_Named_Groups:: and link::Tutorials/Creating_Custom_Elements_and_Groups::
 
 CLASSMETHODS::
 
@@ -41,10 +42,19 @@ g.elAt( 0, \play ); // returns the first group \tr, and the \play button.
 
 METHOD:: action
 a code::Function:: that is fired when any of the enclosed elements is touched. The first argument of this function is the code::MKtlElement:: that is touched. The arguments that follow are it's enclosing MKtlElementGroups up until code::this::.
+code::
+m.elementGroup.action = { |...args|
+	"group action: ".postln;
+	args.do { |el| $\t.post; el.postln };
+};
+m.elementsDict.choose.doAction;
+::
 
 METHOD:: do
-Iterate a function for all enclosed MKtlElements and MKtlGroups
-
+Iterate a function for its enclosed MKtlElements and MKtlGroups
+code::
+m.elementGroup.do { |el| el.postln };
+::
 METHOD:: asArray
 
 returns:: a nested code::Array:: structure of the enclosed elements. Any enclosed element that is an code::MKtlElementGroup:: will be converted into a normal code::Array::
@@ -66,11 +76,12 @@ returns:: an code::MKtlElementGroupGUI::
 
 Method:: value
 get and set the value of all elements in the group (nested if group is nested)
+code::
 m.gui;
 g.value;
 g.elAt(\tr).size; // 11 buttons in tr
 g.elAt(\tr).value = 11.collect { 2.rand }; // 11 buttons in tr
-
+::
 Method:: deviceValue
 get and set the deviceValue of all elements in the group
 
@@ -97,7 +108,7 @@ m.elAt( \bt ); // returns the MKtlElementGroup containing the buttons
 m.elAt( \bt, 0 ).flat; // creates and returns an Array with the first row of buttons
 
 // make a group of the upper row of buttons
-a = MKtlElementGroup( 'group', m.elementAt( \bt, 0 ).flat );
+a = MKtlElementGroup( 'group', m.elAt( \bt, 0 ).flat );
 
 // assign an action to be fired when any element in the group is touched
 // the first argument will be the touched MKtlElement, the second argument
