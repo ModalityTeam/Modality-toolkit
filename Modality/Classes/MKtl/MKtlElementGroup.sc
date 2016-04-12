@@ -76,17 +76,19 @@ MKtlElementGroup : MKtlElement {
 		} { elements.isKindOf( Array ) } {
 			elements = elements.collect({ |item, i|
 				var key;
-				if( item.isKindOf( Association ) ) {
+				case { item.isKindOf( Association ) } {
 					dict.put( item.key, item.value );
 					item.value;
-				} {
-					if (item.isKindOf(Dictionary)) {
-						// a dict with an entry for key:
-						key = item[\key];
-						key = (item.key ?? { (i+1).asSymbol });
-						//	dict.put( key, item );
-					};
+				}
+				{ item.isKindOf(Dictionary) } {
+					// a dict with an entry for key:
+					key = item[\key];
+					key = (item.key ?? { (i+1).asSymbol });
+					dict.put( key, item );
 					item;
+				} { item.isKindOf(MKtlElement) } {
+					dict.put(item.name, item);
+					item
 				};
 			});
 		};
