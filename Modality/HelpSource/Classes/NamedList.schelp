@@ -7,6 +7,8 @@ related:: Classes/Collection, Classes/List, Classes/Dictionary
 DESCRIPTION::
 Like a List, a NamedList has an array of items which can be accessed by index. Like a dictionary, its items can also be accessed by names. Items can be added and removed and replaced by name. It also supports pseudo-object style like a dict.
 
+Not used yet in Modality.
+
 Note::
 
 NamedList is designed primarily for semantic clarity, to make storage as text more clearly readable for humans, and to ensure the intended order of iteration.
@@ -82,11 +84,15 @@ n = NamedList.fromDict((a: 1, c: 5, b: 3), sortFunc: { |a, b| a > b });
 
 METHOD:: newUsing
 create new NamedList from array of values and names
-code:: NamedList.newUsing([1, 3, 5], [\a, \b, \c]); ::
+code::
+NamedList.newUsing([1, 3, 5], [\a, \b, \c]);
+::
 
 METHOD:: fromAssocs
 create new NamedList from array of associations:
-code:: n = NamedList.fromAssocs([\a -> 1, \b -> 3, \c -> 5]); ::
+code::
+n = NamedList.fromAssocs([\a -> 1, \b -> 3, \c -> 5]);
+::
 
 INSTANCEMETHODS::
 
@@ -122,6 +128,8 @@ n.at(\a);
 n.at([\b, \c]);	// multiple values
 n.at([\a, 2]); 	// can also mix indices and keys
 n.a;			// if n.know == true, can access by name as pseudo-method
+n.know = true;
+n.a;
 ::
 
 METHOD:: put
@@ -132,6 +140,7 @@ n.put(2, 33);
 n.put(\a, 111);
 n.put(\c, 333);
 n[\x] = 999;
+n.a = 123; // works if n.know is true
 ::
 
 Method:: add
@@ -151,71 +160,16 @@ n.removeAt([\b, \c]);
 n;
 ::
 
+Method:: addBefore, addAfter
+add relative to another named item
 
-EXAMPLES::
+Method:: addFirst, addLast
+add to top or end of list
 
-code::
-// make a new NamedNist
-n = NamedList([ \a, 4, \b, 5, \c, 6 ]);
+Method:: replace
+replace item at <name> with <item>.
 
-// or more efficiently, but less readable
-n = NamedList.newUsing([4, 5, 6], [\a, \b, \c]);
+Method:: do, collect
+like List.do, collect
 
-
-//  access list-like by index, get and set
-n[0];
-n.at(0);
-
-n.at([0, 2]); 	// multiple values by index
-n.at(4); 		// out of range = nil
-
-n[0] = 12;
-n.put(2, 13);
-n.put(4, 13);  	// out of range put fails, like list
-
-//  access dict-like by name, get and set
-n[\a];
-n.at(\a);
-n.at([\b, \c]);	// multiple values
-n.at([\a, 2]); 	// can also mix indices and keys
-
-n.put(\a, 123);
-n.put(\d, 7); 	// new names get added to the end
-n[\d] = 77;
-
-n.a;			// if n.know == true, can access by name as pseudo-method
-n.eee;
-n.eee = 555; 	// adding also works by pseudo-method
-
-// internals, can be used for faster lookup
-n.dict;
-n.array.postcs;
-n.names.postcs;
-n.dump
-n
-n.remove(555);
-n.remove(5);
-n.removeAt(\a);
-n.removeAt(\yo);
-
-[1, 2, 3].remove(4);
-n = NamedList([ \a, 4, \b, 5, \c, 6 ]);
-n.removeAt([\a, \b, \yo]);
-n.dump;
-
-n.know			// flag whether to use pseudomethods. true by default
-
-// conversions from other formats:
-n = NamedList.fromPairs([a: 1, b: 3, c: 5]);
-n = NamedList.fromAssocs([\a -> 1, \b -> 3, \c -> 5]);
-
-// alphabetical order by default
-n = NamedList.fromDict((a: 1, b: 3, c: 5));
-
-// or specify order:
-n = NamedList.fromDict((a: 1, b: 3, c: 5), [\c, \b, \a]);
-
-[a: 1, b: 3, c: 5].asNamedList;
-(a: 1, b: 3, c: 5).asNamedList;
-[\a -> 1, \b -> 3, \c -> 5].asNamedList;
-::
+private:: basicAdd 

@@ -7,12 +7,13 @@ related:: Overviews/Modality, Classes/MKtlDesc, Classes/MKtlDevice, Classes/MKtl
 DESCRIPTION::
 
 NOTE::
-For a guided tour, start reading at link::Overviews/Modality::.
+For a guided tour, start reading at link::Overviews/Modality::,
+for a tutorial on most of what MKtl does, see link::Tutorials/ModalityTutorial::.
 ::
 
-MKtl provides an easy to use interface for devices you can connect to your computer through MIDI, HID, OSC and eventually Serial and other protocols. Beyond that, you will be able to use it for GUI based controllers (yet to be implemented).
+MKtl provides an easy to use interface for devices you can connect to your computer through MIDI, HID, OSC and possibly later Serial and other protocols. Beyond that, you will be able to use it for GUI based controllers.
 
-MKtl searches for controllers connected to your machine, and gives you a list of available devices. Or, if you already know which controller you want to use, it will look through this list and returns the controller with that name. If it cannot find it, it will represent the physical controller with a GUI so you can simulate using it.
+code:: MKtl.find; :: searches for all controllers connected to your machine, and returns a list of available devices. Or, if you already know which controller you want to use, you can create it directly by name, and MKtl will find and return that controller. If it does not find it, e.g. because the physical controller is not there, it creates a virtual MKtl, which can be used to open a GUI that replaces the controller.
 
 For most devices, this requires that someone has made a description file for the device; if there is none, it is easy to make one following the instructions here:
 link::Tutorials/How_to_create_a_description_file::
@@ -24,7 +25,7 @@ CLASSMETHODS::
 PRIVATE:: initClass, prAddDefaultSpecs
 
 METHOD:: all
-all available MKtl controllers.
+all currently available MKtls.
 code::
 MKtl.all;
 ::
@@ -37,12 +38,19 @@ code::
 MKtl.find;
 ::
 
+METHOD:: protocols, deviceTypes, elementTypesUsed
+the currently supported protocols, deviceTypes, and elementTypes used in loaded description files.
+code::
+MKtl.protocols;
+MKtl.deviceTypes;
+MKtl.elementTypes;
+::
 
 METHOD:: new
 Accesses an existing instance of MKtl with the given name, or creates a new instance with that name. As with e.g. JITLib proxies like Ndef, Tdef, Pdef, or OSCdef, MIDIdef etc.
 
 code::
-// name and name of description file
+// nickname and name of description file
 k = MKtl('mynano2', "korg-nanokontrol2");
 
 // description file name can also contain wildcards:
@@ -63,13 +71,19 @@ argument:: name
 The name of the controller as you want to refer to it.
 
 argument:: lookupNameOrDesc
-The device description that you want to use. This can be the lookupName of a device that was found MKtl.find, the file name of a description file (without extension), an MKtlDesc object, or a dictionary from which a valid device description can be created.
+The device description or lookupName to be used. This can be:
+list::
+## the file name of a description file (without extension, possibly with wildcards)
+## the lookupName of a device that was found by MKtl.find (useful when no desc file exists),
+## an link::Classes/MKtlDesc:: object, or
+## a dictionary that is a well-formed MKtlDesc full description dict.
+::
 
 argument:: lookForNew
-Boolean flag whether or not to look for newly attached devices or newly added device descriptions. Default is false. It will always look for devices and device descriptions the first time you open an MKtl.
+a flag whether or not to look for newly attached devices or newly added device descriptions. Default is false. Will always look for devices and device descriptions the first time you open an MKtl.
 
 argument:: multiIndex
-if several devices of the identical make are used, multiIndex is the index within the array of identical devices. The order depends on USB plug order, but will be reproduceable if the same plugs are used.
+if several devices of identical make are present, multiIndex is the index within this array of identical devices. The order is alphabetical by deviceLookupName, and will be reproduceable if the same set of devices is connected.
 
 
 SUBSECTION:: Using specs in MKtl
@@ -93,6 +107,8 @@ MKtl.getSpec(\bipolar);
 
 
 SUBSECTION:: Description files and MKtlDesc
+
+These methods are all redirected to MKtlDesc.
 
 METHOD:: postLoadableDescs
 post the filenames of all loadable device descriptions.
@@ -121,6 +137,8 @@ MKtl.openDescFolder(0);
 MKtl.loadDescsMatching("*run-n-drive*");
 ::
 
+subsection:: miscellaneous
+
 METHOD:: postPossible
 post all possible (i.e. currently connected or known) devices for the protocol(s) given.
 MKtl.postPossible;
@@ -137,7 +155,7 @@ MKtl.makeLookupName(\osc, "127.0.0.1_57110", "sclang");
 INSTANCEMETHODS::
 
 METHOD:: name
-get and set the name of the MKtl.
+get and set the name (a Symbol) of the MKtl.
 This also changes the name under which the MKtl is stored in Mktl.all.
 code::
 MKtl(\test, "korg-nanokontrol2");
@@ -145,11 +163,8 @@ MKtl(\test).name_(\mynano2);
 MKtl.all; // \test is gone now, use \mynano2 instead
 ::
 
-argument:: inname
-a Symbol.
-
 METHOD:: gui
-Open a gui representation for the MKtl
+Open a gui representation for the MKtl, which shows the state of the MKtl's elements and can do all their actions.
 code::
 MKtl(\mynano2).gui;
 ::
@@ -163,19 +178,26 @@ MKtl(\mynano2).addSpec(\angle, [-pi, pi]);
 MKtl(\mynano2).getSpec(\angle);
 ::
 
+SUBSECTION:: MKtl description
+
 METHOD:: desc
 the MKtlDesc object that holds the device information from the description file.
 It is used to build the elements and groups of this MKtl.
 code::
 a = MKtl(\mynano2).desc;
-a.fullDesc;		// a dict built from the description file
+a.fullDesc;		// a dict loaded from the description file
 a.fullDesc.keys;	// the keys of the items in it
 a.protocol;			// e.g. the protocol used
 a.elementsDesc; 	// the dict of the elements described
-// a.postElements; 	// post element names and keys/indices in hierarchical order
+a.postElements; 	// post element names and keys/indices in hierarchical order
 ::
-For more, see MKtlDesc
+For more, see link::Classes/MKtlDesc::
 
+METHOD::rebuild
+Rebuild all elements of the MKtl based on the new description file given.
+warning:: This will also remove any actions defined for the MKtl elements and groups! Only use rebuild when you are sure that you want to replace the device description with a new one.::
+
+SUBSECTION:: Devices
 
 METHOD:: openDevice
 Open the hardware device for this MKtl if it was not opened already. It will look automatically for an appropriate device.
@@ -197,7 +219,12 @@ MKtl.all.removeAt(\funky);
 
 // now I found my run'n'drive and plugged it in:
 m.openDevice; // finds it automatically
+::
 
+METHOD:: hasDevice
+test whether MKtl has a device (a MIDI/HID/OSCMKtlDevice)
+code::
+m.hasDevice
 ::
 
 METHOD:: closeDevice
@@ -211,20 +238,15 @@ METHOD:: free
 Frees the MKtl again and forgets about its existence.
 If there was an device, this closes it.
 
-METHOD:: reset
+METHOD:: resetActions
 Reset all actions of the elements in this MKtl to nil.
-(should this include the group actions?)
+Note that this does not clear group actions.
 
 METHOD:: trace
-set flag whether incoming data are posted or not.
+set the flag whether incoming data are posted or not, default true.
 
 METHOD:: traceRunning
-Whether or not we are printing incoming data currently.
-
-
-METHOD::rebuild
-If new description given is valid, this will rebuild the elements from the new description.
-warning:: This will remove any actions you have attached, so only use this method when you are really sure that you want to replace the device description.::
+the flag whether incoming data are posted or not.
 
 METHOD::enable, disable
 enable and disable this MKtl, so one can make multiple MKtls (with different setups of elements) for the same physical device.
@@ -245,27 +267,25 @@ MKtl(\funky).elementGroup;
 METHOD:: namedDict
 A dict for adding elements or groups by name, so they can be accessed by name.
 For example, this can be used to reorganize the elements of a fader box into channels as on a mixer.
+See link::Tutorials/Creating_Named_Groups:: and link::Tutorials/Coding_for_Modal_Flexibility::
 
 
 METHOD:: elementNames
 An alphabetical list of all elementNames in the MKtl.
-m = MKtl(\manta, "*manta*");
+m = MKtl(\funky);
 m.elementNames;
 
 METHOD:: postElements
 A pretty printed hierarchical list of the names and indices of all elements
 code::
-m = MKtl(\manta, "*manta*");
 m.postElements;
 ::
 
 METHOD:: elementsDict
-all elements in one flat event so they can be accessed very fast.
+all elements in one flat event so they can be accessed very fast by name.
 code::
 m.elementsDict;
-m.dictAt('pad_13_con');
-
-
+m.dictAt('joy_r_hat');
 ::
 
 METHOD:: inputElements, outputElements
@@ -302,10 +322,10 @@ k = MKtl(\mynano2, "korg-nanokontrol2");
 k.elementGroup;
 k.elAt; // the same top group
 
-k.elAt(\tr); // the top level group of transport elements
+k.elAt(\tr); // the group of transport elements (in top group)
 k.elAt(\tr, \rew); // a button in the \tr group
 
-k.elAt(\not, \there); // nil for non-existent names
+k.elAt(\not, \there); // returns nil for non-existent names
 
 k.elAt(\sl); // the group of all sliders
 k.elAt(\sl, 0); // the first slider by index
@@ -316,8 +336,15 @@ k.elAt(\bt); // the group of all buttons
 k.elAt(\bt, \S); // the S buttons
 k.elAt(\bt, \M, \1); // the first  button
 
+// nil or \all are wildcards:
 k.elAt(\all, 0); // the first element in every group
 k.elAt(nil, 0); // the first element in every group
+
+// arrays of keys and indexes allowed
+k.elAt([\sl, \tr], 3); // the fourth slider and tr button
+
+k.elAt(\bt, [0, 2]); // the S and R buttons
+
 ::
 
 METHOD:: dictAt
@@ -335,20 +362,14 @@ code:: MKtl(\mynano2).at(0); ::
 
 subsection:: Getting and setting element values
 
-METHOD:: valueAt
-Access an element's value by the direct element key
+METHOD:: valueAt, deviceValueAt
+Access an element's value and deviceValue (in the deviceSpec range) by the direct element key
 
 code::
 m = MKtl( 'funky', "*run-n-drive" );
 m.valueAt( \compass );
 m.valueAt( \bt_2 );
-::
 
-METHOD:: deviceValueAt
-Access an element's deviceValue (in the deviceSpec range) by the element key
-
-code::
-m = MKtl( 'funky', "*run-n-drive" );
 m.deviceValueAt( \compass );
 m.deviceValueAt( \bt_2 );
 m.deviceValueAt( \joy_l_x );
@@ -364,7 +385,7 @@ get multiple key/value pairs for a list of element keys.
 this is intended for more robust storage of presets.
 code::
 m.getKeysValues; // gets all keys and values
-m.getKeysValues( [\compass, \wheel] ); // two elements
+m.getKeysValues( [\compass, \wheel] ); // get specific ones
 m.getKeysValues( [\joy_l_x, \joy_l_y, \joy_r_x, \joy_r_y, ] );
 m.getKeysValues( m.elAt(\bt).collect(_.name) ); // the bt group
 ::
@@ -416,6 +437,14 @@ Subsection:: Adding named groups and elements
 One can add named elements to an MKtl and access them by name.
 For a full discussion, see link::Tutorials/Creating_Named_Groups ::.
 
+Method::addNamed
+add an element or group to the mktl's namedDict,
+so they can be accessed by user given names.
+
+This can be used to name single elements by the same function name
+across different devices - e.g. call one button \play, another \stop,
+no matter what its name in the device description may be:
+
 code::
 k = MKtl(\nk2, "*trol2");
 // in a nanoKontrol2, put all transport buttons (in group \tr)
@@ -437,30 +466,6 @@ link::Tutorials/How_to_create_a_description_file_for_OSC::
 Subsection:: Methods for finding info on available devices in MKtlLookup.
 METHOD:: lookupInfo, lookupName, updateLookupInfo
 
-Method:: midiPortNameIndex
-needed for identifying multiple midi devices
-
-Subsection:: Various tests
-
-METHOD:: checkAllCtls, checkIdentical, hasDevice
-
+private:: checkAllCtls, checkIdentical
 private:: wrapCollElemsInGroups, specialMessageNames, sendSpecialMessage, prMatchedElements
 PRIVATE:: storeArgs, printOn, init, makeElements, makeCollectives, finishInit
-
-
-Method::addNamed
-add an element or group to the mktl's namedDict,
-so they can be accessed by user given names.
-
-This can be used to name single elements by the same function name
-across different devices - e.g. call one button \play, another \stop,
-no matter what its name in the device description may be:
-
-code::
-k = MKtl(\nk2, "*trol2");
-k.elAt(\tr, \play);
-k.addNamed(\play, k.elAt(\tr, \play));
-k.elAt(\play);
-k.elAt(\play) === k.elAt(\tr, \play);
-::
-

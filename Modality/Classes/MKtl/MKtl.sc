@@ -35,7 +35,6 @@ MKtl { // abstract class
 	var <collectivesDict; 	// has the collectives (combined elements and groups)
 	// from the device description
 
-	var <midiPortNameIndex;  // only needed when multiple midi ports
 	var <device; // interface to the connected device(s).
 
 	var <traceRunning = false;
@@ -44,7 +43,7 @@ MKtl { // abstract class
 
 	*protocols   { ^MKtlDevice.allProtocols }
 	*deviceTypes { ^MKtlDevice.deviceTypes }
-	*elementTypes { ^MKtlElement.elementTypes }
+	*elementTypesUsed { ^MKtlElement.elementTypesUsed }
 
 	*initClass {
 		Class.initClassTree(Spec);

@@ -16,9 +16,6 @@ In that case, the MKtl will be virtual, meaning it has no device, and you can st
 For most devices, this requires that someone has already made a description file for the device; if there is none, it is easy to make one following the instructions here:
 link::Tutorials/How_to_create_a_description_file::
 
-For most devices, this requires that someone has already made a description file for the device; if there is none, it is easy to make one following the instructions here:
-link::Tutorials/How_to_create_a_description_file::
-
 More general info can be found in link::Classes/MKtl:: and link::Classes/MKtlDevice:: .
 
 CLASSMETHODS::

@@ -141,12 +141,6 @@ MIDIMKtlDevice : MKtlDevice {
 		foundSources = foundInfo[\srcDevice];
 		foundDestinations = foundInfo[\destDevice];
 
-		if (parentMKtl.midiPortNameIndex.notNil) {
-			foundSources = foundSources[parentMKtl.midiPortNameIndex];
-			foundDestinations = foundDestinations
-				[parentMKtl.midiPortNameIndex];
-		};
-
 		newDev = super.basicNew(name, lookupInfo.idInfo, parentMKtl );
 		newDev.initMIDIMKtl(name, foundSources, foundDestinations );
 
