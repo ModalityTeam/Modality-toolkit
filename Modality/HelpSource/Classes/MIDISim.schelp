@@ -4,17 +4,16 @@ categories:: Modality
 related:: Classes/MIDIIn, Classes/MIDIClient, Classes/MKtl, Classes/MIDIMKtlDevice, Overviews/Modality
 
 DESCRIPTION::
-MIDISim is intended for testing controller setups without requiring the device to be there. It can create any kind of midi message,
-thus simplifying the development and automatic testing of complex
-controller setups.
-It uses an Event which is passed through so it can be used in Patterns as well.
+MIDISim is intended for testing controller setups without requiring the device to be there. It can create any kind of midi message, thus simplifying the development and automatic testing of complex controller setups. It uses an Event which is passed through so it can be used in Patterns as well.
 
 code::
 MIDISim.value((midiMsgType: \control, numbers: [0,0,64]));
-MIDISim.value((midiMsgType: \touch, numbers: [0, 80]));
+MIDISim.((midiMsgType: \touch, numbers: [0, 80]));
 ::
 
 CLASSMETHODS::
+
+private::
 
 METHOD:: value
 This method creates a MIDIIn event, based on the event given.
@@ -32,13 +31,14 @@ code::
 METHOD:: noteOn, noteOff
 METHOD:: control, polytouch
 METHOD:: touch, bend, program
+METHOD:: status
 These methods are redirected to MIDIIn methods.
 
 EXAMPLES::
 code::
 
 MIDISim.value((midiMsgType: \control, numbers: [0,0,64]));
-MIDISim.value((midiMsgType: \noSuchMsg, numbers: [0,0,64]));
+MIDISim.((midiMsgType: \noSuchMsg, numbers: [0,0,64]));
 
 Tdef(\spoof, {
 	loop {
@@ -52,16 +52,16 @@ Tdef(\spoof, {
 }).play;
 
 // test all the elements of a device
-//
+// device has to be phyiscally present!
 MKtl.find(\midi);
-m = MKtl('lpd80', "akai-lpd8");
-k =  MKtl('nnkn0', "korg-nanokontrol");
+m = MKtl('lpd', "akai-lpd8");
+m.elAt.action = { |el| el.postln };
 
 (
 Tdef(\spoof, {
 	// play five events for every element
 	m.elementsDict.do { |elem|
-		var desc = elem.elementDescription;
+		var desc = elem.elemDesc;
 		var midiChan = desc[\midiChan];
 		var midiNum = desc[\midiNum];
 		var msgType = desc[\midiMsgType];

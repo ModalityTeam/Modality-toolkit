@@ -2,8 +2,6 @@
 MIDISim {
 	classvar methodNames = #[ 'action', 'noteOn', 'noteOff', 'polytouch', 'control', 'program', 'touch', 'bend', 'sysex', 'sysexPacket', 'sysrt', 'smpte', 'invalid', 'noteOnList', 'noteOffList', 'polyList', 'controlList', 'programList', 'touchList', 'bendList' ];
 
-	classvar <player;
-
 	*value { |ev|
 		var list = ev[\numbers].collect (_.value);
 		var msgType = ev[\midiMsgType];
