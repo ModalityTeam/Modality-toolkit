@@ -6,7 +6,7 @@ HIDMKtlDevice : MKtlDevice {
 
 	var <srcID, <source;
 	var <enabled = true;
-	var <hidElemDict, <hidElemFuncDict, <hidElemLookupDict;
+	var <hidElemDict, <hidElemFuncDict;
 
 	*initClass {
 		Platform.case(\osx, {
@@ -147,7 +147,6 @@ HIDMKtlDevice : MKtlDevice {
 
 		hidElemDict = ();
 		hidElemFuncDict = ();
-		hidElemLookupDict = ();
 
 		if (mktl.desc.notNil) {
 			this.initElements;

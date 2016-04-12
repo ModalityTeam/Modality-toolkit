@@ -71,25 +71,35 @@ When using multiple identical devices, the index which one to use.
 INSTANCEMETHODS::
 
 private:: initHIDMKtl, initCollectives, cleanupElementsAndCollectives
+private:: checkAllCtls, sendSpecialMessage, hidElemDict, hidElemFuncDict
 
 METHOD:: enable, disable
 enable or disable this device.
+
 METHOD:: enabled
 a boolean whether device is currently enabled.
+
+METHOD:: enableElement, disableElement
+enable or disable an element in the device by name.
+
+METHOD:: source
+The link::Classes/HID:: device that is the source of this HIDMKtlDevice.
+
+METHOD:: srcID
+The uid of the source.
 
 METHOD:: closeDevice
 Close the device and clean up anything that it used.
 
 
 METHOD:: explore
-When opening a device that is not known yet by MKtl, you want to explore the device. See for a full tutorial: link::Tutorials/How_to_create_a_description_file::
+When opening a device that is not known yet by MKtl, you may want to explore the device. See the tutorial link::Tutorials/How_to_create_a_description_file::.
 
 ARGUMENT:: bool
-a Boolean to turn this on or off.
+a flag to turn exploring on or off.
 
 METHOD:: exploring
-Whether or not the device is currently being explored.
-
+the flag whether the device is currently being explored or not.
 
 METHOD:: createDescriptionFile
 Create and open a description file for this MKtlDevice, after exploring it.
@@ -98,22 +108,13 @@ METHOD:: initElements
 Initialize all elements and hook them up to the hardware elements.
 
 METHOD:: send
-Send the value of the element to the HID device; called if you set the value of an MKtlElement that is an output.
+Send the value of an element to this HID device; called if you set the value of an MKtlElement that is an output.
 
 argument:: key
 The key of the element.
 
 argument:: val
 The value to which it is set.
-
-
-
-METHOD:: srcID
-The uid of the source.
-
-
-METHOD:: source
-The link::Classes/HID:: device that is the source for this HIDMKtlDevice.
 
 returns:: an instance of link::Classes/HID::
 
