@@ -14,7 +14,7 @@ o.enable;			// turn it on
 o.show;				// show them on gui, no po
 o.watchStatus = true; s.boot;
 
-o.verbose = true;	// post messages
+o.trace;			// post messages
 // show status messages from server too
 o.watchStatus = false;
 o.list.size;
@@ -39,12 +39,11 @@ o.anaDict[\msgNamesByAddr];
 
 o.timeWindow = 25;
 
-o.verbose = false; 	// no posting
+o.trace(false); 	// no posting
 o.postInfo;			// and post current state
 
 o.disable;
 o.enable;
-o.list;
 
 
 
@@ -102,114 +101,86 @@ and an action to do when a new message comes in
 
 INSTANCEMETHODS::
 
+private:: init, nameOrAddr, addDefaultNicknames, analyse, addToList
+
 METHOD:: bufsize
 the maximum number of messages to store
+
 METHOD:: timeWindow
 the maximum time window in which to store messages
+
 METHOD:: listenFunc
 internal: the function with which OSCMon listen to osc traffic.
 
-METHOD:: enable, disable
-enable and disable listening
-
-METHOD:: verbose
-get or set a flag whether to post info on incoming traffic
-METHOD:: trace
-get and set flag whether to post tracing info, default flag is true
-
-METHOD:: anaDict
-the dict containing analyses
+METHOD:: list
+the list of recorded message entries
 
 METHOD:: addresses
 the addresses from which messages have been sent
 
-METHOD:: refreshAddrsAndNames
-refresh analysis of present addresses and names
+METHOD:: msgNames
+the msgNames monitored
 
-
-
-METHOD:: action
-an action to perform on all incoming messages
+METHOD:: anaDict
+a dict containing various analyses of the osc data
 
 METHOD:: postInfo
 post info on current recorded messages
 
-METHOD:: free
-free the resources of this oscmon
 
-METHOD:: w, u
-display window and userview
+METHOD:: enable, disable
+enable and disable listening
+METHOD:: enabled
+get flag whether oscmon is listening
 
-METHOD:: clearMsgNames
+METHOD:: verbose
+get or set flag whether to post info on incoming traffic
+METHOD:: trace
+set verbose flag, default flag is true
 
-METHOD:: refresh
+METHOD:: watchStatus
+get and set flag whether to record server status messages
+
+METHOD:: action
+a custom action to perform on all incoming messages
 
 METHOD:: addNickname
 argument:: name
 argument:: addr
-add a nickname for an address
+add a nickname for an incoming address
 
 METHOD:: removeNickname
 argument:: name
 remove a nickname
 
-METHOD:: removeAddr
+METHOD:: free
+free the resources of this oscmon
+
+METHOD:: refreshAddrsAndNames
+refresh analysis of present addresses and names
+
+METHOD:: addAddr, removeAddr
 argument:: addr
+add/remove an address to/from addrNames
 
-METHOD:: removeMsgName
-argument:: name
-
-METHOD:: addMsgName
-argument:: name
-
-METHOD:: nameOrAddr
-argument:: addr
-
-
-METHOD:: msgNames
-
-METHOD:: trackMsgs
-
-METHOD:: trackAddrs
-
-METHOD:: clearAddrs
-
-METHOD:: addDefaultNicknames
-
-
-METHOD:: analyse
-argument:: arr
-
-
-
+METHOD:: addMsgName, removeMsgName
+add or remove a messageName from msgNames
 
 METHOD:: postMessagesFrom
-argument:: index
+post all messages from address at index
 
-METHOD:: list
-
-METHOD:: addToList
-argument:: arr
-
-
-METHOD:: enabled
-
-METHOD:: init
-argument:: argAction
 
 METHOD:: show
-argument:: name
-argument:: bounds
+make a named display window for the oscmon
 
-METHOD:: addAddr
-argument:: addr
+METHOD:: w, u
+its display window and userview
+METHOD:: refresh
+refresh display
 
+METHOD:: clearMsgNames, clearAddrs
+clear msgNames or addresses
 
-METHOD:: watchStatus
+METHOD:: trackMsgs, trackAddrs
+get and set flags whether to track msgNames and addresses
 
-
-EXAMPLES::
-
-code::
-_some_example_code_
-::

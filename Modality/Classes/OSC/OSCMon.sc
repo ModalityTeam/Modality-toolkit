@@ -137,7 +137,7 @@ OSCMon {
 		"----\n%: % messages in last % seconds.\n".postf(
 			this, list.size, thisThread.seconds - list.last[0]);
 		"addresses: %\n".postf(list.collectAs(_[1], Set));
-		"msgNames: %\n----\n".postf(list.collectAs({ |msg| msg[2][0] }, Set));
+		"msgNames: %\n----\n".postf(list.collectAs({ |entry| entry[3][0] }, Set));
 	}
 
 	refresh {

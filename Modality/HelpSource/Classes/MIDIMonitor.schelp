@@ -1,7 +1,7 @@
 TITLE:: MIDIMonitor
 summary:: monitor MIDI input
 categories:: Utilities
-related:: Classes/MIDIIn, Classes/MIDIClient, Classes/MKtl
+related:: Overviews/Modality, Classes/MKtl, Classes/MIDIExplorer, Classes/MIDIIn, Classes/MIDIClient, Classes/OSCMon, Classes/HIDExplorer
 
 DESCRIPTION::
 MIDIMonitor records all midi input and sorts it into a msgTree. This can be used to determine which messages a given controller is actually sending, so one can automatically make descriptions of its elements.
@@ -45,11 +45,11 @@ METHOD:: chanNumMsgTypes, chanMsgTypes, allMsgTypes
 The midi message types MIDIMonitor can look for
 
 METHOD:: start
-Start monitoring
+start monitoring
 METHOD:: stop
-Stop monitoring
+stop monitoring
 METHOD:: monitoring
-ask flag whether monitoring is on
+flag whether monitoring is on
 
 METHOD:: verbose, trace
 turn verbose on and off
