@@ -314,12 +314,8 @@ MKtlLookup {
 
 	/*
 	how to remove a deviceInfo for a given device?
-	likely useful for OSC devices
+	maybe useful for OSC devices
 	*/
-
-	*addSerial {
-
-	}
 
 	*findByIDInfo { |inIdInfo|
 		var matches = true, matching, ordered;
