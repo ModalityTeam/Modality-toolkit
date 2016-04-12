@@ -5,6 +5,7 @@ related:: Overviews/Modality, Classes/MKtl, Classes/MKtlGUI
 
 DESCRIPTION::
 A view designed to show compass elements as they are on gamepads, gaming josticks etc.
+Not currently used, intended for combined element guis.
 
 First code examples:
 
@@ -17,43 +18,59 @@ z.value = 0;
 z.value = rrand(1, 8);
 z.valueAction = 0;
 z.valueAction = rrand(1, 8).postln;
+
+
+// use a Saitek Gamepad to show connecting to a CompassView
+MKtl.find;
+m = MKtl('imp', "saitek-impact-gamepad");
+
+// compass has 8 directions (N, NE .. NW) + a rest value.
+// this HID reports a bogus mapping of deviceValue to normalized value,
+// so direction north and rest position are the same with value:
+m.elAt(\compass).action = { |el|
+	"val: % devVal: %\n".postf(*[el.value, el.deviceValue, ].round(0.001))
+};
+
+// the deviceValues are better: rest: -1/7, N: 0, NE: 1/7, E: 2/7 .. NW: 7/7.
+// a conversion function for the directions:
+m.elAt(\compass).action = { |el|
+	var intVal = (el.deviceValue * 7 + 1).round.asInteger;
+	var dirs = [\rest, \N, \NE, \E, \SE, \S, \SW, \W, \NW];
+	[\compass, intVal, dirs[intVal], el.value.asFraction].postln;
+};
+
 ::
 
 CLASSMETHODS::
 
 METHOD:: new
-argument:: parent
-argument:: bounds
 
 
 INSTANCEMETHODS::
 
 METHOD:: nameView
+the name view
 
 METHOD:: skin
+the gui skin used
 
-METHOD:: myZone
+METHOD:: zone
+the compositeView in which the buttons live
 
 METHOD:: value
-argument:: val
+get and set the value of the compassview (0 - 8)
 
 METHOD:: buttons
+the buttons showing the directions
 
-METHOD:: init
-argument:: parent
-argument:: bounds
+private:: init
 
 METHOD:: action
+get and set the action to perform when compassview is activated
 
 METHOD:: valueAction
-argument:: val
+set value and do the action
 
 METHOD:: buttonReset
-argument:: val
+reset all buttons to 0
 
-
-EXAMPLES::
-
-code::
-_some_example_code_
-::
