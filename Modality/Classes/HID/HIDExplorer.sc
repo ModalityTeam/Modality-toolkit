@@ -80,11 +80,33 @@ HIDExplorer {
         var elements = dev.elements;
 
 		var inElements, outElements, featureElements;
+		var idInfo = dev.info.productName.asString
+		   ++ "_" ++ dev.info.vendorName.asString;
 
 		// header
-		str = str ++ "idInfo: \"" ++ dev.info.productName.asString ++ "_"
-			++ dev.info.vendorName.asString ++ "\",\n";
+		str = str ++ "idInfo: \"" ++ idInfo ++ "\",\n";
 		str = str ++ "protocol: 'hid',\n";
+		str = str ++ "deviceName: \"" ++ idInfo ++ "\",\n";
+		str = str ++
+"deviceType: '___',
+elementTypes: [],
+status: (
+	linux: \"unknown\",
+	osx: \"unknown\",
+	win: \"unknown\"
+),
+
+// hardwarePages: [1, 2, 3, 4],
+
+// deviceInfo: (
+// vendorURI: 'http://company.com/products/this',
+// manualURI: 'http://company.com/products/this/manual.pdf',
+	// description: ,
+	// features: [],
+	// notes: ,
+	// hasScribble: false
+// ),
+";
 		str = str ++ "elementsDesc: (\n";
 		str = str ++ "	elements: [\n";
 

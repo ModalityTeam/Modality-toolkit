@@ -143,8 +143,7 @@ elementsDesc: %
 
 	*start { |srcID|
 		if (resps.isNil) { this.init };
-
-		observedSrcID = srcID;
+		if (srcID.notNil) { observedSrcID = srcID };
 		this.prepareObserve;
 		resps.do(_.add);
 	}
@@ -180,7 +179,7 @@ elementsDesc: %
 		var string, device;
 		device = MIDIClient.sources.detect { |src| src.uid === observedSrcID };
 		if (device.notNil) { ^device.device };
-		string = "(No source with uid % present.\n Pick one from the posted list:)";
+		string = "( No source with uid % present.\n Pick one from this list: )\n";
 		string.postf(observedSrcID);
 		this.postSrcInfo;
 		^string
