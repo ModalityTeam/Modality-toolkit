@@ -4,11 +4,11 @@ categories:: Libraries>Modality, External Control
 related:: Classes/MKtl, Overviews/Modality
 
 DESCRIPTION::
-MKtlDevice is an abstract interface to access an external device, e.g. a MIDI device such as a MIDI fader box, an HID device such as a joystick, and so on.
+MKtlDevice is an abstract interface to access an external device, e.g. a MIDI device such as a MIDI fader box, an HID device such as a joystick, devices or apps sending OSC, and so on.
 
-Subclasses of MKtlDevice take care of accessing the device with the proper protocol.
+Subclasses of MKtlDevice take care of accessing the device by its protocol.
 
-This class is used mainly internally by link::Classes/MKtl::.
+This class is used mainly internally by link::Classes/MKtl::, so you will not see it often.
 
 
 CLASSMETHODS::
@@ -24,7 +24,7 @@ METHOD:: find
 Find out which devices are attached.
 
 ARGUMENT:: protocols
-Optional argument to specify the protocols to look for, e.g. code::[ 'hid' ]::. If not specified it will look for all protocols that are implemented as subclasses.
+Optional argument for which protocols to look for, e.g. code::[ 'hid' ]::. By default, it will look for MKtlDevice.allProtocols.
 ARGUMENT:: post
 flag to post results or not.
 
@@ -46,10 +46,10 @@ which protocols to look for.
 
 
 METHOD:: open
-Tries to open a device with the given name.
+Tries to open a device with the name (of the MKtl).
 
 ARGUMENT:: name
-The short name of the device that you want to open.
+The short name of the device to open.
 
 ARGUMENT:: parentMKtl
 The instance of MKtl that will refer to this device.
@@ -58,7 +58,6 @@ ARGUMENT:: multiIndex
 when multiple identical devices are present, the index of the device to open.
 
 returns:: either an instance of MKtlDevice, or nil if no device was found.
-
 
 METHOD:: subFor
 Return the subclass that matches the protocol given.

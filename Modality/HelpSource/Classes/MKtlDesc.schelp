@@ -12,6 +12,7 @@ Some examples:
 code::
 // see which devices are supported by Modality
 MKtlDesc.web;
+MKtlDesc.docURI.openOS;
 // (if yours is not there yet, donate one and we add its desc ;-)
 
 MKtlDesc.defaultFolder;			// where modality puts descriptions
@@ -28,13 +29,15 @@ MKtlDesc.allDescs;				// all currently loaded descs
 MKtlDesc('korg-nanokey2').dump;	// look at one
 MKtlDesc('korg-nanokey2').web;	// open its web documentation
 
-	// make one from a desc filename
+	// make an MKtlDesc from a desc filename
 x = MKtlDesc.fromFileName("korg-nanokontrol2");
 x.openFile;			// open its file
-x.fullDesc			// the dict that has contains the info
+x.fullDesc			// the dict that contains all the info
 x.fullDesc.keys;	// the description items:
 x.protocol;			// one of [\midi, \hid, \osc];
 x.idInfo.postcs;	// the device name under which it registers in the OS
+x.fullDesc[\testCode].cs; // optional testCode, wrapped into a function
+
 x.elementsDesc;		// the hierarchical description of the elements
 x.elAt(\sl);		// access single elements or groups by name or index
 x.elAt(\sl, 0);		// access elements by name or index
@@ -42,12 +45,13 @@ x.elementsDict.keys;
 
 x.postInfo;			// post overview info
 x.postInfo(postElements: true); // and the elements too
-	// not working properly
 x.postElements;
 
 // generate default test code for a desc name:
 MKtlDesc.defaultTestCode("korg-nanokontrol");
 MKtlDesc("*nanokontrol").testCode;
+// in its own document for quick testing
+MKtlDesc("*nanokontrol").openTestCode;
 
 // nanokontrol2 has specific testCode in the desc itself
 d = MKtlDesc("*nanokontrol2");
@@ -187,7 +191,7 @@ support methods for cache of filenames and idInfos
 
 Method:: platformSpecific
 Set code::false:: to disable platform specific replacements.
-This will break standard code::MKtl:: functionality and is only needed for rendering documentation.
+NOTE::This will break standard code::MKtl:: functionality and is only needed for rendering documentation!::
 
 private:: fillMidiDefaults, resolveForPlatform, isElementTestFunc, findParent, prMakeElemColls, makeElemKeys, defaultTestCode
 
@@ -251,7 +255,9 @@ private:: docURI, elementsDesc, elementsDesc = type, getMidiMsgTypes, inferName,
 Examples::
 
 code::
-// example for matching with a generic desc:
+// matching with generic desc files is done automatically now.
+
+// still, here an example for matching with a generic desc by hand:
 d = MKtlDesc.loadDescs("generic-mouse").first;
 m = MKtl.find(\hid);
 // we found an optical mouse with an hid ID, so make an MKtl,

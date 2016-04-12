@@ -4,13 +4,19 @@ categories:: Libraries>Modality, External Control
 related:: Overviews/Modality, Classes/MKtl, Classes/MKtlDevice, Classes/MKtlElement
 
 DESCRIPTION::
-HIDMKtlDevice provides an easy to use interface for HID devices you can connect to your computer. It can search for controllers connected to your computer, and gives you a list of available devices. Or, if you already know which controller you want to use, it will look through this list and returns you the controller with that name. If it cannot find it, it will replace it with a graphical representation of the controller to simulate it.
+HIDMKtlDevice provides an internal interface for HID devices you can connect to your computer.
+Note:: Usually, you never access the HIDMKtlDevice itself, as the MKtl that contains it (its parent MKtl) is the main code interface.::
+
+When looking for available devices with code::MKtl.find(\hid)::,
+HIDMKtlDevice searches for connected controllers, and returns a list of available devices.
+
+When creating an MKtl by desc name, e.g. code::MKtl(\x, "*drive");::, HIDMKtlDevice try to find the matching HID in the list of available devices and return it. If it does not find it, e.g. because the physical controller is not there, it will return nil.
+In that case, the MKtl will be virtual, meaning it has no device, and you can still work with it, because it can open a GUI that can replace the controller.
 
 For most devices, this requires that someone has already made a description file for the device; if there is none, it is easy to make one following the instructions here:
 link::Tutorials/How_to_create_a_description_file::
 
 More general info can be found in link::Classes/MKtl:: and link::Classes/MKtlDevice:: .
-
 
 
 CLASSMETHODS::
@@ -114,7 +120,4 @@ argument:: key
 The key of the element.
 
 argument:: val
-The value to which it is set.
-
-returns:: an instance of link::Classes/HID::
-
+The value to which the element is to be set.
