@@ -1,7 +1,7 @@
 TITLE:: SoftSet
 summary:: set process parameters politely.
 categories:: Utilities
-related:: Classes/RelSet, Classes/Ndef, Classes/Pdef, Classes/Tdef
+related:: Overviews/Modality, Classes/RelSet, Classes/Ndef, Classes/Pdef, Classes/Tdef
 
 DESCRIPTION::
 SoftSet is intended for letting a controller set a numerical parameter of an object politely. The common problem is that when a controller is newly assigned to a process parameter, the physical position can differ widely from the current param value in the process/object, which would create undesirable large parameter jumps when moving the controller.

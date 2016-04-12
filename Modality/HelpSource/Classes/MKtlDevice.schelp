@@ -1,7 +1,7 @@
 TITLE:: MKtlDevice
 summary:: A class to provide a common interface for accessing external controllers
 categories:: Libraries>Modality, External Control
-related:: Classes/MKtl, Overviews/Modality
+related:: Overviews/Modality, Classes/MKtl
 
 DESCRIPTION::
 MKtlDevice is an abstract interface to access an external device, e.g. a MIDI device such as a MIDI fader box, an HID device such as a joystick, devices or apps sending OSC, and so on.

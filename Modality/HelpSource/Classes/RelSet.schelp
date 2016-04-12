@@ -1,7 +1,7 @@
 TITLE:: RelSet
 summary:: set an objects's param relatively
 categories:: Utilities
-related:: Classes/SoftSet, Classes/Tdef, Classes/Pdef
+related:: Overviews/Modality, Classes/SoftSet, Classes/Tdef, Classes/Pdef
 
 DESCRIPTION::
 RelSet is intended for encoder-style controllers, such as infinite MIDI knobs that only send relative values. RelSet can move a single param of an object by a normalized relative amount.

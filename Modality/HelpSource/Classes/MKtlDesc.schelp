@@ -1,7 +1,7 @@
 TITLE:: MKtlDesc
 summary:: handling descriptions of interface devices in Modality
-categories:: Overviews/Modality
-related:: Classes/MKtl, Classes/MKtlElement, Classes/MKtlElementGroup
+categories:: Modality
+related:: Overviews/Modality, Classes/MKtl, Classes/MKtlElement, Classes/MKtlElementGroup
 
 DESCRIPTION::
 

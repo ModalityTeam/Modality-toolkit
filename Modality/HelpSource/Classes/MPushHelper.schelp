@@ -1,7 +1,7 @@
 TITLE::MPushHelper
 SUMMARY::Helper methods to interface with the Ableton Push
 CATEGORIES::Libraries/Modality
-RELATED::Classes/MKtl
+RELATED:: Overviews/Modality, Classes/MKtl
 
 DESCRIPTION::
 Providing help for accessing/communicating with an Ableton Push. Currently implements an interface to conveniently set colors.

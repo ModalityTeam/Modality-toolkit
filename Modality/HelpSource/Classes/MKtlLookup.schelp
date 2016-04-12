@@ -1,7 +1,7 @@
 TITLE:: MKtlLookup
 summary:: unify lookup for MKtl devices
 categories:: Libraries/Modality
-related:: Classes/MKtl,  Classes/MKtlDesc, Classes/MKtlDevice
+related:: Overviews/Modality, Classes/MKtl,  Classes/MKtlDesc, Classes/MKtlDevice
 
 DESCRIPTION::
 MKtlLookup provides a single dictionary with unique lookup names for all hardware/network devices found or declared, so they can be used with MKtls. MKtlLookup works in the background when doing code::MKtl.find;::, so you will rarely encounter it, except when you debug device finding mechanisms.

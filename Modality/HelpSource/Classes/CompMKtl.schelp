@@ -1,7 +1,7 @@
 TITLE:: CompMKtl
 summary:: create composite MKtls
 categories:: Modality
-related:: Classes/MKtl, Overviews/Modality
+related:: Overviews/Modality, Classes/MKtl
 
 DESCRIPTION::
 CompMKtl allows combining MKtls into a single MKtl which contains the elements of all these MKtls. For playing interfaces consisting of technically separate devices, it may semantically make sense to merge them into a single MKtl, so one

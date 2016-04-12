@@ -1,7 +1,7 @@
 TITLE:: OSCMon
 summary:: A Monitor for OSC traffic
 categories:: Modality, OSC
-related:: Classes/OSCFunc, Classes/OSCdef
+related:: Overviews/Modality, Classes/MKtl, Classes/OSCFunc, Classes/OSCdef
 
 DESCRIPTION::
 OSCMon monitors captures incoming OSC messages, keeping recent ones around for analyis and display. It can show the  message sizes, relative arrival times for multiple sources.

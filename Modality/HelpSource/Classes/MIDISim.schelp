@@ -1,7 +1,7 @@
 TITLE:: MIDISim
 summary:: a class to simulate input from MIDI controllers
 categories:: Modality
-related:: Overviews/Modality, Classes/MIDIIn, Classes/MIDIClient, Classes/MKtl, Classes/MIDIMKtlDevice
+related:: Overviews/Modality, Classes/MKtl, Classes/MIDIMKtlDevice, Classes/MIDIIn, Classes/MIDIClient, 
 
 DESCRIPTION::
 MIDISim is intended for testing controller setups without requiring the device to be there. It can create any kind of midi message, thus simplifying the development and automatic testing of complex controller setups. It uses an Event which is passed through so it can be used in Patterns as well.

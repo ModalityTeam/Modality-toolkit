@@ -1,10 +1,10 @@
 TITLE:: HIDExplorer
 summary:: explore an HID device for use with the Modality toolkit
 categories:: Libraries>Modality
-related:: Overviews/Modality, Reference/MKtl_description_files, Classes/MIDIExplorer
+related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Classes/MIDIExplorer
 
 DESCRIPTION::
-This helper class helps you to create a description file for an HID device.
+This class helps you to create a description file for an HID device.
 
 code::
 // open an HID device

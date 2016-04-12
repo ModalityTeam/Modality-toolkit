@@ -1,7 +1,7 @@
 TITLE:: MChanVoicer
 summary:: a monophonic voicer for midi channel polyphony
 categories:: Libraries>Modality
-related:: Classes/MKtl, Overviews/Modality
+related:: Overviews/Modality, Classes/MKtl
 
 DESCRIPTION::
 

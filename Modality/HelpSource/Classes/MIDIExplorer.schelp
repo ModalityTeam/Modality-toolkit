@@ -1,7 +1,7 @@
 TITLE:: MIDIExplorer
 summary:: Explore a MIDI device
 categories:: Libraries>Modality
-related::  Overviews/Modality, Reference/MKtl_description_files
+related::  Overviews/Modality, Classes/MKtl, Classes/MIDIMKtlDevice, Reference/MKtl_description_files
 
 DESCRIPTION::
 The functionality of link::Classes/MKtl:: relies on descriptions of the used devices. For some Controllers, and while many descriptions are already available, your device may not yet be among them.
