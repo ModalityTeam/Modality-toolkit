@@ -1,10 +1,10 @@
 TITLE:: HIDExplorer
-summary:: Helper class to explore an HID device for the Modality toolkit
+summary:: explore an HID device for use with the Modality toolkit
 categories:: Libraries>Modality
 related:: Overviews/Modality, Reference/MKtl_description_files, Classes/MIDIExplorer
 
 DESCRIPTION::
-This helper class helps you to create an HID description file.
+This helper class helps you to create a description file for an HID device.
 
 code::
 // open an HID device
@@ -22,21 +22,27 @@ MKtl( 'x' ).device.openDoc;
 ::
 
 
-The file will have lines like this:
+The file will have a dictionary that can be saved as a description file.
+It contains a device idInfo, the protocol (here, \hid), and the elements
+in a flat array consisting of lines like this:
 
 code::
 // --------- input elements ----------
-'<element name b1>': ('hidUsage': 1, 'hidUsagePage': 9, 'type': '<type Button>', 'ioType': 'in' ),
+'<_b1_>': ('hidUsage': 1, 'hidUsagePage': 9, 'type': '<type Button>', 'ioType': 'in' ),
 ::
 
-Here you give a proper name to: code::'<element name b1>':: to e.g. code::'b1'::, based on the number that is written on the button - this is the name that will be used to refer to the element.
+Here you give a proper name to: code::'_b1_':: to e.g. code::'bt1'::, based on the number that is written on the button - this is the name that will be used to refer to the element.
 
-Then you also need to edit the type: code::'<type Button>':: to code::'button'::, and similar for other element types - see other HID device files for examples.
+Then you also need to edit the type: code::'<type Button>':: to code::'button'::, and similar for other element types - see other HID device desc files for examples.
 
-The other parts on the lines you should not change.
+Note that often elements can be grouped in meaningful order, e.g. gamepads have 12 or so number buttons, which can be put into one array with shared properties - see e.g.
+code::
+MKtlDesc("*drive").openFile;
+::
+
+The other items in each line are lookup info for the MKtl, so you should not change them.
 
 Check link::Reference/MKtl_description_files:: for the format of the description files.
-
 
 
 CLASSMETHODS::

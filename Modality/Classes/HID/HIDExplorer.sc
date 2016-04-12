@@ -119,7 +119,7 @@ HIDExplorer {
 		};
 
 		uniques.sortedKeysValuesDo { |key, elem|
-			var specName = specMap[elem.pageName.asSymbol.postcs]
+			var specName = specMap[elem.pageName.asSymbol]
 			?? { "_%_".format(elem.usageName) };
 			str = str + "\n\t\t( key: '_%_', 'hidUsage': %, 'hidUsagePage': %, "
 			"'elementType': '%', 'ioType': '%', 'spec': '%' ),"
@@ -127,7 +127,7 @@ HIDExplorer {
 				ioType, specName );
 		};
 		duplicates.sortedKeysValuesDo { |key, elem|
-			var specName = specMap[elem.pageName.asSymbol.postcs]
+			var specName = specMap[elem.pageName.asSymbol]
 			?? { "_%_".format(elem.usageName) };
 			str = str + "\n\t\t( key: '_%_%_', 'hidElementID': %, "
 			"'elementType': '%', 'ioType': '%', 'spec': '%' ),"
