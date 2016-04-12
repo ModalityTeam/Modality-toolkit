@@ -4,7 +4,11 @@ categories:: Libraries>Modality, External Control
 related:: Overviews/Modality, Classes/MKtl, Classes/MKtlDevice, Classes/MKtlElement
 
 DESCRIPTION::
-OSCMKtlDevice provides an easy to use interface for OSC devices or interfaces that send data to your computer.
+OSCMKtlDevice provides an internal interface for OSC devices, interfaces or programs that send data to your computer via OSC.
+
+Note:: Usually, you never access the OSCMKtlDevice itself, as the MKtl that contains it (its parent MKtl) is the main code interface.::
+
+When creating an MKtl by desc name, e.g. code::MKtl(\x, "*drive");::, a new OSCMKtlDevice  using that description is created. Because actual network ports and addresses may differ from the description file, some adapting may be needed, see link::Tutorials/Connecting_OSC_devices::
 
 For most devices or interfaces, this requires that someone has already made a description file for the device; if there is none, it is easy to make one following the instructions here:
 link::Tutorials/How_to_create_a_description_file:: and here: link::Tutorials/How_to_create_a_description_file_for_OSC::
