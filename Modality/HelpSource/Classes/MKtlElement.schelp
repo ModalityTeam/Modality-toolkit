@@ -1,11 +1,13 @@
 CLASS:: MKtlElement
 summary:: An element of an MKtl.
 categories:: Libraries>Modality
-related:: Overviews/Modality, Classes/MAbstractElement, Classes/MKtl
+related:: Overviews/Modality, Classes/MKtl, Classes/MAbstractElement
 
 DESCRIPTION::
-A named element within an link::Classes/MKtl::, which can typically represent a slider, a button, a joystick axis etc etc. It has a description with a deviceSpec (e.g. \midiNum for a midi faderbox slider), and a type (e.g. \slider). It also has a deviceValue (in the deviceSpec range), and a value (in range 0.0 - 1.0).
+A named element within an link::Classes/MKtl::, which typically represents a slider, a button, a joystick axis etc etc. It has a description with a deviceSpec (e.g. \midiNum for a midi faderbox slider), and a type (e.g. \slider). It also has a deviceValue (in the deviceSpec range), and a value (in range 0.0 - 1.0).
 It is mostly created automatically when an link::Classes/MKtl:: is made.
+
+See also link::Tutorials/Creating_Custom_Elements_and_Groups::.
 
 CLASSMETHODS::
 
@@ -16,6 +18,7 @@ MKtlElement.types;
 // to update after adding more desc files:
 MKtlDesc.loadDescs;
 MKtlDesc.elementTypesUsed;
+
 ::
 private:: initClass
 
@@ -27,12 +30,12 @@ x.value = 0.42;
 x.value
 x.deviceValue
 ::
-The source arg is usually an MKtl
+The source arg is usually an MKtl.
 
 INSTANCEMETHODS::
 
 METHOD:: deviceSpec
-The spec that maps between the device's numerical value and the the unipolar range in the MKtlElement.
+The spec that maps between the numerical value range the device sends and/or receives, and the the unipolar range in the MKtlElement.
 
 private:: init, setSpecFromDesc, updateDescription
 
@@ -176,7 +179,7 @@ k.value_(0.5);
 k.value;
 ::
 
-Classic knobs rotating demo for B:
+Classic knobs rotating demo for BCF:
 
 code::
 (
@@ -194,7 +197,7 @@ fork {
 }
 )
 
-// Lots of tests to show how MKtl work.
+// Various tests to show how MKtl works.
 
 // Make one by hand:
 x = MKtlElement(\x, (spec: [-100, 100], type: \joyX, ioType: \in));
@@ -221,66 +224,4 @@ x.deviceSpec_([5, 105] * 2);
 
 x.value_(0.55).value;
 x.deviceValue
-
-
-
-/// Here is an example for creating a derived MKtlElement:
-// this converts values from x and y controls to a polar / angle value.
-
-// this covers github/modality issue #72
-// - Adding custom filter elements to an existing MKtlElement
-
-// make elements for x and y dimensions
-
-x = MKtlElement(\x, (spec: [-100, 100], type: \joyX, ioType: \in));
-x.action_(MFunc());  // use an MFunc for convenience and flexibility
-		// add posting to MFunc
-x.action.add(\post, { |el| [el.name, el.value].postln });
-
-x.value_(0.5);
-x.valueAction_(0.6);
-
-// same for y dimension
-y = MKtlElement(\y, (spec: [-100, 100], type: \joyY, ioType: \in));
-y.action_(MFunc());
-y.action.add(\post, { |el| [el.name, el.value].postln });
-
-// make a Slider2D to set x and y
-Slider2D(nil, Rect(0,0,200,200)).action_({ |sl2d|
-    x.valueAction_(sl2d.x); y.valueAction_(sl2d.y);
-}).front;
-
-// make a derived element, which converts x and y to polar angle
-z = MKtlElement(\polar, (spec: [-pi, pi], type: \xyPolar, ioType: 'filter'));
-
-// x and y trigger z.action
-[x, y].do {|el| el.action.add(\toPolar, { z.doAction }) };
-[x, y].do { |el| el.action.disable(\post) };
-
-// now define z.action:
-z.action = MFunc();
-// first add a function to get and and y, and calc its value
-z.action.add(\calcAngle, { |polar|
-    var xy = [x.deviceValue, y.deviceValue];
-    var angle = atan2(x.deviceValue, y.deviceValue);
-    // [xy, angle].round(0.001).postln;
-    polar.deviceValue_(angle);
-});
-
-// then one to do something with it, e.g. post it
-// angles: up is 0 deg, right is 0.5pi, down is +-pi, left is -0.5pi
-
-z.action.add(\postAtan2, { |polar|
-    "polar atan2 value: % \n".postf(polar.deviceValue);
-});
-
-// test pattern support with polar
-// - move 2dslider while pattern plays
-// this is normalized value -
-a = Pbind(\polar, z).trace.play;
-a.stop;
-
-// get the angle value from z
-a = Pbind(\angle, Pfunc({ z.deviceValue })).trace.play;
-a.stop;
 ::

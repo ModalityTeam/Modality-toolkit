@@ -4,14 +4,16 @@ categories:: Libraries>Modality, Tutorials
 related:: Overviews/Modality, Classes/MKtl, Classes/MKtlElement, Classes/MKtlElementGroup, Reference/MKtl_description_files
 
 section:: Background
-MKtl objects contain a hierarchical organisation of their interaction elements in MKtl.elementsGroup. This group contains and defines every element once, and one can access every element directly by its element key, or by its hierarchical address. At times multiple ways of grouping and naming these elements make sense, and MKtl supports multiple such orders.
+MKtl objects contain a hierarchical organisation of their interaction elements in MKtl.elementsGroup. This group contains and defines every element once, and one can access every element directly by its element key, or by its hierarchical address.
 
-The examples below show that for two simple cases.
+Sometimes derived elements are useful, and one can make such elements, but them in additional groups within the MKtl.
 
-section:: Examples
+subsection:: Example - convert x, y coordinates to point and polar
+
 code::
 // make a gamepad controller
 MKtl('x', "saitek-impact-gamepad");
+MKtl('x').gui;
 
 // add a group for left joy axes that has bipolar point coords
 MKtl('x').addNamed(\pointL,
@@ -21,11 +23,12 @@ MKtl('x').addNamed(\pointL,
 	])
 );
 // test access
-MKtl('x').elAt(\pointL, 0).value;
-MKtl('x').elAt(\pointL, \x); // by name not working - why?
+MKtl('x').elAt(\pointL).dict;
+MKtl('x').elAt(\pointL, 0);
+MKtl('x').elAt(\pointL, \x);
 MKtl('x').elAt(\pointL, 0).deviceValue;
 
-// set actions to forward the value to \pointL
+// set actions to forward the value from lx and ly to \pointL
 MKtl('x').elAt(\joy, \l, \x).action_({ |el|
 	MKtl('x').elAt(\pointL, 0).valueAction_(el.value) });
 MKtl('x').elAt(\joy, \l, \y).action_({ |el|
@@ -36,7 +39,7 @@ MKtl('x').elAt(\joy, \l, \x).valueAction_(1.0.rand.round(0.01).postln);
 MKtl('x').elAt(\pointL, 0).value;     // unipolar range
 MKtl('x').elAt(\pointL, 0).deviceValue; // bipolar
 
-// add group for polar version of point
+// add another group for polar version of point
 MKtl('x').addNamed(\polarL,
 	MKtlElementGroup(\polarL, MKtl('x'), [
 		MKtlElement(\ang, (spec: [-pi, pi], type: \polAng)),
@@ -45,15 +48,19 @@ MKtl('x').addNamed(\polarL,
 );
 // test access
 MKtl('x').elAt(\polarL, 0);
-MKtl('x').elAt(\polarL, \ang); // by name does not work yet!
+MKtl('x').elAt(\polarL, \ang);
 MKtl('x').elAt(\pointL, 0).value;
 MKtl('x').elAt(\polarL, 0).value;
 
 // action that sets polar value when pointA gets set, and post after setting
 MKtl('x').elAt(\pointL).action_({ |el, grp|
 	var polar = grp.deviceValue.asPoint.asPolar;
+	"point: %\n".postf(MKtl('x').elAt(\pointL).deviceValue.round(0.001));
 	MKtl('x').elAt(\polarL).deviceValueAction_([polar.rho, polar.theta]);
-	MKtl('x').elAt(\polarL).deviceValue.postln;
+});
+
+MKtl('x').elAt(\polarL).action_({ |el, grp|
+	"polar: %\n".postf(MKtl('x').elAt(\polarL).deviceValue.round(0.001));
 });
 
 // test setting x and y in unipolar to bipolar to magnitude/angle
