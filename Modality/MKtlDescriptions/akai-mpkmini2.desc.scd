@@ -44,7 +44,7 @@ elementsDesc: (
 		// ------ pad -------------
 		(
 			key: \pad,
-			shared: (\midiMsgType: \noteOnOff, \midiChan: 9, \spec: \midiCC),
+			shared: (\midiMsgType: \noteOnOff, \midiChan: 9, \spec: \midiCC, \elementType: \pad),
 			elements: ((36..38)++(40)++(42..53)++(55)++(57)++(59..75)++(82)).collect { |i|
 				(key: (i).asSymbol, \midiNum: i)
 			}

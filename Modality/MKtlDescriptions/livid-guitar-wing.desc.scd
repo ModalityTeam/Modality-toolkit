@@ -43,7 +43,7 @@ specs: (midiBut64: [0, 64, \lin, 64]),
 	elements: [
 		(
 			key: \fader,
-			shared: (type: \touchFader, spec: \midiCC),
+			shared: (elementType: \slider, spec: \midiCC),
 			elements: [
 				(key: \bot,
 					shared: (midiNum: 3),
@@ -82,7 +82,7 @@ specs: (midiBut64: [0, 64, \lin, 64]),
 		),
 		// noteOn 64 noteOff 0, toggle
 		MKtlDesc.notePair(\tipPad, 4,
-			( type: \pad, mode: \toggle, \spec: \midiBut64,
+			( elementType: \pad, mode: \toggle, \spec: \midiBut64,
 				style: (row: 0, column: 0)
 			)
 		),
@@ -128,7 +128,7 @@ specs: (midiBut64: [0, 64, \lin, 64]),
 		),
 		(
 			key: \sw,
-			shared: (type: \pad, spec: \midiBut64),
+			shared: (elementType: \pad, spec: \midiBut64),
 			elements: [
 				MKtlDesc.notePair( \triDn,  40, (style: (row: 0.5, column: 3))),
 				MKtlDesc.notePair( \triUp,  41, (style: (row: 1.5, column: 3))),
@@ -141,7 +141,7 @@ specs: (midiBut64: [0, 64, \lin, 64]),
 		),
 		(
 			key: \cutsw,
-			shared: (type: \pad, spec: \midiBut64),
+			shared: (elementType: \pad, spec: \midiBut64),
 			elements: [
 				MKtlDesc.notePair( \1, 46, (style: (row: 1, column: 0))),
 				MKtlDesc.notePair( \2, 47, (style: (row: 2, column: 0.4))),
@@ -151,7 +151,7 @@ specs: (midiBut64: [0, 64, \lin, 64]),
 		),
 		(
 			key: \accel,
-			shared: (type: \accelAxis, spec: \midiCC, midiMsgType: \control),
+			shared: (elementType: \accelAxis, spec: \midiCC, midiMsgType: \control),
 			elements: [
 				(key: \x, midiNum: 5, style: (type: \slider, height: 2)),
 				(key: \y, midiNum: 6, style: (type: \slider, height: 2)),

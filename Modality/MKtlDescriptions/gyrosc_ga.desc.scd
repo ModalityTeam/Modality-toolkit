@@ -98,7 +98,7 @@ elementsDesc: (
 			key: 'bt',
 			shared: (
 				oscPath: '/gyrosc/button',
-				type: 'button',
+				elementType: 'button',
 				ioType: \in,
 				spec: \hidBut
 			),

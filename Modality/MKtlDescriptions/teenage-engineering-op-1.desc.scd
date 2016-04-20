@@ -62,7 +62,7 @@ elementsDesc: (
 			elements: [
 				(
 					key: \turn,
-					shared: (\midiMsgType: \cc, \type: \knob, \midiChan: 0,
+					shared: (\midiMsgType: \cc, \elementType: \knob, \midiChan: 0,
 						\spec: \midiCC, \ioType: \in),
 					elements: [(1..4), [\blue, \green, \white, \red]].flop
 					.collect { |desc, i|
@@ -73,7 +73,7 @@ elementsDesc: (
 				),
 				(
 					key: \hat,
-					shared: (midiMsgType: \cc, type: \button, \midiChan: 0,
+					shared: (midiMsgType: \cc, elementType: \button, \midiChan: 0,
 						\spec: \midiBut, \mode: \push, \ioType: \in),
 					elements: [(64..67), [\blue, \green, \white, \red]].flop
 					.collect { |desc, i|
@@ -86,13 +86,13 @@ elementsDesc: (
 		),
 		(
 			key: \bt,
-			shared: (\midiMsgType: \cc, \type: \button, \midiChan: 0,
+			shared: (\midiMsgType: \cc, \elementType: \button, \midiChan: 0,
 				\spec: \midiBut, \ioType: \in),
 			elements: (11..14).collect { |num| (\midiNum: num) },
 		),
 		(
 			key: \btPreset,
-			shared: (\midiMsgType: \cc, \type: \button, \midiChan: 0,
+			shared: (\midiMsgType: \cc, \elementType: \button, \midiChan: 0,
 				\spec: \midiBut, \ioType: \in),
 			elements: [50, 51, 52, 21, 22, 23, 24, 25].collect { |num|
 				(midiNum: num)
@@ -100,68 +100,68 @@ elementsDesc: (
 		),
 		(
 			key: \btBubble,
-			\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 5,
+			\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum: 5,
 			\spec: \midiBut, \mode: \push, \ioType: \in),
 		(
 			key: \btMetro,
-			\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 6,
+			\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum: 6,
 			\spec: \midiBut, \mode: \push, \ioType: \in),
 		(
 			key: \btSynth,
-			\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 7,
+			\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum: 7,
 			\spec: \midiBut, \mode: \push, \ioType: \in),
 		(
 			key: \btDrums,
-			\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 8,
+			\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum: 8,
 			\spec: \midiBut, \mode: \push, \ioType: \in),
 		(
-			key: \btTape, \midiNum: 9, \midiMsgType: \cc, \type: \button,
+			key: \btTape, \midiNum: 9, \midiMsgType: \cc, \elementType: \button,
 			\midiChan: 0, \spec: \midiBut, \mode: \push, \ioType: \in),
 		(
-			key: \btMix, \midiNum: 10, \midiMsgType: \cc, \type: \button,
+			key: \btMix, \midiNum: 10, \midiMsgType: \cc, \elementType: \button,
 			\midiChan: 0, \spec: \midiBut, \mode: \push, \ioType: \in),
 
 		// upper right
 		(
 			key: \btSeq,
-			\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 26,
+			\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum: 26,
 			\spec: \midiBut, \mode: \push, \ioType: \in),
 		(
 			key: \btCom,
-			\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 49,
+			\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum: 49,
 			\spec: \midiBut, \mode: \push, \ioType: \in),
 		(
 			key: \btMic,
-			\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 48,
+			\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum: 48,
 			\spec: \midiBut, \mode: \push, \ioType: \in),
 		// red labels
 		(
 			key: \btLift,
-			\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 15,
+			\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum: 15,
 			\spec: \midiBut, \mode: \push, \ioType: \in),
 		(
 			key: \btPaste,
-			\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 16, \spec: \midiBut, \mode: \push, \ioType: \in),
+			\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum: 16, \spec: \midiBut, \mode: \push, \ioType: \in),
 
 		(
 			key: \btCut,
-			\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 17,
+			\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum: 17,
 			\spec: \midiBut, \mode: \push, \ioType: \in),
 		(
 			key: \btRec,
-			\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 38,
+			\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum: 38,
 			\spec: \midiBut, \mode: \push, \ioType: \in),
 		(
 			key: \btPlay,
-			\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 39,
+			\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum: 39,
 			\spec: \midiBut, \mode: \push, \ioType: \in),
 		(
 			key: \btStop,
-			\midiMsgType: \cc, \type: \button, \midiChan: 0, \midiNum: 40,
+			\midiMsgType: \cc, \elementType: \button, \midiChan: 0, \midiNum: 40,
 			\spec: \midiBut, \mode: \push, \ioType: \in),
 		(
 			key: 'bend',
-			'midiMsgType': 'bend', 'type': 'bender', 'midiChan': 0, 'midiNum':  0,
+			'midiMsgType': 'bend', 'elementType': 'bender', 'midiChan': 0, 'midiNum':  0,
 			'spec': 'midiBend', \ioType: \in)
 	]
 )

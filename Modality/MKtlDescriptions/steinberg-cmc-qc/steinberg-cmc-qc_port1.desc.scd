@@ -33,7 +33,7 @@ elementsDesc: (
 		// active after bt EQ1, 2, 3 was pressed
 		(
 			key: \knRel,
-			shared: ('midiMsgType': 'control', 'type': 'knob', 'midiChan':  0, 'spec': 'midiCC'),
+			shared: ('midiMsgType': 'control', 'elementType': 'knob', 'midiChan':  0, 'spec': 'midiCC'),
 			elements: (16..23).collect { |ccnum, i|
 				('midiNum': ccnum, style: (row: i div: 4, column: i % 4, showLabel: true ))
 			}
@@ -41,7 +41,7 @@ elementsDesc: (
 		// // active after bt MIDI was pressed
 		// (
 		// 	key: \kn,
-		// 	shared: ('midiMsgType': 'cc', 'type': 'knob', 'midiChan':  0, 'spec': 'midiCC'),
+		// 	shared: ('midiMsgType': 'cc', 'elementType': 'knob', 'midiChan':  0, 'spec': 'midiCC'),
 		// 	elements: [74, 71, 10, 7, 73, 72, 91, 93].collect { |ccnum, i|
 		// 		('midiNum': ccnum, style: (row: i div: 4 + 2, column: i % 4, showLabel: true ))
 		// 	}
@@ -49,7 +49,7 @@ elementsDesc: (
 
 
 		(key: \bt,
-			shared: ('type': 'pad', spec: 'midiBut'),
+			shared: ('elementType': 'pad', spec: 'midiBut'),
 			elements: MKtlDesc.notePairs([
 				['EQ1', 42, (style: (row: 2, column: 0))],
 				['EQ2', 50, (style: (row: 2, column: 1))],

@@ -23,20 +23,20 @@ elementsDesc: (
 // --------- input elements ----------
 	elements: [
 		(
-			key: \triangle, 'hidUsage': 1, 'hidUsagePage': 9, 'type': 'button',
+			key: \triangle, 'hidUsage': 1, 'hidUsagePage': 9, 'elementType': 'button',
 			'ioType': 'in', spec: \hidBut, mode: \push ),
 		(
-			key: \circle, 'hidUsage': 2, 'hidUsagePage': 9, 'type': 'button',
+			key: \circle, 'hidUsage': 2, 'hidUsagePage': 9, 'elementType': 'button',
 			'ioType': 'in', spec: \hidBut, mode: \push ),
 		(
-			key: 'cross', 'hidUsage': 3, 'hidUsagePage': 9, 'type': 'button',
+			key: 'cross', 'hidUsage': 3, 'hidUsagePage': 9, 'elementType': 'button',
 			'ioType': 'in', spec: \hidBut, mode: \push ),
 		(
-			key: 'square', 'hidUsage': 4, 'hidUsagePage': 9, 'type': 'button',
+			key: 'square', 'hidUsage': 4, 'hidUsagePage': 9, 'elementType': 'button',
 			'ioType': 'in', spec: \hidBut, mode: \push ),
 		(
 			key: 'sh',
-			shared: ('hidUsagePage': 9, 'type': 'button', 'ioType': 'in',
+			shared: ('hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in',
 				spec: \hidBut, mode: \push),
 			elements: [
 				(key: 'l',
@@ -54,13 +54,13 @@ elementsDesc: (
 			]
 		),
 		(
-			key: 'select', 'hidUsage': 9, 'hidUsagePage': 9, 'type': 'button',
+			key: 'select', 'hidUsage': 9, 'hidUsagePage': 9, 'elementType': 'button',
 			'ioType': 'in', spec: \hidBut, mode: \push ),
 		(
-			key: 'start', 'hidUsage': 10, 'hidUsagePage': 9, 'type': 'button',
+			key: 'start', 'hidUsage': 10, 'hidUsagePage': 9, 'elementType': 'button',
 			'ioType': 'in', spec: \hidBut, mode: \push ),
 		(
-			key: 'mode', 'hidUsage': 1, 'hidUsagePage': 65280, 'type': 'button',
+			key: 'mode', 'hidUsage': 1, 'hidUsagePage': 65280, 'elementType': 'button',
 			'ioType': 'in', spec: \hidBut, mode: \push ),
 		(
 			key: 'joy',
@@ -70,13 +70,13 @@ elementsDesc: (
 					key: 'l',
 					elements: [
 						(
-							key: 'x', 'hidUsage': 48, 'hidUsagePage': 1, 'type': 'joyAxis',
+							key: 'x', 'hidUsage': 48, 'hidUsagePage': 1, 'elementType': 'joyAxis',
 							spec: \cent1, mode: \center  ),
 						(
-							key: 'y', 'hidUsage': 49, 'hidUsagePage': 1, 'type': 'joyAxis',
+							key: 'y', 'hidUsage': 49, 'hidUsagePage': 1, 'elementType': 'joyAxis',
 							'ioType': 'in', spec: \cent1, mode: \center  ),
 						(
-							key: 'hat', 'hidUsage': 11, 'hidUsagePage': 9, 'type': 'button',
+							key: 'hat', 'hidUsage': 11, 'hidUsagePage': 9, 'elementType': 'button',
 							'ioType': 'in', spec: \hidBut, mode: \push )
 					]
 				),
@@ -84,13 +84,13 @@ elementsDesc: (
 					key: 'l',
 					elements: [
 						(
-							key: 'x', 'hidUsage': 50, 'hidUsagePage': 1, 'type': 'joyAxis',
+							key: 'x', 'hidUsage': 50, 'hidUsagePage': 1, 'elementType': 'joyAxis',
 							spec: \cent1, mode: \center  ),
 						(
-							key: 'y', 'hidUsage': 53, 'hidUsagePage': 1, 'type': 'joyAxis',
+							key: 'y', 'hidUsage': 53, 'hidUsagePage': 1, 'elementType': 'joyAxis',
 							'ioType': 'in', spec: \cent1, mode: \center  ),
 						(
-							key: 'hat', 'hidUsage': 12, 'hidUsagePage': 9, 'type': 'button',
+							key: 'hat', 'hidUsage': 12, 'hidUsagePage': 9, 'elementType': 'button',
 							'ioType': 'in', spec: \hidBut, mode: \push )
 					]
 				)
@@ -98,24 +98,24 @@ elementsDesc: (
 		),
 		(
 			key: 'compass',
-			'hidUsage': 57, 'hidUsagePage': 1, 'type': 'compass', 'ioType': 'in',
+			'hidUsage': 57, 'hidUsagePage': 1, 'elementType': 'compass', 'ioType': 'in',
 			spec: \unipolar, mode: \center),
 
 		// --------- output elements ----------
 		(
-			key: 'modeOut', 'hidUsage': 2, 'hidUsagePage': 65280, 'type': 'option',
+			key: 'modeOut', 'hidUsage': 2, 'hidUsagePage': 65280, 'elementType': 'option',
 				'ioType': 'out', spec: \lin255, mode: \minimum ),
 		(
-			key: 'rumble1', 'hidElementID': 19, 'type': 'rumble', 'ioType': 'out',
+			key: 'rumble1', 'hidElementID': 19, 'elementType': 'rumble', 'ioType': 'out',
 			spec: \lin255, mode: \minimum ),
 		(
-			key: 'rumble2', 'hidElementID': 20, 'type': 'rumble', 'ioType': 'out',
+			key: 'rumble2', 'hidElementID': 20, 'elementType': 'rumble', 'ioType': 'out',
 			spec: \lin255, mode: \minimum ),
 		(
-			key: 'rumble3', 'hidElementID': 21, 'type': 'rumble', 'ioType': 'out',
+			key: 'rumble3', 'hidElementID': 21, 'elementType': 'rumble', 'ioType': 'out',
 			spec: \lin255, mode: \minimum ),
 		(
-			key: 'rumble4', 'hidElementID': 22, 'type': 'rumble', 'ioType': 'out',
+			key: 'rumble4', 'hidElementID': 22, 'elementType': 'rumble', 'ioType': 'out',
 			spec: \lin255, mode: \minimum )
 	]
 )

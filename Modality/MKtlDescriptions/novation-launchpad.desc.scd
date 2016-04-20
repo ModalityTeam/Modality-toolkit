@@ -33,7 +33,7 @@ elementsDesc: (
 	elements: [
 		(
 			key: \bt,
-			shared: (\midiMsgType: \cc, \type: \button,
+			shared: (\midiMsgType: \cc, \elementType: \button,
 				\spec: \midiBut, \mode: \push),
 			elements: [
 				(key: \up,     \midiNum: 104),
@@ -48,7 +48,7 @@ elementsDesc: (
 		),
 		(
 			key: \pad,
-			shared: (\type: \pad, \spec: \midiVel),
+			shared: (\elementType: \pad, \spec: \midiVel),
 			elements: ((0, 16 .. 112) +.t (0..7)).flat.collect {|num, i|
 				(
 					elements: [
@@ -60,7 +60,7 @@ elementsDesc: (
 		),
 		(
 			key: \arr,
-			shared: (\midiMsgType: \noteOn, \type: \pad, \spec: \midiVel),
+			shared: (\midiMsgType: \noteOn, \elementType: \pad, \spec: \midiVel),
 			elements: ((0, 16 .. 112) + 8).flat.collect {|num, i|
 				(\midiNum: num)
 			}

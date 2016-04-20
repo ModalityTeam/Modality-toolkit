@@ -57,11 +57,11 @@ elementsDesc: (
 		),
 		(
 			key: \hat,
-			'hidUsage': 57, 'hidUsagePage': 1, 'type': 'hatSwitch',
+			'hidUsage': 57, 'hidUsagePage': 1, 'elementType': 'hatSwitch',
 			'ioType': 'in', spec: \cent1inv, mode: \center),
 		(
 			key: \slider,
-			'hidUsage': 54, 'hidUsagePage': 1, 'type': 'slider',
+			'hidUsage': 54, 'hidUsagePage': 1, 'elementType': 'slider',
 			'ioType': 'in', spec: \cent1inv, mode: \center
 		)
 	]

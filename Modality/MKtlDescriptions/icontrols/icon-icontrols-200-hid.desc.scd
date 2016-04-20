@@ -38,11 +38,11 @@ deviceInfo: (
 // adc: (V1.02) on osx this seems to be very close to [60/127, 67/127].
 specs: ( \mouseAxisIcon: [ 0.47244095802307, 0.52755904197693, \lin, 0, 0.5].asSpec ),
 elementsDesc: (
-	shared: ( hidUsagePage: 1, type: 'mouseAxis', ioType: 'in', spec: 'mouseAxisIcon', mode: \center ),
+	shared: ( hidUsagePage: 1, elementType: 'mouseAxis', ioType: 'in', spec: 'mouseAxisIcon', mode: \center ),
 	elements: [
 		(key: 'x', hidUsage: 48),
 		(key: 'y', hidUsage: 49),
-		(key: \hatBt, \type: \button, spec: \hidBut, hidUsagePage: 9, hidUsage: 1),
+		(key: \hatBt, elementType: \button, spec: \hidBut, hidUsagePage: 9, hidUsage: 1),
 	]
 )
 )

@@ -37,7 +37,7 @@ elementsDesc: (
 			]
 		),
 		(
-			key: 'hat',
+			key: 'hat', elementType: \hatSwitch,
 			'hidUsage': 57, 'hidUsagePage': 1, 'type': 'hatSwitch',
 			'ioType': 'in', spec: \cent1, mode: \center
 		),

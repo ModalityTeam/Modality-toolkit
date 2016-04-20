@@ -72,7 +72,7 @@ elementsDesc: (
 
 							elements: notenums.collect { |num, rowi|
 								(
-									shared: (midiNum: num),
+									shared: (midiNum: num, elementType: \pad),
 									elements: [
 										(key: \on, 'midiMsgType': 'noteOn', 'spec': 'midiVel'),
 										(key: \off, 'midiMsgType': 'noteOff', 'spec': 'midiVel'),

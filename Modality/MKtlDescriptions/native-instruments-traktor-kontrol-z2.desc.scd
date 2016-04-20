@@ -34,7 +34,7 @@ deviceInfo: (
 ),
 elementsDesc: (
 // ------ cc NORMAL ------
-	shared: ('midiMsgType': 'cc', 'type': 'pad', 'midiChan': 3,
+	shared: ('midiMsgType': 'cc', 'elementType': 'pad', 'midiChan': 3,
 		\spec: \midiBut, \mode: \push, \ioType: \inout),
 	elements: [
 		(

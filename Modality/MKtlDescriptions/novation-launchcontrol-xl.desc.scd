@@ -52,7 +52,7 @@ elementsDesc: (
 			elements: [
 				(
 					key: \kn,
-					shared: ('midiMsgType': 'cc', 'type': 'knob',
+					shared: ('midiMsgType': 'cc', 'elementType': 'knob',
 						'spec': 'midiCC', \ioType: \inout),
 					elements: [
 						(
@@ -83,7 +83,7 @@ elementsDesc: (
 					elements: [
 						(
 							key: 'fcs',
-							shared: ('type': 'button', 'spec': 'midiNote', \ioType: \inout),
+							shared: ('elementType': 'button', 'spec': 'midiNote', \ioType: \inout),
 							elements: ((41..44) ++ (57..60)).collect{|num, i|
 								MKtlDesc.notePair((i+1).asSymbol, num,
 									shared:(
@@ -97,7 +97,7 @@ elementsDesc: (
 						),
 						(
 							key: 'ctl',
-							shared: ('type': 'button', 'spec': 'midiNote', \ioType: \inout),
+							shared: ('elementType': 'button', 'spec': 'midiNote', \ioType: \inout),
 							elements:  ((73..76) ++ (89..92)).collect { |num, i|
 								MKtlDesc.notePair((i+1).asSymbol, num,
 									shared:(
@@ -115,7 +115,7 @@ elementsDesc: (
 
 				(
 					key: \slct,
-					shared: ('type': 'button', 'spec': 'midiNote', \ioType: \inout),
+					shared: ('elementType': 'button', 'spec': 'midiNote', \ioType: \inout),
 					elements: [
 						[ \device, 105, 3, 8.5 ],
 						[ \mute,   106, 4, 8.5 ],
@@ -133,7 +133,7 @@ elementsDesc: (
 
 				(
 					key: \nav,
-					shared: ('type': 'button', 'spec': 'midiCC', midiMsgType: \cc, \ioType: \inout),
+					shared: ('elementType': 'button', 'spec': 'midiCC', midiMsgType: \cc, \ioType: \inout),
 					elements: [
 						[ \up,     104, 1, 8 ],
 						[ \down,   105, 1, 9 ],

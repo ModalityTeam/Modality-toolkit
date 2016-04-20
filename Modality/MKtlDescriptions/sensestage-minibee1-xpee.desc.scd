@@ -99,7 +99,7 @@ elementsDesc: (
 	elements: [
 		(
 			key: \accel,
-			shared: (elementType: 'accelAxis', elementType: \accelerationAxis, ioType: \collectiveIn, \spec: 'minibeeAccelAxis' ),
+			shared: (elementType: 'accelAxis', elementType: \accelAxis, ioType: \collectiveIn, \spec: 'minibeeAccelAxis' ),
 			elements: [
 				(key: \x),
 				(key: \y),

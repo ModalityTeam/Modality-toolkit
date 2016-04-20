@@ -51,7 +51,7 @@ elementsDesc: (
 			elements: [
 				(
 					key: \kn,
-					shared: ('midiMsgType': 'cc', 'type': 'knob',
+					shared: ('midiMsgType': 'cc', 'elementType': 'knob',
 						'spec': 'midiCC', \ioType: \inout),
 					elements: [
 						(
@@ -81,7 +81,7 @@ elementsDesc: (
 				),
 				(
 					key: \nav,
-					shared: ('type': 'button', 'spec': 'midiCC', midiMsgType: \cc, \ioType: \inout),
+					shared: ('elementType': 'button', 'spec': 'midiCC', midiMsgType: \cc, \ioType: \inout),
 					elements: [
 						[ \up,     114, 1, 8 ],
 						[ \down,   115, 1, 9 ],

@@ -133,19 +133,19 @@ elementsDesc: (
 	// 16 integer arguments represent the state of the 16 digital inputs (0 or 1). Sent only when the state of any digital input pin changes
 		(
 			key: \inD,
-			shared: (type: \switch, spec: \switch, ioType: \collectiveIn),
+			shared: (elementType: \switch, spec: \switch, ioType: \collectiveIn),
 			elements: (1..16).collect ( (key: _) )),
 
 // 16 floating-point arguments indicate the analogue readings for all 16 inputs. Sent at the analogue input message rate
 		(
 			key: \inA,
-			shared: (type: \voltage, spec: \lin1, ioType: \collectiveIn),
+			shared: (elementType: \voltage, spec: \lin1, ioType: \collectiveIn),
 			elements: (1..16).collect ( (key: _) )),
 
 // 16 integer arguments represent the current compare state of the 16 analogue inputs (0 if below or 1 if above the threshold). Sent only when a threshold on any channel is crossed
 		(
 			key: \inC,
-			shared: (type: \switch, spec: \switch, ioType: \collectiveIn),
+			shared: (elementType: \switch, spec: \switch, ioType: \collectiveIn),
 			elements: (1..16).collect ( (key: _) )),
 
 	// // 1 blob argument containing the raw serial data received on input <channel> (1 – 4)
@@ -158,7 +158,7 @@ elementsDesc: (
 	// 1 float indicating the current battery voltage
 		(
 			key: \battery, oscPath: '/battery', ioType: \in,
-			type: \voltage, spec: [0, 3.7].asSpec),
+			elementType: \voltage, spec: [0, 3.7].asSpec),
 	]
 )
 );

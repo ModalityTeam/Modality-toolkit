@@ -49,12 +49,12 @@ deviceInfo: (
 elementsDesc: (
 	elements: [
 		(
-			key: \cf, \midiMsgType: \cc, \type: \xfade,
+			key: \cf, \midiMsgType: \cc, \elementType: \xfader,
 			\midiChan: 0, \midiNum: 7, \spec: \midiCC,
 		),
 		(
 			key: \bt,
-			shared: (\type: \button,
+			shared: (\elementType: \button,
 				spec: \midiBut, \mode: \push),
 			elements: (0..19).collect { |num|
 				(
@@ -65,12 +65,12 @@ elementsDesc: (
 			}),
 		(
 			key: \play,
-			shared: (\type: \button, \midiChan: 12,
+			shared: (\elementType: \button, \midiChan: 12,
 				spec: \midiBut, \mode: \push),
 			elements: (0..19).collect { |num| MKtlDesc.notePair(midiNum: num) }),
 		(
 			key: \stop,
-			shared: (\type: \button, \midiNum: 103,
+			shared: (\elementType: \button, \midiNum: 103,
 				spec: \midiBut, \mode: \push),
 			elements: (0..12).collect { |chan|
 				MKtlDesc.notePair(midiNum: 103, shared: (midiChan: chan))
@@ -80,14 +80,14 @@ elementsDesc: (
 	// drummer
 		(
 			key: \bluL,
-			shared: (\type: \button, \midiChan: 9,
+			shared: (\elementType: \button, \midiChan: 9,
 				spec: \midiVel, \mode: \push),
 			elements: (60..75).collect { |num| MKtlDesc.notePair(midiNum: num) }),
 
 		// duplication in here (42)!
 		(
 			key: \red,
-			shared: (\type: \button, \midiChan: 9,
+			shared: (\elementType: \button, \midiChan: 9,
 				spec: \midiVel, \mode: \push),
 			elements: #[35,48,37,36, 49,47,40,38, 50,45,42,42, 51,43,46,44]
 			.collect { |num, i| MKtlDesc.notePair(midiNum: num) })
@@ -96,7 +96,7 @@ elementsDesc: (
 /*++
 // left blue is duplicate of red
 #[35, 48, 37, 36, 49, 47, 40, 38, 50, 45, 42, 42, 51, 43, 46, 44].collect{|num, i|
-	[("red" ++ i.asStringToBase(10, 2)).asSymbol, (\type: \button, \midiChan: 9, \midiNum: num, spec: \midiBut, \mode: \push)]
+	[("red" ++ i.asStringToBase(10, 2)).asSymbol, (\elementType: \button, \midiChan: 9, \midiNum: num, spec: \midiBut, \mode: \push)]
 }.flat
 */
 

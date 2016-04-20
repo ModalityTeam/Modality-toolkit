@@ -135,7 +135,7 @@ collectives: (
 
 elementsDesc: (
 //	key: \accel, // keep extra level for compatibility with other versions
-	shared: (elementType: 'accelAxis', elementType: \accelerationAxis, ioType: \collectiveIn, \spec: 'minibeeAccelAxis' ),
+	shared: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'minibeeAccelAxis' ),
 	elements: [
 		(key: \x),
 		(key: \y),
