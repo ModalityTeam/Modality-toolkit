@@ -279,8 +279,8 @@ MKtlElement : MAbstractElement {
 	var <deviceSpec;
 
 	*initClass {
-		// types found with MKtlDesc.elementTypesUsed
-		types = [ 'accelAxis', 'analogIn', 'bender', 'button', 'buttons', 'chantouch', 'compass', 'cvIn', 'cvOut', 'dial', 'encoder', 'hatSwitch', 'imu', 'joyAxis', 'key', 'keyTouch', 'keytouch', 'knob', 'led', 'lever', 'midiBut', 'mouseAxis', 'mouseWheel', 'movement', 'option', 'pad', 'pianoKey', 'ribbon', 'rumble', 'slider', 'springFader', 'switch', 'touchButton', 'touchFader', 'trigger', 'voltage', 'wheel', 'xfade' ]
+		// types found with MKtlDesc.elementTypesUsed.size
+		types = [ 'accelAxis', 'bender', 'button', 'compass', 'cvIn', 'cvOut', 'encoder', 'fader', 'gyroAxis', 'hatSwitch', 'joyAxis', 'key', 'keyTouch', 'knob', 'led', 'lever', 'midiBut', 'mouseAxis', 'mouseWheel', 'multiPurpose', 'option', 'pad', 'padX', 'padY', 'pianoKey', 'ribbon', 'rumble', 'scroller', 'slider', 'springFader', 'switch', 'thumbAxis', 'touch', 'trigger', 'voltage', 'wheel', 'xfader' ]
 	}
 
 	// source is used for sending back to the device.

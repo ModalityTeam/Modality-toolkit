@@ -169,7 +169,7 @@ status: (
 			str = str + "\n// ------ element ids -------------";
 			observeDict[\elid].sortedKeysValuesDo { |key, val|
 				#num, chan = key.split($_).collect(_.asInteger);
-				str = str + "\n'<element name %>': ('hidElementID': %, 'type': '<type>'),"
+				str = str + "\n'<element name %>': ('hidElementID': %, 'elementType': '<type>'),"
 					.format(key, val);
 			};
 		};
@@ -178,7 +178,7 @@ status: (
 			str = str + "\n\n// --------- usage ids ----------";
 			observeDict[\usage].sortedKeysValuesDo { |key, val|
 				#num, chan = key.split($_).collect(_.asInteger);
-				str = str + "\n'<element name %>': ('hidUsage': %, 'hidUsagePage': %, , 'type': '<type>' ),"
+				str = str + "\n'<element name %>': ('hidUsage': %, 'hidUsagePage': %, , 'elementType': '<type>' ),"
 				.format(key, val.usage, val.hidUsagePage ); /// could infer type from the control
 			};
 		};

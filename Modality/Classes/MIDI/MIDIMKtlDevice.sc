@@ -391,7 +391,7 @@ MIDIMKtlDevice : MKtlDevice {
 
 		"% : unknown % element found at % midiChan %.\n"
 		"\tPlease add it to the description file. E.g. for a button:"
-		"<bt>: (midiMsgType: %, type: <'button'>,"
+		"<bt>: (midiMsgType: %, elementType: <'button'>,"
 		" midiChan: %, %spec: <'midiBut'>, mode: <'push'>)\n\n"
 		.format(mktl, msgType.cs, numStr, chan, msgType.cs, chan, numStr).inform;
 	}
@@ -411,7 +411,7 @@ MIDIMKtlDevice : MKtlDevice {
 		} { "" };
 
 		"% midi, % > %, raw: %, \n"
-		"   msg: %, %chan: %, type: %"
+		"   msg: %, % chan: %, type: %"
 		.format(mktl, elem.name.cs, elem.value.asStringPrec(3), value,
 			msgType.cs, numStr, chan, elem.type).postln;
 	}
