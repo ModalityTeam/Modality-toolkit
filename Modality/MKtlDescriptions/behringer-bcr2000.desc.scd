@@ -85,7 +85,7 @@ elementsDesc: (
 	//buttons
 		(
 			key: \bt,
-			shared: (elementType: \midiBut, spec: \midiCC),
+			shared: (elementType: \button, spec: \midiCC),
 			elements: [65,73].collect { |ccStart, j|
 				(elements: 8.collect { |i|
 					(midiNum: ccStart+i, \style: (row:2+j, column: i))

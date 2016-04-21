@@ -90,7 +90,7 @@ elementsDesc: (
 	//buttons
 		(
 			key: \bt,
-			shared: (elementType: \midiBut, spec: \midiCC, ioType: \inout),
+			shared: (elementType: \button, spec: \midiCC, ioType: \inout),
 			elements: [65,73].collect { |ccStart,j|
 				(
 					elements: 8.collect { |i|

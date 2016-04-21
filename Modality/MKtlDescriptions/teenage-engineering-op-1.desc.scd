@@ -47,7 +47,7 @@ elementsDesc: (
 		(
 
 			key: \key,
-			shared:  (\elementType: \key,
+			shared:  (\elementType: \pad,
 				\midiChan: 0, \spec: \midiVel, \ioType: \in),
 			elements: (0..124).collect { |num, i| (
 				shared: (midiNum: num),

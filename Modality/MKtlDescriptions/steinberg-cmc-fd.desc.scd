@@ -26,7 +26,7 @@ deviceInfo: (
 	vendorURI: "http://www.steinberg.net/en/products/controllers/cmc_series/models/cmc_fd.html",
 	// manualURI: "",
 	// description: "",
-	// features: ["4 touch faders" ],
+	features: ["4 touch faders" ],
 	longName: "Steinberg CMC-FD",
 	notes: "discontinued.",
 

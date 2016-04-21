@@ -61,7 +61,7 @@ elementsDesc: (
 		),
 		(
 			key: \scroll,
-			shared: ('hidUsagePage': 9, 'elementType': 'scroller', 'spec': \hidBut),
+			shared: ('hidUsagePage': 9, 'elementType': 'scrollWheel', 'spec': \hidBut),
 			elements: [
 				(	key: \up, 'hidUsage': 12),
 				(	key: \down, 'hidUsage': 13),

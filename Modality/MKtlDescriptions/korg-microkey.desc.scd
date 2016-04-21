@@ -38,7 +38,7 @@ elementsDesc: (
 		),
 		(
 			key: 'mod',
-			'midiMsgType': 'cc', 'elementType': 'wheel', 'midiNum': 1,
+			'midiMsgType': 'cc', 'elementType': 'modWheel', 'midiNum': 1,
 			'spec': 'midiCC'),
 		(
 			key: 'bend',
