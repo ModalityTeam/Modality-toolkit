@@ -68,6 +68,8 @@ MKtlElementView {
 			'trigger': \button,
 			'switch': \button,
 
+			'pianoKey': \pad,
+
 			// 'pianoKey' 		-> PianoKeyView for [noteOn, off, (touch)]
 			// 'compass'		-> CompassView as on gamepads
 			// 'stick' 			-> StickView - thumbstick with x, y, hat
