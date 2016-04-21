@@ -43,61 +43,65 @@ elementsDesc: (
 			key: \vol,
 			shared: (midiNum: 7, midiMsgType: \cc, 'spec': 'midiCC', 'elementType': \slider),
 			elements: [
-				(key: \L, midiChan: 0),
-				(key: \R, midiChan: 14)
+				(key: \L, midiChan: 0, style: (row: 0, column: 0, height: 1, width: 6,
+					showLabel: true)),
+				(key: \R, midiChan: 14, style: (row: 0, column: 6, height: 1, width: 6,
+					showLabel: true))
 			]
 		),
-		// sends on channels 0-7, only making it for the first:
+		// sw_2 does nothing - only on my linnstrument?
 		(
-			key: \switch1, midiNum: 64, midiChan: 0, midiMsgType: \cc, 'spec': 'midiBut',
-			'elementType': \button
-		),
-		// does nothing - only on my linnstrument?
-		(
-			key: \switch2, midiNum: 0, midiChan: 0, midiMsgType: \cc, 'spec': 'midiBut',
-			'elementType': \button
-		),
-
-		// the grid of pads:
-		(
-			key: \row,
-			elements: (30,35..65).collect { |lownum, coli|
-				var notenums = lownum + (0..24); // 2 octaves
-				// "coli: %\n".postf(coli);
-				(
-					shared: (midiChan: coli),
-					elements: [
-						(
-							key: \pad,
-
-							elements: notenums.collect { |num, rowi|
-								(
-									shared: (midiNum: num, elementType: \pad),
-									elements: [
-										(key: \on, 'midiMsgType': 'noteOn', 'spec': 'midiVel'),
-										(key: \off, 'midiMsgType': 'noteOff', 'spec': 'midiVel'),
-										(key: \touch, 'midiMsgType': 'polytouch', 'spec': 'midiCC'),
-									]
-								)
-							}
-						),
-						(
-							key: \bend, midiChan: coli, 'midiMsgType': 'bend',
-							'elementType': 'padX', 'spec': 'midiBend'
-						),
-						// channel touch, has to be activated
-						(
-							key: \touch, midiChan: coli, 'midiMsgType': 'touch',
-							'elementType': 'touch', 'spec': 'midiCC'
-						),
-						(
-							key: \padY, midiNum: 74, midiChan: coli, midiMsgType: \cc,
-							'spec': 'midiCC', 'elementType': \padY
-						)
-					]
-				)
-			}
+			key: \sw,
+			shared: (midiChan: 0, midiMsgType: \cc, 'spec': 'midiBut', 'elementType': \button),
+			elements: [ (midiNum: 64), (midiNum: 0) ]
 		)
-	]
+	] ++
+		// the grid of pads + controls:
+	(30,35..65).collect { |lownum, rowi|
+		var notenums = lownum + (0..24); // 2 octaves
+		(
+			key: ("r" ++ rowi).asSymbol,
+			shared: (midiChan: rowi),
+			elements: [
+				(
+					key: \pad,
+					elements: notenums.collect { |num, coli|
+						(
+							shared: (midiNum: num, elementType: \pad),
+							elements: [
+								(key: \on, 'midiMsgType': 'noteOn', 'spec': 'midiVel',
+									style: (column: coli, row: rowi * 2 + 1, width: 0.7)
+								),
+								(key: \off, 'midiMsgType': 'noteOff', 'spec': 'midiVel',
+									style: (column: coli, row: rowi * 2 + 1 + 1, width: 0.7)
+								),
+								(key: \touch, 'midiMsgType': 'polytouch', 'spec': 'midiCC',
+									elementType: \padTouch,
+									style: (column: coli + 0.5, row: rowi * 2 + 1,
+										height: 2,  width: 0.7)
+								),
+							]
+						)
+					}
+				),
+				(
+					key: \bend, midiChan: rowi, 'midiMsgType': 'bend',
+					'elementType': 'padX', 'spec': 'midiBend',
+					style: (height: 2, showLabel: true)
+				),
+				// channel touch, has to be activated
+				(
+					key: \touch, midiChan: rowi, 'midiMsgType': 'touch',
+					'elementType': 'chanTouch', 'spec': 'midiCC',
+					style: (height: 2, showLabel: true)
+				),
+				(
+					key: \padY, midiNum: 74, midiChan: rowi, midiMsgType: \cc,
+					'spec': 'midiCC', 'elementType': \padY,
+					style: (height: 2, showLabel: true)
+				)
+			]
+		)
+	}
 )
 );
