@@ -103,7 +103,8 @@ elementsDesc: (
 	elements: [
 		(
 			key: \xfader,
-			oscPath: '/1/fader5', elementType: 'slider', spec: \unipolar, ioType: \in
+			oscPath: '/1/fader5', elementType: 'slider', spec: \unipolar, ioType: \in,
+			style: (width: 4, height: 1)
 		),
 		(
 			key: \sl,

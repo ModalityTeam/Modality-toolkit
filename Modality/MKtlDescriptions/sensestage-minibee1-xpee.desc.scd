@@ -99,7 +99,7 @@ elementsDesc: (
 	elements: [
 		(
 			key: \accel,
-			shared: (elementType: 'accelAxis', elementType: \accelAxis, ioType: \collectiveIn, \spec: 'minibeeAccelAxis' ),
+			shared: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'minibeeAccelAxis' ),
 			elements: [
 				(key: \x),
 				(key: \y),
@@ -108,7 +108,7 @@ elementsDesc: (
 		),
 		(
 			key: \ana,
-			shared: (elementType: 'bender', elementType: \multiPurpose, ioType:
+			shared: (elementType: \multiPurpose, ioType:
 				\collectiveIn, \spec: 'minibeeAnalog'), // nescivi: why bender?
 			elements: (1..4).collect {|num, i|
 				(key: num.asSymbol)
@@ -116,8 +116,7 @@ elementsDesc: (
 		),
 		(
 			key: \led,
-			shared: (elementType: 'led', elementType: \multiPurpose, ioType:
-				\collectiveIn, \spec: 'minibeePWM'),
+			shared: (elementType: 'led', ioType: \collectiveIn, \spec: 'minibeePWM'),
 			elements: (1..6).collect {|num, i|
 				(key: num.asSymbol)
 			}
