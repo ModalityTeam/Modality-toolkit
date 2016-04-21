@@ -26,11 +26,14 @@ status: (
 elementsDesc: (
 	shared: (
 		'midiChan': 0,
-		'elementType': 'key',
+		'elementType': 'pad', // or maybe hexPad.
 		'spec': 'midiNote'
 	),
 	elements: (0..120).collect{|num, i|
-		MKtlDesc.notePair(num.asSymbol, num)
+		MKtlDesc.notePair(num.asSymbol, num,
+			// at least show them all
+			( style: (column: i % 12, row: i div: 12) )
+		)
 	}
 )
 );
