@@ -36,13 +36,46 @@ MKtlElementView {
 				};
 				vw;
 			},
-			'midiBut': \button,
-			'joyAxis': \slider,
+
+			'fader': \slider,
+			'xfader': \slider,
 			'springFader': \slider,
+
+			'bender': \slider,
+			'lever': \slider,
+
 			'rumble':\slider,
 			'ribbon': \slider,
+
+			'joyAxis': \slider,
+			'mouseAxis':  \slider,
+			'thumbAxis': \slider,
+			'accelAxis': \slider,
+			'gyroAxis': \slider,
+
+			'padX': \slider,
+			'padY': \slider,
+			'padTouch': \slider, // overlay on pad view
+			'keyTouch': \slider, // overlay on pianoKey view
+			'chanTouch': \slider,
+
+			'mouseWheel': \slider,
+			'scrollWheel': \slider,
+
 			'hatSwitch': \knob,
-			'encoder': \knob
+			'encoder': \knob,
+
+			'trigger': \button,
+			'switch': \button,
+
+			// 'pianoKey' 		-> PianoKeyView for [noteOn, off, (touch)]
+			// 'compass'		-> CompassView as on gamepads
+			// 'stick' 			-> StickView - thumbstick with x, y, hat
+			// 'cvIn' 'cvOut'	-> VU-meter,  qunexus,
+			// 'led' : 			-> LEDView, w color, goes from 0-1 intensity
+			// 'option'	?
+			// 'voltage' - VU-meter?
+
 		);
 	}
 
