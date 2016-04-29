@@ -55,13 +55,13 @@ MKtlDevice {
 		};
 	}
 
-	*descFileStrFor { |nameKey, lookupKey, filenames, multiIndex|
+	*descFileStrFor { |nameKey, lookupKey, filenames, multiIndex, generic = ""|
 		var str, numDescs = filenames.size;
 		var lookupStr = "MKtl('%', %);\n".format(nameKey, lookupKey.cs);
 
 		numDescs.switch(
 			0, 	{
-				str = "\t// Unknown - Create from lookupName and explore:\n" ++ lookupStr;
+				str = "\t// Unknown - Create from lookupName and explore %:\n".format(generic) ++ lookupStr;
 			},
 			1, 	{
 				str = "\t// Supported. Create by lookupName only if necessary:\n// "

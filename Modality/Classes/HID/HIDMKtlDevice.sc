@@ -58,6 +58,7 @@ HIDMKtlDevice : MKtlDevice {
 		var postables = MKtlLookup.allFor(\hid);
 		var foundHidden = showAllDevices.not and: { HID.available.size != postables.size };
 		var hiddenStr = "// HID: Some HIDs not shown that can crash the OS. See: HID.available;";
+		var genericHint;
 
 		if (foundHidden) { hiddenStr.postln; };
 		if (postables.size == 0) {
@@ -81,8 +82,11 @@ HIDMKtlDevice : MKtlDevice {
 			};
 			postList.cs.postcln;
 
+			if (filenames.size == 0) {
+				genericHint = "\n\t// (or match with a generic desc)";
+			};
 			this.descFileStrFor(nameKey, lookupKey, filenames,
-				infodict.multiIndex).post;
+				infodict.multiIndex, genericHint).post;
 		};
 	}
 

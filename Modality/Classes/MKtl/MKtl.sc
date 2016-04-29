@@ -610,10 +610,15 @@ MKtl { // abstract class
 		if(this.hasDevice.not) {
 			inform("%.openDevice: remaining virtual.".format(this));
 		} {
-			// if no desc file, try to match with generic
+			// if no desc file, try to match with generic desc
+			// this only works for HID:
+			// - MIDI does no spec reporting,
+			// OSC does not register devices
 			if (this.desc.isNil) {
 				if (device.source.notNil) {
-					foundMatchingDesc = MKtlDesc.findGenericFor(device.source);
+					if (device.source.isKindOf(HID)) {
+						foundMatchingDesc = MKtlDesc.findGenericForHID(device.source);
+					};
 				};
 				if (foundMatchingDesc.notNil) {
 					"\nNow adapting desc % : \n\n".postf(foundMatchingDesc.name.cs);

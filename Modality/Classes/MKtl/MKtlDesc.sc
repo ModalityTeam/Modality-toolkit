@@ -206,7 +206,7 @@ MKtlDesc {
 		^(onlyInDesc: onlyInDesc, onlyInHid: onlyInHid);
 	}
 
-	*findGenericFor { |hid, rateForMatch = 0.5|
+	*findGenericForHID { |hid, rateForMatch = 0.5|
 		var numHidElems = hid.elements.size;
 		var candList = [], candidate;
 		MKtlDesc.loadDescs("*generic*").do { |desc|
