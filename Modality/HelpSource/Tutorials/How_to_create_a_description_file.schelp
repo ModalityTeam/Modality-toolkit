@@ -1,13 +1,13 @@
 title:: How to create a description file
-summary:: How to create a description file to use with the Modality toolkit.
+summary:: How to create a description file for a device to use with the Modality toolkit.
 categories:: Libraries>Modality
 related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Classes/MIDIExplorer, Classes/HIDExplorer, Reference/Naming_conventions_in_element_descriptions
 
 Section:: Introduction
 
-The functionality of link::Classes/MKtl:: relies on descriptions of the used devices. For some Controllers, there are already descriptions available, chances are that your device is not among them.
+The functionality of link::Classes/MKtl:: relies on descriptions of the used devices. For many controllers, there are already descriptions available, but your preferred device may not be among them.
 
-There are three tutorials that explain the procedure for the three different protocols. This tutorial describes elements that can be part of any description file (regardless of protocol).
+This tutorial shows how to describe elements, which is largely the same for all description files (regardless of protocol). For the specifics of the three supported protocols, there are these three specific tutorials:
 
 list::
 ##link::Tutorials/How_to_create_a_description_file_for_MIDI::
@@ -19,15 +19,38 @@ section:: Basic structure of the description file
 
 The description file is a Dictionary with a number of required entries.
 
-The main entry is the code::description:: which contains all the elements/controls of a device.
+The main entry is the code::elementsDesc:: which contains all the elements/controls of a device.
 
-For physical devices, you need to define the protocol and the idInfo. The code::protocol:: is one of code::\osc, \midi, \hid::. The code::idInfo:: is different per protocol, check the respective tutorial for an elaborate description.
+For physical devices, you need to define the protocol and the idInfo. The code::protocol:: is one of code::[\osc, \midi, \hid]::. The code::\idInfo:: is different per protocol, please see the respective tutorial for an elaborate description.
 
 If you want to create a virtual device, the minimum info required is the idInfo and protocol: code::(idInfo: \something, protocol: \virtual):: and in the description, every element needs an ioType and a spec.
 
 For example:
 
 code::
+// create a dictionary that can be turned into an MKtlDesc:
+// it has a name    - only needed for the demo here
+// it has an idInfo - this is for matching with physical devices
+// a protocol - one of \osc, \midi, \hid for real devices, or \virtual
+// and an elementsDesc - here, this has one button.
+(
+~descOneBut = (
+	name: \oneBut,
+	idInfo: \oneBut,
+	protocol: \virtual,
+	elementsDesc: (
+		elements: [
+			(key: \bt, type: \button, ioType: \in, \spec: \but )
+		]
+	)
+);
+);
+// One create an MKtlDesc from it:
+d = MKtlDesc.fromDict(~descOneBut);
+)
+
+// now, to test that the desc dict works,
+// we use the desc dict directly to create an MKtl:
 (
 m = MKtl.new(
 	\oneButton,
@@ -43,68 +66,78 @@ m = MKtl.new(
 	false );
 );
 
-m.gui;    //
-m.elAt;   // the elementGroup
-m.elAt(0); // the only element in it
-m.elAt(\bt); // the only element in it
+m.gui;    // create a gui for the MKtl
+m.elAt;   // access its elementGroup
+m.elAt(0); // the only element in it by index
+m.elAt(\bt); // the only element in it by key
 m.free; // free m's resources and remove it from MKtl.all
 ::
 
-For an MKtl with 4 buttons, one can write the elementsDesc in multiple ways:
+subsection:: Simple Element Groups
+
+Descs for devices with multiple elements can be written in multiple ways:
 
 code::
 // 1. write out every element fully:
 (
-// ...
 elementsDesc: (
 	elements: [
 		(key: \bt1, type: \button, ioType: \in, \spec: \but ),
 		(key: \bt2, type: \button, ioType: \in, \spec: \but ),
-		(key: \bt3, type: \button, ioType: \in, \spec: \but )
+		(key: \bt3, type: \button, ioType: \in, \spec: \but ),
 		(key: \bt4, type: \button, ioType: \in, \spec: \but )
 	]
 )
 );
 
 // 2. put all shared properties in the entry 'shared':
+// note that keys are still made by hand here
+(
 elementsDesc: (
 	shared: (elementType: \button, ioType: \in, \spec: \but ),
 	elements: [
-		(key: \bt_1),
-		(key: \bt_2),
-		(key: \bt_3),
-		(key: \bt_4)
+		(key: \1),
+		(key: \2),
+		(key: \3),
+		(key: \4)
 	]
 )
+)
 
-// 3. generate the elements by code -
-// this may seem complicated for 3-4 elements, but useful for more
+// 3. generate the elements by code - may seem complicated
+// for 2-3 elements, but useful for more.
+// note that keys are passed in here
 (
 	key: \bt,
 	shared: (elementType: \button, ioType: \in, \spec: \but ),
-elements: (1..4).collect { |i| (key: ("bt_" ++i).asSymbol) }
+	elements: [\a, \b, \c, \d].collect { |key| (key: key)  }
 )
 
 
 (
 m = MKtl.new(
-	\threeButtons,
+	\fourButtons,
 	(
 		idInfo: \oneBut,
 		protocol: \virtual,
 		elementsDesc: (
 			key: \bt,
 			shared: (elementType: \button, ioType: \in, \spec: \but ),
-			elements: (1..4).collect { |i| (key: ("bt_" ++i).asSymbol) }
+			elements: [\a, \b, \c, \d].collect { |key| (key: key)  }
+			// this generates [\1, \2, \3, \4] automagically:
+		//	elements: (1..4).collect { |i| () }
 		)
 	),
-	false );
+	false
 );
+);
+// element names get put together from group key and local keys
+// - if not defined explicitly, local keys are \1, \2, \3 ...
 m.postElements;
 
 ::
 
-See also: link::Reference/MKtl_description_files:: for the complete description of all possible keys.
+See also: link::Reference/MKtl_description_files:: for a discussion of all possible keys.
 
 section:: Specs
 
@@ -116,7 +149,8 @@ code::
 specs: (
 	mantaTouch: [ 0, 227 ].asSpec,
 	mantaSlider: [ 0, 4095 ].asSpec,
-	mantaLed: ItemsSpec.new( ["off","amber","red"] ), // led can be off, amber or red
+	// led can be off, amber or red
+	mantaLed: ItemsSpec.new( ["off","amber","red"] ),
 )
 ::
 
@@ -127,17 +161,14 @@ MKtl.globalSpecs.keys;
 MKtl.getSpec( \hidHat ); // look up a specific one
 ::
 
-section:: Elements
-
+section:: Elements in depth
 
 Elements require a type describing which kind of physical thing it is,
 such as button, slider, joyAxis, mouseWheel, or any of:
 
 code::MKtlElement.types::
 
-For multiple elements, one can make groups, which is helpful for semantic clarity.
-
-For example, an MKtl with 5 sliders and 4 buttons, and two labeled buttons (play and stop) would look like this:
+Multiple elements can go into nested groups, which is helpful for semantic clarity. For example, an MKtl with 6 sliders and 4 buttons, and two labeled buttons (play and stop) would look like this:
 
 code::
 (
@@ -149,7 +180,7 @@ m = MKtl.new( \sliders_knobs, (
 			(
 				key: \sl,
 				shared: ( elementType: \slider, ioType: \in, \spec: \midiCC ),
-				elements: (1..5).collect { |i| (key: i.asSymbol) }),
+				elements: (1..4).collect { |i| (key: i.asSymbol) }),
 			(
 				key: \bt,
 				shared: ( elementType: \button, ioType: \in, \spec: \but ),
@@ -174,7 +205,7 @@ m.elAt(\bt)  // the group of 5 buttons
 m.elAt(\bt, 0).value_(1)  // one of them
 m.elAt(\sl).do(_.value_(1.0.rand))  // all sliders
 
-// one can als access them by direct names:
+// one can also access them by direct names:
 
 m.dictAt(\sl_1).action = { |sl| "yo slider: % > %\n".postf(sl.name, sl.value) };
 m.elAt(\sl, 0).valueAction_(1.0.rand);
@@ -182,18 +213,17 @@ m.elAt(\sl, 0).valueAction_(1.0.rand);
 m.free; // free m's resources and remove it from MKtl.all
 ::
 
-For full details on single element description see also:
+For full details on single element descriptions see also:
 link::Reference/Naming_conventions_in_element_descriptions::
 
 
 section:: Finding descriptions for similar devices
 
-Many devices already hace description files, which are used by the link::Classes/MKtlDesc:: class. They can be found here:
+Many devices already have description files, which are used by the link::Classes/MKtlDesc:: class. They can be found here:
 code::
 MKtlDesc.openFolder;
 ::
-You are cordially invited to contribute desc files for any devices you have and find useful!
-For details on making descs for devices using MIDI, HID, or OSC, please read on here:
+You are cordially invited to contribute desc files for any devices you have and find useful! For details on making descs for devices using MIDI, HID, or OSC, please read on here:
 
 list::
 ##link::Tutorials/How_to_create_a_description_file_for_MIDI::

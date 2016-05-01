@@ -7,7 +7,15 @@ When one wants to add a new controller to Modality, it is often similar to one t
 So it makes to check whether there is a similar desc file already, and copy and modify that for the new device.
 
 Some good templates to copy are:
-for faderboxes, the korg-nanokontrol2;
-for gamepads, the saitek-impact-gamepad (simple) and the thrustmaster-run-n-drive (luxury); for launchpads, the novation-launchpad, etc.
+code::
+// for faderboxes:
+MKtlDesc("korg-nanokontrol2").openFile;
+// for gamepads, simple:
+MKtlDesc("saitek-impact-gamepad").openFile;
+// luxury gamepads:
+MKtlDesc("thrustmaster-run-n-drive").openFile;
+// for launchpads:
+MKtlDesc("novation-launchpad").openFile;
+::
 
-(-: Till, an example please? :-)
+... To Do: add example here when there is a good one ... 
