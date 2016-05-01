@@ -1,6 +1,17 @@
 MChanVoicer {
+	classvar <rollbackFuncs;
+
 	var <chan, <noteEl, <velEl, <bendEl, <pressEl, <offVelEl;
-	var <>startFunc, <>endFunc, <heldNotes;
+	var <>startFunc, <>endFunc, <heldNotes, <>rollback = \last;
+
+	*initClass {
+		rollbackFuncs = (
+			\last: { |mcv| mcv.heldNotes.last },
+			\first: { |mcv| mcv.heldNotes.first },
+			\lowest: { |mcv| mcv.heldNotes.minItem },
+			\highest: { |mcv| mcv.heldNotes.maxItem }
+		);
+	}
 
 	*new { |chan = 0, srcID, noteEl, velEl, bendEl, pressEl, offVelEl|
 		^super.newCopyArgs(chan, noteEl, velEl, bendEl, pressEl, offVelEl).init;
@@ -26,7 +37,7 @@ MChanVoicer {
 	noteOff { |note, vel|
 		var prevNote;
 		heldNotes.remove(note);
-		prevNote = heldNotes.last;
+		prevNote = rollbackFuncs[rollback].value(this);
 		if (prevNote.notNil) {
 			if (prevNote != noteEl.deviceValue) {
 				noteEl.deviceValueAction_(prevNote);

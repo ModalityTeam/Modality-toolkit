@@ -6,14 +6,16 @@ related:: Overviews/Modality, Classes/MKtl
 DESCRIPTION::
 
 MChanVoicer is intended for channel rotation polyphony as used in the Roli Saeboard and QuNexus keyboard. It accepts one channel of incoming noteOn, noteOff, bend, and press messages,
-and has an MKtlElement for note, vel, bend, press, and velOff.
-NoteOn and NoteOff are interpreted monophonically, such that:
+and has one MKtlElement each for note, vel, bend, press, and velOff.
+NoteOn and NoteOff are interpreted monophonically as follows:
 
-noteOn sets note and vel values from incoming values;
+noteOn:
+  if there are no held notes yet, startFunc is triggered;
+  always sets note and vel values from incoming values
 
-noteOff behavior depends:
-  if there are held notes, note value is set from the latest of those.
-  if not, noteOff sets vel to 0, and offVelEl is set.
+noteOff:
+  if there are held notes, note value rolls back to one of them (by default, the latest);
+  if not, noteOff sets vel element to 0, offVelEl is set, and endFunc is triggered.
 
 First code examples:
 
@@ -22,6 +24,7 @@ code::
 s.boot; s.latency = nil;
 
 m = MChanVoicer(0);
+m.dump;
 
 Ndef(\m, { |pitch=60, amp = 0.0|
 	VarSaw.ar(pitch.midicps) * 0.5 * amp.lag(0.1) ! 2;
@@ -36,6 +39,7 @@ m.noteOn(64, 80);
 m.noteOn(67, 40);
 m.heldNotes; // two held notes
 m.noteOff(67); // down to previous note
+m.heldNotes;
 m.noteOff(64); // now off
 
 // connect a midi keyboard
@@ -54,7 +58,7 @@ MIDIIn.connectAll;
 
 
 
-// and with a rotating polyphony keyboard, try this:
+// With a rotating polyphony keyboard like the QuNexus, try this:
 
 s.boot; s.latency = nil;
 
@@ -77,7 +81,7 @@ g.release(1);
 	v.endFunc = { g.release(ii) };
 };
 
-// listen to all channels
+// listen to all midi channels
 MIDIIn.connectAll;
 ~non = MIDIFunc.noteOn({ |vel, note, chan|
 	~voicers[chan].noteOn(note, vel);
@@ -87,7 +91,7 @@ MIDIIn.connectAll;
 	~voicers[chan].noteOff(note, vel);
 }, srcID: nil);
 
-// do full test here with bend and press control on each channel...
+// add full test here with bend and press control on each channel...
 
 
 ::
