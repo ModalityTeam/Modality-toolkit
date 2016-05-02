@@ -4,9 +4,10 @@ OSCMKtlDevice : MKtlDevice {
 	classvar inversePatternDispatcher;
 	classvar messageSizeDispatcher;
 
-	var <source;  // receiving OSC from this NetAddr
-	var <destination; // sending OSC back to this NetAddr - usually the same as
-	var <recvPort; // the port on which we need to listen
+	var <source;  // the NetAddr from which SC is receiving OSC from the source
+	var <destination; // the addr SC should send back to - usually the same as source
+	var <recvPort;  // the port to which the source is sending,
+					// which is the one thru which SC listens to the source
 
 	var <oscFuncDictionary;
 
@@ -91,13 +92,13 @@ OSCMKtlDevice : MKtlDevice {
 	// recvPort is the port on which the source sends and SC receives.
 	// srcPort is the port the source LISTENS TO and SC sends on.
 	initAddresses { |info|
-		var ipAddr =  info !? { info.at( \ipAddress ) } ? "127.0.0.1";
-		var srcPort = info !? { info.at( \srcPort ) };
+		var srcIPaddr =  info !? { info.at( \ipAddress ) } ? "127.0.0.1";
+		var srcPort = info !? { info.at( \srcPort ) } ? NetAddr.langPort;
 		// usually the same as destination port
-		recvPort = info !? { info.at( \destPort ) } ? srcPort ? NetAddr.langPort;
+		recvPort = info !? { info.at( \recvPort ) } ? srcPort ? NetAddr.langPort;
 
-		source = NetAddr.new( ipAddr, srcPort );
-		destination = NetAddr.new( ipAddr, recvPort );
+		source = NetAddr.new( srcIPaddr, srcPort );
+		destination = NetAddr.new( srcIPaddr, srcPort );
 		// must do by hand for OSC
 		this.addToLookup;
 	}

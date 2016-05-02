@@ -447,7 +447,7 @@ MKtl.addSpec(\pwm8bit, [0, 255, \linear, 1]);
 	// only for testing: send output values to SC itself
 	// (instead of a real osc device)
 	idInfo: "test",
-	netAddrInfo: ( ipAddress: "127.0.0.1", recvPort: NetAddr.langPort ),
+	netAddrInfo: ( ipAddress: "127.0.0.1", srcPort: NetAddr.langPort, recvPort: NetAddr.langPort ),
 	protocol: \osc,
 	elementsDesc: (
 		elements: [
@@ -464,7 +464,6 @@ MKtl.addSpec(\pwm8bit, [0, 255, \linear, 1]);
 );
 );
 m = MKtl( \exampleOSCoutput, ~descOutput );
-
 // an output element in an OSC MKtl sends its value out by network
 // when the value of the element in the MKtl is changed.
 // to simulate the receiving osc device, we listen in SC itself

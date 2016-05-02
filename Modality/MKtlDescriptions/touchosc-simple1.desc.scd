@@ -39,15 +39,18 @@ MKtl.all.do(_.free).clear;
 t = MKtl(\tosca, "touchosc-simple1");
 
 // trace to look what address the touchOSC app sends from:
-OSCFunc.trace;
-
-// set the address to the one you see in the trace:
-t.device.updateSrcAddr("192.168.178.65", 63008);
+OSCFunc.trace(true);
 // and turn off tracing.
 OSCFunc.trace(false);
 
+// set the address to the one you see in the trace:
+t.device.updateSrcAddr("192.168.178.68", 63763);
+
+NetAddr.langPort;
+
 // now trace the MKtl itself
 t.trace;
+t.device;
 // and give it an action for all its elements
 t.elAt.action = { |el|
 	"tOsc %: %\n".postf(el.name, el.value.round(0.001))
