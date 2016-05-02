@@ -1,8 +1,11 @@
 // QuNexus has four modes:
 // Preset A uses just noteOn/Off and channel bend
 // Preset B adds channel pressure
+// -> desc "*qunexus*AB" covers both A and B;
+
 // Preset C allocates notes to 10 rotating midi chans,
 // and sends poly bend and pressure mod (cc1) on those chans
+
 // Preset D is for drums (uses chan 10) and clips
 
 
@@ -64,11 +67,10 @@ MIDIFunc.trace(false);
 
 /*********  not working yet:
 
-* Preset B is almost identical, except that it uses channel \touch
+* Preset C, poly bend and pressure with channel-based polyphony;
+	should be done with:
 
-* Preset C, poly bend and pressure with channel-based polyphony:
-
-MChanVoicer // <- see help file
+MChanVoicer.openHelpFile
 
 * Preset D is for drums (uses chan 10) and clips,
   to be done when someone wants to use it.
