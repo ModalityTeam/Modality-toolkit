@@ -42,8 +42,7 @@ This is both unique enough to identify devices, and allows linking to the modali
 section:: Semantic and technical information
 
 NOTE::
-A description file is bound to a single protocol - currently one of \midi, \hid, and \osc. If there is a device that communicates on multiple protocols (e.g. the EMPHASIS::icon iCONTROLS::), its components have to be built from separate desc files and merged later on,
-e.g. with CompMKtl.
+A description file is bound to a single protocol - currently one of \midi, \hid, and \osc (or \virtual for sketches). If a device communicates on multiple protocols (e.g. the EMPHASIS::icon iCONTROLS::), or on multiple ports (the EMPHASIS::QuNexus::), its components can be built from separate desc files and optionally be merged with link::Classes/CompMKtl:: if that is desirable.
 ::
 
 subsection:: Top level
@@ -62,18 +61,37 @@ MKtlDesc.loadDescs; MKtlDesc.deviceTypesUsed;
 
 -> [ 'controller', 'djController', 'drumPad', 'drumpad', 'fader', 'faderbox', 'filterbank', 'gamepad', 'joystick', 'keyboard', 'launchpad', 'manta', 'mixer', 'mouse', 'multiController', 'phoneApp', 'push', 'ribbon' ]
 ::
+
 ## elementTypes [optional, but highly recommended]
 || Description of what kind of elements the device has. For example, code:: \fader, \button, \knob, \encoder, \joyAxis ... ::
 ## status [optional, but highly recommended]
-|| A string describing the status of this description, e.g. code::"complete; tested; OSX, Linux"::, code::"incomplete; tested; OSX", ::code::"complete; tested; OSX;"::, code::"incomplete; untested;"::
+|| A string describing the status of this description, i.e. how complete and how well tested it is, by platform, with a nametag and date. E.g. the akai lpd8 has:
+code::
+status: (
+	osx: "tested and working, 2016_03_15, adc",
+	linux: "tested and working 2016_03_20, nescivi",
+	win: "unknown"
+)
+::
+status is unknown until somebody tests the device, and incompleteness can be noted, such as "elements incomplete (X missing)" etc.
+
 ## idInfo | osx | linux [required]
 || The info used to fully identify the device.
-For HID devices, this is <productname>_<vendorname>.
-For MIDI devices with single src and/or dest port, this is the same as the deviceName.
-For multi-port MIDI devices, this should be a dictionary with entries for
-(deviceName: <deviceName>,
-srcPortIndex: <index in MIDIClient.sources>,
-destPortIndex: <index in MIDIClient.destinations>);
+For HID devices, this is a String with <productname>_<vendorname>, e.g.:
+code::
+"Cyborg X_Saitek"
+::
+For MIDI devices with a single source and/or destination port, this is the same as the deviceName. For multi-port MIDI devices, this should be a dictionary with entries for
+code::
+
+(deviceName: <deviceName>, // as reported in
+srcPortIndex: <index in list of this device's in ports>,
+destPortIndex: <index in list of this device's out ports>);
+
+// The KeithMcMillen QuNexus has 3 I/O ports, and the idInfo for port 0 is:
+idInfo: (deviceName: "QuNexus", srcPortIndex: 0, destPortIndex: 0)
+::
+
 For OSC devices, this is a dictionary with information on the ipAdresses and ports used. (As NetAddresses may change, this often requires updating by hand. )
 
 ## elementsDesc [required]
@@ -83,7 +101,7 @@ For OSC devices, this is a dictionary with information on the ipAdresses and por
 || A dictionary giving additional information on the device.
 
 ## collectives [optional]
-|| Specific groups that are needed to send or receive data from the device. In particular these can be used for OSC devices.
+|| Specific groups that are needed to send or receive data collectively from the device. In particular these can be used for OSC devices.
 
 ## specs [optional]
 || A dictionary with specs in serialized notation, like code::(\key: [0, 144, \lin])::. These overwrite existing spec definitions locally for this description only: When an element has a symbol for a spec, this is looked up locally first, then in MKtl.globalSpecs, then in global Spec.specs.
@@ -116,11 +134,12 @@ DEFINITIONLIST::
 
 ##  spec
 || The element code::\spec:: has to be present and is a symbol that, if called code::.asSpec:: upon, returns the (global) code::ControlSpec:: suitable for this element.
-## \midiChan, \midiNum
-|| Needed, if code::\midiType:: is part of the config string. The identifiers code::\bend, \touch, \program:: only need code::\midiChan:: to be specified.
+## midiChan, midiNum
+|| \midiChan is needed for all midi messages including code::\bend, \touch, \program::, \midiNum is needed only for code::\noteOn, \noteOff, \control and \polyTouch:: messages.
 ::
 
-	The 'elementsDesc' field is a dictionary that can contain other dictionaries or arrays, which will be used to build hierarchical groups of elements in the MKtl to be built from the description. At the leaves of this data structure must be a dictionary describing an element. Its most important keys are code:: \key, \shared, \elements::; \key defines a local lookup name for the element or group; shared defines properties shared between elements in this group, and \elements is an array of elements which again contain dictionaries describing elemnts or groups.
+	The 'elementsDesc' field is a dictionary that can contain other dictionaries or arrays, which will be used to build hierarchical groups of elements in the MKtl to be built from the description. At the leaves of this data structure must be a dictionary describing an element. Its most important keys are code:: \key, \shared, \elements::; \key defines a local lookup name for the element or group; \shared defines properties shared between elements in this group, and \elements is an array of elements which again contains dictionaries describing elements or groups.
+
 A typical structure would be:
 	code::
 (
@@ -140,8 +159,8 @@ elementsDesc: [ // the elementsDesc of the whole device
 				shared: (elementType: \slider, spec: \midiCC ),
 				elements: [
 
-					( key: \1, midiNum: 1 ),
-					( key: \2, midiNum: 2 )
+					( key: \1, midiNum: 21 ),
+					( key: \2, midiNum: 22 )
 				]
 			),
 					// a group of 2 buttons
@@ -150,8 +169,8 @@ elementsDesc: [ // the elementsDesc of the whole device
 					// they share elementType and spec
 				shared: (elementType: \button, spec: \midiBut),
 				elements: [
-					( key: \1, midiNum: 1 ),
-					( key: \2, midiNum: 2 )
+					( key: \1, midiNum: 41 ),
+					( key: \2, midiNum: 42 )
 				]
 			)
 		]
@@ -187,24 +206,22 @@ deviceInfo: (
     ],
     notes: "Make sure the device is in total-recall mode!",
     type: [\pad, \slider],
-    hasScribble: false // see e.g. ableton push for a device that has one
+	// a scribble is a PDF for drawing a controller mapping on paper
+	// see e.g. ableton push for a device that has one
+    hasScribble: false
 ),
-description: ...
+elementsDesc: (
+	...
+)
 )
 ::
 
-Examples for code::type:: are
+Examples for code::elementType:: are
 
-list::
-## code::pad::
-## code::knob::
-## code::encoder::
-## code::mixer::
-## code::fader::
-## code::gamepad::
-## code::joystick::
-## code::pointer::
-## code::keyboard::
+code::
+MKtlElement.types.cs;
+
+-> [ 'accelAxis', 'bender', 'button', 'compass', 'cvIn', 'cvOut', 'encoder', 'fader', 'gyroAxis', 'hatSwitch', 'joyAxis', 'key', 'keyTouch', 'knob', 'led', 'lever', 'midiBut', 'mouseAxis', 'mouseWheel', 'multiPurpose', 'option', 'pad', 'padX', 'padY', 'pianoKey', 'ribbon', 'rumble', 'scroller', 'slider', 'springFader', 'switch', 'thumbAxis', 'touch', 'trigger', 'voltage', 'wheel', 'xfader' ]
 ::
 
 Note that they are always written in singular.
@@ -275,7 +292,7 @@ Multiple elements of the same type, such as a bank of sliders, should be put in 
 Groups of elements which belong to a single physical control element (or otherwise belong together semantically) should be put in a single group. E.g. a gamepad thumbstick typically has an x-axis, a y-axis, and sometimes a hat switch, which should be in one group:
 
 code::
-	(key: \l,
+	(key: \l,  // the left joystick
 		elements: [
 			(key: \x, 'hidUsage': 48),
 			(key: \y, 'hidUsage': 49)
@@ -305,29 +322,27 @@ elements: [
 );
 ::
 
-For MIDI noteOn and noteOff, two different patterns are possible, and there is a shortcut noteOnOff. E.g. for a button which sends noteOn and noteOff, the simplest use is :
+For MIDI noteOn and noteOff, one can create pairs with MKtlDesc.notePair,
+which creates a dict with elements for \on  and \off,
+and proper shared info including some gui layout information.
 
 code::
 // the element description
-d = ( key: \bt1, elementType: \button, midiMsgType: \noteOnOff, spec: \midiBut, midiNum: 12);
+~onoffgroup = MKtlDesc.notePair( \bt1, 12, (elementType: \button, spec: \midiBut));
 
-// for demonstration, make an MKtlElement from it, and give it an action
-e = MKtlElement(\bt1, d);
-e.action = { |el| el.value.postln; };
-e.valueAction_(1); // noteOn
-e.valueAction_(0); // noteOff
+// in a dict
+~descdict = (idInfo: "test", \protocol: \midi, elementsDesc: d);
 
-// determine inside the action whether it is on or off,
-// as one does with gui buttons
-e.action = { |el| if (el.value > 0) { "on" } { "off" }.postln };
+// in an MKtl
+MKtl(\x, ~descdict);
 
-e.valueAction_(1); // noteOn
-e.valueAction_(0); // noteOff
+// creates two elements with separate actions:
+MKtl(\x).gui;
+MKtl(\x).elAt(\on).valueAction_(1);
+MKtl(\x).elAt(\off).valueAction_(0);
 ::
 
-While this is fine for simple buttons and pianokeys or pads, one loses use noteOff velocity information (which some keyboards send), and has the inconvenience of the if statement in the action.
-
-So when independent on and off actions make sense, and when other elements should go into this group, one can make them separately:
+When other elements should go into this group, one can also make them separately:
 
 code::
 // description of a pad with noteOn, noteOff and poly touch:
@@ -350,15 +365,17 @@ and noteOff (using noteOff velocity) to end this synth.
 
 section:: Syntax
 
-NOTE:: ABNF notation needs update.::
-The syntax for the description file as agreed on by the modalityTeam on April, 7th 2014
-described in Augmented Backus–Naur Form (with code::/:: switched to code::|:: ) (see link::https://en.wikipedia.org/wiki/ABNF::).
+NOTE:: ABNF NOTATION NEEDS UPDATE!::
 
-NOTE::For an example for the description file syntax, see link::Tutorials/How_to_create_a_description_file::.::
+The syntax for the description file as agreed on by the modalityTeam on April, 7th 2014 described in Augmented Backus–Naur Form (with code::/:: switched to code::|:: ) (see link::https://en.wikipedia.org/wiki/ABNF::).
+
+NOTE::For detailed discussion of writing a conforming description file, see link::Tutorials/How_to_create_a_description_file::.::
 
 NOTE::
-The actual description files used by Modality often don't conform to this syntax because they use SuperCollider code to algorithmically generate the dictionary. In any case calling code::.asCompileString:: on the dictionary should generate a string which conforms to the syntax above.
+The actual description files used by Modality often don't conform to this syntax, because they use SuperCollider code to algorithmically generate parts of the dictionary. Calling code::.asCompileString:: on the dictionary should generate a string which conforms to the syntax above.
 ::
+
+NOTE:: ABNF NOTATION NEEDS UPDATE!::
 
 TELETYPE::
 descFile                    = "( protocol: " protocol ", device: " string ", description:" description [", infoMessage:" string] ")"
