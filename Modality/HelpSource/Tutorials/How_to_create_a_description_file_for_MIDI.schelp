@@ -8,9 +8,9 @@ MIDIClient.init;
 
 Section:: Introduction
 
-The functionality of link::Classes/MKtl:: relies on descriptions of the used devices. For some Controllers, there are already descriptions available. However, it might be the case that your device is not among them.
+The functionality of link::Classes/MKtl:: relies on descriptions of the  devices to be used. For many controllers, there are already descriptions available, but your preferred device may not be among them.
 
-This Tutorial first shows simple examples of MIDI interfaces, by emulating them within SuperCollider, and then describes how to create a description file for your interface.
+This tutorial first shows simple examples of MIDI interfaces, by emulating them within SuperCollider, and then describes how to create a description file for your interface.
 
 
 list::
@@ -25,13 +25,12 @@ list::
 
 section:: Simple input
 
-In this section we will go through the different types of MIDI messages for communicating element states  EMPHASIS::
-from a MIDI-device to SuperCollider:: and show how to write a description for them.
+In this section we will go through the different types of MIDI messages for communicating element states EMPHASIS::from a MIDI-device to SuperCollider:: and show how to write a description for them.
 
 There are a number of different types of MIDI messages:
 
 list::
-## noteOn and noteOff for midi note messages — typically connected to a MIDI keyboard,
+## noteOn and noteOff for midi note messages — typically from a MIDI keyboard,
 ## pitch bend messages,
 ## after touch messages,
 ## MIDI control messages ("CC" e.g., volume control) and
@@ -48,7 +47,7 @@ list::
 ##For OSX, you have to create an IAC Bus in the system tool "Audio MIDI Setup".
 ##For other platforms, please refer to a search engine of your choice.
 ::
-
+::
 
 Find all MIDI devices and do the MIDI initialisation (implicitely within the MKtl implementation):
 
@@ -66,18 +65,24 @@ MIDI Destinations:
 
 -----------------------------------------------------
 
-// Available MIDIMKtls:
-// MKtl(name, filename);  // *[ midi device, portname, uid]
+/*** Possible MKtls for MIDI devices: ***/
+	// [ midi device, portname, uid]
 
-MKtl('midi_0_iac_driver', 'midi_0_iac_driver');		// [ "IAC Driver", "IAC Bus 1", -476939297 ]
+// [ [ "IAC Driver", "IAC Bus 1", -476939297 ] ]
+	// Unknown - Create from lookupName and explore :
+MKtl('midi_0_iac_dr', 'midi_0_iac_driver');
+
 
 -----------------------------------------------------
+-> MKtl
 ::
 
-The followig code creates a (virtual) MIDI loopback connection between code::~midiOut:: and code::~midiIn:: and stores information on your setup in code::~idInfo:::
+The following code creates a (virtual) MIDI loopback connection between code::~midiOut:: and code::~midiIn:: and stores information on your setup in code::~idInfo:::
 
 code::
 (
+MKtl.find(\midi);
+
 // make a MIDIOut for the tests in the examples
 Platform.case(
 	\linux, {
@@ -110,7 +115,6 @@ For more information on MIDIOut see:
 list::
 ##link::Classes/MIDIOut#Linux specific: Connecting and disconnecting ports::
 ##link::Classes/MIDIOut#OS X specific: Sending MIDI to other applications::
-::
 ::
 ::
 
@@ -207,70 +211,13 @@ m.trace;
 ~midiOut.noteOff(0, 64, 127 );
 ~midiOut.noteOff(0, 64, 24 );
 ~midiOut.noteOff(0, 64, 0 );
-~midiOut.noteOn(0, 64, 0 );
+~midiOut.noteOn(0, 64, 0 ); // also becomes noteOff in OSX
 ::
 
-In the case the velocity information is not so important or the code::noteOn:: message with velocity zero is automatically translated to zero, then you can also use the combined code::midiMsgType: \noteOnOff::, which will listen to either kind of message.
-For example a simple button may just send a code::noteOn:: message with velocity 127 and a code::noteOff:: message with velocity 0. In that case it is useful to respond to both types of message with the same element. In the example we use the code::spec: \midiBut::.
+To get noteOn and noteOff actions separately, one can make separate elements, and here one can declare shared properties for both elements.
+(For a while, Modality supported a combined code::midiMsgType: \noteOnOff::, which listened to both noteOn and noteOff; however this has turned out to be problematic - if you find this in old desc files, please convert them as below.)
 
 code::
-// midiMsgType: \noteOnOff,
-(
-~descInput = (
-	idInfo: ~idInfo, // still around from above
-	protocol: \midi,
-	elementsDesc: (
-		elements: [
-			(
-				key: \bt,
-				type: 'button',
-				midiMsgType: \noteOn,
-				midiChan: 0,
-				midiNum: 64, // note number
-				spec: \midiBut,
-				ioType: \in
-			)
-		]
-	)
-);
-)
-
-m = MKtl( \testMIDI, ~descInput );
-m.rebuild( ~descInput ); // updating it
-m.gui;
-m.trace;
-
-// make some messages:
-~midiOut.noteOn(0, 64, 127 );
-~midiOut.noteOn(0, 64, 0 ); // creates a noteOff message (see note)
-~midiOut.noteOff(0, 64, 0 );
-
-// note that we can see in the trace whether it was noteOn or noteOff:
-~midiOut.noteOn(0, 64, 37 );
-~midiOut.noteOff(0, 64, 37 );
-
-// in the single element action, we cannot distinguish
-// between the two message types:
-m.trace(false);
-m.elAt(\bt).action = { |el| el.postln };
-
-// when we are not using the velocity as release velocity,
-// (as is the case with buttons), we can distinguish them by value:
-m.elAt(\bt).action = { |el|
-	if(el.value > 0) {
-		"on".postln;
-	} {
-		"off".postln;
-	}
-};
-
-~midiOut.noteOn(0, 64, 127 );
-~midiOut.noteOn(0, 64, 0 ); // creates a noteOff message (see note)
-~midiOut.noteOff(0, 64, 0 );
-
-
-To get noteOn and noteOff actions separately, one can make separate elements, and here one can declare shared properties for both elements.
-
 (
 ~descInput = (
 	idInfo: ~idInfo, // still around from above
@@ -295,18 +242,63 @@ To get noteOn and noteOff actions separately, one can make separate elements, an
 	)
 )
 );
-m.rebuild(~descInput);
+// alternatively, you can use MKtlDesc.notePair
+// to create a group with shared properties,
+// and elements containing one \on and one for \off:
 
-// This makes it easy to set separ ate actions for on and off:
-m.elAt(\bt, \on).action = { "ON".postln };
-m.elAt(\bt, \off).action = { "OFFFFF".postln };
+MKtlDesc.notePair(\bt_play, 64,
+	(
+		type: 'button',
+		midiChan: 0,
+		midiNum: 64,
+		spec: \midiBut,
+		ioType: \in
+	)
+);
+
+
+(
+~descInput = (
+	idInfo: ~idInfo, // still around from above
+	protocol: \midi,
+	elementsDesc: (
+		shared: (
+					type: 'button',
+					midiChan: 0,
+					spec: \midiBut,
+					ioType: \in
+				),
+
+		// for a play button and a stop button, this is:
+		elements: [
+			[\play, 42],
+			[\stop, 43]
+		].collect { |keyNote, i|
+
+			MKtlDesc.notePair(
+				keyNote[0],
+				keyNote[1],
+				// gui layout hint:
+				( style: (row: 0, column: i))
+			)
+		}
+	)
+)
+);
+
+m.rebuild(~descInput);
+m.postElements;
+m.gui;
+// This makes it easy to set separate actions for on and off:
+m.elAt(\play, \on).action = { "ON".postln };
+m.elAt(\play, \off).action = { "OFFFFF".postln };
 
 ~midiOut.noteOn(0, 64, 37 );
 ~midiOut.noteOff(0, 64, 37 );
 
-// but there is single element to ask whether the button is on or off!
-// To find out, one can use code::isOn:: to check whether on or off was active last:
-m.elAt(\bt).isOn;
+// With this approach, there is no single element to ask whether the button is on or off. You can use the 'isOn' method on the group to check whether on or off was last activated :
+m.elAt(\play).isOn;
+
 ::
 
 
@@ -340,7 +332,7 @@ m = MKtl( \testMIDI, ~descInput );
 m.rebuild( ~descInput ); // updating it
 
 m.trace;
-
+m.gui;
 // make some messages:
 ~midiOut.control(0, 8, 127 );
 ~midiOut.control(0, 8, 24 );
@@ -371,7 +363,7 @@ code::
 
 m = MKtl( \testMIDI, ~descInput );
 m.rebuild( ~descInput ); // updating it
-
+m.gui;
 m.trace;
 
 // make some messages:
@@ -421,7 +413,7 @@ subsection:: MIDI aftertouch messages
 
 Aftertouch is the pressure that is on a piano key after the initial pressing (which is translated to note velocity as explained above). The MIDI protocol implements aftertouch in two ways:
 
-Aftertouch, also called channel pressure, has a single aftertouch value per midi channel, which is usually applied to all notes playing on that channel. Tis is the more common touch implementation in hardware controllers. In SC, this is called code::\touch::.
+Basic Aftertouch, also called channel pressure, has a single aftertouch value per midi channel, which is usually applied to all notes playing on that channel. Tis is the more common touch implementation in hardware controllers. In SC, this is called code::\touch::.
 
 PolyTouch, or polyphonic aftertouch,  allows an individual aftertouch value for every currently playing note. In SC, this is called code::\polyTouch::.
 
@@ -554,12 +546,15 @@ MIDIIn.connectAll; MIDIFunc.trace;
 				midiChan: 0,
 				midiNum: 2,
 				spec: \midiVel,
-				ioType: \out
+				ioType: \inout
 			)
 		]
 	)
 )
 );
+
+m.device.midiOut.dump
+m.device.destination
 
 m = MKtl( \testMIDI, ~descOutput );
 m.rebuild( ~descOutput ); // updating it
@@ -642,7 +637,7 @@ m.gui; // and move the slider
 ::
 
 code::
-// midiMsgType: \cc - slider
+// midiMsgType: \cc - button
 MIDIIn.connectAll; MIDIFunc.trace;
 (
 ~descOutput = (
@@ -708,7 +703,7 @@ m.elAt( \bend ).value_( 1 );
 m.elAt( \bend ).value_( 0.5 ); // default
 ::
 
-subsection:: MIDI after touch messages
+subsection:: MIDI Aftertouch messages
 
 code::
 // midiMsgType: \polyTouch
@@ -808,15 +803,29 @@ subsection:: MIDI system exclusive messages
 
 note:: To be documented when fully implemented and tested.::
 
+
+
 section:: Explore a MIDI device
 
-note:: To be updated using the MIDIMonitor class when finished! ::
+Note:: This will be updated when the MIDIMonitor class is finished. ::
 
 First, find your device in the list posted by the following code and assign the MKtl to a variable.
 code::
-MKtl.find;
-// copy and change '' to the shortname of your device, e.g.
+MKtl.find(\midi);
+
+// copy and change 'midi_0_iac_dr' to a good shortname, e.g.
 a = MKtl('iac', 'midi_0_iac_driver');
+
+// ... this will post some warnings:
+MKtl( 'iac' ) - desc not valid: nil.
+MKtl:finishInit: no desc given, cannot create elements...
+WARNING: MKtl('iac') .elementsDict has no elements:
+ nil
+
+//// and then explanation and working code:
+// MKtl('iac') : opened device without desc file.
+// Maybe you want to explore this device?
+MKtl('iac').explore;
 
 ::
 
@@ -824,6 +833,9 @@ Now, turn on the explore mode and move every element on your controller. Make su
 
 code::
 // MIDI: if you want more information on what is happening, turn on verbose mode:
+
+MKtl('iac').explore;
+
 MIDIExplorer.verbose = true;
 MIDIExplorer.verbose = false; // turn it off again
 ::
@@ -838,139 +850,148 @@ a.explore( false );
 
 note::If this does not work for you, try: code::MIDIExplorer.compile:: and copy the code from the post window manually to a new file.::
 
-section:: Reviewing the exploration
 
-We now have a file that contains all of the raw data that we need for our description file. However, before we can use it in Modality, we will first need to review the data and make sure that the different functions of the controller are properly named.
+section:: Turning exploration data into a desc file
 
-subsection:: Build a description file from the raw data
+We now have a file that contains all the raw data we need for the description file, and that already works as a full desc file. However, it is worth spending time on editing it for for semantic clarity, by better element names, and good grouping.
 
-The examples below are written for a MIDI device, but the same steps need to be taken for HID or other devices.
-
-So first there is a bit of bookkeeping to be done.
-The file we opened earlier contains lines such as:
-
-code::
-'_elName_0_005_': ('midiType': 'noteOn', 'type': 'pianoKey', 'chan': 0, 'midiNote':  5, 'spec': 'midiNote'),
+Detailed background info sources:
+list::
+##For desc file format conventions, see link::Reference/MKtl_description_files::.
+##For naming conventions, see link::Reference/MKtl_description_files#Naming Conventions::.
 ::
 
-
-To bring these into a form useable as a description file for Modality, we have to put it into the format specified in link::Reference/MKtl_description_files:::
-
-code::
-(
-\identifier: (key: value, key: value, ... ),
-\identifier: (key: value, key: value, ... ),
-
-\groupIdentifier: [
-	(key: value, key: value, ... ),
-	(key: value, key: value, ... ),
-	(key: value, key: value, ... ),
-]
-)
+Steps for editing desc files:
+list::
+## Grouping first - put elements in groups with good names.
+E.g. a bank of 8 sliders should be in a group called \sl; knobs would be in \kn; labeled elements, e.g. buttons \play, \stop, \rew, \fwd should be in a transport group, short \tr, etc.
+## Lift shared info up as far as possible. If all elements only use midichannel 0, put that in the top shared entry; if all elements in a group are sliders, put their elementType in the shared dict of that group.
+## Adapt the elementTypes for the elements of the device - put in the most appropriate ones you can find in MKtlElement.types.
 ::
 
-note::Naming conventions apply. You can find them at link::Reference/MKtl_description_files#Naming Conventions::.
-::
-
-Edit the code::edit and save me.desc.scd:: document to assemble your new description file. Make sure you pay attention to the following points:
-
-Unless it does not make sense from the controller's layout (e.g. for record buttons as opposed to a collection of similar elements such as sliders), elements of the same type should be grouped into a hierarchical description for maximum compatibility.
-
-Also, make sure to fill in appropriate descriptions for code::\type:: fields.
-
-
-We here exemplify the process at hand of the following raw data, as it could possibly fall out from the code::MKtl().explore:: function mentioned above.
+We go thru the process step by step with raw data that may have come from the code::MKtl().explore:: as mentioned above.
 It contains information of a device with three knobs:
 
 code::
-(
+...
+elements: [
 	// ------ cc -------------
-	'_elName_0_002_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  2,'spec': 'midiCC'),
-	'_elName_0_003_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  3,'spec': 'midiCC'),
-	'_elName_0_004_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  4,'spec': 'midiCC'),
-);
+	(key: '_elName_0_002_', 'midiMsgType': 'cc', 'elementType': 'slider', 'midiChan': 0, 'midiNum':  2, 'spec': 'midiCC'),
+	(key: '_elName_0_003_', 'midiMsgType': 'cc', 'elementType': 'slider', 'midiChan': 0, 'midiNum':  3, 'spec': 'midiCC'),
+	(key: '_elName_0_004_', 'midiMsgType': 'cc', 'elementType': 'slider', 'midiChan': 0, 'midiNum':  4, 'spec': 'midiCC')
+],
+...
 ::
 
 NOTE::Although the type should be code::\knob::, it registers as code::\slider::. This is because only a cc value is coming in, and it does not state what kind of hardware element is producing it.
 ::
 
-Edit the raw data and add it to a group:
+Edit the raw elements by giving them better names (assuming buttons are labeled A, B, C);
+and put them in a named group:
+
+code::
+// ...
+elements: [
+	(
+		key: \kn,
+		elements: [
+			(key: \A, 'midiMsgType': 'cc', 'elementType': 'knob', 'midiChan': 0, 'midiNum':  2, 'spec': 'midiCC'),
+			(key: \B, 'midiMsgType': 'cc', 'elementType': 'knob', 'midiChan': 0, 'midiNum':  3, 'spec': 'midiCC'),
+			(key: \C, 'midiMsgType': 'cc', 'elementType': 'knob', 'midiChan': 0, 'midiNum':  4, 'spec': 'midiCC')
+		]
+	)
+]
+// ...
+
+// highly recommended: lift all shared properties up to group,
+// so that only the different properties remain in each element:
+// ...
+elements: [
+	(
+		key: \kn,
+		shared: ('midiMsgType': 'cc', 'elementType': 'slider', 'midiChan': 0, 'spec': 'midiCC'),
+		elements: [
+			(key: \A, 'midiNum': 2),
+			(key: \B, 'midiNum': 3),
+			(key: \C, 'midiNum': 4)
+		]
+	)
+]
+// ...
+
+::
+
+In case there are two columns of 3 knobs each, the flat list of 6 knobs would become
+a hierarchical structure like this:
 
 code::
 (
-	// ------ cc -------------
-	'kn': [
-		('midiMsgType': 'cc', 'type': 'knob', 'midiChan': 0, 'midiNum':  2,'spec': 'midiCC'),
-		('midiMsgType': 'cc', 'type': 'knob', 'midiChan': 0, 'midiNum':  3,'spec': 'midiCC'),
-		('midiMsgType': 'cc', 'type': 'knob', 'midiChan': 0, 'midiNum':  4,'spec': 'midiCC')
-	]
+// ...
+elements: [
+	(
+		key: \sl,
+		shared: ('midiMsgType': 'cc', 'elementType': 'slider', 'midiChan': 0, 'spec': 'midiCC'),
+		elements: [
+			(
+				key: \L,
+				elements: [
+					(key: \A, 'midiNum': 2),
+					(key: \B, 'midiNum': 3),
+					(key: \C, 'midiNum': 4)
+				],
+			),
+			(
+				key: \R,
+				elements: [
+					(key: \A, 'midiNum': 2),
+					(key: \B, 'midiNum': 3),
+					(key: \C, 'midiNum': 4)
+				],
+			),
+		]
+	)
+]
+// ...
 )
 ::
 
-In case, the controller has banks of groups, the hierarchical structure would look like this:
+note::
+Description files can also be written and tested without an actual device being attached. As long as you keep the naming conventions in mind you will be able to create a working GUI version.
+::
 
+note::
+A proper description on how to combine code::\noteOn, \noteOff, \polyTouch:: is still missing in this tutorial. Several existing desc files do that already, e.g. see:
 code::
-// raw data of two by three sliders
-(
-	// ------ cc -------------
-	'_elName_0_002_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  2,'spec': 'midiCC'),
-	'_elName_0_003_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  3,'spec': 'midiCC'),
-	'_elName_0_004_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  4,'spec': 'midiCC'),
-	'_elName_0_005_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  5,'spec': 'midiCC'),
-	'_elName_0_006_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  6,'spec': 'midiCC'),
-	'_elName_0_008_': ('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  8,'spec': 'midiCC'),
-);
+MKtlDesc("*beatstep").openFile;
+::
 ::
 
-
-
-
-code::
-(
-	sl: [
-		[ // bank 0
-			('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  2,'spec': 'midiCC'),
-			('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  3,'spec': 'midiCC'),
-			('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  4,'spec': 'midiCC'),
-		], [ // bank 1
-			('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  5,'spec': 'midiCC'),
-			('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  6,'spec': 'midiCC'),
-			('midiMsgType': 'cc', 'type': 'slider', 'midiChan': 0, 'midiNum':  8,'spec': 'midiCC')
-		]
-	]
-);
-::
-
-If a flat description for an element is required, it can be directly copied from the generated description skeleton. However, each element has to have a name that represents its functionality.
 
 note::
-You may want to restart the explore mode for this by evaluating
-code::e.start.verbose_(true)::::
-
-note::
-Its also possible to create a description file without an actual device being attached. As long as you keep the naming conventions in mind you will be able to create a working GUI version.
-::
-note::
-A proper description on how to combine code::\noteOn, \noteOff, \polyTouch:: is still missing in this tutorial. While the developer team is working on it, have a look at similar description files. You can find them in the folder opening when you evaluate
-code::
-MKtlDesc.openFolder;
-::
-
-::
-
-note::
-When exploring a MIDI device only the incoming MIDI is analysed. You will have to add the MIDI output elements manually. You will have to look up in the manual of your device or online to find out which MIDI messages your device responds to.
+When exploring a MIDI device only the incoming MIDI is analysed - MIDI devices do not report any info on which messages they will respond to, so one has to add MIDI output elements manually. This is usually documented in the implementation chart in the device manual (which is usually findable online).
 ::
 
 subsection:: Save description file and test it
 
-If you are happy with the generated document, save it with a meaningful name to the descriptions folder. You can open it with
+If you are happy with the generated document, save it with a meaningful name to the descriptions folder. You can open that folder with
 code::
-MKtl.openDescriptionFolder;
+MKtlDesc.openFolder;
 ::
-The filename should give a meaningful hint to the device it is made for. It further needs to end in code::".desc.scd"::.
+The filename should be "<company-devicename-extra-info>", and must end in code::".desc.scd"::.
+After adding a new desc file, please do
+code::
+MKtlDesc.writeCache;
+::
 
-To test your description file, restart SuperCollider and follow instructions in link::Tutorials/ModalityTutorial::.
+You are highly welcome to contribute your desc files to modality!
+In case this makes little sense (selfmade or modified controllers),
+you can also put your descs in a private desc folder known to MKtlDesc:
+code::
+MKtlDesc.addFolder("~/path/to/my/descs/");
+::
+
+To test your new description file, restart SuperCollider and follow instructions in link::Tutorials/ModalityTutorial::.
+
 /// ... To be updated using the MIDIMonitor class when finished ... ///
 
 

@@ -5,7 +5,7 @@ related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Cl
 
 Section:: Introduction
 
-The functionality of link::Classes/MKtl:: relies on descriptions of the used devices. For many controllers, there are already descriptions available, but your preferred device may not be among them.
+The functionality of link::Classes/MKtl:: relies on descriptions of the  devices to be used. For many controllers, there are already descriptions available, but your preferred device may not be among them.
 
 This tutorial shows how to describe elements, which is largely the same for all description files (regardless of protocol). For the specifics of the three supported protocols, there are these three specific tutorials:
 
