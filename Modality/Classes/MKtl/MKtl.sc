@@ -608,7 +608,7 @@ MKtl { // abstract class
 		device = MKtlDevice.open( this.name, this, multiIndex );
 
 		if(this.hasDevice.not) {
-			inform("%.openDevice: remaining virtual.".format(this));
+			inform("%: remaining virtual.".format(thisMethod));
 		} {
 			// if no desc file, try to match with generic desc
 			// this only works for HID:
@@ -634,6 +634,7 @@ MKtl { // abstract class
 		}
 	}
 
+	// for midi - attach MIDI hardware thru idInfo from an MIDI interface port
 	openDeviceVia { |idInfo, lookAgain=true, multiIndex|
 		if (idInfo.notNil) {
 			"%: replacing idInfo: % with: % to openDevice.\n"
