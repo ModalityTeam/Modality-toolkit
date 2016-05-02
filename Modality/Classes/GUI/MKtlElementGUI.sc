@@ -59,6 +59,7 @@ MKtlElementGUI {
 			'springFader': \slider,
 			'rumble':\slider,
 			'ribbon': \slider,
+			'wheel': \slider,
 			'hatSwitch': \knob,
 			'encoder': \knob
 		);
