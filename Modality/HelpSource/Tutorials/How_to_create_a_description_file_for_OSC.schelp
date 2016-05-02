@@ -42,7 +42,7 @@ code::
 (
 	key: 'bt',
 	oscPath: '/button',
-	type: 'button',
+	elementType: 'button',
 	ioType: \in,
 	spec: \but
 )
@@ -50,7 +50,7 @@ code::
 
 An entry for code::\spec:: in the description is required to recognize this dict as an element description!
 
-Here is a complete working example:
+Here is a complete working example of a description dict:
 
 code::
 (
@@ -63,7 +63,7 @@ code::
 			(
 				key: 'bt',
 				oscPath: '/button',
-				type: 'button',
+				elementType: 'button',
 				ioType: \in,
 				spec: \but
 			)
@@ -82,10 +82,9 @@ m.elementAt(\bt).valueAction_(1);
 m.elementAt(\bt).valueAction_(0);
 
 // create a gui for the osc device:
-m.gui;
+m.gui.parent.alwaysOnTop = true;
 // post incoming OSC data
 m.trace;
-m.device.oscFuncDictionary.do(_.enable)
 
 // and now simulate sending values from an OSC device by network:
 n = NetAddr("127.0.0.1", NetAddr.langPort); // fake device address
@@ -95,7 +94,8 @@ n.sendMsg('/button', 1);
 
 
 
-For a row of buttons, such devices often send an index of the button, e.g. for two buttons:
+For a row of buttons, such devices often use the same message name,
+and send an index of the button to address, e.g. for two buttons:
 
 code::
 // osc message path = /button, index = 0, value = 1, means button at 0 is on
@@ -113,13 +113,13 @@ elements: [
 	(
 	oscPath: '/button',
 	argTemplate: [ 0 ],
-	type: 'button',
+	elementType: 'button',
 	ioType: \in
 	),
 	(
 	oscPath: '/button',
 	argTemplate: [ 1 ],
-	type: 'button',
+	elementType: 'button',
 	ioType: \in
 	)
 ]
@@ -130,7 +130,7 @@ elements: [
 key: 'bt',
 shared: (
 	oscPath: '/button',
-	type: 'button',
+	elementType: 'button',
 	ioType: \in
 ),
 elements: [
@@ -155,7 +155,7 @@ code::
 For a grid layout of e.g. button elements, devices usually send row and column indices of the element along, so a grid of buttons would be:
 
 code::
-// osc message path = /button, rowindex = 0, columnindex=1, value = 1, means the button is on
+// osc message path = /button, rowindex = 0, columnindex=1, value = 1, means the button at rowi at columni is on
 /button 0 1 1
 // osc message path = /button, rowindex = 1, columnindex=2, value = 0, means the button is off
 /button 1 2 0
@@ -171,7 +171,7 @@ code::
 	shared: (
 		oscPath: '/button',
 		argTemplate: [ 0,0 ],
-		type: 'button',
+		elementType: 'button',
 		ioType: \in
 	),
 	elements: [
@@ -188,13 +188,12 @@ code::
 	]
 );
 
-// recommended with more than 2 list elements:
-// write more concise code with .collect.
+// With more than 2 list elements, best write more concisely with .collect.
 (
 key: 'bt',
 shared: (
 	oscPath: '/button',
-	type: 'button',
+	elementType: 'button',
 	ioType: \in
 ),
 elements: 2.collect { |row|
@@ -224,7 +223,7 @@ code::
 (
 	key: 'bt',
 	oscPath: '/button',
-	type: 'button',
+	elementType: 'button',
 	valueAt: 1,
 	ioType: \in
 )
@@ -246,7 +245,7 @@ code::
 				oscPath: '/knob',
 				argTemplate: [ 1,2 ], // the knob at row 1 and column 2
 				valueAt: 3, // the index in the osc message where the value is
-				type: 'knob',
+				elementType: 'knob',
 				spec: \midiCC,
 				ioType: \in
 			)
@@ -295,7 +294,7 @@ code::
 			(
 				key: 'bt',
 				oscPath: '/button/*',
-				type: 'button',
+				elementType: 'button',
 				spec: \onOffString,
 				ioType: \in
 			)
@@ -339,9 +338,9 @@ code::
 			(
 				key: 'tr',
 				oscPath: '/trigger',
-				type: 'trigger',
+				elementType: 'trigger',
 				ioType: \in,
-				spec: \unipolar  // spec is needed, but value is ignored
+				spec: \unipolar  // spec is needed, but its value is ignored
 			)
 		]
 	)
@@ -356,7 +355,7 @@ m.gui;
 // post incoming data
 m.trace;
 
-m.elementAt(\tr).action = { "TRIG!".postln };
+m.elAt(\tr).action = { "TRIG!".postln };
 m.elementAt(\tr).doAction;
 
 n = NetAddr.new( "127.0.0.1", NetAddr.langPort );
@@ -386,7 +385,7 @@ code::
 (
 	key: 'led',
 	oscPath: '/output',
-	type': 'led',
+	elementType: 'led',
 	ioType: \out
 );
 )
@@ -408,7 +407,7 @@ code::
 	key: 'led',
 	oscPath: '/output',
 	argTemplate: [ 2, 3 ],
-	type: 'led',
+	elementType: 'led',
 	ioType: \out
 );
 
@@ -431,7 +430,7 @@ code::
 	key: 'led',
 	oscPath: '/output',
 	argTemplate: [ 2, nil, 3 ],
-	type: 'led',
+	elementType: 'led',
 	ioType: \out
 );
 )
@@ -448,7 +447,7 @@ MKtl.addSpec(\pwm8bit, [0, 255, \linear, 1]);
 	// only for testing: send output values to SC itself
 	// (instead of a real osc device)
 	idInfo: "test",
-	netAddrInfo: ( ipAddress: "127.0.0.1", destPort: NetAddr.langPort ),
+	netAddrInfo: ( ipAddress: "127.0.0.1", recvPort: NetAddr.langPort ),
 	protocol: \osc,
 	elementsDesc: (
 		elements: [
@@ -465,7 +464,6 @@ MKtl.addSpec(\pwm8bit, [0, 255, \linear, 1]);
 );
 );
 m = MKtl( \exampleOSCoutput, ~descOutput );
-
 
 // an output element in an OSC MKtl sends its value out by network
 // when the value of the element in the MKtl is changed.
@@ -509,7 +507,7 @@ code::
 		elements: [
 			(
 				key: 'bt',
-				shared: ( type: 'button', ioType: \collectiveIn, \spec: \but ),
+				shared: ( elementType: 'button', ioType: \collectiveIn, \spec: \but ),
 				elements: 5.collect { () }
 			)
 		]
@@ -567,7 +565,7 @@ code::
 		elements: [
 			(
 				key: 'bt',
-				shared: ( type: 'button', ioType: \collectiveIn, \spec: \but ),
+				shared: ( elementType: 'button', ioType: \collectiveIn, \spec: \but ),
 				elements: 5.collect { () }
 			)
 		]
@@ -609,7 +607,7 @@ code::
 		elements: [
 			(
 				key: 'bt',
-				shared: ( type: 'button', ioType: \collectiveIn, \spec: \but ),
+				shared: ( elementType: 'button', ioType: \collectiveIn, \spec: \but ),
 				elements: 5.collect { () }
 			)
 		]
@@ -652,7 +650,7 @@ code::
 		elements: [
 			(
 				key: 'bt',
-				shared: ( type: 'button', ioType: \collectiveIn, \spec: \but ),
+				shared: ( elementType: 'button', ioType: \collectiveIn, \spec: \but ),
 				elements: 5.collect { () }
 			)
 		]
@@ -691,7 +689,7 @@ code::
 MKtl.addSpec(\pwm8bit, [0, 255, \linear, 1]);
 
 ~descCollectiveOut = (
-	idInfo: ( ipAddress: "127.0.0.1", destPort: NetAddr.langPort ),
+	idInfo: ( ipAddress: "127.0.0.1", recvPort: NetAddr.langPort ),
 	protocol: \osc,
 	'collectives': (
 		leds: (
@@ -709,7 +707,7 @@ MKtl.addSpec(\pwm8bit, [0, 255, \linear, 1]);
 				key: 'led',
 				shared: (
 					default: 0,
-					type: 'led', spec: \pwm8bit,
+					elementType: 'led', spec: \pwm8bit,
 					// use a group method to create the output
 					ioType: \collectiveOut
 				),
@@ -740,7 +738,7 @@ m.collectivesDict[\leds].value_([0, 1, 2] / 2);
 m.elementAt(\led).value;
 
 
-// do a collective send directly:
+// instead, you can do a collective send directly:
 m.send(\leds, [0,64,255]);
 
 
@@ -771,7 +769,7 @@ code::
 MKtl.addSpec(\pwm8bit, [0, 255, \linear, 1]);
 
 ~descCollectiveOut = (
-	idInfo: ( ipAddress: "127.0.0.1", destPort: NetAddr.langPort ),
+	idInfo: ( ipAddress: "127.0.0.1", recvPort: NetAddr.langPort ),
 	protocol: \osc,
 	'collectives': (
 		leds: (
@@ -787,7 +785,7 @@ MKtl.addSpec(\pwm8bit, [0, 255, \linear, 1]);
 				key: 'led',
 				shared: (
 					default: 0,
-					type: 'led', spec: \pwm8bit,
+					elementType: 'led', spec: \pwm8bit,
 					// use a group method to create the output
 					ioType: \collectiveOut
 				),
@@ -875,7 +873,7 @@ code::
 
 				oscPath: '/pad',
 				argTemplate: [ 0,0 ], // at row 0 and column 0
-				type: 'pad',
+				elementType: 'pad',
 				spec: \midiCC,
 				ioType: \in
 			)
@@ -909,7 +907,7 @@ code::
 	elementsDesc: (
 		shared: (
 					oscPath: '/pad',
-					type: 'pad',
+					elementType: 'pad',
 					spec: \midiCC,
 					ioType: \in
 				),
@@ -931,7 +929,7 @@ m.gui
 m.elementsDict
 
 // test with a global action
-m.elements.action = { |el| ("  recv:" + [m, el.name, el.value.round(0.001)]).postln; };
+m.elementGroup.action = { |el| ("  recv:" + [m, el.name, el.value.round(0.001)]).postln; };
 m.elementAt(\pad, 0, 2).deviceValueAction_(128.rand.postln);
 
 // and test that m receives properly via OSC:
@@ -975,7 +973,7 @@ elements: 4.collect { |id|
 		key: \led,
 		oscPath: '/manta/led/button',
 		argTemplate: [ nil, id ],
-		type: 'led',
+		elementType: 'led',
 		spec: 'mantaLed',
 		ioType: \out
 	);
@@ -993,7 +991,7 @@ elements: 48.collect { |id|
 		key: \led,
 		oscPath: '/manta/led/pad',
 		argTemplate: [ nil, id ],
-		type: 'led',
+		elementType: 'led',
 		spec: 'mantaLed',
 		ioType: \out
 	);
@@ -1013,15 +1011,14 @@ specs: (
 For the complete Manta description take a look at its description file:
 
 code::
-MKtlDesc.loadDescs( "snyder*" );
-MKtlDesc.at('snyderphonics-manta').openFile;
+MKtlDesc('snyderphonics-manta').openFile;
 ::
 
 section:: OSC device info
 
 The underlying protocol of OSC communication in SuperCollider and most other applications is UDP. The addressing of messages is done via IP adresses and ports.
 
-The MKtlDesc for an OSC device has an info dictionary which can contain: code::ipAddress, srcPort, recvPort, destPort::. All of these elements are optional. Each of them are described in the following subsections.
+The MKtlDesc for an OSC device has an info dictionary which can contain: code::ipAddress, srcPort, recvPort, recvPort::. All of these elements are optional. Each of them are described in the following subsections.
 
 For a general discussion on OSC Communication, see this guide: link::Guides/OSC_communication::.
 
@@ -1068,9 +1065,9 @@ netAddrInfo: ( recvPort: 31416 );
 
 If you leave the code::recvPort:: undefined then SuperCollider's default port (code::NetAddr.langPort::) is used, and you need to configure your OSC device to send to that port.
 
-subsection:: destPort
+subsection:: recvPort
 
-If the OSC device can also receive messages, you need to know on which port it listens. You can find this in the documentation of the device. For sending a message to an OSC device you need to know both the code::ipAddress:: and the code::destPort::. If the code::destPort:: is left undefined, then the OSCMKtlDevice will use the same port as the code::srcPort::. If the code::ipAddress:: is left undefined then the code::"127.0.0.1":: is used.
+If the OSC device can also receive messages, you need to know on which port it listens. You can find this in the documentation of the device. For sending a message to an OSC device you need to know both the code::ipAddress:: and the code::recvPort::. If the code::recvPort:: is left undefined, then the OSCMKtlDevice will use the same port as the code::srcPort::. If the code::ipAddress:: is left undefined then the code::"127.0.0.1":: is used.
 
 code::
 ( netAddrInfo: ( srcPort: 31417, ipAddress: "127.0.0.1" ) );
@@ -1080,13 +1077,13 @@ m.device.destination;
 // will be NetAddr( "127.0.0.1", 31417 );
 
 
-( netAddrInfo: ( srcPort: 31417, ipAddress: "127.0.0.1", destPort: 31419 ) );
+( netAddrInfo: ( srcPort: 31417, ipAddress: "127.0.0.1", recvPort: 31419 ) );
 m.device.source;
 // will be NetAddr( "127.0.0.1", 31417 );
 m.device.destination;
 // will be NetAddr( "127.0.0.1", 31419 );
 
-( netAddrInfo: ( destPort: 31419 ) );
+( netAddrInfo: ( recvPort: 31419 ) );
 m.device.source;
 // will be nil;
 m.device.destination;

@@ -5,8 +5,8 @@ OSCMKtlDevice : MKtlDevice {
 	classvar messageSizeDispatcher;
 
 	var <source;  // receiving OSC from this NetAddr
-	var <destination; // sending OSC to this NetAddr - usually the same
-	var <recvPort; // port on which we need to listen
+	var <destination; // sending OSC back to this NetAddr - usually the same as
+	var <recvPort; // the port on which we need to listen
 
 	var <oscFuncDictionary;
 
@@ -93,10 +93,11 @@ OSCMKtlDevice : MKtlDevice {
 	initAddresses { |info|
 		var ipAddr =  info !? { info.at( \ipAddress ) } ? "127.0.0.1";
 		var srcPort = info !? { info.at( \srcPort ) };
-		recvPort = info !? { info.at( \recvPort ) } ? srcPort ? NetAddr.langPort;
+		// usually the same as destination port
+		recvPort = info !? { info.at( \destPort ) } ? srcPort ? NetAddr.langPort;
 
 		source = NetAddr.new( ipAddr, srcPort );
-		destination = NetAddr.new( ipAddr, srcPort ); // usually same as source
+		destination = NetAddr.new( ipAddr, recvPort );
 		// must do by hand for OSC
 		this.addToLookup;
 	}
