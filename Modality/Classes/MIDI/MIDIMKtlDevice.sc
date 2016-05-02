@@ -247,7 +247,7 @@ MIDIMKtlDevice : MKtlDevice {
 				midiOut = MIDIOut( 0 );
 				midiOut.connect( MIDIClient.destinations.indexOf(destination) )
 			} {
-				midiOut = MIDIOut( MIDIClient.destinations.indexOf(destination), dstID );
+				midiOut = MIDIOut( MIDIClient.destinations.indexOfEqual(destination), dstID );
 			};
 
 			// set latency to zero as we assume to have controllers
