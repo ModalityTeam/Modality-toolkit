@@ -6,7 +6,6 @@ Dictionary[
 	("akai-mpkmini" -> "MPK mini"),
 	("akai-mpkmini2" -> "MPKmini2"),
 	("arturia-beatstep" -> "Arturia BeatStep"),
-	("arturia-beatstep-rel-0" -> "Arturia BeatStep"),
 	("arturia-beatstep-rel-16" -> "Arturia BeatStep"),
 	("arturia-minilab" -> "Arturia MINILAB"),
 	("behringer-bcf2000" -> ( 'srcPortIndex': 0, 'destPortIndex': 0, 'deviceName': "BCF2000" )),
