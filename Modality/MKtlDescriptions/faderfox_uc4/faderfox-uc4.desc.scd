@@ -7,6 +7,8 @@ It has 9 sliders, 8 knobs with 8 pushbuttons and 8 normal buttons;
 by switching between 8 groups one has 264 controls in one setup,
 and 16 presets of 8 groups each allow very flexible uses.
 
+The knobs are relative with a resolution of about 35 updates per revolution.
+
 This desc file only addresses Setup 01 setup,
 and does not have faders and knobs in every group!
 
