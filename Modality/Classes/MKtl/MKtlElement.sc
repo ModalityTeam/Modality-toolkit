@@ -189,24 +189,24 @@ MAbstractElement {
 
 	// adding posts to see how much use the method even gets
 	index {
-		"// using %\n".postf(thisMethod);
+		// "// using %\n".postf(thisMethod);
 		// ^this.parent !? _.indexOf( this );
 		^this.indexInGroup
 	}
 
 	key {
-		"// using %\n".postf(thisMethod);
+		// "// using %\n".postf(thisMethod);
 		// ^this.index
 		this.keyInGroup
 	}
 
 	indices {
-		"// using %\n".postf(thisMethod);
+		// "// using %\n".postf(thisMethod);
 		^this.parent !? { parent.indices ++ [ this.index ] };
 	}
 
 	keys {
-		"// using %\n".postf(thisMethod);
+		// "// using %\n".postf(thisMethod);
 		^this.parent !? { parent.keys ++ [ this.key ] };
 	}
 
