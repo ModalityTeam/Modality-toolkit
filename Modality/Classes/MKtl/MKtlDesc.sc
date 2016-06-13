@@ -92,7 +92,7 @@ MKtlDesc {
 		foundPaths = foldersToLoad.collect { |dir|
 			(dir +/+ filename ++ fileExt).pathMatch
 			// add depth of one folders
-			++ (dir +/+ "*/" +/+ filename ++ fileExt).pathMatch
+			++ (dir +/+ "*" +/+ filename ++ fileExt).pathMatch
 		}.flatten(1);
 
 		if (postFound) {
