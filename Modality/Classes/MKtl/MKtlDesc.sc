@@ -92,7 +92,13 @@ MKtlDesc {
 		foundPaths = foldersToLoad.collect { |dir|
 			(dir +/+ filename ++ fileExt).pathMatch
 			// add depth of one folders
-			++ (dir +/+ "*" +/+ filename ++ fileExt).pathMatch
+			// worked like this for osx and linux:
+			// ++ (dir +/+ "*" +/+ filename ++ fileExt).pathMatch
+			// quick fix for windows, where pathMatch does not allow
+			// wildcards for dirs, like "path/*/*.desc.scd"
+			++ (dir +/+ "*").pathMatch.collect { |folder|
+				(folder +/+ filename ++ fileExt).pathMatch
+			}.flatten(1)
 		}.flatten(1);
 
 		if (postFound) {
