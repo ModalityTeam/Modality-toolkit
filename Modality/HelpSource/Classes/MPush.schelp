@@ -1,4 +1,4 @@
-TITLE::MPushHelper
+TITLE::MPush
 SUMMARY::Helper methods to interface with the Ableton Push
 CATEGORIES::Libraries/Modality
 RELATED:: Overviews/Modality, Classes/MKtl
@@ -21,8 +21,8 @@ argument:: color
 A Symbol representing the color.
 
 code::
-MPushHelper.lightDict.topRowColor.keys; // 1st row
-MPushHelper.lightDict.padColor.keys; // 2nd row
+MPush.lightDict.topRowColor.keys; // 1st row
+MPush.lightDict.padColor.keys; // 2nd row
 ::
 
 argument:: row
@@ -44,7 +44,7 @@ argument:: color
 A Symbol representing the color.
 
 code::
-MPushHelper.lightDict.padColor.keys;
+MPush.lightDict.padColor.keys;
 ::
 
 argument:: row
@@ -56,10 +56,10 @@ The row of the pads
 code::
 (
 2.do{|i|
-	MKtl('bltn1').elementAt(\colorBut, i).flat.do{|el| el.rawValue_(MPushHelper.buttonLightCode(intensity: \full, color: \red, row: i)).prMaybeSend;};
+	MKtl('bltn1').elementAt(\colorBut, i).flat.do{|el| el.rawValue_(MPush.buttonLightCode(intensity: \full, color: \red, row: i)).prMaybeSend;};
 };
 8.do{|i|
-	MKtl('bltn1').elementAt(\pad, \on, i).flat.do{|el| el.rawValue_(MPushHelper.padLightCode(intensity: \full, color: 60)).prMaybeSend;};
+	MKtl('bltn1').elementAt(\pad, \on, i).flat.do{|el| el.rawValue_(MPush.padLightCode(intensity: \full, color: 60)).prMaybeSend;};
 }
 )
 ::

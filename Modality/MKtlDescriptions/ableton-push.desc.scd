@@ -28,7 +28,7 @@ deviceInfo: (
 	"```\n"
 	"m = MKtl('push', \"ableton*\", multiIndex: 1);\n"
 	"```\n\n"
-	"Helper class: ```MPushHelper```",
+	"Helper class: ```MPush```",
 	longName: "Ableton Push",
 ),
 
