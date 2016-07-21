@@ -1,36 +1,59 @@
 TITLE:: MKtlDesc
 summary:: handling descriptions of interface devices in Modality
 categories:: Modality
-related:: Overviews/Modality, Classes/MKtl, Classes/MKtlElement, Classes/MKtlElementGroup
+related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Classes/MKtlElement, Classes/MKtlElementGroup, Reference/Naming_conventions_in_element_descriptions
 
 DESCRIPTION::
 
-MKtlDesc can read description files for hardware interface devices from its folder or other folders. It converts them into MKtlDesc objects, which contain general information about the device, and detailed information about all of its interface elements (such as sliders, buttons, joysticks, etc etc). MKtlDescs are used to create MKtls and its elements.
-Usually, MKtlDescs are created automatically when making MKtls.
+MKtlDesc can read description files for hardware interface devices into link::Classes/MKtlDesc:: instances.
+Usually, this happens automatically when an link::Classes/MKtl:: is instantiated.
+
+note::
+The file syntax can be found at link::Reference/MKtl_description_files::, element description keys can be found at link::Reference/Naming_conventions_in_element_descriptions::.
+::
 
 Some examples:
+
+Which devices are supported by Modality?
+Look at the webpage:
+
 code::
-// see which devices are supported by Modality
-MKtlDesc.web;
-MKtlDesc.docURI.openOS;
-// (if yours is not there yet, donate one and we add its desc ;-)
+MKtlDesc.web; // SC-internal webView
+MKtlDesc.docURI.openOS; // open in browser
+::
 
-MKtlDesc.defaultFolder;			// where modality puts descriptions
-MKtlDesc.addFolder("~/Desktop/"); // users can add folders
-MKtlDesc.descFolders;			// which show up here
-MKtlDesc.openFolder(0);			// and can be opened by index
+
+Folders:
+
+code::
+MKtlDesc.defaultFolder;			  // where modality puts descriptions
+MKtlDesc.addFolder("~/Desktop/"); // Add custom folders
+MKtlDesc.descFolders;			  // which show up here
+MKtlDesc.openFolder(0);			  // open by index, 0 is defaultFolder
 MKtlDesc.openFolder(1);
+::
 
+Loading:
+
+code::
 MKtlDesc.loadDescs;				// load all description files
 MKtlDesc.loadDescs("*nano*");	// or matching ones
 MKtlDesc.loadDescs("nano*", folderIndex: 0); // in specific places
+::
 
+Global inspection:
+
+code::
 MKtlDesc.allDescs;				// all currently loaded descs
 MKtlDesc('korg-nanokey2').dump;	// look at one
 MKtlDesc('korg-nanokey2').web;	// open its web documentation
+::
 
-	// make an MKtlDesc from a desc filename
-x = MKtlDesc.fromFileName("korg-nanokontrol2");
+
+Make an MKtlDesc from a desc filename
+
+code::
+x = MKtl/Desc.fromFileName("korg-nanokontrol2");
 x.openFile;			// open its file
 x.fullDesc			// the dict that contains all the info
 x.fullDesc.keys;	// the description items:

@@ -1,9 +1,10 @@
 title:: MKtl description files
 summary:: describes the format for MKtl desc files and the entries in them.
 categories:: Libraries>Modality
-related:: Overviews/Modality, Classes/MKtl, Tutorials/How_to_create_a_description_file, Reference/Naming_conventions_in_element_descriptions
+related:: Overviews/Modality, Classes/MKtl, Classes/MKtlDesc, Tutorials/How_to_create_a_description_file, Reference/MKtl_description_files, Reference/Naming_conventions_in_element_descriptions
 
-A description file contains detailed information about a controller, so it can be used to full advantage in Modality. Especially, precise information about each of its interaction elements (sliders, knobs, imus, and what-have-yous) help to create good performance setups very efficiently.
+A description file contains detailed information about a controller.
+Precise information about each of its interaction elements like sliders, knobs, or buttons help to create good performance setups very efficiently.
 
 Evaluating the code in a desc file should return a link::Classes/Dictionary:: of a well-defined structure. Description files are located here:
 code::
@@ -11,7 +12,7 @@ MKtlDesc.openFolder;
 ::
 
 NOTE::
-For a good overview on how a description file for your controller should look like, find a similar one that is already supported and look at its description file.
+Find a similar controller that is already supported and use it as a blueprint for your new description file.
 ::
 
 This document gives an overview on
