@@ -44,6 +44,7 @@ MIDIMKtlDevice : MKtlDevice {
 	}
 
 	closeDevice {
+		this.cleanupElementsAndCollectives;
 		destination.notNil.if {
 			if ( thisProcess.platform.name == \linux ) {
 				midiOut.disconnect( MIDIClient.destinations.indexOf(destination) )
