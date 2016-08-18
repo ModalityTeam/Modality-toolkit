@@ -673,6 +673,7 @@ MKtl { // abstract class
 
 	closeDevice {
 		if ( device.isNil ){ ^this };
+		this.resetActions;
 		device.closeDevice;
 		device = nil;
 	}
