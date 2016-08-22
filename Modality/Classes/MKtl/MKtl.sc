@@ -673,7 +673,8 @@ MKtl { // abstract class
 
 	closeDevice {
 		if ( device.isNil ){ ^this };
-		this.resetActions;
+		// revisit to make sure this method does not close
+		// the lowest-level device when other MKtls share it.
 		device.closeDevice;
 		device = nil;
 	}
@@ -722,9 +723,9 @@ MKtl { // abstract class
 	}
 
 	free {
-		elementGroup = elementsDict = nil;
+		this.resetActions;
 		this.closeDevice;
+		elementGroup = elementsDict = nil;
 		all.removeAt( name );
-
 	}
 }
