@@ -198,21 +198,7 @@ HIDMKtlDevice : MKtlDevice {
 	}
 
 	cleanupElementsAndCollectives {
-		mktl.elementsDict.do{ |el|
-			var theseElements;
-			var elid = el.elemDesc[\hidElementID];
-			var page = el.elemDesc[\hidUsagePage];
-			var usage = el.elemDesc[\hidUsage];
-
-			if ( elid.notNil ) { // filter by element id
-				source.elements.at( elid ).action = nil;
-			} {
-				theseElements = source.findElementWithUsage( usage, page );
-				theseElements.do { |it|
-					it.action = nil;
-				}
-			}
-		};
+		this.disable;
 	}
 
 	// nothing here yet, to be ported
