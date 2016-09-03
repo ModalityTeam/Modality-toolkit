@@ -2,7 +2,10 @@
 
 /*
 
-k = Mktl(\o49, "m-audio-oxygen49");
+k = MKtl('o49', "m-audio-oxygen49");
+a = Array.fill(9, 0);
+m = MultiSliderView().elasticMode_(1).size_(9).front;
+k.elAt(\sl).action_({ |el| a[el.parent.indexOf(el)] = el.value; { m.value = a; }.defer; });
 
 */
 
@@ -10,15 +13,13 @@ k = Mktl(\o49, "m-audio-oxygen49");
 deviceName: "Oxygen 49",
 protocol: 'midi',
 deviceType: 'keyboard',
-elementTypes: [\fader, \button, \knob],
+elementTypes: [\fader, \button, \knob, \key, \bend],
 status: (
 	linux: "working, no gui",
 	osx: "unknown",
 	win: "unknown"),
 
 idInfo: "Oxygen 49",
-
-// hardwarePages: [1, 2, 3, 4],
 
 deviceInfo: (
 	vendorURI: "http://www.m-audio.com/",
