@@ -42,6 +42,7 @@ Dictionary[
 	("livid-guitar-wing" -> "Livid Guitar Wing"),
 	("logitech-extreme-3d-pro" -> "Logitech Extreme 3D_Logitech"),
 	("m-audio-triggerfinger" -> "USB Trigger Finger"),
+	("m-audio-oxygen49" -> "Oxygen 49"),
 	("native-instruments-traktor-kontrol-z2" -> "Traktor Kontrol Z2 Input"),
 	("novation-launchcontrol" -> "Launch Control"),
 	("novation-launchcontrol-xl" -> "Launch Control XL"),
