@@ -1,0 +1,8 @@
+(
+  name: "Modality Toolkit",
+  summary: "A common interface to MIDI, OSC and HID for highly personalised electronic instruments",
+  version: "0.1",
+  schelp: "Modality",
+  license: "GPL",
+  copyright: "Modality team, http://modality.github.io"
+)
