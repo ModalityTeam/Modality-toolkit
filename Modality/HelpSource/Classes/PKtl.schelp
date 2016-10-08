@@ -1,0 +1,80 @@
+TITLE:: PKtl
+summary:: a pattern for accessing MKtls and their elements
+categories:: Undocumented classes
+related:: Overviews/Modality, Classes/MKtl, Classes/MKtlElement
+
+DESCRIPTION::
+PKtl allows using MKtls in patterns. It can access all present MKtls by patterns of names, and the elements they contain by patterns of names or indices.
+
+First code examples:
+
+code::
+// make two example MKtls - nanokontrol2s
+a = MKtl(\nkA, "*trol2"); a.gui;
+a.elAt(\kn).value_((1..8) / 10);
+a.elAt(\kn).value;
+
+b = MKtl(\nkB, "*trol2"); b.gui;
+b.elAt(\kn).value = 1!8;
+
+
+// use single element in pattern -  move first knob while playing
+Pdef(\test, Pbind(
+	\degree, (Pn(a.elAt(\kn, 0)) * 10).round(1),
+	\dur, 0.25
+)).trace.play
+
+// same with PKtl
+Pdef(\test, Pbind(
+	\degree, (PKtl(\nkA, \kn, 0) * 10).round(1),
+	\dur, 0.25
+)).trace.play
+
+// use all knobs as step sequencer
+Pdef(\test, Pbind(
+	\knVal, Pseq(a.elAt(\kn), inf),
+	\degree, (Pkey(\knVal) * 10).round(1),
+	\dur, 0.25
+)).trace.play
+
+a.elAt(\sl, 0).value = 1;
+// same with PKtl, and uses slider1 to set dur
+Pdef(\test, Pbind(
+	\knVal, PKtl(\nk2, \kn, Pseq((0..7), inf)),
+	\degree, (Pkey(\knVal) * 10).round(1),
+	\dur, 0.125 ** PKtl(\nkA, \sl, 0)
+)).trace.play
+
+// alternate between 3 step values from nkA, 3 from nkB
+Pdef(\test, Pbind(
+	\knVal, PKtl(
+		Pseq([\nkA, \nkB], inf).stutter(3),
+		\kn,
+		Pseq((0..7), inf)
+	),
+	\degree, (Pkey(\knVal) * 10).round(0.1),
+	\dur, 0.125 ** PKtl(\nkA, \sl, 0)
+)).trace.play
+
+// change values on nkB knobs for testing
+b.elAt(\kn).value = (0..7).normalize(0.9, 1);
+
+::
+
+CLASSMETHODS::
+
+METHOD:: new
+create a new PKtl with
+argument:: namePat
+a pattern for MKtl names
+argument::  ... elPats
+patterns for element access within MKtls
+
+INSTANCEMETHODS::
+
+METHOD:: namePat, elPats
+access pattern data
+
+private:: embedInStream
+
+
