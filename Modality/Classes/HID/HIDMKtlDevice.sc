@@ -159,9 +159,26 @@ HIDMKtlDevice : MKtlDevice {
 	}
 
 	closeDevice {
-		this.cleanupElementsAndCollectives;
-		srcID = nil;
-		if (source.notNil and: { source.isOpen }) { source.close };
+		if (this.mktlsSharingDeviceSource.isEmpty) {
+			this.cleanupElementsAndCollectives;
+			srcID = nil;
+			if (source.notNil and: { source.isOpen }) {
+				source.close;
+			};
+		} {
+			// other mktls use this HID,
+			// so just remove my actions
+			this.disable;
+			srcID = nil;
+		};
+	}
+
+	mktlsSharingDeviceSource {
+		var found = MKtl.all.select { |mk|
+			mk.device.notNil and: { mk.device.source == source }
+		};
+		found.removeAt(mktl.name);
+		^found
 	}
 
 	*makeDeviceName { |hidinfo|
@@ -198,6 +215,7 @@ HIDMKtlDevice : MKtlDevice {
 	}
 
 	cleanupElementsAndCollectives {
+		// only remove my actions, hid may be shared by others
 		this.disable;
 	}
 
@@ -278,13 +296,13 @@ HIDMKtlDevice : MKtlDevice {
 	// not elegant to write global enabling into each element.
 	// there should be a simpler global way.
 	enable { |elemKeys|
-		(elemKeys ? mktl.elementsDict.keys).do { |elem|
+		(elemKeys ? hidElemDict.keys).do { |elem|
 			this.enableElement(elem);
 		}
 	}
 
 	disable { |elemKeys|
-		(elemKeys ? mktl.elementsDict.keys).do { |elem|
+		(elemKeys ? hidElemDict.keys).do { |elem|
 			this.disableElement(elem);
 		}
 	}
