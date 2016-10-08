@@ -41,6 +41,7 @@ Dictionary[
 	("linnstrument_8chan" -> "LinnStrument MIDI"),
 	("livid-guitar-wing" -> "Livid Guitar Wing"),
 	("logitech-extreme-3d-pro" -> "Logitech Extreme 3D_Logitech"),
+	("m-audio-oxygen49" -> "Oxygen 49"),
 	("m-audio-triggerfinger" -> "USB Trigger Finger"),
 	("native-instruments-traktor-kontrol-z2" -> "Traktor Kontrol Z2 Input"),
 	("novation-launchcontrol" -> "Launch Control"),
