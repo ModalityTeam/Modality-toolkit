@@ -365,4 +365,16 @@ MKtlGUI {
 	showLabels { |bool = true|
 		labelView.visible = bool;
 	}
+
+	moveTo { |h, v|
+		var bounds;
+		if (parent.isKindOf(Window)) {
+			bounds = parent.bounds;
+			parent.bounds = bounds.moveTo(
+				h ? bounds.left,
+				v ? bounds.top
+			);
+		}
+	}
+
 }
