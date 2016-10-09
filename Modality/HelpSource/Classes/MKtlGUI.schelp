@@ -1,0 +1,83 @@
+TITLE:: MKtlGUI
+summary:: gui class for MKtl objects
+categories:: Libraries>Modality, External Control
+related:: Classes/MKtl
+
+DESCRIPTION::
+MKtlGUI creates guis for MKtls and all their elements,
+using the style info provided in the MKtl's desc file.
+
+Especially when one does not have the device at hand,
+one can continue developing for it using the MKtlGUI
+as a functional substitute.
+
+
+First code examples:
+
+code::
+k = MKtl('nk', "korg-nanokontrol");
+g = MKtlGUI(mktl: k);
+
+g.traceButton.valueAction_(1);
+g.showLabels;
+g.showLabels(false);
+
+// switch page
+g.currentPage_(3);
+
+// put it somewhere
+g.moveTo(200, 200);
+::
+
+CLASSMETHODS::
+
+
+METHOD:: maxSize
+maximum window size
+
+METHOD:: minViewSize, maxViewSize
+max and min sizes for single views on gui
+
+METHOD:: margin
+the margin to use between views
+
+METHOD:: new
+create a new MKtlGUI with
+argument:: parent
+a parent view - nil will create a window
+argument:: bounds
+bounds - nil will create bounds based on mktl desc
+argument:: mktl
+the mktl to show - required!
+
+
+INSTANCEMETHODS::
+
+METHOD:: mktl
+the mktl it is showing
+
+METHOD:: parent
+its parent view
+
+METHOD:: labelView, labelButton, traceButton
+METHOD:: views, pagesSwitch
+various views
+
+METHOD:: showLabels
+set whether to show labels or not
+
+METHOD:: currentPage
+get and set current page to show on gui
+
+METHOD:: getNumPages
+get the number of pages of the MKtl
+
+private:: init, layoutElementsOnPage, layoutElements, getNumRowsColumns
+private:: labelButton, pagesSwitch, gridSize, pageComposites
+
+private:: skipJack, updateGUI
+
+METHOD:: moveTo
+argument:: h
+argument:: v
+move gui window to a specific location for setup layout.

@@ -176,11 +176,11 @@ MKtlGUI {
 	classvar <>maxViewSize = 60;
 	classvar <>margin = 5;
 
-	var <>mktl;
-	var <>parent, <>views, <>skipJack;
-	var <>gridSize;
-	var <>traceButton, <>labelButton;
-	var <>labelView;
+	var <mktl;
+	var <parent, <views, <skipJack;
+	var <gridSize;
+	var <traceButton, <labelButton;
+	var <labelView;
 	var <pageComposites, <pagesSwitch;
 	var <currentPage = 0;
 
