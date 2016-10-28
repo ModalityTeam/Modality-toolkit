@@ -32,7 +32,9 @@
 		};
 		^nil
 	}
+}
 
++ Dictionary {
 	// get this dict's keys and those of all parents
 	allKeys { |species|
 		var dict = this, ancestry = [];
