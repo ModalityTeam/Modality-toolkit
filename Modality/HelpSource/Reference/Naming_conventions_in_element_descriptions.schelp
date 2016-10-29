@@ -51,7 +51,8 @@ code::
 subsection:: spec
 
 a spec for the internal number range of the device; e.g. for midi controls, code::\midiCC:: is code::[0, 127, \lin, 1, 0].asSpec;::
-This gives an overview of predefined specs:
+
+This gives an overview of some predefined specs:
 
 code::
 Spec.specs;
@@ -59,7 +60,7 @@ MKtl.globalSpecs.keys;
 ::
 
 note::
-	You can also add specific specs in the desc for the MKtl itself
+	You can also add specific specs in the desc for the MKtl itself.
 ::
 
 Example:
@@ -79,7 +80,9 @@ definitionlist::
 ## \absolute
 || this is what most elements send, e.g. fader position, so it is the default valueType.
 ## \relative
-|| means the element sends a delta value, i.e. by how much to change whatever it is currently setting. HID mouse devices send deltaX and deltY values, MIDI encoder knobs send how many clicks one has turned, or custon increment/decrement buttons. In this case, one can use a code::RelSet:: in the element.action, so the current value of the destination object is changed.
+|| means the element sends a delta value, i.e. by how much to change whatever it is currently setting. HID mouse devices send deltaX and deltY values, MIDI encoder knobs send how many clicks one has turned, or custom increment/decrement buttons. In this case, the element's value is simply the last delta value, and there is no current absolute value in the element - the object that is being set knows its absolute value.
+The code::RelSet:: class can be used in the element.action to change the current value of the destination object by a delta.
+See link::Classes/RelSet::
 ::
 
 Example:
@@ -168,8 +171,8 @@ code::
 	'hidUsage': 5,
 	'hidUsagePage': 9,
 
-	// if the HID's firmware is flaky, an element's id
-	// can be assigned with
+	// if the HID's firmware is flaky,
+	// one also can define by an elementID
 	'hidElementID': 0,
 )
 ::

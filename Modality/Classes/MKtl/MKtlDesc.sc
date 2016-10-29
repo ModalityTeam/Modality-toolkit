@@ -817,7 +817,7 @@ MKtlDesc {
 			msgTypesUsed.remove(\noteOnOff);
 		};
 
-		fullDesc.put(\msgTypesUsed, msgTypesUsed);
+		fullDesc.put(\msgTypesUsed, msgTypesUsed.asArray.sort);
 
 		if (missing.notEmpty) {
 			fullDesc.put(\elementsWithMissingType, missing);

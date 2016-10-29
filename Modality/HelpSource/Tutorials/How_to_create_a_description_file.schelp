@@ -15,6 +15,8 @@ list::
 ##link::Tutorials/How_to_create_a_description_file_for_OSC::
 ::
 
+NOTE:: Making descriptions by hand is a good method for sketching the functionality and layout of new controllers before physically making them.::
+
 section:: Basic structure of the description file
 
 The description file is a Dictionary with a number of required entries.
@@ -154,7 +156,7 @@ specs: (
 )
 ::
 
-Many common specs in SC are in Spec.specs, and some specs that many MKtls share can be found in MKtl.specs:
+Many common specs in SC are in Spec.specs, and some specs that many MKtls share can be found in MKtl.globalSpecs:
 code::
 Spec.specs.keys;	// get the names
 MKtl.globalSpecs.keys;
@@ -163,8 +165,7 @@ MKtl.getSpec( \hidHat ); // look up a specific one
 
 section:: Elements in depth
 
-Elements require a type describing which kind of physical thing it is,
-such as button, slider, joyAxis, mouseWheel, or any of:
+Elements require an elementType describing which kind of physical thing it is, such as button, slider, joyAxis, mouseWheel, or any of:
 
 code::MKtlElement.types::
 

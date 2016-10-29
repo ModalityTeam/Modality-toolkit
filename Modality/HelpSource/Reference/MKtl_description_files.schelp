@@ -6,7 +6,7 @@ related:: Overviews/Modality, Classes/MKtl, Classes/MKtlDesc, Tutorials/How_to_c
 A description file contains detailed information about a controller.
 Precise information about each of its interaction elements like sliders, knobs, or buttons help to create good performance setups very efficiently.
 
-Evaluating the code in a desc file should return a link::Classes/Dictionary:: of a well-defined structure. Description files are located here:
+Evaluating the code in a desc file should return a link::Classes/Dictionary:: (or more conveniently, an link::Classes/Event::) of a well-defined structure. Description files are located here:
 code::
 MKtlDesc.openFolder;
 ::
@@ -34,8 +34,8 @@ code::
 where
 
 list::
-## code::<vendor>:: is lower-case name of vendor with spaces replaced by code::-::
-## code::<device_name>:: is lower-case name of the device with spaces replaced by code::-::
+## code::<vendor>:: is lower-case name of vendor with spaces replaced by code::'-'::.
+## code::<device_name>:: is lower-case name of the device with spaces replaced by code::'-'::.
 This is both unique enough to identify devices, and allows linking to the modality website entry on each device.
 ## code::<optional_setup_naming>:: can be used to create multiple desc files for the same device, e.g. to support multiple ports (as e.g. the QuNexus keyboard), for special presets, such as making separate desc files for switchable hardware pages, or for personalized versions of desc files.
 ::
@@ -43,7 +43,7 @@ This is both unique enough to identify devices, and allows linking to the modali
 section:: Semantic and technical information
 
 NOTE::
-A description file is bound to a single protocol - currently one of \midi, \hid, and \osc (or \virtual for sketches). If a device communicates on multiple protocols (e.g. the EMPHASIS::icon iCONTROLS::), or on multiple ports (the EMPHASIS::QuNexus::), its components can be built from separate desc files and optionally be merged with link::Classes/CompMKtl:: if that is desirable.
+A description file is bound to a single protocol - currently one of \midi, \hid, and \osc (or \virtual for sketches). If a device communicates on multiple protocols (e.g. the EMPHASIS::icon iCONTROLS::), or on multiple ports (the EMPHASIS::QuNexus::), its components can be built from separate desc files and optionally be merged with link::Classes/CompMKtl:: where that is desirable.
 ::
 
 subsection:: Top level
@@ -51,20 +51,28 @@ subsection:: Top level
 DEFINITIONLIST::
 
 ## deviceName | osx | linux [required]
-|| For MIDI and HID, this is the device name as reported by the hardware or OS drivers.
+|| For MIDI and HID, this is the device name as reported by the hardware or OS drivers. (OSC devices are not registered by the OS, so the name is only for description here).
 ## protocol [required]
-|| The protocol used by the device
+|| The protocol used by the device. one of
+code:: [\hid, \midi, \osc, \virtual].::
 ## deviceType [optional, but highly recommended]
 || Semantic description of what kind of device it is. This will make it easier to find another device that might easily replace it. For examples, do:
 code::
 MKtlDevice.deviceTypes;
 MKtlDesc.loadDescs; MKtlDesc.deviceTypesUsed;
 
--> [ 'controller', 'djController', 'drumPad', 'drumpad', 'fader', 'faderbox', 'filterbank', 'gamepad', 'joystick', 'keyboard', 'launchpad', 'manta', 'mixer', 'mouse', 'multiController', 'phoneApp', 'push', 'ribbon' ]
+-> [ controller, drum, drumpad, externalMidiPort, fader, faderbox, gamepad, joystick, keyboard, launchpad, manta, midiKeyboard, minibee, mixer, mouse, multiController, organelle, phoneApp, push, ribbon, surface ]
 ::
 
 ## elementTypes [optional, but highly recommended]
-|| Description of what kind of elements the device has. For example, code:: \fader, \button, \knob, \encoder, \joyAxis ... ::
+|| Description of what kind of elements the device has. For example: code:: \fader, \button, \knob, \encoder, \joyAxis ...::
+code::
+// See all currently used types
+MKtlElement.types.cs;
+
+-> [ 'accelAxis', 'bender', 'button', 'compass', 'cvIn', 'cvOut', 'encoder', 'fader', 'gyroAxis', 'hatSwitch', 'joyAxis', 'key', 'keyTouch', 'knob', 'led', 'lever', 'midiBut', 'mouseAxis', 'mouseWheel', 'multiPurpose', 'option', 'pad', 'padX', 'padY', 'pianoKey', 'ribbon', 'rumble', 'scroller', 'slider', 'springFader', 'switch', 'thumbAxis', 'touch', 'trigger', 'voltage', 'wheel', 'xfader' ]
+::
+
 ## status [optional, but highly recommended]
 || A string describing the status of this description, i.e. how complete and how well tested it is, by platform, with a nametag and date. E.g. the akai lpd8 has:
 code::
@@ -102,7 +110,7 @@ For OSC devices, this is a dictionary with information on the ipAdresses and por
 || A dictionary giving additional information on the device.
 
 ## collectives [optional]
-|| Specific groups that are needed to send or receive data collectively from the device. In particular these can be used for OSC devices.
+|| Specific groups that are needed to send or receive data collectively from the device. These are commonly used in OSC devices.
 
 ## specs [optional]
 || A dictionary with specs in serialized notation, like code::(\key: [0, 144, \lin])::. These overwrite existing spec definitions locally for this description only: When an element has a symbol for a spec, this is looked up locally first, then in MKtl.globalSpecs, then in global Spec.specs.
@@ -217,16 +225,6 @@ elementsDesc: (
 )
 ::
 
-Examples for code::elementType:: are
-
-code::
-MKtlElement.types.cs;
-
--> [ 'accelAxis', 'bender', 'button', 'compass', 'cvIn', 'cvOut', 'encoder', 'fader', 'gyroAxis', 'hatSwitch', 'joyAxis', 'key', 'keyTouch', 'knob', 'led', 'lever', 'midiBut', 'mouseAxis', 'mouseWheel', 'multiPurpose', 'option', 'pad', 'padX', 'padY', 'pianoKey', 'ribbon', 'rumble', 'scroller', 'slider', 'springFader', 'switch', 'thumbAxis', 'touch', 'trigger', 'voltage', 'wheel', 'xfader' ]
-::
-
-Note that they are always written in singular.
-
 section:: Identifier naming convention
 
 Naming conventions for identifiers are:
@@ -256,15 +254,22 @@ korg-nanokontrol2.desc.scd
 is a good example for element naming. All naming examples are taken from there.
 ::
 
-Generally, element names should be as clear as possible, and reasonably short to allow for compact code. The main advantage of following the conventions is that similar elements across devices will have identical or at least simlar names, and thus allow substituting one device for a similar one with minimal code changes.
+Generally, element names should be as clear as possible, and reasonably short to allow for compact code (e.g. for live coding mappings of controllers). The main advantage of following the conventions is that similar elements across devices will have identical or at least similar names, and thus allow substituting one device for a similar one with minimal code changes.
 
-	Unnamed buttons should be called \bt, sliders \sl, knobs \kn, pads \pad, etc., and when they are physically in arrays, they should be given as, e.g.
+	Unnamed buttons should be called \bt, sliders \sl, knobs \kn, pads \pad, etc., and when they are physically in arrays, they should be given like this:
 code::
 (
 	key: \kn,
 	shared: (\midiMsgType: \cc, \type: \knob, \midiChan: 0, \spec: \midiCC),
 	elements: (16..23).collect { |i| (\midiNum: i) }
 )
+::
+When elements in an array are not explicitly given name keys, they will get self-generated keys as follows:
+code::
+// index -> key
+	0 -> '1',
+	1 -> '2',
+//	etc
 ::
 	When in rows and columns, these can be nested:
 code::
@@ -332,7 +337,7 @@ code::
 ~onoffgroup = MKtlDesc.notePair( \bt1, 12, (elementType: \button, spec: \midiBut));
 
 // in a dict
-~descdict = (idInfo: "test", \protocol: \midi, elementsDesc: d);
+~descdict = (idInfo: "test", \protocol: \midi, elementsDesc: ~onoffgroup);
 
 // in an MKtl
 MKtl(\x, ~descdict);
@@ -341,6 +346,9 @@ MKtl(\x, ~descdict);
 MKtl(\x).gui;
 MKtl(\x).elAt(\on).valueAction_(1);
 MKtl(\x).elAt(\off).valueAction_(0);
+
+// check at top layer whether \on or \off happened last:
+MKtl(\x).elAt.isOn
 ::
 
 When other elements should go into this group, one can also make them separately:
@@ -366,17 +374,15 @@ and noteOff (using noteOff velocity) to end this synth.
 
 section:: Syntax
 
-NOTE:: ABNF NOTATION NEEDS UPDATE!::
-
 The syntax for the description file as agreed on by the modalityTeam on April, 7th 2014 described in Augmented Backus–Naur Form (with code::/:: switched to code::|:: ) (see link::https://en.wikipedia.org/wiki/ABNF::).
+NOTE:: The desc file format has since changed, and the ABNF form should be updated accordingly by the ABNF experts in the team. ::
+
 
 NOTE::For detailed discussion of writing a conforming description file, see link::Tutorials/How_to_create_a_description_file::.::
 
 NOTE::
 The actual description files used by Modality often don't conform to this syntax, because they use SuperCollider code to algorithmically generate parts of the dictionary. Calling code::.asCompileString:: on the dictionary should generate a string which conforms to the syntax above.
 ::
-
-NOTE:: ABNF NOTATION NEEDS UPDATE!::
 
 TELETYPE::
 descFile                    = "( protocol: " protocol ", device: " string ", description:" description [", infoMessage:" string] ")"
