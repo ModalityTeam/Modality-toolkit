@@ -1,0 +1,93 @@
+TITLE:: Piano
+summary:: layout for piano keyboards
+categories:: GUI
+related:: Classes/MKtlGUI, Classes/MPadView, Overviews/Modality
+
+DESCRIPTION::
+
+
+First code examples:
+
+code::
+// create layout event for key 33 when leftmost key is 21
+Piano.pos(33, 21);
+Piano.pos(24, 21);
+Piano.pos(21, 21);
+Piano.pos(69, 60);
+
+Piano.layout(48, 72).printAll; "";
+
+(
+// simple blockish layout
+w = Window("PianoLayout", Rect(0, 200, 400, 200)).front;
+Piano.layout(48, 72).do { |ev|
+	var color = Color.perform(ev.color);
+	UserView(w, Rect(ev.x * 20 + 4, ev.y * 50 + 4, 18, 50))
+	.background_(color)
+	.drawFunc = {
+		Pen.stringAtPoint(ev.note.asString, 0@25,
+			color: color.complementary);
+	}
+};
+)
+
+// draw black keys on top of whites, use MPadViews
+(
+~win = Window("PianoLayout", Rect(0, 200, 400, 150)).front;
+
+// sort black before white keys so we draw them on top
+~layouts = Piano.layout(48, 72).sort { |a, b| a.color > b.color };
+
+// draw MPadViews as keys
+~keys = ~layouts.collect { |ev|
+	var color = Color.perform(ev.color);
+	var height = ev.h * 60;
+	var rect = Rect(ev.x + (1-ev.w/2) * 24 + 4, 4, 24 * ev.w, height);
+	var pad = MPadView(~win, rect).mode_(\noteOnOffTouch);
+	pad.baseColor_(color).label_(ev.note);
+	pad.vShiftLabel_( ev.h * 15);
+    pad.action = { |pd| "pad %    on: % \n".postf(ev.note, pd.value.round(0.001)) };
+    pad.upAction = { |pd| "pad %   off: % \n".postf(ev.note, pd.upValue.round(0.001)) };
+    pad.moveAction = { |pd| "pad % touch: % \n".postf(ev.note, pd.moveValue.round(0.001)) };
+};
+)
+::
+
+CLASSMETHODS::
+private:: initClass
+
+METHOD:: blackNoteIndices
+the indices of the black keys in the octave
+
+METHOD:: allXs, whiteXs, blackXs
+the x positions of white, black and all 12 keys in the octave.
+code::
+Piano.allXs;
+Piano.whiteIndices;
+Piano.blackIndices;
+::
+METHOD:: all12
+events with layout info for the 12 keys in the octave.
+
+METHOD:: layout
+argument:: from
+argument:: to
+create a list of layout events for keys from from to to:
+Piano.layout(60, 72);
+
+METHOD:: pos
+argument:: note
+argument:: start
+create info event for single key relative to start (lowest note displayed)
+Piano.pos(24, 21);
+
+
+
+INSTANCEMETHODS::
+
+
+EXAMPLES::
+
+code::
+_some_example_code_
+::

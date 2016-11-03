@@ -30,35 +30,32 @@ code::
 
 // make a little keyboard to try the different modes:
 (
-~basekey = 48;
-~win = Window("3 octave keyboard sketch", Rect(10, 10, 500, 160)).front;
+~win = Window("PianoLayout", Rect(0, 200, 400, 200)).front;
+// switch between modes:
 ~pop = EZPopUpMenu(~win, Rect(4, 4, 192, 24), "mode",
-	MPadView.modeKeys, { |pop|
-		pop.item.postln;
-		~keys.do(_.mode_(pop.item));
+    MPadView.modeKeys, { |pop|
+        pop.item.postln;
+        ~keys.do(_.mode_(pop.item));
 }, labelWidth: 40);
 
-~whites = 22.collect { |i|
-    var left = i * 22 + 5;
-    MPadView(~win, Rect(left, 96, 20, 64)).baseColor_(Color.white);
-};
-~blacks = 15.collect { |i|
-    var left = (i * (22 * 7 / 5) - 4 ).round(22) + 16;
-    MPadView(~win, Rect(left, 32, 20, 64)).baseColor_(Color.black);
-};
+// sort black before white keys so we draw them on top
+~layouts = Piano.layout(48, 72).sort { |a, b| a.color > b.color };
 
-~keys = [~whites, ~blacks].flat.sort { |a, b| a.bounds.left < b.bounds.left };
-
-~keys.do { |pad, i|
-	var num = ~basekey + i; pad.label = num;
-	pad.action = { |pd| "pad %    on: % \n".postf(num, pd.value.round(0.001)) };
-	pad.upAction = { |pd| "pad %   off: % \n".postf(num, pd.upValue.round(0.001)) };
-	pad.moveAction = { |pd| "pad % touch: % \n".postf(num, pd.moveValue.round(0.001)) };
+// draw MPadViews as keys
+~keys = ~layouts.collect { |ev|
+	var color = Color.perform(ev.color);
+	var height = ev.h * 60;
+	var rect = Rect(ev.x + (1-ev.w/2) * 24 + 4, 30 + 4, 24 * ev.w, height);
+	var pad = MPadView(~win, rect);
+	pad.baseColor_(color).label_(ev.note);
+	pad.vShiftLabel_( ev.h * 15);
+    pad.action = { |pd| "pad %    on: % \n".postf(ev.note, pd.value.round(0.001)) };
+    pad.upAction = { |pd| "pad %   off: % \n".postf(ev.note, pd.upValue.round(0.001)) };
+    pad.moveAction = { |pd| "pad % touch: % \n".postf(ev.note, pd.moveValue.round(0.001)) };
 };
 )
 
-
-// make an MPadView, and show its modes / behavior in more detail:
+// make a single MPadView and show its modes / behavior in more detail:
 
 m = MPadView().front;
 // set its basic actions for mouseDown, mouseUp and mouseMove
