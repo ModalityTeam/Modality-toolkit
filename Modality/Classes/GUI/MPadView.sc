@@ -1,8 +1,8 @@
 MPadView : SCViewHolder {
 
-	var <value = 0, <upValue = 0;
+	var <value = 0, <upValue = 0, <moveValue = 0;
 	var <pressed = false;
-	var <useUpValue = false;
+	var <useValue = true, <useUpValue = false, <useMoveValue = false;
 	var <>autoUpTime = inf;
 	var <baseColor, <hiliteColor;
 	var <label;
@@ -10,7 +10,7 @@ MPadView : SCViewHolder {
 	var <vShiftLabel = 0;
 	var <>action;
 
-	var <>upAction;
+	var <>upAction, <>moveAction;
 	var upTimeTask, upTask, upValueScaled = 0;
 
 	*new { |parent, bounds|
@@ -21,26 +21,39 @@ MPadView : SCViewHolder {
 		baseColor = Color.white;
 		hiliteColor = Color.red(0.75,0.5);
 		this.view = UserView( parent, bounds );
+
 		this.view.drawFunc = { |vw|
-			var rect, fillRect, fillColor;
+			var rect, fillRect, fillRect2, fillColor;
+			var halfColor = hiliteColor.copy.alpha_( hiliteColor.alpha * 0.5 );
+
 			rect = vw.bounds.moveTo(0, 0).insetBy(1,1);
 			if( pressed ) {
 				Pen.width = 2;
-				fillRect = rect.insetAll(0, (1 - value) * rect.height,0,0 );
 				fillColor = hiliteColor;
+				fillRect = rect.insetAll(0, (1 - value) * rect.height,0,0 );
+				if (useMoveValue) {
+					fillRect2 = rect.insetAll(0, (1 - moveValue) * rect.height, 0, 0 );
+				};
 			} {
 				if( useUpValue && { upValueScaled > 0 }) {
+					fillColor = halfColor;
 					fillRect = rect.insetAll(0, (1 - upValueScaled) * rect.height,0,0 );
-					fillColor = hiliteColor.copy.alpha_( hiliteColor.alpha * 0.5 );
 				};
 			};
+
 			Pen.fillColor = baseColor;
-			Pen.strokeColor = Color.black;
 			Pen.fillRect( rect );
+
 			if( fillRect.notNil ) {
 				Pen.fillColor = fillColor;
 				Pen.fillRect( fillRect );
 			};
+			if( fillRect2.notNil ) {
+				Pen.fillColor = halfColor;
+				Pen.fillRect( fillRect2 );
+			};
+
+			Pen.strokeColor = Color.black;
 			Pen.strokeRect( rect );
 			if( label.notNil ) {
 				Pen.use({
@@ -52,9 +65,14 @@ MPadView : SCViewHolder {
 		};
 
 		this.view.mouseDownAction = { |vw, x, y|
-			var rect;
-			rect = vw.bounds.moveTo(0, 0).insetBy(1,1);
+			var rect = vw.bounds.moveTo(0, 0).insetBy(1,1);
 			this.valueAction = y.linlin( 0, rect.height, 1, 0 );
+		};
+		this.view.mouseMoveAction = { |vw, x, y|
+			var rect = vw.bounds.moveTo(0, 0).insetBy(1,1);
+			if (useMoveValue) {
+				this.moveValueAction = y.linlin( 0, rect.height, 1, 0 );
+			};
 		};
 
 		this.view.mouseUpAction = { |vw, x, y|
@@ -81,6 +99,7 @@ MPadView : SCViewHolder {
 
 	value_ { |newValue = 0|
 		this.stopTasks;
+		if (useValue.not) { newValue = newValue.sign.max(0); };
 		value = newValue;
 		pressed = true;
 		this.refresh;
@@ -99,8 +118,10 @@ MPadView : SCViewHolder {
 
 	upValue_ { |newValue = 0|
 		this.stopTasks;
+		moveValue = 0;
 		if( useUpValue ) {
 			upValue = newValue;
+
 			pressed = false;
 			upValueScaled = upValue;
 			upTask = Task({
@@ -109,6 +130,7 @@ MPadView : SCViewHolder {
 					upValueScaled = upValueScaled - 0.05;
 					this.refresh;
 				};
+				upValueScaled = 0;
 			}, AppClock).start;
 		} {
 			if( pressed != false ) {
@@ -122,17 +144,32 @@ MPadView : SCViewHolder {
 		this.upValue = newValue;
 		this.doUpAction;
 	}
-	
-	label_ { |string| 
+
+	moveValue_ {|newValue = 0|
+		moveValue = newValue;
+		this.refresh;
+	}
+
+	moveValueAction_ {|newValue = 0|
+		this.moveValue_(newValue);
+		this.doMoveAction;
+		this.refresh;
+	}
+
+	doMoveAction {|newValue = 0|
+		moveAction.value(this);
+	}
+
+	label_ { |string|
 		label = string;
 		this.refresh;
 	}
-	
+
 	vShiftLabel_ { |number = 0|
 		vShiftLabel = number;
 		this.refresh;
 	}
-	
+
 	font_ { |aFont|
 		font = aFont;
 		this.refresh;
@@ -143,8 +180,21 @@ MPadView : SCViewHolder {
 		this.refresh;
 	}
 
+	useValue_ { |bool = true|
+		useValue = bool;
+		if (bool.not) { value = 0 };
+		this.refresh;
+	}
+
 	useUpValue_ { |bool = true|
 		useUpValue = bool;
+		if (bool.not) { upValue = 0 };
+		this.refresh;
+	}
+
+	useMoveValue_ { |bool = true|
+		useMoveValue = bool;
+		if (bool.not) { moveValue = 0 };
 		this.refresh;
 	}
 
@@ -160,27 +210,27 @@ MPadView : SCViewHolder {
 }
 
 MPadUpViewRedirect {
-	
+
 	// creates a spoof View object which redirects upValue and upAction to value and action
 	var <view, <action;
-	
+
 	*new { |view| // must be an MPadView
 		^super.newCopyArgs( view );
 	}
-	
+
 	value { ^view.upValue }
 	value_ { |val| view.upValue_( val ) }
 	valueAction_ { |val| view.upValueAction_( val ) }
-	
-	action_ { |func| 
+
+	action_ { |func|
 		action = func;
-		view.upAction = { action.value( this ) }; 
+		view.upAction = { action.value( this ) };
 	}
-	
+
 	addAction { |act| this.action = action.addFunc( act ) }
-	
+
 	removeAction { |act| this.action = action.removeFunc( act ) }
-	
+
 	doesNotUnderstand { |selector ...args|
 		var res;
 		res = view.perform( selector, *args );
