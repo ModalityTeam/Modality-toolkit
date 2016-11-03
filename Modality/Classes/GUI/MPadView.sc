@@ -1,5 +1,7 @@
 MPadView : SCViewHolder {
 
+	classvar <modes;
+
 	var <value = 0, <upValue = 0, <moveValue = 0;
 	var <pressed = false;
 	var <useValue = true, <useUpValue = false, <useMoveValue = false;
@@ -8,16 +10,47 @@ MPadView : SCViewHolder {
 	var <label;
 	var <font;
 	var <vShiftLabel = 0;
-	var <>action;
+	var <>action, <>upAction, <>moveAction;
+	var <mode = \noteOnOff;
 
-	var <>upAction, <>moveAction;
 	var upTimeTask, upTask, upValueScaled = 0;
+
+	*initClass {
+		modes = (
+			noteOnOff: [true, false, false, inf],
+
+			noteOnOffBut: [false, false, false, inf],
+			noteOnTrig: [false, true, false, 0.1],
+			noteOnVel: [true, true, false, 0.1],
+			noteOnOffTouch: [true, false, true, inf],
+
+			noteOnOffVel: [true, true, false, inf],
+			noteOnOffVelTouch: [true, true, true, inf]
+		);
+	}
+
+	*modeKeys { ^modes.keys(Array).sort }
 
 	*new { |parent, bounds|
 		^super.new.init( parent, bounds );
 	}
 
-	init { |parent, bounds|
+	mode_ { |modeName|
+		var modeValues = modes[modeName];
+		if (modeValues.isNil) {
+			"%: mode % not found. modes: %\n"
+			.postf(thisMethod, modeName, modes.keys(Array).sort);
+			^this;
+		};
+		this.useValue = modeValues[0];
+		this.useUpValue = modeValues[1] ? useUpValue;
+		this.useMoveValue = modeValues[2] ? moveValue;
+		this.autoUpTime = modeValues[3] ? autoUpTime;
+
+		mode = modeName;
+	}
+
+	init { |parent, bounds, argMode = \noteOnOff|
 		baseColor = Color.white;
 		hiliteColor = Color.red(0.75,0.5);
 		this.view = UserView( parent, bounds );
@@ -82,6 +115,7 @@ MPadView : SCViewHolder {
 				this.upValueAction = y.linlin( 0, rect.height, 1, 0 );
 			};
 		};
+		this.mode_(argMode);
 
 		this.refresh;
 	}

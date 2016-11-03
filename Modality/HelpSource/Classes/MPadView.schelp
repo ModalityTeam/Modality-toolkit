@@ -27,47 +27,81 @@ table::
 Subsection::Code Examples for demonstration:
 
 code::
-// make an MPadView, and show its configurations/behavior
+
+// make a little keyboard to try the different modes:
+(
+~basekey = 48;
+~win = Window("3 octave keyboard sketch", Rect(10, 10, 500, 160)).front;
+~pop = EZPopUpMenu(~win, Rect(4, 4, 192, 24), "mode",
+	MPadView.modeKeys, { |pop|
+		pop.item.postln;
+		~keys.do(_.mode_(pop.item));
+}, labelWidth: 40);
+
+~whites = 22.collect { |i|
+    var left = i * 22 + 5;
+    MPadView(~win, Rect(left, 96, 20, 64)).baseColor_(Color.white);
+};
+~blacks = 15.collect { |i|
+    var left = (i * (22 * 7 / 5) - 4 ).round(22) + 16;
+    MPadView(~win, Rect(left, 32, 20, 64)).baseColor_(Color.black);
+};
+
+~keys = [~whites, ~blacks].flat.sort { |a, b| a.bounds.left < b.bounds.left };
+
+~keys.do { |pad, i|
+	var num = ~basekey + i; pad.label = num;
+	pad.action = { |pd| "pad %    on: % \n".postf(num, pd.value.round(0.001)) };
+	pad.upAction = { |pd| "pad %   off: % \n".postf(num, pd.upValue.round(0.001)) };
+	pad.moveAction = { |pd| "pad % touch: % \n".postf(num, pd.moveValue.round(0.001)) };
+};
+)
+
+
+// make an MPadView, and show its modes / behavior in more detail:
+
 m = MPadView().front;
-// set its label
-m.label_("noteOnOff");
 // set its basic actions for mouseDown, mouseUp and mouseMove
-m.action = { |mp| "noteOn vel: %\n".postf(mp.value) };
-m.upAction = { |mp| "noteOff vel: %\n".postf(mp.upValue) };
-m.moveAction = { |mp| "touch value: %\n".postf(mp.moveValue) };
+m.action = { |mp| "noteOn vel: %\n".postf(mp.value.round(0.001)) };
+m.upAction = { |mp| "noteOff vel: %\n".postf(mp.upValue.round(0.001)) };
+m.moveAction = { |mp| "touch value: %\n".postf(mp.moveValue.round(0.001)) };
 
 // -> try its default behavior:
+m.mode;
+m.label_(m.mode);
 // y-pos on pad determines noteOn velocity, noteOff is 0, touch is off
-[m.useValue, m.useUpValue, m.useMoveValue ];
+// post its internal settings
+[m.useValue, m.useUpValue, m.useMoveValue, m.autoUpTime ];
 
 // noteOn/off button only - turn off useValue
-m.label_("noteOnOffBut");
-m.useValue = false; m.useUpValue = false; m.useMoveValue = false;
+m.mode_(\noteOnOffBut).label_(m.mode);
+[m.useValue, m.useUpValue, m.useMoveValue, m.autoUpTime ];
 
 // use noteOn, e.g. for simple trigger pads:
-m.label_("noteOn");
-m.autoUpTime = 0.1; // hold value, then velocity falls by itself
-m.useValue = false; m.useUpValue = true; m.useMoveValue = false;
+m.mode_(\noteOnTrig).label_(m.mode);
+// hold value for m.autoUpTime, then velocity falls by itself
+[m.useValue, m.useUpValue, m.useMoveValue, m.autoUpTime ];
 
 // use only noteOn with velocity, e.g. for drum pads:
-m.label_("noteOnVel");
-m.autoUpTime = 0.1; // velocity falls by itself
-m.useValue = true; m.useUpValue = true; m.useMoveValue = false;
-
+m.mode_(\noteOnVel).label_(m.mode);
+[m.useValue, m.useUpValue, m.useMoveValue, m.autoUpTime ];
 
 // useMouseMove to enable polytouch sensing on key
-m.label_("noteOnOffTouch");
-m.autoUpTime = inf;
-m.useMoveValue = true;
-m.moveAction = { |mp| "touch: %\n".postf(mp.moveValue) };
-
+m.mode_('noteOnOffTouch').label_(m.mode);
+[m.useValue, m.useUpValue, m.useMoveValue, m.autoUpTime ];
 
 // noteOff : enable velocity
-m.label_("noteOnOffVel");
-m.autoUpTime = inf;
-m.useValue = true; m.useUpValue = true; m.useMoveValue = false;
+m.mode_('noteOnOffVel').label_(m.mode);
+[m.useValue, m.useUpValue, m.useMoveValue, m.autoUpTime ];
 
-m.baseColor = Color.black(0.1);
+// noteOff : enable velocity
+m.mode_('noteOnOffVelTouch').label_(m.mode);
+[m.useValue, m.useUpValue, m.useMoveValue, m.autoUpTime ];
+
+// won't switch when nonexistent mode
+m.mode_(\noSuchMode);
+
+m.baseColor = Color.grey(0.25);
 
 ::
 
@@ -76,16 +110,25 @@ CLASSMETHODS::
 METHOD:: new
 argument:: parent
 argument:: bounds
+make a new instance of an MPadView
 
+METHOD:: modes
+a dictionary of modes, see top example
+
+METHOD:: modeKeys
+names of the available behavior modes
 
 INSTANCEMETHODS::
 
 private:: init, stopTasks
 
+METHOD:: mode
+get and set behavior mode of the mpadview. modeName is one of code:: MPadView.modeKeys::.
+
 METHOD:: baseColor
 get and set mpadview's background color
 METHOD:: hiliteColor
-get and set color for when view is activated
+get and set color for activities on view
 
 METHOD:: value, valueAction
 get and set current value (and optionally do its action): Clicking on gui sets it to y position within view. Usually used as noteOn velocity.
