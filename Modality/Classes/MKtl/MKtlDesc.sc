@@ -98,11 +98,17 @@ MKtlDesc {
 	}
 
 	*expandElemToGroup { |dict, groupType|
+		var groupFunc, groupDict;
 		groupType = groupType ? dict[\groupType];
-		if (groupType.isNil) {
+		if (groupType.isNil) { ^dict };
+
+		groupFunc = groupFuncs[groupType];
+		if (groupFunc.isNil) {
+			"%: no groupFunc found at %\n".postf(thisMethod, groupType.cs);
 			^dict
 		};
-		^groupFuncs[groupType.postln].value(dict);
+		groupDict = groupFunc.value(dict) ? dict;
+		^groupDict.put(\groupType, groupType);
 	}
 
 	// access to all
