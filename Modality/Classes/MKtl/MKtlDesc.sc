@@ -21,6 +21,8 @@ MKtlDesc {
 	classvar <>isElemFunc;
 	classvar <>platformSpecific = true;
 
+	classvar <groupFuncs;
+
 	var <name, <fullDesc, <path;
 	var <elementsDict;
 
@@ -35,7 +37,72 @@ MKtlDesc {
 
 		fileToIDDict = Dictionary.new;
 
+		this.initGroupFuncs;
+
 		this.loadCache;
+	}
+
+	*initGroupFuncs {
+		groupFuncs = (
+			// // remain single elements, should not be needed at all
+			// // - maybe use only to switch MPadView to its proper mode.
+			noteOnTrig: { |dict|
+				dict.putAll((\midiMsgType: \noteOn, \spec: \midiBut));
+			},
+			noteOnVel: { |dict|
+				dict.putAll((\midiMsgType: \noteOn, \spec: \midiVel));
+			},
+			noteOnOff: { |dict|
+				dict.put(\elements, [
+					(key: \on,  midiMsgType: \noteOn,  spec: \midiVel),
+					(key: \off, midiMsgType: \noteOff, spec: \midiBut)
+				]).put(\useSingleGui, true);
+			},
+			noteOnOffBut: { |dict|
+				dict.put(\elements, [
+					(key: \on,  midiMsgType: \noteOn,  spec: \midiBut),
+					(key: \off, midiMsgType: \noteOff, spec: \midiBut)
+				]).put(\useSingleGui, true);
+			},
+			noteOnOffVel: { |dict|
+				dict.put(\elements, [
+					(key: \on,  midiMsgType: \noteOn,  spec: \midiVel),
+					(key: \off, midiMsgType: \noteOff, spec: \midiVel)
+				]).put(\useSingleGui, true);
+			},
+			noteOnOffTouch: { |dict|
+				dict.put(\elements, [
+					(key: \on,  midiMsgType: \noteOn,  spec: \midiVel),
+					(key: \off, midiMsgType: \noteOff, spec: \midiBut),
+					(key: \touch, midiMsgType: \polytouch, spec: \midiVel)
+				]).put(\useSingleGui, true);
+			},
+			noteOnOffVelTouch: { |dict|
+				dict.put(\elements, [
+					(key: \on,  midiMsgType: \noteOn,  spec: \midiVel),
+					(key: \off, midiMsgType: \noteOff, spec: \midiVel),
+					(key: \touch, midiMsgType: \polytouch, spec: \midiVel)
+				]).put(\useSingleGui, true);
+			},
+		);
+	}
+
+	*deepExpand { |groupDict, groupType|
+		^if (isElemFunc.value(groupDict)) {
+			this.expandElemToGroup(groupDict, groupType);
+		} {
+			groupDict.elements.collect { |elemDict|
+				this.deepExpand(elemDict, groupType)
+			}
+		}
+	}
+
+	*expandElemToGroup { |dict, groupType|
+		groupType = groupType ? dict[\groupType];
+		if (groupType.isNil) {
+			^dict
+		};
+		^groupFuncs[groupType.postln].value(dict);
 	}
 
 	// access to all
@@ -559,11 +626,16 @@ MKtlDesc {
 
 		this.findParent;
 
-		// make elements in both forms
 		this.inferName;
+		// prepare elements, share and expand first
+		MKtlDesc.sharePropsToElements(this.elementsDesc);
+		MKtlDesc.deepExpand(this.elementsDesc);
+		// do it again, in case there were elems to expand
+		MKtlDesc.sharePropsToElements(this.elementsDesc);
+
+		// now make elements in both dict and array form
 		elementsDict = ();
 		this.makeElemKeys(this.elementsDesc, []);
-		MKtlDesc.sharePropsToElements(this.elementsDesc);
 
 		if (this.protocol == \midi) {
 			this.getMidiMsgTypes;
