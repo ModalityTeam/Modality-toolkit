@@ -161,8 +161,6 @@ code::
 )
 );
 
-// on OSX, does not work yet to build a proper device like this
-MKtlLookup.all;
 m = MKtl( \testMIDI, ~descInput );
 m.rebuild( ~descInput ); // later, one can update it
 m.gui;
