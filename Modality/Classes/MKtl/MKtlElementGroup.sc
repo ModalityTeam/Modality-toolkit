@@ -4,6 +4,9 @@ MKtlElementGroup : MKtlElement {
 	var <dict;
 	var <>groupAction;
 
+	var <>useSingleGui = false;
+	var <>groupType;
+
 	*new { |name, source, elements|
 		^super.newCopyArgs( name, source ).elements_(elements);
 	}
@@ -35,6 +38,9 @@ MKtlElementGroup : MKtlElement {
 				if (desc[\shared].notNil) {
 					group.shared = desc[\shared];
 				};
+
+				group.useSingleGui = desc.useSingleGui ? false;
+				group.groupType = desc.groupType;
 
 				group.do { |elem, i|
 					var key = if (elem.isKindOf(MKtlElementGroup)) {
