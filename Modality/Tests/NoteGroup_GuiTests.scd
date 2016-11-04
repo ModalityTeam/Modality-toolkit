@@ -1,11 +1,12 @@
 // test all types of noteOnOffTouch combinations
 // controlled by a single MPadView
+// and connected back from element via SimpleController
 (
 w = Window("test", Rect(10, 100, 150, 600)).front;
 m = List[];
 g = List[];
 
-MPadView.modeKeys.keep(4).do { |mode, i|
+MPadView.modeKeys.keep(5).do { |mode, i|
 	var elemDesc, desc, mktl, mkgui, grp, pad;
 	elemDesc = (
 		groupType: mode.postcs,
@@ -21,16 +22,29 @@ MPadView.modeKeys.keep(4).do { |mode, i|
 	mkgui.parent.bounds = Rect(200, 600 - (i * 120), 200, 90);
 
 	grp = MKtl(mode).elementGroup;
-	grp.groupType.postln;
 	grp.action = { |el| [\test1_2, el.name, el.value.round(0.001)].postln };
 
 	pad = MPadView(w, Rect(0, 120 * i, 145, 120)).front;
 	m.add(pad);
-	pad.action = { |m| grp.at(0) !? { grp.at(0).valueAction_(m.value) } };
-	pad.upAction = { |m| grp.at(1) !? { grp.at(1).valueAction_(m.upValue) } };
-	pad.moveAction = { |m| grp.at(2) !? { grp.at(2).valueAction_(m.moveValue) } };
+
 	pad.mode = grp.groupType;
 	pad.label = grp.groupType;
+
+	grp.at(0) !? {
+		SimpleController( grp.at(0) )
+		.put(\value, { |onEl| pad.value = onEl.value; pad.refresh });
+		pad.action = { |m| grp.at(0).valueAction_(pad.value) };
+	};
+	grp.at(1) !? {
+		SimpleController( grp.at(1) )
+		.put(\value, { |offEl| pad.upValue = offEl.value; pad.refresh });
+		pad.upAction = { |m| grp.at(1).valueAction_(pad.upValue) };
+	};
+	grp.at(2) !? {
+		SimpleController( grp.at(2) )
+		.put(\value, { |tchEl| pad.moveValue = tchEl.value; pad.refresh });
+		pad.moveAction = { |m| grp.at(2).valueAction_(pad.moveValue) };
+	};
 
 };
 )
