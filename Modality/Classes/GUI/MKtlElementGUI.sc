@@ -41,6 +41,14 @@ MKtlElementGUI {
 					.useUpValue_( true )
 					.autoUpTime_( 0.2 );
 			},
+
+			'padUp': { |parent, label, redirView|
+				MPadUpViewRedirect( redirView )
+			},
+			'padMove': { |parent, label, redirView|
+				MPadMoveViewRedirect( redirView )
+			},
+
 			'unknown': { |parent, label|
 				var vw;
 				if( label.notNil ) {
@@ -175,12 +183,13 @@ MKtlElementGroupGUI : MKtlElementGUI {
 			},
 			\pad: { |gui|
 				var lastElement;
-				var allElements, onElements, offElements;
-				var offViews;
+				var allElements, onElements, offElements, touchElements;
+				var offViews, touchViews;
 				var size, division;
 				allElements = gui.element.flat;
 				onElements = allElements.select({ |item| item.name.asString.find( "on" ).notNil });
 				offElements = allElements.select({ |item| item.name.asString.find( "off" ).notNil });
+				touchElements = allElements.select({ |item| item.name.asString.find( "touch" ).notNil });
 
 				if( (onElements.size == 0) && (offElements.size == 0) ) {
 					makeSubViewsFuncDict[ \mixed ].value( gui ); // fallback to normal behavior
@@ -192,7 +201,8 @@ MKtlElementGroupGUI : MKtlElementGUI {
 						gui.parent.asView.decorator.nextLine;
 					};
 
-					StaticText( gui.parent, labelWidth@16 ).string_( gui.element.name.asString ++ " " ).align_( \right );
+					StaticText( gui.parent, labelWidth@16 )
+					.string_( gui.element.name.asString ++ " " ).align_( \right );
 
 					if( size == 0 ) {
 						onElements = offElements;
@@ -213,15 +223,22 @@ MKtlElementGroupGUI : MKtlElementGUI {
 						};
 
 						view = MPadView( gui.parent, 20@20 ).useUpValue_(true);
+						view.mode = gui.element.groupType.postln;
+
 						if( offElements.size == 0 ) {
 							view.autoUpTime_(0.2);
+						} {
+							offViews = offViews.add( MPadUpViewRedirect( view ) );
 						};
-
-						offViews = offViews.add( MPadUpViewRedirect( view ) );
+						if (touchElements.size > 0) {
+							touchViews = touchViews.add( MPadMoveViewRedirect( view ) );
+						};
 
 						gui.getValueFuncs = gui.getValueFuncs.add( gui.makeGetValueFunc( element, view ) );
 						gui.views = gui.views.add( view );
 					});
+
+					"touchViews.size: %\n".postf(touchViews.size);
 
 					offElements.do({ |element, i|
 						var view, getValueFunc;
@@ -229,6 +246,17 @@ MKtlElementGroupGUI : MKtlElementGUI {
 						view = offViews[ i ];
 
 						if( offViews[i].notNil ) {
+							gui.getValueFuncs = gui.getValueFuncs.add( gui.makeGetValueFunc( element, view ) );
+							gui.views = gui.views.add( view );
+						};
+					});
+					touchElements.do({ |element, i|
+						var view, getValueFunc;
+
+						view = touchViews[ i ];
+
+						if( touchViews[i].notNil ) {
+							"gets to touchViews.".postln;
 							gui.getValueFuncs = gui.getValueFuncs.add( gui.makeGetValueFunc( element, view ) );
 							gui.views = gui.views.add( view );
 						};

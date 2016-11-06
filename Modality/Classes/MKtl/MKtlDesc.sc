@@ -52,36 +52,38 @@ MKtlDesc {
 			noteOnVel: { |dict|
 				dict.putAll((\midiMsgType: \noteOn, \spec: \midiVel));
 			},
+			// default
 			noteOnOff: { |dict|
 				dict.put(\elements, [
 					(key: \on,  midiMsgType: \noteOn,  spec: \midiVel),
-					(key: \off, midiMsgType: \noteOff, spec: \midiBut)
+					(key: \off, midiMsgType: \noteOff, spec: \midiBut, elementType: \padUp)
 				]).put(\useSingleGui, true);
 			},
+			// others
 			noteOnOffBut: { |dict|
 				dict.put(\elements, [
 					(key: \on,  midiMsgType: \noteOn,  spec: \midiBut),
-					(key: \off, midiMsgType: \noteOff, spec: \midiBut)
+					(key: \off, midiMsgType: \noteOff, spec: \midiBut, elementType: \padUp)
 				]).put(\useSingleGui, true);
 			},
 			noteOnOffVel: { |dict|
 				dict.put(\elements, [
 					(key: \on,  midiMsgType: \noteOn,  spec: \midiVel),
-					(key: \off, midiMsgType: \noteOff, spec: \midiVel)
+					(key: \off, midiMsgType: \noteOff, spec: \midiVel, elementType: \padUp)
 				]).put(\useSingleGui, true);
 			},
 			noteOnOffTouch: { |dict|
 				dict.put(\elements, [
 					(key: \on,  midiMsgType: \noteOn,  spec: \midiVel),
-					(key: \off, midiMsgType: \noteOff, spec: \midiBut),
-					(key: \touch, midiMsgType: \polytouch, spec: \midiVel)
+					(key: \off, midiMsgType: \noteOff, spec: \midiBut, elementType: \padUp),
+					(key: \touch, midiMsgType: \polytouch, spec: \midiVel, elementType: \padMove)
 				]).put(\useSingleGui, true);
 			},
 			noteOnOffVelTouch: { |dict|
 				dict.put(\elements, [
 					(key: \on,  midiMsgType: \noteOn,  spec: \midiVel),
-					(key: \off, midiMsgType: \noteOff, spec: \midiVel),
-					(key: \touch, midiMsgType: \polytouch, spec: \midiVel)
+					(key: \off, midiMsgType: \noteOff, spec: \midiVel, elementType: \padUp),
+					(key: \touch, midiMsgType: \polytouch, spec: \midiVel, elementType: \padMove)
 				]).put(\useSingleGui, true);
 			},
 		);

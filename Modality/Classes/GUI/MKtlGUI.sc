@@ -7,13 +7,14 @@ MKtlElementView {
 
 	var <>snapbackValue = 0, <snapback = false;
 
-	*new { |parent, bounds, element|
-		^this.newCopyArgs( element ).makeView( parent, bounds );
+	*new { |parent, bounds, element, redirectView|
+		// "% : redirectView is % \n".postf(thisMethod, redirectView);
+		^this.newCopyArgs( element ).makeView( parent, bounds, redirectView );
 	}
 
 	*initClass {
 		makeViewFuncDict = (
-			'button': { |parent, bounds, label, element|
+			'button': { |parent, bounds, label|
 				Button( parent, bounds.insetBy( MKtlGUI.margin ) )
 				.states_([[ label ? "" ],[ label ? "", Color.black, Color.gray(0.33) ]]);
 			},
@@ -27,6 +28,12 @@ MKtlElementView {
 				MPadView( parent, bounds.insetBy( MKtlGUI.margin ) )
 				.useUpValue_( true )
 				.autoUpTime_( 0.2 );
+			},
+			'padUp': { |parent, bounds, label, redirectView|
+				MPadUpViewRedirect( redirectView )
+			},
+			'padMove': { |parent, bounds, label, redirectView|
+				MPadMoveViewRedirect( redirectView )
 			},
 			'unknown': { |parent, bounds, label|
 				var vw;
@@ -81,13 +88,14 @@ MKtlElementView {
 		);
 	}
 
-	makeView { |inParent, bounds|
+	makeView { |inParent, bounds, redirectView |
 		var label;
 		parent = inParent ? parent;
+		// "makeView: redirectView is %\n".postf(redirectView);
 		if( element.elemDesc[ \style ] !? _.showLabel ? false ) {
 			label = element.elemDesc[ \label ] ?? { element.name };
 		};
-		view = this.getMakeViewFunc( element.type ).value( parent, bounds, label, element );
+		view = this.getMakeViewFunc( element.type ).value( parent, bounds, label, redirectView );
 		getValueFunc = this.makeGetValueFunc( element, view );
 
 		view.keyDownAction = { |vw, key|
@@ -127,7 +135,7 @@ MKtlElementView {
 			element.valueAction = vw.value;
 			if( element.source.traceRunning == true ) {
 				"% - % > % | via GUI\n".postf(
-					element.source.name, element.name, element.value;
+					element.source.name, element.name, element.value.round(0.0001);
 				);
 			};
 		});
@@ -192,6 +200,7 @@ MKtlGUI {
 		var createdWindow = false;
 		var numRowsColumns, cellSize;
 		var pages;
+		var elemsToShow, viewToPass;
 
 		pages = this.getNumPages;
 		this.layoutElements( pages );
@@ -210,22 +219,70 @@ MKtlGUI {
 			});
 		};
 
-		views = mktl.elementGroup.flat.collect({ |item|
-			var style, bounds, view = parent;
-			style = item.elemDesc[ \style ] ?? { ( row: 0, column: 0, width: 0, height: 0 ) };
+		// // was:
+		// elemsToShow = mktl.elementGroup.flat;
+		// keep groups with a groupType together
+		elemsToShow = mktl.elementGroup.elements.flatIf { |el| el.groupType.isNil };
+
+		views = elemsToShow.collect({ |item|
+			var style, bounds, parView = parent, redirView, newViews;
+			var itemIsGroup = item.isKindOf(MKtlElementGroup);
+
+			style = try { item.elemDesc[ \style ] } ?? { ( row: 0, column: 0, width: 0, height: 0 ) };
 			if( pages.notNil && { item.elemDesc[ \page ].notNil }) {
-				view = pageComposites[ item.elemDesc[ \page ] ];
+				parView = pageComposites[ item.elemDesc[ \page ] ];
 			};
-			MKtlElementView( view, Rect( style.column * cellSize, (style.row * cellSize) + 25, style.width * cellSize, style.height * cellSize ), item );
-		});
+
+			if (itemIsGroup.not) {
+				MKtlElementView(
+					parView,
+					Rect( style.column * cellSize, (style.row * cellSize) + 25,
+						style.width * cellSize, style.height * cellSize ),
+					item
+				);
+			} {
+				// "item is a group: %\n".postf(item);
+				newViews = item.elements.collect { |it, i|
+					var nuview;
+					// "index: % sending to nuview: %\n".postf(i, redirView);
+					nuview = MKtlElementView(
+						parView,
+						Rect( style.column * cellSize, (style.row * cellSize) + 25,
+							style.width * cellSize, style.height * cellSize ),
+						it,
+						redirView
+					);
+
+					if ( i == 0) {
+						redirView = nuview.view;
+						redirView.mode = item.groupType;
+						if (style.color.notNil) { redirView.baseColor = Color.perform(style.color) };
+						// "setting redirView: %\n".postf(redirView);
+					} {
+						// "used nuview.view - it is %. \n".postf(nuview.view);
+					};
+					nuview
+				};
+				redirView = nil;
+				newViews;
+			};
+		}).flat;
 
 		labelView = UserView( parent, bounds.moveTo(0,0) )
 		.background_( Color.black.alpha_(0.33) )
 		.drawFunc_({ |vw|
+
 			views.do({ |item, i|
 				var name;
-				if( item.element.elemDesc[ \page ].isNil or: { item.element.elemDesc[ \page ] == currentPage } ) {
+				var doDraw = item.view.isKindOf(MPadUpViewRedirect).not
+				and: { item.element.elemDesc[ \page ].isNil
+					or: { item.element.elemDesc[ \page ] == currentPage } };
+
+				if(doDraw) {
 					name = item.element.name.asString;
+					if (item.element.elemDesc.groupType.notNil) {
+						name = name.split($_).drop(-1).join($_);
+					};
 					if( name.asString.size > 5 ) {
 						name = name.split( $_ );
 						name[((name.size-1) / 2).floor] = name[((name.size-1) / 2).floor] ++ "\n";

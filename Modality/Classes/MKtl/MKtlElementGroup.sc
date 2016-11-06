@@ -71,6 +71,7 @@ MKtlElementGroup : MKtlElement {
 		var array;
 		tags = Set[];
 		dict = ();
+		elemDesc = ();
 		elements = elements ?? { Array.new };
 		case { elements.isKindOf( Dictionary ) } {
 			elements.sortedKeysValuesDo({ |key, value|
@@ -205,6 +206,10 @@ MKtlElementGroup : MKtlElement {
 
 	flat {
 		^this.elements.flat;
+	}
+
+	flatIf { |func|
+		^this.elements.flatIf(func);
 	}
 
 	prFlat { |list|

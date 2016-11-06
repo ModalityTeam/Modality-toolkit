@@ -123,7 +123,7 @@ definitionlist::
 ## \hold
 || means the value is held where it is (e.g. most faders)
 ## \snapback
-|| means it phyiscally returns to a known value,
+|| means it physically returns to a known value,
 which is then given via code::\snapbackValue::.
 ::
 
