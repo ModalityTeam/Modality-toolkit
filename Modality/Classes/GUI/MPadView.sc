@@ -273,3 +273,19 @@ MPadUpViewRedirect {
 		};
 	}
 }
+
+MPadMoveViewRedirect : MPadUpViewRedirect {
+
+	*new { |view| // must be an MPadView
+		^super.newCopyArgs( view );
+	}
+
+	value { ^view.moveValue }
+	value_ { |val| view.moveValue_( val ) }
+	valueAction_ { |val| view.moveValueAction_( val ) }
+
+	action_ { |func|
+		action = func;
+		view.moveAction = { action.value( this ) };
+	}
+}

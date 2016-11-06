@@ -11,17 +11,17 @@ It flexibly supports a variety of behaviors these noteOn, noteOff and touch elem
 These types of MIDI elements include:
 
 table::
-	## tag: || description: || noteOn: || noteOff: || touch:
-	## || - DEFAULT - ||
-	## \noteOnOff || piano key || 1-127 || 0 || off
-	## || - COMMON - ||
-	## \noteOnOffBut || basic button || 127 || 0 || off
-	## \noteOnTrig || trigger pad || 127 || off || off
-	## \noteOnVel || trig pad w/ velocity || 1-127 || 0 || off
-	## \noteOnOffTouch || piano key w/ touch || 1-127 || 0 || 0-127
-	## || - RARE - ||
-	## \noteOnOffVel || piano key || 1-127 || 1-127 || off
-	## \noteOnOffVelTouch || piano key || 1-127 || 1-127 || 1-127
+	## tag: || description: || noteOn: || noteOff: || touch: || comment
+	##
+	## \noteOnTrig || trigger pad || 127 || - || - ||
+	## \noteOnVel || trig pad w/ vel. || 1-127 || - || - ||
+	##
+	## \noteOnOff || piano key w/ on vel. || 1-127 || 0 || - || default
+	## \noteOnOffBut || button on/off || 127 || 0 || - ||
+	## \noteOnOffVel || pad/key w/ off vel. || 1-127 || 1-127 || - || rare
+	##
+	## \noteOnOffTouch || pad/key w/ polytouch || 1-127 || 0 || 0-127 || semi-rare
+	## \noteOnOffVelTouch || pad/key w/ off vel and touch || 1-127 || 1-127 || 1-127 || very rare!
 ::
 
 Subsection::Code Examples for demonstration:
