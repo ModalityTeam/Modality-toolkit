@@ -57,15 +57,19 @@ elementsDesc: (
 	elements: [
 		(
 			key: \bt,
-			shared: (elementType: \button, midiChan: 0, spec: \midiBut),
+			shared: (elementType: \pad, midiChan: 0, spec: \midiBut),
 			elements: #[
 				[ 16, 17, 18, 19, 20, 21, 22, 23, 48 ],
 				[  8,  9, 10, 11, 12, 13, 14, 15, 49 ]
 			].collect { |xs, row|
 				(
 					elements: xs.collect { |note, col|
-						MKtlDesc.notePair(col, note,
-							shared: ( \style: (row: row+2, column: 3 + (col*2), showLabel: false))
+						(
+							key: col, midiNum: note, groupType: \noteOnOffBut,
+							shared: (
+								groupType: \noteOnOffBut,
+								\style: (row: row+2, column: 3 + (col*2), showLabel: false)
+							)
 						);
 					}
 				)
@@ -92,14 +96,14 @@ elementsDesc: (
 		),
 		(
 			key: \tr,
-			shared: (elementType: \button, midiChan: 0, spec: \midiBut),
+			shared: (elementType: \pad, midiChan: 0, groupType: \noteOnOffBut, spec: \midiBut),
 			elements: [
-				MKtlDesc.notePair( \rew, 	91, shared: ( \style: (row: 0, column: 0, showLabel: true) ) ),
-				MKtlDesc.notePair( \play, 	94, shared: ( \style: (row: 0, column: 1, showLabel: true) ) ),
-				MKtlDesc.notePair( \fwd, 	92, shared: ( \style: (row: 0, column: 2, showLabel: true) ) ),
-				MKtlDesc.notePair( \cycle, 	86, shared: ( \style: (row: 1, column: 0, showLabel: true) ) ),
-				MKtlDesc.notePair( \stop, 	93, shared: ( \style: (row: 1, column: 1, showLabel: true) ) ),
-				MKtlDesc.notePair( \rec, 	95, shared: ( \style: (row: 1, column: 2, showLabel: true) ) )
+				( key: \rew, 	midiNum: 91, shared: ( \style: (row: 0, column: 0, showLabel: true) ) ),
+				( key: \play, 	midiNum: 94, shared: ( \style: (row: 0, column: 1, showLabel: true) ) ),
+				( key: \fwd, 	midiNum: 92, shared: ( \style: (row: 0, column: 2, showLabel: true) ) ),
+				( key: \cycle, 	midiNum: 86, shared: ( \style: (row: 1, column: 0, showLabel: true) ) ),
+				( key: \stop, 	midiNum: 93, shared: ( \style: (row: 1, column: 1, showLabel: true) ) ),
+				( key: \rec, 	midiNum: 95, shared: ( \style: (row: 1, column: 2, showLabel: true) ) )
 			]
 		)
 	]

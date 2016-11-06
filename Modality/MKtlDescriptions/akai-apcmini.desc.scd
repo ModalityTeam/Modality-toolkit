@@ -45,9 +45,12 @@ elementsDesc: (
 			shared: (elementType: 'pad',
 				midiChan: 0, spec: 'midiNote', ioType: \inout),
 			elements: (0..63).collect { |midiNote, i|
-				MKtlDesc.notePair(
-					(i+1).asSymbol, midiNote,
+				(
+					key: (i+1).asSymbol,
+					midiNum: midiNote,
+					groupType: \noteOnOff,
 					shared: (
+						groupType: \noteOnOff,
 						style: (
 							row: 7 - (i div: 8),
 							column: i % 8,
@@ -58,13 +61,15 @@ elementsDesc: (
 			}
 		),
 		(
-			key: \navBut,
-			shared: (elementType: 'button',
+			key: \navBt,
+			shared: (elementType: 'pad',
 				midiChan: 0, spec: 'midiBut', ioType: \inout),
 			elements: (64..67).collect { |midiNote, i|
-				MKtlDesc.notePair(
-					(i+1).asSymbol, midiNote,
+				(
+					key: (i+1).asSymbol, midiNum: midiNote,
+					groupType: \noteOnOffBut,
 					shared: (
+						groupType: \noteOnOffBut,
 						style: (
 							row: 8,
 							column: i,
@@ -75,13 +80,15 @@ elementsDesc: (
 			}
 		),
 		(
-			key: \ctrlBut,
-			shared: (elementType: 'button',
+			key: \ctlBt,
+			shared: (elementType: 'pad',
 				midiChan: 0, spec: 'midiBut', ioType: \inout),
 			elements: (68..71).collect { |midiNote, i|
-				MKtlDesc.notePair(
-					(i+1).asSymbol, midiNote,
+				(
+					key: (i+1).asSymbol, midiNum: midiNote,
+					groupType: \noteOnOffBut,
 					shared: (
+						groupType: \noteOnOffBut,
 						style: (
 							row: 8,
 							column: i + 4,
@@ -92,13 +99,15 @@ elementsDesc: (
 			}
 		),
 		(
-			key: \launchBut,
-			shared: (elementType: 'button',
+			key: \lnchBt,
+			shared: (elementType: 'pad',
 				midiChan: 0, spec: 'midiBut', ioType: \inout),
 			elements: (82..89).collect { |midiNote, i|
-				MKtlDesc.notePair(
-					(i+1).asSymbol, midiNote,
+				(
+					key: (i+1).asSymbol, midiNum: midiNote,
+					groupType: \noteOnOffBut,
 					shared: (
+						groupType: \noteOnOffBut,
 						style: (
 							row: i,
 							column: 8,
@@ -107,10 +116,12 @@ elementsDesc: (
 				)
 			}
 		),
-		MKtlDesc.notePair(
-			\shift, 98,
+		(
+			key: \shift, midiNum: 98,
+			groupType: \noteOnOffBut,
 			shared: (
-				\elementType: 'button',
+				groupType: \noteOnOffBut,
+				\elementType: 'pad',
 				\midiChan: 0,
 				\spec: 'midiBut',
 				\ioType: \inout,
