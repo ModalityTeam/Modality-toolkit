@@ -146,31 +146,19 @@ elementsDesc: (
 			elements: [
 				(
 					key: \stop,
-					shared: (elementType: 'button', midiNum: 1, spec: \midiBut),
-					elements: [
-						(
-							key: \on, midiMsgType: 'noteOn',
-							style: (row: 2, column: 0, height: 0.5, showLabel: true)
-						),
-						(
-							key: \off, midiMsgType: 'noteOff',
-							style: (row: 2.5, column: 0, height: 0.5, showLabel: true)
-						)
-					],
+					groupType: \noteOnOffBut,
+					shared: (elementType: 'pad', midiNum: 1, spec: \midiBut,
+						groupType: \noteOnOffBut,
+						style: (row: 2, column: 0, height: 0.75, showLabel: true)
+					)
 				),
 				(
 					key: \play,
-					shared: (elementType: 'button', midiNum: 2, spec: \midiBut),
-					elements: [
-						(
-							key: \on, midiMsgType: 'noteOn',
-							style: (row: 2.0, column: 1, height: 0.5, showLabel: true)
-						),
-						(
-							key: \off, midiMsgType: 'noteOff',
-							style: (row: 2.5, column: 1, height: 0.5, showLabel: true)
-						)
-					],
+					groupType: \noteOnOffBut,
+					shared: (elementType: 'pad', midiNum: 1, spec: \midiBut,
+						groupType: \noteOnOffBut,
+						style: (row: 2, column: 1, height: 0.75, showLabel: true)
+					)
 				),
 
 				(
@@ -178,24 +166,12 @@ elementsDesc: (
 					shared: (elementType: 'pad', spec: 'midiVel'),
 					elements: (36 + ((8..15)++(0..7))).collect { |num,i|
 						(
-							shared: (midiNum: num),
-							elements: [
-								(
-									key: \on, midiMsgType: \noteOn,
-									style: (row: (i div: 8 * 2 + 2), column: i % 8 + 2,
-										height: 0.5, showLabel: true)
-								),
-								(
-									key: \off, midiMsgType: \noteOff,
-									style: (row: (i div: 8 * 2 + 2.5), column: i % 8 + 2,
-										height: 0.5, showLabel: true)
-								),
-								(
-									key: \touch, midiMsgType: \polytouch,
-									style: (row: (i div: 8 * 2 + 3), column: i % 8 + 2,
-										height: 0.5, showLabel: true)
-								)
-							]
+							groupType: \noteOnOffTouch,
+							shared: (midiNum: num,
+								groupType: \noteOnOffTouch,
+								style: (row: (i div: 8 + 2), column: i % 8 + 2,
+									height: 1, showLabel: true)
+							)
 						)
 					}
 				),
@@ -209,6 +185,7 @@ elementsDesc: (
 						[114, 18, 19, 16, 17, 91, 79, 72]
 					].flat.collect { |num, i|
 						( midiNum:  num,
+
 							style: (row: (i div: 8), column: i % 8 + 2, showLabel: true)
 						)
 					}
@@ -219,7 +196,7 @@ elementsDesc: (
 					key: \bigKnob, midiMsgType: 'cc', elementType: 'encoder',
 					spec: 'midiCCrel_64_22', // [56, 72, \lin, 1].asSpec,
 					midiNum: 7,  // big knob
-					style: (row: 0, column: 0, height: 2, showLabel: true)
+					style: (row: 0, column: 0, height: 2, width: 2, showLabel: true)
 				)
 			]
 		)

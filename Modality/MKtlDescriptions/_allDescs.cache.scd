@@ -1,5 +1,6 @@
 Dictionary[
 	("ableton-push" -> "Ableton Push"),
+	("akai-apc40" -> "Akai APC40"),
 	("akai-apcmini" -> "APC MINI"),
 	("akai-lpd8" -> "LPD8"),
 	("akai-mpd18" -> "Akai MPD18"),
@@ -44,9 +45,11 @@ Dictionary[
 	("m-audio-oxygen49" -> "Oxygen 49"),
 	("m-audio-triggerfinger" -> "USB Trigger Finger"),
 	("native-instruments-traktor-kontrol-z2" -> "Traktor Kontrol Z2 Input"),
+	("nordDrum2" -> "EXTERNAL"),
 	("novation-launchcontrol" -> "Launch Control"),
 	("novation-launchcontrol-xl" -> "Launch Control XL"),
 	("novation-launchpad" -> "Launchpad"),
+	("organelle" -> "organelle"),
 	("rme-audio-totalmix" -> "TotalMix"),
 	("saitek-cyborg-command-pad-unit" -> "Saitek Cyborg Command Pad Unit_"),
 	("saitek-cyborg-x" -> "Cyborg X_Saitek"),

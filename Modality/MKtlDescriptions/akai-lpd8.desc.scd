@@ -109,14 +109,11 @@ elementsDesc: (
 		),
 		(
 			key: \pad,
-			shared: (\elementType: \pad, \spec: \midiVel),
+			shared: (\elementType: \pad, groupType: \noteOnOff),
 		 	elements: (36..43).collect { |num, i|
-				MKtlDesc.notePair(
-					(i+1).asSymbol, num,
-					shared: (style: (
-						row: 1 - (i div: 4), // lower row has pad 1-4
-						column: i % 4)
-					)
+				(
+					midiNum: num, key: (i+1).asSymbol,
+					shared: (style: (row: 1 - (i div: 4), column: i % 4))
 				);
 			}
 		)

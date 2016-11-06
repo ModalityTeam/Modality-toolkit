@@ -58,29 +58,21 @@ elementsDesc: (
 			style: (row: 1, column: 4, height: 3)
 		),
 		(
-			key: \touch,
-			midiMsgType: 'touch',
-			elementType: 'slider', // for better display only
-			midiChan: 0, midiNum:  0,
-			spec: 'midiTouch',
-			style: (row: 0, column: 4, height: 1)
-		),
-		(
 			key: \pad,
-			shared: (elementType: \pad, midiChan: 0, spec: \midiVel),
+			shared: (elementType: \pad, midiChan: 0, spec: \midiVel, midiMsgType: \noteOn),
 			elements: (36..83).clump(16).collect { |padNums, page|
 				(
-					shared: (page: page),
+					shared: (page: page, groupType: \noteOnOffTouch),
 					elements: padNums.collect { |num, i|
-						MKtlDesc.notePair(
-							(i+1).asSymbol, num,
-							(style: (
-								row: 3 - (i div: 4),
-								column: (i % 4)
-							))
+						(
+							key: (i+1).asSymbol,
+							shared: (
+								midiNum: num,
+								style: (row: 3 - (i div: 4), column: (i % 4))
+							)
 						)
 					}
-				);
+				)
 			}
 		)
 	]

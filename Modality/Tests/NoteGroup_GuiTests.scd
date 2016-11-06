@@ -1,3 +1,61 @@
+// test expansion in MKtlGUI
+MKtl.find;
+
+// create a keyboard with 61 keys and polytouch
+// - 61 keys barely fit on screen
+// - black keys could be black
+// noteOn, off, touch work!
+(
+a = (
+	key: \k,
+	// groupType: \noteOnOffTouch,
+	shared: (groupType: \noteOnOffTouch, 'elementType':
+		'pad', spec: \midiVel, midiChan: 0),
+	elements: (36..96).collect { |num, i|
+		var pos = Piano.pos(num, 36);
+		(
+			key: num.asSymbol,
+			shared: (
+				midiNum: num,
+				style: (row: pos.y, column: pos.x + (1-pos.y * 0.2),
+					width: pos.w * 1.2, height: 1.2, color: pos.color)
+			)
+		)
+	}
+);
+d = (protocol: \midi, idInfo: "test", elementsDesc: (elements: [a]));
+m.free; m = MKtl(\x, d);
+g = m.trace.gui.showLabels;
+)
+
+// these devices are already adapted!
+// - label just says pad_x, no on/off
+
+MKtlDesc.loadDescs; l.free; l = MKtl(\lpd8, "*uc4");
+l.elementsDict.size;
+l.elementsDict.choose.elemDesc;
+l.trace.gui.showLabels;
+
+MKtlDesc.loadDescs; l.free; l = MKtl(\lpd8, "*lpd8");
+l.elementsDict.size;
+l.elementsDict.choose.elemDesc;
+l.trace.gui.showLabels;
+
+MKtlDesc.loadDescs; l.free; l = MKtl(\mpd18, "*mpd18");
+l.elementsDict.size;
+l.elementsDict.choose.elemDesc;
+g = l.trace.gui.showLabels;
+
+MKtlDesc.loadDescs; l.free; l = MKtl(\btst, "*beatstep*16");
+l.elementsDict.size;
+l.elementsDict.choose.elemDesc;
+g = l.trace.gui.showLabels;
+
+
+// not working yet
+MKtlElementGroupGUI(nil, nil, m.elAt(0));
+
+
 // test all types of noteOnOffTouch combinations
 // controlled by a single MPadView
 // and connected back from element via SimpleController
