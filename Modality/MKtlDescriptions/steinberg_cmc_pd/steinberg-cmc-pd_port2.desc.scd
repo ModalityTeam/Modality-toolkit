@@ -22,8 +22,8 @@ MIDIFunc.trace
 m = MKtl('pd_ctls', "*cmc-pd_port2");
 m.trace;
 m.postElements;
-m.gui;
-
+g = m.gui;
+g.views.collect(_.view);
 // example for use of relative knob:
 m.elAt(\kn).action = { |el|
 	var delta = el.deviceValue.fold(0, 64).wrap(-31, 32);
@@ -72,17 +72,21 @@ specs: (midiRel: [0, 127, \lin, 1]),
 elementsDesc:
 
 (
-// ------ noteOn, noteOff -------------
+// ------ noteOn Off -------------
 shared: ('midiChan': 0),
 elements: [
 	(
 		key: \bt,
-		shared: ('elementType': 'button', 'midiNum':  70, 'spec': 'midiBut'),
+		shared: ('elementType': 'pad', groupType: \noteOnOffBut, 'spec': 'midiBut'),
 		elements: [
-			MKtlDesc.notePair('shift', 70, (style: (row: 0, column: 1.5))),
-			MKtlDesc.notePair('curveSetup', 114, (style: (row: 1, column: 0))),
-			MKtlDesc.notePair('4velMode', 115, (style: (row: 1, column: 1))),
-			MKtlDesc.notePair('browse', 58, (style: (row: 1, column: 2)))
+			(key: 'shift',
+				shared: ( midiNum:  70, style: (row: 0, column: 1.5))),
+			(key: 'curveSetup',
+				shared: ( midiNum: 114, style: (row: 1, column: 0))),
+			(key: '4velMode',
+				shared: ( midiNum: 115, style: (row: 1, column: 1))),
+			(key: 'browse',
+				shared: ( midiNum:  58, style: (row: 1, column: 2)))
 		]
 	),
 // ------ cc -------------
