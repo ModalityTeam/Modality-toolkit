@@ -31,16 +31,16 @@ m.postElements;
 */
 
 (
-deviceName: "iCON iControl V2.00",
+deviceName: "iCON iControls V2.00",
 protocol: \midi,
 deviceType: \faderbox,
 elementTypes: [\fader, \knob, \button],
 status: (
-	linux: "unknown",
-	osx: "tested desc, looks good. needs test with current icontrols V2.00. 2016_04_08, adc",
+	linux: "tested and working, 2016_03_20 by nescivi",
+	osx: "tested desc, looks ok.",
 	win: "unknown"),
 
-idInfo: (deviceName: "iCON iControl V2.00", srcPortIndex: 0, destPortIndex: 0),
+idInfo: (deviceName: "iCON iControls V2.00", srcPortIndex: 0, destPortIndex: 0),
 
 deviceInfo: (
 	vendorURI: "http://icon-global.com/product/icontrols/",
@@ -56,45 +56,55 @@ deviceInfo: (
 elementsDesc: (
 	elements: [
 		(
-			key: \tr,
-			shared: (elementType: \button, midiChan: 0, spec: \midiBut),
-			elements: [
-				MKtlDesc.notePair( \rew,  21, shared: ( \style: (row: 0, column: 0, showLabel: true) ) ),
-				MKtlDesc.notePair( \play, 24, shared: ( \style: (row: 0, column: 1, showLabel: true) ) ),
-				MKtlDesc.notePair( \fwd,  22, shared: ( \style: (row: 0, column: 2, showLabel: true) ) ),
-				MKtlDesc.notePair( \cycle,20, shared: ( \style: (row: 1, column: 0, showLabel: true) ) ),
-				MKtlDesc.notePair( \stop, 23, shared: ( \style: (row: 1, column: 1, showLabel: true) ) ),
-				MKtlDesc.notePair( \rec,  25, shared: ( \style: (row: 1, column: 2, showLabel: true) ) )
-			]
-		),
-		(
-			key: \kn,
-			shared: (midiMsgType: \cc, elementType: \knob, midiNum: 12, spec: \midiCC),
-			elements: (0..8).collect { |i, n|
-				( midiChan: i, \style: (row: 0, column: 4+(n*2)) )
-			}
-		),
-		(
-			key: \sl,
-			shared: (midiMsgType: \cc, elementType: \slider, midiNum:  13, spec: \midiCC),
-			elements: (0..8).collect { |i, n|
-				( midiChan: i, \style: (row: 1, column: 4+(i*2)))
-			}
-		),
-		(
 			key: \bt,
-			shared: (elementType: \button, midiChan: 0, spec: \midiBut),
-			elements: #[ 26, 27 ].collect { |midiNum, row|
+			shared: (elementType: \pad, midiChan: 0, spec: \midiBut),
+			elements: #[
+				[ 16, 17, 18, 19, 20, 21, 22, 23, 48 ],
+				[  8,  9, 10, 11, 12, 13, 14, 15, 49 ]
+			].collect { |xs, row|
 				(
-					shared: (midiNum: midiNum),
-					elements: (0..8).collect { |chan, col|
-						MKtlDesc.notePair(col+1, midiNum,
-							shared: ( midiChan: chan,
-								\style: (row: row+2, column: 3 + (col*2), showLabel: false))
+					elements: xs.collect { |note, col|
+						(
+							key: col, midiNum: note, groupType: \noteOnOffBut,
+							shared: (
+								groupType: \noteOnOffBut,
+								\style: (row: row+2, column: 3 + (col*2), showLabel: false)
+							)
 						);
 					}
 				)
 			}
+		),
+		(
+			key: \sl,
+			shared: (
+				midiMsgType: \cc, elementType: \slider,
+				midiNum:  13, spec: \midiCC),
+			elements: (0..8).collect { |i, n| (
+				midiChan: i,
+				\style: (row: 1, column: 4+(i*2))
+			) }
+		),
+		(
+			key: \kn,
+			shared: (midiMsgType: \cc, elementType: \knob,
+				midiChan: 0, spec: \midiCC),
+			elements: ((16..23)++[12]).collect { |i, n| (
+				midiNum: i,
+				\style: (row: 0, column: 4+(n*2))
+			) }
+		),
+		(
+			key: \tr,
+			shared: (elementType: \pad, midiChan: 0, groupType: \noteOnOffBut, spec: \midiBut),
+			elements: [
+				( key: \rew, 	midiNum: 91, shared: ( \style: (row: 0, column: 0, showLabel: true) ) ),
+				( key: \play, 	midiNum: 94, shared: ( \style: (row: 0, column: 1, showLabel: true) ) ),
+				( key: \fwd, 	midiNum: 92, shared: ( \style: (row: 0, column: 2, showLabel: true) ) ),
+				( key: \cycle, 	midiNum: 86, shared: ( \style: (row: 1, column: 0, showLabel: true) ) ),
+				( key: \stop, 	midiNum: 93, shared: ( \style: (row: 1, column: 1, showLabel: true) ) ),
+				( key: \rec, 	midiNum: 95, shared: ( \style: (row: 1, column: 2, showLabel: true) ) )
+			]
 		)
 	]
 )

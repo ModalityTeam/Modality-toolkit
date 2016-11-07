@@ -1,5 +1,8 @@
 ///// nanoPAD2 desc file
-
+/*
+MKtlDesc.loadDescs("*nanopad2");
+m.free; m = MKtl(\nky2, "*nanopad2"); m.gui.showLabels;
+*/
 (
 deviceName: "nanoPAD2",
 protocol: \midi,
@@ -36,22 +39,23 @@ elementsDesc: (
 			shared: ( elementType: \pad, \spec: \midiVel, \ioType: \in),
 			elements: (36..99).clump(16).collect { |padbank, page|
 				(
-					shared: (page: page),
+					shared: (page: page, groupType: \noteOnOff),
 					elements: padbank.collect { |num, j|
-						MKtlDesc.notePair(i, num,
-							(style: (row: j div: 8, column: j % 8 + 3))
-							)
+						(
+							key: i, midiNum: num,
+							shared: (style: (row: j div: 8, column: j % 8 + 3))
+						)
 					}
 				)
 			}
 		),
 		(
 			key: 'touch',
-			shared: ('midiMsgType': 'cc', 'elementType': 'slider', 'spec': 'midiCC'),
+			shared: ('midiMsgType': 'cc', 'elementType': 'slider', style: (height: 2), 'spec': 'midiCC'),
 			elements: [
-				(key: \x, 'midiNum':  1),
-				(key: \y, 'midiNum':  2),
-				(key: \on, 'midiNum':  16)
+				(key: \x, 'midiNum':   1, style: (height: 2, column: 0)),
+				(key: \y, 'midiNum':   2, style: (height: 2, column: 1)),
+				(key: \on, 'midiNum': 16, style: (height: 2, column: 2))
 			]
 		)
 	]

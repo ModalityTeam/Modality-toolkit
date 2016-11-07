@@ -1,6 +1,6 @@
 /*
-MKtl.find;
-m = MKtl(\nky, "*nanokey"); m.gui;
+MKtlDesc.loadDescs("*nanokey");
+m.free; m = MKtl(\nky, "*nanokey"); m.trace.gui.showLabels;
 */
 
 (
@@ -30,10 +30,19 @@ elementsDesc: (
 	elements: [
 		(
 			key: \pkey,
-			shared: (elementType: \pad, spec: \midiVel),
+			shared: ('elementType': 'pianoKey', groupType: \noteOnOff, spec: \midiVel),
 			elements: (0..120).collect { |midinum, i|
-				MKtlDesc.notePair(i, midinum,
-					(style: (row: i div: 24, column: i % 24))
+				var pos = Piano.pos(midinum % 48, 0);
+				(key: i.asSymbol,
+					midiNum: midinum,
+					shared: (
+						groupType: \noteOnOff,
+						style: (
+							row: (4 - (i div: 48 * 2)) + (pos.y * 0.9),
+							column: pos.x,
+							color: pos.color,
+							height: 1.2
+					))
 				);
 			}
 		),
@@ -46,7 +55,7 @@ elementsDesc: (
 			key: \cc,
 			shared: ('midiMsgType': 'cc', 'elementType': 'slider', 'spec': 'midiCC'),
 			elements: ((14..31) ++ (80..87)).collect { |midinum, i|
-				('midiNum': midinum)
+				('midiNum': midinum, style: (height: 2, row: 6, column: i))
 			}
 		),
 		(

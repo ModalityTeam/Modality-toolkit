@@ -23,9 +23,10 @@ thisProcess.nowExecutingPath.basename.split($.).first.postcs;
 d = MKtlDesc.loadDescs("*icontrols").first;
 d.web;
 
-MKtlDesc.loadDescs;
-m.free; m = MKtl(\ic, "*icontrols"); m.gui;
-m.trace;
+MKtlDesc.loadDescs("*icontrols");
+m.free; m = MKtl(\ic, "*icontrols"); m.trace;
+m.gui.showLabels;
+
 m.elementsDict.size;
 m.postElements;
 */

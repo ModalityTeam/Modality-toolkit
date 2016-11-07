@@ -79,13 +79,16 @@ elementsDesc: (
 				),
 				(
 					key: \bt,
-					shared: ('elementType': 'button', 'spec': 'midiNote', \ioType: \inout),
+					shared: ('elementType': 'pad', groupType: \noteOnOffBut,
+						'spec': 'midiNote', \ioType: \inout),
 					elements: [
 						(
 							key: 'fcs',
-							shared: ('elementType': 'button', 'spec': 'midiNote', \ioType: \inout),
+							shared: ('elementType': 'pad', 'spec': 'midiNote', \ioType: \inout),
 							elements: ((41..44) ++ (57..60)).collect{|num, i|
-								MKtlDesc.notePair((i+1).asSymbol, num,
+
+								(
+									key: (i+1).asSymbol, midiNum: num,
 									shared:(
 										style: (
 											row: 7,
@@ -97,14 +100,13 @@ elementsDesc: (
 						),
 						(
 							key: 'ctl',
-							shared: ('elementType': 'button', 'spec': 'midiNote', \ioType: \inout),
+							shared: ('elementType': 'pad', groupType: \noteOnOffBut,
+								'spec': 'midiNote', \ioType: \inout),
 							elements:  ((73..76) ++ (89..92)).collect { |num, i|
-								MKtlDesc.notePair((i+1).asSymbol, num,
+								(
+									key: (i+1).asSymbol, midiNum: num,
 									shared:(
-										style: (
-											row: 8,
-											column: i
-										)
+										style: ( row: 8, column: i )
 									)
 								)
 							}
@@ -115,7 +117,8 @@ elementsDesc: (
 
 				(
 					key: \slct,
-					shared: ('elementType': 'button', 'spec': 'midiNote', \ioType: \inout),
+					shared: ('elementType': 'pad', groupType: \noteOnOffBut,
+						'spec': 'midiNote', \ioType: \inout),
 					elements: [
 						[ \device, 105, 3, 8.5 ],
 						[ \mute,   106, 4, 8.5 ],
@@ -124,8 +127,8 @@ elementsDesc: (
 					].collect{|list|
 						var key, num, row, col;
 						#key, num, row, col = list;
-
-						MKtlDesc.notePair(key, num,
+						(
+							key: key, midiNum: num,
 							shared: (style: (row: row, column: col, \showLabel: true))
 						)
 					}
