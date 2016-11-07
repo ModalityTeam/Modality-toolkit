@@ -27,6 +27,7 @@ MKtlElementView {
 			'pad': { |parent, bounds, label|
 				MPadView( parent, bounds.insetBy( MKtlGUI.margin ) )
 				.useUpValue_( true )
+				.label_(label ? "")
 				.autoUpTime_( 0.2 );
 			},
 			'padUp': { |parent, bounds, label, redirectView|
@@ -94,8 +95,12 @@ MKtlElementView {
 		parent = inParent ? parent;
 		// "makeView: redirectView is %\n".postf(redirectView);
 		if( element.elemDesc[ \style ] !? _.showLabel ? false ) {
-			label = element.elemDesc[ \label ] ?? { element.name };
+			label = (element.elemDesc[ \label ] ? element.name).asString;
+			if (element.elemDesc.groupType.notNil) {
+				label = MKtlGUI.dropLastElem(label);
+			};
 		};
+		label.postln;
 		view = this.getMakeViewFunc( element.type ).value( parent, bounds, label, redirectView );
 		getValueFunc = this.makeGetValueFunc( element, view );
 
@@ -193,6 +198,28 @@ MKtlGUI {
 	var <pageComposites, <pagesSwitch;
 	var <currentPage = 0;
 
+	*dropLastElem { |str, sep = $_|
+		var indices = str.findAll(sep);
+		if (indices.isNil) { ^str };
+		^str.keep(indices.last);
+	}
+
+	*splitLabel { |label, maxLength = 5|
+		var name = label = (label ? "").asString;
+		var nameSize = name.size;
+		var splitPoints, bestIndex;
+		if( nameSize > maxLength ) {
+			splitPoints = name.findAll($_);
+			if (splitPoints.isNil) {
+				bestIndex = (nameSize / 2).roundUp.asInteger;
+			} {
+				bestIndex = splitPoints.minItem { |i| absdif(i, nameSize / 2) };
+			};
+			name = name.keep(bestIndex)  ++ "\n" ++ name.drop(bestIndex);
+		};
+		^name
+	}
+
 	*new { |parent, bounds, mktl|
 		^super.newCopyArgs( mktl, parent ).init( bounds );
 	}
@@ -224,7 +251,7 @@ MKtlGUI {
 		// elemsToShow = mktl.elementGroup.flat;
 		// keep groups with a groupType together
 		elemsToShow = mktl.elementGroup.elements.flatIf { |el| el.groupType.isNil };
-		"%: will show % elements in % views.\n".postf(thisMethod,
+		"%: will show % elements of % in % views.\n".postf(thisMethod, mktl,
 			mktl.elementsDict.size, elemsToShow.size);
 
 		views = elemsToShow.collect({ |item|
@@ -286,12 +313,9 @@ MKtlGUI {
 					if (item.element.elemDesc.groupType.notNil) {
 						name = name.split($_).drop(-1).join($_);
 					};
-					if( name.asString.size > 5 ) {
-						name = name.split( $_ );
-						name[((name.size-1) / 2).floor] = name[((name.size-1) / 2).floor] ++ "\n";
-						name = name.join( $_ );
-					};
-					Pen.stringCenteredIn( name, Rect.aboutPoint( item.view.bounds.center, 60, 15 ), nil, Color.white )
+					name = MKtlGUI.splitLabel(name);
+					Pen.stringCenteredIn( name,
+						Rect.aboutPoint( item.view.bounds.center, 60, 15 ), nil, Color.white )
 				};
 			});
 		})

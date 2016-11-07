@@ -49,7 +49,7 @@ parentDesc: "steinberg-cmc-pd",
 
 status: (
 	linux: "unknown",
-	osx: "tested and working. 2016-03-16, adc",
+	osx: "sketch only. best mapping still to be figured out. 2016-11-07, adc",
 	win: "unknown"),
 
 idInfo: (deviceName: "Steinberg CMC-PD", srcPortIndex: 0, destPortIndex: 0),
@@ -83,13 +83,13 @@ elementsDesc: (
 						).put(\page, 0)
 					}
 				),
-				// \2: (4..19)   .collect { |num, i| MKtlDesc.notePair(i, num) },
-				// \3: (20..35)  .collect { |num, i| MKtlDesc.notePair(i, num) },
-				// \4: (36..51)  .collect { |num, i| MKtlDesc.notePair(i, num) },
-				// \5: (52..67)  .collect { |num, i| MKtlDesc.notePair(i, num) },
-				// \6: (68..83)  .collect { |num, i| MKtlDesc.notePair(i, num) },
-				// \7: (84..99)  .collect { |num, i| MKtlDesc.notePair(i, num) },
-				// \8: (100..115).collect { |num, i| MKtlDesc.notePair(i, num) }
+				// \2: (4..19)   .collect { |num, i| (key: i, midiNum: num) },
+				// \3: (20..35)  .collect { |num, i| (key: i, midiNum: num) },
+				// \4: (36..51)  .collect { |num, i| (key: i, midiNum: num) },
+				// \5: (52..67)  .collect { |num, i| (key: i, midiNum: num) },
+				// \6: (68..83)  .collect { |num, i| (key: i, midiNum: num) },
+				// \7: (84..99)  .collect { |num, i| (key: i, midiNum: num) },
+				// \8: (100..115).collect { |num, i| (key: i, midiNum: num) }
 			]
 		)
 	]
