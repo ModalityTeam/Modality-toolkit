@@ -37,7 +37,7 @@ OSCMKtlDevice.verbose = false;
 MKtl.all.do(_.free).clear;
 // make our tosc
 t = MKtl(\tosca, "touchosc-simple1");
-
+t.gui;
 // trace to look what address the touchOSC app sends from:
 OSCFunc.trace(true);
 // and turn off tracing.
@@ -107,29 +107,29 @@ elementsDesc: (
 		(
 			key: \xfader,
 			oscPath: '/1/fader5', elementType: 'slider', spec: \unipolar, ioType: \in,
-			style: (width: 4, height: 1)
+			style: (width: 4, height: 1, showLabel: true)
 		),
 		(
 			key: \sl,
 			shared: (elementType: \slider, spec: \unipolar, ioType: \in),
 			elements: (1..4).collect { |num|
-				(oscPath: "/1/fader%".format(num).asSymbol)
+				(oscPath: "/1/fader%".format(num).asSymbol, style: (showLabel: true))
 			}
 		),
 		(
 			key: \bt,
 			shared: (elementType: \button, spec: \but, ioType: \in),
 			elements: (1..4).collect { |num|
-				(oscPath: "/1/toggle%".format(num).asSymbol)
+				(oscPath: "/1/toggle%".format(num).asSymbol, style: (showLabel: true))
 			}
 		),
 		(
 			key: \accel,
 			shared: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accx' ),
 			elements: [
-				(key: \x),
-				(key: \y),
-				(key: \z)
+				(key: \x, style: (showLabel: true)),
+				(key: \y, style: (showLabel: true)),
+				(key: \z, style: (showLabel: true))
 			]
 		)
 	]

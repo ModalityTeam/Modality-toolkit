@@ -1,4 +1,5 @@
 /*
+MKtlDesc.allDescs.clear;
 m = MKtl(\nky2, "*nanokey2"); m.gui.showLabels;
 */
 (
@@ -38,7 +39,8 @@ elementsDesc: (
 							row: (4 - (i div: 48 * 2)) + (pos.y * 0.9),
 							column: pos.x,
 							color: pos.color,
-							height: 1.2
+							height: 1.2,
+							showLabel: true
 					))
 				);
 			}

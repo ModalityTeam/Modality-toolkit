@@ -5,6 +5,9 @@
 * track buttons
 * 8x sliders, knobs, 3 buttons
 
+MKtlDesc.loadDescs("*trol2");
+k = MKtl(\nk2, "*trol2"); k.gui;
+
 */
 (
 deviceName: "nanoKONTROL2",
@@ -94,14 +97,14 @@ elementsDesc: (
 			key: \sl,
 			shared: (\elementType: \slider, \spec: \midiCC),
 			elements: (1..8).collect { |num, i|
-				(key: num.asSymbol, \midiNum: i, \style: (row: 1, column: 7+(i*2)))
+				(key: num.asSymbol, \midiNum: i, \style: (row: 1, column: 7+(i*2), showLabel: true))
 			}
 		),
 		(
 			key: \kn,
 			shared: (\elementType: \knob, \spec: \midiCC),
 			elements: (16..23).collect { |num, i|
-				(key: (i + 1).asSymbol, \midiNum: num, \style: (row: 0, column: 7+(i*2)))
+				(key: (i + 1).asSymbol, \midiNum: num, \style: (row: 0, column: 7+(i*2), showLabel: true))
 			}
 		),
 		(
