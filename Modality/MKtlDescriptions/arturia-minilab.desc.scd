@@ -8,15 +8,15 @@ TODO:
 
 thisProcess.nowExecutingPath.basename.split($.).first.postcs;
 d = MKtlDesc.loadDescs("*minilab").first;
-d.web;
+// d.web;
 
-m.free; m = MKtl(\mpk, "*minilab"); m.gui;
+m.free; m = MKtl(\mnl, "*minilab"); m.gui;
 m.trace;
 m.elementsDict.size;
 m.postElements;
 
 Ndef(\test, { |amp = 0.2, cutoff = 1000, reso = 5|
-	RLPF.ar(Saw.ar(100, amp ! 2), cutoff, 1/reso);
+RLPF.ar(Saw.ar(100, amp ! 2), cutoff, 1/reso);
 }).play;
 Ndef(\test).addSpec(\cutoff, [800, 10000, \exp]);
 Ndef(\test).addSpec(\reso, [0.5, 100, \exp]);
@@ -56,14 +56,31 @@ elementsDesc: (
 	elements: [
 		(
 			key: \pkey,
-			shared: (elementType: 'pianoKey', spec: 'midiVel'),
-			elements: (36..72).collect  { |num, i| MKtlDesc.notePair(midiNum: num) } ),
+			shared: (elementType: 'pianoKey', groupType: \noteOnOff, spec: 'midiVel'),
+			// was 36-72, I assume it should be 48-72
+			elements: (48..72).collect  { |num, i|
+				var pos = Piano.pos(num, 48);
+				(
+					key: num.asSymbol, midiNum: num,
+					shared: (style: (
+						row: pos.y * 0.8 + 3,
+						column: pos.x * 0.55 + 2,
+						width: 0.7,
+						color: pos.color))
+				)
+			}
+		),
 		(
 			key: \pad,
-			shared: (elementType: 'pad', spec: 'midiVel'),
-			/// pads overlap with keys???
-			elements: (36..43).collect { |num, i| MKtlDesc.notePair(midiNum: num) } ),
-	// ... pads bank 2: (22..29) ...
+			shared: (elementType: 'pad', groupType: \noteOnOff, spec: 'midiVel'),
+			/// if keys begin with 36 as well, pads would overlap with keys
+			elements: (36..43).collect { |num, i|
+				(
+					midiNum: num,
+					shared: (style: (row: 2, column: i + 2))
+				)
+		} ),
+		// ... pads bank 2: (22..29) ...
 		(
 			key: \kn,
 			shared: (midiMsgType: 'cc', elementType: 'knob', midiChan: 0,
@@ -71,17 +88,24 @@ elementsDesc: (
 			elements: [
 				[7, 74, 71, 76, 77, 93, 73, 75],
 				[114, 18, 19, 16, 17, 91, 79, 72]
-			].collect { |line|
-				(elements: line.collect { |num| (midiNum:  num) })
+			].collect { |line, j|
+				(elements: line.collect { |num, i|
+					(
+						midiNum:  num,
+						style: (row: j, column: i + 2)
+					)
+				})
 			}
+		),
+		(
+			key: \bend, midiMsgType: 'bend', elementType: 'bender',
+			midiChan: 0, spec: 'midiBend', style: (row: 3, column: 0, height: 2)
 		),
 		(
 			key: \mod,
 			midiMsgType: 'cc', elementType: 'slider', midiChan: 0,
-			midiNum: 1, spec: 'midiCC'),
-		(
-			key: \bend, midiMsgType: 'bend', elementType: 'bender',
-			midiChan: 0, spec: 'midiBend')
+			midiNum: 1, spec: 'midiCC', style: (row: 3, column: 1, height: 2)
+		),
 	]
 )
 )

@@ -3,9 +3,12 @@
 /*
 thisProcess.nowExecutingPath.basename.split($.).first.postcs;
 d = MKtlDesc.loadDescs("*icontrols-pro").first;
-d.web;
+d.elementsDict.size;
+// d.web;
 
-m.free; m = MKtl(\ic, "*icontrols-pro"); m.gui;
+m.free; m = MKtl(\ic, "*icontrols-pro");
+g = m.gui;
+g.views.size;
 m.trace;
 m.elementsDict.size;
 m.postElements;
@@ -36,32 +39,48 @@ elementsDesc: (
 	elements: [
 		(
 			key: \bt,
-			shared: (elementType: \button, ioType: \inout,
-				midiChan: 0, spec: \midiBut, mode: \push ),
+			shared: (elementType: \pad, ioType: \inout, groupType: \noteOnOffBut,
+				midiMsgType: \noteOn, midiChan: 0, spec: \midiBut, mode: \push ),
 			elements: [
 				(
 					key: \rec,
 					elements: (0..7).collect { |num, i|
-						MKtlDesc.notePair(midiNum: num, shared: (style: (row: 0, column: i)))
+						(
+							key: (i+1).asSymbol,
+							midiNum: num,
+							shared: (style: (row: 0, column: i))
+						)
 					}
 				),
 				(
 					key: \solo,
 					elements: (8..15).collect { |num, i|
-						MKtlDesc.notePair(midiNum: num, shared: (style: (row: 1, column: i)))
+						(
+							key: (i+1).asSymbol,
+							midiNum: num,
+							shared: (style: (row: 1, column: i))
+						)
 					}
 				),
 				(
 					key: \mute,
 					elements: (16..23).collect { |num, i|
-						MKtlDesc.notePair(midiNum: num, shared: (style: (row: 2, column: i)))
+						(
+							key: (i+1).asSymbol,
+							midiNum: num,
+							shared: (style: (row: 2, column: i))
+						)
 					}
 				),
 				(
 					key: \select,
 					// assuming this is 24-31? was 16-23, copy paste error?
 					elements: (24..31).collect { |num, i|
-						MKtlDesc.notePair(midiNum: num, shared: (style: (row: 3, column: i)))
+						(
+							key: (i+1).asSymbol,
+							midiNum: num,
+							shared: (style: (row: 3, column: i))
+						)
 					}
 				)
 			]
