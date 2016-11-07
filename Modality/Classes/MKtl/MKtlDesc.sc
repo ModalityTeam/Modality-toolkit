@@ -86,6 +86,22 @@ MKtlDesc {
 					(key: \touch, midiMsgType: \polytouch, spec: \midiVel, elementType: \padMove)
 				]).put(\useSingleGui, true);
 			},
+			// fader touch on/off + control
+			noteOnOffButCtl: { |dict|
+				dict.put(\elements, [
+					(key: \on,  midiMsgType: \noteOn,  spec: \midiBut),
+					(key: \off, midiMsgType: \noteOff, spec: \midiBut, elementType: \padUp),
+					(key: \ctl, midiMsgType: \control, spec: \midiVel, elementType: \padMove)
+				]).put(\useSingleGui, true);
+			},
+			// velocity on, but off, pressure -> control
+			noteOnOffCtl: { |dict|
+				dict.put(\elements, [
+					(key: \on,  midiMsgType: \noteOn,  spec: \midiVel),
+					(key: \off, midiMsgType: \noteOff, spec: \midiBut, elementType: \padUp),
+					(key: \ctl, midiMsgType: \control, spec: \midiVel, elementType: \padMove)
+				]).put(\useSingleGui, true);
+			},
 		);
 	}
 

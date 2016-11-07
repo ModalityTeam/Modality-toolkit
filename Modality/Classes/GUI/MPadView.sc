@@ -25,7 +25,9 @@ MPadView : SCViewHolder {
 			noteOnOffTouch: [true, false, true, inf],
 
 			noteOnOffVel: [true, true, false, inf],
-			noteOnOffVelTouch: [true, true, true, inf]
+			noteOnOffVelTouch: [true, true, true, inf],
+			noteOnOffButCtl: [true, true, true, inf],
+			noteOnOffCtl: [true, true, true, inf]
 		);
 	}
 
@@ -58,6 +60,7 @@ MPadView : SCViewHolder {
 		this.view.drawFunc = { |vw|
 			var rect, fillRect, fillRect2, fillColor;
 			var halfColor = hiliteColor.copy.alpha_( hiliteColor.alpha * 0.5 );
+			var name;
 
 			rect = vw.bounds.moveTo(0, 0).insetBy(1,1);
 			if( pressed ) {
@@ -92,7 +95,10 @@ MPadView : SCViewHolder {
 				Pen.use({
 					Pen.font = font;
 					Pen.color = baseColor.complementary;
-					Pen.stringCenteredIn( label.asString, rect.insetAll( 0, vShiftLabel * 2, 0, 0 ) );
+					Pen.stringCenteredIn(
+						MKtlGUI.splitLabel(label),
+						rect.insetAll( 0, vShiftLabel * 2, 0, 0 )
+					);
 				});
 			};
 		};
