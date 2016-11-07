@@ -90,15 +90,22 @@ elementsDesc: (
 				})
 			}
 		),
-		// //// what do these do?
+		// // what do these do?
 		// (
 		// 	key: \padCC,
 		// 	shared: (elementType: \pad, midiChan: 9, spec: \midiVel),
 		// 	elements: [(1..9),(10..17)]
 		// 	.collect { |bank|
-		// 		( elements: bank.collect{ |cc|
-		// 			MKtlDesc.notePair(midiNum: cc)
-		// 		})
+		// 		(
+		// 			elements: bank.collect { |note, ii|
+		// 				(
+		// 					midiNum:  note, groupType: \noteOnOff,
+		// 					shared: (page: i, groupType: \noteOnOff,
+		// 						style: (row: 1 - (ii div: 4), column: ii % 4 + 1)
+		// 					)
+		// 				)
+		// 			}
+		// 		)
 		// 	}
 		// )
 	]

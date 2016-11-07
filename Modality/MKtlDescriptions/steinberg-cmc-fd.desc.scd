@@ -49,14 +49,17 @@ elementsDesc: (
 		),
 
 		// the buttons
-		MKtlDesc.notePair(\shift, 70, (style: (row: 6, column: 1.5))),
+		(
+			key: \shift, midiNum: 70, groupType: \noteOnOffBut,
+			shared: (groupType: \noteOnOffBut, style: (row: 6, column: 1.5))
+		),
 		(
 			key: \bt,
 			elements: [
-				MKtlDesc.notePair('chanL', 48, (style: (row: 7, column: 0))),
-				MKtlDesc.notePair('chanR', 49, (style: (row: 7, column: 1))),
-				MKtlDesc.notePair('bankL', 46, (style: (row: 7, column: 2))),
-				MKtlDesc.notePair('bankR', 47, (style: (row: 7, column: 3))),
+				(key: 'chanL', midiNum: 48, shared: (style: (row: 7, column: 0))),
+				(key: 'chanR', midiNum: 49, shared: (style: (row: 7, column: 1))),
+				(key: 'bankL', midiNum: 46, shared: (style: (row: 7, column: 2))),
+				(key: 'bankR', midiNum: 47, shared: (style: (row: 7, column: 3))),
 			]
 		),
 
@@ -65,9 +68,8 @@ elementsDesc: (
 			key: 'ftouch',
 			// shared: ('elementType': 'button', 'spec': 'midiVel'),
 			elements: (104..107).collect { |num, i|
-				MKtlDesc.notePair(
-					(i+1).asSymbol, num,
-					(style: (row: 3.9, column: i))
+				(key: (i+1).asSymbol, midiNum: num,
+					shared: (style: (row: 3.9, column: i))
 				);
 			}
 		),
@@ -76,9 +78,9 @@ elementsDesc: (
 			key: 'fmute',
 			// shared: ('elementType': 'button', 'midiChan': 0, 'spec': 'midiBut'),
 			elements: (8..11).collect { |num, i|
-				MKtlDesc.notePair(
-					(i+1).asSymbol, num,
-					(style: (row: 4.8, column: i))
+				(
+					key: (i+1).asSymbol, midiNum: num,
+					shared: (style: (row: 4.8, column: i))
 				);
 			}
 		),

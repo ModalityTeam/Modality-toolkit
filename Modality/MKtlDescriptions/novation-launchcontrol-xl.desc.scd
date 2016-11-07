@@ -157,7 +157,7 @@ elementsDesc: (
 				)
 
 
-				//
+				//	// check this when enabling it
 				// 	[	// key, midinum, row, col
 				// 		[ \up,     104, 1, 8 ],
 				// 		[ \down,   105, 1, 9 ],
@@ -176,7 +176,7 @@ elementsDesc: (
 				// 		#key, num, row, col = list;
 				// 		style = (row: row, column: col, \showLabel: true);
 				//
-				// 		onOffGroup = MKtlDesc.notePair(key, num).postcs;
+				// 		onOffGroup = (key: key, midiNum: num).postcs;
 				// 		// onOffGroup.elements[0].put(\style, style);
 				// 		// onOffGroup.elements[0].put(\style,
 				// 		// 	style.copy.put(\row, style.row + 0.8)

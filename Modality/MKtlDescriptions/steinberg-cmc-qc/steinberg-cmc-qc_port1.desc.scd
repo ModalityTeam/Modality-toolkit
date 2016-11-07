@@ -49,8 +49,8 @@ elementsDesc: (
 
 
 		(key: \bt,
-			shared: ('elementType': 'pad', spec: 'midiBut'),
-			elements: MKtlDesc.notePairs([
+			shared: ('elementType': 'pad', groupType: \noteOnOffBut, spec: 'midiBut' ),
+			elements: [
 				['EQ1', 42, (style: (row: 2, column: 0))],
 				['EQ2', 50, (style: (row: 2, column: 1))],
 				['EQ3', 44, (style: (row: 2, column: 2))],
@@ -67,7 +67,9 @@ elementsDesc: (
 				['chanR', 49, (style: (row: 5, column: 1))],
 				['R', 81, (style: (row: 5, column: 2))],
 				['W', 78, (style: (row: 5, column: 3))]
-			])
+			].collect { |list, i|
+				(key: list[0], midiNum: list[1], shared: list[2])
+			}
 		),
 	]
 )
