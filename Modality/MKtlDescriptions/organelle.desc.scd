@@ -1,13 +1,10 @@
 // organelle desc
 /*
-MKtl(\org, d);
-MKtl(\org).rebuild(d);
-MKtl(\org).gui;
-
-1 / 1.4
+d = MKtlDesc.loadDescs("organelle").first;
+k.free; k = MKtl(\org, d); k.trace.gui.showLabels;
 */
 
-d = (
+(
 	deviceName: "organelle",
 	protocol: \midi,
 	deviceType: \organelle,
@@ -46,34 +43,36 @@ d = (
 				shared: (\elementType: \knob, \midiMsgType: \cc,
 					\spec: \midiCC),
 				elements: (1..4).collect { |num, i|
-					(key: num.asSymbol, \midiNum: num, style: (row: 0, column: i * 2))
+					(key: num.asSymbol, \midiNum: num, style: (row: 0, column: i * 1.5 + 1))
 				}
 			),
 			(
 				key: \but,
-				shared: (\elementType: \pad, \spec: \midiVel),
+				shared: (\elementType: \pad, \groupType: \noteOnOffBut, \spec: \midiBut),
 				elements: (48..71).collect { |num, i|
-					var index = [0, 0.5, 1, 1.5, 2, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5][i%12] + (i div: 12 * 6);
-					var black = [1, 3, 6, 8, 10].includes(i%12).binaryValue;
-					MKtlDesc.notePair(
-						(i+1).asSymbol, num,
+					var pos = Piano.pos(num, 48);
+					(key: i.asSymbol, midiNum: num,
 						shared: (style: (
-							row: 2.5 - black, // upper row is black keys
-							column: index + 2)
+							row: 1 + (pos.y * 0.7),
+							column: pos.x * 0.7 + 2,
+							height: 0.7, width: 0.7
+						),
+
 						)
 					);
 				}
 			),
-			MKtlDesc.notePair(\alt, 36,
-				shared: (key: \alt, \elementType: \pad, \spec: \midiBut,
-					style: (row: 2.5, column: 1)
+			(	key: \alt, midiNum: 36,
+				groupType: \noteOnOffBut,
+				shared: (key: \alt, groupType: \noteOnOffBut, \elementType: \pad, \spec: \midiBut,
+					style: (row: 1.6, column: 1.2, height: 0.7, width: 0.7)
 				)
 			),
 			(
 				key: \pedal,
 				\elementType: \slider, \midiMsgType: \cc,
 				\spec: \midiCC, \midiNum: 64, midiChan: 0,
-				style: (row: 1, column: 0, height: 2)
+				style: (row: 0, column: 0, height: 2)
 			)
 		]
 	)

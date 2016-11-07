@@ -1,12 +1,14 @@
 // Contributed by Nathan Ho.
+// updated for 0.9.0 by adc
 
 /*
+MKtlDesc.loadDescs("*oxygen49");
+k.free; k = MKtl('o49', "m-audio-oxygen49");
+k.trace.gui.showLabels;
 
-k = MKtl('o49', "m-audio-oxygen49");
 a = Array.fill(9, 0);
 m = MultiSliderView().elasticMode_(1).size_(9).front;
 k.elAt(\sl).action_({ |el| a[el.parent.indexOf(el)] = el.value; { m.value = a; }.defer; });
-
 */
 
 (
@@ -39,66 +41,76 @@ elementsDesc: (
 	elements: [
 		(
 			key: \bend,
-			type: \wheel,
+			elementType: \bender,
 			midiChan: 0,
 			midiMsgType: \bend,
-			elementType: \bender,
-			spec: \midiBend
+			spec: \midiBend,
+			style: (height: 2)
 		),
 		(
 			key: \mod,
-			type: \wheel,
+			elementType: \bender,
 			midiChan: 0,
 			midiMsgType: \cc,
-			elementType: \wheel,
 			spec: \midiCC,
-			midiNum: 1
+			midiNum: 1,
+			style: (height: 2)
 		),
 		(
-			key: \kn,
-			shared: (type: \knob, midiMsgType: \cc, elementType: \cc, midiChan: 15, spec: \midiCC),
-			elements: (17..24).collect { |midiNum| (midiNum: midiNum) }
+			key: \sl,
+			shared: (elementType: \slider, midiMsgType: \cc, midiChan: 15, spec: \midiCC),
+			elements: (33..41).collect { |midiNum, i|
+				(midiNum: midiNum, style: (row: 0, column: i + 6, height: 2))
+			}
 		),
 		(
 			key: \bt,
 			shared: (midiMsgType: \cc, elementType: \button, spec: \midiBut, midiChan: 15, mode: \push),
-			elements: (49..57).collect { |midiNum| (midiNum: midiNum) }
+			elements: (49..57).collect { |midiNum, i|
+				(midiNum: midiNum, style: (row: 2, column: i + 6))
+			}
+		),
+		(
+			key: \kn,
+			shared: (elementType: \knob, midiMsgType: \cc, midiChan: 15, spec: \midiCC),
+			elements: (17..24).collect { |midiNum, i|
+				(midiNum: midiNum, style: (row: i div: 4, column: 16 + (i % 4 + (i div: 4 * 0.5))))
+			}
 		),
 		(
 			key: \tr,
 			shared: (midiMsgType: \cc, elementType: \button, spec: \midiBut, midiChan: 15, mode: \push),
 			elements: [
-				(key: \prev, \midiNum: 110, style: (\showLabel: true)),
-				(key: \next, \midiNum: 111, style: (\showLabel: true)),
-				(key: \loop, \midiNum: 113, style: (\showLabel: true)),
-				(key: \rew, \midiNum: 114, style: (\showLabel: true)),
-				(key: \fwd, \midiNum: 115, style: (\showLabel: true)),
-				(key: \stop, \midiNum: 116, style: (\showLabel: true)),
-				(key: \play, \midiNum: 117, style: (\showLabel: true)),
-				(key: \rec, \midiNum: 118, style: (\showLabel: true))
+				(key: \prev, \midiNum: 110, style: (row: 0, column: 2,  width: 1.2, \showLabel: true)),
+				(key: \next, \midiNum: 111, style: (row: 0, column: 3,  width: 1.2, \showLabel: true)),
+
+				(key: \loop, \midiNum: 113, style: (row: 2, column: 16, width: 1.2, \showLabel: true)),
+				(key: \rew, \midiNum: 114,  style: (row: 2, column: 17, width: 1.2, \showLabel: true)),
+				(key: \fwd, \midiNum: 115,  style: (row: 2, column: 18, width: 1.2, \showLabel: true)),
+				(key: \stop, \midiNum: 116, style: (row: 2, column: 19, width: 1.2, \showLabel: true)),
+				(key: \play, \midiNum: 117, style: (row: 2, column: 20, width: 1.2, \showLabel: true)),
+				(key: \rec, \midiNum: 118,  style: (row: 2, column: 21, width: 1.2, \showLabel: true))
 			]
 		),
 		(
-			key: \sl,
-			shared: (type: \slider, midiMsgType: \cc, elementType: \cc, midiChan: 15, spec: \midiCC),
-			elements: (33..41).collect { |midiNum| (midiNum: midiNum) }
-		),
-		(
-			key: \kn,
-			shared: (type: \knob, midiMsgType: \cc, elementType: \cc, midiChan: 15, spec: \midiCC),
-			elements: (17..24).collect { |midiNum| (midiNum: midiNum) }
-		),
-		(
 			key: \pkey,
-			shared: (elementType: \key, spec: \midiVel, midiChan: 0),
+			shared: (elementType: \pianoKey, spec: \midiVel, midiChan: 0),
 			elements: (0..127).collect { |midinum, i|
-				MKtlDesc.notePair(i, midinum,
-					(style: (row: i div: 24, column: i % 24))
+				var pos = Piano.pos(midinum % 48, 0);
+				(key: i.asSymbol, midiNum: midinum,
+					groupType: \noteOnOff,
+					shared: (groupType: \noteOnOff,
+						style: (
+							row: 7 - (i div: 48 * 2) + (pos.y * 0.9),
+							column: pos.x,
+							color: pos.color,
+							height: 1.2
+						)
+					)
 				);
 			}
 		)
 	]
 )
-
 );
 

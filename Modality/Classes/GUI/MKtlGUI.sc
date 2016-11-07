@@ -49,6 +49,7 @@ MKtlElementView {
 			'springFader': \slider,
 
 			'bender': \slider,
+			'modWheel': \slider,
 			'lever': \slider,
 
 			'rumble':\slider,

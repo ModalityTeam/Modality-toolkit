@@ -1,5 +1,5 @@
 /*
-m = MKtl(\nky2, "*microkey"); m.gui;
+MKtlDesc.loadDescs("*microkey"); m.free; m = MKtl(\nky2, "*microkey"); m.trace.gui.showLabels;
 */
 (
 deviceName: "microKEY",
@@ -29,21 +29,31 @@ elementsDesc: (
 	elements: [
 		(
 			key: \pkey,
-			shared: ('elementType': 'pianoKey', spec: \midiVel),
+			shared: ('elementType': 'pianoKey', groupType: \noteOnOff, spec: \midiVel),
 			elements: (0..120).collect { |midinum, i|
-				MKtlDesc.notePair(i, midinum,
-					(style: (row: i div: 24, column: i % 24))
+				var pos = Piano.pos(midinum % 48, 0);
+				(key: i.asSymbol,
+					midiNum: midinum,
+					shared: (
+						groupType: \noteOnOff,
+						style: (
+							row: (4 - (i div: 48 * 2)) + (pos.y * 0.9),
+							column: pos.x,
+							color: pos.color,
+							height: 1.2
+					))
 				);
 			}
 		),
 		(
 			key: 'mod',
 			'midiMsgType': 'cc', 'elementType': 'modWheel', 'midiNum': 1,
-			'spec': 'midiCC'),
+			'spec': 'midiCC', style: (row: 0, column: 18, height: 2)
+		),
 		(
 			key: 'bend',
 			'midiMsgType': 'bend', 'elementType': 'bender',
-			'spec': 'midiBend'
+			'spec': 'midiBend', style: (row: 0, column: 19, height: 2)
 		)
 	]
 )

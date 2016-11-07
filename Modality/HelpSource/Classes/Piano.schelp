@@ -17,6 +17,9 @@ Piano.pos(69, 60);
 
 Piano.layout(48, 72).printAll; "";
 
+// example MKtl that has 25 physical keys and 121 reachable ones:
+MKtl(\o49, "*oxygen49").gui.showLabels;
+
 (
 // simple blockish layout
 w = Window("PianoLayout", Rect(0, 200, 400, 200)).front;
@@ -56,7 +59,7 @@ Piano.layout(48, 72).do { |ev|
 CLASSMETHODS::
 private:: initClass
 
-METHOD:: blackNoteIndices
+METHOD:: blackNotes
 the indices of the black keys in the octave
 
 METHOD:: allXs, whiteXs, blackXs
