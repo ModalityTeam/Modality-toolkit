@@ -1,3 +1,6 @@
+/*
+m.free; m = MKtl(\ax, "*axis49"); m.gui;
+*/
 (
 deviceName: "AXIS-49 USB Keyboard",
 protocol: 'midi',
@@ -27,12 +30,15 @@ elementsDesc: (
 	shared: (
 		'midiChan': 0,
 		'elementType': 'pad', // or maybe hexPad.
-		'spec': 'midiNote'
+		'spec': 'midiNote',
+		midiMsgType: \noteOn,
+		groupType: \noteOnOff
 	),
-	elements: (0..120).collect{|num, i|
-		MKtlDesc.notePair(num.asSymbol, num,
+	elements: (0..120).collect {
+		|num, i|
+		(key: num.asSymbol, midiNum: num,
 			// at least show them all
-			( style: (column: i % 12, row: i div: 12) )
+			shared: (style: (column: i % 12, row: i div: 12))
 		)
 	}
 )

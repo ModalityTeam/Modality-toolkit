@@ -1,24 +1,28 @@
 // these devices are already adapted!
 // - label just says pad_x, no on/off
 
-MKtlDesc.loadDescs; l.free; l = MKtl(\apcmini, "*apcmini");
+m.free; m = MKtl(\qnx, "*1_AB"); m.trace.gui.showLabels;
+
+m.free; m = MKtl(\ax, "*axis49"); m.trace.gui.showLabels;
+
+MKtlDesc.loadDescs; l.free; l = MKtl(\apc, "*apcmini");
 l.elementsDict.size;
 l.elementsDict.choose.elemDesc;
 l.trace.gui.showLabels;
 
 
-MKtlDesc.loadDescs; l.free; l = MKtl(\mpkmini, "*icontrols");
+MKtlDesc.loadDescs; l.free; l = MKtl(\ic, "*icontrols");
 l.elementsDict.size;
 l.elementsDict.choose.elemDesc;
 l.trace.gui.showLabels;
 
-MKtlDesc.loadDescs; l.free; l = MKtl(\mpkmini, "*mpkmini");
+MKtlDesc.loadDescs; l.free; l = MKtl(\mpk, "*mpkmini");
 l.elementsDict.size;
 l.elementsDict.choose.elemDesc;
 l.trace.gui.showLabels;
 
 
-MKtlDesc.loadDescs; l.free; l = MKtl(\lpd8, "*uc4");
+MKtlDesc.loadDescs; l.free; l = MKtl(\uc4, "*uc4");
 l.elementsDict.size;
 l.elementsDict.choose.elemDesc;
 l.trace.gui.showLabels;
