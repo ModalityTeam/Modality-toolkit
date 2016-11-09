@@ -1,5 +1,9 @@
 // M-audio Trigger finger - MKtl
 
+/*
+MKtlDesc.loadDescs("*finger"); m.free; m = MKtl('op1', "*finger"); m.trace.gui;
+*/
+
 (
 deviceName: "USB Trigger Finger",
 protocol: \midi,
@@ -24,29 +28,40 @@ elementsDesc: (
 	shared: (\midiChan: 0, ioType: \in),
 	elements: [
 		(
-			key: \pad,
-			shared: ( elementType: \pad, \midiMsgType: \note,
-				spec: \midiVel),
-			elements: ((0..15) + 35).collect { |num, i|
-				(key: (i + 1).asSymbol, \midiNum: num)
-			}
+			key: \kn,
+			shared: ( elementType: \knob, \midiMsgType: \cc,
+				spec: \midiCC),
+			elements: ( #[10, 91, 12, 93, 5, 73, 84, 72].collect { |num, i|
+				(key: (i + 1).asSymbol, \midiNum: num,
+					style: (row: 0.5 - (i div: 4 * 0.8),
+						column: (i % 4 * 0.9) + 3 + (i div: 4 * 0.5)
+					)
+				)
+			})
 		),
 		(
 			key: \sl,
 			shared: ( elementType: \slider, \midiMsgType: \cc,
 				spec: \midiCC),
 			elements: #[7, 1, 71, 74].collect { |num, i|
-				(key: (i + 1).asSymbol, \midiNum: num )
+				(key: (i + 1).asSymbol, \midiNum: num,
+					style: (row: 3, column: i * 0.75, width: 0.8)
+				)
 			}
 		),
 		(
-			key: \kn,
-			shared: ( elementType: \knob, \midiMsgType: \cc,
-				spec: \midiCC),
-			elements: ( #[10, 91, 12, 93, 5, 73, 84, 72].collect { |num, i|
-				(key: (i + 1).asSymbol, \midiNum: num )
-			})
-		)
+			key: \pad,
+			shared: ( elementType: \pad, \groupType: \noteOnOff,
+				spec: \midiVel),
+			elements: ((0..15) + 35).collect { |num, i|
+				(key: (i + 1).asSymbol, \midiNum: num,
+					shared: (style: (
+						column: i % 4 + 3,
+						row:  5 - (i div: 4)
+					))
+				)
+			}
+		),
 	]
 )
 )

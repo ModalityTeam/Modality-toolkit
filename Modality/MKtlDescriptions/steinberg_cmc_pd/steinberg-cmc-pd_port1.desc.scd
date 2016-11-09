@@ -37,6 +37,7 @@ pads and 4velmode also send sysex on port 2;
 // 15: (100..115),
 // 16: all sysex messages // no idea what they are for
 
+MKtlDesc.loadDescs;
 m.free; m = MKtl(\pd, "*cmc-pd_port1");
 m.gui;
 m.postElements;
@@ -76,11 +77,12 @@ elementsDesc: (
 			elements: [
 				(
 					key: \1,
+					shared: (groupType: \noteOnOffBut),
 					elements: [35, 36, 38, 40,   39,44,42,46,   41,45,47,48,  51,55,49,56]
 					.collect { |num, i|
-						MKtlDesc.notePair(i, num,
-							(style: (row: 4 - (i div: 4), column: i % 4))
-						).put(\page, 0)
+						(key: i, midiNum: num, \page: 0,
+							shared: (style: (row: 4 - (i div: 4), column: i % 4))
+						)
 					}
 				),
 				// \2: (4..19)   .collect { |num, i| (key: i, midiNum: num) },

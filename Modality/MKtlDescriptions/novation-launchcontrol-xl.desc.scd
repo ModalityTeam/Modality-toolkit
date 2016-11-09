@@ -155,37 +155,36 @@ elementsDesc: (
 					}
 
 				)
-
-
-				//	// check this when enabling it
-				// 	[	// key, midinum, row, col
-				// 		[ \up,     104, 1, 8 ],
-				// 		[ \down,   105, 1, 9 ],
-				// 		[ \left,   106, 2, 8 ],
-				// 		[ \right,  107, 2, 9 ],
-				//
-				// 		[ \device, 105, 3, 8.5 ],
-				// 		[ \mute,   106, 4, 8.5 ],
-				// 		[ \solo,   107, 5, 8.5 ],
-				// 		[ \arm,    108, 6, 8.5 ]
-				//
-				// 	].collect { |list|
-				// 		var onOffGroup, style;
-				// 		var key, num, row, col;
-				//
-				// 		#key, num, row, col = list;
-				// 		style = (row: row, column: col);
-				/
-				// 		onOffGroup = (key: key, midiNum: num).postcs;
-				// 		// onOffGroup.elements[0].put(\style, style);
-				// 		// onOffGroup.elements[0].put(\style,
-				// 		// 	style.copy.put(\row, style.row + 0.8)
-				// 		// );
-				// 		onOffGroup
-				// 	}
-				// )
 			]
 		)
 	}
 )
 );
+
+
+				// // check this when enabling it
+				// [	// key, midinum, row, col
+				// 	[ \up,     104, 1, 8 ],
+				// 	[ \down,   105, 1, 9 ],
+				// 	[ \left,   106, 2, 8 ],
+				// 	[ \right,  107, 2, 9 ],
+				//
+				// 	[ \device, 105, 3, 8.5 ],
+				// 	[ \mute,   106, 4, 8.5 ],
+				// 	[ \solo,   107, 5, 8.5 ],
+				// 	[ \arm,    108, 6, 8.5 ]
+				//
+				// ].collect { |list|
+				// 	var onOffGroup, style;
+				// 	var key, num, row, col;
+				//
+				// 	#key, num, row, col = list;
+				// 	style = (row: row, column: col);
+				//
+				// 	onOffGroup = (key: key, midiNum: num).postcs;
+				// 	// onOffGroup.elements[0].put(\style, style);
+				// 	// onOffGroup.elements[0].put(\style,
+				// 	// 	style.copy.put(\row, style.row + 0.8)
+				// 	// );
+				// 	onOffGroup
+				// }
