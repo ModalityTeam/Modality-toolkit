@@ -94,7 +94,8 @@ MKtlElementGroup : MKtlElement {
 					dict.put( key, item );
 					item;
 				} { item.isKindOf(MKtlElement) } {
-					dict.put(item.name, item);
+					// "gets here?".postln;
+					// dict.put(item.name, item);
 					item
 				};
 			});

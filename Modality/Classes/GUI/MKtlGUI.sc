@@ -38,7 +38,9 @@ MKtlElementView {
 			},
 			'unknown': { |parent, bounds, label|
 				var vw;
-				vw = NumberBox( parent, bounds.insetBy( MKtlGUI.margin ) ).clipLo_(0).clipHi_(1);
+				vw = NumberBox( parent, bounds.insetBy( MKtlGUI.margin ) )
+				.clipLo_(0).clipHi_(1)
+				.step_(0.01).scroll_step_(0.01);
 				if( vw.respondsTo( \maxDecimals_ ) ) {
 					vw.maxDecimals = 4;
 				};
@@ -94,13 +96,13 @@ MKtlElementView {
 		var label;
 		parent = inParent ? parent;
 		// "makeView: redirectView is %\n".postf(redirectView);
-		if( element.elemDesc[ \style ] !? _.showLabel ? false ) {
+		if( element.elemDesc[ \style ] !? _.showLabel ? MKtlGUI.showLabels ) {
 			label = (element.elemDesc[ \label ] ? element.name).asString;
 			if (element.elemDesc.groupType.notNil) {
 				label = MKtlGUI.dropLastElem(label);
 			};
 		};
-		label.postln;
+		// label.postln;
 		view = this.getMakeViewFunc( element.type ).value( parent, bounds, label, redirectView );
 		getValueFunc = this.makeGetValueFunc( element, view );
 
@@ -189,6 +191,8 @@ MKtlGUI {
 	classvar <>minViewSize = 38;
 	classvar <>maxViewSize = 60;
 	classvar <>margin = 5;
+
+	classvar <>showLabels = true;
 
 	var <mktl;
 	var <parent, <views, <skipJack;

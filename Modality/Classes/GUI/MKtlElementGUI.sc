@@ -56,7 +56,8 @@ MKtlElementGUI {
 				};
 				vw = NumberBox( parent,
 					if( label.notNil ) { 80@16 } { 30@16 }
-				).clipLo_(0).clipHi_(1);
+				).clipLo_(0).clipHi_(1)
+				.step_(0.01).scroll_step_(0.01);
 				if( vw.respondsTo( \maxDecimals_ ) ) {
 					vw.maxDecimals = 4;
 				};

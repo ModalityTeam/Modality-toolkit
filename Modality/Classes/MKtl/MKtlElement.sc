@@ -187,17 +187,13 @@ MAbstractElement {
 	// elemIndexOf == indexOf,  returns index of an element in group
 	// elemKeyOf returns key of an element in group
 
-	// adding posts to see how much use the method even gets
+	// backwards compat
 	index {
-		// "// using %\n".postf(thisMethod);
-		// ^this.parent !? _.indexOf( this );
 		^this.indexInGroup
 	}
 
 	key {
-		// "// using %\n".postf(thisMethod);
-		// ^this.index
-		this.keyInGroup
+		^this.keyInGroup
 	}
 
 	indices {
