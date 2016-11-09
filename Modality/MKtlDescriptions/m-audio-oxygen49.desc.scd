@@ -4,7 +4,7 @@
 /*
 MKtlDesc.loadDescs("*oxygen49");
 k.free; k = MKtl('o49', "m-audio-oxygen49");
-k.trace.gui.showLabels;
+k.trace.gui;
 
 a = Array.fill(9, 0);
 m = MultiSliderView().elasticMode_(1).size_(9).front;
@@ -81,15 +81,15 @@ elementsDesc: (
 			key: \tr,
 			shared: (midiMsgType: \cc, elementType: \button, spec: \midiBut, midiChan: 15, mode: \push),
 			elements: [
-				(key: \prev, \midiNum: 110, style: (row: 0, column: 2,  width: 1.2, \showLabel: true)),
-				(key: \next, \midiNum: 111, style: (row: 0, column: 3,  width: 1.2, \showLabel: true)),
+				(key: \prev, \midiNum: 110, style: (row: 0, column: 2,  width: 1.2)),
+				(key: \next, \midiNum: 111, style: (row: 0, column: 3,  width: 1.2)),
 
-				(key: \loop, \midiNum: 113, style: (row: 2, column: 16, width: 1.2, \showLabel: true)),
-				(key: \rew, \midiNum: 114,  style: (row: 2, column: 17, width: 1.2, \showLabel: true)),
-				(key: \fwd, \midiNum: 115,  style: (row: 2, column: 18, width: 1.2, \showLabel: true)),
-				(key: \stop, \midiNum: 116, style: (row: 2, column: 19, width: 1.2, \showLabel: true)),
-				(key: \play, \midiNum: 117, style: (row: 2, column: 20, width: 1.2, \showLabel: true)),
-				(key: \rec, \midiNum: 118,  style: (row: 2, column: 21, width: 1.2, \showLabel: true))
+				(key: \loop, \midiNum: 113, style: (row: 2, column: 16, width: 1.2)),
+				(key: \rew, \midiNum: 114,  style: (row: 2, column: 17, width: 1.2)),
+				(key: \fwd, \midiNum: 115,  style: (row: 2, column: 18, width: 1.2)),
+				(key: \stop, \midiNum: 116, style: (row: 2, column: 19, width: 1.2)),
+				(key: \play, \midiNum: 117, style: (row: 2, column: 20, width: 1.2)),
+				(key: \rec, \midiNum: 118,  style: (row: 2, column: 21, width: 1.2))
 			]
 		),
 		(
@@ -102,9 +102,10 @@ elementsDesc: (
 					shared: (groupType: \noteOnOff,
 						style: (
 							row: 7 - (i div: 48 * 2) + (pos.y * 0.9),
-							column: pos.x,
+							column: pos.x * 0.8,
 							color: pos.color,
-							height: 1.2
+							height: 1.2,
+							showLabel: true
 						)
 					)
 				);

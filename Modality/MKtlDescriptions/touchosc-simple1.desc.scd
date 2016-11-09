@@ -107,29 +107,29 @@ elementsDesc: (
 		(
 			key: \xfader,
 			oscPath: '/1/fader5', elementType: 'slider', spec: \unipolar, ioType: \in,
-			style: (width: 4, height: 1, showLabel: true)
+			style: (width: 4, height: 1)
 		),
 		(
 			key: \sl,
 			shared: (elementType: \slider, spec: \unipolar, ioType: \in),
 			elements: (1..4).collect { |num|
-				(oscPath: "/1/fader%".format(num).asSymbol, style: (showLabel: true))
+				(oscPath: "/1/fader%".format(num).asSymbol)
 			}
 		),
 		(
 			key: \bt,
 			shared: (elementType: \button, spec: \but, ioType: \in),
 			elements: (1..4).collect { |num|
-				(oscPath: "/1/toggle%".format(num).asSymbol, style: (showLabel: true))
+				(oscPath: "/1/toggle%".format(num).asSymbol)
 			}
 		),
 		(
 			key: \accel,
 			shared: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accx' ),
 			elements: [
-				(key: \x, style: (showLabel: true)),
-				(key: \y, style: (showLabel: true)),
-				(key: \z, style: (showLabel: true))
+				(key: \x),
+				(key: \y),
+				(key: \z)
 			]
 		)
 	]

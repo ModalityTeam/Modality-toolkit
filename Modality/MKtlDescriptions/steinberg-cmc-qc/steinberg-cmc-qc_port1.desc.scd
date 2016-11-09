@@ -35,7 +35,7 @@ elementsDesc: (
 			key: \knRel,
 			shared: ('midiMsgType': 'control', 'elementType': 'knob', 'midiChan':  0, 'spec': 'midiCC'),
 			elements: (16..23).collect { |ccnum, i|
-				('midiNum': ccnum, style: (row: i div: 4, column: i % 4, showLabel: true ))
+				('midiNum': ccnum, style: (row: i div: 4, column: i % 4 ))
 			}
 		),
 		// // active after bt MIDI was pressed
@@ -43,7 +43,7 @@ elementsDesc: (
 		// 	key: \kn,
 		// 	shared: ('midiMsgType': 'cc', 'elementType': 'knob', 'midiChan':  0, 'spec': 'midiCC'),
 		// 	elements: [74, 71, 10, 7, 73, 72, 91, 93].collect { |ccnum, i|
-		// 		('midiNum': ccnum, style: (row: i div: 4 + 2, column: i % 4, showLabel: true ))
+		// 		('midiNum': ccnum, style: (row: i div: 4 + 2, column: i % 4 ))
 		// 	}
 		// ),
 

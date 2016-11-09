@@ -85,7 +85,7 @@ elementsDesc: (
 							key:[ 'pan', 'sendA', 'sendB', 'sendC' ][i],
 							midiNum:num,
 							shared:( midiChan:0, buttonMode:\toggle,
-								style:( row:1.85, column:12+i, height:0.75 ), showLabel:true ) )
+								style:( row:1.85, column:12+i, height:0.75 ) ) )
 				} ),
 
 				//------------ Shift ---------------- //
@@ -104,7 +104,7 @@ elementsDesc: (
 							shared:( midiChan:0,
 								style:( row: 2.75+[0,0.3,0.3,0.75][i],
 									column:12.25+[0.7,0,1.4,0.7][i],
-									width:0.75, height:0.85 ), showLabel:true )
+									width:0.75, height:0.85 ) )
 						)
 				} ),
 

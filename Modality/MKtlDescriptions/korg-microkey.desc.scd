@@ -1,5 +1,5 @@
 /*
-MKtlDesc.loadDescs("*microkey"); m.free; m = MKtl(\nky2, "*microkey"); m.trace.gui.showLabels;
+MKtlDesc.loadDescs("*microkey"); m.free; m = MKtl(\nky2, "*microkey"); m.trace.guis;
 */
 (
 deviceName: "microKEY",

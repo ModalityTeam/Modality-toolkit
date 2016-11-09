@@ -6,7 +6,7 @@
 * 8x sliders, knobs, 3 buttons
 
 MKtlDesc.loadDescs("*trol2");
-k = MKtl(\nk2, "*trol2"); k.gui;
+k.free; k = MKtl(\nk2, "*trol2"); k.gui;
 
 */
 (
@@ -69,42 +69,42 @@ elementsDesc: (
 
 			elements: [
 				(key: \rew,  \midiNum: 43,  \label: \rew,
-					\style: (row: 3, column: 0, showLabel: true)),
+					\style: (row: 3, column: 0)),
 				(key: \fwd,  \midiNum: 44, \label: \fwd,
-					\style: (row: 3, column: 1, showLabel: true)),
+					\style: (row: 3, column: 1)),
 				(key: \stop, \midiNum: 42, \label: \stop,
-					\style: (row: 3, column: 2, showLabel: true)),
+					\style: (row: 3, column: 2)),
 				(key: \play, \midiNum: 41, \label: \play,
-					\style: (row: 3, column: 3, showLabel: true)),
+					\style: (row: 3, column: 3)),
 				(key: \rec,  \midiNum: 45, \label: \rec,
-					\style: (row: 3, column: 4, showLabel: true)),
+					\style: (row: 3, column: 4)),
 
 				(key: \cycle, \midiNum: 46, \label: \cycle,
-					\style: (row: 2.125, column: 0, height: 0.75, showLabel: true)),
+					\style: (row: 2.125, column: 0, height: 0.75)),
 				(key: \mset, \midiNum: 60, \label: "set",
-					\style: (row: 2.125, column: 2, height: 0.75, showLabel: true)),
+					\style: (row: 2.125, column: 2, height: 0.75)),
 				(key: \mleft, \midiNum: 61, \label: "<",
-					\style: (row: 2.125, column: 3, height: 0.75, showLabel: true)),
+					\style: (row: 2.125, column: 3, height: 0.75)),
 				(key: \mright, \midiNum: 62, \label: ">",
-					\style: (row: 2.125, column: 4, height: 0.75, showLabel: true)),
+					\style: (row: 2.125, column: 4, height: 0.75)),
 				(key: \tleft, \midiNum: 58, \label: "<",
-					\style: (row: 1.125, column: 0, height: 0.75, showLabel: true)),
+					\style: (row: 1.125, column: 0, height: 0.75)),
 				(key: \tright, \midiNum: 59, \label: ">",
-					\style: (row: 1.125, column: 1, height: 0.75, showLabel: true)),
+					\style: (row: 1.125, column: 1, height: 0.75)),
 			]
 		),
 		(
 			key: \sl,
 			shared: (\elementType: \slider, \spec: \midiCC),
 			elements: (1..8).collect { |num, i|
-				(key: num.asSymbol, \midiNum: i, \style: (row: 1, column: 7+(i*2), showLabel: true))
+				(key: num.asSymbol, \midiNum: i, \style: (row: 1, column: 7+(i*2)))
 			}
 		),
 		(
 			key: \kn,
 			shared: (\elementType: \knob, \spec: \midiCC),
 			elements: (16..23).collect { |num, i|
-				(key: (i + 1).asSymbol, \midiNum: num, \style: (row: 0, column: 7+(i*2), showLabel: true))
+				(key: (i + 1).asSymbol, \midiNum: num, \style: (row: 0, column: 7+(i*2)))
 			}
 		),
 		(
@@ -117,7 +117,7 @@ elementsDesc: (
 					key: label,
 					elements: nums.collect { |num, j|
 						 (key: (j + 1).asSymbol, \midiNum: num, label: label,
-							\style: (row: 1+i, column: 6+(j*2), showLabel: true ))
+							\style: (row: 1+i, column: 6+(j*2) ))
 					}
 				)
 			}

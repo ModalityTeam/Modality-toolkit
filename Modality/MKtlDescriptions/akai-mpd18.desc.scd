@@ -68,8 +68,7 @@ elementsDesc: (
 							key: (i+1).asSymbol,
 							shared: (
 								midiNum: num,
-								style: (row: 3 - (i div: 4), column: (i % 4),
-									showLabel: true
+								style: (row: 3 - (i div: 4), column: (i % 4)
 								)
 							)
 						)

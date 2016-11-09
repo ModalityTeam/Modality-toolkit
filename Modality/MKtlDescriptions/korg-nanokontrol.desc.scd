@@ -1,13 +1,15 @@
+//	// KORG nanoKONTROL specs:
+//	// only cc messages,
+//	// 4 hardware scenes as pages
+
 // TODO - but_4_2_1 overwrites kn_1_3 !
 // * fix - likely disable but 2 1 in scene 4, and leave kn 1 3 on.
 // * check whether there are any other clashes of cc numbers !
 
-// * finish conversion of  deeply nested elements.
-// * or make 4 descs, one for each scene?
+/*
+MKtlDesc.loadDescs("*trol"); MKtl(\nk).free; MKtl(\nk, "*trol").gui;
+*/
 
-//	// KORG nanoKONTROL specs:
-//	// only cc messages,
-//	// 4 hardware scenes, flattened out with underscores
 
 (
 deviceName: "nanoKONTROL",
@@ -76,7 +78,11 @@ elementsDesc: (
 					elements: page.collect { |row, ii|
 						(elements: row.flop.collect { |xs, i|
 							(\midiChan: xs[1], \midiNum:  xs[0],
-								\style: ( \row: [1,3][ii], \column: (i*2) + 3 ),
+								\style: ( \row: [1.25,2.75][ii],
+									\column: (i*2) + 3,
+									width: 1.4,
+									showLabel: true
+								),
 								\page: iii )
 						})
 				})

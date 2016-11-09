@@ -13,6 +13,10 @@ For some examples, see "DeviceExamples/linnstrument_8chan.scd":
 ~here = thisProcess.nowExecutingPath;
 (~here.dirname.dirname.dirname +/+ "DeviceExamples/linnstrument_8chan.scd").openOS;
 
+d = MKtlDesc.loadDescs("linn*").first;
+d.elementsDict.size;
+m.free; m = MKtl(\linn, "linn*");
+m.gui;
 ****/
 (
 deviceName: "LinnStrument MIDI",
@@ -43,62 +47,58 @@ elementsDesc: (
 			key: \vol,
 			shared: (midiNum: 7, midiMsgType: \cc, 'spec': 'midiCC', 'elementType': \slider),
 			elements: [
-				(key: \L, midiChan: 0, style: (row: 0, column: 0, height: 1, width: 6,
-					showLabel: true)),
-				(key: \R, midiChan: 14, style: (row: 0, column: 6, height: 1, width: 6,
-					showLabel: true))
+				(key: \L, midiChan: 0, style: (row: 9, column: 2, height: 1, width: 6)),
+				(key: \R, midiChan: 14, style: (row: 9, column: 8, height: 1, width: 6))
 			]
 		),
 		// sw_2 does nothing - only on my linnstrument?
 		(
 			key: \sw,
 			shared: (midiChan: 0, midiMsgType: \cc, 'spec': 'midiBut', 'elementType': \button),
-			elements: [ (midiNum: 64), (midiNum: 0) ]
+			elements: [
+				(midiNum: 64, style: (row: 5, column: 0)),
+				(midiNum: 0, style: (row: 6, column: 0))
+			]
 		)
 	] ++
 		// the grid of pads + controls:
-	(30,35..65).collect { |lownum, rowi|
+	(30, 35..65).collect { |lownum, rowi|
 		var notenums = lownum + (0..24); // 2 octaves
 		(
-			key: ("r" ++ rowi).asSymbol,
+			key: ((rowi + 1)).asSymbol,
 			shared: (midiChan: rowi),
 			elements: [
 				(
 					key: \pad,
+					shared: (elementType: \pad, groupType: \noteOnOffTouch),
 					elements: notenums.collect { |num, coli|
 						(
-							shared: (midiNum: num, elementType: \pad),
-							elements: [
-								(key: \on, 'midiMsgType': 'noteOn', 'spec': 'midiVel',
-									style: (column: coli, row: rowi * 2 + 1, width: 0.7)
-								),
-								(key: \off, 'midiMsgType': 'noteOff', 'spec': 'midiVel',
-									style: (column: coli, row: rowi * 2 + 1 + 1, width: 0.7)
-								),
-								(key: \touch, 'midiMsgType': 'polytouch', 'spec': 'midiCC',
-									elementType: \padTouch,
-									style: (column: coli + 0.5, row: rowi * 2 + 1,
-										height: 2,  width: 0.7)
-								),
-							]
+							key: coli, midiNum: num,
+
+							shared: (
+								style: (column: coli + 1, row: rowi,
+									width: 1.2, height: 1.2,
+									label: [rowi, num].join,
+									)
+							)
 						)
 					}
 				),
 				(
-					key: \bend, midiChan: rowi, 'midiMsgType': 'bend',
+					key: \bnd, midiChan: rowi, 'midiMsgType': 'bend',
 					'elementType': 'padX', 'spec': 'midiBend',
-					style: (height: 2, showLabel: true)
+					style: (row: rowi, column: 26, width: 2, height: 0.6)
 				),
 				// channel touch, has to be activated
 				(
-					key: \touch, midiChan: rowi, 'midiMsgType': 'touch',
+					key: \tch, midiChan: rowi, 'midiMsgType': 'touch',
 					'elementType': 'chanTouch', 'spec': 'midiCC',
-					style: (height: 2, showLabel: true)
+					style: (row: rowi + 0.3, column: 26, width: 2, height: 0.6)
 				),
 				(
-					key: \padY, midiNum: 74, midiChan: rowi, midiMsgType: \cc,
+					key: \pdY, midiNum: 74, midiChan: rowi, midiMsgType: \cc,
 					'spec': 'midiCC', 'elementType': \padY,
-					style: (height: 2, showLabel: true)
+					style: (row: rowi + 0.6, column: 26, width: 2, height: 0.6)
 				)
 			]
 		)

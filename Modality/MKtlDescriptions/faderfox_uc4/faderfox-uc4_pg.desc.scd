@@ -24,7 +24,7 @@ knpg8 [\kn, \pbt][index]
 "Tutorials/Hardware_paging".openHelpFile;
 
 MKtlDesc.loadDescs("*uc4_pg");
-m.free; m = MKtl(\uc4, "*uc4_pg"); m.trace.gui.showLabels;
+m.free; m = MKtl(\uc4, "*uc4_pg"); m.trace.gui;
 
 ****/
 
@@ -102,7 +102,7 @@ elementsDesc: (
 			elements: 8.collect { |i|
 				(
 					midiNum: slNum1 + i,
-					\style: ( \row: 4, \column: i, height: 2, showLabel: true),
+					\style: ( \row: 4, \column: i, height: 2),
 					\page: gr_i
 				)
 			}
@@ -116,7 +116,7 @@ elementsDesc: (
 				(
 					key: nil, midiNum: (btNum1[gr_i] + i),
 					shared:	(
-						style: ( \row: 7, \column: i, height: 0.8, showLabel: true)
+						style: ( \row: 7, \column: i, height: 0.8)
 					)
 				)
 			};
@@ -132,7 +132,7 @@ elementsDesc: (
 	[
 		( key: 'xfader', 'midiNum':  112, 'midiMsgType': 'cc',
 			'elementType': 'slider', 'spec': 'midiCC',
-			\style: ( \row: 6, \column: 2.5, height: 1, width: 3, showLabel: true)
+			\style: ( \row: 6, \column: 2.5, height: 1, width: 3)
 	)]
 
 )

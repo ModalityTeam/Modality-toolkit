@@ -5,10 +5,7 @@
 
 /*
 // test this desc:
-~thisdesc = thisProcess.nowExecutingPath.basename.split($.).first.postcs;
-d = MKtlDesc.loadDescs(~thisdesc).first;
-d.web;
-
+MKtlDesc.loadDescs("*lpd8");
 // close old m, open new one, make gui:
 m.free; m = MKtl(\lpd8, "*lpd8"); m.gui;
 m.trace;

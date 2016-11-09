@@ -149,7 +149,7 @@ elementsDesc: (
 					groupType: \noteOnOffBut,
 					shared: (elementType: 'pad', midiNum: 1, spec: \midiBut,
 						groupType: \noteOnOffBut,
-						style: (row: 2, column: 0, height: 0.75, showLabel: true)
+						style: (row: 2, column: 0, height: 0.75)
 					)
 				),
 				(
@@ -157,7 +157,7 @@ elementsDesc: (
 					groupType: \noteOnOffBut,
 					shared: (elementType: 'pad', midiNum: 1, spec: \midiBut,
 						groupType: \noteOnOffBut,
-						style: (row: 2, column: 1, height: 0.75, showLabel: true)
+						style: (row: 2, column: 1, height: 0.75)
 					)
 				),
 
@@ -170,7 +170,7 @@ elementsDesc: (
 							shared: (midiNum: num,
 								groupType: \noteOnOffTouch,
 								style: (row: (i div: 8 + 2), column: i % 8 + 2,
-									height: 1, showLabel: true)
+									height: 1)
 							)
 						)
 					}
@@ -186,7 +186,7 @@ elementsDesc: (
 					].flat.collect { |num, i|
 						( midiNum:  num,
 
-							style: (row: (i div: 8), column: i % 8 + 2, showLabel: true)
+							style: (row: (i div: 8), column: i % 8 + 2)
 						)
 					}
 
@@ -196,7 +196,7 @@ elementsDesc: (
 					key: \bigKnob, midiMsgType: 'cc', elementType: 'encoder',
 					spec: 'midiCCrel_64_22', // [56, 72, \lin, 1].asSpec,
 					midiNum: 7,  // big knob
-					style: (row: 0, column: 0, height: 2, width: 2, showLabel: true)
+					style: (row: 0, column: 0, height: 2, width: 2)
 				)
 			]
 		)

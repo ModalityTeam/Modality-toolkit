@@ -53,8 +53,7 @@ elementsDesc: (
 						groupType: \noteOnOff,
 						style: (
 							row: 7 - (i div: 8),
-							column: i % 8,
-							showLabel: true
+							column: i % 8
 						)
 					)
 				)
@@ -72,8 +71,7 @@ elementsDesc: (
 						groupType: \noteOnOffBut,
 						style: (
 							row: 8,
-							column: i,
-							showLabel: true
+							column: i
 						)
 					)
 				)
@@ -91,8 +89,7 @@ elementsDesc: (
 						groupType: \noteOnOffBut,
 						style: (
 							row: 8,
-							column: i + 4,
-							showLabel: true
+							column: i + 4
 						)
 					)
 				)
@@ -110,8 +107,7 @@ elementsDesc: (
 						groupType: \noteOnOffBut,
 						style: (
 							row: i,
-							column: 8,
-							showLabel: true
+							column: 8
 					))
 				)
 			}
@@ -125,11 +121,7 @@ elementsDesc: (
 				\midiChan: 0,
 				\spec: 'midiBut',
 				\ioType: \inout,
-				style: (
-					row: 8,
-					column: 8,
-					showLabel: true
-				)
+				style: ( row: 8, column: 8 )
 			)
 		),
 		(
@@ -138,7 +130,7 @@ elementsDesc: (
 				midiChan: 0, spec: 'midiBut', ioType: \in),
 			elements: (48..56).collect { |midinote|
 				(midiNum: midinote, spec: 'midiCC', ioType: \in,
-					\style: (row: 9, column: i, showLabel: true)
+					\style: (row: 9, column: i)
 				)
 			}
 		)

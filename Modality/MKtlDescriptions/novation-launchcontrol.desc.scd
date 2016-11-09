@@ -6,7 +6,7 @@ minimal code examples for testing, such as:
 k = MKtl('nlc', "novation-launchcontrol");
 k.elementAt(0, \kn, 0).action = { \yo.postln; };
 k.elementAt(0, \kn, 1).action = { 1.postcs; };
-k.gui.showLabels
+k.gui;
 
 
 
@@ -72,10 +72,7 @@ elementsDesc: (
 							key: (i+1).asSymbol, midiNum: num,
 							groupType: \noteOnOffBut,
 							shared: (
-								style: (
-									row: 2,
-									column: i
-								)
+								style: ( row: 2, column: i )
 							)
 						)
 					}
@@ -96,7 +93,7 @@ elementsDesc: (
 						(
 							'key': key,
 							'midiNum': num,
-							'style':  (row: row, column: col, \showLabel: true)
+							'style':  (row: row, column: col)
 						)
 
 					}

@@ -5,7 +5,7 @@ thisProcess.nowExecutingPath.basename.split($.).first.postcs;
 
 d = MKtlDesc.loadDescs("*wing").first;
 m.free; m = MKtl(\gw, "*wing").trace;
-m.gui.showLabels;
+m.gui;
 m.elementsDict.size;
 m.postElements;
 */
@@ -45,15 +45,15 @@ specs: ( midiBut64: [0, 64, \lin, 64] ),
 			elements: [
 				(
 					key: \bot,
-					shared: (midiNum: 3, style: (height: 4, row: 0, column: 2, showLabel: true))
+					shared: (midiNum: 3, style: (height: 4, row: 0, column: 2))
 				),
 				(
 					key: \l,
-					shared: (midiNum: 1, style: (width: 2, row: 5.2, column: 4, showLabel: true)),
+					shared: (midiNum: 1, style: (width: 2, row: 5.2, column: 4)),
 				),
 				(
 					key: \r,
-					shared: (midiNum: 2, style: (width: 2, row: 5.2, column: 6, showLabel: true)),
+					shared: (midiNum: 2, style: (width: 2, row: 5.2, column: 6)),
 				),
 			]
 		),
@@ -63,7 +63,7 @@ specs: ( midiBut64: [0, 64, \lin, 64] ),
 			shared: (
 				elementType: \pad, \groupType: \noteOnOff,
 				mode: \toggle, \spec: \midiBut64,
-				style: (row: 0, column: 0, showLabel: true)
+				style: (row: 0, column: 0)
 			)
 		),
 
@@ -73,16 +73,16 @@ specs: ( midiBut64: [0, 64, \lin, 64] ),
 			shared: (elementType: \pad, groupType: \noteOnOffCtl, spec: \midiCC),
 			elements: [
 				(
-					key: \idx, midiNum: 36, shared: (style: (row: 3.5 + 1, column: 3, showLabel: true))
+					key: \idx, midiNum: 36, shared: (style: (row: 3.5 + 1, column: 3))
 				),
 				(
-					key: \mid, midiNum: 37, shared: (style: (row: 3.0 + 1, column: 4.3, showLabel: true))
+					key: \mid, midiNum: 37, shared: (style: (row: 3.0 + 1, column: 4.3))
 				),
 				(
-					key: \rng, midiNum: 38, shared: (style: (row: 3.1 + 1, column: 5.6, showLabel: true))
+					key: \rng, midiNum: 38, shared: (style: (row: 3.1 + 1, column: 5.6))
 				),
 				(
-					key: \pnk, midiNum: 39, shared: (style: (row: 3.2 + 1, column: 7, showLabel: true))
+					key: \pnk, midiNum: 39, shared: (style: (row: 3.2 + 1, column: 7))
 				),
 			]
 		),
@@ -90,32 +90,32 @@ specs: ( midiBut64: [0, 64, \lin, 64] ),
 			key: \sw,
 			shared: (elementType: \pad, groupType: \noteOnOffBut, spec: \midiBut64),
 			elements: [
-				(key:  \triDn,  midiNum: 40, shared: (style: (row: 0.5, column: 3, showLabel: true))),
-				(key:  \triUp,  midiNum: 41, shared: (style: (row: 1.5, column: 3, showLabel: true))),
+				(key:  \triDn,  midiNum: 40, shared: (style: (row: 0.5, column: 3))),
+				(key:  \triUp,  midiNum: 41, shared: (style: (row: 1.5, column: 3))),
 
-				(key:  \idx,  midiNum: 42, shared: (style: (row: 2, column: 4, showLabel: true))),
-				(key:  \mid,  midiNum: 43, shared: (style: (row: 2, column: 5, showLabel: true))),
-				(key:  \rng,  midiNum: 44, shared: (style: (row: 2, column: 6, showLabel: true))),
-				(key:  \pnk,  midiNum: 45, shared: (style: (row: 2, column: 7, showLabel: true))),
+				(key:  \idx,  midiNum: 42, shared: (style: (row: 2, column: 4))),
+				(key:  \mid,  midiNum: 43, shared: (style: (row: 2, column: 5))),
+				(key:  \rng,  midiNum: 44, shared: (style: (row: 2, column: 6))),
+				(key:  \pnk,  midiNum: 45, shared: (style: (row: 2, column: 7))),
 			]
 		),
 		(
 			key: \cutsw,
 			shared: (elementType: \pad, groupType: \noteOnOffBut, spec: \midiBut64),
 			elements: [
-				(key:  \1, midiNum: 46, shared: (style: (row: 1, column: 0, showLabel: true))),
-				(key:  \2, midiNum: 47, shared: (style: (row: 2, column: 0.4, showLabel: true))),
-				(key:  \3, midiNum: 48, shared: (style: (row: 3, column: 0.7, showLabel: true))),
-				(key:  \4, midiNum: 49, shared: (style: (row: 4, column: 0.7, showLabel: true)))
+				(key:  \1, midiNum: 46, shared: (style: (row: 1, column: 0))),
+				(key:  \2, midiNum: 47, shared: (style: (row: 2, column: 0.4))),
+				(key:  \3, midiNum: 48, shared: (style: (row: 3, column: 0.7))),
+				(key:  \4, midiNum: 49, shared: (style: (row: 4, column: 0.7)))
 			]
 		),
 		(
 			key: \accel,
 			shared: (elementType: \accelAxis, spec: \midiCC, midiMsgType: \control),
 			elements: [
-				(key: \x, midiNum: 5, style: (type: \slider, height: 2, showLabel: true)),
-				(key: \y, midiNum: 6, style: (type: \slider, height: 2, showLabel: true)),
-				(key: \z, midiNum: 7, style: (type: \slider, height: 2, showLabel: true))
+				(key: \x, midiNum: 5, style: (type: \slider, height: 2)),
+				(key: \y, midiNum: 6, style: (type: \slider, height: 2)),
+				(key: \z, midiNum: 7, style: (type: \slider, height: 2))
 			]
 		)
 	]

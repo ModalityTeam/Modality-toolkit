@@ -1,6 +1,6 @@
 /*
 MKtlDesc.allDescs.clear;
-m = MKtl(\nky2, "*nanokey2"); m.gui.showLabels;
+m = MKtl(\nky2, "*nanokey2"); m.gui;
 */
 (
 deviceName: "nanoKEY2",
@@ -37,10 +37,9 @@ elementsDesc: (
 						groupType: \noteOnOff,
 						style: (
 							row: (4 - (i div: 48 * 2)) + (pos.y * 0.9),
-							column: pos.x,
+							column: pos.x * 0.8,
 							color: pos.color,
-							height: 1.2,
-							showLabel: true
+							height: 1.2
 					))
 				);
 			}

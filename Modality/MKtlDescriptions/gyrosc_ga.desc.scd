@@ -6,6 +6,8 @@
 
 /* todo:
 * add others movement sensors
+MKtlDesc.loadDescs("gyrosc_ga"); k.free; k = MKtl('gyr', "gyrosc_ga"); k.gui;
+
 */
 
 // gyrosc and nametags:
@@ -77,18 +79,18 @@ elementsDesc: (
 			key: \accel,
 			shared: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accelAxis' ),
 			elements: [
-				(key: \x, style: (row: 0, column: 3, showLabel: true) ),
-				(key: \y, style: (row: 0, column: 4, showLabel: true) ),
-				(key: \z, style: (row: 0, column: 5, showLabel: true) )
+				(key: \x, style: (row: 0, column: 3) ),
+				(key: \y, style: (row: 0, column: 4) ),
+				(key: \z, style: (row: 0, column: 5) )
 			],
 		),
 		(
 			key: \gyro,
 			shared: (elementType: 'gyroAxis', ioType: \collectiveIn, \spec: 'gyroAxis' ),
 			elements: [
-				(key: \pitch, style: (row: 1, column: 3, showLabel: true)),
-				(key: \roll, style: (row: 1, column: 4, showLabel: true)),
-				(key: \yaw, style: (row: 1, column: 5, showLabel: true)),
+				(key: \pitch, style: (row: 1, column: 3)),
+				(key: \roll, style: (row: 1, column: 4)),
+				(key: \yaw, style: (row: 1, column: 5)),
 			]
 		),
 		// similar for comp, matrix, rrate, quat, grav, mag, gps
@@ -104,23 +106,23 @@ elementsDesc: (
 			),
 			elements: [
 				( argTemplate: [ 1 ],
-					style: (row: 0.5, column: 0, showLabel: true) ),
+					style: (row: 0.5, column: 0) ),
 				( argTemplate: [ 2 ],
-					style: (row: 1.5, column: 0, showLabel: true) ),
+					style: (row: 1.5, column: 0) ),
 				( argTemplate: [ 3 ],
-					style: (row: 2.5, column: 0, showLabel: true) ),
+					style: (row: 2.5, column: 0) ),
 				( argTemplate: [ 4 ], mode: \toggle,
-					style: (row: 0, column: 1, showLabel: true) ),
+					style: (row: 0, column: 1) ),
 				( argTemplate: [ 5 ], mode: \toggle,
-					style: (row: 1, column: 1, showLabel: true) ),
+					style: (row: 1, column: 1) ),
 				( argTemplate: [ 6 ], mode: \toggle,
-					style: (row: 2, column: 1, showLabel: true) ),
+					style: (row: 2, column: 1) ),
 				( argTemplate: [ 7 ],
-					style: (row: 0.5, column: 2, showLabel: true) ),
+					style: (row: 0.5, column: 2) ),
 				( argTemplate: [ 8 ],
-					style: (row: 1.5, column: 2, showLabel: true) ),
+					style: (row: 1.5, column: 2) ),
 				( argTemplate: [ 9 ],
-					style: (row: 2.5, column: 2, showLabel: true) )
+					style: (row: 2.5, column: 2) )
 			]
 		)
 

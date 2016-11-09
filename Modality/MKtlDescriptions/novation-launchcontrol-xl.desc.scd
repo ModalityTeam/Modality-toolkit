@@ -129,7 +129,7 @@ elementsDesc: (
 						#key, num, row, col = list;
 						(
 							key: key, midiNum: num,
-							shared: (style: (row: row, column: col, \showLabel: true))
+							shared: (style: (row: row, column: col ))
 						)
 					}
 				),
@@ -149,7 +149,7 @@ elementsDesc: (
 						(
 							'key': key,
 							'midiNum': num,
-							'style':  (row: row, column: col, \showLabel: true)
+							'style':  (row: row, column: col )
 						)
 
 					}
@@ -174,8 +174,8 @@ elementsDesc: (
 				// 		var key, num, row, col;
 				//
 				// 		#key, num, row, col = list;
-				// 		style = (row: row, column: col, \showLabel: true);
-				//
+				// 		style = (row: row, column: col);
+				/
 				// 		onOffGroup = (key: key, midiNum: num).postcs;
 				// 		// onOffGroup.elements[0].put(\style, style);
 				// 		// onOffGroup.elements[0].put(\style,

@@ -1,7 +1,7 @@
 ///// nanoPAD2 desc file
 /*
 MKtlDesc.loadDescs("*nanopad2");
-m.free; m = MKtl(\nky2, "*nanopad2"); m.gui.showLabels;
+m.free; m = MKtl(\nky2, "*nanopad2"); m.gui;
 */
 (
 deviceName: "nanoPAD2",

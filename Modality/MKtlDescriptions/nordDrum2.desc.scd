@@ -89,24 +89,11 @@ elementsDesc: (
 		// // ------ cc -------------
 		// ( key: 'cc_9_058', 'midiNum':  58, 'midiChan': 9, 'midiMsgType': 'cc', 'elementType': 'slider', 'spec': 'midiCC'),
 		// ( key: 'cc_9_070', 'midiNum':  70, 'midiChan': 9, 'midiMsgType': 'cc', 'elementType': 'slider', 'spec': 'midiCC'),
-
-		// (
-		// 	key: \pad,
-		// 	shared:  (\elementType: \pad,
-		// 	\midiChan: 9, \spec: \midiVel, \ioType: \inout),
-		// 	elements: [60, 62, 64, 65, 67, 69].collect { |num, i| (
-		// 		shared: (midiNum: num),
-		// 		elements: [
-		// 			(key: \on,  midiMsgType: \noteOn ),
-		// 			(key: \off, midiMsgType: \noteOff)
-		// 		]
-		// 	)}
-		// )
-
 		(
 			key: \pad,
 			shared: (\elementType: \pad, groupType: \noteOnOff,
-				\midiChan: 9, \spec: \midiVel, \ioType: \inout),
+				\midiChan: 9, \spec: \midiVel, \ioType: \inout
+			),
 			elements: [
 				(key: '1', midiNum: 60, shared: (style: (row: 0, column: 0))),
 				(key: '2', midiNum: 62, shared: (style: (row: 0, column: 1))),

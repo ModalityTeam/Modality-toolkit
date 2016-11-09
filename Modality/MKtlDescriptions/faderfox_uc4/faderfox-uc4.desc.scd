@@ -58,7 +58,10 @@ elementsDesc: (
 				( elements: 8.collect { |i|
 					(
 						midiNum: num1 + i,
-						\style: ( \row: i div: 4 * 2, \column: i % 4 * 2 + 0.5),
+						\style: ( \row: i div: 4 * 2,
+							\column: i % 4 * 2 + 0.5,
+							showLabel: true
+						),
 						\page: gr_i
 					)
 				} )
@@ -74,7 +77,8 @@ elementsDesc: (
 						(
 							groupType: \noteOnOffBut,
 							shared:  (midiNum: num, page: gr_i, groupType: \noteOnOffBut,
-								style: ( \row: i div: 4 * 2 + 1, \column: i % 4 * 2 + 0.5, height: 0.75)
+								style: ( \row: i div: 4 * 2 + 1, \column: i % 4 * 2 + 0.5,
+									height: 0.75)
 							)
 						)
 					}

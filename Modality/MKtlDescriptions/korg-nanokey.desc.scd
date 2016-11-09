@@ -1,6 +1,6 @@
 /*
 MKtlDesc.loadDescs("*nanokey");
-m.free; m = MKtl(\nky, "*nanokey"); m.trace.gui.showLabels;
+m.free; m = MKtl(\nky, "*nanokey"); m.trace.gui;
 */
 
 (
@@ -39,7 +39,7 @@ elementsDesc: (
 						groupType: \noteOnOff,
 						style: (
 							row: (4 - (i div: 48 * 2)) + (pos.y * 0.9),
-							column: pos.x,
+							column: pos.x * 0.8,
 							color: pos.color,
 							height: 1.2
 					))
@@ -60,7 +60,8 @@ elementsDesc: (
 		),
 		(
 			key: \bend,
-			'midiMsgType': 'bend', 'elementType': 'button', 'spec': 'midiBend'
+			'midiMsgType': 'bend', 'elementType': 'button', 'spec': 'midiBend',
+			style: (row: 0, column: 12, width: 2)
 		)
 	]
 )

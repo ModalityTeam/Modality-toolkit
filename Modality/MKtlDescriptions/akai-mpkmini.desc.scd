@@ -10,7 +10,6 @@ TODO:
 
 thisProcess.nowExecutingPath.basename.split($.).first.postcs;
 d = MKtlDesc.loadDescs("*mpkmini").first;
-d.web;
 
 m.free; m = MKtl(\mpk, "*mpkmini"); m.gui;
 m.trace;

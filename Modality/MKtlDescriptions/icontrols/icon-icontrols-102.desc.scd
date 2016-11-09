@@ -52,7 +52,7 @@ elementsDesc: (
 							key: col, midiNum: note, groupType: \noteOnOffBut,
 							shared: (
 								groupType: \noteOnOffBut,
-								\style: (row: row+2, column: 3 + (col*2), showLabel: false)
+								\style: (row: row+2, column: 3 + (col*2))
 							)
 						);
 					}
@@ -82,12 +82,12 @@ elementsDesc: (
 			key: \tr,
 			shared: (elementType: \pad, midiChan: 0, groupType: \noteOnOffBut, spec: \midiBut),
 			elements: [
-				( key: \rew, 	midiNum: 91, shared: ( \style: (row: 0, column: 0, showLabel: true) ) ),
-				( key: \play, 	midiNum: 94, shared: ( \style: (row: 0, column: 1, showLabel: true) ) ),
-				( key: \fwd, 	midiNum: 92, shared: ( \style: (row: 0, column: 2, showLabel: true) ) ),
-				( key: \cycle, 	midiNum: 86, shared: ( \style: (row: 1, column: 0, showLabel: true) ) ),
-				( key: \stop, 	midiNum: 93, shared: ( \style: (row: 1, column: 1, showLabel: true) ) ),
-				( key: \rec, 	midiNum: 95, shared: ( \style: (row: 1, column: 2, showLabel: true) ) )
+				( key: \rew, 	midiNum: 91, shared: ( \style: (row: 0, column: 0) ) ),
+				( key: \play, 	midiNum: 94, shared: ( \style: (row: 0, column: 1) ) ),
+				( key: \fwd, 	midiNum: 92, shared: ( \style: (row: 0, column: 2) ) ),
+				( key: \cycle, 	midiNum: 86, shared: ( \style: (row: 1, column: 0) ) ),
+				( key: \stop, 	midiNum: 93, shared: ( \style: (row: 1, column: 1) ) ),
+				( key: \rec, 	midiNum: 95, shared: ( \style: (row: 1, column: 2) ) )
 			]
 		)
 	]

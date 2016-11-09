@@ -59,35 +59,35 @@ elementsDesc: (
 			elements: [
 				// right side buttons
 				(key: '1', 'hidUsage': 1,
-					'style': (row: 1.8, column: 4.4, height: 0.5, showLabel: true)),
+					'style': (row: 1.8, column: 4.4, height: 0.5)),
 				(key: '2', 'hidUsage': 2,
-					'style': (row: 1.0, column: 5.2, height: 0.5, showLabel: true)),
+					'style': (row: 1.0, column: 5.2, height: 0.5)),
 				(key: '3', 'hidUsage': 3,
-					'style': (row: 2.6, column: 5.2, height: 0.5, showLabel: true)),
+					'style': (row: 2.6, column: 5.2, height: 0.5)),
 				(key: '4', 'hidUsage': 4,
-					'style': (row: 1.8, column: 6.0, height: 0.5, showLabel: true)),
+					'style': (row: 1.8, column: 6.0, height: 0.5)),
 
 				// shoulders
 				(key: '5', 'hidUsage': 5,
-					'style': (row: 0.5, column: 1, height: 0.5, showLabel: true)),
+					'style': (row: 0.5, column: 1, height: 0.5)),
 				(key: '6', 'hidUsage': 6,
-					'style': (row: 0.0, column: 1, height: 0.5, showLabel: true)),
+					'style': (row: 0.0, column: 1, height: 0.5)),
 				// underside
 				(key: '7', 'hidUsage': 7,
-					'style': (row: 0.5, column: 5, height: 0.5, showLabel: true)),
+					'style': (row: 0.5, column: 5, height: 0.5)),
 				(key: '8', 'hidUsage': 8,
-					'style': (row: 0.0, column: 5, height: 0.5, showLabel: true)),
+					'style': (row: 0.0, column: 5, height: 0.5)),
 				// top center
 				(key: '9', 'hidUsage': 9,
-					'style': (row: 1.6, column: 2.5, height: 0.5, showLabel: true)),
+					'style': (row: 1.6, column: 2.5, height: 0.5)),
 				(key: '10', 'hidUsage': 10,
-					'style': (row: 1.6, column: 3.5, height: 0.5, showLabel: true)),
+					'style': (row: 1.6, column: 3.5, height: 0.5)),
 			]
 		),
 		(
 			key: 'compass', 'hidUsage': 57, 'hidUsagePage': 1,
 			'elementType': 'compass', spec: \unipolar,
-			'style': (row: 1.8, column: 1.3, showLabel: true)
+			'style': (row: 1.8, column: 1.3)
 		),
 		(
 			key: \joy,
@@ -97,14 +97,14 @@ elementsDesc: (
 					key: \l,
 					elements: [
 						(key: \x, 'hidUsage': 48, 'elementType': 'joyAxis', spec: \cent1,
-							mode: \center, 'style': (row: 3.5, column: 1, height: 2, showLabel: true)
+							mode: \center, 'style': (row: 3.5, column: 1, height: 2)
 						),
 						(key: \y, 'hidUsage': 49, 'elementType': 'joyAxis', spec: \cent1,
-							mode: \center, 'style': (row: 3.5, column: 1.9, height: 2, showLabel: true)
+							mode: \center, 'style': (row: 3.5, column: 1.9, height: 2)
 						),
 						(key: \hat, 'hidUsage': 11, 'elementType': 'button', 'hidUsagePage': 9,
 							spec: \hidBut, mode: \push,
-							'style': (row: 3.2, column: 1.5, height: 0.5, showLabel: true)
+							'style': (row: 3.2, column: 1.5, height: 0.5)
 						)
 					]
 				),
@@ -112,14 +112,14 @@ elementsDesc: (
 					key: \r,
 					elements: [
 						(key: \x, 'hidUsage': 53, 'elementType': 'joyAxis', spec: \cent1,
-							mode: \center, 'style': (row: 3.5, column: 3, height: 2, showLabel: true)
+							mode: \center, 'style': (row: 3.5, column: 3, height: 2)
 						),
 						(key: \y, 'hidUsage': 50, 'elementType': 'joyAxis', spec: \cent1,
-							mode: 'center', 'style': (row: 3.5, column: 3.9, height: 2, showLabel: true)
+							mode: 'center', 'style': (row: 3.5, column: 3.9, height: 2)
 						),
 						(key: \hat, 'hidUsage': 12, 'hidUsagePage': 9, 'elementType': 'button',
 							spec: \hidBut, mode: \push,
-							'style': (row: 3.2, column: 3.5, height: 0.5, showLabel: true)
+							'style': (row: 3.2, column: 3.5, height: 0.5)
 						)
 					]
 				)

@@ -3,12 +3,12 @@
 See also rel0, rel-16 descs for relative control with examples.
 
 MKtl('bs', "arturia-beatstep");
-MKtl('bs').trace;
+MKtl('bs').trace.gui;
 
 
 // TODO:
 * setting an encoder to a value from SC,
-    so encoder continues moving from there
+so encoder continues moving from there
 
 MKtl('bs').elAt(\pg0, \kn, 0).value;
 // set to a different value by program
@@ -55,83 +55,58 @@ elementsDesc: (
 			shared: (midiChan: chan, page: i),
 
 			elements: [
-		(
-			key: \stop,
-			shared: (elementType: 'button', midiNum: 1, spec: \midiBut),
-			elements: [
 				(
-					key: \on, midiMsgType: 'noteOn',
-					style: (row: 2, column: 0, height: 0.5, showLabel: true)
+					key: \stop,
+					groupType: \noteOnOffBut,
+					shared: (elementType: 'pad', midiNum: 1, spec: \midiBut,
+						groupType: \noteOnOffBut,
+						style: (row: 2, column: 0, height: 0.75)
+					)
 				),
 				(
-					key: \off, midiMsgType: 'noteOff',
-					style: (row: 2.5, column: 0, height: 0.5, showLabel: true)
-				)
-			],
-		),
-		(
-			key: \play,
-			shared: (elementType: 'button', midiNum: 2, spec: \midiBut),
-			elements: [
-				(
-					key: \on, midiMsgType: 'noteOn',
-					style: (row: 2.0, column: 1, height: 0.5, showLabel: true)
+					key: \play,
+					groupType: \noteOnOffBut,
+					shared: (elementType: 'pad', midiNum: 1, spec: \midiBut,
+						groupType: \noteOnOffBut,
+						style: (row: 2, column: 1, height: 0.75)
+					)
 				),
 				(
-					key: \off, midiMsgType: 'noteOff',
-					style: (row: 2.5, column: 1, height: 0.5, showLabel: true)
-				)
-			],
-		),
-
-		(
-			key: \pad,
-			shared: (elementType: 'pad', spec: 'midiVel'),
-			elements: (36 + ((8..15)++(0..7))).collect { |num,i|
-				(
-					shared: (midiNum: num),
-					elements: [
+					key: \pad,
+					shared: (elementType: 'pad', spec: 'midiVel'),
+					elements: (36 + ((8..15)++(0..7))).collect { |num,i|
 						(
-							key: \on, midiMsgType: \noteOn,
-							style: (row: (i div: 8 * 2 + 2), column: i % 8 + 2,
-								height: 0.5, showLabel: true)
-						),
-						(
-							key: \off, midiMsgType: \noteOff,
-							style: (row: (i div: 8 * 2 + 2.5), column: i % 8 + 2,
-								height: 0.5, showLabel: true)
-						),
-						(
-							key: \touch, midiMsgType: \polytouch,
-							style: (row: (i div: 8 * 2 + 3), column: i % 8 + 2,
-								height: 0.5, showLabel: true)
+							groupType: \noteOnOffTouch,
+							shared: (midiNum: num,
+								groupType: \noteOnOffTouch,
+								style: (row: (i div: 8 + 2), column: i % 8 + 2,
+									height: 1)
+							)
 						)
-					]
-				)
-			}
-		),
-		(
-			// default - absolute values
-			key: \kn,
-			shared: (midiMsgType: 'cc', elementType: 'encoder',
-				spec: 'midiCC', ioType: \inout),
-			elements: [
-				[ 10, 74, 71, 76, 77, 93, 73, 75],
-				[114, 18, 19, 16, 17, 91, 79, 72]
-			].flat.collect { |num, i|
-				( midiNum:  num,
-					style: (row: (i div: 8), column: i % 8 + 2, showLabel: true)
-				)
-			}
+					}
+				),
+				(
+					// default - absolute values
+					key: \kn,
+					shared: (midiMsgType: 'cc', elementType: 'encoder',
+						spec: 'midiCC', ioType: \inout),
+					elements: [
+						[ 10, 74, 71, 76, 77, 93, 73, 75],
+						[114, 18, 19, 16, 17, 91, 79, 72]
+					].flat.collect { |num, i|
+						( midiNum:  num,
+							style: (row: (i div: 8), column: i % 8 + 2)
+						)
+					}
 
-		),
-		(
-			// default - absolute value
-			key: \bigKnob, midiMsgType: 'cc', elementType: 'encoder',
-			spec: 'midiCC',
-			midiNum: 7,  // big knob
-			style: (row: 0, column: 0, height: 2, showLabel: true)
-		)
+				),
+				(
+					// default - absolute value
+					key: \bigKnob, midiMsgType: 'cc', elementType: 'encoder',
+					spec: 'midiCC',
+					midiNum: 7,  // big knob
+					style: (row: 0, column: 0, height: 2, width: 2)
+				)
 			]
 		)
 	}
