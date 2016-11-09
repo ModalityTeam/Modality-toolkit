@@ -14,9 +14,10 @@ MKtlElementView {
 
 	*initClass {
 		makeViewFuncDict = (
-			'button': { |parent, bounds, label|
+			'button': { |parent, bounds, label = ""|
+				label = MKtlGUI.splitLabel(label);
 				Button( parent, bounds.insetBy( MKtlGUI.margin ) )
-				.states_([[ label ? "" ],[ label ? "", Color.black, Color.gray(0.33) ]]);
+				.states_([[ label ],[ label , Color.black, Color.gray(0.33) ]]);
 			},
 			'slider': { |parent, bounds, label|
 				Slider( parent, bounds.insetBy( MKtlGUI.margin ) );
@@ -96,13 +97,13 @@ MKtlElementView {
 		var label;
 		parent = inParent ? parent;
 		// "makeView: redirectView is %\n".postf(redirectView);
-		if( element.elemDesc[ \style ] !? _.showLabel ? MKtlGUI.showLabels ) {
+		if( ((element.elemDesc[ \style ] !? _.showLabel) ? MKtlGUI.showLabels) ) {
 			label = (element.elemDesc[ \label ] ? element.name).asString;
 			if (element.elemDesc.groupType.notNil) {
 				label = MKtlGUI.dropLastElem(label);
 			};
 		};
-		// label.postln;
+
 		view = this.getMakeViewFunc( element.type ).value( parent, bounds, label, redirectView );
 		getValueFunc = this.makeGetValueFunc( element, view );
 
