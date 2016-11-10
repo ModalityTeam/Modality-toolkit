@@ -52,12 +52,8 @@ MPadView : SCViewHolder {
 		mode = modeName;
 	}
 
-	init { |parent, bounds, argMode = \noteOnOff|
-		baseColor = Color.white;
-		hiliteColor = Color.red(0.75,0.5);
-		this.view = UserView( parent, bounds );
-
-		this.view.drawFunc = { |vw|
+	baseDrawFunc {
+		^{ |vw|
 			var rect, fillRect, fillRect2, fillColor;
 			var halfColor = hiliteColor.copy.alpha_( hiliteColor.alpha * 0.5 );
 			var name;
@@ -102,25 +98,34 @@ MPadView : SCViewHolder {
 				});
 			};
 		};
+	}
+
+	setColors {
+		baseColor = Color.white;
+		hiliteColor = Color.red(0.75,0.5);
+	}
+
+	init { |parent, bounds, argMode = \noteOnOff|
+		this.setColors;
+
+		this.view = UserView( parent, bounds );
+		this.view.drawFunc = this.baseDrawFunc;
 
 		this.view.mouseDownAction = { |vw, x, y|
-			var rect = vw.bounds.moveTo(0, 0).insetBy(1,1);
-			this.valueAction = y.linlin( 0, rect.height, 1, 0 );
+			this.valueAction = y.linlin( 0, vw.bounds.height, 1, 0 );
 		};
 		this.view.mouseMoveAction = { |vw, x, y|
-			var rect = vw.bounds.moveTo(0, 0).insetBy(1,1);
 			if (useMoveValue) {
-				this.moveValueAction = y.linlin( 0, rect.height, 1, 0 );
+				this.moveValueAction = y.linlin( 0, vw.bounds.height, 1, 0 );
 			};
 		};
 
 		this.view.mouseUpAction = { |vw, x, y|
-			var rect;
 			if( autoUpTime == inf ) {
-				rect = vw.bounds.moveTo(0, 0).insetBy(1,1);
-				this.upValueAction = y.linlin( 0, rect.height, 1, 0 );
+				this.upValueAction = y.linlin( 0, vw.bounds.height, 1, 0 );
 			};
 		};
+
 		this.mode_(argMode);
 
 		this.refresh;

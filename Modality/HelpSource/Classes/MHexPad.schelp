@@ -1,0 +1,82 @@
+TITLE:: MHexPad
+summary:: extends MPadView for Hexagonal and round pads
+categories:: GUI
+related:: Classes/MKtl, Classes/MKtlGUI, Overviews/MOdality
+
+DESCRIPTION::
+code::MHexPad:: and code::MRoundPad:: allow more different shapes and behaviors than its superclass, MPadView.
+
+
+First code examples:
+
+code::
+// make a window with some MPadViews
+
+w = Window("manta").front;
+h = 6.collect { |j|
+	8.collect { |i|
+		var h = MHexPad(w, Rect(i * 45 + (j % 2 * 22), j * 40, 45, 45)).mode_(\noteOnLed);
+		h.action = { |el| "pad %, % vel % \n".postf(j, i, el.value.round(0.01)) };
+		h.upDoesAction = true;
+		h.label = "p_%_%".format(j, i);
+		h.moveAction = { |el| "pad %, % move % \n".postf(j, i, el.moveValue.round(0.01)) };
+}};
+
+h.flat.do(_.ledVal_(2));
+h.flat.do(_.ledVal_(1));
+h.flat.do(_.ledVal_(0));
+
+h.flat.do(_.vShiftLabel_(10));
+
+
+Task {
+	100.do { |i|
+		defer { h.flat.do(_.angle_(i * 0.1)) };
+		0.1.wait;
+	}
+}.play;
+
+h[0][0].ledColors.put(0, Color.black); h[0][0].refresh;
+h[0][0].ledVal = 3.rand;
+h[0][0].label = "";
+
+h.flat.do { |m| m.hexColor_(Color.rand).refresh };
+
+Task {
+	100.do { |i|
+		defer { h.flat.do { |m| m.angle_(m.angle + 0.1.bilinrand) } };
+		0.1.wait;
+	}
+}.play;
+
+::
+
+
+CLASSMETHODS::
+
+private:: initClass
+
+
+INSTANCEMETHODS::
+
+private:: baseDrawFunc, setColors
+
+METHOD:: upDoesAction
+
+argument:: bool
+get and set flag whether mouseUp also triggers the pads action or not.
+this allows using noteOn with value 1-127, and noteOn with value 0 to signal note end
+(which is the standard the Manta uses).
+
+METHOD:: angle
+rotate the pad by an angle
+
+METHOD:: ledColors
+get and set the colors to use for the led display
+
+METHOD:: ledVal
+get and set the value which led color to show.
+
+METHOD:: hexColor
+the color for the background hexagon shape.
+

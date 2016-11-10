@@ -256,7 +256,7 @@ MKtlGUI {
 		// elemsToShow = mktl.elementGroup.flat;
 		// keep groups with a groupType together
 		elemsToShow = mktl.elementGroup.elements.flatIf { |el| el.groupType.isNil };
-		"%: will show % elements of % in % views.\n".postf(thisMethod, mktl,
+		"%: will show %'s % elements in % views.\n".postf(thisMethod, mktl,
 			mktl.elementsDict.size, elemsToShow.size);
 
 		views = elemsToShow.collect({ |item|
