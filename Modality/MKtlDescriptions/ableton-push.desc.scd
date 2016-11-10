@@ -1,3 +1,6 @@
+/*
+MKtlDesc.loadDescs("*push"); m.free; m = MKtl(\push, "*push").trace; m.gui;
+*/
 (
 deviceName: "Ableton Push",
 protocol: \midi,
@@ -36,20 +39,41 @@ deviceInfo: (
 elementsDesc: (
 	shared: (midiChan: 0),
 	elements: [
+		//------ encoderTopRow
+		(
+			key: \kn,
+			elements: [
+				(
+					key: \touch,
+					shared: (
+						elementType: 'pad', groupType: \noteOnOffBut,
+						spec: \midiVel
+					),
+					elements: ( 0.. 8 ).collect { |num, i|
+						(
+							key: (num+1).asSymbol, midiNum: num,
+							shared: (style: (row: -0.5, column: i + 2, height: 0.7))
+						)
+					}
+				),
+				(
+					key: \turn,
+					shared: (midiMsgType: \cc, elementType: \encoder, spec: \midiCC),
+					elements: (71..79).collect { |num, i|
+						(midiNum: num, style: (row: 0, column: 2 + i))
+					}
+				)
+			]
+		),
 		//------ pads -------------
 		(
 			key: \pad,
-			shared: (elementType: \pad),
+			shared: (elementType: \pad, groupType: \noteOnOffTouch),
 			elements: (36..99).clump(8).reverse.collect { |rownums, i|
 				(
 					elements: rownums.collect { |num, j|
 						(
-							shared: (midiNum: num),
-							elements: [
-								(key: \on, 'midiMsgType': 'noteOn', 'spec': 'midiVel', ioType: \inout),
-								(key: \off, 'midiMsgType': 'noteOff', 'spec': 'midiVel', ioType: \in),
-								(key: \touch, 'midiMsgType': 'polyTouch', 'spec': 'midiCC', ioType: \in),
-							]
+							shared: (midiNum: num, style: (row: i + 4, column: j + 2))
 						)
 					}
 				)
@@ -59,39 +83,23 @@ elementsDesc: (
 		(
 			key: \ribbon,
 			elements: [
-				MKtlDesc.notePair(\touch, 12,
+				(
+					key: \touch, midiNum: 12,
+					groupType: \noteOnOffBut,
 					shared: (
-						elementType: 'button',
+						groupType: \noteOnOffBut,
+						elementType: 'pad',
 						midiChan: 0,
-						spec: 'midiNote'
+						spec: 'midiBut',
+						style: (row: 4, column: 1)
 					)
 				),
 				(
 					key: \bend,
 					midiMsgType: 'bend',
 					elementType: 'ribbon',
-					spec: 'midiBend'
-				)
-			]
-		),
-		//------ encoderTopRow
-		(
-			key: \kn,
-			elements: [
-				(
-					key: \touch,
-					shared: (
-						elementType: 'button',
-						spec: \midiVel
-					),
-					elements: ( 0.. 8).collect { |num|
-						MKtlDesc.notePair((num+1).asSymbol, num)
-					}
-				),
-				(
-					key: \turn,
-					shared: (midiMsgType: \cc, elementType: \encoder,spec: \midiCC),
-					elements: (71..79).collect { |num| (midiNum: num) }
+					spec: 'midiBend',
+					style: (row: 5, column: 1, height: 7)
 				)
 			]
 		),
@@ -99,11 +107,13 @@ elementsDesc: (
 		(
 			key: \knLeft,
 			elements: [
-				MKtlDesc.notePair(\touch, 10,
+				(
+					key: \touch, midiNum: 10,
+					groupType: \noteOnOffBut,
 					shared: (
-						elementType: \button,
-						spec: \midiVel
-
+						elementType: \pad, groupType: \noteOnOffBut,
+						spec: \midiVel,
+						style: (row: 3, column: 0, height: 0.4)
 					),
 				),
 				(
@@ -111,18 +121,21 @@ elementsDesc: (
 					midiMsgType: \cc,
 					elementType: \encoder,
 					midiNum: 14,
-					spec: \midiBut
+					spec: \midiBut,
+					style: (row: 3.4, column: 0, height: 0.8)
 				)
 			]
 		),
 		(
 			key: \knRight,
 			elements: [
-				MKtlDesc.notePair(\touch, 9,
+				(
+					key: \touch, midiNum: 9,
+					groupType: \noteOnOffBut,
 					shared: (
-						elementType: \button,
-						spec: \midiVel
-
+						elementType: \pad, groupType: \noteOnOffBut,
+						spec: \midiVel,
+						style: (row: 3, column: 1, height: 0.4)
 					),
 				),
 				(
@@ -130,19 +143,22 @@ elementsDesc: (
 					midiMsgType: \cc,
 					elementType: \encoder,
 					midiNum: 15,
-					spec: \midiBut
+					spec: \midiBut,
+					style: (row: 3.4, column: 1, height: 0.8)
 				)
 			]
 		),
 		//------ color button rows
 		(
 			key: \bt,
-			shared: (midiMsgType: 'cc', elementType: 'button',
+			shared: (midiMsgType: 'cc', elementType: 'pad',
 				spec: 'midiCC', ioType: \inout),
 			elements: [(20..27), (102..109)].collect { |row, i|
 				(
+					shared: (groupType: \noteOnOffBut),
 					elements: row.collect { |num, j|
-						(midiNum: num)
+						(midiNum: num,
+							shared: (style: (row: i * 0.5 + 3, column: j + 2, height: 0.6)))
 				})
 			}
 		),
@@ -153,65 +169,73 @@ elementsDesc: (
 			shared: (midiMsgType: 'cc', elementType: 'button',
 				spec: 'midiCC', ioType: \inout),
 			elements: [
-				(key: '132t', midiNum: 43),
-				(key: '132',  midiNum: 42),
-				(key: '116t', midiNum: 41),
-				(key: '116',  midiNum: 40),
-				(key: '18t',  midiNum: 39),
-				(key: '18',   midiNum: 38),
-				(key: '14t',  midiNum: 37),
-				(key: '14',   midiNum: 36)
+				(key: '132t', midiNum: 43, style: (row: 4, column: 10)),
+				(key: '132',  midiNum: 42, style: (row: 5, column: 10)),
+				(key: '116t', midiNum: 41, style: (row: 6, column: 10)),
+				(key: '116',  midiNum: 40, style: (row: 7, column: 10)),
+				(key: '18t',  midiNum: 39, style: (row: 8, column: 10)),
+				(key: '18',   midiNum: 38, style: (row: 9, column: 10)),
+				(key: '14t',  midiNum: 37, style: (row: 10, column: 10)),
+				(key: '14',   midiNum: 36, style: (row: 11,column: 10))
 			]
 		),
-		//------ ctl buttons
+		// // ------ ctl buttons
 		(
 			key: \btCtl,
 			shared: (midiMsgType: 'cc', elementType: 'button',
 				spec: 'midiCC', ioType: \inout),
 			elements: [
-				(key: \tapTempo, midiNum: 3),
-				(key: \metronome, midiNum: 9),
-				(key: \undo, midiNum: 119),
-				(key: \delete, midiNum: 118),
-				(key: \double, midiNum: 117),
-				(key: \quantize, midiNum: 116),
-				(key: \fixedLength, midiNum: 90),
-				(key: \automation, midiNum: 89),
-				(key: \duplicate, midiNum: 88),
-				(key: \new, midiNum: 87),
-				(key: \record, midiNum: 86),
-				(key: \play, midiNum: 85),
-				(key: \stop, midiNum: 29),
-				(key: \master, midiNum: 28),
-				(key: \volume, midiNum: 114),
-				(key: \track, midiNum: 112),
+				(key: \tapTempo, midiNum: 3, style: (row: 1, column: 0)),
+				(key: \metronome, midiNum: 9, style: (row: 2, column: 0, height: 0.7)),
 
-				(key: \device, midiNum: 110),
-				(key: \in, midiNum: 62),
-				(key: \mute, midiNum: 60),
-				(key: \scales, midiNum: 58),
-				(key: \repeat, midiNum: 56),
-				(key: \octaveDown, midiNum: 54),
-				(key: \addEffect, midiNum: 52),
-				(key: \note, midiNum: 50),
-				(key: \select, midiNum: 48),
+				(key: \undo, 	midiNum: 119, style: (row: 4, column: 0, height: 0.8)),
+				(key: \delete, 	midiNum: 118, style: (row: 4.7, column: 0, height: 0.8)),
+				(key: \double, 	midiNum: 117, style: (row: 5.4, column: 0, height: 0.8)),
+				(key: \quantize, midiNum: 116, style: (row: 6.1, column: 0, height: 0.8)),
 
-				(key: \panSend, midiNum: 115),
-				(key: \clip, midiNum: 113),
-				(key: \browse, midiNum: 111),
-				(key: \out, midiNum: 63),
-				(key: \solo, midiNum: 61),
-				(key: \user, midiNum: 59),
-				(key: \accent, midiNum: 57),
-				(key: \octaveUp, midiNum: 55),
+				(key: \fixedLength, midiNum: 90, style: (row: 7, column: 0, height: 0.8)),
+				(key: \automation,  midiNum: 89, style: (row: 7.7, column: 0, height: 0.8)),
+				(key: \duplicate,   midiNum: 88, style: (row: 8.4, column: 0, height: 0.8)),
+				(key: \new, 		midiNum: 87, style: (row: 9, column: 0)),
+				(key: \record, 		midiNum: 86, style: (row: 10, column: 0)),
+				(key: \play, 		midiNum: 85, style: (row: 11, column: 0)),
 
-				(key: \addTrack, midiNum: 53),
-				(key: \session, midiNum: 51),
-				(key: \shift, midiNum: 49),
-				(key: \left, midiNum: 44),
-				(key: \right, midiNum: 45),
-				(key: \up, midiNum: 46),
-				(key: \down, midiNum: 47)
+				(key: \master, 		midiNum: 28, style: (row: 3.0, column: 10, height: 0.6)),
+				(key: \stop, 		midiNum: 29, style: (row: 3.5, column: 10, height: 0.6)),
+
+
+				(key: \volume, 	midiNum: 114, style: (row: 1.0, column: 11, height: 0.8)),
+				(key: \track, 	midiNum: 112, style: (row: 1.6, column: 11, height: 0.8)),
+				(key: \device, 	midiNum: 110, style: (row: 2.2, column: 11, height: 0.8)),
+
+				(key: \in, 		midiNum:  62, style: (row: 3.0, column: 11, height: 0.8)),
+				(key: \mute, 	midiNum:  60, style: (row: 3.6, column: 11, height: 0.8)),
+				(key: \scales, 	midiNum:  58, style: (row: 4.2, column: 11, height: 0.8)),
+				(key: \repeat, 	midiNum:  56, style: (row: 4.8, column: 11, height: 0.8)),
+				(key: \octaveDown,midiNum:54, style: (row: 5.4, column: 11, height: 0.8)),
+
+				(key: \addEffect,midiNum:52, style:(row: 7.0, column: 11, height: 0.8)),
+				(key: \note, 	midiNum: 50, style: (row: 7.6, column: 11, height: 0.8)),
+				(key: \select, 	midiNum: 48, style: (row: 8.2, column: 11, height: 0.8)),
+
+				(key: \panSend, midiNum: 115, style: (row: 1.0, column: 12, height: 0.8)),
+				(key: \clip, 	midiNum: 113, style: (row: 1.6, column: 12, height: 0.8)),
+				(key: \browse, 	midiNum: 111, style: (row: 2.2, column: 12, height: 0.8)),
+
+				(key: \out, 	midiNum: 63, style: (row: 3.0, column: 12, height: 0.8)),
+				(key: \solo, 	midiNum: 61, style: (row: 3.6, column: 12, height: 0.8)),
+				(key: \user, 	midiNum: 59, style: (row: 4.2, column: 12, height: 0.8)),
+				(key: \accent, 	midiNum: 57, style: (row: 4.8, column: 12, height: 0.8)),
+				(key: \octaveUp,midiNum: 55, style: (row: 5.4, column: 12, height: 0.8)),
+
+				(key: \addTrack,midiNum: 53, style: (row: 7.0, column: 12, height: 0.8)),
+				(key: \session, midiNum: 51, style: (row: 7.6, column: 12, height: 0.8)),
+				(key: \shift, 	midiNum: 49, style: (row: 8.2, column: 12, height: 0.8)),
+
+				(key: \left, 	midiNum: 44, style: (row: 9.8, column: 11, height: 0.8)),
+				(key: \right, 	midiNum: 45, style: (row: 9.8, column: 12, height: 0.8)),
+				(key: \up, 		midiNum: 46, style: (row: 9.2, column: 11.5, height: 0.8)),
+				(key: \down, 	midiNum: 47, style: (row: 10.4, column: 11.5, height: 0.8))
 			]
 		),
 		(
@@ -220,8 +244,8 @@ elementsDesc: (
 				spec: 'midiCC', ioType: \in
 			),
 			elements: [
-				(key: '1', midiNum: 64),
-				(key: '2', midiNum: 69)
+				(key: '1', midiNum: 64, style: (row: 11, column: 11)),
+				(key: '2', midiNum: 69, style: (row: 11, column: 12))
 			]
 
 		)

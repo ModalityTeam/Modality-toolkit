@@ -1,6 +1,8 @@
 /*
 needs initialisation messages for different configs,
 see github/modality #24
+MKtlDesc.loadDescs("eowave*");
+m.free; m = MKtl(\eo, "eowave*").trace.gui;
 */
 
 (
@@ -29,36 +31,36 @@ deviceInfo: (
 ),
 
 elementsDesc: (
+	shared: (midiChan: 0),
 	elements: [
-	// ribbon
-	// [ noteOn, val, 127, num, 78, chan, 0, src, -1477523613 ]
-	// [ noteOff, val, 0, num, 78, chan, 0, src, -1477523613 ]
+		// ribbon
+		// [ noteOn, val, 127, num, 78, chan, 0, src, -1477523613 ]
+		// [ noteOff, val, 0, num, 78, chan, 0, src, -1477523613 ]
 		(
-			key: \ribbon,
-			shared: (midiChan: 0),
-			elements: [
-				(
-					key: \touch,
-					shared: (elementType: \slider, spec: \midiBut),
-					elements: (36..82).collect {|num, i|
-						MKtlDesc.notePair(i, num, (style: (row: 0, column: i)))
-					}
-				),
-				(
-					key: \bend,
-					midiMsgType: \bend, elementType: \slider, midiNum: 0, spec: \midiBend
-				),
-				(
-					key: \pressure,
-					midiMsgType: \cc, elementType: \slider, midiNum: 7, spec: \midiCC
-				),
-				// expressionPad
-				// [ cc, val, 0, num, 1, chan, 0, src, -1477523613 ]
-				(
-					key: \pad,
-					midiMsgType: \cc, elementType: \pad, midiNum: 1, spec: \midiCC
-				)
-			]
+			key: \rib,
+			shared: (elementType: \pad, groupType: \noteOnOffBut, spec: \midiBut),
+			elements: (36..82).collect {|num, i|
+				(key: i, midiNum: num, shared:
+					(style: (row: 0, column: i * 0.8, height: 1.5, width: 0.9,
+						showLabel: true, label: i)))
+			}
+		),
+		(
+			key: \bend,
+			midiMsgType: \bend, elementType: \slider, midiNum: 0, spec: \midiBend,
+			style: (row: 1.5, column: 3, width: 4, height: 1)
+		),
+		(
+			key: \pressure,
+			midiMsgType: \cc, elementType: \slider, midiNum: 7, spec: \midiCC,
+			style: (row: 1.5, column: 8, width: 4, height: 1)
+		),
+		// expressionPad
+		// [ cc, val, 0, num, 1, chan, 0, src, -1477523613 ]
+		(
+			key: \pad,
+			midiMsgType: \cc, elementType: \pad, midiNum: 1, spec: \midiCC,
+			style: (row: 1.5, column: 0, width: 2)
 		)
 	]
 )

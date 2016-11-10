@@ -6,18 +6,17 @@
 
 TODO:
 * has 611 elements ATM .. is this correct?
-* will need GUI layout
-* use some kind of paging for gui with 600+ elements.
+* will need GUI layout, by somebody who knows what exactly?
+* will need some kind of gui paging with 600+ elements.
+* did simple gui paging, I hope this is correct. FIXME PLEASE.
 ***
 
 thisProcess.nowExecutingPath.basename.split($.).first.postcs;
 d = MKtlDesc.loadDescs("*istage").first;
-d.web;
-
-m.free; m = MKtl(\ic, "*istage"); m.gui;
-m.trace;
-m.elementsDict.size;
-m.postElements;
+d.elementsDict.size;
+d.postElements;
+// d.web;
+m.free; m = MKtl(\ic, "*istage"); m.gui; m.trace;
 */
 
 (
@@ -51,46 +50,66 @@ elementsDesc: (
 		(
 			key: \cf, \midiMsgType: \cc, \elementType: \xfader,
 			\midiChan: 0, \midiNum: 7, \spec: \midiCC,
+			style: (row: 4, column: 0, width: 2, height: 1)
 		),
 		(
+			// just put these somewhere, and on 12 pages - fix when we know how.
 			key: \bt,
-			shared: (\elementType: \button,
-				spec: \midiBut, \mode: \push),
-			elements: (0..19).collect { |num|
+			shared: (\elementType: \pad,
+			spec: \midiBut, \mode: \push),
+			elements: (0..19).collect { |num, j|
 				(
-					elements: (0..11).collect { |chan|
-						MKtlDesc.notePair(midiNum: num, shared: (midiChan: chan))
+					// guessing that these are paged?
+					shared: (groupType: \noteOnOffBut),
+					elements: (0..11).collect { |chan, i|
+						(midiNum: num, shared: (midiChan: chan, page: i,
+							style: (row: 6, column: j * 0.8))
+						)
 					}
 				)
-			}),
+			}
+		),
 		(
+			// just put them somewhere, fix when we know which page etc
 			key: \play,
-			shared: (\elementType: \button, \midiChan: 12,
-				spec: \midiBut, \mode: \push),
-			elements: (0..19).collect { |num| MKtlDesc.notePair(midiNum: num) }),
+			shared: (\elementType: \pad, groupType: \noteOnOffBut, \midiChan: 12,
+			spec: \midiBut, \mode: \push),
+			elements: (0..19).collect { |num, j|
+				(midiNum: num, shared: (style: (row: 7, column: j * 0.8)))
+			}
+		),
+
 		(
+			// these are physically correctly placed
 			key: \stop,
-			shared: (\elementType: \button, \midiNum: 103,
+			shared: (\elementType: \pad, groupType: \noteOnOffBut, \midiNum: 103,
 				spec: \midiBut, \mode: \push),
-			elements: (0..12).collect { |chan|
-				MKtlDesc.notePair(midiNum: 103, shared: (midiChan: chan))
+			elements: (0..12).collect { |chan, i|
+				(midiNum: 103, shared: (midiChan: chan, style: (row: 4, column: i + 2))
+				)
 			}
 		),
 
 	// drummer
 		(
 			key: \bluL,
-			shared: (\elementType: \button, \midiChan: 9,
-				spec: \midiVel, \mode: \push),
-			elements: (60..75).collect { |num| MKtlDesc.notePair(midiNum: num) }),
+			shared: (\elementType: \pad, groupType: \noteOnOffBut, \midiChan: 9,
+			spec: \midiVel, \mode: \push),
+			elements: (60..75).collect { |num, i|
+				(midiNum: num, shared: (style: (row: i div: 4, column: i % 4 + 2)))
+			}
+		),
 
 		// duplication in here (42)!
 		(
 			key: \red,
-			shared: (\elementType: \button, \midiChan: 9,
+			shared: (\elementType: \pad, groupType: \noteOnOffBut, \midiChan: 9,
 				spec: \midiVel, \mode: \push),
 			elements: #[35,48,37,36, 49,47,40,38, 50,45,42,42, 51,43,46,44]
-			.collect { |num, i| MKtlDesc.notePair(midiNum: num) })
+			.collect { |num, i|
+				(midiNum: num, shared: (style: (row: i div: 4, column: i % 4 + 6)))
+			}
+		)
 	]
 
 /*++
