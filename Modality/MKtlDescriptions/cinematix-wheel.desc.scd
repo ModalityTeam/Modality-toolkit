@@ -9,19 +9,16 @@ and the last 4 bits of note number are the wheel index.
 
 // test as MKtl
 c = MKtl(\cin, "cinematix-wheel");
+
 MKtlDesc.loadDescs.size;
 MKtlDesc.writeCache;
 g = c.trace.gui;
-c.elAt.action = { |el| "action: %, %\n".postf(el.name.cs, el.value.round(0.001)) };
+c.elAt.action = { |el| "action! %, %, %\n".postf(el.source, el.name.cs, el.value.round(0.001)) };
 
 c.elAt(0).deviceValueAction_(1023);
 10.do { c.elAt(16.rand).deviceValueAction_(1024.rand); };
 
-// cannot disable gui? fixme!
-c.elAt(0).disable;
-c.elAt(0).deviceValueAction_(512);
-
-// the coding seems to be :
+// the coding given in modality issues #177 seems to be :
 // 7 bits of value are crude wheel position value,
 // first 3 bits of note are extra precision,
 // last 4 bits of note are wheel index.
@@ -70,7 +67,6 @@ MIDIIn.noteOn.value(0, 0, 15, 64);
 ~fakeCinIn.(*[16.rand, 1023.rand].postln);
 */
 
-"reading me".postln;
 (
 	idInfo: "CinematixWheel",
 	protocol: \virtual,
