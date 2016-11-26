@@ -97,9 +97,11 @@ elementsDesc: (
 			shared: (elementType: \pianoKey, spec: \midiVel, midiChan: 0),
 			elements: (0..127).collect { |midinum, i|
 				var pos = Piano.pos(midinum % 48, 0);
-				(key: i.asSymbol, midiNum: midinum,
+				(key: i.asSymbol,
 					groupType: \noteOnOff,
-					shared: (groupType: \noteOnOff,
+					shared: (
+						groupType: \noteOnOff,
+						midiNum: midinum,
 						style: (
 							row: 7 - (i div: 48 * 2) + (pos.y * 0.9),
 							column: pos.x * 0.8,
