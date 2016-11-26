@@ -25,12 +25,26 @@ MKtlElementView {
 			'knob': { |parent, bounds, label|
 				Knob( parent, bounds.insetBy( MKtlGUI.margin ) );
 			},
+
 			'pad': { |parent, bounds, label|
 				MPadView( parent, bounds.insetBy( MKtlGUI.margin ) )
 				.useUpValue_( true )
 				.label_(label ? "")
 				.autoUpTime_( 0.2 );
 			},
+			'hexpad': { |parent, bounds, label|
+				MHexPad( parent, bounds.insetBy( MKtlGUI.margin ) )
+				.useUpValue_( true )
+				.label_(label ? "")
+				.autoUpTime_( 0.2 );
+			},
+			'roundpad': { |parent, bounds, label|
+				MRoundPad( parent, bounds.insetBy( MKtlGUI.margin ) )
+				.useUpValue_( true )
+				.label_(label ? "")
+				.autoUpTime_( 0.2 );
+			},
+
 			'padUp': { |parent, bounds, label, redirectView|
 				MPadUpViewRedirect( redirectView )
 			},
@@ -82,13 +96,12 @@ MKtlElementView {
 
 			'pianoKey': \pad,
 
-			// 'pianoKey' 		-> PianoKeyView for [noteOn, off, (touch)]
 			// 'compass'		-> CompassView as on gamepads
 			// 'stick' 			-> StickView - thumbstick with x, y, hat
 			// 'cvIn' 'cvOut'	-> VU-meter,  qunexus,
-			// 'led' : 			-> LEDView, w color, goes from 0-1 intensity
+			// 'led' : 			-> LEDView w color, from 0-1 intensity
 			// 'option'	?
-			// 'voltage' - VU-meter?
+			// 'voltage' - a VU-meter?
 
 		);
 	}
