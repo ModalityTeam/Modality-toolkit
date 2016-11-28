@@ -971,9 +971,9 @@ When exploring a MIDI device only the incoming MIDI is analysed - MIDI devices d
 
 subsection:: Save description file and test it
 
-If you are happy with the generated document, save it with a meaningful name to the descriptions folder. You can open that folder with
+If you are happy with the generated document, save it with a meaningful name to the user  folder for descriptions, which is here:
 code::
-MKtlDesc.openFolder;
+MKtlDesc.userFolder.openOS;
 ::
 The filename should be "<company-devicename-extra-info>", and must end in code::".desc.scd"::.
 After adding a new desc file, please do
@@ -982,10 +982,10 @@ MKtlDesc.writeCache;
 ::
 
 You are highly welcome to contribute your desc files to modality!
-In case this makes little sense (selfmade or modified controllers),
-you can also put your descs in a private desc folder known to MKtlDesc:
+Especially when they are generally useful (i.e. not for a selfmade or customized device
+that only you have), you can save it to the defaultFolder, and submit a pull request at github, or mail it to the modality list.
 code::
-MKtlDesc.addFolder("~/path/to/my/descs/");
+MKtlDesc.defaultFolder.openOS;
 ::
 
 To test your new description file, restart SuperCollider and follow instructions in link::Tutorials/ModalityTutorial::.

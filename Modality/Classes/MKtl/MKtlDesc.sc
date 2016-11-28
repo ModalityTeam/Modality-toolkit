@@ -10,6 +10,7 @@ MKtlDesc {
 	classvar <descExt = ".desc.scd", <compExt = ".comp.scd";
 	classvar <parentExt = ".parentDesc.scd";
 	classvar <descFolders;
+	classvar <userFolder;
 
 	classvar <allDescs;
 	classvar <cacheName = "_allDescs.cache.scd";
@@ -29,7 +30,8 @@ MKtlDesc {
 	*initClass {
 		defaultFolder = MKtlDesc.filenameSymbol.asString.dirname.dirname.dirname
 		+/+ folderName;
-		descFolders = List[defaultFolder];
+		this.checkUserFolder;
+		descFolders = List[defaultFolder, userFolder];
 		allDescs =();
 		isElemFunc = { |el|
 			el.isKindOf(Dictionary) and: { el[\elements].isNil }
@@ -40,6 +42,13 @@ MKtlDesc {
 		this.initGroupFuncs;
 
 		this.loadCache;
+	}
+
+	*checkUserFolder {
+		userFolder = Platform.userAppSupportDir +/+ folderName;
+		if (userFolder.pathMatch.isEmpty) {
+			File.mkdir(userFolder)
+		};
 	}
 
 	*initGroupFuncs {

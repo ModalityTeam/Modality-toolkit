@@ -27,9 +27,11 @@ Folders:
 
 code::
 MKtlDesc.defaultFolder;			  // where modality puts descriptions
-MKtlDesc.addFolder("~/Desktop/"); // Add custom folders
+MKtlDesc.userFolder;			  // where user can put personalized descriptions
+
+MKtlDesc.addFolder("~/Desktop/"); // Add custom folders if desired
 MKtlDesc.descFolders;			  // which show up here
-MKtlDesc.openFolder(0);			  // open by index, 0 is defaultFolder
+MKtlDesc.openFolder(0);			  // open by index, 0 is defaultFolder, 1 is userFolder
 MKtlDesc.openFolder(1);
 ::
 
@@ -89,8 +91,11 @@ PRIVATE:: initClass, docURI, parentExt, webview
 METHOD:: defaultFolder
 the path where the folder for MKtlDesc files lives.
 
+METHOD:: userFolder
+the path where users can put personalized MKtlDesc files.
+
 METHOD:: folderName
-the filename of the defaultFolder.
+the name of the defaultFolder and userFolder.
 
 METHOD:: descFolders
 all descFolders within which to look for MKtlDesc files.
