@@ -564,7 +564,7 @@ MKtl { // abstract class
 	// remake elements from new desc,
 	// close mktldevice if there,
 	// and try to open a new one
-	rebuild { |descNameOrDict| // could be a string/symbol or dictionary
+	rebuild { |descNameOrDict, lookAgain, multiIndex| // could be a string/symbol or dictionary
 		var newDesc;
 		// always replace desc,
 		// if none given, rebuild from existing:
@@ -583,7 +583,7 @@ MKtl { // abstract class
 		this.closeDevice;
 
 		desc = newDesc;
-		this.init(desc);
+		this.init(desc, lookForNew: lookAgain, multiIndex: multiIndex);
 		this.changed( \elementGroup );
 	}
 
@@ -640,7 +640,7 @@ MKtl { // abstract class
 			"%: replacing idInfo: % with: % to openDevice.\n"
 			.postf(this, desc.idInfo.cs, idInfo.cs);
 			this.desc.fullDesc.put(\idInfo, idInfo);
-			this.rebuild;
+			this.rebuild(lookAgain: lookAgain, multiIndex: multiIndex);
 		};
 	}
 
