@@ -4,12 +4,30 @@ CATEGORIES::Libraries/Modality
 RELATED:: Overviews/Modality, Classes/MKtl
 
 DESCRIPTION::
-Providing help for accessing/communicating with an Ableton Push. Currently implements an interface to conveniently set colors.
+MKtl class that simplifies interfacing the Ableton Push (1) controller.
+Otherwise behaves as its parent MKtl.
+
+Currently only implements an interface to set color LEDs.
+
+note::
+Currently no support for the display.
+::
+
 
 CLASSMETHODS::
 
-METHOD:: buttonLightCode
-returns a cc-number representing the color specified by given arguments.
+METHOD:: new
+argument:: name
+a name
+
+argument:: multiIndex
+should be 1, unless you have several, then it is 3, 5, etc.
+
+METHOD:: buttonLight
+returns a 7bit CC-number representing the color specified by given arguments.
+
+argument:: color
+A Symbol representing the color.
 
 argument:: intensity
 can be either code::\dim::, code::\full:: or code::\half:: (2nd row only)
@@ -17,22 +35,25 @@ can be either code::\dim::, code::\full:: or code::\half:: (2nd row only)
 argument:: blink
 can be either code::\steady::, code::\slow:: or code::\fast:: (not yet implemented for 2nd row)
 
-argument:: color
-A Symbol representing the color.
-
-code::
-MPush.lightDict.topRowColor.keys; // 1st row
-MPush.lightDict.padColor.keys; // 2nd row
-::
 
 argument:: row
 either code::0:: or code::1::.
 
+code::
+// print available colors
+MPush.lights.topRowColor.keys; // 1st row
+MPush.lights.padColor.keys; // 2nd row
+::
 
 
 
-METHOD:: padLightCode
-returns a velocity representing the color specified by the given arguments.
+
+
+METHOD:: padLight
+returns a 7bit velocity representing the color specified by the given arguments.
+
+argument:: color
+A Symbol representing the color.
 
 argument:: intensity
 can be either code::\dim::, code::\full:: or code::\half::
@@ -40,28 +61,95 @@ can be either code::\dim::, code::\full:: or code::\half::
 argument:: blink
 can be either code::\steady::, code::\slow:: or code::\fast:: (not yet implemented)
 
-argument:: color
-A Symbol representing the color.
 
 code::
-MPush.lightDict.padColor.keys;
+// print available colors
+MPush.lights.padColor.keys;
 ::
 
-argument:: row
-The row of the pads
 
-
+method:: lights
+dictionary with light definitions.
 
 
 code::
 (
 2.do{|i|
-	MKtl('bltn1').elementAt(\colorBut, i).flat.do{|el| el.rawValue_(MPush.buttonLightCode(intensity: \full, color: \red, row: i)).prMaybeSend;};
+	MKtl('bltn1').elementAt(\colorBut, i).flat.do{|el| el.rawValue_(MPush.buttonLight(intensity: \full, color: \red, row: i)).prMaybeSend;};
 };
 8.do{|i|
-	MKtl('bltn1').elementAt(\pad, \on, i).flat.do{|el| el.rawValue_(MPush.padLightCode(intensity: \full, color: 60)).prMaybeSend;};
+	MKtl('bltn1').elementAt(\pad, \on, i).flat.do{|el| el.rawValue_(MPush.padLight(intensity: \full, color: 60)).prMaybeSend;};
 }
 )
 ::
 
+INSTANCEMETHODS::
 
+METHOD:: lightsOff
+turn off all lights.
+
+
+METHOD:: setBtLight, setCtlLight, setPadLight
+argument:: elem
+element to be set. should be of type specified by method
+argument:: color
+A Symbol representing the color.
+
+argument:: intensity
+can be either code::\dim::, code::\full:: or code::\half::
+
+argument:: blink
+can be either code::\steady::, code::\slow:: or code::\fast:: (not implemented for pads)
+
+set light of a specific element
+
+
+
+Examples::
+
+code::
+// create Mktl for the Push controller, it has two ports, the 2nd one is the "default"
+
+// make sure, ableton is not running (it grabs the device)
+k = MPush('push');
+
+
+k.trace(true);
+// wiggle some pots / buttons
+
+k.trace(false);
+
+
+k.elAt(\pad, \8, \1); // symbols represent button names (typically starting at 1), integers are indices (starting at 0)
+
+// set an action to post aftertouch values
+k.elAt(\pad, \8, \1).action = {|el|
+	el.value.postln;
+}
+
+// remove action
+k.elAt(\pad, \8, \1).action= nil;
+
+
+// on-action:
+
+k.elAt(\pad, \8, \1, \on).action = {|el|
+	"on:\t%".format(el.value).postln
+}
+
+// off-action:
+
+k.elAt(\pad, \8, \1, \off).action = {|el|
+	"off:\t%".format(el.value).postln
+}
+
+// set lights
+k.setPadLight(k.elAt(\pad, \8, \1, \on), \green);
+k.setBtLight(k.elementAt(\bt, 0, 0), \green);
+k.setBtLight(k.elementAt(\bt, 1, 0), \blue);
+k.setCtlLight(k.elementAt(\btCtl), blink: \slow);
+k.setCtlLight(k.elementAt(\btCtl), blink: \steady);
+
+// turn off all lights
+k.lightsOff
+::

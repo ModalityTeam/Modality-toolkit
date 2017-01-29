@@ -1,54 +1,54 @@
 MPush : MKtl{
-	classvar <lightDict;
+	classvar <lights;
 
 	*new {|name, multiIndex = 1 |
 		^super.new(name, "ableton-push", multiIndex: multiIndex)
 	}
 
 	*initClass {
-		lightDict = ();
+		lights = ();
 
 
-		lightDict.ctlIntensity = IdentityDictionary[
+		lights.ctlIntensity = IdentityDictionary[
 			\off    -> 0,
 			\dim    -> 1,
 			\full   -> 7,
 		];
 
 
-		lightDict.topRowIntensity = IdentityDictionary[
+		lights.topRowIntensity = IdentityDictionary[
 			\dim -> 0,
 			\full-> 1
 		];
 
-		lightDict.topRowBlink = IdentityDictionary[
+		lights.topRowBlink = IdentityDictionary[
 			\steady -> 0,
 			\slow   -> 1,
 			\fast   -> 2
 		];
 
 
-		lightDict.topRowColor = IdentityDictionary[
+		lights.topRowColor = IdentityDictionary[
 			\red    -> 0,
 			\orange -> 1,
 			\yellow  -> 2,
 			\green  -> 3,
 		];
 
-		lightDict.padIntensity = IdentityDictionary[
+		lights.padIntensity = IdentityDictionary[
 			\dim  -> 2,
 			\half -> 1,
 			\full -> 0
 		];
 
-		// lightDict.padBlink = IdentityDictionary[
+		// lights.padBlink = IdentityDictionary[
 		// 	\steady -> 0,
 		// 	\slow   -> 1,
 		// 	\fast   -> 2
 		// ];
 
 
-		lightDict.padColor = IdentityDictionary[
+		lights.padColor = IdentityDictionary[
 			\red     ->  0,
 			\amber   ->  1,
 			\yellow  ->  2,
@@ -68,14 +68,14 @@ MPush : MKtl{
 
 	}
 
-	*buttonLightCode {|intensity = \full, blink = \steady, color = \red, row = 0|
+	*buttonLight {|color = \red, intensity = \full, blink = \steady, row = 0|
 		(row > 0).if({
-			^this.padLightCode(intensity, blink, color)
+			^this.padLight(color, intensity, blink)
 		});
 
-		intensity = lightDict.topRowIntensity  [intensity] ? intensity;
-		blink     = lightDict.topRowBlink      [blink] ? blink;
-		color     = lightDict.topRowColor[color] ? color;
+		intensity = lights.topRowIntensity  [intensity] ? intensity;
+		blink     = lights.topRowBlink      [blink] ? blink;
+		color     = lights.topRowColor[color] ? color;
 
 		^intensity.notNil.if({
 			(color * 6) + (intensity  * 3) + blink + 1
@@ -84,9 +84,9 @@ MPush : MKtl{
 		});
 	}
 
-	*padLightCode {|intensity = \full, blink = \steady, color = \red|
-		intensity = lightDict.padIntensity  [intensity] ? intensity;
-		color     = lightDict.padColor[color] ? color;
+	*padLight {|color = \red, intensity = \full, blink = \steady|
+		intensity = lights.padIntensity  [intensity] ? intensity;
+		color     = lights.padColor[color] ? color;
 
 		^(color == 60).if({
 			60
@@ -96,32 +96,32 @@ MPush : MKtl{
 	}
 
 	lightsOff {
-		this.setCtlLight(\btCtl, \off);
-		this.setCtlLight(\btLen, \off);
-		this.setBtLight(this.elementAt(\bt, 0), \off);
-		this.setBtLight(this.elementAt(\bt, 1), \off);
-		this.setPadLight(\pad, \off);
+		this.setCtlLight(\btCtl, intensity: \off);
+		this.setCtlLight(\btLen, intensity: \off);
+		this.setBtLight(this.elementAt(\bt, 0), intensity: \off);
+		this.setBtLight(this.elementAt(\bt, 1), intensity: \off);
+		this.setPadLight(this.elAt(\pad), intensity: \off);
 	}
 
 
-	setPadLight {|elem, intensity = \full, blink = \steady, color = \red|
+	setPadLight {|elem, color = \red, intensity = \full, blink = \steady|
 		elem.isKindOf(Symbol).if{
-			elem = this.elementAt(elem, \on);
+			elem = this.elAt(elem, \on);
 		};
-		elem.bubble.flat.do{|e| e.deviceValue_(this.class.padLightCode(intensity, blink, color))};
+		elem.bubble.flat.do{|e| e.deviceValue_(this.class.padLight(color, intensity, blink))};
 	}
 
-	setCtlLight {|elem, intensity = \full, blink = \steady, color = \red|
+	setCtlLight {|elem, color = \red, intensity = \full, blink = \steady|
 		elem.isKindOf(Symbol).if{
-			elem = this.elementAt(elem);
+			elem = this.elAt(elem);
 		};
-		elem.bubble.flat.do{|e| e.deviceValue_(this.class.buttonLightCode(intensity, blink, color))};
+		elem.bubble.flat.do{|e| e.deviceValue_(this.class.buttonLight(color, intensity, blink))};
 	}
 
-	setBtLight {|elem, intensity = \full, blink = \steady, color = \red|
+	setBtLight {|elem, color = \red, intensity = \full, blink = \steady|
 		elem.isKindOf(Symbol).if{
-			elem = this.elementAt(elem);
+			elem = this.elAt(elem);
 		};
-		elem.bubble.flat.do{|e| e.deviceValue_(this.class.buttonLightCode(intensity, blink, color, elem.parent.index))}
+		elem.bubble.flat.do{|e| e.deviceValue_(this.class.buttonLight(color, intensity, blink, elem.parent.index))}
 	}
 }

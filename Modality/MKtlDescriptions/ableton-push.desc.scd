@@ -42,33 +42,62 @@ elementsDesc: (
 		//------ encoderTopRow
 		(
 			key: \kn,
-			elements: [
+			elements:
+			( 0.. 8 ).collect { |num, i|
 				(
-					key: \touch,
-					shared: (
-						elementType: 'pad', groupType: \noteOnOffBut,
-						spec: \midiVel
-					),
-					elements: ( 0.. 8 ).collect { |num, i|
+					key: (num+1).asSymbol,
+					elements: [
 						(
-							key: (num+1).asSymbol, midiNum: num,
-							shared: (style: (row: -0.5, column: i + 2, height: 0.7))
+							key: \touch,
+							groupType: \noteOnOffBut,
+							shared: (
+								elementType: 'button', spec: \midiVel,
+								midiNum: num,
+								style: (row: -0.5, column: i + 2, height: 0.7)
+							)
+						),
+						(
+							key: \turn,
+							midiNum: 71+num,
+							midiMsgType: \cc, elementType: \encoder,
+							spec: \midiCC,
+							style: (row: 0, column: 2 + i)
 						)
-					}
-				),
-				(
-					key: \turn,
-					shared: (midiMsgType: \cc, elementType: \encoder, spec: \midiCC),
-					elements: (71..79).collect { |num, i|
-						(midiNum: num, style: (row: 0, column: 2 + i))
-					}
+					]
 				)
-			]
+			}
+
+
+			// [
+			// 	(
+			// 		key: \touch,
+			// 		shared: (
+			// 			elementType: 'button', spec: \midiVel,
+			// 			groupType: \noteOnOffBut,
+			// 		),
+			// 		elements: ( 0.. 8 ).collect { |num, i|
+			// 			(
+			// 				key: (num+1).asSymbol,
+			// 				shared: (
+			// 					midiNum: num,
+			// 					style: (row: -0.5, column: i + 2, height: 0.7)
+			// 				)
+			// 			)
+			// 		}
+			// 	),
+			// 	(
+			// 		key: \turn,
+			// 		shared: (midiMsgType: \cc, elementType: \encoder, spec: \midiCC),
+			// 		elements: (71..79).collect { |num, i|
+			// 			(midiNum: num, style: (row: 0, column: 2 + i))
+			// 		}
+			// 	)
+			// ]
 		),
 		//------ pads -------------
 		(
 			key: \pad,
-			shared: (elementType: \pad, groupType: \noteOnOffTouch),
+			shared: (elementType: \pad, groupType: \noteOnOffTouch, ioType: \inout),
 			elements: (36..99).clump(8).reverse.collect { |rownums, i|
 				(
 					elements: rownums.collect { |num, j|
@@ -84,9 +113,10 @@ elementsDesc: (
 			key: \ribbon,
 			elements: [
 				(
-					key: \touch, midiNum: 12,
+					key: \touch,
 					groupType: \noteOnOffBut,
 					shared: (
+						midiNum: 12,
 						groupType: \noteOnOffBut,
 						elementType: 'pad',
 						midiChan: 0,
@@ -108,9 +138,10 @@ elementsDesc: (
 			key: \knLeft,
 			elements: [
 				(
-					key: \touch, midiNum: 10,
+					key: \touch,
 					groupType: \noteOnOffBut,
 					shared: (
+						midiNum: 10,
 						elementType: \pad, groupType: \noteOnOffBut,
 						spec: \midiVel,
 						style: (row: 3, column: 0, height: 0.4)
@@ -130,9 +161,10 @@ elementsDesc: (
 			key: \knRight,
 			elements: [
 				(
-					key: \touch, midiNum: 9,
+					key: \touch,
 					groupType: \noteOnOffBut,
 					shared: (
+						midiNum: 9,
 						elementType: \pad, groupType: \noteOnOffBut,
 						spec: \midiVel,
 						style: (row: 3, column: 1, height: 0.4)
@@ -155,11 +187,16 @@ elementsDesc: (
 				spec: 'midiCC', ioType: \inout),
 			elements: [(20..27), (102..109)].collect { |row, i|
 				(
-					shared: (groupType: \noteOnOffBut),
+					// shared: (groupType: \noteOnOffBut),
 					elements: row.collect { |num, j|
-						(midiNum: num,
-							shared: (style: (row: i * 0.5 + 3, column: j + 2, height: 0.6)))
-				})
+						(
+							midiNum: num,
+							shared: (
+								style: (row: i * 0.5 + 3, column: j + 2, height: 0.6)
+							)
+						)
+					}
+				)
 			}
 		),
 		//------ note length buttons
