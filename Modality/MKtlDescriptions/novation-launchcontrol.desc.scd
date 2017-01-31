@@ -69,9 +69,10 @@ elementsDesc: (
 					shared: ('elementType': 'pad', 'spec': 'midiNote', \ioType: \inout),
 					elements: ((9..12) ++ (25..28)).collect{|num, i|
 						(
-							key: (i+1).asSymbol, midiNum: num,
+							key: (i+1).asSymbol,
 							groupType: \noteOnOffBut,
 							shared: (
+								midiNum: num,
 								style: ( row: 2, column: i )
 							)
 						)

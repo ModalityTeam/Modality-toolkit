@@ -88,8 +88,9 @@ elementsDesc: (
 							elements: ((41..44) ++ (57..60)).collect{|num, i|
 
 								(
-									key: (i+1).asSymbol, midiNum: num,
+									key: (i+1).asSymbol,
 									shared:(
+										midiNum: num,
 										style: (
 											row: 7,
 											column: i
@@ -104,8 +105,9 @@ elementsDesc: (
 								'spec': 'midiNote', \ioType: \inout),
 							elements:  ((73..76) ++ (89..92)).collect { |num, i|
 								(
-									key: (i+1).asSymbol, midiNum: num,
+									key: (i+1).asSymbol,
 									shared:(
+										midiNum: num,
 										style: ( row: 8, column: i )
 									)
 								)
@@ -128,8 +130,8 @@ elementsDesc: (
 						var key, num, row, col;
 						#key, num, row, col = list;
 						(
-							key: key, midiNum: num,
-							shared: (style: (row: row, column: col ))
+							key: key,
+							shared: (midiNum: num, style: (row: row, column: col ))
 						)
 					}
 				),
