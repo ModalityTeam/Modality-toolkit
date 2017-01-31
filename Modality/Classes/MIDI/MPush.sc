@@ -1,15 +1,8 @@
-MPush2 : MPush {
-	*new {|name, multiIndex = 0 |
-		^this.fromMKtl(MKtl(name, "ableton-push-2", multiIndex: multiIndex))
-	}
-}
-
 MPush : MKtl{
 	classvar <lights;
 
 	*new {|name, multiIndex = 1 |
-		^this.fromMKtl(MKtl(name, "ableton-push", multiIndex: multiIndex))
-		// ^super.new(name, "ableton-push", multiIndex: multiIndex)
+		^super.new(name, "ableton-push", multiIndex: multiIndex)
 	}
 
 	*fromMKtl {|mktl|

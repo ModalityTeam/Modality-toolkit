@@ -1,16 +1,17 @@
 TITLE::MPush
 SUMMARY::Helper methods to interface with the Ableton Push
 CATEGORIES::Libraries/Modality
-RELATED:: Overviews/Modality, Classes/MKtl, Classes/MPush2
+RELATED:: Overviews/Modality, Classes/MKtl
 
 DESCRIPTION::
-MKtl class that simplifies interfacing the Ableton Push (1) controller.
+MKtl class that simplifies interfacing the Ableton Push 1 controller.
 Otherwise behaves as its parent MKtl.
 
 Currently only implements an interface to set color LEDs.
 
 note::
 Currently no support for the display.
+For the Push 2, please just use the standard MKtl for now and refer to link::https://github.com/Ableton/push-interface/blob/master/doc/AbletonPush2MIDIDisplayInterface.asc#LEDs:: to set its LEDs.
 ::
 
 
