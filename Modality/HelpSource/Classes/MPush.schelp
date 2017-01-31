@@ -1,7 +1,7 @@
 TITLE::MPush
 SUMMARY::Helper methods to interface with the Ableton Push
 CATEGORIES::Libraries/Modality
-RELATED:: Overviews/Modality, Classes/MKtl
+RELATED:: Overviews/Modality, Classes/MKtl, Classes/MPush2
 
 DESCRIPTION::
 MKtl class that simplifies interfacing the Ableton Push (1) controller.

@@ -1,3 +1,9 @@
+MPush2 : MPush {
+	*new {|name, multiIndex = 0 |
+		^super.new(name, "ableton-push-2", multiIndex: multiIndex)
+	}
+}
+
 MPush : MKtl{
 	classvar <lights;
 
