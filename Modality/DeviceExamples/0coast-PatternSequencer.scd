@@ -4,6 +4,7 @@ MKtl(\nocoast).openDeviceVia("USB MIDI Device", true, 1);
 
 // test
 MKtl(\nocoast).elAt(\key, 50, \on).deviceValue_(127);
+
 MKtl(\nocoast).elAt(\key, 50, \off).deviceValue_(0);
 
 MKtl(\nocoast).elAt(\key, 55, \on).deviceValue_(127);
@@ -20,7 +21,7 @@ MKtl(\nocoast).elAt(\key, 55, \off).deviceValue_(0);
 
 
 // portamento?
-MKtl(\nocoast).elAt(\ctl, \portamento).deviceValue_(0)
+MKtl(\nocoast).elAt(\ctl, \portamento).deviceValue_(1)
 
 
 
@@ -39,6 +40,7 @@ MKtl(\nocoast).elAt(\ctl, \gateB).deviceValue_(0);
 
 )
 
+MKtl(\nocoast).elAt(\ctl, \gateB).deviceValue_(4);
 
 
 // midiA
@@ -59,8 +61,9 @@ Pdef(\player, Pbind(
 	\midicmd, \noteOn,
 	\midiout, MKtl(\nocoast).device.midiOut,
 	\chan, MKtl(\nocoast).elAt(\key).elemDesc.midiChan,
-	\degree, Pseq([0, 1, 4, 10, 4, 24, 3], inf),
-	\octave, Pseq([1, 5, 5, 5], inf),
+	\ctranspose, 2,
+	\note, Pslide([0, 2, 3, 5]-3, inf, 3, 1, 0),
+	\octave, Pseq([3], inf),
 	\dur, Pkey(\mydur),
 	\sustain, {~dur/4}
 ))
@@ -73,16 +76,18 @@ Pdef(\player).gui
 
 /// just another pattern on midiB
 (
-Pdef(\playerB).quant = 4;
+Pdef(\playerB).quant = [4, 1];
 Pdef(\playerB, Pbind(
 	\type, \midi,
 	\midicmd, \noteOn,
 	\midiout, MKtl(\nocoast).device.midiOut,
 	\chan, 1,
 	// \degree, Pseq([0, 4, 4, 12], inf),
-	\octave, Pseq([2, 3, 4], inf),
-	\dur, Pfunc({8 * Pdef(\player).get(\dur)}),
-	\sustain, {~dur},
+	\degree, Pseq((0!16) ++ (1!16), inf),
+	// \octave, Pseq([2, 4] * [1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2], inf),
+	\octave, Pseq([2, 44], inf) * Pseq([1, 1, 0, 1], inf),
+	\dur, Pfunc({2 * Pdef(\player).get(\mydur)}),
+	\sustain, Pkey(\dur) * Pseq([Pseries(0.01, 0.01, 32)], inf),
 )).play
 )
 
