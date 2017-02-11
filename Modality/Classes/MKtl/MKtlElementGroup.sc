@@ -195,7 +195,6 @@ MKtlElementGroup : MKtlElement {
 	}
 
 	indexOf { |item|
-		"// using %\n".postf(thisMethod);
 		^this.elemIndexOf(item);
 	}
 
