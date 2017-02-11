@@ -314,7 +314,12 @@ OSCMKtlDevice : MKtlDevice {
 
 	sendSpecialMessage { |messages|
 		if (destination.notNil) {
-			messages.do { |msg| destination.sendMsg(*msg.postln) }
+			if(traceRunning) {
+				messages.do{|msg|
+					"% osc special sent > % ".format(mktl, msg).postln;
+				}
+			};
+			messages.do { |msg| destination.sendMsg(*msg) }
 		};
 	}
 }
