@@ -314,7 +314,7 @@ OSCMKtlDevice : MKtlDevice {
 
 	sendSpecialMessage { |messages|
 		if (destination.notNil) {
-			messages.do { |msg| destination.sendMsg(msg.postln) }
+			messages.do { |msg| destination.sendMsg(*msg.postln) }
 		};
 	}
 }
