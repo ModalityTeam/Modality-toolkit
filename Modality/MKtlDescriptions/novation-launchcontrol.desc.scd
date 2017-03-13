@@ -72,6 +72,7 @@ elementsDesc: (
 							key: (i+1).asSymbol,
 							groupType: \noteOnOffBut,
 							shared: (
+								groupType: \noteOnOffBut,
 								midiNum: num,
 								style: ( row: 2, column: i )
 							)
