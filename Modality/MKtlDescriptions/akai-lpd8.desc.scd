@@ -92,7 +92,6 @@ deviceInfo: (
 elementsDesc: (
 	// key: \lpd8,
 	'shared': ( midiChan: 0),
-
 	elements: [
 		(
 			key: \kn,
@@ -106,7 +105,7 @@ elementsDesc: (
 		),
 		(
 			key: \pad,
-			shared: (\elementType: \pad, groupType: \noteOnOff),
+			shared: (\elementType: \pad, groupType: \noteOnOff, \ioType: \inout),
 			elements: (36..43).collect { |num, i|
 				(
 					key: (i+1).asSymbol,
