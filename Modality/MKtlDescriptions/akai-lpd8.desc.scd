@@ -91,12 +91,12 @@ deviceInfo: (
 
 elementsDesc: (
 	// key: \lpd8,
-	'shared': (key: \shared, \ioType: \inout, midiChan: 0),
+	'shared': ( midiChan: 0),
 
 	elements: [
 		(
 			key: \kn,
-			shared: (\elementType: \knob, \midiMsgType: \cc,
+			shared: (\elementType: \knob, \midiMsgType: \cc, \ioType: \in,
 				\spec: \midiCC),
 			elements: (1..8).collect { |num, i|
 				(key: num.asSymbol, \midiNum: num,
@@ -107,10 +107,10 @@ elementsDesc: (
 		(
 			key: \pad,
 			shared: (\elementType: \pad, groupType: \noteOnOff),
-		 	elements: (36..43).collect { |num, i|
+			elements: (36..43).collect { |num, i|
 				(
-					midiNum: num, key: (i+1).asSymbol,
-					shared: (style: (row: 1 - (i div: 4), column: i % 4))
+					key: (i+1).asSymbol,
+					shared: ( midiNum: num, style: (row: 1 - (i div: 4), column: i % 4))
 				);
 			}
 		)
