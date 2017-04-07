@@ -50,7 +50,7 @@ elementsDesc: (
 	//buttons at bottom right
 		(
 			key: \pr,
-			shared: (elementType: \button, spec: \midiBut, mode: \toggle),
+			shared: (elementType: \button, spec: \midiBut, mode: \toggle, ioType: \inout),
 			elements: [
 				(elements: [
 					( midiNum: 89, \style: (row:4, column: 8)),
@@ -77,7 +77,7 @@ elementsDesc: (
 		//upper row of encoders, 4 pages, 8 rows
 		(
 			key: \kn,
-			shared: (elementType: \encoder, spec: \midiCC, ioType: \in),
+			shared: (elementType: \encoder, spec: \midiCC, ioType: \inout),
 			elements: 4.collect { |j|
 				(
 					elements: 8.collect { |i|
