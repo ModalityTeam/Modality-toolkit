@@ -36,72 +36,100 @@ deviceInfo: (
 ),
 
 elementsDesc: (
-    shared: (midiChan: 0),
-    elements:[
-
+	
+	elements:
+	[
+		
+		// ------ pad BANK A note on-off-------------
+		(
+			key: \pnA,
+			shared: ( elementType: \pad, midiChan: 0, spec: \midiVel, midiMsgType: \noteOn, groupType: \noteOnOffBut ),
+			elements: ( 44..51 ).collect{ |num, i|
+				(
+					key: i.asSymbol,
+					shared: ( midiNum: num, style:( row: 1 - (i div:4), column: 2 + (i % 4)) )
+				)
+			}
+		),
+		
+		// ------ pad BANK B note on-off -------------
+		(
+			key: \pnB,
+			shared: ( elementType: \pad, midiChan: 0, spec: \midiVel, midiMsgType: \noteOn, groupType: \noteOnOffBut ),
+			elements: ( 32..39 ).collect{ |num, i|
+				(
+					key: i.asSymbol,
+					shared: ( midiNum: num, style:( row: 2.25 + (1 - (i div:4)), column: 2 + (i % 4)) )
+				)
+			}
+		),
+		
+		// ------ pad BANK A cc -------------
+		(
+			key: \pcA,
+			shared: ( midiChan: 0, midiMsgType: \cc, elementType: \pad, spec: \midiCC ),
+			elements: ( 20..27 ).collect{ |num, i|
+				(
+					key: i.asSymbol,
+					midiNum: num,
+					style:( row: 4.5 + (1 - (i div:4)), column: 2 + (i % 4))
+				)
+			}
+		),
+		
+		// ------ pad BANK B cc -------------
+		(
+			key: \pcB,
+			shared: ( elementType: \pad, midiChan: 0, spec: \midiCC, \ioType: \inout, midiMsgType: \cc ),
+			elements: ( 28..35 ).collect{ |num, i|
+				(
+					key: i.asSymbol,
+					midiNum: num,
+					style:( row: 6.75 + (1 - (i div:4)), column: 2 + (i % 4))
+				)
+			}
+		),
+		
+		
+		// ------ knob -------------
+		(
+			key: \k,
+			shared: ( elementType: \knob, midiChan: 0, spec: \midiCC, midiMsgType: \cc ),
+			elements: ( 1..8 ).collect{ |num, i|
+				(
+					key: i.asSymbol,
+					midiNum: num, style:( row: i div:4, column: 6 + (i % 4) ),
+				)
+			}
+		),
+		
+		//////// piano key //////////
+		(
+			key: \pkey,
+			shared: ( midiChan: 0, elementType: \pianoKey, groupType: \noteOnOff, spec: \midiVel ),
+			elements:
+			(0..120).collect { |i|
+				var pos = Piano.pos( i % 25, 0);
+				(
+					key: i.asSymbol,
+					shared: (
+						midiNum: i, groupType: \noteOnOff,
+						style: (
+							row: ( i div: 25 * 1.5 ) + (pos.y * 0.6),
+							column: 10 + (pos.x * 0.65 % 25),
+							color: pos.color,
+							width: 0.9,
+							height: 0.75,
+						)
+					)
+				)
+			}
+		),
 		// ------- bend ------------
-        ( key: \bend,
-            midiMsgType: \bend, elementType: \bender, spec: \midiBend, style: (row: 0, column:0, width: 1.01)
-        ),
-
-        // ------ pad BANK A -------------
-        (
-            key: \padA,
-            shared: ( elementType: \pad, spec: \midiVel, midiMsgType: \noteOn, groupType: \noteOnOffBut ),
-            elements: ( 44..51 ).collect{ |num, i|
-                (
-                    key: (i+1).asSymbol,
-                    shared: ( midiNum: num, style:( row: 1 - (i div:4), column: 1 + (i % 4)) )
-                )
-            }
-        ),
-
-        // ------ pad BANK B -------------
-        (
-            key: \padB,
-            shared: ( elementType: \pad, spec: \midiVel, midiMsgType: \noteOn, groupType: \noteOnOffBut ),
-            elements: ( 32..39 ).collect{ |num, i|
-                (
-                    key: (i+1).asSymbol,
-                    shared: ( midiNum: num, style:( row: 3.5 - (i div:4), column: 1 + (i % 4)) )
-                )
-            }
-        ),
-
-        // ------ knob -------------
-        (
-            key: \kn,
-            shared: ( elementType: \knob, spec: \midiCC, midiMsgType: \cc ),
-            elements: ( 1..8 ).collect{ |num, i|
-                (
-                    key: (i+1).asSymbol,
-                    midiNum: num, style:( row: i div:4, column: i % 4 + 5 )
-                )
-            }
-        ),
-
-        //////// piano key //////////
-        (
-            key: \pkey,
-            shared: ( elementType: \pianoKey, groupType: \noteOnOff, spec: \midiVel ),
-            elements:
-            (0..120).collect { |num, i|
-                var pos = Piano.pos( num % 48, 0);
-                (
-                    key: i.asSymbol,
-                    shared: (
-                        midiNum: num, groupType: \noteOnOff,
-                        style: (
-                            row: (9 - (i div: 48 * 2)) + (pos.y * 0.9),
-                            column: pos.x * 0.8 % 25,
-                            color: pos.color,
-                            height: 1.2,
-                        )
-                    )
-                )
-            }
-        ),
-
-    ]
+		( key: \bY,
+			midiChan: 0, \midiNum: 2, midiMsgType: \cc, elementType: \slider, spec: \midiCC, style: (row: 0, column:0.5, width: 0.84, height: 1.75 ) ),
+		( key: \bX,
+			midiChan: 0, midiMsgType: \bend, elementType: \xfader, spec: \midiBend, style: (row: 1.66, column:0, width: 1.9 ) ),
+	]
 )
 );
