@@ -69,6 +69,7 @@ MKtlElementView {
 			'bender': \slider,
 			'modWheel': \slider,
 			'lever': \slider,
+			'pedal': \slider,
 
 			'rumble':\slider,
 			'ribbon': \slider,
