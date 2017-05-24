@@ -48,11 +48,11 @@ elementsDesc: (
 	shared: ( ioType: \in ),
 	elements: (0..3).collect{ |page|
 		(
-			shared: ('midiChan': page ),
+			shared: ('midiChan': page, page: page ),
 			elements: [
 				(
 					key: \pkey,
-					shared: ('elementType': 'pianoKey', groupType: \noteOnOff, spec: \midiVel), // groupType: \noteOnOff,
+					shared: ('elementType': 'pianoKey', groupType: \noteOnOff, spec: \midiVel),
 					elements: (0..120).collect { |midinum,i|
 						var pos = Piano.pos(midinum % 48, 0);
 						(
