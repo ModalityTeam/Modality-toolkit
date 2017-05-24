@@ -274,8 +274,7 @@ MIDIMKtlDevice : MKtlDevice {
 		hashKeys = msgType.asArray.collect { |type|
 			MIDIMKtlDevice.makeMsgKey(type, elemDesc[\midiChan], elemDesc[\midiNum]);
 		};
-
-			^hashKeys
+		^hashKeys
 	}
 
 	// utilities for fast lookup of elements in elementsDict
