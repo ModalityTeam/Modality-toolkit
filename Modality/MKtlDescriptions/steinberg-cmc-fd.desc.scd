@@ -55,6 +55,7 @@ elementsDesc: (
 		),
 		(
 			key: \bt,
+			// shared: ('midiMsgType': 'cc' ), // ???
 			elements: [
 				(key: 'chanL', midiNum: 48, shared: (style: (row: 7, column: 0))),
 				(key: 'chanR', midiNum: 49, shared: (style: (row: 7, column: 1))),
@@ -66,6 +67,7 @@ elementsDesc: (
 				// fader touched or not
 		(
 			key: 'ftouch',
+			// shared: ('midiMsgType': 'cc' ), // ???
 			// shared: ('elementType': 'button', 'spec': 'midiVel'),
 			elements: (104..107).collect { |num, i|
 				(key: (i+1).asSymbol, midiNum: num,
@@ -76,6 +78,7 @@ elementsDesc: (
 		// fader touched when shift is down sends channel mute
 		(
 			key: 'fmute',
+			// shared: ('midiMsgType': 'cc' ), // ???
 			// shared: ('elementType': 'button', 'midiChan': 0, 'spec': 'midiBut'),
 			elements: (8..11).collect { |num, i|
 				(
