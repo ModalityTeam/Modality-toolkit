@@ -8,6 +8,7 @@ MButtonView : Button {
 		mode = modeName;
 	}
 	upValue_ { |newValue = 0|
+		this.value_( newValue );
 	}
 }
 
@@ -20,6 +21,7 @@ MSliderView : Slider {
 		mode = modeName;
 	}
 	upValue_ { |newValue = 0|
+		this.value_( newValue );
 	}
 }
 
@@ -32,5 +34,6 @@ MKnobView : Knob {
 		mode = modeName;
 	}
 	upValue_ { |newValue = 0|
+		this.value_( newValue );
 	}
 }
