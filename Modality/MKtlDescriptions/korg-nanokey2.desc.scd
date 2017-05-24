@@ -32,8 +32,8 @@ elementsDesc: (
 			elements: (0..120).collect { |midinum, i|
 				var pos = Piano.pos(midinum % 48, 0);
 				(key: i.asSymbol,
-					midiNum: midinum,
 					shared: (
+						midiNum: midinum,
 						groupType: \noteOnOff,
 						style: (
 							row: (4 - (i div: 48 * 2)) + (pos.y * 0.9),
