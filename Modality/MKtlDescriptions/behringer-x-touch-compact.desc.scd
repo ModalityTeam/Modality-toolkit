@@ -4,8 +4,7 @@
 touch
 motorized control
 
-foot pedal and expression pedal are not implemented yet
-output to device is not implemented yet
+output to device is not implemented yet, perhaps this uses Mackie control
 
 ****/
 // a =
@@ -24,8 +23,8 @@ idInfo: "X-TOUCH COMPACT",
 hardwarePages: [1, 2],
 
 deviceInfo: (
-	vendorURI: "",
-	manualURI: "",
+	vendorURI: "http://www.music-group.com/Categories/Behringer/Computer-Audio/Desktop-Controllers/X-TOUCH-COMPACT/p/P0B3L#",
+	manualURI: "http://media.music-group.com/media/PLM/data/docs/P0B3L/X-TOUCH%20COMPACT_QSG_WW.pdf",
 	// description: "",
 	features: [
 		"9 touch sensitive motor-faders",
@@ -43,6 +42,22 @@ elementsDesc: (
 		(
 			shared: ( \page: lyr ),
 			elements: [
+				(
+					key: \pdl,
+					shared: ( midiMsgType: \cc, elementType: \pedal, spec: \midiCC ),
+					elements: [
+						(
+							midiNum: [ 27, 64 ].at(lyr),
+							style: ( row: 6, column: 11, height: 4 ),
+							label: "foot"
+						),
+						(
+							midiNum: [ 26, 63 ].at(lyr),
+							style: ( row: 6, column: 12, height: 4 ),
+							label: "expr"
+						)
+					];
+				),
 				( // channel faders
 					key: \chan,
 					elements: 8.collect{ |i|
@@ -56,7 +71,7 @@ elementsDesc: (
 										elementType: \button,
 										mode: \push,
 										midiNum: i + [ 40, 95 ].at(lyr),
-										style: ( row: 9, column: i ),
+										style: ( row: 10, column: i ),
 										label: ("mc"++(i+1) )
 									)
 								),
@@ -65,16 +80,16 @@ elementsDesc: (
 									key: \sl,
 									elementType: \slider,
 									midiNum: i + [ 1, 28 ].at(lyr),
-									style: ( row: 5, column: i, height: 4 ),
+									style: ( row: 6, column: i, height: 4 ),
 									label: ("sl"++(i+1) )
 								),
 								(
 									midiMsgType: \cc, spec: \midiCC,
 									key: \tch,
-									elementType: \touch,
+									elementType: \touch, // \chanTouch ?
 									midiNum: i + [ 101, 111 ].at(lyr),
 									label: ("enc"++(i+1) ),
-									style: ( row: 4, column: i )
+									style: ( row: 5, column: i )
 								),
 								// only for channel 1 to 8
 								(
@@ -87,19 +102,37 @@ elementsDesc: (
 												elementType: \button,
 												mode: \push,
 												midiNum: [16,71].at(lyr) + (jt*8) + i, // 71,79,87
-												style: ( row: 1+jt, column: i ),
+												style: ( row: 2+jt, column: i ),
 												label: ("bt"++(i+1)++"_"++(jt+1))
 											)
 										)
 									}
 								),
 								(
-									midiMsgType: \cc, spec: \midiCC,
 									key: \enc,
-									elementType: \encoder,
-									midiNum: i + [ 10, 37 ].at(lyr),
-									style: ( row: 0, column: i ),
-									label: ("enc"++(i+1) )
+									shared: (
+										label: ("enc"++(i+1) )
+									),
+									elements: [
+										(
+											// key: \kn,
+											midiMsgType: \cc, spec: \midiCC,
+											elementType: \encoder,
+											midiNum: i + [ 10, 37 ].at(lyr),
+											style: ( row: 1, column: i ),
+										),
+										(
+											// key: \bt,
+											groupType: \noteOnOff,
+											shared: (
+												spec: \midiBut, mode: \push,
+												elementType: \button,
+												// elementType: \encoderButton,
+												midiNum: [ 0, 55 ].at( lyr ) + i,
+												style: ( row: 0, column: i )
+											)
+										)
+									]
 								),
 							]
 						)
@@ -117,7 +150,7 @@ elementsDesc: (
 								mode: \push,
 								midiNum: [48,103].at(lyr),
 								label: 'mc_main',
-								style: ( row: 9, column: 8 )
+								style: ( row: 10, column: 8 )
 							)
 						),
 						(
@@ -126,7 +159,7 @@ elementsDesc: (
 							elementType: \slider,
 							midiNum: [9, 36].at(lyr),
 							label: 'sl_main',
-							style: ( row: 5, column: 8, height: 4 )
+							style: ( row: 6, column: 8, height: 4 )
 						),
 						(
 							midiMsgType: \cc, spec: \midiCC,
@@ -134,19 +167,32 @@ elementsDesc: (
 							elementType: \touch,
 							midiNum: [109, 119].at(lyr),
 							label: 'tch_main',
-							style: ( row: 4, column: 8 )
+							style: ( row: 5, column: 8 )
 						)
 					]
 				),
 				(
 					key: \enc,
-					shared: ( midiMsgType: \cc, spec: \midiCC, elementType: \encoder ),
+					shared: (elementType: \encoder ),
 					elements: 8.collect{ |it|
 						(
-							key: it+9,
-							midiNum: [18,45].at(lyr)+it, // 45
-							style: ( row: (it/2).floor, column: 9 + (it%2) ),
-							label: ("enc"++(it+9) )
+							shared: ( key: it+9,  midiMsgType: \cc, spec: \midiCC, label: ("enc"++(it+9) ) ),
+							elements: [
+								(
+								midiNum: [18,45].at(lyr)+it, // 45
+								style: ( row: (it/2).floor, column: 9 + (it%2 * 2) ),
+							),
+								(
+									// key: \bt,
+									groupType: \noteOnOff,
+									shared: (
+										spec: \midiBut, mode: \push, elementType: \button,
+										midiNum: [ 8, 63 ].at( lyr ) + it,
+									style: ( row: (it/2).floor, column: 9 + (it%2 * 2) + 1 ), // would be nicer if knob has a button press view
+									// elementType: \encoderButton,
+								)
+							)
+							]
 						)
 					};
 				),
@@ -158,37 +204,37 @@ elementsDesc: (
 						( key: \rew,
 							shared: (
 								label: \rew, midiNum: [49,104].at(lyr),
-								style: ( row: 6, column: 9 )
+								style: ( row: 7, column: 9 )
 							)
 						),
 						( key: \fwd,
 							shared: (
 								label: \fwd, midiNum: [50,105].at(lyr),
-								style: ( row: 6, column: 10 )
+								style: ( row: 7, column: 10 )
 							)
 						),
 						( key: \loop,
 							shared: (
 								label: \loop, midiNum: [51,106].at(lyr),
-								style: ( row: 7, column: 9 )
+								style: ( row: 8, column: 9 )
 							)
 						),
 						( key: \rec,
 							shared: (
 								label: \rec, midiNum:  [52, 107].at(lyr),
-								style: ( row: 7, column: 10 )
+								style: ( row: 8, column: 10 )
 							)
 						),
 						( key: \stop,
 							shared: (
 								label: \stop, midiNum: [53, 108].at(lyr),
-								style: ( row: 8, column: 9 )
+								style: ( row: 9, column: 9 )
 							)
 						),
 						( key: \play,
 							shared: (
 								label: \play, midiNum: [54, 109].at(lyr),
-								style: ( row: 8, column: 10 )
+								style: ( row: 9, column: 10 )
 							)
 						)
 					]
@@ -198,67 +244,3 @@ elementsDesc: (
 	};
 );
 );
-
-
-/*
-		( // master fader strip
-			key: \master,
-			elements: [
-				(
-					groupType: \noteOnOff,
-					key: \mc,
-					shared: (
-						spec: \midiBut,
-						elementType: \button,
-						midiNum: 48 // 103
-					)
-				),
-				(
-					midiMsgType: \cc, spec: \midiCC,
-					key: \sl,
-					elementType: \slider,
-					midiNum: 9 // 36
-				),
-				(
-					midiMsgType: \cc, spec: \midiCC,
-					key: \tch,
-					elementType: \touch,
-					midiNum: 109 // 119
-				)
-			]
-		)
-*/
-
-		/*
-		( // transport controls
-			key: \tr,
-			shared: ( midiMsgType: \cc, spec: \midiCC, elementType: \button ),
-			elements: [
-				( key: \rew, midiNum: 49 // 104
-				),
-				( key: \fwd, midiNum: 50 // 105
-				),
-				( key: \loop, midiNum: 51 // 106
-				),
-				( key: \rec, midiNum: 52 // 107
-				),
-				( key: \stop, midiNum: 53 // 108
-				),
-				( key: \play, midiNum: 54 // 109
-				)
-			]
-		)
-*/
-
-	/*
-	++
-	8.collect{ |it| // encoders -- could also be a group
-		(
-			midiMsgType: \cc, spec: \midiCC,
-			key: \enc,
-			elementType: \encoder,
-			midiNum: 18+it // 45
-		)
-	};
-	*/
-	// )
