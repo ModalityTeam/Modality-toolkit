@@ -16,14 +16,14 @@ MKtlElementView {
 		makeViewFuncDict = (
 			'button': { |parent, bounds, label = ""|
 				label = MKtlGUI.splitLabel(label);
-				Button( parent, bounds.insetBy( MKtlGUI.margin ) )
+				MButtonView( parent, bounds.insetBy( MKtlGUI.margin ) )
 				.states_([[ label ],[ label , Color.black, Color.gray(0.33) ]]);
 			},
 			'slider': { |parent, bounds, label|
-				Slider( parent, bounds.insetBy( MKtlGUI.margin ) );
+				MSliderView( parent, bounds.insetBy( MKtlGUI.margin ) );
 			},
 			'knob': { |parent, bounds, label|
-				Knob( parent, bounds.insetBy( MKtlGUI.margin ) );
+				MKnobView( parent, bounds.insetBy( MKtlGUI.margin ) );
 			},
 
 			'pad': { |parent, bounds, label|
