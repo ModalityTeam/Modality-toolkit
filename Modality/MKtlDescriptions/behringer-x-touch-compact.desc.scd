@@ -37,7 +37,7 @@ deviceInfo: (
 
 elementsDesc: (
 	key: \lyr,
-	shared: ( midiChan: 0, ioType: \inout ), //, \ioType: \inout ),
+	shared: ( midiChan: 0, ioType: \inout ),
 	elements: 2.collect{ |lyr|
 		(
 			shared: ( \page: lyr ),
@@ -47,11 +47,13 @@ elementsDesc: (
 					shared: ( midiMsgType: \cc, elementType: \pedal, spec: \midiCC ),
 					elements: [
 						(
+							key: \foot,
 							midiNum: [ 27, 64 ].at(lyr),
 							style: ( row: 6, column: 11, height: 4 ),
 							label: "foot"
 						),
 						(
+							key: \expr,
 							midiNum: [ 26, 63 ].at(lyr),
 							style: ( row: 6, column: 12, height: 4 ),
 							label: "expr"
