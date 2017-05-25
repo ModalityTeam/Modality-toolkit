@@ -14,7 +14,7 @@ protocol: 'midi',
 deviceType: 'mixer',
 elementTypes: [ \encoder, \fader, \button ],
 status: (
-	linux: "tested and working, except for output and pedals; 24-05-2017 by nescivi",
+	linux: "tested and working, except for output; 25-05-2017 by nescivi",
 	osx: "unknown",
 	win: "unknown"),
 

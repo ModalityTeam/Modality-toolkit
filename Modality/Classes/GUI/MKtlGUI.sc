@@ -86,6 +86,7 @@ MKtlElementView {
 			'keyTouch': \slider, // overlay on pianoKey view
 			'chanTouch': \slider,
 
+			'jogWheel': \slider,
 			'mouseWheel': \slider,
 			'scrollWheel': \slider,
 
@@ -96,6 +97,8 @@ MKtlElementView {
 			'switch': \button,
 
 			'pianoKey': \pad,
+			'led': \button, // LED can have different types (colors, states (off,blinking,on))
+			'meter': \slider
 
 			// 'compass'		-> CompassView as on gamepads
 			// 'stick' 			-> StickView - thumbstick with x, y, hat
