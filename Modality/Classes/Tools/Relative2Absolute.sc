@@ -46,3 +46,35 @@ Relative2Absolute {
 
 }
 
+MIDIRelative2AbsoluteFloat{
+	var <rawMinVal, <rawMaxVal, <rawInitVal;
+	var <spec;
+	var <r2a;
+
+	*new { |rawminval, rawmaxval, rawInitVal|
+		^super.newCopyArgs( rawminval,rawmaxval,rawInitVal ).init;
+	}
+
+	init {
+		r2a = Relative2Absolute.new( rawMinVal, rawMaxVal, rawInitVal );
+		spec = [ rawMinVal, rawMaxVal, \linear, 1 ].asSpec;
+	}
+
+	midiDelta_{ |val|
+		if ( val > 64 ){ val = 64-val; };
+		this.delta_( val );
+	}
+
+	delta_{ |dl|
+		r2a.delta_( dl );
+	}
+
+	value{
+		^spec.unmap( r2a.value );
+	}
+
+	value_{ |inval|
+		r2a.value_( spec.map( inval ) );
+	}
+
+}
