@@ -1,5 +1,5 @@
 /*
-map from one integer spec to another
+clip to an integer range and ensure integer type
 */
 IntegerClip {
 	var <minval,<maxval, <default;
