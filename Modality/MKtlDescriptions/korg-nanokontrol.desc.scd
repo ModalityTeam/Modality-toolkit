@@ -7,7 +7,11 @@
 // * check whether there are any other clashes of cc numbers !
 
 /*
-MKtlDesc.loadDescs("*trol"); MKtl(\nk).free; MKtl(\nk, "*trol").gui;
+MKtlDesc.loadDescs("*trol");
+MKtl(\nk, "korg-nanokontrol" );
+MKtl(\nk).gui;
+MKtl(\nk).free;
+MKtl(\nk, "*trol").gui;
 */
 
 
