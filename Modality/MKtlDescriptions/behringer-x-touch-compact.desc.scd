@@ -34,13 +34,33 @@ m.elAt( \out, \master, \sl ).value_(1)
 m.elAt( \out, \master, \sl ).value_(0.5)
 
 
-m.elAt( \out, \chan, \1, \mc ).value_( 2 );
+m.elAt( \out, \mc, \1 ).value_(2);
 m.elAt( \out, \chan, \1, \mc ).value_( 0 );
 
-m.elAt( \out, \chan, \1, \sl ).value_( 1 );
-m.elAt( \out, \chan, \1, \sl ).value_( 0.5 );
-m.elAt( \out, \chan, \1, \sl ).value_( 0 );
+m.elAt( \out, \sl ).value_( 1 );
+m.elAt( \out, \sl ).value_( 0.5 );
+m.elAt( \out, \sl ).value_( 0 );
 
+
+// RING control:
+// mode affects how encoder value is reflected on the ring
+// single: 0, pan: 1, fan: 2, spread: 3, trim: 4
+
+m.elAt( \out, \ringCh, \mode ).value_( 0 )
+m.elAt( \out, \ringCh, \mode ).value_( 1 )
+
+// segment controls which segments are on: but only on at a time can be controlled, or all
+// see also behringer-x-touch-mini
+
+m.elAt( \out, \ringCh, \seg ).value_( 0 )
+m.elAt( \out, \ringCh, \seg ).value_( 13 )
+m.elAt( \out, \ringCh, \seg ).value_( 14 )
+m.elAt( \out, \ringCh, \seg ).value_( 26 )
+m.elAt( \out, \ringCh, \seg ).value_( 27 )
+m.elAt( \out, \ringCh, \seg ).value_( 28 )
+
+
+m.elAt( \out, \ringCtl, \seg ).value_( 30 )
 
 ****/
 // a =
@@ -104,12 +124,12 @@ elementsDesc: (
 				),
 				( // channel faders
 					key: \chan,
-					elements: 8.collect{ |i|
+					elements: [
 						(
-							elements: [
+							key: \mc,
+							elements: 8.collect{ |i|
 								(
 									groupType: \noteOnOff,
-									key: \mc,
 									shared: (
 										spec: \midiBut,
 										elementType: \button,
@@ -118,26 +138,38 @@ elementsDesc: (
 										style: ( row: 10, column: i ),
 										label: ("mc"++(i+1) )
 									)
-								),
+								)
+							}
+						),
+						(
+							key: \sl,
+							elements: 8.collect{ |i|
 								(
 									midiMsgType: \cc, spec: \midiCC,
-									key: \sl,
 									elementType: \slider,
 									midiNum: i + [ 1, 28 ].at(lyr),
 									style: ( row: 6, column: i, height: 4 ),
 									label: ("sl"++(i+1) )
-								),
+								)
+							}
+						),
+						(
+							key: \tch,
+							elements: 8.collect{ |i|
 								(
 									midiMsgType: \cc, spec: \midiCC,
-									key: \tch,
 									elementType: \touch, // \chanTouch ?
 									midiNum: i + [ 101, 111 ].at(lyr),
 									label: ("tch"++(i+1) ),
 									style: ( row: 5, column: i )
-								),
-								// only for channel 1 to 8
+								)
+							}
+						),
+						// only for channel 1 to 8
+						(
+							key: \bt,
+							elements: 8.collect{ |i|
 								(
-									key: \bt,
 									elements: 3.collect{ |jt|
 										(
 											groupType: \noteOnOff,
@@ -151,36 +183,43 @@ elementsDesc: (
 											)
 										)
 									}
-								),
+								)
+							}
+						),
+						(
+							key: \enc,
+							elements: [
 								(
-									key: \enc,
-									shared: (
-										label: ("enc"++(i+1) )
-									),
-									elements: [
+									key: \kn,
+									elements: 8.collect{ |i|
 										(
-											// key: \kn,
 											midiMsgType: \cc, spec: \midiCC,
 											elementType: \encoder,
 											midiNum: i + [ 10, 37 ].at(lyr),
 											style: ( row: 1, column: i ),
-										),
+											label: ("enc"++(i+1) )
+										)
+									}
+								),
+								(
+									key: \bt,
+									elements: 8.collect{ |i|
 										(
-											// key: \bt,
 											groupType: \noteOnOff,
 											shared: (
 												spec: \midiBut, mode: \push,
 												elementType: \button,
 												// elementType: \encoderButton,
 												midiNum: [ 0, 55 ].at( lyr ) + i,
-												style: ( row: 0, column: i )
+												style: ( row: 0, column: i ),
+												label: ("encbt"++(i+1) )
 											)
 										)
-									]
-								),
+									}
+								)
 							]
-						)
-					}
+						),
+					]
 				),
 				( // master fader strip
 					key: \master,
@@ -329,102 +368,100 @@ elementsDesc: (
 			key: \out,
 			shared: ( ioType: \out, page: 2, midiChan: 1 ), // page not in hardware, just for GUI
 			elements: [
-			( // channel faders
-				key: \chan,
-				elements: 8.collect{ |i|
-					(
-						elements: [
-							(
-								midiMsgType: \noteOn,
-								key: \mc,
-								spec: \midiLedTri,
-								elementType: \led,
-								mode: \tristate,
-								midiNum: (24..31).at(i),
-								style: ( row: 10, column: i ),
-								label: ("mc"++(i+1) ),
-							),
-							(
-								midiMsgType: \cc,
-								spec: \midiCC,
-								key: \sl,
-								elementType: \slider,
-								midiNum: i+1,
-								style: ( row: 6, column: i, height: 4 ),
-								label: ("sl"++(i+1) )
-							),
-							// only for channel 1 to 8
-							(
-								key: \led,
-								elements: 3.collect{ |jt|
-									(
-										midiMsgType: \noteOn,
-										spec: \midiLedTri,
-										elementType: \led,
-										mode: \tristate,
-										midiNum: i + (jt*8), // 71,79,87
-										style: ( row: 2+jt, column: i ),
-										label: ("ld"++(i+1)++"_"++(jt+1))
-									)
-								}
-							),
-							/*(
-							key: \enc,
-							shared: (
-							label: ("enc"++(i+1) )
-							),
-							elements: [
-							(
-							// key: \kn,
+				(
+					key: \mc,
+					shared: ( midiMsgType: \noteOn, spec: \midiLedTri, elementType: \led, mode: \tristate ),
+					elements: 8.collect{ |i|
+						(
+							midiNum: i+24,
+							style: ( row: 10, column: i ),
+							label: ( "mc"++(i+1) )
+						)
+					}
+				),
+				(
+					key: \led,
+					shared: ( midiMsgType: \noteOn, spec: \midiLedTri, elementType: \led, mode: \tristate ),
+					elements: 3.collect{ |jt|
+						(
+							elements: 8.collect{ |i|
+								(
+									midiNum: i + (jt*8),
+									style: ( row: 2+jt, column: i ),
+									label: ("ld"++(i+1)++"_"++(jt+1))
+								)
+							}
+						)
+					}
+				),
+				(
+					key: \sl,
+					shared: ( midiMsgType: \cc, spec: \midiCC, elementType: \slider ),
+					elements: 8.collect{ |i|
+						(
+							midiNum: i+1,
+							style: ( row: 6, column: i, height: 4 ),
+							label: ("sl"++(i+1) )
+						)
+					};
+				),
+				(
+					key: \ringCh,
+					shared: ( midiMsgType: \control ),
+					elements: [\mode,\seg].collect{ |ky,j|
+						(
+							key: ky,
+							elements: 8.collect{ |i|
+								(
+									key: (i+1).asSymbol,
+									midiNum: i+10+(j*16),
+									spec: [\ringMode,\ringVal].at(j),
+									style: ( row: j, column: i ),
+								)
+							};
+						)
+					};
+				),
+				( // master fader strip
+					key: \master,
+					elements: [
+						(
+							key: \mc,
+							spec: \midiLedTri,
+							midiMsgType: \noteOn,
+							elementType: \led,
+							mode: \tristate,
+							midiNum: 32,
+							label: 'mc_main',
+							style: ( row: 10, column: 8 )
+						),
+						(
 							midiMsgType: \cc, spec: \midiCC,
-							elementType: \encoder,
-							midiNum: i + [ 10, 37 ].at(lyr),
-							style: ( row: 1, column: i ),
-							)
-							]
-								),*/
-						]
-					)
-				}
-			),
-			( // master fader strip
-				key: \master,
-				elements: [
-					(
-						key: \mc,
-						spec: \midiLedTri,
-						midiMsgType: \noteOn,
-						elementType: \led,
-						mode: \tristate,
-						midiNum: 32,
-						label: 'mc_main',
-						style: ( row: 10, column: 8 )
-					),
-					(
-						midiMsgType: \cc, spec: \midiCC,
-						key: \sl,
-						elementType: \slider,
-						midiNum: 9,
-						label: 'sl_main',
-						style: ( row: 6, column: 8, height: 4 )
-					)
-				]
-			),
-			// (
-			// 	key: \enc,
-			// 	shared: (elementType: \encoder ),
-			// 	elements: 8.collect{ |it|
-			// 		(
-			// 			shared: ( key: it+9,  midiMsgType: \cc, spec: \midiCC, label: ("enc"++(it+9) ) ),
-			// 			elements: [
-			// 				(
-			// 					midiNum: [18,45].at(lyr)+it, // 45
-			// 					style: ( row: (it/2).floor, column: 9 + (it%2 * 2) ),
-			// 				)
-			// 			]
-			// 		)
-			// 	};
-			// ),
+							key: \sl,
+							elementType: \slider,
+							midiNum: 9,
+							label: 'sl_main',
+							style: ( row: 6, column: 8, height: 4 )
+						)
+					]
+				),
+				(
+					key: \ringCtl,
+					shared: ( midiMsgType: \control ),
+					elements: [\mode,\seg].collect{ |ky,j|
+						(
+							key: ky,
+							elements: 8.collect{ |i|
+								(
+									key: (i+1).asSymbol,
+									midiNum: i+18+(j*16),
+									spec: [\ringMode,\ringVal].at(j),
+									style: ( row: (i/2).floor, column: 9 + (i%2 * 2) ),
+								)
+							};
+						)
+					};
+				),
 				(
 					// transport controls
 					key: \tr,
@@ -461,3 +498,4 @@ elementsDesc: (
 	]
 );
 );
+
