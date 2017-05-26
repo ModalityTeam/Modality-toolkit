@@ -2,15 +2,15 @@
 clip to an integer range and ensure integer type
 */
 IntegerClip {
-	var <minval,<maxval, <defaultValue;
+	var <minval,<maxval, <default;
 
 
-	*new { |minval, maxval, defaultValue|
-		^super.newCopyArgs( minval,maxval,defaultValue ).init;
+	*new { |minval, maxval, default|
+		^super.newCopyArgs( minval,maxval,default ).init;
 	}
 
 	init {
-		if ( defaultValue.isNil ){ defaultValue = minval };
+		if ( default.isNil ){ default = minval };
 	}
 
 	map { |inval|
