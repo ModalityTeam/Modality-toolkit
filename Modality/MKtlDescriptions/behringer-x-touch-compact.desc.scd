@@ -6,6 +6,10 @@ motorized control
 
 output to device is not implemented yet, perhaps this uses Mackie control
 
+Note: I am not entirely sure whether the device I had, had a custom mapping or not.
+
+Note: I have used the layers as the main group division.
+
 ****/
 // a =
 (
