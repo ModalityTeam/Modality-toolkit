@@ -27,3 +27,9 @@ IntegerClip {
 	}
 }
 
+// to avoid an error on the .trace method
++ Integer {
+	asStringPrec { arg precision;
+		this.asFloat.asStringPrec( precision );
+	}
+}
