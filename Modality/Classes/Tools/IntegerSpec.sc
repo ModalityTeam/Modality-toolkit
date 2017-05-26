@@ -5,8 +5,8 @@ IntegerClip {
 	var <minval,<maxval, <defaultValue;
 
 
-	*new { |minval, maxval, default|
-		^super.newCopyArgs( minval,maxval,default ).init;
+	*new { |minval, maxval, defaultValue|
+		^super.newCopyArgs( minval,maxval,defaultValue ).init;
 	}
 
 	init {
