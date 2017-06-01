@@ -97,6 +97,8 @@ MKtlElementView {
 			'switch': \button,
 
 			'pianoKey': \pad,
+			'pianoKeyUp': \padUp,
+
 			'led': \button, // LED can have different types (colors, states (off,blinking,on))
 			'meter': \slider
 
