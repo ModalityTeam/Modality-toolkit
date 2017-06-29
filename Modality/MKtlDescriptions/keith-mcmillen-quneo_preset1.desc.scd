@@ -5,7 +5,7 @@ deviceName: "QUNEO",
 protocol: \midi,
 deviceType: \launchpad,
 status: (
-    linux: "tested on 28/05/2017 by @patrickdupuis"
+    linux: "tested on 28/05/2017 by @patrickdupuis. GUI styles forthcoming.",
     osx: "unknown",
     win: "unknown"
 ),
@@ -20,10 +20,11 @@ deviceInfo: (
 ),
 
 elementsDesc: (
-    shared: ( midiChan: 0, elementType: \pad, ioType: \in ),
+    shared: ( midiChan: 0, elementType: \pad ),
     elements: [
         (
             key: \play,
+            shared: ( ioType: \in ),
             elements: [
                 ( key: \on, midiNum: 26, midiMsgType: \noteOn, spec: \midiVel ),
                 ( key: \off, midiNum: 26, midiMsgType: \noteOff, spec: \midiVel ),
@@ -32,6 +33,7 @@ elementsDesc: (
         ),
         (
             key: \stop,
+            shared: ( ioType: \in ),
             elements: [
                 ( key: \on, midiNum: 25, midiMsgType: \noteOn, spec: \midiVel ),
                 ( key: \off, midiNum: 25, midiMsgType: \noteOff, spec: \midiVel ),
@@ -40,6 +42,7 @@ elementsDesc: (
         ),
         (
             key: \rec,
+            shared: ( ioType: \in ),
             elements: [
                 ( key: \on, midiNum: 24, midiMsgType: \noteOn, spec: \midiVel ),
                 ( key: \off, midiNum: 24, midiMsgType: \noteOff, spec: \midiVel ),
@@ -48,6 +51,7 @@ elementsDesc: (
         ),
         (
             key: \rhombus,
+            shared: ( ioType: \in ),
             elements: [
                 ( key: \on, midiNum: 19, midiMsgType: \noteOn, spec: \midiVel ),
                 ( key: \off, midiNum: 19, midiMsgType: \noteOff, spec: \midiVel ),
@@ -56,6 +60,7 @@ elementsDesc: (
         ),
         (
             key: \arrow,
+            shared: ( ioType: \in ),
             elements: [
                 (
                     key: \1,
@@ -180,6 +185,7 @@ elementsDesc: (
         (
             // Sliders (horizontal and vertical)
             key: \slider,
+            shared: ( ioType: \in ),
             elements: [
                 (
                     key: \horizontal,
@@ -267,6 +273,7 @@ elementsDesc: (
         ),
         (
             key: \longSlider,
+            shared: ( ioType: \in ),
             elements: [
                 ( key: \on, midiNum: 10, midiMsgType: \noteOn, spec: \midiVel ),
                 ( key: \off, midiNum: 10, midiMsgType: \noteOff, spec: \midiVel ),
@@ -277,6 +284,7 @@ elementsDesc: (
         ),
         (
             key: \rotary,
+            shared: ( ioType: \in ),
             elements: [
                 (
                     key: \1,
@@ -300,6 +308,7 @@ elementsDesc: (
         ),
         (
             key: \pad,
+            shared: ( ioType: \in ),
             elements: ((36..51) +++ (23..70).clump(3)).collect { | midiNum, index |
                 (
                     key: (index+1).asSymbol,
@@ -312,7 +321,95 @@ elementsDesc: (
                     ]
                 )
             }
-        )
-    ]
+        ),
+		(
+			// LED output
+			key: \led,
+			shared: ( ioType: \out ),
+			elements: [
+                ( key: \rec, midiNum: 9, groupType: \noteOnOff, spec: \midiVel ),
+                ( key: \stop, midiNum: 10, groupType: \noteOnOff, spec: \midiVel ),
+                ( key: \play, midiNum: 11, groupType: \noteOnOff, spec: \midiVel ),
+				(
+					key: \slider,
+					elements: [
+						(
+							key: \horizontal,
+							elements: (1..4).collect { |ccNum, index|
+								( key: (index+1).asSymbol, midiNum: ccNum, midiMsgType: \control, spec: \midiCC )
+							}
+						),
+						(
+							key: \vertical,
+							elements: (8..11).collect { |ccNum, index|
+								( key: (index+1).asSymbol, midiNum: ccNum, midiMsgType: \control, spec: \midiCC )
+							}
+						),
+						(
+                            key: \long, midiNum: 5, midiMsgType: \control, spec: \midiCC
+                        )
+					]
+				),
+				(
+					key: \rotary,
+					elements: [6, 7].collect { |midiNum, index|
+						( key: (index+1).asSymbol, midiNum: midiNum, midiMsgType: \control, spec: \midiCC )
+					}
+				),
+                (
+					key: \arrow,
+					elements: [
+						(
+							key: \1,
+							elements: [12, 13, 22, 23].collect { |midiNum, index|
+								var orientation = [\left, \right, \up, \down].at(index);
+								( key: orientation, midiNum: midiNum, groupType: \noteOnOff, spec: \midiVel )
+							}
+						),
+						(
+							key: \2,
+							elements: [14, 15, 24, 25].collect { |midiNum, index|
+								var orientation = [\left, \right, \up, \down].at(index);
+								( key: orientation, midiNum: midiNum, groupType: \noteOnOff, spec: \midiVel )
+							}
+						),
+						(
+							key: \3,
+							elements: [16, 17].collect { |midiNum, index|
+								var orientation = [\left, \right].at(index);
+								( key: orientation, midiNum: midiNum, groupType: \noteOnOff, spec: \midiVel )
+							}
+						),
+						(
+							key: \4,
+							elements: [18, 19].collect { |midiNum, index|
+								var orientation = [\left, \right].at(index);
+								( key: orientation, midiNum: midiNum, groupType: \noteOnOff, spec: \midiVel )
+							}
+						)
+					]
+				),
+				(
+					key: \rhombus,
+					elements: [20, 21].collect { |midiNum, index|
+							var color = [\red, \green].at(index);
+							( key: color, midiNum: midiNum, groupType: \noteOnOff, spec: \midiVel )
+					}
+				),
+				(
+					key: \pad,
+					elements: (0..31).clump(2).collect { |pads, index|
+						(
+							key: (index+1).asSymbol,
+							elements: pads.collect { |midiNum, index|
+								var color = [\green, \red].at(index);
+								( key: color, midiNum: midiNum, groupType: \noteOnOff, spec: \midiVel )
+							}
+						)
+					}
+				)
+			]
+		) // end of LEDs
+	]
 ),
 )
