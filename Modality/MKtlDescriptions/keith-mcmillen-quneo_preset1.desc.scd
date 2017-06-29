@@ -1,3 +1,5 @@
+// A MKtl description for the QuNeo controller
+// factory preset #1 (the lower left drum pad)
 (
 deviceName: "QUNEO",
 protocol: \midi,
