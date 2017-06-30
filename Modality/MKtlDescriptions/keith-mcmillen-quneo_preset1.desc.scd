@@ -155,9 +155,9 @@ elementsDesc: (
             key: \led,
             shared: ( ioType: \out, elementType: \led ),
             elements: [
-                ( key: \rec, midiNum: 9, groupType: \noteOnOff, spec: \midiVel ),
-                ( key: \stop, midiNum: 10, groupType: \noteOnOff, spec: \midiVel ),
-                ( key: \play, midiNum: 11, groupType: \noteOnOff, spec: \midiVel ),
+                ( key: \rec, midiNum: 33, groupType: \noteOnOff, spec: \midiVel ),
+                ( key: \stop, midiNum: 34, groupType: \noteOnOff, spec: \midiVel ),
+                ( key: \play, midiNum: 35, groupType: \noteOnOff, spec: \midiVel ),
                 (
                     key: \slider,
                     elements: [ (1..4), (8..11) ].collect { |sliders, index|
@@ -179,7 +179,7 @@ elementsDesc: (
                 ),
                 (
                     key: \arrow,
-                    elements: [ [12, 14, 16, 18], [13, 15, 17, 19], [22, 24], [23, 25] ].collect { |arrows, index|
+                    elements: [ [36, 38, 40, 42], [37, 39, 41, 43], [46, 48], [47, 49] ].collect { |arrows, index|
                         var orientation = [\left, \right, \up, \down].at(index);
                         (
                             key: orientation,
@@ -191,7 +191,7 @@ elementsDesc: (
                 ),
                 (
                     key: \rhombus,
-                    elements: [20, 21].collect { |midiNum, index|
+                    elements: [44, 45].collect { |midiNum, index|
                         var color = [\red, \green].at(index);
                         ( key: color, midiNum: midiNum, groupType: \noteOnOff, spec: \midiVel )
                     }
