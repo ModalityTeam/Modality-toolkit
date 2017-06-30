@@ -345,9 +345,7 @@ elementsDesc: (
 								( key: (index+1).asSymbol, midiNum: ccNum, midiMsgType: \control, spec: \midiCC )
 							}
 						),
-						(
-                            key: \long, midiNum: 5, midiMsgType: \control, spec: \midiCC
-                        )
+						( key: \long, midiNum: 5, midiMsgType: \control, spec: \midiCC )
 					]
 				),
 				(
