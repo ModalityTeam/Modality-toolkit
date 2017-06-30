@@ -153,7 +153,7 @@ elementsDesc: (
         (
             // LEDs
             key: \led,
-            shared: ( ioType: \out ),
+            shared: ( ioType: \out, elementType: \led ),
             elements: [
                 ( key: \rec, midiNum: 9, groupType: \noteOnOff, spec: \midiVel ),
                 ( key: \stop, midiNum: 10, groupType: \noteOnOff, spec: \midiVel ),
