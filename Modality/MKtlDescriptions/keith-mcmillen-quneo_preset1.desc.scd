@@ -165,7 +165,7 @@ elementsDesc: (
                         (
                             key: orientation,
                             elements: sliders.collect { |midiSpec, index|
-                                ( key: (index+1).asSymbol, midiNum: midiSpec[0], midiMsgType: \control, spec: \midiCC )
+                                ( key: (index+1).asSymbol, midiNum: midiSpec, midiMsgType: \control, spec: \midiCC )
                             }
                         )
                     }
