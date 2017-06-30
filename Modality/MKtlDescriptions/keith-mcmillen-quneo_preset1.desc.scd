@@ -184,7 +184,7 @@ elementsDesc: (
                         (
                             key: orientation,
                             elements: arrows.collect { |midiSpec, index|
-                                ( key: (index+1).asSymbol, midiNum: midiSpec[0], groupType: \noteOnOff, spec: \midiVel )
+                                ( key: (index+1).asSymbol, midiNum: midiSpec, groupType: \noteOnOff, spec: \midiVel )
                             }
                         )
                     }
