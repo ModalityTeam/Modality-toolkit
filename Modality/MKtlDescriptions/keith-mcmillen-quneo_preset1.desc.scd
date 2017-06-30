@@ -170,7 +170,7 @@ elementsDesc: (
                         )
                     }
                 ),
-                ( key: \long, midiNum: 5, midiMsgType: \control, spec: \midiCC ),
+                ( key: \longSlider, midiNum: 5, midiMsgType: \control, spec: \midiCC ),
                 (
                     key: \rotary,
                     elements: [6, 7].collect { |midiNum, index|
