@@ -90,7 +90,7 @@ elementsDesc: (
         (
             key: \slider,
             shared: ( ioType: \in ),
-            elements: [ (0..3)+++(12..15) ] ++ [ (6..9)+++(18..21) ].collect { |sliders, index|
+            elements: ([ (0..3)+++(12..15) ] ++ [ (6..9)+++(18..21) ]).collect { |sliders, index|
                 var orientation = [\horizontal, \vertical].at(index);
                 (
                     key: orientation,
