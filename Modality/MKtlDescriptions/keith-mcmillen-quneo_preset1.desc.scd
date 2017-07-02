@@ -136,7 +136,7 @@ elementsDesc: (
         ),
         (
             key: \rotary,
-            elements: ([4, 5, 6] +++ [16, 17, 7]).collect { |midiSpec, index|
+            elements: ([4, 5] +++ [16, 17] +++ [6, 7]).collect { |midiSpec, index|
                 (
                     key: (index+1).asSymbol,
                     elements: [
