@@ -155,30 +155,9 @@ elementsDesc: (
             key: \led,
             shared: ( ioType: \out, elementType: \led ),
             elements: [
-                (
-			key: \rec,
-			shared: ( midiNum: 33, spec: \midiVel ),
-			elements: [
-				( key: \on, midiMsgType: \noteOn ),
-				( ket: \off, midiMsgType: \noteOff )
-			]
-		),
-		(
-			key: \stop,
-			shared: ( midiNum: 34, spec: \midiVel ),
-			elements: [
-				( key: \on, midiMsgType: \noteOn ),
-				( ket: \off, midiMsgType: \noteOff )
-			]
-		),
-		(
-			key: \play,
-			shared: ( midiNum: 35, spec: \midiVel ),
-			elements: [
-				( key: \on, midiMsgType: \noteOn ),
-				( ket: \off, midiMsgType: \noteOff )
-			]
-		),
+                ( key: \rec, midiNum: 33, midiMsgType: \noteOn, spec: \midiVel ),
+                ( key: \stop, midiNum: 34, midiMsgType: \noteOn, spec: \midiVel ),
+                ( key: \play, midiNum: 35, midiMsgType: \noteOn, spec: \midiVel ),
                 (
                     key: \slider,
                     elements: [ (1..4), (8..11) ].collect { |sliders, index|
@@ -204,15 +183,8 @@ elementsDesc: (
                         var orientation = [\left, \right, \up, \down].at(index);
                         (
                             key: orientation,
-                            elements: arrows.collect { |midiSpec, index|
-                                //( key: (index+1).asSymbol, midiNum: midiSpec, groupType: \noteOnOff, spec: \midiVel )
-				(
-					key: (index+1).asSymbol,
-					elements: [
-						( key: \on, midiNum: midiSpec, midiMsgType: \noteOn, spec: \midiVel ),
-						( key: \off, midiNum: midiSpec, midiMsgType: \noteOff, spec: \midiVel )
-					]
-				)
+                            elements: arrows.collect { |midiNum, index|
+                                ( key: (index+1).asSymbol, midiNum: midiNum, midiMsgType: \noteOn, spec: \midiVel )
                             }
                         )
                     }
@@ -221,14 +193,7 @@ elementsDesc: (
                     key: \rhombus,
                     elements: [44, 45].collect { |midiNum, index|
                         var color = [\red, \green].at(index);
-                        //( key: color, midiNum: midiNum, groupType: \noteOnOff, spec: \midiVel )
-			(
-				key: color,
-				elements: [
-					( key: \on, midiNum: midiNum, midiMsgType: \noteOn, spec: \midiVel ),
-					( key: \off, midiNum: midiNum, midiMsgType: \noteOff, spec: \midiVel )
-				]
-			)
+                        ( key: color, midiNum: midiNum, midiMsgType: \noteOn, spec: \midiVel )
                     }
                 ),
                 (
@@ -238,14 +203,7 @@ elementsDesc: (
                             key: (index+1).asSymbol,
                             elements: pads.collect { |midiNum, index|
                                 var color = [\green, \red].at(index);
-                                //( key: color, midiNum: midiNum, groupType: \noteOnOff, spec: \midiVel )
-                                (
-					key: color,
-					elements: [
-						( key: \on, midiNum: midiNum, midiMsgType: \noteOn, spec: \midiVel ),
-						( key: \off, midiNum: midiNum, midiMsgType: \noteOff, spec: \midiVel )
-					]
-				)
+                                ( key: color, midiNum: midiNum, midiMsgType: \noteOn, spec: \midiVel )
                             }
                         )
                     }
@@ -255,3 +213,4 @@ elementsDesc: (
     ]
 )
 )
+
