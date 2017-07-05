@@ -239,8 +239,9 @@ Frees the MKtl again and forgets about its existence.
 If there was an device, this closes it.
 
 METHOD:: resetActions
-Reset all actions of the elements in this MKtl to nil.
-Note that this does not clear group actions.
+Reset all actions of the elements in this code::MKtl:: to code::nil::.
+argument:: includeGroups
+if code::true::, also actions of contained groups are reset.
 
 METHOD:: trace
 set the flag whether incoming data are posted or not, default true.

@@ -204,6 +204,18 @@ MKtlElementGroup : MKtlElement {
 
 	do { |function| elements.do( function ); }
 
+	doRecursive {|function, includeGroups = true|
+		var doOne = { |elemOrGroup, depth|
+			if (elemOrGroup.isKindOf(MKtlElementGroup)) {
+				if(includeGroups) { function.value(elemOrGroup, depth) };
+				elemOrGroup.do({ |item| doOne.value(item, depth + 1) });
+			} {
+				function.value(elemOrGroup);
+			};
+		};
+		doOne.value(this, 0);
+	}
+
 	flat {
 		^this.elements.flat;
 	}
