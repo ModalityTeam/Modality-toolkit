@@ -496,8 +496,12 @@ MKtl { // abstract class
 	}
 
 
-	resetActions {
-		elementsDict.do( _.resetAction )
+	resetActions {|includeGroups = false|
+		if (includeGroups) {
+			elementGroup.doRecursive{|e| e.resetAction}
+		} {
+			elementsDict.do(_.resetAction)
+		}
 	}
 	resetAction {
 		"% - please use resetActions.\n".postf(thisMethod);
