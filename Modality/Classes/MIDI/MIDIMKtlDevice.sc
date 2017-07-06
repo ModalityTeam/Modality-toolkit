@@ -21,15 +21,23 @@ MIDIMKtlDevice : MKtlDevice {
 	var <responders; // the MIDIFuncs responding to each protocol
 	var <msgTypes;	// the msgTypes for which this MKtl needs MIDIfuncs
 
+	var <cc14helpers;
+	var <cc14nums;
+
 	*initClass {
 		allMsgTypes = #[
-			\noteOn, \noteOff, /* \noteOnOff, */ \cc, \control, \polyTouch, \polytouch,
+			\noteOn, \noteOff, /* \noteOnOff, */
+			\cc, \control,
+			\cc14, \control14,
+			\polyTouch, \polytouch,
 			\touch, \bend, \program,
 			\midiClock, \start, \stop, \continue, \reset,
 			\allNotesOff
 		];
 
 		msgTypeKeys = (
+			\cc14: "c14_%_%",
+			\control14: "c14_%_%",
 			\cc: "c_%_%",
 			\control: "c_%_%",
 			\noteOn: "non_%_%",
@@ -274,6 +282,11 @@ MIDIMKtlDevice : MKtlDevice {
 		hashKeys = msgType.asArray.collect { |type|
 			MIDIMKtlDevice.makeMsgKey(type, elemDesc[\midiChan], elemDesc[\midiNum]);
 		};
+		if ( [ \control14, \cc14].includes( msgType ) ){
+			hashKeys = [ 0, 32 ].collect { |offset|
+				MIDIMKtlDevice.makeMsgKey(msgType, elemDesc[\midiChan], elemDesc[\midiNum] + offset );
+			};
+		};
 		^hashKeys
 	}
 
@@ -298,6 +311,9 @@ MIDIMKtlDevice : MKtlDevice {
 		var elementsDict = mktl.elementsDict;
 		midiKeyToElemDict = ();
 
+		cc14helpers = ();
+		cc14nums = Set.new;
+
 		if (elementsDict.isNil) {
 			warn("% has no elementsDict?".format(mktl));
 			^this
@@ -306,12 +322,23 @@ MIDIMKtlDevice : MKtlDevice {
 		elementsDict.do { |elem|
 			var elemDesc = elem.elemDesc;
 			var midiKeys = this.makeHashKey( elemDesc, elem );
+			// midiKeys.postln;
+			// elemDesc[\midiNum].postln;
 
 			// set the inputs only; outputs can use elemDesc directly
 			if ( [nil, \in, \inout].includes(elemDesc[\ioType])) {
 				// element has specific description for the input
 				midiKeys.do { |key|
 					midiKeyToElemDict.put(*[key, elem]);
+				};
+				if ( [\control14,\cc14].includes( elemDesc[\midiMsgType] ) ){
+					// create a cc14 helper
+					var cc14 = MIDIControl14BitHelper.new( elemDesc[\midiNum] );
+					var cc14lo = MIDIControl14BitHelperLobyte.new( cc14 );
+					cc14nums.add( elemDesc[ \midiNum] );
+					cc14nums.add( elemDesc[ \midiNum] + 32 );
+					cc14helpers.put( midiKeys[0], cc14 );
+					cc14helpers.put( midiKeys[1], cc14lo );
 				};
 			};
 		};
@@ -365,26 +392,67 @@ MIDIMKtlDevice : MKtlDevice {
 				var hash = MIDIMKtlDevice.makeMsgKey(typeKey, chan, num);
 				var el = midiKeyToElemDict[hash];
 
-				 // do global actions first
+				// do global actions first
 				midiRawAction.value(typeKey, src, chan, num, value);
-				global[typeKey].value(chan, num, value);
+					global[typeKey].value(chan, num, value);
 
 				if (el.notNil) {
 					el.deviceValueAction_(value);
 					if(traceRunning) {
 						MIDIMKtlDevice.postMsgTrace(mktl, el,
-						typeKey, value, num, chan, src);
+							typeKey, value, num, chan, src);
 					};
 				} { // element is nil
 					if (traceRunning) {
-						MIDIMKtlDevice.postMsgNotFound(mktl, typeKey,
-						value, num, chan, src);
+						if ( cc14nums.includes( num ).not ){
+							MIDIMKtlDevice.postMsgNotFound(mktl, typeKey,
+								value, num, chan, src);
+						};
 					};
 				}
 
 			}, msgType: typeKey, srcID: srcUid).permanent_(true);
 		);
 	}
+
+	// 14bit cc
+	makeChanNumCC14MsgMIDIFunc { |typeKey, srcUid|
+		if (typeKey == \cc14) { typeKey = \control14 };
+
+		responders.put(typeKey,
+			MIDIFunc({ |value, num, chan, src|
+				var elhash, el;
+				var hash = MIDIMKtlDevice.makeMsgKey(typeKey, chan, num);
+				var cc14 = cc14helpers[hash];
+				var value14;
+
+				 // do global actions first
+				midiRawAction.value(typeKey, src, chan, num, value);
+				global[typeKey].value(chan, num, value);
+
+				if ( cc14.notNil ){
+					value14 = cc14.value( value );
+					if ( value14.notNil ){
+						elhash = MIDIMKtlDevice.makeMsgKey(typeKey, chan, num - 32); // lo byte comes second
+						el = midiKeyToElemDict[hash];
+						if ( el.notNil) {
+							el.deviceValueAction_(value14);
+							if(traceRunning) {
+								MIDIMKtlDevice.postMsgTrace(mktl, el,
+									typeKey, value14, num, chan, src);
+							};
+						}{ // element is nil
+							if (traceRunning) {
+								MIDIMKtlDevice.postMsgNotFound(mktl, typeKey,
+									value, num, chan, src);
+							};
+						};
+					};
+				};
+			}, msgType: \control, srcID: srcUid).permanent_(true); // explicit control
+		);
+	}
+
 
 	*postMsgNotFound { |mktl, msgType, value, num, chan, src|
 		var numStr = if (num.notNil) { "midiNum: %, ".format(num) } { "" };
@@ -402,12 +470,16 @@ MIDIMKtlDevice : MKtlDevice {
 			numStr = msgType.switch(
 				\cc, "ccNum: %, ",
 				\control, "ccNum: %, ",
+
+				\cc14, "ccNum14: %, %",
+				\control14, "ccNum14: %, %",
+
 				\noteOn, "noteNum: %, ",
 				\noteOff, "noteNum: %, ",
 				\polyTouch, "touch: %, ",
 				\polytouch, "touch: %, "
 			)
-			.format(num)
+			.format(num, num+32)
 		} { "" };
 
 		"% midi, % > %, raw: %, \n"
@@ -450,6 +522,10 @@ MIDIMKtlDevice : MKtlDevice {
 			switch(msgType,
 				\cc,          { this.makeChanNumMsgMIDIFunc(msgType, srcID) },
 				\control,     { this.makeChanNumMsgMIDIFunc(msgType, srcID) },
+
+				\cc14,          { this.makeChanNumCC14MsgMIDIFunc(msgType, srcID) },
+				\control14,     { this.makeChanNumCC14MsgMIDIFunc(msgType, srcID) },
+
 				\noteOn,      { this.makeChanNumMsgMIDIFunc(msgType, srcID) },
 				\noteOff,     { this.makeChanNumMsgMIDIFunc(msgType, srcID) },
 				\noteOnOff,   {
@@ -475,6 +551,8 @@ MIDIMKtlDevice : MKtlDevice {
 	// output
 	send { |key, val|
 		var elem, elemDesc, msgType, chan, num;
+
+		val = val.asInteger; // integer is needed for MIDI output
 
 		// check that midiout needed for sending exists,
 		// complain and exit if it is missing
@@ -515,6 +593,10 @@ MIDIMKtlDevice : MKtlDevice {
 		switch(msgType,
 			\cc,  { midiOut.control(chan, num, val ) },
 			\control,  { midiOut.control(chan, num, val ) },
+
+			\cc14,  { midiOut.control14(chan, num, val ) },
+			\control14,  { midiOut.control14(chan, num, val ) },
+
 			\noteOn, { midiOut.noteOn(chan, num, val ) },
 			\noteOff, { midiOut.noteOff(chan, num, val ) },
 			\touch, { midiOut.touch(chan, val ) },
