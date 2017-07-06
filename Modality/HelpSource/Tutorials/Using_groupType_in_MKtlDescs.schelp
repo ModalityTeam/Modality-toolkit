@@ -211,10 +211,6 @@ elementsDesc: (
 );
 m.free; m = MKtl(\test, d).trace; m.postElements; g = m.gui;
 )
-g.parent.view.children[0].bounds_(Rect(5, 30, 50, 50));
-g.parent.view.children[1].bounds_(Rect(60, 30, 50, 50));
-.collect(_.bounds);
-
 
 // make noteOnOffVel + touch control with groupType \noteOnOffVelTouch
 // FIX GUI
