@@ -124,16 +124,14 @@ MIDI note messages were originally designed for piano keys on a MIDI keyboard. H
 
 MIDI code::noteOn:: messages have a EMPHASIS::note number:: defining which key was pressed, and a EMPHASIS::velocity:: value defining the speed or intensity with which it was pressed. A typical mapping for velocity would be the amplitude of a sound such that it gets louder with the amount of energy applied to press the corresponding key.
 
-When the key is lifted again (i.e. the note is released), a code::noteOff:: message is sent. It again features a note number and a velocity value. By interpreting this velocity as the release speed, a resonable mapping would be stretching the release time of sound's envelope). Instead of a code::noteOff::, most MIDI devices send a code::noteOn:: message with velocity code::0:: (an officially supported method).
+When the key is lifted again (i.e. the note is released), a code::noteOff:: message is sent. It again features a note number and a velocity value. By interpreting this velocity as the release speed, a resonable mapping would be stretching the release time of sound's envelope). Instead of a code::noteOff::, many MIDI devices send a code::noteOn:: message with velocity code::0::, which is officially supported, and many MIDI toolkits translate this into a noteOff 0 message.
 
-NOTE::
-MIDI noteOn messages with velocity 0 are always parsed as noteOff messages (in SuperCollider).
-There is a pull request to the SuperCollider development which would make this an option rather than a default. The syntax then would be
+SuperCollider allows turning this translation on and off if desired
 code::
 MIDIIn.noteOnZeroAsNoteOff = false; // send noteOn with velocity 0 as noteOn 0
 MIDIIn.noteOnZeroAsNoteOff = true; // send noteOn with velocity 0 as noteOff 0
 ::
-For more details, see link::https://github.com/supercollider/supercollider/issues/1483:: and link::https://github.com/supercollider/supercollider/pull/1488::
+For details, see link::https://github.com/supercollider/supercollider/issues/1483:: and link::https://github.com/supercollider/supercollider/pull/1488::
 ::
 
 
@@ -204,7 +202,7 @@ m = MKtl( \testMIDI, ~descInput );
 // or rebuild it from the new description:
 m.rebuild( ~descInput );
 m.trace;
-
+m.gui;
 // make some messages:
 ~midiOut.noteOff(0, 64, 127 );
 ~midiOut.noteOff(0, 64, 24 );
@@ -212,8 +210,7 @@ m.trace;
 ~midiOut.noteOn(0, 64, 0 ); // also becomes noteOff in OSX
 ::
 
-To get noteOn and noteOff actions separately, one can make separate elements, and here one can declare shared properties for both elements.
-(For a while, Modality supported a combined code::midiMsgType: \noteOnOff::, which listened to both noteOn and noteOff; however this has turned out to be problematic - if you find this in old desc files, please convert them as below.)
+To get noteOn and noteOff actions separately, one can make separate elements, and here one can declare shared properties for both elements with full flexibility, like this:
 
 code::
 (
@@ -240,62 +237,76 @@ code::
 	)
 )
 );
-// alternatively, you can use MKtlDesc.notePair
-// to create a group with shared properties,
-// and elements containing one \on and one for \off:
-
-MKtlDesc.notePair(\bt_play, 64,
-	(
-		type: 'button',
-		midiChan: 0,
-		midiNum: 64,
-		spec: \midiBut,
-		ioType: \in
-	)
-);
+m.free;  // free m and make it new:
+m = MKtl( \testMIDI, ~descInput );
+m.trace; m.gui;
+// make some messages:
+~midiOut.noteOn(0, 64, 127 );
+~midiOut.noteOff(0, 64, 127 );
+~midiOut.noteOff(0, 64, 24 );
+~midiOut.noteOff(0, 64, 0 );
+~midiOut.noteOn(0, 64, 0 ); // also becomes noteOff in OSX
+::
 
 
+The code:: \groupType :: key allows concisely defining the following combinations of noteOn, noteOff and touch by a single name, and building them correctly:
+
+table::
+	## tag: || description: || noteOn: || noteOff: || touch: || comment
+	##
+	## \noteOnTrig || trigger pad || 127 || - || - ||
+	## \noteOnVel || trig pad w/ vel. || 1-127 || - || - ||
+	##
+	## \noteOnOff || piano key w/ on vel. || 1-127 || 0 || - || default
+	## \noteOnOffBut || button on/off || 127 || 0 || - ||
+	## \noteOnOffVel || pad/key w/ off vel. || 1-127 || 1-127 || - || rare
+	##
+	## \noteOnOffTouch || pad/key w/ polytouch || 1-127 || 0 || 0-127 || semi-rare
+	## \noteOnOffVelTouch || pad/key w/ off vel and touch || 1-127 || 1-127 || 1-127 || very rare
+::
+
+See link::Tutorials/Using_groupType_in_MKtlDescs:: for a full discussion.
+As a first example, here is how to make a
+
+code::
+// make noteOnOff + touch control with groupType \noteOnOffTouch
 (
-~descInput = (
-	idInfo: ~idInfo, // still around from above
-	protocol: \midi,
-	elementsDesc: (
-		shared: (
-					type: 'button',
-					midiChan: 0,
-					spec: \midiBut,
-					ioType: \in
-				),
-
-		// for a play button and a stop button, this is:
-		elements: [
-			[\play, 42],
-			[\stop, 43]
-		].collect { |keyNote, i|
-
-			MKtlDesc.notePair(
-				keyNote[0],
-				keyNote[1],
-				// gui layout hint:
-				( style: (row: 0, column: i))
+d = (
+	deviceName: "test", protocol: 'midi',
+	idInfo: "bogus", filename: "test4onoffs",
+elementsDesc: (
+		shared: (elementType: \pad, midiChan: 0, groupType: \noteOnOffTouch),
+		elements: // [];
+		(48..51).collect { |midiNum, i|
+			( midiNum: midiNum,
+				style: (row: 0, column: i, width: 1, height: 1)
 			)
 		}
 	)
-)
 );
-
-m.rebuild(~descInput);
+x = MKtlDesc.fromDict(d);
+x.elementsDict.size.postln; // 12
+m = MKtl(\test, x);
 m.postElements;
-m.gui;
-// This makes it easy to set separate actions for on and off:
-m.elAt(\play, \on).action = { "ON".postln };
-m.elAt(\play, \off).action = { "OFFFFF".postln };
+g = m.gui;
+)
 
-~midiOut.noteOn(0, 64, 37 );
-~midiOut.noteOff(0, 64, 37 );
+// This makes it easy to set separate actions for on and off:
+m.elAt(\1, \on).action = { "ON".postln };
+m.elAt(\1, \touch).action = { "mooove".postln };
+m.elAt(\1, \off).action = { "OFFFFF".postln };
+
+// open as if on external MIDI plug
+// - on macOS, requires IAC driver,
+// - on lin/win, use appropriate MIDI port
+m.openDeviceVia("IAC Driver");
+~midiOut = MIDIOut(0);
+~midiOut.noteOn(0, 48, 37 );
+~midiOut.polyTouch(0, 48, 73 );
+~midiOut.noteOff(0, 48, 37 );
 
 // With this approach, there is no single element to ask whether the button is on or off. You can use the 'isOn' method on the group to check whether on or off was last activated :
-m.elAt(\play).isOn;
+m.elAt(\1).isOn;
 
 ::
 

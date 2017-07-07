@@ -63,60 +63,95 @@ MKtlDesc {
 			},
 			// default
 			noteOnOff: { |dict|
-				dict.put(\elements, [
-					(key: \on,  midiMsgType: \noteOn,  spec: \midiVel),
-					(key: \off, midiMsgType: \noteOff, spec: \midiBut, elementType: \padUp)
-				]).put(\useSingleGui, true);
+				var shared = ().putAll(dict);
+				dict.clear.putAll((
+					shared: shared,
+					\shareGui: true,
+					\elements: [
+						(key: \on,  midiMsgType: \noteOn,  spec: \midiVel),
+						(key: \off, midiMsgType: \noteOff, spec: \midiBut,
+							elementType: \padUp)
+				]));
 			},
 			// others
 			noteOnOffBut: { |dict|
-				dict.put(\elements, [
-					(key: \on,  midiMsgType: \noteOn,  spec: \midiBut),
-					(key: \off, midiMsgType: \noteOff, spec: \midiBut, elementType: \padUp)
-				]).put(\useSingleGui, true);
+				var shared = ().putAll(dict);
+				dict.clear.putAll((
+					shared: shared,
+					\shareGui: true,
+					\elements: [
+						(key: \on,  midiMsgType: \noteOn,  spec: \midiBut),
+						(key: \off, midiMsgType: \noteOff, spec: \midiBut, elementType: \padUp)
+				]));
 			},
 			noteOnOffVel: { |dict|
-				dict.put(\elements, [
-					(key: \on,  midiMsgType: \noteOn,  spec: \midiVel),
-					(key: \off, midiMsgType: \noteOff, spec: \midiVel, elementType: \padUp)
-				]).put(\useSingleGui, true);
+				var shared = ().putAll(dict);
+				dict.clear.putAll((
+					shared: shared,
+					\shareGui: true,
+					\elements: [
+						(key: \on,  midiMsgType: \noteOn,  spec: \midiVel),
+						(key: \off, midiMsgType: \noteOff, spec: \midiVel, elementType: \padUp)
+				]));
 			},
 			noteOnOffTouch: { |dict|
-				dict.put(\elements, [
-					(key: \on,  midiMsgType: \noteOn,  spec: \midiVel),
-					(key: \off, midiMsgType: \noteOff, spec: \midiBut, elementType: \padUp),
-					(key: \touch, midiMsgType: \polytouch, spec: \midiVel, elementType: \padMove)
-				]).put(\useSingleGui, true);
+				var shared = ().putAll(dict);
+				dict.clear.putAll((
+					shared: shared,
+					\shareGui: true,
+					\elements: [
+						(key: \on,  midiMsgType: \noteOn,  spec: \midiVel),
+						(key: \off, midiMsgType: \noteOff, spec: \midiBut, elementType: \padUp),
+						(key: \touch, midiMsgType: \polytouch, spec: \midiVel, elementType: \padMove)
+				]));
 			},
 			noteOnOffVelTouch: { |dict|
-				dict.put(\elements, [
-					(key: \on,  midiMsgType: \noteOn,  spec: \midiVel),
-					(key: \off, midiMsgType: \noteOff, spec: \midiVel, elementType: \padUp),
-					(key: \touch, midiMsgType: \polytouch, spec: \midiVel, elementType: \padMove)
-				]).put(\useSingleGui, true);
+				var shared = ().putAll(dict);
+				dict.clear.putAll((
+					shared: shared,
+					\shareGui: true,
+					\elements: [
+						(key: \on,  midiMsgType: \noteOn,  spec: \midiVel),
+						(key: \off, midiMsgType: \noteOff, spec: \midiVel, elementType: \padUp),
+						(key: \touch, midiMsgType: \polytouch, spec: \midiVel, elementType: \padMove)
+				]));
 			},
 			// fader touch on/off + control
+			// steinberg CMC uses this
 			noteOnOffButCtl: { |dict|
-				dict.put(\elements, [
-					(key: \on,  midiMsgType: \noteOn,  spec: \midiBut),
-					(key: \off, midiMsgType: \noteOff, spec: \midiBut, elementType: \padUp),
-					(key: \ctl, midiMsgType: \control, spec: \midiVel, elementType: \padMove)
-				]).put(\useSingleGui, true);
+				var shared = ().putAll(dict);
+				dict.clear.putAll((
+					shared: shared,
+					\shareGui: true,
+					\elements: [
+						(key: \on,  midiMsgType: \noteOn,  spec: \midiBut),
+						(key: \off, midiMsgType: \noteOff, spec: \midiBut, elementType: \padUp),
+						(key: \ctl, midiMsgType: \control, spec: \midiVel, elementType: \padMove)
+				]));
 			},
 			// velocity on, but off, pressure -> control
 			noteOnOffCtl: { |dict|
-				dict.put(\elements, [
-					(key: \on,  midiMsgType: \noteOn,  spec: \midiVel),
-					(key: \off, midiMsgType: \noteOff, spec: \midiBut, elementType: \padUp),
-					(key: \ctl, midiMsgType: \control, spec: \midiVel, elementType: \padMove)
-				]).put(\useSingleGui, true);
+				var shared = ().putAll(dict);
+				dict.clear.putAll((
+					shared: shared,
+					\shareGui: true,
+					\elements: [
+						(key: \on,  midiMsgType: \noteOn,  spec: \midiVel),
+						(key: \off, midiMsgType: \noteOff, spec: \midiBut, elementType: \padUp),
+						(key: \ctl, midiMsgType: \control, spec: \midiVel, elementType: \padMove)
+				]));
 			},
 		);
 	}
 
 	*deepExpand { |groupDict, groupType|
 		^if (isElemFunc.value(groupDict)) {
-			this.expandElemToGroup(groupDict, groupType);
+			groupType = groupType ?? { groupDict[\groupType] };
+			if (groupType.notNil) {
+				this.expandElemToGroup(groupDict, groupType);
+			} {
+				groupDict
+			}
 		} {
 			groupDict.elements.collect { |elemDict|
 				this.deepExpand(elemDict, groupType)
@@ -125,17 +160,19 @@ MKtlDesc {
 	}
 
 	*expandElemToGroup { |dict, groupType|
-		var groupFunc, groupDict;
-		groupType = groupType ? dict[\groupType];
-		if (groupType.isNil) { ^dict };
-
+		var groupFunc;
 		groupFunc = groupFuncs[groupType];
 		if (groupFunc.isNil) {
 			"%: no groupFunc found at %\n".postf(thisMethod, groupType.cs);
 			^dict
 		};
-		groupDict = groupFunc.value(dict) ? dict;
-		^groupDict.put(\groupType, groupType);
+
+		groupFunc.value(dict);
+		dict.put(\groupType, groupType);
+		dict.elements.do { |elemDict|
+			elemDict.style = dict.style;
+		};
+		^dict;
 	}
 
 	// access to all
