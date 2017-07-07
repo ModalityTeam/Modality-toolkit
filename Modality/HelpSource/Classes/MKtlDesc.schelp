@@ -302,4 +302,72 @@ d.matchWithHID(m.device.source);
 // remove hid elem 5 in HID -> now elements remain onlyInHID as well
 m.device.source.elements.removeAt(5);
 d.matchWithHID(m.device.source);
+
+/********** TESTS ********/
+// groupType expansion:
+
+a = (midiNum: 12, style: (width: 0.5, height: 2));
+
+// call funcs directly
+MKtlDesc.groupFuncs['noteOnTrig'].value(a);
+MKtlDesc.groupFuncs['noteOnVel'].value(a);
+
+MKtlDesc.groupFuncs['noteOnOff'].value(a);
+MKtlDesc.groupFuncs['noteOnOffBut'].value(());
+MKtlDesc.groupFuncs['noteOnOffVel'].value(());
+
+MKtlDesc.groupFuncs['noteOnOffCtl'].value(());
+MKtlDesc.groupFuncs['noteOnOffTouch'].value(());
+MKtlDesc.groupFuncs['noteOnOffVelTouch'].value(());
+
+// lookup as it happens in deepExpand
+MKtlDesc.expandElemToGroup(a, 'noteOnOff');
+
+// tests for deepExpand:
+
+~groupType = \noteOnTrig;
+~groupType = \noteOnVel;
+
+~elems = MKtlDesc.deepExpand(
+	(key: \pad,
+		elements: (48..51).collect { |num, i|
+			( midiNum: num, groupType: ~groupType,
+				style: (row: i % 4, column: i div: 4) )
+		}
+	)
+).printAll; "";
+~elems.collect(_.elements).flat.size; // 4
+
+
+// these expand to two each
+~groupType = 'noteOnOff';
+~groupType = 'noteOnOffBut';
+~groupType = 'noteOnOffVel';
+
+~elems = MKtlDesc.deepExpand(
+	(key: \pad,
+		elements: (48..51).collect { |num, i|
+			( midiNum: num, groupType: ~groupType,
+				style: (row: i % 4, column: i div: 4) )
+		}
+	)
+).printAll; "";
+~elems.collect(_.elements).flat.size; // 8
+
+
+// these expand to three each
+~groupType = 'noteOnOffCtl';
+~groupType = 'noteOnOffTouch';
+~groupType = 'noteOnOffVelTouch';
+
+~elems = MKtlDesc.deepExpand(
+	(key: \pad,
+		elements: (48..51).collect { |num, i|
+			( midiNum: num, groupType: ~groupType,
+				style: (row: i % 4, column: i div: 4) )
+		}
+	)
+).printAll; "";
+~elems.collect(_.elements).flat.size; // 12
+
 ::
