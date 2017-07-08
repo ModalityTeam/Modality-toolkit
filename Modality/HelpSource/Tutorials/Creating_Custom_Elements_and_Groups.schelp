@@ -6,9 +6,44 @@ related:: Overviews/Modality, Classes/MKtl, Classes/MKtlElement, Classes/MKtlEle
 section:: Background
 MKtl objects contain a hierarchical organisation of their interaction elements in MKtl.elementsGroup. This group contains and defines every element once, and one can access every element directly by its element key, or by its hierarchical address.
 
-Sometimes derived elements are useful, and one can make such elements, but them in additional groups within the MKtl.
+Sometimes derived elements are useful, and one can make such elements, and put them in additional groups within the MKtl.
 
-subsection:: Example - convert x, y coordinates to point and polar
+subsection:: Example for reordering - put noteOns and noteOffs in separate groups
+
+code::
+// make a drumpad controller
+MKtl('lpd', "*lpd8");
+MKtl('lpd').gui;
+
+// make an elementgroup by hand of just the on elements:
+~ons = MKtlElementGroup(\ons, MKtl('lpd'), MKtl('lpd').elAt(\pad).collect(_[\on]));
+// and add it to the MKtl:
+MKtl('lpd').addNamed(\ons, ~ons);
+
+// give the group a shared ON function
+MKtl('lpd').elAt(\ons).action = { |el|
+	"ON group: % %\n".postf(el.name, el.value.round(0.001));
+};
+// test that the elements all respond
+MKtl('lpd').elAt(\pad, 7.rand, \on).valueAction_(1.0.rand);
+
+
+// Same for the offs, but use automatic group wrapping of arrays of elements:
+MKtl('lpd').addNamed(\offs, MKtl('lpd').elAt(\pad).collect(_[\off]));
+
+MKtl('lpd').elAt(\offs);
+MKtl('lpd').elAt(\offs, 0);
+
+// give the group a shared ON function
+MKtl('lpd').elAt(\offs).action = { |el|
+	"OFF group: % %\n".postf(el.name, el.value.round(0.001));
+};
+// test that the elements all respond
+MKtl('lpd').elAt(\pad, 7.rand, \off).valueAction_(1.0.rand);
+
+::
+
+subsection:: Example for derived elements - convert x, y coordinates to point and polar
 
 code::
 // make a gamepad controller

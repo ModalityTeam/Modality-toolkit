@@ -344,6 +344,9 @@ MKtl { // abstract class
 	}
 
 	addNamed { |name, group|
+		if (group.isKindOf(Array)) {
+			group = MKtlElementGroup(name, this, group);
+		};
 		namedDict.put(name, group);
 	}
 
