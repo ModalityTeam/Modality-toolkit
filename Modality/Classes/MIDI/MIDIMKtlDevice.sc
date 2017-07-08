@@ -322,6 +322,7 @@ MIDIMKtlDevice : MKtlDevice {
 		elementsDict.do { |elem|
 			var elemDesc = elem.elemDesc;
 			var midiKeys = this.makeHashKey( elemDesc, elem );
+			var cc14, cc14lo;
 			// midiKeys.postln;
 			// elemDesc[\midiNum].postln;
 
@@ -333,8 +334,8 @@ MIDIMKtlDevice : MKtlDevice {
 				};
 				if ( [\control14,\cc14].includes( elemDesc[\midiMsgType] ) ){
 					// create a cc14 helper
-					var cc14 = MIDIControl14BitHelper.new( elemDesc[\midiNum] );
-					var cc14lo = MIDIControl14BitHelperLobyte.new( cc14 );
+					cc14 = MIDIControl14BitHelper.new( elemDesc[\midiNum] );
+					cc14lo = MIDIControl14BitHelperLobyte.new( cc14 );
 					cc14nums.add( elemDesc[ \midiNum] );
 					cc14nums.add( elemDesc[ \midiNum] + 32 );
 					cc14helpers.put( midiKeys[0], cc14 );
