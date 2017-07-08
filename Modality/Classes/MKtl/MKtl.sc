@@ -145,7 +145,7 @@ MKtl { // abstract class
 	// or returns a new empty instance.
 	// If no physcal device is present, this becomes a virtual MKtl.
 
-	*new { |name, lookupNameOrDesc, lookForNew = false, multiIndex |
+	*new { |name, lookupNameOrDesc, lookForNew = false, multiIndex, tryOpenDevice=true |
 		var res, lookupName, lookupInfo, descName, newMKtlDesc, protocol;
 
 		if (name.isNil) {
@@ -180,12 +180,16 @@ MKtl { // abstract class
 				lookupName = lookupNameOrDesc;
 				lookupInfo = MKtlLookup.all[lookupName];
 				if (lookupInfo.isNil) {
-					MKtlDevice.initHardwareDevices;
-					lookupInfo = MKtlLookup.all[lookupName];
-					if (lookupInfo.isNil) {
-						"%: could not find device for key %,"
-						" cannot create MKtl(%)!\n"
-						.postf(thisMethod, lookupNameOrDesc, name);
+					if ( tryOpenDevice ){
+						MKtlDevice.initHardwareDevices;
+						lookupInfo = MKtlLookup.all[lookupName];
+						if (lookupInfo.isNil) {
+							"%: could not find device for key %,"
+							" cannot create MKtl(%)!\n"
+							.postf(thisMethod, lookupNameOrDesc, name);
+							^nil
+						}
+					}{
 						^nil
 					}
 				};
@@ -208,7 +212,9 @@ MKtl { // abstract class
 					^nil
 				};
 				protocol = newMKtlDesc.protocol;
-				MKtlDevice.initHardwareDevices(false, protocol);
+				if ( tryOpenDevice ){
+					MKtlDevice.initHardwareDevices(false, protocol);
+				};
 			},
 			MKtlDesc, { newMKtlDesc = lookupNameOrDesc },
 			{
@@ -236,7 +242,7 @@ MKtl { // abstract class
 		// and hopefully a good enough desc
 		^super.newCopyArgs(name)
 		.init(newMKtlDesc, lookupName, lookupInfo,
-			lookForNew, multiIndex );
+			lookForNew, multiIndex, tryOpenDevice );
 	}
 
 	checkIdentical { |lookupNameOrDesc|
@@ -293,7 +299,7 @@ MKtl { // abstract class
 	storeArgs { ^[name] }
 	printOn { |stream| this.storeOn(stream) }
 
-	init { |argDesc, argLookupName, argLookupInfo, lookForNew = false, multiIndex|
+	init { |argDesc, argLookupName, argLookupInfo, lookForNew = false, multiIndex, tryOpenDevice=true|
 		var specsFromDesc;
 
 		desc = argDesc;
@@ -318,10 +324,10 @@ MKtl { // abstract class
 		// only put in all if everything worked
 		all.put(name, this);
 
-		this.finishInit(lookForNew, multiIndex); // and finalise init
+		this.finishInit(lookForNew, multiIndex, tryOpenDevice); // and finalise init
 	}
 
-	finishInit { |lookForNew, multiIndex|
+	finishInit { |lookForNew, multiIndex, tryOpenDevice=true|
 		if (desc.isNil) {
 			"%: no desc given, cannot create elements..."
 				.format(thisMethod).inform;
@@ -332,7 +338,9 @@ MKtl { // abstract class
 			this.makeElements;
 			this.makeCollectives;
 		};
-		this.openDevice( lookForNew, multiIndex );
+		if ( tryOpenDevice ){
+			this.openDevice( lookForNew, multiIndex );
+		};
 	}
 
 	addNamed { |name, group|
