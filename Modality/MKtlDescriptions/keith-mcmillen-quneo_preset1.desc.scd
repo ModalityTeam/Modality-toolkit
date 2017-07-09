@@ -1,12 +1,15 @@
 // A MKtl description for the QuNeo controller
 // factory preset #1 (the lower left drum pad)
+
+// TODO: convert to groupTypes where possible
+// then add gui info to make gui usable.
 (
 deviceName: "QUNEO",
 protocol: \midi,
 deviceType: \launchpad,
 status: (
     linux: "tested on 28/05/2017 by @patrickdupuis. GUI not included.",
-    osx: "unknown",
+    osx: "tested and working on 2017_07_09 by adc. GUI layout needs care",
     win: "unknown"
 ),
 
