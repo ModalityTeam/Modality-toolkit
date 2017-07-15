@@ -31,6 +31,8 @@ MKtlDesc {
 		defaultFolder = MKtlDesc.filenameSymbol.asString.dirname.dirname.dirname
 		+/+ folderName;
 		this.checkUserFolder;
+		this.initGroupFuncs;
+
 		descFolders = List[defaultFolder, userFolder];
 		allDescs =();
 		isElemFunc = { |el|
@@ -39,9 +41,21 @@ MKtlDesc {
 
 		fileToIDDict = Dictionary.new;
 
-		this.initGroupFuncs;
+		MKtlDesc.checkCaches;
+		this.loadCaches;
+	}
 
-		this.loadCache;
+	// if needed only
+	*updateCaches {
+		descFolders.do { |path, index|
+			var descDates = MKtlDesc.findFile(folderIndex: index)
+			.collect(File.mtime(_));
+			var cacheDate = File.mtime(path +/+ MKtlDesc.cacheName);
+
+			if (descDates.maxItem > cacheDate) {
+				this.writeCache(index);
+			};
+		};
 	}
 
 	*checkUserFolder {
@@ -408,45 +422,61 @@ MKtlDesc {
 		^candidate.desc
 	}
 
-	*writeCache {
-		var dictForFolder = Dictionary.new, file;
-
+	*checkCaches {
+		var cacheTime, lastDescTime;
 		descFolders.do { |folder, i|
-			var descs = MKtlDesc.loadDescs(folderIndex: i);
-			var path = folder +/+ cacheName;
+			var files = this.findFile("*", i);
+			var newestDescTime = files.collect(File.mtime(_)).maxItem;
+			var cacheTime = File.mtime(folder +/+ cacheName);
+			files.size.postln;
+			if (cacheTime.isNil or: { newestDescTime > cacheTime }) {
+				this.writeCache(i);
+			}
+		}
+	}
 
-			descs.collect { |desc|
-				var filename = desc.fullDesc.filename;
-				var idInfo = desc.fullDesc.idInfo;
-				dictForFolder.put(filename, idInfo);
-			};
-			file = File.open(path, "w");
+	*writeCaches {
+		descFolders.size.do { |i| this.writeCache(i) }
+	}
+
+	*writeCache { |folderIndex = 0|
+		var folder = descFolders[folderIndex];
+		var localDescs = this.loadDescs(folderIndex: folderIndex);
+		var dictForFolder = Dictionary.new;
+		var path = folder +/+ cacheName;
+
+		localDescs.collect { |desc|
+			var filename = desc.fullDesc.filename;
+			var idInfo = desc.fullDesc.idInfo;
+			dictForFolder.put(filename, idInfo);
+		};
+		File.use(path, "w", { |file|
 			if (file.isOpen) {
 				file.write("Dictionary[\n");
 				dictForFolder.sortedKeysValuesDo { |key, val|
 					file.write("\t" ++ (key -> val).cs ++ ",\n");
 				};
 				file.write("]\n");
-				file.close;
-				"MKtlDesc cache written with % entries at %.\n".postf(dictForFolder.size, path);
+				"MKtlDesc cache written with % entries at %.\n"
+				.postf(dictForFolder.size, path);
 			} {
 				warn("MKtlDesc: could not write cache at %.\n".format(path));
 			}
-		};
+		});
 	}
 
-	*loadCache {
-		// clear first? maybe better not
-		descFolders.do { |folder|
-			var loadedList = (folder +/+ cacheName).load;
-			//	("// loadedList: \n" + loadedList.cs).postln;
-			if (loadedList.isNil) {
-				"% : no cache file found.\n".postf(thisMethod);
-				^this
-			};
-			loadedList.keysValuesDo { |filename, idInfo|
-				fileToIDDict.put(filename, idInfo);
-			};
+	*loadCaches {
+		descFolders.do { |folder| this.loadCache(folder) };
+	}
+
+	*loadCache { |folder|
+		var loadedList = (folder +/+ cacheName).load;
+		if (loadedList.isNil) {
+			"% : no cache file found.\n".postf(thisMethod);
+			^this
+		};
+		loadedList.keysValuesDo { |filename, idInfo|
+			fileToIDDict.put(filename, idInfo);
 		};
 	}
 
@@ -631,10 +661,10 @@ MKtlDesc {
 		if (multi.not) {
 			if (paths.size > 1) {
 				warn("MktlDesc: found multiple matching files!");
-					paths.do { |path|
-						"\t".post; path.basename.postcs;
-					};
-					warn("loading first of %\n:\t%.\n".format(paths.size, paths[0].basename.cs));
+				paths.do { |path|
+					"\t".post; path.basename.postcs;
+				};
+				warn("loading first of %\n:\t%.\n".format(paths.size, paths[0].basename.cs));
 				^this.fromPath(paths[0]);
 			};
 		};
@@ -923,8 +953,8 @@ MKtlDesc {
 		// lower half pad for noteOff:
 		notePair.elements[1].put(
 			\style, style.copy.put(\height, halfHeight)
-				// push down only if row is given,
-				// else leave row nil for crude auto-positioning
+			// push down only if row is given,
+			// else leave row nil for crude auto-positioning
 			.put(\row, style.row !? { style.row + 0.45 })
 		);
 
