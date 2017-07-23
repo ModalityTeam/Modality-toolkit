@@ -28,6 +28,8 @@ MKtlDesc {
 	var <elementsDict;
 
 	*initClass {
+		Class.initClassTree(Spec);
+
 		defaultFolder = MKtlDesc.filenameSymbol.asString.dirname.dirname.dirname
 		+/+ folderName;
 		this.checkUserFolder;
@@ -426,12 +428,15 @@ MKtlDesc {
 		var cacheTime, lastDescTime;
 		descFolders.do { |folder, i|
 			var files = this.findFile("*", i);
-			var newestDescTime = files.collect(File.mtime(_)).maxItem;
-			var cacheTime = File.mtime(folder +/+ cacheName);
-			files.size.postln;
-			if (cacheTime.isNil or: { newestDescTime > cacheTime }) {
-				this.writeCache(i);
-			}
+			var newestDescTime;
+			var cacheTime = 0, cachePath = folder +/+ cacheName;
+			if (files.notEmpty) {
+				newestDescTime = files.collect(File.mtime(_)).maxItem;
+				if (cachePath.pathMatch.notEmpty) {
+					cacheTime = File.mtime(cachePath);
+				};
+				if (newestDescTime > cacheTime) { this.writeCache(i) }
+			};
 		}
 	}
 
