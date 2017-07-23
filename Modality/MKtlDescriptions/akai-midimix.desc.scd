@@ -73,14 +73,14 @@ idInfo: "MIDI Mix",
 // deviceInfo: (
 // vendorURI: 'http://company.com/products/this',
 // manualURI: 'http://company.com/products/this/manual.pdf',
-	// description: ,
-	// features: [],
-	// notes: ,
-	// hasScribble: false
+// description: ,
+// features: [],
+// notes: ,
+// hasScribble: false
 // ),
 
 elementsDesc: (
-	 elements: [
+	elements: [
 
 		(
 			key: \kn,
@@ -102,7 +102,7 @@ elementsDesc: (
 			key: \sl,
 			shared: (midiChan: 0, 'midiMsgType': 'cc', 'type': 'slider', 'spec': 'midiCC', \ioType: \in),
 			elements: [19, 23, 27, 31, 49, 53, 57, 61, 62]
-					.collect{ |n,i| (midiNum: n, \style: (row:5, column: i)) }
+			.collect{ |n,i| (midiNum: n, \style: (row:5, column: i)) }
 		),
 
 		(
