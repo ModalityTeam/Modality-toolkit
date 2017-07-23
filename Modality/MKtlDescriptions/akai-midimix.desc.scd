@@ -113,11 +113,11 @@ elementsDesc: (
 					.collect{ |midiNote,i|
 						MKtlDesc.notePair(
 							(i+1).asSymbol, midiNote,
-							style: (
+							(style: (
 								row: 3,
 								column: i,
 								showLabel: true
-							)
+							))
 						)
 					}
 				),
@@ -125,11 +125,11 @@ elementsDesc: (
 					.collect{ |midiNote,i|
 						MKtlDesc.notePair(
 							(i+1).asSymbol, midiNote,
-							style: (
+							(style: (
 								row: 4,
 								column: i,
 								showLabel: true
-							)
+							))
 						)
 					}
 				)
