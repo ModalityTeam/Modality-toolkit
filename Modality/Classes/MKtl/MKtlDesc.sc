@@ -43,21 +43,8 @@ MKtlDesc {
 
 		fileToIDDict = Dictionary.new;
 
-		MKtlDesc.checkCaches;
+		MKtlDesc.updateCaches;
 		this.loadCaches;
-	}
-
-	// if needed only
-	*updateCaches {
-		descFolders.do { |path, index|
-			var descDates = MKtlDesc.findFile(folderIndex: index)
-			.collect(File.mtime(_));
-			var cacheDate = File.mtime(path +/+ MKtlDesc.cacheName);
-
-			if (descDates.maxItem > cacheDate) {
-				this.writeCache(index);
-			};
-		};
 	}
 
 	*checkUserFolder {
@@ -424,20 +411,41 @@ MKtlDesc {
 		^candidate.desc
 	}
 
-	*checkCaches {
-		var cacheTime, lastDescTime;
-		descFolders.do { |folder, i|
-			var files = this.findFile("*", i);
-			var newestDescTime;
-			var cacheTime = 0, cachePath = folder +/+ cacheName;
-			if (files.notEmpty) {
-				newestDescTime = files.collect(File.mtime(_)).maxItem;
-				if (cachePath.pathMatch.notEmpty) {
-					cacheTime = File.mtime(cachePath);
-				};
-				if (newestDescTime > cacheTime) { this.writeCache(i) }
+
+	// non-functional duplicate to updateCaches
+	// *checkCaches {
+	// 	var cacheTime, lastDescTime;
+	// 	descFolders.do { |folder, i|
+	// 		var files = this.findFile("*", i);
+	// 		var newestDescTime;
+	// 		var cacheTime = 0, cachePath = folder +/+ cacheName;
+	// 		if (files.notEmpty) {
+	// 			newestDescTime = files.collect(File.mtime(_)).maxItem;
+	// 			if (cachePath.pathMatch.notEmpty) {
+	// 				cacheTime = File.mtime(cachePath);
+	// 			};
+	// 			if (newestDescTime > cacheTime) { this.writeCache(i) }
+	// 		};
+	// 	}
+	// }
+
+	*updateCaches {
+		descFolders.do { |path, index|
+			var descDates, cacheDate;
+
+
+			descDates = MKtlDesc.findFile(folderIndex: index).collect(File.mtime(_));
+
+			if (File.exists(path +/+ MKtlDesc.cacheName)) {
+				cacheDate = File.mtime(path +/+ MKtlDesc.cacheName);
 			};
-		}
+
+			// write cahce files also when directory is empty
+			// but not if empty directory already contains cache file
+			if (cacheDate.isNil or: {(descDates.maxItem ? -1) > cacheDate}) {
+				this.writeCache(index);
+			};
+		};
 	}
 
 	*writeCaches {
