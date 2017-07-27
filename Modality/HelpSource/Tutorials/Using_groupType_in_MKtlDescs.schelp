@@ -1,6 +1,6 @@
 TITLE:: Tutorials/Using groupType in MKtlDescs
 summary:: Creating combined noteOn noteOff touch groups in MKtlDescs with groupType
-categories:: Libraries>Modality, MIDI
+categories:: Libraries>Modality, External Control>MIDI
 related:: Overviews/Modality, Classes/MKtl, Classes/MKtlDesc, Classes/MKtlElement, Tutorials/How_to_create_a_description_file
 
 Many MIDI devices create noteOn, noteOff and sometimes touch messages from the same physical element, a pianoKey, a drumpad, or button.
