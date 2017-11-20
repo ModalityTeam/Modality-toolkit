@@ -132,8 +132,6 @@ MIDIIn.noteOnZeroAsNoteOff = false; // send noteOn with velocity 0 as noteOn 0
 MIDIIn.noteOnZeroAsNoteOff = true; // send noteOn with velocity 0 as noteOff 0
 ::
 For details, see link::https://github.com/supercollider/supercollider/issues/1483:: and link::https://github.com/supercollider/supercollider/pull/1488::
-::
-
 
 As a first example, we now create an link::Classes/MKtl:: containing exactly one link::Classes/MKtlElement:: that responds to a code::noteOn:: event. For mapping its velocity we use the code::spec: \midiVel:: identifier, which tells the system to normalise the raw value range of velocity values (code::0:: to code::127::) to values between code::0:: and code::1::.
 
