@@ -48,6 +48,7 @@ Dictionary[
 	("logitech-extreme-3d-pro" -> "Logitech Extreme 3D_Logitech"),
 	("m-audio-triggerfinger" -> "USB Trigger Finger"),
 	("makenoise-0coast" -> "EXTERNAL"),
+	("native-instruments-traktor-kontrol-z1" -> "Traktor Kontrol Z1 Input"),
 	("native-instruments-traktor-kontrol-z2" -> "Traktor Kontrol Z2 Input"),
 	("nordDrum2" -> "EXTERNAL"),
 	("novation-launchcontrol" -> "Launch Control"),
