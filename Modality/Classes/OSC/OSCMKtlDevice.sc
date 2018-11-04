@@ -121,6 +121,26 @@ OSCMKtlDevice : MKtlDevice {
 	updateSrcAddr { |hostname, port|
 		if (hostname.notNil) {
 			source.hostname = hostname;
+		};
+		if (port.notNil) {
+			source.port = port;
+		};
+		this.initOSC;
+	}
+
+	updateDstAddr { |hostname, port|
+		if (hostname.notNil) {
+			destination.hostname = hostname;
+		};
+		if (port.notNil) {
+			destination.port = port;
+		};
+		this.initOSC;
+	}
+
+	updateSrcDstAddr { |hostname, port|
+		if (hostname.notNil) {
+			source.hostname = hostname;
 			destination.hostname = hostname;
 		};
 		if (port.notNil) {
