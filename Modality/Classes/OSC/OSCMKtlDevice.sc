@@ -119,10 +119,37 @@ OSCMKtlDevice : MKtlDevice {
 	// source is used in all OSCFuncs, so sticking in new ip/port
 	// values will redirect OSCfuncs to the new address data
 	updateSrcAddr { |hostname, port|
-		if (hostname.notNil) { source.hostname = hostname };
-		if (port.notNil) { source.port = port };
+		if (hostname.notNil) {
+			source.hostname = hostname;
+		};
+		if (port.notNil) {
+			source.port = port;
+		};
 		this.initOSC;
 	}
+
+	updateDstAddr { |hostname, port|
+		if (hostname.notNil) {
+			destination.hostname = hostname;
+		};
+		if (port.notNil) {
+			destination.port = port;
+		};
+		this.initOSC;
+	}
+
+	updateSrcDstAddr { |hostname, port|
+		if (hostname.notNil) {
+			source.hostname = hostname;
+			destination.hostname = hostname;
+		};
+		if (port.notNil) {
+			source.port = port;
+			destination.port = port;
+		};
+		this.initOSC;
+	}
+
 	updateRecvPort { |port|
 		recvPort = port ? recvPort;
 		this.initOSC;
