@@ -100,3 +100,23 @@ returns:: an instance of link::Classes/NetAddr::
 METHOD:: recvPort
 The port to which the OSC device/interface is sending data to. If this is configurable in the OSC device or interface, then it is easier to use sclang's default port of 57120 and leave it undefined.
 
+METHOD:: updateSrcAddr
+Updates the device that is the source for this OSCMKtlDevice and reconfigures OSC communications.
+ARGUMENT:: hostname
+The hostname or IP address of the source
+ARGUMENT:: port
+The port of the source
+
+METHOD:: updateDstAddr
+Updates the device that is the destination for this OSCMKtlDevice and reconfigures OSC communications.
+ARGUMENT:: hostname
+The hostname or IP address of the destination
+ARGUMENT:: port
+The port of the destination
+
+METHOD:: updateSrcDstAddr
+Updates the device that is both the source and destination for this OSCMKtlDevice and reconfigures OSC communications. Use this method if the source and destination lies in the same program on the same machine.
+ARGUMENT:: hostname
+The hostname or IP address of the source/destination
+ARGUMENT:: port
+The port of the source/destination

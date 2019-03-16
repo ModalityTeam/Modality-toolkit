@@ -106,19 +106,19 @@ elementsDesc: (
 	elements: [
 		(
 			key: \xfader,
-			oscPath: '/1/fader5', elementType: 'slider', spec: \unipolar, ioType: \in,
+			oscPath: '/1/fader5', elementType: 'slider', spec: \unipolar, ioType: \inout,
 			style: (width: 4, height: 1)
 		),
 		(
 			key: \sl,
-			shared: (elementType: \slider, spec: \unipolar, ioType: \in),
+			shared: (elementType: \slider, spec: \unipolar, ioType: \inout),
 			elements: (1..4).collect { |num|
 				(oscPath: "/1/fader%".format(num).asSymbol)
 			}
 		),
 		(
 			key: \bt,
-			shared: (elementType: \button, spec: \but, ioType: \in),
+			shared: (elementType: \button, spec: \but, ioType: \inout),
 			elements: (1..4).collect { |num|
 				(oscPath: "/1/toggle%".format(num).asSymbol)
 			}
