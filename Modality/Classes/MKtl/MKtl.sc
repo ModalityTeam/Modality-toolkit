@@ -183,9 +183,11 @@ MKtl { // abstract class
 						MKtlDevice.initHardwareDevices;
 						lookupInfo = MKtlLookup.all[lookupName];
 						if (lookupInfo.isNil) {
-							"%: could not find device for key %,"
-							" cannot create MKtl(%)!\n"
-							.postf(thisMethod, lookupNameOrDesc, name);
+							"%: lookupNameOrDesc % was a Symbol, which looks for present devices in \n"
+							"MKtlLookup.all;\n"
+							"No matching device was found, so could not create MKtl(%).\n"
+							"Maybe try with a string, which looks for a desc file?"
+							.postf(thisMethod, lookupNameOrDesc.cs, name.cs);
 							^nil
 						}
 					}{
@@ -206,8 +208,11 @@ MKtl { // abstract class
 				descName = lookupNameOrDesc;
 				newMKtlDesc = MKtlDesc(descName);
 				if (newMKtlDesc.isKindOf(MKtlDesc).not) {
-					"% : newMKtlDesc is nil, cannot make MKtl named %.\n"
-					.postf(thisMethod, name.cs);
+					"%: lookupNameOrDesc % was a String, which looks for description files in \n"
+					"MKtlDesc.allDescs;\n"
+					"No matching description was found, so could not create MKtl(%).\n"
+					"Maybe try with a symbol, which looks for a present device?"
+					.postf(thisMethod, lookupNameOrDesc.cs, name.cs);
 					^nil
 				};
 				protocol = newMKtlDesc.protocol;
