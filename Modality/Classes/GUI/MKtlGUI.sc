@@ -186,21 +186,15 @@ MKtlElementView {
 				"% gui: switching to momentary action/snapback.\n".postf(element);
 			};
 			if (view.isKindOf(Button)) {
-				view.mouseDownAction = { |bt| bt.valueAction = 1 };
-			};
-			// elasticity
-			view.mouseUpAction = {
-				defer ({
-					element.valueAction = snapbackValue;
-					view.value = snapbackValue;
-				}, 0.05);
+				view.mouseDownAction = { |bt|
+					bt.valueAction = 1 - snapbackValue;
+				};
 			};
 		} {
 			if (post) {
 				"% gui: switching to toggle action.\n".postf(element);
 			};
 			if (view.isKindOf(Button)) { view.mouseDownAction = nil; };
-			view.mouseUpAction = nil;
 		};
 	}
 }
