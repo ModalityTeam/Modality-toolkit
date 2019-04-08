@@ -327,7 +327,7 @@ MKtlGUI {
 					or: { item.element.elemDesc[ \page ] == currentPage } };
 
 				if(doDraw) {
-					name = item.element.name.asString;
+					name = item.element.elemDesc.label ? item.element.name.asString;
 					if (item.element.elemDesc.groupType.notNil) {
 						name = name.split($_).drop(-1).join($_);
 					};
