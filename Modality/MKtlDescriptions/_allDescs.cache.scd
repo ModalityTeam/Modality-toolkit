@@ -76,4 +76,5 @@ Dictionary[
 	("touchosc-simple1" -> "touchOSC"),
 	("vmeter-vmeter" -> "VMeter 1.30 A"),
 	("x-io-x-osc" -> "x-osc"),
+	("xosc-ntmi" -> "x-osc"),
 ]
