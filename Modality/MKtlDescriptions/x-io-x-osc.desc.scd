@@ -1,37 +1,49 @@
 /*
-NOT DONE YET:
+
+////// basic example for cxosc in adhoc mode (default):
+
+// 1. log into WIFI "x-OSC"
+
+// 2. run this:
+MKtlDesc.loadDescs;
+x = MKtl(\x, "*x-osc"); x.gui;
+
+// -> gui display should jitter slightly,
+// -> and change clearly when you move the xosc!
+
+/////// TROUBLESHOOTING:
+
+/// 1. DOES MY XOSC REALLY SEND?
+/// listen to all messages from \imu:
+OSCdef(\imutest, { "oyoy ".scramble.postln }, \imu);
+OSCdef(\imutest).disable;
+
+
+// 2. in adhoc mode, xosc sends on its own wifi,
+// from IP: NetAddr("169.254.1.1", 9000);
+// to a broadcast IP: NetAddr("255.255.255.255", 8000);
+
+//////// if you use custom settings, adjust like this:
+x.device.destination.cs;
+x.device.updateDstAddr(port: 9000);
+x.device.updateSrcAddr(port: 9000);
+x.device.updateRecvPort(8000);
+
+
+******* NOT DONE YET: *******
+--- see also long list on bottom ---
 
 + output communication
-+ figure out spec ranges for the 10 imu params
+
 + serial input messages are raw data, how to handle?
+
 + how to handle string only values?
   + ping returns strings,
   + sending back to set stuff uses strings
 -> use PassSpec for not touching raw values
 
 
-o = OSCMon.new;
-o.enable;
-// which sending addresses?
-o.anaDict.msgNamesByAddr.keys.postcs
-// which msgNames from where?
-o.anaDict.msgNamesByAddr
-// the last n messages from all addresses
-o.anaDict.messagesByAddr.collect(_.keep(-10)).postcs
-o.disable;
 
-
-OSCFunc.trace;
-OSCFunc.trace(false);
-
-g = MKtl(\xosc, "*x-osc");
-// update with the address seen in OSCMon or OSCFunc.trace:
-g.device.updateSrcAddr("169.254.1.1", 9000);
-
-g.trace
-g.trace(false)
-
-g.gui
 */
 
 (
@@ -41,12 +53,12 @@ deviceType: \multiController,
 elementTypes: [\accelerometer, \sensor, \serial],
 status: (
 	linux: "unknown after refactor, incomplete",
-	osx: "unknown after refactor, incomplete",
+	osx: "imu, analog ins, digital ins tested and working.",
 	win: "unknown after refactor, incomplete"
 ),
 
 idInfo: "x-osc",
-netAddrInfo: ( ipAddress: "169.254.1.1", recvPort: 57120 ), // ip for adhoc mode
+netAddrInfo: ( ipAddress: "169.254.1.1", srcPort: 9000, recvPort: 8000 ), // ip for adhoc mode
 
 deviceInfo: (
 	vendorURI: "http://www.x-io.co.uk/products/x-osc/",
@@ -67,9 +79,16 @@ deviceInfo: (
 specs: (
 	\switch: [0, 1, \lin, 1],
 	\pass: PassSpec,
-	gyroAxis: [-8, 8],
+	// measured degrees of rotation at 100 Hz sendrate:
+	gyroAxis: [-1000, 1000],
+	// measured max accel with fast shaking:
 	accelAxis: [-8, 8],
-	temp: [0, 100]
+	// guessing, usually more between +-0.5:
+	magnetAxis: [-0.8, 0.8],
+	// gyro temperature
+	temp: [0, 100],
+	// min and max working battery voltage
+	batVolt: [3.4, 3.9]
 ),
 
 collectives: (
@@ -85,22 +104,22 @@ collectives: (
 	),
 	dIn: (
 		oscPath: '/inputs/digital',
-		elements: 16.collect{|i|
-			[\inD, i]
+		elements: 16.collect {|i|
+			[\inD, (i + 1).asSymbol]
 		},
 		ioType: \in
 	),
 	aIn: (
 		oscPath: '/inputs/analogue',
-		elements: 16.collect{|i|
-			[\inA, i]
+		elements: 16.collect {|i|
+			[\inA, (i + 1).asSymbol]
 		},
 		ioType: \in
 	),
 	aCIn: (
 		oscPath: '/inputs/analogue/comparator',
-		elements: 16.collect{|i|
-			[\inC, i]
+		elements: 16.collect {|i|
+			[\inC, (i + 1).asSymbol]
 		},
 		ioType: \in
 	)
@@ -115,53 +134,74 @@ elementsDesc: (
 			key: \accel,
 			shared: (elementType: 'accelAxis', ioType: \collectiveIn,
 				\spec: 'accelAxis' ),
-			elements: [\x, \y, \z].collect( (key: _))),
+			elements: [\x, \y, \z].collect { |name, i|
+				(key: name, style: (row: 0, column: i * 0.9 + 0, height: 2))
+			}
+		),
 		(
 			key: \gyro,
 			shared: (elementType: 'gyroAxis', ioType: \collectiveIn,
 				\spec: 'gyroAxis' ),
-			elements: [\pitch, \roll, \yaw].collect( (key: _))),
+			elements: [\pitch, \roll, \yaw].collect{ |name, i|
+				(key: name, style: (row: 0, column: i * 0.9 + 3, height: 2))
+			}
+		),
 		(
 			key: \magnet,
 			shared: (elementType: 'gyroAxis', ioType: \collectiveIn,
-				\spec: 'gyroAxis' ),
-			elements: [\pitch, \roll, \yaw].collect( (key: _))),
+				\spec: 'magnetAxis' ),
+			elements: [\pitch, \roll, \yaw].collect { |name, i|
+				(key: name, style: (row: 0, column: i* 0.9  + 6, height: 2))
+			}
+		),
 		(
 			key: \temp, elementType: 'cvIn', ioType: \collectiveIn,
 			\spec: 'temp' ),
 
-	// 16 integer arguments represent the state of the 16 digital inputs (0 or 1). Sent only when the state of any digital input pin changes
+		// 1 float indicating the current battery voltage
+		(
+			key: \battery, oscPath: '/battery', ioType: \in,
+			elementType: \voltage, spec: \batVolt),
+
+		// 16 integer arguments represent the state of the 16 digital inputs (0 or 1). Sent only when the state of any digital input pin changes
 		(
 			key: \inD,
 			shared: (elementType: \switch, spec: \switch, ioType: \collectiveIn),
-			elements: (1..16).collect ( (key: _) )),
+			elements:  (1..16).collect { |num|  (key: num.asSymbol) }
+		),
+		(
+			key: \led,
+			shared: (elementType: \pad, spec: \unipolar, ioType: \out),
+			elements:  (1..16).collect { |num|  (key: num.asSymbol) }
+		),
 
-// 16 floating-point arguments indicate the analogue readings for all 16 inputs. Sent at the analogue input message rate
+		// 16 floating-point arguments indicate the analogue readings for all 16 inputs. Sent at the analogue input message rate
 		(
 			key: \inA,
-			shared: (elementType: \voltage, spec: \lin1, ioType: \collectiveIn),
-			elements: (1..16).collect ( (key: _) )),
+			shared: (elementType: \slider, spec: \lin1, ioType: \collectiveIn),
+			elements:  (1..16).collect { |num|  (key: num.asSymbol, style: (height: 2)) }
+		),
 
-// 16 integer arguments represent the current compare state of the 16 analogue inputs (0 if below or 1 if above the threshold). Sent only when a threshold on any channel is crossed
+		// 16 integer arguments represent the current compare state of the 16 analogue inputs (0 if below or 1 if above the threshold). Sent only when a threshold on any channel is crossed
 		(
 			key: \inC,
 			shared: (elementType: \switch, spec: \switch, ioType: \collectiveIn),
-			elements: (1..16).collect ( (key: _) )),
+			elements: (1..16).collect { |num|  (key: num.asSymbol,  height: 0.5) }
+		),
 
-	// // 1 blob argument containing the raw serial data received on input <channel> (1 – 4)
-	// inS1: (oscPath: '/inputs/serial/1', inType: \blob, ioType: \in),
-	// inS2: (oscPath: '/inputs/serial/2', inType: \blob, ioType: \in),
-	// inS3: (oscPath: '/inputs/serial/3', inType: \blob, ioType: \in),
-	// inS4: (oscPath: '/inputs/serial/4', inType: \blob, ioType: \in),
+		// // 1 blob argument containing the raw serial data received on input <channel> (1 – 4)
+		// inS1: (oscPath: '/inputs/serial/1', inType: \blob, ioType: \in),
+		// inS2: (oscPath: '/inputs/serial/2', inType: \blob, ioType: \in),
+		// inS3: (oscPath: '/inputs/serial/3', inType: \blob, ioType: \in),
+		// inS4: (oscPath: '/inputs/serial/4', inType: \blob, ioType: \in),
 
-
-	// 1 float indicating the current battery voltage
-		(
-			key: \battery, oscPath: '/battery', ioType: \in,
-			elementType: \voltage, spec: [0, 3.7].asSpec),
 	]
 )
 );
+
+
+///////////// NOTES - older list things to do look into
+
 	// // /ping: 3 string arguments are the x-OSC local IP address (1st string), MAC address (2nd string) and firmware version (3rd string)
 	// ping: (oscPath: \ping, numArgs: 3, ioType: \in),
 
