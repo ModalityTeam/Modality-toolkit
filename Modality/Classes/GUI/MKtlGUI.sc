@@ -211,7 +211,7 @@ MKtlGUI {
 	var <mktl;
 	var <parent, <views, <skipJack;
 	var <gridSize;
-	var <traceButton, <labelButton;
+	var <traceButton, <labelButton, <deviceButton;
 	var <labelView;
 	var <pageComposites, <pagesSwitch;
 	var <currentPage = 0;
@@ -349,6 +349,14 @@ MKtlGUI {
 		.states_([["labels"],["labels", Color.black, Color.green]])
 		.action_({ |bt| this.showLabels( bt.value.booleanValue ) });
 
+		deviceButton = Button( parent, Rect(54 + 54,2,50,16) )
+		.states_([["device"],["device", Color.black, Color.green]])
+		.action_({ |bt|
+			mktl.openDevice;
+			bt.value_(mktl.hasDevice.binaryValue);
+		});
+		deviceButton.value_(mktl.hasDevice.binaryValue);
+
 		if( pages.notNil ) {
 			Button( parent, Rect( 168, 2, 16, 16 ) )
 			.states_([ ["<"] ])
@@ -462,6 +470,18 @@ MKtlGUI {
 
 	updateGUI {
 		views.do(_.updateGUI);
+		this.updateButtons;
+	}
+
+	updateButtons {
+		var deviceVal = mktl.hasDevice.binaryValue;
+		var traceVal = mktl.traceRunning.binaryValue;
+		if (deviceButton.value != deviceVal) {
+			deviceButton.value != deviceVal
+		};
+		if (traceButton.value != traceVal) {
+			traceButton.value != traceVal
+		};
 	}
 
 	showLabels { |bool = true|
