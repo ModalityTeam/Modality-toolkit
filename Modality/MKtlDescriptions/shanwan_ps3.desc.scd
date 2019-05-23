@@ -22,7 +22,7 @@
     elementsDesc: (
         elements: [
             (key: 'bt',
-                shared: ('hidUsagePage': 9, 'elementType': 'Button', 'ioType': 'in', 'spec': 'hidBut', mode: 'push'),
+                shared: ('hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in', 'spec': 'hidBut', mode: 'push'),
                 elements: [
                     ( key: 'y', 'hidUsage': 1), 
                     ( key: 'b', 'hidUsage': 2), 
