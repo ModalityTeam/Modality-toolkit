@@ -24,7 +24,7 @@ knpg8 [\kn, \pbt][index]
 "Tutorials/Hardware_paging".openHelpFile;
 
 MKtlDesc.loadDescs("*uc4_pg");
-m.free; m = MKtl(\uc4, "*uc4_pg"); m.trace.gui;
+m.free; m = MKtl(\uc4_pg, "*uc4_pg"); m.trace.gui;
 
 ****/
 
@@ -33,8 +33,9 @@ parentDesc: "faderfox-uc4",
 
 status: (
 	linux: "unknown",
-	osx: "tested and working. 2016-04-10, adc",
-	win: "unknown"),
+	osx: "tested and working. 2019-12-29, adc",
+	win: "unknown"
+),
 
 elementsDesc: (
 	shared: ('midiChan': 0, ioType: \inout),
@@ -61,7 +62,7 @@ elementsDesc: (
 							midiNum: knum1 + i,
 							\style: ( \row: i div: 4 * 2,
 								\column: i % 4 * 2 + 0.5,
-								// showLabel: true
+								showLabel: true
 							),
 							\page: gr_i
 						)
@@ -82,8 +83,8 @@ elementsDesc: (
 							style: (\row: i div: 4 * 2 + 0.8,
 								\column: i % 4 * 2 + 0.5,
 								height: 0.8,
-								label: "pbt_" ++ (i + 1)
-								// showLabel: true
+								// label: "pbt_" ++ (i + 1),
+								showLabel: true
 							)
 						)
 					}
@@ -119,7 +120,7 @@ elementsDesc: (
 			elements: 8.collect { |i|
 				(
 					key: nil, midiNum: (btNum1[gr_i] + i),
-					label: ("bt_" ++ (i + 1)),
+					// label: ("bt_" ++ (i + 1)),
 					style: ( \row: 7, \column: i, height: 1)
 				)
 			};
