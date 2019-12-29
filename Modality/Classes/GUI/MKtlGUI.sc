@@ -280,8 +280,6 @@ MKtlGUI {
 			?? { try { item.elemDesc[ \shared ][ \style ] } }
 			?? { ( row: 0, column: 0, width: 0, height: 0 ) };
 
-			[item, style].postln;
-
 			if( pages.notNil && { item.elemDesc[ \page ].notNil }) {
 				parView = pageComposites[ item.elemDesc[ \page ] ];
 			};
