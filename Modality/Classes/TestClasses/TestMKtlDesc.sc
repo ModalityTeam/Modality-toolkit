@@ -207,7 +207,7 @@ TestMKtlDesc : UnitTest {
 		var desc = MKtlDesc.fromDict(dict);
 
 		this.assertEquals(
-			desc.elementsDesc.elements[0].elements.collect(_.midiMsgType).postcs,
+			desc.elementsDesc.elements[0].elements.collect(_.midiMsgType),
 			[\noteOn, \noteOff, \control],
 			"expanded noteOnOff desc elements should have proper midiMsgTypes.", false);
 
@@ -235,7 +235,7 @@ TestMKtlDesc : UnitTest {
 		var desc = MKtlDesc.fromDict(dict);
 
 		this.assertEquals(
-			desc.elementsDesc.elements[0].elements.collect(_.midiMsgType).postcs,
+			desc.elementsDesc.elements[0].elements.collect(_.midiMsgType),
 			[\noteOn, \noteOff, \polytouch],
 			"expanded noteOnOff desc elements should have proper midiMsgTypes.", false);
 
