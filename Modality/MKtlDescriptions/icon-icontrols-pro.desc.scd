@@ -79,7 +79,6 @@ elementsDesc: (
 				),
 				(
 					key: \select,
-					groupType: \noteOnOffBut,
 					// assuming this is 24-31? was 16-23, copy paste error?
 					elements: (24..31).collect { |num, i|
 						(
