@@ -965,23 +965,31 @@ MKtlDesc {
 	getMidiMsgTypes {
 		var msgTypesUsed = Set.new;
 		var type, missing = List[];
+		var excludeKeys = [\shared, \style ];
 
 		this.elementsDesc.traverseDo ({ |elem, deepKeys|
 			var msgType;
-			if (deepKeys.last != \shared) {
+			// deepKeys.postcs;
+			if (isElemFunc.value(elem) and: { excludeKeys.includes(deepKeys.last).not }) {
 				MKtlDesc.fillMidiDefaults(elem);
 				msgType = elem[\midiMsgType];
 
 				if (msgType.notNil) {
 					msgTypesUsed.add(msgType.unbubble);
 				} {
-					//	"missing: ".post;
+					"missing: ".post;
+					elem.postcs;
 					missing.add(elem.elemKey);
 				};
 				// [elemKey, elem].postln;
 			};
-		}, MKtlDesc.isElemFunc);
+		}, isElemFunc);
 
+		if (msgTypesUsed.isEmpty) {
+			"*** % - msgTypesUsed are empty! % \n".postf(this, msgTypesUsed);
+		} {
+			// "% : msgTypesUsed are % \n".postf(this, msgTypesUsed);
+		};
 
 		// treat noteOnOff as noteOn / noteOff
 		if (msgTypesUsed.includes(\noteOnOff)) {
