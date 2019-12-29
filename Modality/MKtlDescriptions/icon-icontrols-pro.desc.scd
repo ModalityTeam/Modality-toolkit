@@ -6,6 +6,7 @@ d = MKtlDesc.loadDescs("*icontrols-pro").first;
 d.elementsDict.size;
 // d.web;
 
+MKtlDesc.loadDescs("*icontrols-pro");
 m.free; m = MKtl(\ic, "*icontrols-pro");
 g = m.gui;
 g.views.size;
@@ -39,7 +40,7 @@ elementsDesc: (
 	elements: [
 		(
 			key: \bt,
-			shared: (elementType: \pad, ioType: \inout, groupType: \noteOnOffBut,
+			shared: (elementType: \pad, ioType: \inout,
 				midiMsgType: \noteOn, midiChan: 0, spec: \midiBut, mode: \push ),
 			elements: [
 				(
@@ -47,16 +48,19 @@ elementsDesc: (
 					elements: (0..7).collect { |num, i|
 						(
 							key: (i+1).asSymbol,
+							groupType: \noteOnOffBut,
 							midiNum: num,
-							shared: (style: (row: 0, column: i))
+							style: (row: 0, column: i)
 						)
 					}
 				),
 				(
 					key: \solo,
+
 					elements: (8..15).collect { |num, i|
 						(
 							key: (i+1).asSymbol,
+							groupType: \noteOnOffBut,
 							midiNum: num,
 							shared: (style: (row: 1, column: i))
 						)
@@ -67,6 +71,7 @@ elementsDesc: (
 					elements: (16..23).collect { |num, i|
 						(
 							key: (i+1).asSymbol,
+							groupType: \noteOnOffBut,
 							midiNum: num,
 							shared: (style: (row: 2, column: i))
 						)
@@ -74,10 +79,12 @@ elementsDesc: (
 				),
 				(
 					key: \select,
+					groupType: \noteOnOffBut,
 					// assuming this is 24-31? was 16-23, copy paste error?
 					elements: (24..31).collect { |num, i|
 						(
 							key: (i+1).asSymbol,
+							groupType: \noteOnOffBut,
 							midiNum: num,
 							shared: (style: (row: 3, column: i))
 						)
@@ -88,13 +95,13 @@ elementsDesc: (
 		(
 			key: \kn,
 			shared: (midiMsgType: \cc, elementType: \encoder,
-				ioType: \inout, midiChan: 0, spec: \midiCC, mode: \mackie ),
+			ioType: \inout, midiChan: 0, spec: \midiCC, mode: \mackie ),
 			elements: (16..23).collect { |num, i| (midiNum: num) }
 		),
 		(
 			key: \sl,
 			shared: (midiMsgType: \bend, elementType: \slider,
-				ioType: \inout, spec: \midiBend),
+			ioType: \inout, spec: \midiBend),
 			elements: 9.collect { |i| (midiChan: i) }
 		)
 	]
