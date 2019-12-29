@@ -16,28 +16,31 @@ MKtlElementGroup : MKtlElement {
 	}
 
 	*fromDesc { |desc, srcMktl|
-		var elems, isElem, group, elemKey;
+		var elems, isGroup, group, elemKey;
 		var mktlElemDict = srcMktl !? { srcMktl.elementsDict };
 		var newElem;
 
 		^if (desc.isKindOf(Dictionary)) {
-			elems = desc[\elements];
-			isElem = elems.isNil;
-			if (isElem) {
+			// "fromDesc: %\n".postf(desc.key);
+			// are there elements at this level, NOT IN PARENT or proto?
+			isGroup = desc.array.includes(\elements);
+
+			if (isGroup.not) {
 				elemKey = desc.elemKey;
 				newElem = MKtlElement(elemKey, desc, srcMktl);
 				mktlElemDict !? { mktlElemDict.put(elemKey, newElem) };
 				newElem;
 			} {
-				// elements is always an array
-				elems = elems.collect { |desc2|
+				////// elements is always an array
+				elems = desc[\elements].collect { |desc2|
 					this.fromDesc(desc2, srcMktl);
 				};
 				group = MKtlElementGroup(desc.key, srcMktl, elems);
 
-				if (desc[\shared].notNil) {
-					group.shared = desc[\shared];
-				};
+				group.elemDesc = desc;
+				// if (desc[\shared].notNil) {
+				// 	group.shared = desc[\shared];
+				// };
 
 				group.useSingleGui = desc.useSingleGui ? false;
 				group.groupType = desc.groupType;
