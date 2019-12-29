@@ -627,28 +627,50 @@ MKtlDesc {
 		true
 	}
 
-	// plug shared properties in as parents
-	*sharePropsToElements { |dict, toShare|
-		var shared, elements, subProps;
+	*makeParents { |dict|
+		var excludeKeys = #[\shared, \elements, \key];
+		var inShared;
+		var newParentDict;
+		var dictHasElements;
+
+		// "*** makeParents: ".postln;
+
+		// not a dict
 		if (dict.isKindOf(Dictionary).not) {
-			//	"cant share in %\n".postf(dict);
-			^this
+			"%: can't setParent in %\n".postf(this, dict);
+			^dict
 		};
 
-		shared = dict[\shared] ? ();
-		elements = dict[\elements];
-		if (toShare.notNil) {
-			//	"shared: % parent: %\n\n".postf(shared, toShare);
-			shared.parent = toShare;
+		// dictHas no elements
+		if (isElemFunc.value(dict)) {
+			// "dict has no elements to set parents of, so early return".postln;
+			^dict
 		};
-		elements.do { |elemDict|
-			if (elemDict[\elements].notNil) {
-				this.sharePropsToElements(elemDict, shared);
-			} {
-				//	"elem: % shared: %\n\n".postf(elemDict, shared);
-				elemDict.parent = shared
-			};
+
+		newParentDict = ();
+		newParentDict.parent = dict.parent;
+
+		dict.keysValuesDo { |key, val|
+			if (excludeKeys.includes(key).not) {
+				newParentDict.put(key, val);
+			}
 		};
+
+		inShared = dict[\shared];
+		if (inShared.notNil) {
+			inShared.keysValuesDo { |key, val|
+				if (excludeKeys.includes(key).not) {
+					newParentDict.put(key, val);
+				}
+			}
+		};
+
+		// if elements exist at this level, recurse
+		dict[\elements].do { |elemDict|
+			elemDict.parent = newParentDict;
+			this.makeParents(elemDict, newParentDict, dict[\shared]);
+		};
+		^dict
 	}
 
 
@@ -731,11 +753,10 @@ MKtlDesc {
 		this.findParent;
 
 		this.inferName;
-		// prepare elements, share and expand first
-		MKtlDesc.sharePropsToElements(this.elementsDesc);
+
+		MKtlDesc.makeParents(this.elementsDesc);
+		// expand lowest level
 		MKtlDesc.deepExpand(this.elementsDesc);
-		// do it again, in case there were elems to expand
-		MKtlDesc.sharePropsToElements(this.elementsDesc);
 
 		// now make elements in both dict and array form
 		elementsDict = ();
