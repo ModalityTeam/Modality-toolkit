@@ -423,14 +423,13 @@ MKtlDesc {
 		descFolders.do { |path, index|
 			var descDates, cacheDate;
 
-
 			descDates = MKtlDesc.findFile(folderIndex: index).collect(File.mtime(_));
 
 			if (File.exists(path +/+ MKtlDesc.cacheName)) {
 				cacheDate = File.mtime(path +/+ MKtlDesc.cacheName);
 			};
 
-			// write cahce files also when directory is empty
+			// write cache files also when directory is empty
 			// but not if empty directory already contains cache file
 			if (cacheDate.isNil or: {(descDates.maxItem ? -1) > cacheDate}) {
 				this.writeCache(index);
@@ -453,6 +452,7 @@ MKtlDesc {
 			var idInfo = desc.fullDesc.idInfo;
 			dictForFolder.put(filename, idInfo);
 		};
+
 		File.use(path, "w", { |file|
 			if (file.isOpen) {
 				file.write("Dictionary[\n");
@@ -650,6 +650,7 @@ MKtlDesc {
 			};
 		};
 	}
+
 
 
 	// creation methods
