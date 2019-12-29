@@ -276,7 +276,12 @@ MKtlGUI {
 			var style, bounds, parView = parent, redirView, newViews;
 			var itemIsGroup = item.isKindOf(MKtlElementGroup);
 
-			style = try { item.elemDesc[ \style ] } ?? { ( row: 0, column: 0, width: 0, height: 0 ) };
+			style = try { item.elemDesc[ \style ] }
+			?? { try { item.elemDesc[ \shared ][ \style ] } }
+			?? { ( row: 0, column: 0, width: 0, height: 0 ) };
+
+			[item, style].postln;
+
 			if( pages.notNil && { item.elemDesc[ \page ].notNil }) {
 				parView = pageComposites[ item.elemDesc[ \page ] ];
 			};
