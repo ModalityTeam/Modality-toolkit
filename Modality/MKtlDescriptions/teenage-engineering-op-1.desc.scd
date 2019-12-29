@@ -4,10 +4,12 @@
 
 /* test that this works:
 
-MKtl.find;
-m = MKtl('op1', "teenage-engineering-op-1");
+d = MKtlDesc.loadDescs("*op-1").first;
+m.free; m = MKtl('op1', "*op-1");
 m.trace;
 m.gui;
+
+
 m.elAt(\bt, \4).addAction({ |el| "but 4: %\n".postf(el.value); });
 m.elAt(\btBubble).action_({ |el| "btBubble: %\n".postf(el.value); });
 m.elAt(\key, 0).action_({ |el| "keyOn: %\n".postf(el.value); });
@@ -48,14 +50,12 @@ elementsDesc: (
 
 			key: \key,
 			shared:  (\elementType: \pad,
-				\midiChan: 0, \spec: \midiVel, \ioType: \in),
-			elements: (0..124).collect { |num, i| (
-				shared: (midiNum: num),
-				elements: [
-						(key: \on,  midiMsgType: \noteOn ),
-						(key: \off, midiMsgType: \noteOff)
-				]
-			)}
+			\midiChan: 0, \spec: \midiVel, \ioType: \in),
+			elements: (0..124).collect { |num, i|
+				( midiNum: num, groupType: \noteOnOffBut,
+					style: (row: i div: 12, column: i % 12)
+				)
+			}
 		),
 		(
 			key: \kn,
@@ -63,7 +63,7 @@ elementsDesc: (
 				(
 					key: \turn,
 					shared: (\midiMsgType: \cc, \elementType: \knob, \midiChan: 0,
-						\spec: \midiCC, \ioType: \in),
+					\spec: \midiCC, \ioType: \in),
 					elements: [(1..4), [\blue, \green, \white, \red]].flop
 					.collect { |desc, i|
 						var num, label;
@@ -74,7 +74,7 @@ elementsDesc: (
 				(
 					key: \hat,
 					shared: (midiMsgType: \cc, elementType: \button, \midiChan: 0,
-						\spec: \midiBut, \mode: \push, \ioType: \in),
+					\spec: \midiBut, \mode: \push, \ioType: \in),
 					elements: [(64..67), [\blue, \green, \white, \red]].flop
 					.collect { |desc, i|
 						var num, label;
@@ -87,13 +87,13 @@ elementsDesc: (
 		(
 			key: \bt,
 			shared: (\midiMsgType: \cc, \elementType: \button, \midiChan: 0,
-				\spec: \midiBut, \ioType: \in),
+			\spec: \midiBut, \ioType: \in),
 			elements: (11..14).collect { |num| (\midiNum: num) },
 		),
 		(
 			key: \btPreset,
 			shared: (\midiMsgType: \cc, \elementType: \button, \midiChan: 0,
-				\spec: \midiBut, \ioType: \in),
+			\spec: \midiBut, \ioType: \in),
 			elements: [50, 51, 52, 21, 22, 23, 24, 25].collect { |num|
 				(midiNum: num)
 			}
