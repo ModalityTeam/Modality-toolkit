@@ -255,7 +255,9 @@ MKtlDesc {
 	*loadDescs { |filename = "*", folderIndex, post = false|
 		var paths = this.findFile(filename, folderIndex);
 		var descs = paths.collect {|path|
-			try { this.fromPath(path); };
+			try { this.fromPath(path); } {
+				"*** % FAILED: %\n".postf(path);
+			};
 		}.select(_.notNil);
 
 		if (post) {
@@ -884,7 +886,7 @@ MKtlDesc {
 		var postOne = { |elemOrGroup, index, depth = 0|
 			depth.do { $\t.post; };
 			index.post; $\t.post;
-			if (elemOrGroup[\elements].notNil) {
+			if (isElemFunc.value(elemOrGroup).not) {
 				"Group: ".post; elemOrGroup.key.postcs;
 				elemOrGroup[\elements].do({ |item, i|
 					postOne.value(item, i, depth + 1)
