@@ -68,6 +68,11 @@ MKtlElementGroup : MKtlElement {
 	shared_ { |dict| elemDesc = dict }
 	shared { ^elemDesc }
 
+	// do nothing, to avoid confusing "deviceSpec for 'nil' is missing" posts!
+	setSpecFromDesc {
+
+	}
+
 	// do we still need init?
 	// *  elements_ should do fromDesc a level lower!
 	init {

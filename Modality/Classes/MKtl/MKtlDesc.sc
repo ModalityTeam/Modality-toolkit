@@ -1015,12 +1015,12 @@ MKtlDesc {
 			// "% : msgTypesUsed are % \n".postf(this, msgTypesUsed);
 		};
 
-		// treat noteOnOff as noteOn / noteOff
-		if (msgTypesUsed.includes(\noteOnOff)) {
-			msgTypesUsed.add(\noteOn);
-			msgTypesUsed.add(\noteOff);
-			msgTypesUsed.remove(\noteOnOff);
-		};
+		// // treat noteOnOff as noteOn / noteOff
+		// if (msgTypesUsed.includes(\noteOnOff)) {
+		// 	msgTypesUsed.add(\noteOn);
+		// 	msgTypesUsed.add(\noteOff);
+		// 	msgTypesUsed.remove(\noteOnOff);
+		// };
 
 		fullDesc.put(\msgTypesUsed, msgTypesUsed.asArray.sort);
 

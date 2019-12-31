@@ -265,10 +265,14 @@ MKtlGUI {
 			});
 		};
 
-		// // was:
-		// elemsToShow = mktl.elementGroup.flat;
 		// keep groups with a groupType together
-		elemsToShow = mktl.elementGroup.elements.flatIf { |el| el.groupType.isNil };
+		////// this is not ideal, because groupType has to be defined
+		////// at the exact level it applies, and cannot be set at higher levels.
+		///// so, how to do this best?
+		elemsToShow = mktl.elementGroup.elements.flatIf { |el|
+			el.groupType.isNil
+		};
+
 		"%: will show %'s % elements in % views.\n".postf(thisMethod, mktl,
 			mktl.elementsDict.size, elemsToShow.size);
 
