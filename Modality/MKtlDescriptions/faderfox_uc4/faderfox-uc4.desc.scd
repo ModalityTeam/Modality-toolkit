@@ -40,8 +40,9 @@ parentDesc: "faderfox-uc4",
 
 status: (
 	linux: "unknown",
-	osx: "tested and working. 2016-03-16, adc",
-	win: "unknown"),
+	osx: "tested and working. 2019-12-29, adc",
+	win: "unknown"
+),
 
 elementsDesc: (
 	shared: (ioType: \inout),

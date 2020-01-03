@@ -265,10 +265,14 @@ MKtlGUI {
 			});
 		};
 
-		// // was:
-		// elemsToShow = mktl.elementGroup.flat;
 		// keep groups with a groupType together
-		elemsToShow = mktl.elementGroup.elements.flatIf { |el| el.groupType.isNil };
+		////// this is not ideal, because groupType has to be defined
+		////// at the exact level it applies, and cannot be set at higher levels.
+		///// so, how to do this best?
+		elemsToShow = mktl.elementGroup.elements.flatIf { |el|
+			el.groupType.isNil
+		};
+
 		"%: will show %'s % elements in % views.\n".postf(thisMethod, mktl,
 			mktl.elementsDict.size, elemsToShow.size);
 
@@ -276,7 +280,10 @@ MKtlGUI {
 			var style, bounds, parView = parent, redirView, newViews;
 			var itemIsGroup = item.isKindOf(MKtlElementGroup);
 
-			style = try { item.elemDesc[ \style ] } ?? { ( row: 0, column: 0, width: 0, height: 0 ) };
+			style = try { item.elemDesc[ \style ] }
+			?? { try { item.elemDesc[ \shared ][ \style ] } }
+			?? { ( row: 0, column: 0, width: 0, height: 0 ) };
+
 			if( pages.notNil && { item.elemDesc[ \page ].notNil }) {
 				parView = pageComposites[ item.elemDesc[ \page ] ];
 			};
