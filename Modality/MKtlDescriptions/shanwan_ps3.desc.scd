@@ -3,14 +3,12 @@
     protocol: 'hid',
     deviceName: "PS3/PC Wired GamePad_ShanWan",
     deviceType: 'gamepad',
-    elementTypes: ['joyAxis', 'button', 'compass'],
+    elementTypes: ['joyAxis', 'button', 'compass', 'rumble'],
     status: (
-        linux: "unknown",
-        osx: "works 05-04-2019 mk",
+        linux: "tested working 27-02-2020, not sure about the rumble",
+        osx: "not sure",
         win: "unknown"
     ),
-    // hardwarePages: [1, 2, 3, 4],
-
     deviceInfo: (
         vendorURI: 'https://www.kjell.com/no/produkter/lyd-og-bilde/dataspill-og-gaming/playstation-3/arrogant-frostbite-gamepad-p61887',
         manualURI: '',
@@ -21,8 +19,9 @@
     ),
     elementsDesc: (
         elements: [
+			// Buttons
             (key: 'bt',
-                shared: ('hidUsagePage': 9, 'elementType': 'Button', 'ioType': 'in', 'spec': 'hidBut', mode: 'push'),
+                shared: ('hidUsagePage': 9, 'elementType': 'button', 'ioType': 'in', 'spec': 'hidBut', mode: 'push'),
                 elements: [
                     ( key: 'y', 'hidUsage': 1), 
                     ( key: 'b', 'hidUsage': 2), 
@@ -38,19 +37,21 @@
                     ( key: 'hat_r', 'hidUsage': 12), 
                 ]
             ),
+			// Joy sticks
             (key: 'joy',
                 shared: ('hidUsagePage': 1, 'elementType': 'joyAxis', 'ioType': 'in', 'spec': 'cent1'),
                 elements:[
                     (key: 'l', elements: [
-                        ( key: 'x', 'hidUsage': 48), 
-                        ( key: 'y', 'hidUsage': 49), 
+                        ( key: 'x', 'hidUsage': 4), 
+                        ( key: 'y', 'hidUsage': 48), 
                     ]),
                     (key: 'r', elements: [
-                        ( key: 'x', 'hidUsage': 50), 
-                        ( key: 'y', 'hidUsage': 53), 
+                        ( key: 'x', 'hidUsage': 49), 
+                        ( key: 'y', 'hidUsage': 50), 
                     ]),
                 ]
             ),
+			// Compass
             ( key: 'compass', 'hidUsage': 57, 'hidUsagePage': 1, 'elementType': 'compass', 'ioType': 'in', mode: 'center', spec: 'unipolar' ),  
         /***************** output elements *****************/
         (
