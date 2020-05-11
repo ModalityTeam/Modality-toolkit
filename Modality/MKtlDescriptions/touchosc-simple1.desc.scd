@@ -1,26 +1,41 @@
 /****************************
-// first pass on MKtl support for touchOSC
-// in the touchOSC app, this only supports Layout Simple, page 1
-// ( other scenes may be added later, in separate desc files )
+first pass on MKtl support for touchOSC
+in the touchOSC app, this only supports Layout Simple, page 1
+( other pages in this Layout, or other touchOSC layouts
+may be added later, in separate desc files )
 
-// INSTRUCTIONS to test:
-// * have touchosc and laptop with SC be in the same network
+****** INSTRUCTIONS to test: ******
+* log the smartphone with touchosc
+  and the computer with SC into the same network
 
-/////// in the touchOSC app,
-// * set OSC host ip to the laptops IP, as seen in network settings,
-//    e.g. 192.168.178.51
-// or find them in unixCmd("ifconfig")
-// * switch Layout to 'Simple',
-// * in options,
-// * turn accelerometer on, and touch and ping off
+On the computer:
+1. find its IP address
+// on macOS in System Prefs/Network/WiFi,
+// or in Terminal with ifconfig, or in SC with
+unixCmdGetStdOut("ifconfig");
+// -> look for lines with "inet " and the IP4 pattern xxx.xxx.xxx.xxx
 
-/////// in SC:
-// * check if anything is coming, and note the sending address
-OSCFunc.trace(true);
+2. in SuperCollider, check its langPort number:
+NetAddr.langPort;
+// default is 57120, but after crashes it can be 57121 or higher
+
+
+On the smartphone, in touchOSC app, CONNECTIONS:
+* set OSC host IP address to the laptop's IP from above
+--  e.g. 192.168.178.51
+* set OSC port number to SuperCollider's port number
+* switch Layout to 'Simple',
+* in Options,
+-- turn accelerometer on, and touch and ping off
+
+On computer, in SC:
+* check if anything is coming, and note the sending address
+OSCFunc.trace(true, true);
 OSCFunc.trace(false);
-// * if nothing, check that touchosc sends to proper port:
+// * if nothing, check again that touchosc sends to SC's langPort:
 NetAddr.langPort;
 
+// test for the top horiz. fader on page 1:
 OSCdef('/1/fader5', { |msg| msg.postln });
 
 ////// the protocol for scene 1 is
@@ -31,36 +46,40 @@ OSCdef('/1/fader5', { |msg| msg.postln });
 // // 4 toggle buttons
 // '/1/toggle1' .. 4
 
-// maybe turn off debug info,
+// maybe turn off debug info if needed
+OSCMKtlDevice.verbose = true;
 OSCMKtlDevice.verbose = false;
-// maybe clear MKtls first
+
+// maybe clear MKtls first if needed
 MKtl.all.do(_.free).clear;
-// make our tosc
+
+// now make our touchosc MKtl from this desc file:
 t = MKtl(\tosca, "touchosc-simple1");
 t.gui;
-// trace to look what address the touchOSC app sends from:
-OSCFunc.trace(true);
+
+// in the touchOSC app, Connections, OSC find Local IP address:
+// this is the IP of the smartphone, which touchOSC sends from.
+// trace in SC to see the same address that touchOSC sends from:
+OSCFunc.trace(true, true);
 // and turn off tracing.
 OSCFunc.trace(false);
 
 // set the address to the one you see in the trace:
-t.device.updateSrcAddr("192.168.178.68", 63763);
-
-NetAddr.langPort;
+t.device.updateSrcDstAddr("192.168.178.55", 9000);
 
 // now trace the MKtl itself
 t.trace;
-t.device;
+t.trace(false);
+t.gui;
+
 // and give it an action for all its elements
 t.elAt.action = { |el|
 	"tOsc %: %\n".postf(el.name, el.value.round(0.001))
 };
 
-t.gui;
-
-// or if you test by simulation from SC:
-n = NetAddr("192.168.178.51", 57120);
-MKtl(\tosca).device.updateSrcAddr("192.168.178.51", 57120);
+// or test by simulation from SC:
+n = NetAddr.localAddr;
+MKtl(\tosca).device.updateSrcDstAddr(n.hostname, n.port);
 
 
 Tdef(\toscTest, {
@@ -71,6 +90,9 @@ Tdef(\toscTest, {
 		0.1.wait;
 	};
 }).play;
+
+// set back to touchOSC IP address as above ...
+t.device.updateSrcDstAddr("192.168.178.55", 9000);
 
 *******************************/
 (
@@ -125,11 +147,11 @@ elementsDesc: (
 		),
 		(
 			key: \accel,
-			shared: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accx' ),
+			shared: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accx'),
 			elements: [
-				(key: \x),
-				(key: \y),
-				(key: \z)
+				(key: \x, style: (height: 2)),
+				(key: \y, style: (height: 2)),
+				(key: \z, style: (height: 2))
 			]
 		)
 	]
