@@ -47,6 +47,7 @@ Dictionary[
 	("livid-guitar-wing" -> "Livid Guitar Wing"),
 	("logitech-extreme-3d-pro" -> "Logitech Extreme 3D_Logitech"),
 	("m-audio-triggerfinger" -> "USB Trigger Finger"),
+	("macally-ishock" -> "Macally iShock_Macally "),
 	("makenoise-0coast" -> "EXTERNAL"),
 	("native-instruments-traktor-kontrol-z1" -> "Traktor Kontrol Z1 Input"),
 	("native-instruments-traktor-kontrol-z2" -> "Traktor Kontrol Z2 Input"),
@@ -62,6 +63,7 @@ Dictionary[
 	("sensestage-minibee1-xpee" -> "minibee1-xpee"),
 	("sensestage-minibee1-xpree" -> "minibee1-xpree"),
 	("shanwan-wirelessgamepad" -> "USB WirelessGamepad _ShanWan"),
+	("shanwan_ps3" -> "PS3/PC Wired GamePad_ShanWan"),
 	("snyderphonics-manta" -> "manta"),
 	("snyderphonics-manta_mc" -> "manta"),
 	("steinberg-cmc-fd" -> "Steinberg CMC-FD"),
@@ -74,6 +76,7 @@ Dictionary[
 	("thrustmaster-run-n-drive" -> "Run'N' Drive_Thrustmaster"),
 	("thrustmaster-run-n-drive-wireless" -> "Run'N' Drive Wireless_Thrustmaster"),
 	("touchosc-simple1" -> "touchOSC"),
+	("touchosc-simple1_2" -> "touchOSC"),
 	("vmeter-vmeter" -> "VMeter 1.30 A"),
 	("x-io-x-osc" -> "x-osc"),
 ]
