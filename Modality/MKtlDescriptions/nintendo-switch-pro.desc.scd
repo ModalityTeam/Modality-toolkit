@@ -1,3 +1,20 @@
+/****
+ToDo
+- update when/if
+CompassView and StickView classes are integrated.
+
+MKtl(\swpro).free;
+m = MKtl(\swpro, "*switch-pro");
+m.gui;
+
+// conversion from arrows to 8 directions + up/release
+m.elAt(\arrows).action = { |el|
+    var intVal = (el.deviceValue * 7 + 1).round.asInteger;
+    var dirs = [\rest, \N, \NE, \E, \SE, \S, \SW, \W, \NW, \up];
+	[\arrows, intVal, dirs.clipAt(intVal), el.value.asFraction].postcs;
+};
+
+***/
 (
 idInfo: "Pro Controller_Unknown",
 
