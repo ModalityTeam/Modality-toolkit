@@ -51,6 +51,7 @@ Dictionary[
 	("makenoise-0coast" -> "EXTERNAL"),
 	("native-instruments-traktor-kontrol-z1" -> "Traktor Kontrol Z1 Input"),
 	("native-instruments-traktor-kontrol-z2" -> "Traktor Kontrol Z2 Input"),
+	("nintendo-switch-pro" -> "Pro Controller_Unknown"),
 	("nordDrum2" -> "EXTERNAL"),
 	("novation-launchcontrol" -> "Launch Control"),
 	("novation-launchcontrol-xl" -> "Launch Control XL"),
