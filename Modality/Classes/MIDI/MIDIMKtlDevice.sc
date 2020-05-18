@@ -144,7 +144,7 @@ MIDIMKtlDevice : MKtlDevice {
 		// logic is still too loopy, but no time to simplify now.
 
 	//	"%: %: %\n".postf(thisMethod, \multiIndex, multiIndex);
-		foundInfo = MKtlLookup.findByIDInfo(lookupInfo.deviceName)
+		foundInfo = MKtlLookup.findByIDInfo(idInfo)
 		.at(multiIndex ? 0);
 
 		foundSources = foundInfo[\srcDevice];
