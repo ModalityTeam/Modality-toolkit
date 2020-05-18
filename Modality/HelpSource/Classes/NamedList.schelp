@@ -1,7 +1,7 @@
 
 TITLE:: NamedList
 summary:: an ordered list of items which can be accessed by index or name.
-categories:: Collections, Classes/List
+categories:: Collections
 related:: Classes/Collection, Classes/List, Classes/Dictionary
 
 DESCRIPTION::
