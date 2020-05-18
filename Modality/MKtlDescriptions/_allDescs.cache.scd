@@ -11,6 +11,7 @@ Dictionary[
 	("arturia-beatstep-rel-16" -> "Arturia BeatStep"),
 	("behringer-bcf2000" -> ( 'srcPortIndex': 0, 'destPortIndex': 0, 'deviceName': "BCF2000" )),
 	("behringer-bcr2000" -> ( 'srcPortIndex': 0, 'destPortIndex': 0, 'deviceName': "BCR2000" )),
+	("behringer-motor_49" -> ( 'srcPortIndex': 0, 'destPortIndex': 0, 'deviceName': "MOTÖR49 Keyboard" )),
 	("behringer-x-touch-compact" -> "X-TOUCH COMPACT"),
 	("behringer-x-touch-mini" -> "X-TOUCH MINI"),
 	("cinematix-wheel" -> "CinematixWheel"),
