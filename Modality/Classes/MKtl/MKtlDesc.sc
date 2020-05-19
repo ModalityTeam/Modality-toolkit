@@ -29,6 +29,7 @@ MKtlDesc {
 
 	*initClass {
 		Class.initClassTree(Spec);
+		Class.initClassTree(Piano);
 
 		defaultFolder = MKtlDesc.filenameSymbol.asString.dirname.dirname.dirname
 		+/+ folderName;
