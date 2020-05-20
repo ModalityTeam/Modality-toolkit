@@ -165,9 +165,10 @@ MAbstractElement {
 	}
 
 	freeBus {
-		bus.notNil.if({
-			Bus.free;
-		});
+		bus.notNil.if {
+			bus.free;
+			bus = nil;
+		};
 	}
 
 	kr {|server|
