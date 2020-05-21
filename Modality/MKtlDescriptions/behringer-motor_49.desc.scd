@@ -89,18 +89,13 @@ MKtlDesc("*motor_49"); MKtl(\m49).free; MKtl(\m49, "*motor*").gui;
 			(
 				key: 'sl',
 				shared: (
-					elementType: \slider,
+					elementType: 'slider',
 					midiMsgType: 'cc',
 					midiChan: 1,
 					spec: 'midiCC',
 					ioType: 'inout'
 				),
-				elements: [
-					(
-						key: 'master', midiNum: 53,
-						style: (row: 0, column: 2 + 8)
-					)
-				] ++ 4.collect {| page |
+				elements: 4.collect {| page |
 					(
 						key: (page + 1).asSymbol,
 						page: page,
@@ -108,16 +103,20 @@ MKtlDesc("*motor_49"); MKtl(\m49).free; MKtl(\m49, "*motor*").gui;
 							(
 								midiNum: 21 + (page * 8) + fader,
 								style: (row: 0, column: 2 + fader),
-
 							)
 						}
 					)
-				}
+				} ++ [
+					(
+						key: 'main', midiNum: 53,
+						style: (row: 0, column: 2 + 8)
+					)
+				]
 			),
 			(
 				key: 'kn',
 				shared: (
-					elementType: \knob,
+					elementType: 'knob',
 					midiMsgType: 'cc',
 					midiChan: 1,
 					spec: 'midiCC',
@@ -127,7 +126,8 @@ MKtlDesc("*motor_49"); MKtl(\m49).free; MKtl(\m49, "*motor*").gui;
 					(
 						page: page,
 						elements: 8.collect {| knob |
-							(midiNum: 71 + (page * 8) + knob,
+							(
+								midiNum: 71 + (page * 8) + knob,
 								style: (row: knob div: 4, column: knob % 4 + 11),
 							)
 						}
@@ -150,7 +150,8 @@ MKtlDesc("*motor_49"); MKtl(\m49).free; MKtl(\m49, "*motor*").gui;
 						elements: 8.collect {| pad |
 							(
 								midiNum: 66 + (page * 8) + pad,
-								style: (row: 1 - (pad div: 4) * 1.5,
+								style: (
+									row: 1 - (pad div: 4) * 1.5,
 									column: pad % 4 * 1.5 + 15,
 									width: 1.5, height: 1.5
 								),
