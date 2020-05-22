@@ -11,3 +11,4 @@ descDict.deviceInfo.longName = "Behringer MOTÖR61 Keyboard";
 descDict.deviceInfo.features.do(_.replace("49", "61"));
 
 descDict;
+
