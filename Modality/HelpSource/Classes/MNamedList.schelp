@@ -1,26 +1,28 @@
 
-TITLE:: NamedList
+TITLE:: MNamedList
 summary:: an ordered list of items which can be accessed by index or name.
 categories:: Collections
 related:: Classes/Collection, Classes/List, Classes/Dictionary
 
 DESCRIPTION::
-Like a List, a NamedList has an array of items which can be accessed by index. Like a dictionary, its items can also be accessed by names. Items can be added and removed and replaced by name. It also supports pseudo-object style like a dict.
+note:: NamedList is now in adclib! MNamedList is a copy of NamedList which will stay here for backwards compatibility.::
+
+Like a List, a MNamedList has an array of items which can be accessed by index. Like a dictionary, its items can also be accessed by names. Items can be added and removed and replaced by name. It also supports pseudo-object style like a dict.
 
 Not used yet in Modality.
 
 Note::
 
-NamedList is designed primarily for semantic clarity, to make storage as text more clearly readable for humans, and to ensure the intended order of iteration.
+MNamedList is designed primarily for semantic clarity, to make storage as text more clearly readable for humans, and to ensure the intended order of iteration.
 
-NamedList also does quite efficient lookup: code::put, at:: methods are reasonably fast, and direct lookup with code::namedlist.dict[key]:: or code::namedlist.array[index]:: is almost as fast as with Array and Event.
+MNamedList also does quite efficient lookup: code::put, at:: methods are reasonably fast, and direct lookup with code::MNamedList.dict[key]:: or code::MNamedList.array[index]:: is almost as fast as with Array and Event.
 
 code::add, remove, removeAt:: methods are slower than with arrays or dicts, due to the overhead of keeping array, names and dict in sync. This design assumes that lookup will happen several orders of magnitude more often than add/remove.
 ::
 
 code::
 // make a new NamedNist
-n = NamedList([ \a, 4, \b, 5, \c, 6 ]);
+n = MNamedList([ \a, 4, \b, 5, \c, 6 ]);
 
 //  access list-like by index, get and set
 n[0];
@@ -71,27 +73,27 @@ n.collect { |val, key, i| val * 100 };
 CLASSMETHODS::
 
 METHOD:: new, fromPairs
-create new NamedList from array of pairs
+create new MNamedList from array of pairs
 
-code:: n = NamedList([ \a, 4, \b, 5, \c, 6 ]); ::
+code:: n = MNamedList([ \a, 4, \b, 5, \c, 6 ]); ::
 
 METHOD:: fromDict
-create new NamedList from dict and optional ordered names or sortFunc.
+create new MNamedList from dict and optional ordered names or sortFunc.
 code::
-n = NamedList.fromDict((a: 1, b: 3, c: 5), [\c, \a, \b]);
-n = NamedList.fromDict((a: 1, c: 5, b: 3), sortFunc: { |a, b| a > b });
+n = MNamedList.fromDict((a: 1, b: 3, c: 5), [\c, \a, \b]);
+n = MNamedList.fromDict((a: 1, c: 5, b: 3), sortFunc: { |a, b| a > b });
 ::
 
 METHOD:: newUsing
-create new NamedList from array of values and names
+create new MNamedList from array of values and names
 code::
-NamedList.newUsing([1, 3, 5], [\a, \b, \c]);
+MNamedList.newUsing([1, 3, 5], [\a, \b, \c]);
 ::
 
 METHOD:: fromAssocs
-create new NamedList from array of associations:
+create new MNamedList from array of associations:
 code::
-n = NamedList.fromAssocs([\a -> 1, \b -> 3, \c -> 5]);
+n = MNamedList.fromAssocs([\a -> 1, \b -> 3, \c -> 5]);
 ::
 
 INSTANCEMETHODS::

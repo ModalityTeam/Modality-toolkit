@@ -1,4 +1,7 @@
-NamedList : List {
+// moved NamedList to adclib, where it should live!
+// leaving a renamed copy of NamedList here for backwards compatibility only.
+
+MNamedList : List {
 	var <names, <dict, <>know = true;
 
 	// very clear
