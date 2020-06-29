@@ -55,7 +55,7 @@ MIDIMKtlDevice : MKtlDevice {
 		this.cleanupElementsAndCollectives;
 		destination.notNil.if {
 			if ( thisProcess.platform.name == \linux ) {
-				midiOut.disconnect( MIDIClient.destinations.indexOf(destination) )
+				midiOut.disconnect( MIDIClient.destinations.indexOfEqual(destination) )
 			};
 			midiOut = nil;
 		};
@@ -254,7 +254,7 @@ MIDIMKtlDevice : MKtlDevice {
 		destination.notNil.if {
  			if ( thisProcess.platform.name == \linux ) {
 				midiOut = MIDIOut( 0 );
-				midiOut.connect( MIDIClient.destinations.indexOf(destination) )
+				midiOut.connect( MIDIClient.destinations.indexOfEqual(destination) )
 			} {
 				midiOut = MIDIOut( MIDIClient.destinations.indexOfEqual(destination), dstID );
 			};
