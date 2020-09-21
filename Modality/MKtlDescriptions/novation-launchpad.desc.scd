@@ -54,7 +54,7 @@ elementsDesc: (
 		),
 		(
 			key: \pad,
-			shared: (\elementType: \pad, \spec: \midiVel),
+			shared: (\elementType: \pad, \spec: \midiVel, \ioType: \inout),
 			elements: ((0, 16 .. 112) +.t (0..7)).flat.clump(8).collect {|nums, i|
 				(
 					elements: nums.collect { |num, j|
@@ -67,9 +67,15 @@ elementsDesc: (
 		),
 		(
 			key: \arr,
-			shared: (\midiMsgType: \noteOn, \elementType: \pad, \spec: \midiVel),
+			shared: (\elementType: \pad, \spec: \midiVel),
 			elements: ((0, 16 .. 112) + 8).flat.postln.collect {|num, i|
-				(\midiNum: num)
+				(
+					groupType: \noteOnOff,
+					\midiNum: num,
+					style: (row: 10, column: i)
+
+
+				)
 			}
 		)
 	]

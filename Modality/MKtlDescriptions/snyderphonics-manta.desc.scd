@@ -52,6 +52,9 @@ testCode: {
 
 	// enable LED control and set one light
 	m.sendSpecialMessage(\enableLEDControl);
+
+	// Manta v.2 has two different LED colors; amber and red
+	// Manta v.1 has only amber.
 	m.elAt(\pad, 0, \led).deviceValue = "amber";
 
 	// some light patterns
@@ -79,7 +82,8 @@ testCode: {
 	];
 
 	q.ledPatterns.choose.do{|val, i|
-		m.elAt(\pad, 0, \led).value = 0.5 * val;
+		// amber is 0.5, red is 1
+		m.elAt(\pad, i, \led).value = 0.5 * val;
 	};
 
 },
