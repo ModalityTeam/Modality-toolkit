@@ -82,8 +82,8 @@ testCode: {
 	];
 
 	q.ledPatterns.choose.do{|val, i|
-		// amber is 0.5, red is 1
-		m.elAt(\pad, i, \led).value = 0.5 * val;
+		// amber is 1, red is 0.5
+		m.elAt(\pad, i, \led).value = val;
 	};
 
 },
