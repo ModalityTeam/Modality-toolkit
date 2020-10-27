@@ -35,6 +35,7 @@ list::
 ## after touch messages,
 ## MIDI control messages ("CC" e.g., volume control) and
 ## MIDI program change messages (e.g. to switch to a different bank of sounds).
+## 14 bit MIDI control messages
 ::
 
 To try out the examples below even without a physical device at hand, we will use SuperColliders own MIDI input and output.
@@ -378,6 +379,41 @@ m.trace;
 ~midiOut.control(0, 8, 0 );
 ::
 
+subsection:: 14 bit MIDI control messages
+
+Modality has support for 14 bit MIDI. 
+
+14 bit midi is achieved by combining two midi CC's into one. They are offset by 32 steps in their cc numbers which means that a sending device may send the first part of it on midi cc 16, and then the rest at midi cc 48.
+
+In Modality, you only need to specify the first "lower" midi cc channel and then Modality will handle the rest of it for you. To use this functionality, specify the midiMsgType key in your description as \cc14 and optionally your spec as \midiCC14 like so:
+
+code::
+(
+~descInput = (
+    idInfo: ~idInfo, // still around from above
+    protocol: \midi,
+    elementsDesc: (
+        elements: [
+            (
+                key: 'kn',
+                type: 'knob',
+                midiMsgType: \cc14, // 14 bit
+                midiChan: 0,
+                midiNum: 8, // The lower / first part of the 14 bit midi signal. The other is assumed to be offset 32 from this, so 40 in this case. 
+                spec: \midiCC14, // 14 bit
+                ioType: \in
+            )
+        ]
+    )
+)
+);
+
+m = MKtl( \testMIDI, ~descInput );
+m.rebuild( ~descInput ); // updating it
+
+m.trace;
+m.gui;
+::
 subsection:: MIDI pitch bend messages
 
 
@@ -1088,3 +1124,5 @@ specialMessages: (
 ])
 )
 ::
+
+
