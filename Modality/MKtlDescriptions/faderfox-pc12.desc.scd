@@ -1,4 +1,4 @@
-/**** Faderfox UC4 desc file. adc 2015_12_24 (merry xmas)
+/**** Faderfox PC12 desc file. superpeachman 2020_11_08
 
 // General Info:
 
