@@ -1,5 +1,8 @@
 /*
-MKtlDesc.loadDescs("*push"); m.free; m = MKtl(\push, "*push").trace; m.gui;
+MKtlDesc.loadDescs("*push"); m.free; m = MKtl(\push, "*push", multiIndex: 1).trace;
+m.gui;
+m.elAt(\pad, 0, 0).elemDesc.style.parent
+
 */
 (
 deviceName: "Ableton Push",
@@ -50,59 +53,35 @@ elementsDesc: (
 						(
 							key: \touch,
 							groupType: \noteOnOffBut,
-							shared: (
-								elementType: 'button', spec: \midiVel,
-								midiNum: num,
-								style: (row: -0.5, column: i + 2, height: 0.7)
-							)
+							elementType: 'button', spec: \midiVel,
+							midiNum: num,
+							style: (row: -0.1, column: i + 2, height: 0.7)
+
 						),
 						(
 							key: \turn,
 							midiNum: 71+num,
 							midiMsgType: \cc, elementType: \encoder,
 							spec: \midiCC,
-							style: (row: 0, column: 2 + i)
+							style: (row: 0.5, column: 2 + i)
 						)
 					]
 				)
 			}
-
-
-			// [
-			// 	(
-			// 		key: \touch,
-			// 		shared: (
-			// 			elementType: 'button', spec: \midiVel,
-			// 			groupType: \noteOnOffBut,
-			// 		),
-			// 		elements: ( 0.. 8 ).collect { |num, i|
-			// 			(
-			// 				key: (num+1).asSymbol,
-			// 				shared: (
-			// 					midiNum: num,
-			// 					style: (row: -0.5, column: i + 2, height: 0.7)
-			// 				)
-			// 			)
-			// 		}
-			// 	),
-			// 	(
-			// 		key: \turn,
-			// 		shared: (midiMsgType: \cc, elementType: \encoder, spec: \midiCC),
-			// 		elements: (71..79).collect { |num, i|
-			// 			(midiNum: num, style: (row: 0, column: 2 + i))
-			// 		}
-			// 	)
-			// ]
 		),
-		//------ pads -------------
+		///// ------ pads -------------
 		(
 			key: \pad,
-			shared: (elementType: \pad, groupType: \noteOnOffTouch, ioType: \inout),
+			elementType: \pad,
+
+			ioType: \inout,
 			elements: (36..99).clump(8).reverse.collect { |rownums, i|
 				(
 					elements: rownums.collect { |num, j|
 						(
-							shared: (midiNum: num, style: (row: i + 4, column: j + 2))
+							groupType: \noteOnOffTouch,
+							midiNum: num,
+							style: (row: i + 4, column: j + 2)
 						)
 					}
 				)
@@ -115,14 +94,12 @@ elementsDesc: (
 				(
 					key: \touch,
 					groupType: \noteOnOffBut,
-					shared: (
-						midiNum: 12,
-						groupType: \noteOnOffBut,
-						elementType: 'pad',
-						midiChan: 0,
-						spec: 'midiBut',
-						style: (row: 4, column: 1)
-					)
+					midiNum: 12,
+					elementType: 'pad',
+					midiChan: 0,
+					spec: 'midiBut',
+					style: (row: 4, column: 1)
+
 				),
 				(
 					key: \bend,
@@ -184,16 +161,14 @@ elementsDesc: (
 		(
 			key: \bt,
 			shared: (midiMsgType: 'cc', elementType: 'pad',
-				spec: 'midiCC', ioType: \inout),
+			spec: 'midiCC', ioType: \inout),
 			elements: [(20..27), (102..109)].collect { |row, i|
 				(
 					// shared: (groupType: \noteOnOffBut),
 					elements: row.collect { |num, j|
 						(
 							midiNum: num,
-							shared: (
-								style: (row: i * 0.5 + 3, column: j + 2, height: 0.6)
-							)
+							style: (row: i * 0.5 + 3, column: j + 2, height: 0.6)
 						)
 					}
 				)
@@ -204,7 +179,7 @@ elementsDesc: (
 		(
 			key: \btLen,
 			shared: (midiMsgType: 'cc', elementType: 'button',
-				spec: 'midiCC', ioType: \inout),
+			spec: 'midiCC', ioType: \inout),
 			elements: [
 				(key: '132t', midiNum: 43, style: (row: 4, column: 10)),
 				(key: '132',  midiNum: 42, style: (row: 5, column: 10)),
@@ -220,7 +195,7 @@ elementsDesc: (
 		(
 			key: \btCtl,
 			shared: (midiMsgType: 'cc', elementType: 'button',
-				spec: 'midiCC', ioType: \inout),
+			spec: 'midiCC', ioType: \inout),
 			elements: [
 				(key: \tapTempo, midiNum: 3, style: (row: 1, column: 0)),
 				(key: \metronome, midiNum: 9, style: (row: 2, column: 0, height: 0.7)),

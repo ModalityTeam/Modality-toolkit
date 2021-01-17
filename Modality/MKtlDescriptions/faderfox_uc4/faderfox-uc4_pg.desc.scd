@@ -24,7 +24,7 @@ knpg8 [\kn, \pbt][index]
 "Tutorials/Hardware_paging".openHelpFile;
 
 MKtlDesc.loadDescs("*uc4_pg");
-m.free; m = MKtl(\uc4, "*uc4_pg"); m.trace.gui;
+m.free; m = MKtl(\uc4_pg, "*uc4_pg"); m.trace.gui;
 
 ****/
 
@@ -33,8 +33,9 @@ parentDesc: "faderfox-uc4",
 
 status: (
 	linux: "unknown",
-	osx: "tested and working. 2016-04-10, adc",
-	win: "unknown"),
+	osx: "tested and working. 2019-12-29, adc",
+	win: "unknown"
+),
 
 elementsDesc: (
 	shared: ('midiChan': 0, ioType: \inout),
@@ -70,17 +71,21 @@ elementsDesc: (
 				// note-buttons
 				(
 					key: \pbt,
-					shared: ('elementType': 'pad', groupType: \noteOnOffBut,
+					shared: ('elementType': 'pad',
+						groupType: \noteOnOffBut,
 						\page: gr_i, 'spec': 'midiBut'),
 					// 0-7, 8-15 ... 56-63
 					elements: ((0..7) + (gr_i * 8)).collect { |num, i|
 						(
-							key: nil, midiNum: num,
-							shared:	(
-								style: (\row: i div: 4 * 2 + 0.8,
-									\column: i % 4 * 2 + 0.5,
-									height: 0.8,
-									showLabel: true))
+							// key: nil,
+							midiNum: num,
+
+							style: (\row: i div: 4 * 2 + 0.8,
+								\column: i % 4 * 2 + 0.5,
+								height: 0.8,
+								// label: "pbt_" ++ (i + 1),
+								showLabel: true
+							)
 						)
 					}
 				)
@@ -115,14 +120,13 @@ elementsDesc: (
 			elements: 8.collect { |i|
 				(
 					key: nil, midiNum: (btNum1[gr_i] + i),
-					shared:	(
-						style: ( \row: 7, \column: i, height: 0.8)
-					)
+					// label: ("bt_" ++ (i + 1)),
+					style: ( \row: 7, \column: i, height: 1)
 				)
 			};
 		);
 
-			// only put sliders in first 5 pages
+		// only put sliders in first 5 pages
 		(
 			key: ("pgSl" ++ (gr_i + 1)).asSymbol,
 			elements: if (gr_i < 5) { [ slElems, btElems] } { [ btElems ] };

@@ -2,6 +2,12 @@
 // Mostly NoteOn / NoteOff, some cc messages,
 // no hardware scenes, flattened out with underscores
 
+/*
+MKtlDesc.loadDescs("*launchpad");
+m.free; m = MKtl(\lp, "*launchpad");  m.gui;
+*/
+
+
 (
 deviceName: "Launchpad",
 protocol: \midi,
@@ -9,7 +15,7 @@ deviceType: \launchpad,
 elementTypes: [\button],
 status: (
 	linux: "unknown",
-	osx: "tested desc, looks good. needs gui layout. 2016_03_23, adc",
+	osx: "now with gui layout. 2019_12_29, adc",
 	win: "unknown"),
 
 idInfo: "Launchpad",
@@ -48,21 +54,28 @@ elementsDesc: (
 		),
 		(
 			key: \pad,
-			shared: (\elementType: \pad, \spec: \midiVel),
-			elements: ((0, 16 .. 112) +.t (0..7)).flat.collect {|num, i|
+			shared: (\elementType: \pad, \spec: \midiVel, \ioType: \inout),
+			elements: ((0, 16 .. 112) +.t (0..7)).flat.clump(8).collect {|nums, i|
 				(
-					elements: [
-						(key: \on, \midiMsgType: \noteOn, \midiNum: num),
-						(key: \off, \midiMsgType: \noteOff, \midiNum: num)
-					]
+					elements: nums.collect { |num, j|
+						( groupType: \noteOnOff,
+							style: (row: i + 1, column: j)
+						)
+					}
 				)
 			}
 		),
 		(
 			key: \arr,
-			shared: (\midiMsgType: \noteOn, \elementType: \pad, \spec: \midiVel),
-			elements: ((0, 16 .. 112) + 8).flat.collect {|num, i|
-				(\midiNum: num)
+			shared: (\elementType: \pad, \spec: \midiVel),
+			elements: ((0, 16 .. 112) + 8).flat.postln.collect {|num, i|
+				(
+					groupType: \noteOnOff,
+					\midiNum: num,
+					style: (row: 10, column: i)
+
+
+				)
 			}
 		)
 	]

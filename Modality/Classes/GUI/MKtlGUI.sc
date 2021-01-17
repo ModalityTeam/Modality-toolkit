@@ -97,6 +97,8 @@ MKtlElementView {
 			'switch': \button,
 
 			'pianoKey': \pad,
+			'pianoKeyUp': \padUp,
+
 			'led': \button, // LED can have different types (colors, states (off,blinking,on))
 			'meter': \slider
 
@@ -184,21 +186,15 @@ MKtlElementView {
 				"% gui: switching to momentary action/snapback.\n".postf(element);
 			};
 			if (view.isKindOf(Button)) {
-				view.mouseDownAction = { |bt| bt.valueAction = 1 };
-			};
-			// elasticity
-			view.mouseUpAction = {
-				defer ({
-					element.valueAction = snapbackValue;
-					view.value = snapbackValue;
-				}, 0.05);
+				view.mouseDownAction = { |bt|
+					bt.valueAction = 1 - snapbackValue;
+				};
 			};
 		} {
 			if (post) {
 				"% gui: switching to toggle action.\n".postf(element);
 			};
 			if (view.isKindOf(Button)) { view.mouseDownAction = nil; };
-			view.mouseUpAction = nil;
 		};
 	}
 }
@@ -215,7 +211,7 @@ MKtlGUI {
 	var <mktl;
 	var <parent, <views, <skipJack;
 	var <gridSize;
-	var <traceButton, <labelButton;
+	var <traceButton, <labelButton, <deviceButton;
 	var <labelView;
 	var <pageComposites, <pagesSwitch;
 	var <currentPage = 0;
@@ -269,10 +265,14 @@ MKtlGUI {
 			});
 		};
 
-		// // was:
-		// elemsToShow = mktl.elementGroup.flat;
 		// keep groups with a groupType together
-		elemsToShow = mktl.elementGroup.elements.flatIf { |el| el.groupType.isNil };
+		////// this is not ideal, because groupType has to be defined
+		////// at the exact level it applies, and cannot be set at higher levels.
+		///// so, how to do this best?
+		elemsToShow = mktl.elementGroup.elements.flatIf { |el|
+			el.groupType.isNil
+		};
+
 		"%: will show %'s % elements in % views.\n".postf(thisMethod, mktl,
 			mktl.elementsDict.size, elemsToShow.size);
 
@@ -280,7 +280,10 @@ MKtlGUI {
 			var style, bounds, parView = parent, redirView, newViews;
 			var itemIsGroup = item.isKindOf(MKtlElementGroup);
 
-			style = try { item.elemDesc[ \style ] } ?? { ( row: 0, column: 0, width: 0, height: 0 ) };
+			style = try { item.elemDesc[ \style ] }
+			?? { try { item.elemDesc[ \shared ][ \style ] } }
+			?? { ( row: 0, column: 0, width: 0, height: 0 ) };
+
 			if( pages.notNil && { item.elemDesc[ \page ].notNil }) {
 				parView = pageComposites[ item.elemDesc[ \page ] ];
 			};
@@ -331,7 +334,7 @@ MKtlGUI {
 					or: { item.element.elemDesc[ \page ] == currentPage } };
 
 				if(doDraw) {
-					name = item.element.name.asString;
+					name = item.element.elemDesc.label ? item.element.name.asString;
 					if (item.element.elemDesc.groupType.notNil) {
 						name = name.split($_).drop(-1).join($_);
 					};
@@ -352,6 +355,14 @@ MKtlGUI {
 		labelButton = Button( parent, Rect(54,2,50,16) )
 		.states_([["labels"],["labels", Color.black, Color.green]])
 		.action_({ |bt| this.showLabels( bt.value.booleanValue ) });
+
+		deviceButton = Button( parent, Rect(54 + 54,2,50,16) )
+		.states_([["device"],["device", Color.black, Color.green]])
+		.action_({ |bt|
+			mktl.openDevice;
+			bt.value_(mktl.hasDevice.binaryValue);
+		});
+		deviceButton.value_(mktl.hasDevice.binaryValue);
 
 		if( pages.notNil ) {
 			Button( parent, Rect( 168, 2, 16, 16 ) )
@@ -466,6 +477,18 @@ MKtlGUI {
 
 	updateGUI {
 		views.do(_.updateGUI);
+		this.updateButtons;
+	}
+
+	updateButtons {
+		var deviceVal = mktl.hasDevice.binaryValue;
+		var traceVal = mktl.traceRunning.binaryValue;
+		if (deviceButton.value != deviceVal) {
+			deviceButton.value != deviceVal
+		};
+		if (traceButton.value != traceVal) {
+			traceButton.value != traceVal
+		};
 	}
 
 	showLabels { |bool = true|
@@ -482,5 +505,4 @@ MKtlGUI {
 			);
 		}
 	}
-
 }

@@ -28,20 +28,24 @@ MKtlDesc {
 	var <elementsDict;
 
 	*initClass {
+		Class.initClassTree(Spec);
+		Class.initClassTree(Piano);
+
 		defaultFolder = MKtlDesc.filenameSymbol.asString.dirname.dirname.dirname
 		+/+ folderName;
 		this.checkUserFolder;
+		this.initGroupFuncs;
+
 		descFolders = List[defaultFolder, userFolder];
 		allDescs =();
 		isElemFunc = { |el|
-			el.isKindOf(Dictionary) and: { el[\elements].isNil }
+			el.isKindOf(Dictionary) and: { el.array.every(_ != \elements) }
 		};
 
 		fileToIDDict = Dictionary.new;
 
-		this.initGroupFuncs;
-
-		this.loadCache;
+		MKtlDesc.updateCaches;
+		this.loadCaches;
 	}
 
 	*checkUserFolder {
@@ -61,62 +65,84 @@ MKtlDesc {
 			noteOnVel: { |dict|
 				dict.putAll((\midiMsgType: \noteOn, \spec: \midiVel));
 			},
+			// pass if already expanded
+			elem: { |dict| dict },
 			// default
 			noteOnOff: { |dict|
-				dict.put(\elements, [
-					(key: \on,  midiMsgType: \noteOn,  spec: \midiVel),
-					(key: \off, midiMsgType: \noteOff, spec: \midiBut, elementType: \padUp)
-				]).put(\useSingleGui, true);
+				dict.putAll((
+					\shareGui: true,
+					\elements: [
+						(key: \on,  midiMsgType: \noteOn,  spec: \midiVel, groupType: \elem),
+						(key: \off, midiMsgType: \noteOff, spec: \midiBut, elementType: \padUp, groupType: \elem)
+				]));
 			},
 			// others
 			noteOnOffBut: { |dict|
-				dict.put(\elements, [
-					(key: \on,  midiMsgType: \noteOn,  spec: \midiBut),
-					(key: \off, midiMsgType: \noteOff, spec: \midiBut, elementType: \padUp)
-				]).put(\useSingleGui, true);
+				dict.putAll((
+					\shareGui: true,
+					\elements: [
+						(key: \on,  midiMsgType: \noteOn,  spec: \midiBut, groupType: \elem),
+						(key: \off, midiMsgType: \noteOff, spec: \midiBut, elementType: \padUp, groupType: \elem)
+				]));
 			},
 			noteOnOffVel: { |dict|
-				dict.put(\elements, [
-					(key: \on,  midiMsgType: \noteOn,  spec: \midiVel),
-					(key: \off, midiMsgType: \noteOff, spec: \midiVel, elementType: \padUp)
-				]).put(\useSingleGui, true);
+				dict.putAll((
+					\shareGui: true,
+					\elements: [
+						(key: \on,  midiMsgType: \noteOn,  spec: \midiVel, groupType: \elem),
+						(key: \off, midiMsgType: \noteOff, spec: \midiVel, elementType: \padUp, groupType: \elem)
+				]));
 			},
 			noteOnOffTouch: { |dict|
-				dict.put(\elements, [
-					(key: \on,  midiMsgType: \noteOn,  spec: \midiVel),
-					(key: \off, midiMsgType: \noteOff, spec: \midiBut, elementType: \padUp),
-					(key: \touch, midiMsgType: \polytouch, spec: \midiVel, elementType: \padMove)
-				]).put(\useSingleGui, true);
+				dict.putAll((
+					\shareGui: true,
+					\elements: [
+						(key: \on,  midiMsgType: \noteOn,  spec: \midiVel, groupType: \elem),
+						(key: \off, midiMsgType: \noteOff, spec: \midiBut, elementType: \padUp, groupType: \elem),
+						(key: \touch, midiMsgType: \polytouch, spec: \midiVel, elementType: \padMove, groupType: \elem)
+				]));
 			},
 			noteOnOffVelTouch: { |dict|
-				dict.put(\elements, [
-					(key: \on,  midiMsgType: \noteOn,  spec: \midiVel),
-					(key: \off, midiMsgType: \noteOff, spec: \midiVel, elementType: \padUp),
-					(key: \touch, midiMsgType: \polytouch, spec: \midiVel, elementType: \padMove)
-				]).put(\useSingleGui, true);
+				dict.putAll((
+					\shareGui: true,
+					\elements: [
+						(key: \on,  midiMsgType: \noteOn,  spec: \midiVel),
+						(key: \off, midiMsgType: \noteOff, spec: \midiVel, elementType: \padUp, groupType: \elem),
+						(key: \touch, midiMsgType: \polytouch, spec: \midiVel, elementType: \padMove, groupType: \elem)
+				]));
 			},
 			// fader touch on/off + control
+			// steinberg CMC uses this
 			noteOnOffButCtl: { |dict|
-				dict.put(\elements, [
-					(key: \on,  midiMsgType: \noteOn,  spec: \midiBut),
-					(key: \off, midiMsgType: \noteOff, spec: \midiBut, elementType: \padUp),
-					(key: \ctl, midiMsgType: \control, spec: \midiVel, elementType: \padMove)
-				]).put(\useSingleGui, true);
+				dict.putAll((
+					\shareGui: true,
+					\elements: [
+						(key: \on,  midiMsgType: \noteOn,  spec: \midiBut),
+						(key: \off, midiMsgType: \noteOff, spec: \midiBut, elementType: \padUp, groupType: \elem),
+						(key: \ctl, midiMsgType: \control, spec: \midiVel, elementType: \padMove, groupType: \elem)
+				]));
 			},
 			// velocity on, but off, pressure -> control
 			noteOnOffCtl: { |dict|
-				dict.put(\elements, [
-					(key: \on,  midiMsgType: \noteOn,  spec: \midiVel),
-					(key: \off, midiMsgType: \noteOff, spec: \midiBut, elementType: \padUp),
-					(key: \ctl, midiMsgType: \control, spec: \midiVel, elementType: \padMove)
-				]).put(\useSingleGui, true);
+				dict.putAll((
+					\shareGui: true,
+					\elements: [
+						(key: \on,  midiMsgType: \noteOn,  spec: \midiVel),
+						(key: \off, midiMsgType: \noteOff, spec: \midiBut, elementType: \padUp, groupType: \elem),
+						(key: \ctl, midiMsgType: \control, spec: \midiVel, elementType: \padMove, groupType: \elem)
+				]));
 			},
 		);
 	}
 
 	*deepExpand { |groupDict, groupType|
 		^if (isElemFunc.value(groupDict)) {
-			this.expandElemToGroup(groupDict, groupType);
+			groupType = groupType ?? { groupDict[\groupType] };
+			if (groupType.notNil) {
+				this.expandElemToGroup(groupDict, groupType);
+			} {
+				groupDict
+			}
 		} {
 			groupDict.elements.collect { |elemDict|
 				this.deepExpand(elemDict, groupType)
@@ -125,17 +151,20 @@ MKtlDesc {
 	}
 
 	*expandElemToGroup { |dict, groupType|
-		var groupFunc, groupDict;
-		groupType = groupType ? dict[\groupType];
-		if (groupType.isNil) { ^dict };
-
+		var groupFunc;
 		groupFunc = groupFuncs[groupType];
 		if (groupFunc.isNil) {
 			"%: no groupFunc found at %\n".postf(thisMethod, groupType.cs);
 			^dict
 		};
-		groupDict = groupFunc.value(dict) ? dict;
-		^groupDict.put(\groupType, groupType);
+
+		groupFunc.value(dict);
+		dict.put(\groupType, groupType);
+		this.makeParents(dict);
+		// dict.elements.do { |elemDict|
+		// 	elemDict.style = dict.style;
+		// };
+		^dict;
 	}
 
 	// access to all
@@ -227,7 +256,9 @@ MKtlDesc {
 	*loadDescs { |filename = "*", folderIndex, post = false|
 		var paths = this.findFile(filename, folderIndex);
 		var descs = paths.collect {|path|
-			try { this.fromPath(path); };
+			try { this.fromPath(path); } {
+				"*** % FAILED: %\n".postf(path);
+			};
 		}.select(_.notNil);
 
 		if (post) {
@@ -371,45 +402,85 @@ MKtlDesc {
 		^candidate.desc
 	}
 
-	*writeCache {
-		var dictForFolder = Dictionary.new, file;
 
-		descFolders.do { |folder, i|
-			var descs = MKtlDesc.loadDescs(folderIndex: i);
-			var path = folder +/+ cacheName;
+	// non-functional duplicate to updateCaches
+	// *checkCaches {
+	// 	var cacheTime, lastDescTime;
+	// 	descFolders.do { |folder, i|
+	// 		var files = this.findFile("*", i);
+	// 		var newestDescTime;
+	// 		var cacheTime = 0, cachePath = folder +/+ cacheName;
+	// 		if (files.notEmpty) {
+	// 			newestDescTime = files.collect(File.mtime(_)).maxItem;
+	// 			if (cachePath.pathMatch.notEmpty) {
+	// 				cacheTime = File.mtime(cachePath);
+	// 			};
+	// 			if (newestDescTime > cacheTime) { this.writeCache(i) }
+	// 		};
+	// 	}
+	// }
 
-			descs.collect { |desc|
-				var filename = desc.fullDesc.filename;
-				var idInfo = desc.fullDesc.idInfo;
-				dictForFolder.put(filename, idInfo);
+	*updateCaches {
+		descFolders.do { |path, index|
+			var descDates, cacheDate;
+
+			descDates = MKtlDesc.findFile(folderIndex: index).collect(File.mtime(_));
+
+			if (File.exists(path +/+ MKtlDesc.cacheName)) {
+				cacheDate = File.mtime(path +/+ MKtlDesc.cacheName);
 			};
-			file = File.open(path, "w");
+
+			// write cache files also when directory is empty
+			// but not if empty directory already contains cache file
+			if (cacheDate.isNil or: {(descDates.maxItem ? -1) > cacheDate}) {
+				this.writeCache(index);
+			};
+		};
+	}
+
+	*writeCaches {
+		descFolders.size.do { |i| this.writeCache(i) }
+	}
+
+	*writeCache { |folderIndex = 0|
+		var folder = descFolders[folderIndex];
+		var localDescs = this.loadDescs(folderIndex: folderIndex);
+		var dictForFolder = Dictionary.new;
+		var path = folder +/+ cacheName;
+
+		localDescs.collect { |desc|
+			var filename = desc.fullDesc.filename;
+			var idInfo = desc.fullDesc.idInfo;
+			dictForFolder.put(filename, idInfo);
+		};
+
+		File.use(path, "w", { |file|
 			if (file.isOpen) {
 				file.write("Dictionary[\n");
 				dictForFolder.sortedKeysValuesDo { |key, val|
 					file.write("\t" ++ (key -> val).cs ++ ",\n");
 				};
 				file.write("]\n");
-				file.close;
-				"MKtlDesc cache written with % entries at %.\n".postf(dictForFolder.size, path);
+				"MKtlDesc cache written with % entries at %.\n"
+				.postf(dictForFolder.size, path);
 			} {
 				warn("MKtlDesc: could not write cache at %.\n".format(path));
 			}
-		};
+		});
 	}
 
-	*loadCache {
-		// clear first? maybe better not
-		descFolders.do { |folder|
-			var loadedList = (folder +/+ cacheName).load;
-			//	("// loadedList: \n" + loadedList.cs).postln;
-			if (loadedList.isNil) {
-				"% : no cache file found.\n".postf(thisMethod);
-				^this
-			};
-			loadedList.keysValuesDo { |filename, idInfo|
-				fileToIDDict.put(filename, idInfo);
-			};
+	*loadCaches {
+		descFolders.do { |folder| this.loadCache(folder) };
+	}
+
+	*loadCache { |folder|
+		var loadedList = (folder +/+ cacheName).load;
+		if (loadedList.isNil) {
+			"% : no cache file found.\n".postf(thisMethod);
+			^this
+		};
+		loadedList.keysValuesDo { |filename, idInfo|
+			fileToIDDict.put(filename, idInfo);
 		};
 	}
 
@@ -557,29 +628,52 @@ MKtlDesc {
 		true
 	}
 
-	// plug shared properties in as parents
-	*sharePropsToElements { |dict, toShare|
-		var shared, elements, subProps;
+	*makeParents { |dict|
+		var excludeKeys = #[\shared, \elements, \key];
+		var inShared;
+		var newParentDict;
+		var dictHasElements;
+
+		// "*** makeParents: ".postln;
+
+		// not a dict
 		if (dict.isKindOf(Dictionary).not) {
-			//	"cant share in %\n".postf(dict);
-			^this
+			"%: can't setParent in %\n".postf(this, dict);
+			^dict
 		};
 
-		shared = dict[\shared] ? ();
-		elements = dict[\elements];
-		if (toShare.notNil) {
-			//	"shared: % parent: %\n\n".postf(shared, toShare);
-			shared.parent = toShare;
+		// dictHas no elements
+		if (isElemFunc.value(dict)) {
+			// "dict has no elements to set parents of, so early return".postln;
+			^dict
 		};
-		elements.do { |elemDict|
-			if (elemDict[\elements].notNil) {
-				this.sharePropsToElements(elemDict, shared);
-			} {
-				//	"elem: % shared: %\n\n".postf(elemDict, shared);
-				elemDict.parent = shared
-			};
+
+		newParentDict = ();
+		newParentDict.parent = dict.parent;
+
+		dict.keysValuesDo { |key, val|
+			if (excludeKeys.includes(key).not) {
+				newParentDict.put(key, val);
+			}
 		};
+
+		inShared = dict[\shared];
+		if (inShared.notNil) {
+			inShared.keysValuesDo { |key, val|
+				if (excludeKeys.includes(key).not) {
+					newParentDict.put(key, val);
+				}
+			}
+		};
+
+		// if elements exist at this level, recurse
+		dict[\elements].do { |elemDict|
+			elemDict.parent = newParentDict;
+			this.makeParents(elemDict, newParentDict, dict[\shared]);
+		};
+		^dict
 	}
+
 
 
 	// creation methods
@@ -594,10 +688,10 @@ MKtlDesc {
 		if (multi.not) {
 			if (paths.size > 1) {
 				warn("MktlDesc: found multiple matching files!");
-					paths.do { |path|
-						"\t".post; path.basename.postcs;
-					};
-					warn("loading first of %\n:\t%.\n".format(paths.size, paths[0].basename.cs));
+				paths.do { |path|
+					"\t".post; path.basename.postcs;
+				};
+				warn("loading first of %\n:\t%.\n".format(paths.size, paths[0].basename.cs));
 				^this.fromPath(paths[0]);
 			};
 		};
@@ -660,11 +754,10 @@ MKtlDesc {
 		this.findParent;
 
 		this.inferName;
-		// prepare elements, share and expand first
-		MKtlDesc.sharePropsToElements(this.elementsDesc);
+
+		MKtlDesc.makeParents(this.elementsDesc);
+		// expand lowest level
 		MKtlDesc.deepExpand(this.elementsDesc);
-		// do it again, in case there were elems to expand
-		MKtlDesc.sharePropsToElements(this.elementsDesc);
 
 		// now make elements in both dict and array form
 		elementsDict = ();
@@ -816,7 +909,7 @@ MKtlDesc {
 		var postOne = { |elemOrGroup, index, depth = 0|
 			depth.do { $\t.post; };
 			index.post; $\t.post;
-			if (elemOrGroup[\elements].notNil) {
+			if (isElemFunc.value(elemOrGroup).not) {
 				"Group: ".post; elemOrGroup.key.postcs;
 				elemOrGroup[\elements].do({ |item, i|
 					postOne.value(item, i, depth + 1)
@@ -886,8 +979,8 @@ MKtlDesc {
 		// lower half pad for noteOff:
 		notePair.elements[1].put(
 			\style, style.copy.put(\height, halfHeight)
-				// push down only if row is given,
-				// else leave row nil for crude auto-positioning
+			// push down only if row is given,
+			// else leave row nil for crude auto-positioning
 			.put(\row, style.row !? { style.row + 0.45 })
 		);
 
@@ -897,30 +990,38 @@ MKtlDesc {
 	getMidiMsgTypes {
 		var msgTypesUsed = Set.new;
 		var type, missing = List[];
+		var excludeKeys = [\shared, \style ];
 
 		this.elementsDesc.traverseDo ({ |elem, deepKeys|
 			var msgType;
-			if (deepKeys.last != \shared) {
+			// deepKeys.postcs;
+			if (isElemFunc.value(elem) and: { excludeKeys.includes(deepKeys.last).not }) {
 				MKtlDesc.fillMidiDefaults(elem);
 				msgType = elem[\midiMsgType];
 
 				if (msgType.notNil) {
 					msgTypesUsed.add(msgType.unbubble);
 				} {
-					//	"missing: ".post;
+					"missing: ".post;
+					elem.postcs;
 					missing.add(elem.elemKey);
 				};
 				// [elemKey, elem].postln;
 			};
-		}, MKtlDesc.isElemFunc);
+		}, isElemFunc);
 
-
-		// treat noteOnOff as noteOn / noteOff
-		if (msgTypesUsed.includes(\noteOnOff)) {
-			msgTypesUsed.add(\noteOn);
-			msgTypesUsed.add(\noteOff);
-			msgTypesUsed.remove(\noteOnOff);
+		if (msgTypesUsed.isEmpty) {
+			"*** % - msgTypesUsed are empty! % \n".postf(this, msgTypesUsed);
+		} {
+			// "% : msgTypesUsed are % \n".postf(this, msgTypesUsed);
 		};
+
+		// // treat noteOnOff as noteOn / noteOff
+		// if (msgTypesUsed.includes(\noteOnOff)) {
+		// 	msgTypesUsed.add(\noteOn);
+		// 	msgTypesUsed.add(\noteOff);
+		// 	msgTypesUsed.remove(\noteOnOff);
+		// };
 
 		fullDesc.put(\msgTypesUsed, msgTypesUsed.asArray.sort);
 

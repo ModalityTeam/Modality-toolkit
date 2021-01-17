@@ -79,37 +79,32 @@ elementsDesc: (
 				),
 				(
 					key: \bt,
-					shared: ('elementType': 'pad', groupType: \noteOnOffBut,
+					shared: ('elementType': 'pad',
 						'spec': 'midiNote', \ioType: \inout),
 					elements: [
 						(
 							key: 'fcs',
-							shared: ('elementType': 'pad', 'spec': 'midiNote', \ioType: \inout),
 							elements: ((41..44) ++ (57..60)).collect{|num, i|
-
 								(
 									key: (i+1).asSymbol,
-									shared:(
-										midiNum: num,
-										style: (
-											row: 7,
-											column: i
-										)
-								))
+									groupType: \noteOnOffBut,
+									midiNum: num,
+									style: (
+										row: 7,
+										column: i
+									)
+								)
 							}
 
 						),
 						(
 							key: 'ctl',
-							shared: ('elementType': 'pad', groupType: \noteOnOffBut,
-								'spec': 'midiNote', \ioType: \inout),
 							elements:  ((73..76) ++ (89..92)).collect { |num, i|
 								(
 									key: (i+1).asSymbol,
-									shared:(
-										midiNum: num,
-										style: ( row: 8, column: i )
-									)
+									groupType: \noteOnOffBut,
+									midiNum: num,
+									style: ( row: 8, column: i )
 								)
 							}
 

@@ -8,7 +8,8 @@ DESCRIPTION::
 
 NOTE::
 For a guided tour, start reading at link::Overviews/Modality::,
-for a tutorial on most of what MKtl does, see link::Tutorials/ModalityTutorial::.
+for a tutorial on most of what MKtl does, see link::Tutorials/ModalityTutorial::,
+for how to add your own controllers, see link::Tutorials/How_to_create_a_description_file::
 ::
 
 MKtl provides an easy to use interface for devices you can connect to your computer through MIDI, HID, OSC and possibly later Serial and other protocols. Beyond that, you will be able to use it for GUI based controllers.
@@ -50,10 +51,10 @@ METHOD:: new
 Accesses an existing instance of MKtl with the given name, or creates a new instance with that name. As with e.g. JITLib proxies like Ndef, Tdef, Pdef, or OSCdef, MIDIdef etc.
 
 code::
-// nickname and name of description file
+// nickname to give the MKtl, and a string as name of description file
 k = MKtl('mynano2', "korg-nanokontrol2");
 
-// description file name can also contain wildcards:
+// description file name can also contain wildcards to match:
 l = MKtl('op1', "*op-1");
 
 // if you have several devices of the same kind connected,
@@ -65,6 +66,16 @@ n = MKtl('nk2B', "korg-nanokontrol2", multiIndex: 1);
 // and in the order they show up in the system,
 // as is posted from MKtl.find. If you connect your
 // devices to the same plugs, they will get the same multiIndex again.
+
+// if lookupName is a Symbol, it will look for devices by key in MKtlLookup.all:
+m = MKtl('nk2C', 'midi2_orSimilar');
+
+MKtlLookup.all.keys.postcs;
+
+// if lookupName is an MKtlDesc, it will look for devices by key in MKtlLookup.all:
+MKtlDesc.loadDescs;
+m = MKtl('nk2D', MKtlDesc.allDescs['korg-nanokontrol2']);
+
 ::
 
 argument:: name
@@ -73,10 +84,10 @@ The name of the controller as you want to refer to it.
 argument:: lookupNameOrDesc
 The device description or lookupName to be used. This can be:
 list::
-## the file name of a description file (without extension, possibly with wildcards)
-## the lookupName of a device that was found by MKtl.find (useful when no desc file exists),
+## strong:: a String :: - the file name of a description file (without extension, possibly with wildcards)
+## strong:: a Symbol :: the lookupName of a device that was found by MKtl.find (useful when no desc file exists),
 ## an link::Classes/MKtlDesc:: object, or
-## a dictionary that is a well-formed MKtlDesc full description dict.
+## strong:: a dictionary :: that is a well-formed MKtlDesc full description dict, see link::Tutorials/How_to_create_a_description_file::
 ::
 
 argument:: lookForNew
@@ -84,6 +95,9 @@ a flag whether or not to look for newly attached devices or newly added device d
 
 argument:: multiIndex
 if several devices of identical make are present, multiIndex is the index within this array of identical devices. The order is alphabetical by deviceLookupName, and will be reproduceable if the same set of devices is connected.
+
+argument:: tryOpenDevice
+if true, MKtl will try to open the physical device if present.
 
 
 SUBSECTION:: Using specs in MKtl
@@ -239,8 +253,9 @@ Frees the MKtl again and forgets about its existence.
 If there was an device, this closes it.
 
 METHOD:: resetActions
-Reset all actions of the elements in this MKtl to nil.
-Note that this does not clear group actions.
+Reset all actions of the elements in this code::MKtl:: to code::nil::.
+argument:: includeGroups
+if code::true::, also actions of contained groups are reset.
 
 METHOD:: trace
 set the flag whether incoming data are posted or not, default true.

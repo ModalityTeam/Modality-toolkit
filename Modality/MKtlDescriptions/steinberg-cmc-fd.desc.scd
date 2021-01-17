@@ -23,8 +23,8 @@ status: (
 idInfo:"Steinberg CMC-FD",
 
 deviceInfo: (
-	vendorURI: "http://www.steinberg.net/en/products/controllers/cmc_series/models/cmc_fd.html",
-	// manualURI: "",
+	vendorURI: "https://www.steinberg.net/en/products/audio_interfaces/cmc_series/specs_downloads.html",
+	manualURI: "https://www.steinberg.net/fileadmin/files/PRODUCTS/Controller/CMC/Downloads/CMC_Guide_Book_v1.pdf",
 	// description: "",
 	features: ["4 touch faders" ],
 	longName: "Steinberg CMC-FD",
@@ -55,7 +55,7 @@ elementsDesc: (
 		),
 		(
 			key: \bt,
-			// shared: ('midiMsgType': 'cc' ), // ???
+			shared: ('midiMsgType': 'cc' ), // ???
 			elements: [
 				(key: 'chanL', midiNum: 48, shared: (style: (row: 7, column: 0))),
 				(key: 'chanR', midiNum: 49, shared: (style: (row: 7, column: 1))),
@@ -67,7 +67,7 @@ elementsDesc: (
 				// fader touched or not
 		(
 			key: 'ftouch',
-			// shared: ('midiMsgType': 'cc' ), // ???
+			shared: ('midiMsgType': 'cc' ), // ???
 			// shared: ('elementType': 'button', 'spec': 'midiVel'),
 			elements: (104..107).collect { |num, i|
 				(key: (i+1).asSymbol, midiNum: num,
@@ -78,7 +78,7 @@ elementsDesc: (
 		// fader touched when shift is down sends channel mute
 		(
 			key: 'fmute',
-			// shared: ('midiMsgType': 'cc' ), // ???
+			shared: ('midiMsgType': 'cc' ), // ???
 			// shared: ('elementType': 'button', 'midiChan': 0, 'spec': 'midiBut'),
 			elements: (8..11).collect { |num, i|
 				(

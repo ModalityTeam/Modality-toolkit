@@ -16,28 +16,31 @@ MKtlElementGroup : MKtlElement {
 	}
 
 	*fromDesc { |desc, srcMktl|
-		var elems, isElem, group, elemKey;
+		var elems, isGroup, group, elemKey;
 		var mktlElemDict = srcMktl !? { srcMktl.elementsDict };
 		var newElem;
 
 		^if (desc.isKindOf(Dictionary)) {
-			elems = desc[\elements];
-			isElem = elems.isNil;
-			if (isElem) {
+			// "fromDesc: %\n".postf(desc.key);
+			// are there elements at this level, NOT IN PARENT or proto?
+			isGroup = desc.array.includes(\elements);
+
+			if (isGroup.not) {
 				elemKey = desc.elemKey;
 				newElem = MKtlElement(elemKey, desc, srcMktl);
 				mktlElemDict !? { mktlElemDict.put(elemKey, newElem) };
 				newElem;
 			} {
-				// elements is always an array
-				elems = elems.collect { |desc2|
+				////// elements is always an array
+				elems = desc[\elements].collect { |desc2|
 					this.fromDesc(desc2, srcMktl);
 				};
 				group = MKtlElementGroup(desc.key, srcMktl, elems);
 
-				if (desc[\shared].notNil) {
-					group.shared = desc[\shared];
-				};
+				group.elemDesc = desc;
+				// if (desc[\shared].notNil) {
+				// 	group.shared = desc[\shared];
+				// };
 
 				group.useSingleGui = desc.useSingleGui ? false;
 				group.groupType = desc.groupType;
@@ -64,6 +67,11 @@ MKtlElementGroup : MKtlElement {
 
 	shared_ { |dict| elemDesc = dict }
 	shared { ^elemDesc }
+
+	// do nothing, to avoid confusing "deviceSpec for 'nil' is missing" posts!
+	setSpecFromDesc {
+
+	}
 
 	// do we still need init?
 	// *  elements_ should do fromDesc a level lower!
@@ -203,6 +211,18 @@ MKtlElementGroup : MKtlElement {
 
 
 	do { |function| elements.do( function ); }
+
+	doRecursive {|function, includeGroups = true|
+		var doOne = { |elemOrGroup, depth|
+			if (elemOrGroup.isKindOf(MKtlElementGroup)) {
+				if(includeGroups) { function.value(elemOrGroup, depth) };
+				elemOrGroup.do({ |item| doOne.value(item, depth + 1) });
+			} {
+				function.value(elemOrGroup);
+			};
+		};
+		doOne.value(this, 0);
+	}
 
 	flat {
 		^this.elements.flat;

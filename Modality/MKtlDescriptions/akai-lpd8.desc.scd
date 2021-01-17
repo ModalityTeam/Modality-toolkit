@@ -9,7 +9,6 @@ MKtlDesc.loadDescs("*lpd8");
 // close old m, open new one, make gui:
 m.free; m = MKtl(\lpd8, "*lpd8"); m.gui;
 m.trace;
-m.elementsDict.size;
 m.postElements;
 */
 
@@ -19,10 +18,12 @@ m.postElements;
 // and how to play something with it.
 
 MKtl.find; // find all MDIDI devices and list them
-MKtl('lpd').clear;
+
+
+MKtlDesc.loadDescs("*lpd8"); // reload desc after changing this file?
+MKtl('lpd').free;
 MKtl('lpd', "*lpd8"); // make an MKtl for LPD8.
 MKtl('lpd').trace;
-
 // make a gui for it
 MKtl('lpd').gui;
 
@@ -69,7 +70,7 @@ protocol: \midi,
 deviceType: \drumpad,
 elementTypes: [\pad, \knob],
 status: (
-	osx: "tested and working, 2016_03_15, adc",
+	osx: "tested and working, 2019_12_29, adc",
 	linux: "tested and working 2016_03_20, nescivi",
 	win: "unknown"
 ),
@@ -92,24 +93,30 @@ deviceInfo: (
 elementsDesc: (
 	// key: \lpd8,
 	'shared': ( midiChan: 0),
+	\spec: \midiCC,
 	elements: [
 		(
 			key: \kn,
-			shared: (\elementType: \knob, \midiMsgType: \cc, \ioType: \in,
-				\spec: \midiCC),
+			\elementType: \knob,
+			\midiMsgType: \cc,
+			\ioType: \in,
+
 			elements: (1..8).collect { |num, i|
-				(key: num.asSymbol, \midiNum: num,
+				(	key: num.asSymbol, \midiNum: num,
 					style: (row: i div: 4, column: i % 4 + 4)
 				)
 			}
 		),
 		(
 			key: \pad,
-			shared: (\elementType: \pad, groupType: \noteOnOff, \ioType: \inout),
+			\elementType: \pad,
+			\ioType: \inout,
+
 			elements: (36..43).collect { |num, i|
-				(
-					key: (i+1).asSymbol,
-					shared: ( midiNum: num, style: (row: 1 - (i div: 4), column: i % 4))
+				(	key: (i+1).asSymbol,
+					groupType: \noteOnOff,
+					midiNum: num,
+					shared: (style: (row: 1 - (i div: 4), column: i % 4))
 				);
 			}
 		)

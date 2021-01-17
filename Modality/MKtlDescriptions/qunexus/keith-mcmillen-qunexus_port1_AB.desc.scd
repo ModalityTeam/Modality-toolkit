@@ -44,13 +44,13 @@ elementsDesc: (
 	// Preset B has the same elements as Preset A, and single channel pressure.
 	elements: [
 		(
-			key: \pk,
+			key: \k,
 			shared: ('elementType': 'pad', groupType: \noteOnOff, 'spec': 'midiVel'),
 			elements: (24..108).collect { |midinote, i|
 				var xindex = i % 24, yindex = i div: 24;
 				var octDists = [0, 7] +.x [0, 0.5, 1, 1.5, 2, 3, 3.5, 4, 4.5, 5, 5.5, 6];
 				var xpos = octDists[xindex];
-				var ypos = (3 - yindex) - (xpos.frac * 0.9) + 0.5 * 2;
+				var ypos = (3 - yindex) - (xpos.frac * 0.9) + 0.5 * 1.9;
 
 				(
 					key: midinote, midiNum: midinote,

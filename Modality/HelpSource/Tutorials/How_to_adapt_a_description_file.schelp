@@ -3,8 +3,22 @@ summary:: For similar devices, description files can be copied and adapted.
 categories:: Libraries>Modality
 related:: Overviews/Modality, Classes/MKtl, Reference/MKtl_description_files, Classes/MIDIExplorer
 
-When one wants to add a new controller to Modality, it is often similar to one that is already supported, especially if it conforms to a type pattern like the faderbox, the gamepad, etc etc.
-So it makes to check whether there is a similar desc file already, and copy and modify that for the new device.
+When one wants to add a new controller to Modality, it is often similar to one that is already supported, especially if it conforms to a type pattern like the faderbox, the gamepad, etc etc. So it makes sense to check whether there is a similar desc file already, and copy and modify that for the new device.
+Also, when one wants to customize the hardware settings on a controller, it makes sense to have a personalized desc file for this setup. The best place to keep such additional desc files is here:
+code:: MKtlDesc.userFolder.openOS; ::
+The filename should be "<company-devicename-extra-info>", and must end in code::".desc.scd"::.
+After adding a new desc file, please do
+code::
+MKtlDesc.writeCache;
+::
+to make sure Modality finds it.
+
+You are highly welcome to contribute your desc files to modality!
+Especially when they are generally useful (i.e. not for a one-off selfmade or customized device that only you have), you can save it to the defaultFolder, and submit a pull request at github, or mail it to the modality list.
+
+code::
+MKtlDesc.defaultFolder.openOS;
+::
 
 Some good templates to copy are:
 code::
@@ -18,4 +32,4 @@ MKtlDesc("thrustmaster-run-n-drive").openFile;
 MKtlDesc("novation-launchpad").openFile;
 ::
 
-... To Do: add example here when there is a good one ... 
+... To Do: add example here when there is a good one ...

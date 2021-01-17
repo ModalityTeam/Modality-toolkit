@@ -5,6 +5,11 @@
 // For a usage example, see
 "Tutorials/Connecting_external_MIDI_devices".openHelpFile;
 
+thisProcess.nowExecutingPath.basename.split($.).first.postcs;
+
+d = MKtlDesc.loadDescs("*pocketfader").first;
+m.free; m = MKtl(\pf, "*pocketfader").trace.gui;
+
 */
 
 (

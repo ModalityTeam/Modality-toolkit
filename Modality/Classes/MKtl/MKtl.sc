@@ -81,7 +81,6 @@ MKtl { // abstract class
 		this.addSpec(\cent255inv, [255, 0, \lin, 1, 128]);
 		this.addSpec(\lin255,  [0, 255, \lin, 1, 0]);
 		this.addSpec(\cent1023,  [0, 1023, \lin, 1, 512]);
-		this.addSpec(\cent1,  [0, 1, \lin, 0, 0.5]);
 		this.addSpec(\lin1inv,  [1, 0, \lin, 0, 1]);
 		this.addSpec(\lin1,  [0, 1, \lin, 0, 1]);
 		this.addSpec(\but,  [0, 1, \lin, 1, 0]);
@@ -90,6 +89,7 @@ MKtl { // abstract class
 		// MIDI
 		this.addSpec(\midiNote, [0, 127, \lin, 1, 0]);
 		this.addSpec(\midiCC, [0, 127, \lin, 1, 0]);
+		this.addSpec(\midiCC14, [0, 16383, \lin, 1, 0]);
 		this.addSpec(\midiVel, [0, 127, \lin, 1, 0]);
 		this.addSpec(\midiBut, [0, 127, \lin, 127, 0]);
 		this.addSpec(\midiTouch, [0, 127, \lin, 1, 0]);
@@ -145,7 +145,7 @@ MKtl { // abstract class
 	// or returns a new empty instance.
 	// If no physcal device is present, this becomes a virtual MKtl.
 
-	*new { |name, lookupNameOrDesc, lookForNew = false, multiIndex |
+	*new { |name, lookupNameOrDesc, lookForNew = false, multiIndex, tryOpenDevice=true |
 		var res, lookupName, lookupInfo, descName, newMKtlDesc, protocol;
 
 		if (name.isNil) {
@@ -180,12 +180,18 @@ MKtl { // abstract class
 				lookupName = lookupNameOrDesc;
 				lookupInfo = MKtlLookup.all[lookupName];
 				if (lookupInfo.isNil) {
-					MKtlDevice.initHardwareDevices;
-					lookupInfo = MKtlLookup.all[lookupName];
-					if (lookupInfo.isNil) {
-						"%: could not find device for key %,"
-						" cannot create MKtl(%)!\n"
-						.postf(thisMethod, lookupNameOrDesc, name);
+					if ( tryOpenDevice ){
+						MKtlDevice.initHardwareDevices;
+						lookupInfo = MKtlLookup.all[lookupName];
+						if (lookupInfo.isNil) {
+							"%: lookupNameOrDesc % was a Symbol, which looks for present devices in \n"
+							"MKtlLookup.all;\n"
+							"No matching device was found, so could not create MKtl(%).\n"
+							"Maybe try with a string, which looks for a desc file?"
+							.postf(thisMethod, lookupNameOrDesc.cs, name.cs);
+							^nil
+						}
+					}{
 						^nil
 					}
 				};
@@ -203,12 +209,17 @@ MKtl { // abstract class
 				descName = lookupNameOrDesc;
 				newMKtlDesc = MKtlDesc(descName);
 				if (newMKtlDesc.isKindOf(MKtlDesc).not) {
-					"% : newMKtlDesc is nil, cannot make MKtl named %.\n"
-					.postf(thisMethod, name.cs);
+					"%: lookupNameOrDesc % was a String, which looks for description files in \n"
+					"MKtlDesc.allDescs;\n"
+					"No matching description was found, so could not create MKtl(%).\n"
+					"Maybe try with a symbol, which looks for a present device?"
+					.postf(thisMethod, lookupNameOrDesc.cs, name.cs);
 					^nil
 				};
 				protocol = newMKtlDesc.protocol;
-				MKtlDevice.initHardwareDevices(false, protocol);
+				if ( tryOpenDevice ){
+					MKtlDevice.initHardwareDevices(false, protocol);
+				};
 			},
 			MKtlDesc, { newMKtlDesc = lookupNameOrDesc },
 			{
@@ -236,7 +247,7 @@ MKtl { // abstract class
 		// and hopefully a good enough desc
 		^super.newCopyArgs(name)
 		.init(newMKtlDesc, lookupName, lookupInfo,
-			lookForNew, multiIndex );
+			lookForNew, multiIndex, tryOpenDevice );
 	}
 
 	checkIdentical { |lookupNameOrDesc|
@@ -293,7 +304,7 @@ MKtl { // abstract class
 	storeArgs { ^[name] }
 	printOn { |stream| this.storeOn(stream) }
 
-	init { |argDesc, argLookupName, argLookupInfo, lookForNew = false, multiIndex|
+	init { |argDesc, argLookupName, argLookupInfo, lookForNew = false, multiIndex, tryOpenDevice=true|
 		var specsFromDesc;
 
 		desc = argDesc;
@@ -318,10 +329,10 @@ MKtl { // abstract class
 		// only put in all if everything worked
 		all.put(name, this);
 
-		this.finishInit(lookForNew, multiIndex); // and finalise init
+		this.finishInit(lookForNew, multiIndex, tryOpenDevice); // and finalise init
 	}
 
-	finishInit { |lookForNew, multiIndex|
+	finishInit { |lookForNew, multiIndex, tryOpenDevice=true|
 		if (desc.isNil) {
 			"%: no desc given, cannot create elements..."
 				.format(thisMethod).inform;
@@ -332,10 +343,15 @@ MKtl { // abstract class
 			this.makeElements;
 			this.makeCollectives;
 		};
-		this.openDevice( lookForNew, multiIndex );
+		if ( tryOpenDevice ){
+			this.openDevice( lookForNew, multiIndex );
+		};
 	}
 
 	addNamed { |name, group|
+		if (group.isKindOf(Array)) {
+			group = MKtlElementGroup(name, this, group);
+		};
 		namedDict.put(name, group);
 	}
 
@@ -496,8 +512,12 @@ MKtl { // abstract class
 	}
 
 
-	resetActions {
-		elementsDict.do( _.resetAction )
+	resetActions {|includeGroups = false|
+		if (includeGroups) {
+			elementGroup.doRecursive{|e| e.resetAction}
+		} {
+			elementsDict.do(_.resetAction)
+		}
 	}
 	resetAction {
 		"% - please use resetActions.\n".postf(thisMethod);
@@ -564,7 +584,7 @@ MKtl { // abstract class
 	// remake elements from new desc,
 	// close mktldevice if there,
 	// and try to open a new one
-	rebuild { |descNameOrDict, lookAgain, multiIndex| // could be a string/symbol or dictionary
+	rebuild { |descNameOrDict, lookAgain = true, multiIndex| // could be a string/symbol or dictionary
 		var newDesc;
 		// always replace desc,
 		// if none given, rebuild from existing:

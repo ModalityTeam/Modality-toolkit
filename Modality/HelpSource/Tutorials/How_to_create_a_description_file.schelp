@@ -15,6 +15,10 @@ list::
 ##link::Tutorials/How_to_create_a_description_file_for_OSC::
 ::
 
+When your controller is rather typical example of its class, say a gamepad or faderbox,
+you can also find a similar device and adapt its description:
+link::Tutorials/How_to_adapt_a_description_file::
+
 NOTE:: Making descriptions by hand is a good method for sketching the functionality and layout of new controllers before physically making them.::
 
 section:: Basic structure of the description file
@@ -222,12 +226,18 @@ section:: Finding descriptions for similar devices
 
 Many devices already have description files, which are used by the link::Classes/MKtlDesc:: class. They can be found here:
 code::
-MKtlDesc.openFolder;
+MKtlDesc.defaultFolder.openOS;
 ::
+While developing new descs in files, you can also keep them in
+code::
+MKtlDesc.userFolder;
+::
+
 You are cordially invited to contribute desc files for any devices you have and find useful! For details on making descs for devices using MIDI, HID, or OSC, please read on here:
 
 list::
 ##link::Tutorials/How_to_create_a_description_file_for_MIDI::
 ##link::Tutorials/How_to_create_a_description_file_for_HID::
 ##link::Tutorials/How_to_create_a_description_file_for_OSC::
+##link::Tutorials/How_to_adapt_a_description_file::
 ::

@@ -44,13 +44,11 @@ elementsDesc: (
 		(
 			key: \key,
 			shared:  (\elementType: \pad,
-				\midiChan: 0, \spec: \midiVel, \ioType: \out),
+			\midiChan: 0, \spec: \midiVel, \ioType: \out),
 			elements: (0..124).collect { |num, i| (
-				shared: (midiNum: num),
-				elements: [
-					(key: \on,  midiMsgType: \noteOn ),
-					(key: \off, midiMsgType: \noteOff)
-				]
+				midiNum: num,
+				groupType: \noteOnOff,
+				style: (row: i div: 24, column: i % 24)
 			)}
 		),
 		(

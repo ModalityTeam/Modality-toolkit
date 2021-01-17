@@ -40,8 +40,9 @@ parentDesc: "faderfox-uc4",
 
 status: (
 	linux: "unknown",
-	osx: "tested and working. 2016-03-16, adc",
-	win: "unknown"),
+	osx: "tested and working. 2019-12-29, adc",
+	win: "unknown"
+),
 
 elementsDesc: (
 	shared: (ioType: \inout),
@@ -76,10 +77,8 @@ elementsDesc: (
 					elements: list.collect { |num, i|
 						(
 							groupType: \noteOnOffBut,
-							shared:  (midiNum: num, page: gr_i, groupType: \noteOnOffBut,
-								style: ( \row: i div: 4 * 2 + 1, \column: i % 4 * 2 + 0.5,
-									height: 0.75)
-							)
+							midiNum: num, page: gr_i, groupType: \noteOnOffBut,
+							style: ( \row: i div: 4 * 2 + 1, \column: i % 4 * 2 + 0.5, height: 0.8)
 						)
 					}
 				)
@@ -113,9 +112,8 @@ elementsDesc: (
 					elements: list.collect { |num, i|
 						(
 							groupType: \noteOnOffBut,
-							shared:  (midiNum: num, page: gr_i, groupType: \noteOnOffBut,
-								\style: ( \row: 7, \column: i, height: 0.75)
-							)
+							midiNum: num, page: gr_i, groupType: \noteOnOffBut,
+							\style: ( \row: 7, \column: i, height: 1)
 						)
 					}
 				)

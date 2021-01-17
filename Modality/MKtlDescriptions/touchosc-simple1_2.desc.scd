@@ -1,8 +1,6 @@
 /****************************
-first pass on MKtl support for touchOSC
-in the touchOSC app, this only supports Layout Simple, page 1
-( other pages in this Layout, or other touchOSC layouts
-may be added later, in separate desc files )
+MKtl support for touchOSC, Layout Simple, all 4 pages
+( more touchOSC layouts may be added later, in new desc files )
 
 ****** INSTRUCTIONS to test: ******
 * log the smartphone with touchosc
@@ -31,31 +29,18 @@ On the smartphone, in touchOSC app, CONNECTIONS:
 On computer, in SC:
 * check if anything is coming, and note the sending address
 OSCFunc.trace(true, true);
+s.quit;
 OSCFunc.trace(false);
 // * if nothing, check again that touchosc sends to SC's langPort:
 NetAddr.langPort;
 
-// test for the top horiz. fader on page 1:
-OSCdef('/1/fader5', { |msg| msg.postln });
-
-////// the protocol for scene 1 is
-// // a horiz. crossfader
-// '/1/fader5'
-// // four vertical faders
-// '/1/fader1' .. 4
-// // 4 toggle buttons
-// '/1/toggle1' .. 4
-
-// maybe turn off debug info if needed
-OSCMKtlDevice.verbose = true;
-OSCMKtlDevice.verbose = false;
-
-// maybe clear MKtls first if needed
-MKtl.all.do(_.free).clear;
-
 // now make our touchosc MKtl from this desc file:
-t = MKtl(\tosca, "touchosc-simple1");
+t.free; MKtlDesc.loadDescs("touchosc-simple*");
+t = MKtl(\tosc12, "touchosc-simple1_2");
 t.gui;
+// set the address to the one you see in the trace:
+t.device.updateSrcDstAddr("192.168.178.55", 9000);
+
 
 // in the touchOSC app, Connections, OSC find Local IP address:
 // this is the IP of the smartphone, which touchOSC sends from.
@@ -64,35 +49,11 @@ OSCFunc.trace(true, true);
 // and turn off tracing.
 OSCFunc.trace(false);
 
-// set the address to the one you see in the trace:
-t.device.updateSrcDstAddr("192.168.178.55", 9000);
 
-// now trace the MKtl itself
-t.trace;
-t.trace(false);
-t.gui;
-
-// and give it an action for all its elements
+// and give it an example action for all its elements
 t.elAt.action = { |el|
 	"tOsc %: %\n".postf(el.name, el.value.round(0.001))
 };
-
-// or test by simulation from SC:
-n = NetAddr.localAddr;
-MKtl(\tosca).device.updateSrcDstAddr(n.hostname, n.port);
-
-
-Tdef(\toscTest, {
-	inf.do {
-		n.sendMsg('/accxyz', 1.0.rand2, 1.0.rand2, 1.0.rand2);
-		if (0.1.coin) { n.sendMsg('/xfader'.postln, 1.0.rand); };
-		if (0.1.coin) { n.sendMsg("/1/fader4".postln, 1.0.rand); };
-		0.1.wait;
-	};
-}).play;
-
-// set back to touchOSC IP address as above ...
-t.device.updateSrcDstAddr("192.168.178.55", 9000);
 
 *******************************/
 (
@@ -108,8 +69,8 @@ status: (
 ),
 
 idInfo: "touchOSC",
-// recvPort will default to NetAddr.langPort
-netAddrInfo: (srcPort: 9000, recvPort: nil, ipAddress: "192.168.178.51"),
+// nil gets replaced with NetAddr.langPort
+netAddrInfo: (srcPort: 9000, recvPort: nil, ipAddress: "192.168.178.55"),
 
 deviceInfo: (
 	longName: "touchOSC"
@@ -124,9 +85,15 @@ collectives: (
             elements: [ [\accel, \x], [\accel, \y], [\accel, \z]],
             ioType: \in
         )
+        xy: (
+            oscPath: '/3/xy',
+            elements: [ [\xy, \x], [\xy, \y]],
+            ioType: \in
+        )
     ),
 elementsDesc: (
 	elements: [
+		// page 1
 		(
 			key: \xfader,
 			oscPath: '/1/fader5', elementType: 'slider', spec: \unipolar, ioType: \inout,
@@ -154,7 +121,70 @@ elementsDesc: (
 				(key: \y, style: (height: 2)),
 				(key: \z, style: (height: 2))
 			]
-		)
+		),
+		///// page 2 on Layout Simple
+		(
+			key: \pb,
+			shared: (elementType: \button, spec: \but, ioType: \inout),
+			elements: (1..16).collect { |num, i|
+				(oscPath: "/2/push%".format(num).asSymbol,
+					style: (column: i % 4 + 4, row: i div: 4)
+				)
+			}
+		),
+		(
+			key: \bt2,
+			shared: (elementType: \button, spec: \but, ioType: \inout),
+			elements: (1..4).collect { |num, i|
+				(oscPath: "/2/toggle%".format(num).asSymbol,
+					style: (column: i % 4 + 4, row: 4)
+				)
+			}
+		),
+
+		////// page 3 -
+		/////// xy collective not working yet ...
+		/////// and xy should have a Slider2D as GUI ...
+		(
+			key: \xy,
+			shared: (elementType: 'accelAxis', ioType: \collectiveIn, \spec: 'accx'),
+			elements: [
+				(key: \x, style: (row: 0, column: 8, width: 4, height: 1)),
+				(key: \y, style: (row: 1, column: 9.5, width: 1, height: 3)),
+			]
+		),
+		(
+			key: \bt3,
+			shared: (elementType: \button, spec: \but, ioType: \inout),
+			elements: (1..4).collect { |num, i|
+				(oscPath: "/3/toggle%".format(num).asSymbol,
+					style: (column: i % 4 + 8, row: 4)
+				)
+			}
+		),
+		// page 4
+		(
+			key: \m,
+			shared: (elementType: \button, spec: \but, ioType: \inout),
+			elements: (1..64).collect { |num, i|
+				var col = i % 8, row = i div: 8;
+				(
+					oscPath: "/4/multitoggle/%/%".format(col + 1, row + 1).asSymbol,
+					style: (column: col / 2 + 12, row: row / 2,
+						width: 0.6, height: 0.6
+					)
+				)
+			}
+		),
+		(
+			key: \bt4,
+			shared: (elementType: \button, spec: \but, ioType: \inout),
+			elements: (1..4).collect { |num, i|
+				(oscPath: "/4/toggle%".format(num).asSymbol,
+					style: (column: i % 4 + 12, row: 4)
+				)
+			}
+		),
 	]
 )
 );

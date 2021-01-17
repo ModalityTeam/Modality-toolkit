@@ -21,7 +21,7 @@ table::
 	## \noteOnOffVel || pad/key w/ off vel. || 1-127 || 1-127 || - || rare
 	##
 	## \noteOnOffTouch || pad/key w/ polytouch || 1-127 || 0 || 0-127 || semi-rare
-	## \noteOnOffVelTouch || pad/key w/ off vel and touch || 1-127 || 1-127 || 1-127 || very rare!
+	## \noteOnOffVelTouch || pad/key w/ off vel and touch || 1-127 || 1-127 || 1-127 || very rare
 ::
 
 Subsection::Code Examples for demonstration:

@@ -128,10 +128,10 @@ elementsDesc: (
 					key: \l,
 					elements: [
 						(key: \x, 'hidUsage': 48, 'elementType': 'joyAxis', spec: \cent1,
-							mode: \center, 'style': (row: 4, column: 1)
+							mode: \center, 'style': (row: 4.1, column: 1, height: 0.7, width: 1.5)
 						),
 						(key: \y, 'hidUsage': 49, 'elementType': 'joyAxis', spec: \cent1,
-							mode: \center, 'style': (row: 4, column: 2)
+							mode: \center, 'style': (row: 3.2, column: 2.4, height: 1.5, width: 0.7)
 						),
 						(key: \hat, 'hidUsage': 11, 'elementType': 'button', 'hidUsagePage': 9,
 							spec: \hidBut, mode: \push,
@@ -143,10 +143,10 @@ elementsDesc: (
 					key: \r,
 					elements: [
 						(key: \x, 'hidUsage': 50, 'elementType': 'joyAxis', spec: \cent1,
-							mode: \center, 'style': (row: 4, column: 3)
+							mode: \center, 'style': (row: 4.1, column: 3, height: 0.7, width: 1.5)
 						),
 						(key: \y, 'hidUsage': 53, 'elementType': 'joyAxis', spec: \cent1,
-							mode: 'center', 'style': (row: 4, column: 4)
+							mode: 'center', 'style': (row: 3.2, column: 4.5, height: 1.5, width: 0.7)
 						),
 						(key: \hat, 'hidUsage': 12, 'hidUsagePage': 9, 'elementType': 'button',
 							spec: \hidBut, mode: \push,
@@ -161,14 +161,14 @@ elementsDesc: (
 			shared: ('hidUsagePage': 1, 'elementType': 'springFader',
 				'ioType': 'in', mode: \minimum, spec: \lin1inv),
 			elements: [
-				(key: \l, 'hidUsage': 51, 'style': (row: 0, column: 0)),
-				(key: \r, 'hidUsage': 52, 'style': (row: 0, column: 6))
+				(key: \l, 'hidUsage': 51, 'style': (row: 0, column: 0, height: 1.5)),
+				(key: \r, 'hidUsage': 52, 'style': (row: 0, column: 6, height: 1.5))
 			]
 		),
 		(
 			key: 'wheel', 'hidUsage': 54, 'hidUsagePage': 1, 'elementType': 'springFader',
 			'ioType': 'in', spec: \cent1inv, mode: \center,
-			'style': (row: 1, column: 0)
+			'style': (row: 1.5, column: 0, height: 1.5)
 		),
 
 		// --------- output elements ----------
@@ -181,12 +181,12 @@ elementsDesc: (
 				(
 					key: \l,
 					'hidUsage': 187, 'hidUsagePage': 1, hidElementID: 32,
-					'style': (row: 4, column: 0)
+					'style': (row: 4, column: 0, width: 0.8, height: 1.5)
 				),
 				(
 					key: \r,
 					'hidUsage': 123, 'hidUsagePage': 1, hidElementID: 32,
-					'style': (row: 4, column: 5)
+					'style': (row: 4, column: 6, width: 0.8, height: 1.5)
 				)
 			]
 		)

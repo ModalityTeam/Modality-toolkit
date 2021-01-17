@@ -1,0 +1,52 @@
+TITLE:: MKtlElementCollective
+summary:: A group for elements with collective get/set communication
+categories:: MKtl
+related:: Classes/MKtlElementGroup, Tutorials/How_to_create_a_description_file_for_OSC
+
+DESCRIPTION::
+
+sc version: 3.9dev
+MKtlElementCollective contains elements whose values the corresponding device sends (or receives) in grouped form: For example, an OSC device which sends all its button states in a single OSC message with a message name and n values.
+Very likely one never needs to make an MKtlElementCollective by hand; it is created automatically when a description file defines a group of elements as a collective.
+For code examples, see link::Tutorials/How_to_create_a_description_file_for_OSC:: esp. the sections on collective input and output.
+
+code::
+
+// This example of a device creates one.
+// touchOSC is a smartphone app that can send accelerometer data:
+
+t = MKtl(\tosca, "touchosc-simple1");
+t.trace.gui;
+// here is the collective:
+t.collectivesDict[\accel];
+// here is the OSCFunc that receives the three-value message:
+t.device.oscFuncDictionary[\accel].dump;
+
+// change the address so we can test-send from SC's address:
+t.device.source.hostname_("127.0.0.1").port_(57120);
+// now send osc values
+NetAddr.localAddr.sendMsg('/accxyz', 3.0.rand2, 3.0.rand2, 3.0.rand2);
+
+// test setting the collective value directly:
+t.collectivesDict[\accel].value = [1.0.rand, 1.0.rand, 1.0.rand ];
+
+// see the desc file for how the collective was defined:
+t.desc.openFile;
+::
+
+CLASSMETHODS::
+
+METHOD:: new
+argument:: source
+argument:: name
+argument:: elemDesc
+
+
+INSTANCEMETHODS::
+
+METHOD:: addCollectiveToChildren
+
+METHOD:: init
+argument:: inElemDesc
+
+METHOD:: removeCollectiveFromChildren

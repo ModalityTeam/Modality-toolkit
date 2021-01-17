@@ -1,0 +1,229 @@
+TITLE:: Tutorials/Using groupType in MKtlDescs
+summary:: Creating combined noteOn noteOff touch groups in MKtlDescs with groupType
+categories:: Libraries>Modality, External Control>MIDI
+related:: Overviews/Modality, Classes/MKtl, Classes/MKtlDesc, Classes/MKtlElement, Tutorials/How_to_create_a_description_file
+
+Many MIDI devices create noteOn, noteOff and sometimes touch messages from the same physical element, a pianoKey, a drumpad, or button.
+
+The code:: \groupType :: key allows defining the following common and rare combinations of noteOn, noteOff and touch by a single name, and building them correctly:
+
+Tutorials/Using_groupType_in_MKtlDescs
+
+table::
+	## tag: || description: || noteOn: || noteOff: || touch: || comment
+	##
+	## \noteOnTrig || trigger pad || 127 || - || - ||
+	## \noteOnVel || trig pad w/ vel. || 1-127 || - || - ||
+	##
+	## \noteOnOff || piano key w/ on vel. || 1-127 || 0 || - || default
+	## \noteOnOffBut || button on/off || 127 || 0 || - ||
+	## \noteOnOffVel || pad/key w/ off vel. || 1-127 || 1-127 || - || rare
+	##
+	## \noteOnOffTouch || pad/key w/ polytouch || 1-127 || 0 || 0-127 || semi-rare
+	## \noteOnOffVelTouch || pad/key w/ off vel and touch || 1-127 || 1-127 || 1-127 || very rare
+::
+
+section:: Devices with only noteOn messages
+
+These can be made simply by hand, or by using code::groupType:: keys code::\noteOnTrig:: and code::\noteOnVel::.
+
+code::
+// direct creation with \noteOn description:
+// drum pads - noteOn only + velocity
+(
+d = (
+deviceName: "test", protocol: 'midi', idInfo: "test",
+elementsDesc: (
+		shared: (elementType: \pad, midiChan: 0, midiMsgType: \noteOn),
+		elements: (48..55).collect { |midiNum, i|
+			( midiNum: midiNum )
+		}
+	)
+);
+m.free; m = MKtl(\test, d).trace; m.postElements; g = m.gui;
+)
+
+// trigger buttons with noteOn only, no velocity by spec: \midiBut
+(
+d = (
+deviceName: "test", protocol: 'midi', idInfo: "test",
+elementsDesc: (
+		shared: (elementType: \pad, midiChan: 0, midiMsgType: \noteOn, spec: \midiBut),
+		elements: (48..55).collect { |midiNum, i|
+			( midiNum: midiNum )
+		}
+	)
+);
+m.free; m = MKtl(\test, d).trace; m.postElements; g = m.gui;
+)
+::
+
+The same two examples done with groupType:
+code::
+// \noteOnVel = noteOn only + velocity
+(
+d = (
+deviceName: "test", protocol: 'midi', idInfo: "test",
+elementsDesc: (
+		shared: (elementType: \pad, midiChan: 0, groupType: \noteOnVel),
+		elements: (48..55).collect { |midiNum, i|
+			( midiNum: midiNum )
+		}
+	)
+);
+m.free; m = MKtl(\test, d).trace; m.postElements; g = m.gui;
+)
+
+// same two things with groupTypes:
+//  \noteOnTrig = trig only, no velociy
+(
+d = (
+deviceName: "test", protocol: 'midi', idInfo: "test",
+elementsDesc: (
+		shared: (elementType: \pad, midiChan: 0, groupType: \noteOnTrig),
+		elements: (48..55).collect { |midiNum, i|
+			( midiNum: midiNum )
+		}
+	)
+);
+m.free; m = MKtl(\test, d).trace; m.postElements; g = m.gui;
+)
+::
+
+section:: Combined noteOn + noteOff variants
+
+The code::\groupType:: keys code::\noteOnOff, \noteOnOffBut, \noteOnOffVel:: provide the most common combinations here.
+
+If your controller element is very unusual, making its combination by hand
+is still the most flexible option. This works, and creates separate views for \on and \off, and gui layout will need to be done by hand.
+
+code::
+// As an example, make (very common) noteOn + vel, noteOff nonvel by hand.
+(
+d = (
+deviceName: "test", protocol: 'midi', idInfo: "test",
+elementsDesc: (
+		shared: (elementType: \pad, midiChan: 0),
+		elements: (48..55).collect { |midiNum, i|
+			(
+				elements: [
+					( key: \on, midiNum: midiNum, midiMsgType: \noteOn, spec: \midiVel,
+						style: (row: 0, column: i)
+					),
+					( key: \off, midiNum: midiNum, midiMsgType: \noteOff, spec: \midiBut,
+						style: (row: 1, column: i)
+					)
+				]
+			)
+		}
+	)
+);
+m.free; m = MKtl(\test, d).trace; m.postElements; g = m.gui;
+)
+::
+
+For completeness - MKtlDesc.notePair is present in some desc files.
+It works and can be used to make noteOn + vel, noteOff + vel, but is not recommended anymore: groupType is simpler, shorter and more flexible.
+code::
+// MKtlDesc.notePair example
+(
+d = (
+deviceName: "test", protocol: 'midi', idInfo: "test",
+elementsDesc: (
+		shared: (elementType: \pad, midiChan: 0),
+		elements: (48..55).collect { |midiNum, i|
+			MKtlDesc.notePair(midiNum, midiNum)
+		}
+	)
+);
+m.free; m = MKtl(\test, d).trace; m.postElements; g = m.gui;
+)
+::
+
+Here are the three groupTypes supported:
+
+code::
+// make noteOn with velo, noteOff nonvelo with groupType \noteOnOff
+// FIX GUI
+(
+d = (
+deviceName: "test", protocol: 'midi', idInfo: "test",
+elementsDesc: (
+		shared: (elementType: \pad, midiChan: 0, groupType: \noteOnOff),
+		elements: (48..55).collect { |midiNum, i|
+			( midiNum: midiNum )
+		}
+	)
+);
+m.free; m = MKtl(\test, d).trace; m.postElements; g = m.gui;
+)
+
+
+// make noteOn + noteOff nonvelo with groupType \noteOnOffBut
+// FIX GUI
+(
+d = (
+deviceName: "test", protocol: 'midi', idInfo: "test",
+elementsDesc: (
+		shared: (elementType: \pad, midiChan: 0, groupType: \noteOnOffBut),
+		elements: (48..55).collect { |midiNum, i|
+			( midiNum: midiNum )
+		}
+	)
+);
+m.free; m = MKtl(\test, d).trace; m.postElements; g = m.gui;
+)
+
+// make noteOn + noteOff with velocity with groupType \noteOnOffVel
+// FIX GUI
+(
+d = (
+deviceName: "test", protocol: 'midi', idInfo: "test",
+elementsDesc: (
+		shared: (elementType: \pad, midiChan: 0, groupType: \noteOnOffVel),
+		elements: (48..55).collect { |midiNum, i|
+			( midiNum: midiNum )
+		}
+	)
+);
+m.free; m = MKtl(\test, d).trace; m.postElements; g = m.gui;
+)
+::
+
+Finally, the two types which include touch messages.
+These can be drum pads or piano keys with velocity that transmit polytouch pressure from a pad while it is held and pressed, and noteOff when letting go.
+
+code::
+// make noteOnOff + touch control with groupType \noteOnOffTouch
+// FIX GUI
+(
+d = (
+deviceName: "test", protocol: 'midi', idInfo: "test",
+elementsDesc: (
+		shared: (elementType: \pad, midiChan: 0, groupType: \noteOnOffTouch),
+		elements: // [];
+		(48..49).collect { |midiNum, i|
+			( midiNum: midiNum,
+				style: (row: 0, column: i, width: 1, height: 1)
+			)
+		}
+	)
+);
+m.free; m = MKtl(\test, d).trace; m.postElements; g = m.gui;
+)
+
+// make noteOnOffVel + touch control with groupType \noteOnOffVelTouch
+// FIX GUI
+(
+d = (
+deviceName: "test", protocol: 'midi', idInfo: "test",
+elementsDesc: (
+		shared: (elementType: \pad, midiChan: 0, groupType: \noteOnOffVelTouch),
+		elements: (48..55).collect { |midiNum, i|
+			( midiNum: midiNum )
+		}
+	)
+);
+m.free; m = MKtl(\test, d).trace; m.postElements; g = m.gui;
+)
+::

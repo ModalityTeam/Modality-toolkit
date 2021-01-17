@@ -1,4 +1,7 @@
-NamedList : List {
+// moved NamedList to adclib, where it should live!
+// leaving a renamed copy of NamedList here for backwards compatibility only.
+
+MNamedList : List {
 	var <names, <dict, <>know = true;
 
 	// very clear
@@ -72,8 +75,14 @@ NamedList : List {
 			warn(
 				"NamedList: keys can only be symbols,"
 				"numbers or collections of symbols or numbers.");
-				^nil
-			};
+			^nil
+		};
+	}
+
+	clear {
+		dict.clear;
+		names = [];
+		super.clear;
 	}
 
 	// replaces if name is there
@@ -106,27 +115,27 @@ NamedList : List {
 	removeAt { |keyOrNum|
 		var name, item, index;
 		case
-			{ keyOrNum.isKindOf(Collection) } {
-				^keyOrNum.collect (this.removeAt(_)) }
+		{ keyOrNum.isKindOf(Collection) } {
+			^keyOrNum.collect (this.removeAt(_)) }
 
-			{ keyOrNum.isKindOf(SimpleNumber) } {
-				index = keyOrNum.asInteger;
+		{ keyOrNum.isKindOf(SimpleNumber) } {
+			index = keyOrNum.asInteger;
+			item = array.removeAt(index);
+			name = names.removeAt(index);
+			if (name.notNil) { dict.removeAt(name) };
+			^item
+		}
+
+		{ keyOrNum.isKindOf(Symbol) } {
+			name = keyOrNum;
+			index = names.indexOf(name);
+			dict.removeAt(name);
+			if (index.notNil) {
 				item = array.removeAt(index);
-				name = names.removeAt(index);
-				if (name.notNil) { dict.removeAt(name) };
-				^item
-			}
-
-			{ keyOrNum.isKindOf(Symbol) } {
-				name = keyOrNum;
-				index = names.indexOf(name);
-				dict.removeAt(name);
-				if (index.notNil) {
-					item = array.removeAt(index);
-					names.removeAt(index);
-				};
-				^item
-			}
+				names.removeAt(index);
+			};
+			^item
+		}
 	}
 
 	// qualified add - select method
@@ -188,6 +197,10 @@ NamedList : List {
 		this.basicAdd(name, item);
 	}
 
+	keysValuesDo { |func|
+		names.do { |key, i| func.value(key, dict[key], i) };
+	}
+
 	do { |func|
 		names.do { |key, i| func.value(dict[key], key, i) };
 	}
@@ -202,12 +215,12 @@ NamedList : List {
 
 	put { |keyOrNum, val|
 		case
-			{ keyOrNum.isKindOf(SimpleNumber) } { ^array[keyOrNum.asInteger] = val }
-			{ keyOrNum.isKindOf(Symbol) } { ^this.add(keyOrNum, val) }
-			{
-				warn("NamedList: put keys can only be symbols or numbers.");
-				^this
-			};
+		{ keyOrNum.isKindOf(SimpleNumber) } { ^array[keyOrNum.asInteger] = val }
+		{ keyOrNum.isKindOf(Symbol) } { ^this.add(keyOrNum, val) }
+		{
+			warn("NamedList: put keys can only be symbols or numbers.");
+			^this
+		};
 	}
 
 	// support event-like object modeling
@@ -232,6 +245,12 @@ NamedList : List {
 		};
 	}
 
+	pairs {
+		^if (names.size + array.size == 0) {
+			[]
+		} { [names, array].flop.flatten }
+	}
+
 	printOn { |stream| this.storeOn(stream) }
 
 	storeOn { |stream|
@@ -240,5 +259,5 @@ NamedList : List {
 	}
 
 	// inefficient, but reads well
-	storeArgs { ^[names, array].flop.flat }
+	storeArgs { ^this.pairs }
 }

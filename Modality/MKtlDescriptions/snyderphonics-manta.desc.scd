@@ -52,6 +52,9 @@ testCode: {
 
 	// enable LED control and set one light
 	m.sendSpecialMessage(\enableLEDControl);
+
+	// Manta v.2 has two different LED colors; amber and red
+	// Manta v.1 has only amber.
 	m.elAt(\pad, 0, \led).deviceValue = "amber";
 
 	// some light patterns
@@ -79,7 +82,8 @@ testCode: {
 	];
 
 	q.ledPatterns.choose.do{|val, i|
-		m.elAt(\pad, 0, \led).value = 0.5 * val;
+		// amber is 1, red is 0.5
+		m.elAt(\pad, i, \led).value = val;
 	};
 
 },
@@ -87,7 +91,7 @@ testCode: {
 specs: (
 	mantaTouch: [ 0, 227 ].asSpec, // this seems to be the spec, looking at the github source code
 	mantaSlider: [ 0, 4095 ].asSpec, // slider sends values between 0 and 4095, releasing the slider sends 65536
-	mantaLed: ItemsSpec.new( ["off","amber","red"] ), // led can be off, amber or red
+	mantaLed: ItemsSpec.new( ["off","red", "amber"] ), // led can be off, red, or amber
 ),
 
 deviceInfo: (
