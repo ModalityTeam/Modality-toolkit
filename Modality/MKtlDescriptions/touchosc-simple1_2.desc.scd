@@ -84,7 +84,7 @@ collectives: (
             oscPath: '/accxyz',
             elements: [ [\accel, \x], [\accel, \y], [\accel, \z]],
             ioType: \in
-        )
+        ),
         xy: (
             oscPath: '/3/xy',
             elements: [ [\xy, \x], [\xy, \y]],
