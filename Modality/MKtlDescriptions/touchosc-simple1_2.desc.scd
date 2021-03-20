@@ -70,7 +70,7 @@ status: (
 
 idInfo: "touchOSC",
 // nil gets replaced with NetAddr.langPort
-netAddrInfo: (srcPort: 9000, recvPort: nil, ipAddress: "192.168.178.55"),
+netAddrInfo: (srcPort: 9000, recvPort: 57120, ipAddress: "192.168.178.55"),
 
 deviceInfo: (
 	longName: "touchOSC"
