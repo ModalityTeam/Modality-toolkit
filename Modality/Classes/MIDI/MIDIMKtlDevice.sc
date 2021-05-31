@@ -73,10 +73,17 @@ MIDIMKtlDevice : MKtlDevice {
 			MIDIClient.disposeClient;
 			MIDIClient.init;
 		};
-		// broken MIDI init on osx
-		if ( thisProcess.platform.name == \osx and: Main.versionAtMost( 3,6 ) ){
-			"next time you recompile the language, reboot the interpreter"
-			"\n instead to get MIDI working again.".warn;
+
+		if ( thisProcess.platform.name == \osx) {
+			// probably obsolete backwards compatibility
+			// broken MIDI init on osx up to 3.6
+			if ( Main.versionAtMost( 3,6 ) ){
+				"next time you recompile the language, reboot the interpreter"
+				"\n instead to get MIDI working again.".warn;
+			} {
+				// macOS newer than 3.8 tested, works:
+				MIDIClient.init
+			}
 		};
 
 		MIDIIn.connectAll;
