@@ -32,3 +32,42 @@ returns inval
 METHOD:: default
 returns nil, because there is no meaningful default value for a neutral
 non-mapping spec class.
+
+EXAMPLES::
+code::
+// a description desc for a device with a single,
+// non-numeric element:
+(
+d = (
+	deviceName: "testa",
+	protocol: \osc,
+	idInfo: "testa",
+	netAddrInfo: ( ipAddress: "169.254.1.1", srcPort: 9000, recvPort: 8000 ),
+
+	elementsDesc: (
+		shared: ( ioType: \in, spec: PassSpec, \type: \unknown),
+		elements: [( key: 'device',  oscPath: "/serialosc/device" )]
+	)
+);
+// make an MKtl from it
+MKtl(\x).free;
+MKtl(\x, d);
+// look at the element
+MKtl(\x).elAt(\device).dump;
+)
+
+// tests: setting and and getting non-number value works with PassSpec
+MKtl(\x).elAt(\device).elemDesc.deviceSpec; // the class PassSpec
+
+MKtl(\x).elAt(\device).value = "foo"; // string remains unchanged
+MKtl(\x).elAt(\device).value.cs;
+MKtl(\x).elAt(\device).deviceValue.cs;
+
+MKtl(\x).elAt(\device).deviceValue = \oof; // symbol too
+MKtl(\x).elAt(\device).value.cs
+MKtl(\x).elAt(\device).deviceValue.cs
+
+// TODO: fails here, because non-number elements
+// are not supported in GUI class
+MKtl(\x).gui;
+
