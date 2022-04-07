@@ -1,0 +1,34 @@
+TITLE:: PassSpec
+summary:: pass thru value and deviceValue
+categories:: Control
+related:: Classes/Spec, Reference/ControlSpec
+
+DESCRIPTION::
+Some control values (strings, symbols, maybe others) should simply be passed thru, rather than converting them with map/nmap functions. PassSpec does just that, so deviceValue and value are always just passed thru as is.
+
+First code examples:
+
+code::
+PassSpec.new; // returns PassSpec class, because
+PassSpec.map(23);   // values are unchanged
+PassSpec.unmap(\skidoo); // in both directions
+PassSpec.asSpec; // returns PassSpec class
+PassSpec.default; // always returns nil
+::
+
+CLASSMETHODS::
+
+METHOD:: new
+returns PassSpec class, because when map and unmap are always the same,
+there is no need to create instances.
+
+METHOD:: asSpec
+returns PassSpec class
+
+METHOD:: map, unmap
+argument:: inval
+returns inval
+
+METHOD:: default
+returns nil, because there is no meaningful default value for a neutral
+non-mapping spec class.

@@ -13,4 +13,5 @@ PassSpec {
 	*asSpec { ^this }
 	*map { |inval| ^inval }
 	*unmap { |inval| ^inval }
+	*default { ^nil }
 }
