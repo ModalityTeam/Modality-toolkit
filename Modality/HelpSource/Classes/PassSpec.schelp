@@ -1,7 +1,7 @@
 TITLE:: PassSpec
 summary:: pass thru value and deviceValue
 categories:: Control
-related:: Classes/Spec, Reference/ControlSpec
+related:: Classes/Spec, Classes/ControlSpec
 
 DESCRIPTION::
 Some control values (strings, symbols, maybe others) should simply be passed thru, rather than converting them with map/nmap functions. PassSpec does just that, so deviceValue and value are always just passed thru as is.
@@ -67,7 +67,7 @@ MKtl(\x).elAt(\device).deviceValue = \oof; // symbol too
 MKtl(\x).elAt(\device).value.cs
 MKtl(\x).elAt(\device).deviceValue.cs
 
-// TODO: fails here, because non-number elements
-// are not supported in GUI class
+// TODO: add an MKtlElementGUI that supports non-number elements;
+// currently they are not supported, so this line fails:
 MKtl(\x).gui;
-
+::
