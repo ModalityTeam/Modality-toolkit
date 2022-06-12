@@ -60,7 +60,7 @@ elementsDesc: (
 					elements: 8.collect { |i|
 						(
 							midiNum: knum1 + i,
-							\style: ( \row: i div: 4 * 2,
+							\style: ( \row: i div: 4 * 1.5,
 								\column: i % 4 * 2 + 0.5,
 								showLabel: true
 							),
@@ -80,7 +80,7 @@ elementsDesc: (
 							// key: nil,
 							midiNum: num,
 
-							style: (\row: i div: 4 * 2 + 0.8,
+							style: (\row: i div: 4 * 1.5 + 0.8,
 								\column: i % 4 * 2 + 0.5,
 								height: 0.8,
 								// label: "pbt_" ++ (i + 1),
@@ -107,7 +107,7 @@ elementsDesc: (
 			elements: 8.collect { |i|
 				(
 					midiNum: slNum1 + i,
-					\style: ( \row: 4, \column: i, height: 2),
+					\style: ( \row: 3, \column: i, height: 2),
 					\page: gr_i
 				)
 			}
@@ -121,7 +121,7 @@ elementsDesc: (
 				(
 					key: nil, midiNum: (btNum1[gr_i] + i),
 					// label: ("bt_" ++ (i + 1)),
-					style: ( \row: 7, \column: i, height: 1)
+					style: ( \row: 6, \column: i, height: 1)
 				)
 			};
 		);
@@ -136,7 +136,7 @@ elementsDesc: (
 	[
 		( key: 'xfader', 'midiNum':  112, 'midiMsgType': 'cc',
 			'elementType': 'slider', 'spec': 'midiCC',
-			\style: ( \row: 6, \column: 2.5, height: 1, width: 3)
+			\style: ( \row: 5, \column: 2.5, height: 1, width: 3)
 	)]
 
 )
