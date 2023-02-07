@@ -50,6 +50,18 @@ testCode: {
 
 	m.elAt.action = { |el| [el.name, el.value.round(0.0001)].postln };
 
+	// sliders have an encoded release value
+	m.elAt(\sl, 0, \con).action = {|el|
+		var on = el.deviceValue != 65535;
+
+		on.if({
+			el.value.postln
+		}, {
+			"finger released".postln
+		})
+	};
+
+
 	// enable LED control and set one light
 	m.sendSpecialMessage(\enableLEDControl);
 
@@ -90,7 +102,7 @@ testCode: {
 
 specs: (
 	mantaTouch: [ 0, 227 ].asSpec, // this seems to be the spec, looking at the github source code
-	mantaSlider: [ 0, 4095 ].asSpec, // slider sends values between 0 and 4095, releasing the slider sends 65536
+	mantaSlider: [ 0, 4095 ].asSpec, // slider sends values between 0 and 4095, releasing the slider sends 65535
 	mantaLed: ItemsSpec.new( ["off","red", "amber"] ), // led can be off, red, or amber
 ),
 
@@ -193,7 +205,7 @@ elementsDesc: (
 							spec: 'mantaLed',
 							ioType: \out,
 							style: (row: 0 + (id div: 2),
-							column: 5.5 + (id % 2) + (id div: 2 * 0.5) + 0.45,
+								column: 5.5 + (id % 2) + (id div: 2 * 0.5) + 0.45,
 								width: 0.6, height: 0.5
 							)
 						)
