@@ -9,7 +9,7 @@ The name *Modality* arose from the idea to scaffold the creation of modal interf
 It is our believe that integration of such on-the-fly remapping features helps to create a setup much more flexible, powerful, and interesting to play. 
 Such a modal interface allows to cope with fast changes of overall direction as it can be necessary when e.g. improvising with musicians playing acoustic instruments.
 
-For more information, visit the [Modality page](http://modality.bek.no).
+For more information, visit the [Modality page](http://modalityteam.github.io/).
 
 ## Installation
 
