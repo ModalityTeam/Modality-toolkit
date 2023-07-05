@@ -278,11 +278,7 @@ MKtlGUI {
 
         // Remove elements that have the hide flag set in the style dict
         elemsToShow = elemsToShow.reject({ |el|
-            var result = try {el.elemDesc[ \style ].notNil && el.elemDesc[ \style ][ \hide ] == true} ? false;
-            // var result = try{el.elemDesc[\style][\hide]} ? false;
-
-            result.if("Removing element % because it has the hide flag set in the style dict.\n".postf(el.name));
-            result
+            try {el.elemDesc[ \style ].notNil && el.elemDesc[ \style ][ \hide ] == true} ? false;
         });
 
 		views = elemsToShow.collect({ |item|
