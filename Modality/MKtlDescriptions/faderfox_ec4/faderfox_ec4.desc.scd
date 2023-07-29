@@ -35,7 +35,7 @@ elementsDesc:
 	elements: (0..15).collect{|midiChan|
 		(
 			key: "GR%".format((100 + midiChan+1).asString[1..]).asSymbol,
-			shared: (midiChan: midiChan),
+			shared: (midiChan: midiChan, page: midiChan),
 
 
 			elements: [
