@@ -44,7 +44,7 @@ elementsDesc:
 					shared: (elementType: \knob, midiMsgType: \cc14, spec: \midiCC14),
 					elements: (0..15).collect {|midiNum, i|
 						( midiNum: midiNum,
-							style: (row: i div: 4 , column: (i % 4) * 2, width: 0.5, height: 1)
+							style: (row: i div: 4 , column: (i % 4) * 2, width: 1, height: 1)
 						)
 					}
 				),
@@ -53,7 +53,7 @@ elementsDesc:
 					shared: (elementType: \button, groupType: \noteOnOffBut),
 					elements: (0..15).collect {|midiNum, i|
 						( midiNum: midiNum,
-							style: (row: i div: 4 , column: (i % 4) * 2 + 1, width: 0.5, height: 1)
+							style: (row: i div: 4 , column: (i % 4) * 2 + 1, width: 1, height: 1)
 						)
 
 					}
