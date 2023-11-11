@@ -5,9 +5,9 @@ related:: Overviews/Modality, Classes/MKtl, Tutorials/ModalityTutorial
 
 The Modality toolkit simplifies using controllers in SuperCollider. It was created by a team of developers and users of SuperCollider.
 
-see link::http://modality.bek.no/::, or in browser:
+see link::http://modalityteam.github.io/::, or in browser:
 code::
-"http://modality.bek.no/".openOS;
+"http://modalityteam.github.io/".openOS;
 ::
 
 section::Features

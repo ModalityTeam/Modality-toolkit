@@ -31,7 +31,7 @@ elementsDesc: (
 	shared: (elementType: \slider, midiMsgType: \control,
 		midiChan: 0, spec: \midiCC, \ioType: \inout),
 	elements: (
-		(1..16).collect { |num, i| (key: num.asSymbol, midiNum: 22 + num) }
+		(1..16).collect { |num, i| (key: num.asSymbol, midiNum: 31 + num) }
 	)
 )
 );
