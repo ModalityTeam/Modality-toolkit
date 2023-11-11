@@ -49,7 +49,7 @@ m.elAt( \ring, \mode ).value_(4); // trim mode
 
 // segment controls which segments are on: but only on at a time can be controlled, or all
 
-Tdef( \testRingSeg, { 127.do{ |it| m.elAt( \ring, \seg ).value_( it ); 1.0.wait; } } ).play
+Tdef( \testRingSeg, { 127.do{ |it| m.elAt( \ring, \seg ).value_( it.postln ); 1.0.wait; } } ).play
 
 m.elAt( \ring, \seg ).value_( 0 ); // off
 m.elAt( \ring, \seg ).value_( 27 ); // all on
@@ -67,8 +67,17 @@ m.elAt( \ring, \mode, \8 ).value_(3); // single mode
 m.elAt( \ring, \seg, \8 ).value_( 3 ); // segnumber
 
 
+TODO:
+x add layer for MC mode to have relative encoders
+
+- on macOS, device LED updates are slow, almost 1 sec delay - why?
+-- layer switching shows very late on device
+-- clicking button LEDs on gui only shows late on device
+-- led rings around encoders : only mode shown, not value?
 
 ****/
+// thisProcess.nowExecutingPath.postcs;
+
 (
 deviceName: "X-TOUCH MINI",
 protocol: 'midi',
@@ -87,8 +96,19 @@ specs: (
 	midiLedTri: IntegerClip.new( 0, 2, 0 ), // tristate led :  (off: 0, on: 1, blinking: 2)
 	ringMode: IntegerClip(0,4), // single: 0, pan: 1, fan: 2, spread: 3, trim: 4
 	ringVal: IntegerClip.new(0,28), // output has a particular meaning, see example above
-	modeSpec: [0,1,\linear,1].asSpec // 0 or 1
-),
+	modeSpec: [0,1,\linear,1].asSpec, // 0 or 1
+
+	// for relative encoders in MC mode:
+	relEnc: (minval: -64, maxval: 64,
+		asSpec: {|dict| dict },
+		map: { |spec, val = 0| val.linlin(0, 1, spec.minval, spec.maxval).round.asInteger },
+		unmap: { |spec, val = 0|
+			val = min(64 - val, val);
+			val.linlin(spec.minval, spec.maxval, 0, 1);
+		},
+		default: 0
+	)
+).postcs,
 
 deviceInfo: (
 	vendorURI: "http://www.music-group.com/Categories/Behringer/Computer-Audio/Desktop-Controllers/X-TOUCH-MINI/p/P0B3M",
@@ -172,8 +192,85 @@ elementsDesc: (
 					style: ( row: 2, column: 8, height: 4 )
 				)
 			]
-		);
-	} ++
+		)
+	}
+	++
+	////// MC Mode:
+	[
+		(
+			key: \MC,
+			shared: ( \page: 2, midiChan: 0, ioType: \in ),
+			elements: [
+				( // channel faders
+					key: \chan,
+					elements: 8.collect{ |i|
+						(
+							elements: [
+								(
+									key: \bt,
+									elements: [\A,\B].collect{ |jt,j|
+										(
+											key: jt,
+											groupType: \noteOnOff,
+											shared: (
+												spec: \midiBut,
+												elementType: \button,
+												mode: \push,
+												midiNum: [
+													[89, 90, 40, 41, 42, 43, 44, 45],
+													[87, 88, 91, 92, 86, 93, 94, 95],
+												][j][i],
+												style: ( row: 4+j, column: i ),
+												label: (jt++(i+1))
+											)
+										)
+									}
+								),
+								(
+									key: \enc,
+									shared: (
+										label: ("enc"++(i+1) )
+									),
+									elements: [
+										(
+											// the encoder,
+											key: (i+1).asSymbol,
+											midiMsgType: \cc,
+											spec: \relEnc,
+											elementType: \encoder,
+											midiNum: 16 + i,
+											style: ( row: 3, column: i ),
+										),
+										(
+											// the hat knob
+											key: (i+1).asSymbol,
+											groupType: \noteOnOff,
+											shared: (
+												spec: \midiBut, mode: \push,
+												elementType: \button,
+												// elementType: \encoderButton,
+												midiNum: 32 + i,
+												style: ( row: 2, column: i )
+											)
+										)
+									]
+								),
+							]
+						)
+					}
+				),
+				( // master fader strip
+					key: \sl,
+					midiMsgType: \bend, spec: \midiBend,
+					elementType: \slider,
+					midiChan: 8,
+					label: 'master',
+					style: ( row: 2, column: 8, height: 4 )
+				)
+			]
+		)
+	]
+	++
 	// output
 	[
 		(
