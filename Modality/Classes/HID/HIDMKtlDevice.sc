@@ -14,7 +14,11 @@ HIDMKtlDevice : MKtlDevice {
 			deviceProductNamesToHide = List[
 				"Apple Internal Keyboard / Trackpad",
 				"Apple Mikey HID Driver",
-				"Apple IR"
+				"Apple IR",
+				"Headset",
+				"Keyboard Backlight",
+				"BTM",
+				""
 			];
 		}, { deviceProductNamesToHide = List[]; } );
 	}
