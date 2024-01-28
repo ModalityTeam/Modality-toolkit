@@ -321,7 +321,14 @@ MKtlDesc {
 		if (infoInFile.isKindOf(Dictionary).not) { infoInFile = (deviceName: infoInFile) };
 
 		^(infoFromDev.deviceName == infoInFile.deviceName)
-		and: { infoFromDev.srcPortIndex == infoInFile.srcPortIndex }
+		// this is when a single e.g. MIDI device has multiple ports:
+		and: { infoFromDev.srcPortIndex == infoInFile.srcPortIndex
+			// and when multiple exact-same devices are connected,
+			// their entries get a srcPortIndex, but the file does not,
+			// so this lets them pass:
+			or: { infoInFile.srcPortIndex.isNil }
+		}
+
 		// destPortIndex matches if srcPortIndex does
 	}
 
