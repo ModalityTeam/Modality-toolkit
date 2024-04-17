@@ -2,7 +2,7 @@
 deviceName: "Thrustmaster dual analog 3.2_Thrustmaster",
 protocol: \hid,
 deviceType: \gamepad,
-elementTypes: [\joystick, \button, \wheel, \throttle, \compass],
+elementTypes: [\joystick, \button, \compass],
 status: (
 	linux: "tested by bgola 12.04.2024",
 	osx: "unknown",
