@@ -1,0 +1,247 @@
+(
+idInfo: "Thrustmaster dual analog 3.2_Mega World",
+protocol: 'hid',
+deviceName: "Thrustmaster dual analog 3.2_Mega World",
+deviceType: \gamepad,
+elementTypes: [\joystick, \button, \compass],
+status: (
+	linux: "tested by bgola 12.04.2024",
+	osx: "unknown",
+	win: "unknown"),
+
+
+deviceInfo: (
+	vendorURI: "https://support.thrustmaster.com/en/product/f1dualanalogferrarif150-en/",
+	// manualURI: "",
+	// description: "",
+	// features: [],
+	// notes: "",
+	// type: [],
+	// hasScribble: false
+),
+
+elementsDesc: (
+	elements: [
+
+		// --------- input elements ----------
+		(
+			key: 'bt',
+			shared: ('hidUsagePage': 9, 'elementType': 'button',
+				'ioType': 'in', spec: \hidBut, mode: \push),
+
+			elements: [
+				(key: '1', 'hidUsage': 1, 'style': (row: 2.6, column: 5.2)),
+				(key: '2', 'hidUsage': 2, 'style': (row: 1.8, column: 4.4)),
+				(key: '3', 'hidUsage': 3, 'style': (row: 1.8, column: 6.0)),
+				(key: '4', 'hidUsage': 4, 'style': (row: 1.0, column: 5.2)),
+				// shoulders
+				(key: '5', 'hidUsage': 5, 'style': (row: 0, column: 1)),
+				(key: '7', 'hidUsage': 7, 'style': (row: 0, column: 5)),
+				// underside
+				(key: '6', 'hidUsage': 6, 'style': (row: 0, column: 2.5)),
+				(key: '8', 'hidUsage': 8, 'style': (row: 0, column: 3.5)),
+				// top center
+				(key: '9', 'hidUsage': 9, 'style': (row: 1.6, column: 2.5)),
+				(key: '10', 'hidUsage': 10,'style': (row: 1.6, column: 3.5))
+			]
+		),
+
+		(
+			key: 'compass', 'hidUsage': 57, 'hidUsagePage': 1, 'elementType': 'compass',
+			'ioType': 'in', mode: \center, spec: \unipolar,
+			'style': (row: 1.8, column: 1.3)
+		),
+
+		(
+			key: 'joy',
+			shared: ('hidUsagePage': 1, 'ioType': 'in'),
+			elements: [
+				(
+					key: \l,
+					elements: [
+						(key: \x, 'hidUsage': 48, 'elementType': 'joyAxis', spec: \cent1,
+							mode: \center, 'style': (row: 4.1, column: 1, height: 0.7, width: 1.5)
+						),
+						(key: \y, 'hidUsage': 49, 'elementType': 'joyAxis', spec: \cent1,
+							mode: \center, 'style': (row: 3.2, column: 2.4, height: 1.5, width: 0.7)
+						),
+						(key: \hat, 'hidUsage': 11, 'elementType': 'button', 'hidUsagePage': 9,
+							spec: \hidBut, mode: \push,
+							'style': (row: 3.2, column: 1.5)
+						)
+					]
+				),
+				(
+					key: \r,
+					elements: [
+						(key: \x, 'hidUsage': 53, 'elementType': 'joyAxis', spec: \cent1,
+							mode: \center, 'style': (row: 4.1, column: 3, height: 0.7, width: 1.5)
+						),
+						(key: \y, 'hidUsage': 54, 'elementType': 'joyAxis', spec: \cent1,
+							mode: 'center', 'style': (row: 3.2, column: 4.5, height: 1.5, width: 0.7)
+						),
+						(key: \hat, 'hidUsage': 12, 'hidUsagePage': 9, 'elementType': 'button',
+							spec: \hidBut, mode: \push,
+							'style': (row: 3.2, column: 3.5)
+						)
+					]
+				)
+			]
+		),
+	]
+);
+)
+
+
+/*
+
+// hardwarePages: [1, 2, 3, 4],
+
+// deviceInfo: (
+// vendorURI: 'http://company.com/products/this',
+// manualURI: 'http://company.com/products/this/manual.pdf',
+	// description: ,
+	// features: [],
+	// notes: ,
+	// hasScribble: false
+// ),
+
+(
+protocol: \hid,
+deviceType: \gamepad,
+elementTypes: [\joystick, \button, \wheel, \throttle, \compass],
+status: (
+	linux: "tested by bgola 12.04.2024",
+	osx: "unknown",
+	win: "unknown"),
+
+idInfo: "Thrustmaster dual analog 3.2_Thrustmaster",
+
+deviceInfo: (
+	vendorURI: "https://support.thrustmaster.com/en/product/dualanalog4-en/",
+	// manualURI: "",
+	// description: "",
+	// features: [],
+	// notes: "",
+	// type: [],
+	// hasScribble: false
+),
+
+elementsDesc: (
+	elements: [
+
+		// --------- input elements ----------
+		(
+			key: 'bt',
+			shared: ('hidUsagePage': 9, 'elementType': 'button',
+				'ioType': 'in', spec: \hidBut, mode: \push),
+
+			elements: [
+				(key: '1', 'hidUsage': 1, 'style': (row: 2.6, column: 5.2)),
+				(key: '2', 'hidUsage': 2, 'style': (row: 1.8, column: 4.4)),
+				(key: '3', 'hidUsage': 3, 'style': (row: 1.8, column: 6.0)),
+				(key: '4', 'hidUsage': 4, 'style': (row: 1.0, column: 5.2)),
+				// shoulders
+				(key: '5', 'hidUsage': 5, 'style': (row: 0, column: 1)),
+				(key: '7', 'hidUsage': 7, 'style': (row: 0, column: 5)),
+				// underside
+				(key: '6', 'hidUsage': 6, 'style': (row: 0, column: 2.5)),
+				(key: '8', 'hidUsage': 8, 'style': (row: 0, column: 3.5)),
+				// top center
+				(key: '9', 'hidUsage': 9, 'style': (row: 1.6, column: 2.5)),
+				(key: '10', 'hidUsage': 10,'style': (row: 1.6, column: 3.5))
+			]
+		),
+
+		(
+			key: 'compass', 'hidUsage': 57, 'hidUsagePage': 1, 'elementType': 'compass',
+			'ioType': 'in', mode: \center, spec: \unipolar,
+			'style': (row: 1.8, column: 1.3)
+		),
+
+		(
+			key: 'joy',
+			shared: ('hidUsagePage': 1, 'ioType': 'in'),
+			elements: [
+				(
+					key: \l,
+					elements: [
+						(key: \x, 'hidUsage': 48, 'elementType': 'joyAxis', spec: \cent1,
+							mode: \center, 'style': (row: 4.1, column: 1, height: 0.7, width: 1.5)
+						),
+						(key: \y, 'hidUsage': 49, 'elementType': 'joyAxis', spec: \cent1,
+							mode: \center, 'style': (row: 3.2, column: 2.4, height: 1.5, width: 0.7)
+						),
+						(key: \hat, 'hidUsage': 11, 'elementType': 'button', 'hidUsagePage': 9,
+							spec: \hidBut, mode: \push,
+							'style': (row: 3.2, column: 1.5)
+						)
+					]
+				),
+				(
+					key: \r,
+					elements: [
+						(key: \x, 'hidUsage': 53, 'elementType': 'joyAxis', spec: \cent1,
+							mode: \center, 'style': (row: 4.1, column: 3, height: 0.7, width: 1.5)
+						),
+						(key: \y, 'hidUsage': 54, 'elementType': 'joyAxis', spec: \cent1,
+							mode: 'center', 'style': (row: 3.2, column: 4.5, height: 1.5, width: 0.7)
+						),
+						(key: \hat, 'hidUsage': 12, 'hidUsagePage': 9, 'elementType': 'button',
+							spec: \hidBut, mode: \push,
+							'style': (row: 3.2, column: 3.5)
+						)
+					]
+				)
+			]
+		),
+	]
+);
+)
+/*
+elementsDesc: (
+	elements: [
+
+
+		// --------- input elements ----------
+		( key: '_b1_', 'hidUsage': 1, 'hidUsagePage': 9, 'elementType': 'Button', 'ioType': 'in', 'spec': 'hidBut' ),
+		( key: '_b2_', 'hidUsage': 2, 'hidUsagePage': 9, 'elementType': 'Button', 'ioType': 'in', 'spec': 'hidBut' ),
+		( key: '_b3_', 'hidUsage': 3, 'hidUsagePage': 9, 'elementType': 'Button', 'ioType': 'in', 'spec': 'hidBut' ),
+		( key: '_b4_', 'hidUsage': 4, 'hidUsagePage': 9, 'elementType': 'Button', 'ioType': 'in', 'spec': 'hidBut' ),
+		( key: '_b5_', 'hidUsage': 5, 'hidUsagePage': 9, 'elementType': 'Button', 'ioType': 'in', 'spec': 'hidBut' ),
+		( key: '_b6_', 'hidUsage': 6, 'hidUsagePage': 9, 'elementType': 'Button', 'ioType': 'in', 'spec': 'hidBut' ),
+		( key: '_b7_', 'hidUsage': 7, 'hidUsagePage': 9, 'elementType': 'Button', 'ioType': 'in', 'spec': 'hidBut' ),
+		( key: '_b8_', 'hidUsage': 8, 'hidUsagePage': 9, 'elementType': 'Button', 'ioType': 'in', 'spec': 'hidBut' ),
+		( key: '_b9_', 'hidUsage': 9, 'hidUsagePage': 9, 'elementType': 'Button', 'ioType': 'in', 'spec': 'hidBut' ),
+		( key: '_b10_', 'hidUsage': 10, 'hidUsagePage': 9, 'elementType': 'Button', 'ioType': 'in', 'spec': 'hidBut' ),
+		( key: '_b11_', 'hidUsage': 11, 'hidUsagePage': 9, 'elementType': 'Button', 'ioType': 'in', 'spec': 'hidBut' ),
+		( key: '_b12_', 'hidUsage': 12, 'hidUsagePage': 9, 'elementType': 'Button', 'ioType': 'in', 'spec': 'hidBut' ),
+		( key: '_b0_', 'hidUsage': 0, 'hidUsagePage': 9, 'elementType': 'Button', 'ioType': 'in', 'spec': 'hidBut' ),
+		( key: '_Hat_switch_', 'hidUsage': 57, 'hidUsagePage': 1, 'elementType': 'GenericDesktop', 'ioType': 'in', 'spec': '_Hat_switch_' ),
+		( key: '_X_', 'hidUsage': 48, 'hidUsagePage': 1, 'elementType': 'GenericDesktop', 'ioType': 'in', 'spec': '_X_' ),
+		( key: '_Y_', 'hidUsage': 49, 'hidUsagePage': 1, 'elementType': 'GenericDesktop', 'ioType': 'in', 'spec': '_Y_' ),
+		( key: '_Rz_', 'hidUsage': 53, 'hidUsagePage': 1, 'elementType': 'GenericDesktop', 'ioType': 'in', 'spec': '_Rz_' ),
+		( key: '_Slider_', 'hidUsage': 54, 'hidUsagePage': 1, 'elementType': 'GenericDesktop', 'ioType': 'in', 'spec': '_Slider_' ),
+
+		// --------- output elements ----------
+		( key: '_b1_', 'hidUsage': 1, 'hidUsagePage': 9, 'elementType': 'Button', 'ioType': 'out', 'spec': 'hidBut' ),
+		( key: '_b2_', 'hidUsage': 2, 'hidUsagePage': 9, 'elementType': 'Button', 'ioType': 'out', 'spec': 'hidBut' ),
+		( key: '_b3_', 'hidUsage': 3, 'hidUsagePage': 9, 'elementType': 'Button', 'ioType': 'out', 'spec': 'hidBut' ),
+		( key: '_b4_', 'hidUsage': 4, 'hidUsagePage': 9, 'elementType': 'Button', 'ioType': 'out', 'spec': 'hidBut' ),
+		( key: '_b5_', 'hidUsage': 5, 'hidUsagePage': 9, 'elementType': 'Button', 'ioType': 'out', 'spec': 'hidBut' ),
+		( key: '_b6_', 'hidUsage': 6, 'hidUsagePage': 9, 'elementType': 'Button', 'ioType': 'out', 'spec': 'hidBut' ),
+		( key: '_b7_', 'hidUsage': 7, 'hidUsagePage': 9, 'elementType': 'Button', 'ioType': 'out', 'spec': 'hidBut' ),
+		( key: '_b8_', 'hidUsage': 8, 'hidUsagePage': 9, 'elementType': 'Button', 'ioType': 'out', 'spec': 'hidBut' ),
+		( key: '_b9_', 'hidUsage': 9, 'hidUsagePage': 9, 'elementType': 'Button', 'ioType': 'out', 'spec': 'hidBut' ),
+		( key: '_b10_', 'hidUsage': 10, 'hidUsagePage': 9, 'elementType': 'Button', 'ioType': 'out', 'spec': 'hidBut' ),
+		( key: '_b11_', 'hidUsage': 11, 'hidUsagePage': 9, 'elementType': 'Button', 'ioType': 'out', 'spec': 'hidBut' ),
+		( key: '_b12_', 'hidUsage': 12, 'hidUsagePage': 9, 'elementType': 'Button', 'ioType': 'out', 'spec': 'hidBut' ),
+		( key: '_b0_', 'hidUsage': 0, 'hidUsagePage': 9, 'elementType': 'Button', 'ioType': 'out', 'spec': 'hidBut' ),
+		( key: '_Hat_switch_', 'hidUsage': 57, 'hidUsagePage': 1, 'elementType': 'GenericDesktop', 'ioType': 'out', 'spec': '_Hat_switch_' ),
+		( key: '_X_', 'hidUsage': 48, 'hidUsagePage': 1, 'elementType': 'GenericDesktop', 'ioType': 'out', 'spec': '_X_' ),
+		( key: '_Y_', 'hidUsage': 49, 'hidUsagePage': 1, 'elementType': 'GenericDesktop', 'ioType': 'out', 'spec': '_Y_' ),
+		( key: '_Rz_', 'hidUsage': 53, 'hidUsagePage': 1, 'elementType': 'GenericDesktop', 'ioType': 'out', 'spec': '_Rz_' ),
+		( key: '_Slider_', 'hidUsage': 54, 'hidUsagePage': 1, 'elementType': 'GenericDesktop', 'ioType': 'out', 'spec': '_Slider_' ), 	]
+)
+);
+*/
