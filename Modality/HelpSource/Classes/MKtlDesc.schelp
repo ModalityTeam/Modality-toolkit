@@ -213,7 +213,10 @@ find device idInfo for given filename
 Method:: filenamesForIDInfo
 find filenames for a given device idInfo
 
-Method:: writeCache, cacheName, loadCache, updateCache
+METHOD:: writeCache
+METHOD:: cacheName
+METHOD:: loadCache
+METHOD:: updateCache
 support methods for cache of filenames and idInfos
 
 
