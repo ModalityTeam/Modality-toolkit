@@ -151,8 +151,10 @@ MIDIMKtlDevice : MKtlDevice {
 		// logic is still too loopy, but no time to simplify now.
 
 	//	"%: %: %\n".postf(thisMethod, \multiIndex, multiIndex);
-		foundInfo = MKtlLookup.findByIDInfo(idInfo)
-		.at(multiIndex ? 0);
+		// for multiple identical MIDI devices,
+		// idInfo already is a dict w srcPortIndex etc,
+		// so MKtlLookup finds only one that matches, thus at(0)
+		foundInfo = MKtlLookup.findByIDInfo(idInfo).at(0);
 
 		foundSources = foundInfo[\srcDevice];
 		foundDestinations = foundInfo[\destDevice];
