@@ -359,12 +359,11 @@ MKtlGUI {
 		deviceButton = Button( parent, Rect(54 + 54,2,50,16) )
 		.states_([["device"],["device", Color.black, Color.green]])
 		.action_({ |bt, mod = 0|
-			bt.value_(mktl.hasDevice.binaryValue);
-			// allow devicebutton to close with mod keys
-			if (bt.value > 0) {
+
+			if (mktl.hasDevice.not) {
 				mktl.openDevice
 			} {
-				if (mod > 0) { mktl.closeDevice } {
+				if (mod.postln > 0) { mktl.closeDevice } {
 					"% - hold shift or option to close.\n".postf(mktl);
 				}
 			};
