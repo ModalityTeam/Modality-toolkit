@@ -108,7 +108,7 @@ specs: (
 		},
 		default: 0
 	)
-).postcs,
+),
 
 deviceInfo: (
 	vendorURI: "http://www.music-group.com/Categories/Behringer/Computer-Audio/Desktop-Controllers/X-TOUCH-MINI/p/P0B3M",
