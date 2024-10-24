@@ -68,7 +68,7 @@ elementsDesc: (
 		(
 			key: \arr,
 			shared: (\elementType: \pad, \spec: \midiVel),
-			elements: ((0, 16 .. 112) + 8).flat.postln.collect {|num, i|
+			elements: ((0, 16 .. 112) + 8).flat.collect {|num, i|
 				(
 					groupType: \noteOnOff,
 					\midiNum: num,
