@@ -5,9 +5,15 @@ MKtlDesc.loadDescs("intech-grid");
 
 k.free; k = MKtl('grid', "*grid"); k.gui;
 k.elAt(\enc).action = { |el| [el.name, el.deviceValue, el.value.round(0.001)].postln };
+k.elAt(\bt).action = { |el| [el.name, el.deviceValue, el.value.round(0.001)].postln };
 
+Questions / To Do:
 Is there a way to set it to relative mode?
 https://docs.intech.studio/guides/introduction
+
+Would be useful to set encoders to values from SC - how?
+naively declaring (ioType: \inout) does not work.
+some other ccnums?
 
 ****/
 
@@ -34,7 +40,7 @@ deviceInfo: (
 	hasScribble: false
 ),
 elementsDesc: (
-	shared: (midiChan: 0),
+	shared: (midiChan: 0, ),
 	elements: [
 		(
 			key: \enc,
@@ -45,7 +51,7 @@ elementsDesc: (
 		),
 		(
 			key: \bt,
-			shared: ('midiMsgType': 'noteOnOff', 'elementType': 'button', 'spec': 'midiBut'),
+			shared: ('groupType': 'noteOnOff', 'elementType': 'button', 'spec': 'midiBut'),
 			elements: (32..47).collect { |midinum, i|
 				(midiNum: midinum, style: (column: i % 4 * 1.5, row: (i div: 4 * 1.5), height: 0.5))
 			}
