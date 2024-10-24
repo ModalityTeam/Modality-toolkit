@@ -40,7 +40,7 @@ deviceInfo: (
 	hasScribble: false
 ),
 elementsDesc: (
-	shared: (midiChan: 0, ),
+	shared: (midiChan: 0),
 	elements: [
 		(
 			key: \enc,
