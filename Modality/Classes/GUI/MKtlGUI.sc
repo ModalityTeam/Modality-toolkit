@@ -276,6 +276,11 @@ MKtlGUI {
 		"%: will show %'s % elements in % views.\n".postf(thisMethod, mktl,
 			mktl.elementsDict.size, elemsToShow.size);
 
+        // Remove elements that have the hide flag set in the style dict
+        elemsToShow = elemsToShow.reject({ |el|
+            try {el.elemDesc[ \style ].notNil && el.elemDesc[ \style ][ \hide ] == true} ? false;
+        });
+
 		views = elemsToShow.collect({ |item|
 			var style, bounds, parView = parent, redirView, newViews;
 			var itemIsGroup = item.isKindOf(MKtlElementGroup);
@@ -406,7 +411,22 @@ MKtlGUI {
 		if (mktl.elementGroup.elements.isEmpty) {
 			^[1, 2]
 		};
-		^mktl.elementGroup.flat.collect({ |item|
+		^mktl.elementGroup.flat
+        // Remove element from count if it is hidden
+        .reject({|item|
+			var desc = item.elemDesc;
+
+            if(desc.isNil, {
+                false
+            }, {
+                if(desc[ \style ].isNil, {
+                    false
+                }, {
+                    desc[ \style ][ \hide ] == true
+                })
+            })
+
+        }).collect({ |item|
 			var desc = item.elemDesc;
 			desc !? {
 				((desc[ \style ] ?? { ( row: 0, column: 0, width: 0, height: 0 ) })
