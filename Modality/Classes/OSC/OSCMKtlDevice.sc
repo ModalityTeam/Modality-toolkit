@@ -274,7 +274,7 @@ OSCMKtlDevice : MKtlDevice {
 							valueMsg = msg.at( msgIndices).asArray
 								++ msg.copyToEnd( templEnd );
 						}{
-							 valueMsg = msg.copyToEnd( templEnd );
+							valueMsg = msg.copyToEnd( templEnd );
 						};
 
 						coll.deviceValueAction_( valueMsg );
@@ -335,8 +335,13 @@ OSCMKtlDevice : MKtlDevice {
 				outvalues = outvalues ++ val;
 			};
 		};
-		// and send
-		destination.sendMsg(oscPath, *outvalues);
+		// and send : wrap in try func to avoid repeated long error
+		//  posts when an OSC device is temporarily unreachable.
+		try {
+			destination.sendMsg(oscPath, *outvalues);
+		} {
+			"*** % : device could not send to key %\n".postf(source, key)
+		}
 	}
 
 	sendSpecialMessage { |messages|
