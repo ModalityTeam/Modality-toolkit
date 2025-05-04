@@ -112,7 +112,7 @@ elementsDesc: (
 				//--------- Scene Launch
 				(
 					key: \scene,
-					elements: (82..86).reverse.collect{ |num, i|
+					elements: (82..86).collect{ |num, i|
 						MKtlDesc.notePair( key:((1+i).asSymbol), midiNum:num,
 							shared: ( midiChan:0, style:( row: i, column:8 ) ) )
 					}
@@ -251,22 +251,33 @@ elementsDesc: (
 				(
 					key: \t,
 					elements: (48..55).collect{ |num, i|
-								( key:(i+1).asSymbol, midiChan:0, midiNum:num,
-									style:( row:i  ) )
+						( 
+							key:(i+1).asSymbol, 
+							midiChan:0, 
+							midiNum:num,
+							ioType: \inout,
+							style:( row:i  ) 
+						)
 					}
 				),
 
 				//************** Device Control (all channels)
 				(
 					key: \d,
-					elements: (0..8).collect{ |chan, i| (
-						elements: (16..23).collect { |num, j|
-							( key: (1..8)[j].asSymbol,
-								midiChan:chan, midiNum:num,
-								style:( row:4.5+i, column:10+j )
-							)
-					} )
-				} ),
+					elements: (0..8).collect{ |chan, i| 
+						(
+							elements: (16..23).collect { |num, j|
+								( 
+									key: (1..8)[j].asSymbol,
+									ioType: \inout,
+									midiChan:chan, 
+									midiNum:num,
+									style:( row:4.5+i, column:10+j )
+								)
+							} 
+						)
+					} 
+				),
 			]
 		),
 

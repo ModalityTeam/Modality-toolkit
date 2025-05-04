@@ -60,6 +60,7 @@ elementsDesc: (
 					elements: nums.collect { |num, j|
 						( groupType: \noteOnOff,
 							\midiNum: num,
+							midiChan: 0,
 							style: (row: i + 1, column: j)
 						)
 					}
@@ -68,7 +69,7 @@ elementsDesc: (
 		),
 		(
 			key: \arr,
-			shared: (\elementType: \pad, \spec: \midiVel),
+			shared: (\elementType: \pad, \spec: \midiBut, \ioType: \inout),
 			elements: ((0, 16 .. 112) + 8).flat.postln.collect {|num, i|
 				(
 					groupType: \noteOnOff,
