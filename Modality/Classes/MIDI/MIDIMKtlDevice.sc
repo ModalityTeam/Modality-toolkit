@@ -262,7 +262,7 @@ MIDIMKtlDevice : MKtlDevice {
 
 		destination.notNil.if {
  			if ( thisProcess.platform.name == \linux ) {
-				midiOut = MIDIOut( 0, dstID );
+				midiOut = MIDIOut( 0 );
 				midiOut.connect( MIDIClient.destinations.indexOfEqual(destination) )
 			} {
 				midiOut = MIDIOut( MIDIClient.destinations.indexOfEqual(destination), dstID );
