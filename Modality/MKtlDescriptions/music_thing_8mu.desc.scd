@@ -30,7 +30,7 @@ elementsDesc: (
 		// Buttons
 		(
 			key: \bt,
-			shared: (midiChan: 0, groupType: \noteOnOffBut, elementType: 'pad', midiNum: 1, spec: \midiBut),
+			shared: (midiChan: 0, groupType: \noteOnOffBut, elementType: 'button', midiNum: 1, spec: \midiBut),
 			elements: 4.collect { |buttonIdx|
 				(
 					midiNum:  36 + (buttonIdx*12),
