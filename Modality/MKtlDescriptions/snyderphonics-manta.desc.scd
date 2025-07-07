@@ -128,6 +128,9 @@ elementsDesc: (
 				ioType: \in
 			),
 			elements: (0..47).collect { |id|
+				var row = 8 - (id div: 8) + 0.5 * 1.5;
+				var column = (id % 8 + 0.5 - (id div: 8 % 2 * 0.5 ) * 2);
+
 				(
 					key: id.asSymbol,
 					elements: [
@@ -135,20 +138,20 @@ elementsDesc: (
 							key: \con,
 							oscPath: '/manta/continuous/pad',
 							argTemplate: [ id ],
-							elementType: 'slider',
+							elementType: 'pad',
 							style: (
-								row: 2.0 + (id div: 8) + 0.5,
-								column: id % 8,
-								width: 0.6, height: 1)
+								row: row,
+								column: column,
+								width: 1.1, height: 1.5)
 						),
 						(
 							key: \vel,
 							oscPath: '/manta/velocity/pad',
 							argTemplate: [ id ],
 							elementType: 'pad',
-							style: (row: 2.3 +  (id div: 8) + 0.5,
-								column: id % 8 + 0.45,
-								width: 0.6, height: 0.7)
+							style: (row: row + 0.6,
+								column: column + 0.9,
+							width: 1.1, height: 0.9)
 						),
 						(
 							key: \led,
@@ -157,9 +160,9 @@ elementsDesc: (
 							elementType: 'led',
 							spec: 'mantaLed',
 							ioType: \out,
-							style: (row: 2.0 + (id div: 8) + 0.5,
-								column: id % 8 + 0.45,
-								width: 0.6, height: 0.5
+							style: (row: row,
+								column: column + 0.9,
+								width: 1.1, height: 0.9
 							)
 						)
 					]
