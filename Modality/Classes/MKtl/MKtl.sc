@@ -145,7 +145,7 @@ MKtl { // abstract class
 	// or returns a new empty instance.
 	// If no physcal device is present, this becomes a virtual MKtl.
 
-	*new { |name, lookupNameOrDesc, lookForNew = false, multiIndex, tryOpenDevice=true |
+	*new { |name, lookupNameOrDesc, lookForNew = false, multiIndex = 0, tryOpenDevice=true |
 		var res, lookupName, lookupInfo, descName, newMKtlDesc, protocol;
 
 		if (name.isNil) {

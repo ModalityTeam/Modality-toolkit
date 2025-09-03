@@ -131,7 +131,7 @@ MIDIMKtlDevice : MKtlDevice {
 		};
 	}
 
-	*new { |name, idInfo, parentMKtl, multiIndex|
+	*new { |name, idInfo, parentMKtl, multiIndex = 0|
 
 		var lookupInfo = parentMKtl.lookupInfo;
 		var foundInfo, foundSources, foundDestinations;
@@ -154,7 +154,9 @@ MIDIMKtlDevice : MKtlDevice {
 		// for multiple identical MIDI devices,
 		// idInfo already is a dict w srcPortIndex etc,
 		// so MKtlLookup finds only one that matches, thus at(0)
-		foundInfo = MKtlLookup.findByIDInfo(idInfo).at(0);
+		// foundInfo = MKtlLookup.findByIDInfo(idInfo).at(0);
+		//foundInfo = MKtlLookup.findByIDInfo(idInfo.deviceName)
+		foundInfo = MKtlLookup.findByIDInfo(idInfo).at(multiIndex);
 
 		foundSources = foundInfo[\srcDevice];
 		foundDestinations = foundInfo[\destDevice];

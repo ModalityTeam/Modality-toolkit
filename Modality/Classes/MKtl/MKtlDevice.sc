@@ -94,7 +94,7 @@ MKtlDevice {
 		};
 	}
 
-	*open { |name, parentMKtl, multiIndex|
+	*open { |name, parentMKtl, multiIndex = 0|
 		var lookupName, lookupInfo, protocol, idInfo;
 		var desc, subClass, newDevice;
 		var deviceCandidates;
@@ -133,6 +133,15 @@ MKtlDevice {
 		protocol = desc.protocol;
 		idInfo = desc.idInfo;
 		deviceCandidates = MKtlLookup.findByIDInfo(idInfo);
+
+		if (multiIndex >= deviceCandidates.size) {
+			inform(
+				"% - multiIndex % is too high for % candidate device(s)!\n"
+				"--> Please connect more devices or reduce multiIndex."
+				.format(thisMethod, multiIndex, deviceCandidates.size)
+			);
+			^nil
+		};
 
 		// "number of device candidates: %\n".postf(deviceCandidates.size);
 		if (deviceCandidates.size == 0) {
