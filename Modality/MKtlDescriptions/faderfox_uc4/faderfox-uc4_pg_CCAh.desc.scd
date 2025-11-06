@@ -59,6 +59,18 @@ k.postElements; // see all elements
 
 k.elAt.action = { |el| [el.name, el.value.round(0.001), el.deviceValue].postcs }; // display all elements
 k.elAt.action = nil; // stop posting
+
+// access individual elements
+k.elAt(\pgKn1, \kn, 0).action = { |el| "individual knob: ".post; [el.name, el.deviceValue].postln };
+k.elAt(\pgKn1, \kn, 0).value; // get value
+k.elAt(\pgKn1, \kn, 0).value = 0.5; // set value
+
+
+k.elAt(\pgKn1, \pbt, 0).action = { |el| "individual knob press: ".post; [el.name, el.deviceValue].postln };
+k.elAt(\pgKn1, \pbt, 0).isOn; // get state
+k.elAt(\pgSl1, \xfader).action = { |el| "xfade ".post; [el.name, el.deviceValue].postln };
+k.elAt(\pgSl1, \bt, 0, 0).isOn;
+
 ****/
 
 (
