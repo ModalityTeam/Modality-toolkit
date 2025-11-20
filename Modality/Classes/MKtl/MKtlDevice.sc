@@ -78,9 +78,9 @@ MKtlDevice {
 		);
 
 		filenames.do { |filename|
-		str = str ++ "MKtl(%, %%);\n".format(
-			nameKey.cs,
-			filename.cs,
+			str = str ++ "MKtl(%, %%);\n".format(
+				nameKey.cs,
+				filename.cs,
 				if (multiIndex.notNil, ", multiIndex:" + multiIndex, "")
 			);
 		};
@@ -114,7 +114,7 @@ MKtlDevice {
 		// if we know the device lookupName already,
 		// and it is a single name only, we can get it from here:
 		if (lookupInfo.notNil) {
-		//	[lookupName, lookupInfo].postln;
+			//	[lookupName, lookupInfo].postln;
 			subClass = MKtlDevice.subFor(lookupInfo.protocol);
 			^subClass.new( lookupName, parentMKtl: parentMKtl, multiIndex: multiIndex);
 		};
@@ -124,60 +124,60 @@ MKtlDevice {
 		desc = parentMKtl.desc;
 		if (desc.isNil) {
 			if (verbose) {
-				"MKtlDevice:open: cannot open - no matching device found and no desc given."
-				.postln;
+				"% cannot open device: no desc given.\n".postf(parentMKtl);
 			};
 			^nil
 		};
 
 		protocol = desc.protocol;
 		idInfo = desc.idInfo;
-		deviceCandidates = MKtlLookup.findByIDInfo(idInfo);
 
-		if (multiIndex >= deviceCandidates.size) {
-			inform(
-				"% - multiIndex % is too high for % candidate device(s)!\n"
-				"--> Please connect more devices or reduce multiIndex."
-				.format(thisMethod, multiIndex, deviceCandidates.size)
-			);
-			^nil
-		};
 
-		// "number of device candidates: %\n".postf(deviceCandidates.size);
-		if (deviceCandidates.size == 0) {
-			if (protocol != \osc) {
+		// check deviceCandidates: only applies for MIDI and HID;
+		// OSC devices get identified by IP address when opened.
+		if (protocol != \osc) {
+			deviceCandidates = MKtlLookup.findByIDInfo(idInfo);
+			// "number of device candidates: %\n".postf(deviceCandidates.size);
+
+			if (deviceCandidates.size == 0) {
 				if (verbose) {
-					inform("%: can not open - no device candidates found."
-						.format(thisMethod)
-					);
+					"% can not open: no device candidates found.\n".postf(parentMKtl);
 				};
 				^nil
 			};
-		};
 
-		if (deviceCandidates.size > 1) {
-			if (multiIndex.notNil) {
-				lookupInfo = deviceCandidates[multiIndex];
-				if (lookupInfo.notNil) {
-					lookupName = lookupInfo.lookupName;
-				};
-			} {
-				inform("//---\n%: multiple device candidates found,"
-					" please disambiguate by providing a multiIndex!"
-					"\nThe candidates are:\n"
-				.format(thisMethod));
-				deviceCandidates.do { |info, i|
-					"multiIndex %: %\n".format(i, info.cs).postln;
-				};
+			if (multiIndex >= deviceCandidates.size) {
+				"% - multiIndex % is too high for % candidate device(s)!\n"
+				"--> Please connect more devices or reduce multiIndex.\n"
+				.postf(parentMKtl, multiIndex, deviceCandidates.size);
 				^nil
 			};
-		} {
+
+			if (deviceCandidates.size > 1) {
+				if (multiIndex.notNil) {
+					lookupInfo = deviceCandidates[multiIndex];
+					if (lookupInfo.notNil) {
+						lookupName = lookupInfo.lookupName;
+					};
+				} {
+					inform("//---\n%: multiple device candidates found,"
+						" please disambiguate by providing a multiIndex!"
+						"\nThe candidates are:\n"
+						.format(parentMKtl));
+					deviceCandidates.do { |info, i|
+						"multiIndex %: %\n".format(i, info.cs).postln;
+					};
+					^nil
+				};
+			};
+
 			// we have exactly one candidate, so we take it:
 			lookupInfo = deviceCandidates[0];
 			if (lookupInfo.notNil) {
 				lookupName = lookupInfo.lookupName;
 			};
 		};
+		// continue after candidates check:
 
 		if (lookupName.notNil) {
 			lookupInfo.lookupName = lookupName;

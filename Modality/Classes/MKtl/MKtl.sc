@@ -39,7 +39,7 @@ MKtl { // abstract class
 
 	var <traceRunning = false;
 	// used to find its info in MKtlLookup:
-	var <lookupName, <lookupInfo;
+	var <lookupName, <lookupInfo, <>multiIndex;
 
 	*protocols   { ^MKtlDevice.allProtocols }
 	*deviceTypes { ^MKtlDevice.deviceTypes }
@@ -304,12 +304,14 @@ MKtl { // abstract class
 	storeArgs { ^[name] }
 	printOn { |stream| this.storeOn(stream) }
 
-	init { |argDesc, argLookupName, argLookupInfo, lookForNew = false, multiIndex, tryOpenDevice=true|
+	init { |argDesc, argLookupName, argLookupInfo, lookForNew = false, argMultiIndex, tryOpenDevice=true|
 		var specsFromDesc;
 
 		desc = argDesc;
 		lookupName = argLookupName;
 		lookupInfo = argLookupInfo;
+		// store multiIndex too
+		multiIndex = argMultiIndex;
 
 		if(desc.notNil and: { desc.fullDesc.notNil }) {
 			specsFromDesc = desc.fullDesc[\specs];
@@ -329,10 +331,10 @@ MKtl { // abstract class
 		// only put in all if everything worked
 		all.put(name, this);
 
-		this.finishInit(lookForNew, multiIndex, tryOpenDevice); // and finalise init
+		this.finishInit(lookForNew, tryOpenDevice); // and finalise init
 	}
 
-	finishInit { |lookForNew, multiIndex, tryOpenDevice=true|
+	finishInit { |lookForNew, tryOpenDevice=true|
 		if (desc.isNil) {
 			"%: no desc given, cannot create elements..."
 				.format(thisMethod).inform;
@@ -611,7 +613,7 @@ MKtl { // abstract class
 
 	// ------ make MKtlDevice and interface with it
 
-	openDevice { |lookAgain=true, multiIndex|
+	openDevice { |lookAgain=true, argMultiIndex|
 		var protocol, foundMatchingDesc;
 		if ( this.hasDevice ) {
 			"%: Device already opened.\n"
@@ -621,14 +623,17 @@ MKtl { // abstract class
 			^this;
 		};
 
+		// can change multiIndex when opening device:
+		multiIndex = argMultiIndex ? this.multiIndex;
+
 		// this may be an issue, only look for appropriate protocol
 		protocol = desc !? { desc.protocol };
-		MKtlDevice.initHardwareDevices( lookAgain, protocol);
+		MKtlDevice.initHardwareDevices( lookAgain, protocol );
 
 		device = MKtlDevice.open( this.name, this, multiIndex );
 
 		if(this.hasDevice.not) {
-			inform("%: remaining virtual.".format(thisMethod));
+			inform("%: remaining virtual.".format(this));
 		} {
 			// if no desc file, try to match with generic desc
 			// this only works for HID:
@@ -660,6 +665,7 @@ MKtl { // abstract class
 			"%: replacing idInfo: % with: % to openDevice.\n"
 			.postf(this, desc.idInfo.cs, idInfo.cs);
 			this.desc.fullDesc.put(\idInfo, idInfo);
+			multiIndex = multiIndex ? this.multiIndex;
 			this.rebuild(lookAgain: lookAgain, multiIndex: multiIndex);
 		};
 	}

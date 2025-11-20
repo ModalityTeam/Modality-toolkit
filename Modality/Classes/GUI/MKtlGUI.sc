@@ -370,7 +370,7 @@ MKtlGUI {
 			if (mktl.hasDevice) {
 				"% device is open now.\n".postf(mktl);
 			} {
-				"% device has no device now.\n".postf(mktl);
+				"% has no device now.\n".postf(mktl);
 			};
 			bt.value_(mktl.hasDevice.binaryValue);
 		});
