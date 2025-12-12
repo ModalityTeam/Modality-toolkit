@@ -5,7 +5,7 @@ Description file for Faderfox EC4.
 For general information, see parent description file
 MKtlDesc.findFile(MKtlDesc.at(\faderfox_ec4).fullDesc[\parentDesc], fileExt: MKtlDesc.parentExt).first.openDocument
 
-This implements 14bit mode for all 16 groups of the Faderfox EC4 as it is set for "Setup 01" in the sysex file "SE01-allGroupsCCAh.syx" next to this document.
+This implements CCAh (14bit) mode for all 16 groups of the Faderfox EC4 as it is set for "Setup 01" in the sysex file "SE01-allGroupsCCAh.syx" next to this document.
 Load the SE01 of the sysex file to a setup of your choosing on your EC4 via
    https://www.privatepublic.de/faderfox-editor/ec4/
    https://github.com/privatepublic-de/faderfox-editor
