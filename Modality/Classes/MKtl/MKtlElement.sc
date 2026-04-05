@@ -274,6 +274,7 @@ MKtlElement : MAbstractElement {
 	// for mapping between numbers from device
 	// and internal value between [0, 1]
 	var <deviceSpec;
+	var <>label;
 
 	*initClass {
 		// types found with MKtlDesc.elementTypesUsed.size

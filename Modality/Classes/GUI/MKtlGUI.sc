@@ -334,7 +334,9 @@ MKtlGUI {
 					or: { item.element.elemDesc[ \page ] == currentPage } };
 
 				if(doDraw) {
-					name = item.element.elemDesc.label ? item.element.name.asString;
+					name = item.element.label ?
+					item.element.elemDesc.label ?
+					item.element.name.asString;
 					if (item.element.elemDesc.groupType.notNil) {
 						name = name.split($_).drop(-1).join($_);
 					};
@@ -505,6 +507,7 @@ MKtlGUI {
 
 	showLabels { |bool = true|
 		labelView.visible = bool;
+		if (bool) { labelView.refresh };
 	}
 
 	moveTo { |h, v|
